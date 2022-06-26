@@ -1,0 +1,61 @@
+{
+  "name": "@saeris/discordkit",
+  "description": "A RESTapi Client for Discord",
+  "version": "1.0.0",
+  "license": "MIT",
+  "keywords": [
+    "discord",
+    "api",
+    "client",
+    "rest"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/saeris/discordkit.git"
+  },
+  "homepage": "https://github.com/saeris/discordkit#readme",
+  "bugs": {
+    "url": "https://github.com/saeris/discordkit/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
+  "main": "src/index.ts",
+  "scripts": {
+    "ci": "yarn install --ignore-scripts --frozen-lockfile --silent --non-interactive",
+    "build:docs": "fiddly",
+    "lint": "yarn test:lint",
+    "format": "yarn test:lint --fix",
+    "prepare": "is-ci || husky install",
+    "release": "release-it",
+    "test": "yarn test:lint && yarn test:typecheck && yarn test:unit",
+    "test:lint": "eslint \"./src/**/*.{j,t}s?(x)\"",
+    "test:typecheck": "tsc --noEmit",
+    "test:unit": "jest",
+    "test:watch": "yarn test:unit --watch",
+    "typecheck": "yarn test:typecheck",
+    "version": "yarn build:docs"
+  },
+  "peerDependencies": {
+    "zod": "^3.17.3"
+  },
+  "devDependencies": {
+    "@saeris/eslint-config": "^2.2.0",
+    "@types/eslint": "^8.4.3",
+    "@types/jest": "^28.1.3",
+    "@types/node": "18.0.0",
+    "commitlint": "^17.0.3",
+    "eslint": "^8.18.0",
+    "fiddly": "^0.12.0",
+    "husky": "^8.0.1",
+    "is-ci": "^3.0.1",
+    "jest": "^28.1.1",
+    "lint-staged": "^13.0.3",
+    "prettier": "^2.7.1",
+    "release-it": "^15.1.0",
+    "type-fest": "^2.14.0",
+    "typescript": "4.7.4"
+  },
+  "packageManager": "yarn@3.1.1"
+}

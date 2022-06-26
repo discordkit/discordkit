@@ -1,0 +1,26 @@
+# package directories
+node_modules
+
+# Directories
+/.husky/_
+/coverage
+public/
+
+# Yarn
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# Files
+.DS_STORE
+npm-debug.log*
+yarn-error.log*
+.env
+*.tsbuildinfo
+
+coverage.lcov
+engine.json
