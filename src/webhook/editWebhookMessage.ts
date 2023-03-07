@@ -1,8 +1,6 @@
 import { z } from "zod";
-import type { Message } from "../channel";
-import { allowedMention, attachment, embed } from "../channel";
-import { mutation, patch } from "../utils";
-import { buildURL } from "../utils/buildURL";
+import { allowedMention, attachment, embed, type Message } from "../channel";
+import { mutation, patch, buildURL } from "../utils";
 
 export const editWebhookMessageSchema = z.object({
   webhook: z.string().min(1),

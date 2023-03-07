@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { mutation, post } from "../utils";
-import type { ModerationRule } from "./types";
-import { moderationAction, ModerationEvent, ModerationTrigger, triggerMeta } from "./types";
+import { moderationAction, triggerMeta, ModerationEvent, ModerationTrigger, type ModerationRule } from "./types";
 
 export const createAutoModerationRuleSchema = z.object({
   guild: z.string().min(1),

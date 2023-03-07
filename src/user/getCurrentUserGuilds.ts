@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { Guild } from "../guild/types";
+import type { Guild } from "../guild";
 import { get, query } from "../utils";
 
 export const getCurrentUserGuildsSchema = z.object({

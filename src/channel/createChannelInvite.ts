@@ -1,6 +1,5 @@
 import { z } from "zod";
-import { InviteTarget } from "../invite";
-import type { Invite } from "../invite";
+import { InviteTarget, type Invite } from "../invite";
 import { mutation, post } from "../utils";
 
 export const createChannelInviteSchema = z.object({

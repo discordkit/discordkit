@@ -19,7 +19,12 @@ module.exports = {
     `!**/vendor/**`
   ],
   transform: {
-    "^.+\\.(js|jsx|ts|tsx)$": ["babel-jest", { presets: ["next/babel"] }]
+    "^.+\\.(js|jsx|ts|tsx)$": [
+      "babel-jest",
+      {
+        presets: ["@babel/preset-typescript", "@babel/preset-env"]
+      }
+    ]
   },
   testEnvironment: `node`,
   verbose: true

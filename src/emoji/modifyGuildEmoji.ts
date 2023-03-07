@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { mutation, patch } from "../utils";
-import type { Emoji } from "./types";
+import { type Emoji } from "./types";
 
 export const modifyGuildEmojiSchema = z.object({
   guild: z.string().min(1),

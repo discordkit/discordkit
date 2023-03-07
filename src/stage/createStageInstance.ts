@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { mutation, post } from "../utils";
-import { StagePrivacyLevel } from "./types";
-import type { Stage } from "./types";
+import { type Stage, StagePrivacyLevel } from "./types";
 
 export const createStageInstanceSchema = z.object({
   body: z.object({

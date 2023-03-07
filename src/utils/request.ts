@@ -1,5 +1,5 @@
 import { toCamelKeys } from "./toCamelKeys";
-import { toSnakeKeys } from "./toSnakeKeys"
+import { toSnakeKeys } from "./toSnakeKeys";
 import { discord } from "../DiscordSession";
 
 export type RequestBody = object | null | undefined;

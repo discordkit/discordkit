@@ -1,13 +1,13 @@
 import { z } from "zod";
 import { mutation, patch } from "../utils";
 import {
+  GuildFeatures,
   DefaultMessageNotificationLevel,
   ExplicitContentFilterLevel,
-  GuildFeatures,
+  VerificationLevel,
   SystemChannelFlags,
-  VerificationLevel
+  type Guild
 } from "./types";
-import type { Guild } from "./types";
 
 export const modifyGuildSchema = z.object({
   guild: z.string().min(1),

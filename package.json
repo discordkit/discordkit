@@ -21,6 +21,9 @@
     "access": "public",
     "registry": "https://registry.npmjs.org"
   },
+  "engines": {
+    "node": ">=14.x"
+  },
   "main": "src/index.ts",
   "scripts": {
     "ci": "yarn install --ignore-scripts --frozen-lockfile --silent --non-interactive",
@@ -41,11 +44,14 @@
     "zod": "^3.17.3"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.18.2",
+    "@babel/preset-typescript": "^7.17.12",
     "@saeris/eslint-config": "^2.2.0",
     "@types/eslint": "^8.4.3",
     "@types/jest": "^28.1.3",
     "@types/node": "18.0.0",
     "commitlint": "^17.0.3",
+    "dotenv-quokka-plugin": "^1.0.0",
     "eslint": "^8.18.0",
     "fiddly": "^0.12.0",
     "husky": "^8.0.1",
@@ -55,7 +61,13 @@
     "prettier": "^2.7.1",
     "release-it": "^15.1.0",
     "type-fest": "^2.14.0",
-    "typescript": "4.7.4"
+    "typescript": "4.7.4",
+    "zod": "^3.17.3"
+  },
+  "quokka": {
+    "plugins": [
+      "dotenv-quokka-plugin"
+    ]
   },
   "packageManager": "yarn@3.1.1"
 }

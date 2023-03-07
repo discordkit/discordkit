@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { mutation, patch } from "../utils";
-import type { GuildWidget } from "./types";
-import { guildWidget } from "./types";
+import { guildWidget, type GuildWidget } from "./types";
 
 export const modifyGuildWidgetScehma = z.object({
   guild: z.string().min(1),

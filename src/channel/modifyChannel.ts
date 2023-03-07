@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { mutation, patch } from "../utils";
+import { VideoQualityMode, ChannelType, autoArchiveDuration } from "./types";
 import type { Channel } from "./types";
-import { autoArchiveDuration, ChannelType, VideoQualityMode } from "./types";
 
 const sharedChannelOptions = z.object({
   /** 1-100 character channel name */

@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { mutation, post } from "../utils";
-import type { ScheduledEvent } from "./types";
-import { entityMetadata, ScheduledEventEntityType, ScheduledEventPrivacyLevel } from "./types";
+import { entityMetadata, ScheduledEventEntityType, ScheduledEventPrivacyLevel, type ScheduledEvent } from "./types";
 
 export const createGuildScheduledEventSchema = z.object({
   guild: z.string().min(1),

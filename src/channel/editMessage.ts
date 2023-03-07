@@ -1,6 +1,5 @@
 import { z } from "zod";
-import type { Message } from "./types";
-import { messageContent } from "./types";
+import { messageContent, type Message } from "./types";
 import { mutation, patch } from "../utils";
 
 export const editMessageSchema = z.object({

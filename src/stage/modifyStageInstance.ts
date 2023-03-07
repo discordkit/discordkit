@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { mutation, patch } from "../utils";
-import { StagePrivacyLevel } from "./types";
-import type { Stage } from "./types";
+import { type Stage, StagePrivacyLevel } from "./types";
 
 export const modifyStageInstanceSchema = z.object({
   channel: z.string().min(1),

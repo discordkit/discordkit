@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { mutation, post } from "../utils";
-import type { Channel } from "./types";
-import { allowedMention, attachment, autoArchiveDuration, embed, MessageFlag } from "./types";
+import { allowedMention, attachment, embed, MessageFlag, autoArchiveDuration, type Channel } from "./types";
 
 export const startThreadInForumChannelSchema = z.object({
   channel: z.string().min(1),

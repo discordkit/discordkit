@@ -1,6 +1,5 @@
 import { z } from "zod";
-import type { Channel } from "./types";
-import { autoArchiveDuration } from "./types";
+import { autoArchiveDuration, type Channel } from "./types";
 import { mutation, post } from "../utils";
 
 export const startThreadFromMessageSchema = z.object({

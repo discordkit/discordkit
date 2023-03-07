@@ -1,6 +1,5 @@
 import { z } from "zod";
-import { mutation, post } from "../utils";
-import { buildURL } from "../utils/buildURL";
+import { mutation, post, buildURL } from "../utils";
 
 export const executeSlackCompatibleWebhookSchema = z.object({
   webhook: z.string().min(1),

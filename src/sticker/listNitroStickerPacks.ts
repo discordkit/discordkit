@@ -1,5 +1,4 @@
-import type { Fetcher } from "../utils";
-import { get } from "../utils";
+import { get, type Fetcher } from "../utils";
 import type { StickerPack } from "./types";
 
 /**

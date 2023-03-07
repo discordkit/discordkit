@@ -1,13 +1,13 @@
 import { z } from "zod";
 import { mutation, post } from "../utils";
 import { channel } from "../channel";
-import type { Guild } from "./types";
 import {
+  role,
   DefaultMessageNotificationLevel,
   ExplicitContentFilterLevel,
   VerificationLevel,
   SystemChannelFlags,
-  role
+  type Guild
 } from "./types";
 
 export const createGuildSchema = z.object({

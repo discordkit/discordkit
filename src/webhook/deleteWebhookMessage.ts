@@ -1,6 +1,5 @@
 import { z } from "zod";
-import { mutation, remove } from "../utils";
-import { buildURL } from "../utils/buildURL";
+import { mutation, remove, buildURL } from "../utils";
 
 export const deleteWebhookMessageSchema = z.object({
   webhook: z.string().min(1),
