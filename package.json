@@ -24,13 +24,29 @@
   "engines": {
     "node": ">=14.x"
   },
-  "main": "src/index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
   "scripts": {
     "ci": "yarn install --ignore-scripts --frozen-lockfile --silent --non-interactive",
+    "build": "tsup",
     "build:docs": "fiddly",
     "lint": "yarn test:lint",
     "format": "yarn test:lint --fix",
     "prepare": "is-ci || husky install",
+    "prepublishOnly": "yarn test",
+    "prepack": "yarn build",
     "release": "release-it",
     "test": "yarn test:lint && yarn test:typecheck && yarn test:unit",
     "test:lint": "eslint \"./src/**/*.{j,t}s?(x)\"",
@@ -60,6 +76,7 @@
     "lint-staged": "^13.0.3",
     "prettier": "^2.7.1",
     "release-it": "^15.1.0",
+    "tsup": "^6.7.0",
     "type-fest": "^2.14.0",
     "typescript": "4.7.4",
     "zod": "^3.17.3"
@@ -69,5 +86,19 @@
       "dotenv-quokka-plugin"
     ]
   },
-  "packageManager": "yarn@3.1.1"
+  "tsup": {
+    "entry": [
+      "src/index.ts"
+    ],
+    "format": [
+      "cjs",
+      "esm"
+    ],
+    "dts": true,
+    "splitting": false,
+    "sourcemap": true,
+    "clean": true
+  },
+  "packageManager": "yarn@3.1.1",
+  "sideEffects": false
 }

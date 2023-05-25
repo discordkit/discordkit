@@ -5,6 +5,7 @@ node_modules
 /.husky/_
 /coverage
 public/
+dist/
 
 # Yarn
 .pnp.*
