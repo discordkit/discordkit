@@ -1,7 +1,7 @@
 {
   "name": "@saeris/discordkit",
   "description": "A RESTapi Client for Discord",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "license": "MIT",
   "keywords": [
     "discord",
@@ -62,6 +62,7 @@
   "devDependencies": {
     "@babel/preset-env": "^7.18.2",
     "@babel/preset-typescript": "^7.17.12",
+    "@release-it/conventional-changelog": "^5.1.1",
     "@saeris/eslint-config": "^2.2.0",
     "@types/eslint": "^8.4.3",
     "@types/jest": "^28.1.3",
