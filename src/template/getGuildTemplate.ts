@@ -11,6 +11,8 @@ export const getGuildTemplateSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild-template#get-guild-template
  */
-export const getGuildTemplate = query(getGuildTemplateSchema, ({ template }) =>
-  get<GuildTemplate>(`/guilds/templates/${template}`)
+export const getGuildTemplate = query(
+  getGuildTemplateSchema,
+  async ({ input: { template } }) =>
+    get<GuildTemplate>(`/guilds/templates/${template}`)
 );

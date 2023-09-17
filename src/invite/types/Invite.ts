@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { application } from "../../application";
-import { channel } from "../../channel";
+import { application } from "../../application/types/Application";
+import { channel } from "../../channel/types/Channel";
 import { scheduledEvent } from "../../event";
-import { guild } from "../../guild";
+import { guild } from "../../guild/types/Guild";
 import { user } from "../../user";
 import { inviteStageInstance } from "./InviteStageInstance";
 import { inviteTarget } from "./InviteTarget";

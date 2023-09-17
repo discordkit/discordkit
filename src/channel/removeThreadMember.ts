@@ -11,6 +11,8 @@ export const removeThreadMemberSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#remove-thread-member
  */
-export const removeThreadMember = mutation(removeThreadMemberSchema, async ({ channel, user }) =>
-  remove(`/channels/${channel}/thread-members/${user}`)
+export const removeThreadMember = mutation(
+  removeThreadMemberSchema,
+  async ({ channel, user }) =>
+    remove(`/channels/${channel}/thread-members/${user}`)
 );

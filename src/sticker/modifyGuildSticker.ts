@@ -24,6 +24,8 @@ export const modifyGuildStickerSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/sticker#modify-guild-sticker
  */
-export const modifyGuildSticker = mutation(modifyGuildStickerSchema, async ({ guild, sticker, body }) =>
-  patch<Sticker>(`/guilds/${guild}/stickers/${sticker}`, body)
+export const modifyGuildSticker = mutation(
+  modifyGuildStickerSchema,
+  async ({ guild, sticker, body }) =>
+    patch<Sticker>(`/guilds/${guild}/stickers/${sticker}`, body)
 );

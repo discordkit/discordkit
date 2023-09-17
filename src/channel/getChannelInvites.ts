@@ -11,6 +11,8 @@ export const getChannelInvitesSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#get-channel-invites
  */
-export const getChannelInvites = query(getChannelInvitesSchema, ({ channel }) =>
-  get<Invite[]>(`/channels/${channel}/invites`)
+export const getChannelInvites = query(
+  getChannelInvitesSchema,
+  async ({ input: { channel } }) =>
+    get<Invite[]>(`/channels/${channel}/invites`)
 );

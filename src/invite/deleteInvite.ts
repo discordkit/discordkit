@@ -10,4 +10,6 @@ export const deleteInviteSchema = z.object({
  *
  * *This endpoint supports the `X-Audit-Log-Reason` header.*
  */
-export const deleteInvite = mutation(deleteInviteSchema, async ({ code }) => remove(`/invites/${code}`));
+export const deleteInvite = mutation(deleteInviteSchema, async ({ code }) =>
+  remove(`/invites/${code}`)
+);

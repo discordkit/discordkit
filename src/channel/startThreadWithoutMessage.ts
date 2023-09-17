@@ -27,6 +27,8 @@ export const startThreadWithoutMessageSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#start-thread-without-message
  */
-export const startThreadWithoutMessage = mutation(startThreadWithoutMessageSchema, async ({ channel, body }) =>
-  post<Channel>(`/channels/${channel}/threads`, body)
+export const startThreadWithoutMessage = mutation(
+  startThreadWithoutMessageSchema,
+  async ({ channel, body }) =>
+    post<Channel>(`/channels/${channel}/threads`, body)
 );

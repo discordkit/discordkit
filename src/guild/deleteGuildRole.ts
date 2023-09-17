@@ -13,6 +13,7 @@ export const deleteGuildRoleSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#delete-guild-role
  */
-export const deleteGuildRole = mutation(deleteGuildRoleSchema, async ({ guild, role }) =>
-  remove(`/guilds/${guild}/roles/${role}`)
+export const deleteGuildRole = mutation(
+  deleteGuildRoleSchema,
+  async ({ guild, role }) => remove(`/guilds/${guild}/roles/${role}`)
 );

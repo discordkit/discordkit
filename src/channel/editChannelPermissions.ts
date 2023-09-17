@@ -21,6 +21,8 @@ export const editChannelPermissionsSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#edit-channel-permissions
  */
-export const editChannelPermissions = mutation(editChannelPermissionsSchema, async ({ channel, overwrite, body }) =>
-  put(`/channels/${channel}/permissions/${overwrite}`, body)
+export const editChannelPermissions = mutation(
+  editChannelPermissionsSchema,
+  async ({ channel, overwrite, body }) =>
+    put(`/channels/${channel}/permissions/${overwrite}`, body)
 );

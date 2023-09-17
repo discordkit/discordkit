@@ -28,6 +28,8 @@ export const createWebhookConfig = z.object({
  *
  * https://discord.com/developers/docs/resources/webhook#create-webhook
  */
-export const createWebhook = mutation(createWebhookConfig, async ({ channel, body }) =>
-  post<Webhook>(`/channels/${channel}/webhooks`, body)
+export const createWebhook = mutation(
+  createWebhookConfig,
+  async ({ channel, body }) =>
+    post<Webhook>(`/channels/${channel}/webhooks`, body)
 );

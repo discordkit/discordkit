@@ -14,6 +14,8 @@ export const getAutoModerationRuleSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/auto-moderation#get-auto-moderation-rule
  */
-export const getAutoModerationRule = query(getAutoModerationRuleSchema, ({ guild, rule }) =>
-  get<ModerationRule>(`/guilds/${guild}/auto-moderation/rules/${rule}`)
+export const getAutoModerationRule = query(
+  getAutoModerationRuleSchema,
+  async ({ input: { guild, rule } }) =>
+    get<ModerationRule>(`/guilds/${guild}/auto-moderation/rules/${rule}`)
 );

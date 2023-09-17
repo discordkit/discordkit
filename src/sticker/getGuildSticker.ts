@@ -12,6 +12,8 @@ export const getGuildStickerSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/sticker#get-guild-sticker
  */
-export const getGuildSticker = query(getGuildStickerSchema, ({ guild, sticker }) =>
-  get<Sticker>(`/guilds/${guild}/stickers/${sticker}`)
+export const getGuildSticker = query(
+  getGuildStickerSchema,
+  async ({ input: { guild, sticker } }) =>
+    get<Sticker>(`/guilds/${guild}/stickers/${sticker}`)
 );

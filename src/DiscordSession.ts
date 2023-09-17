@@ -1,5 +1,7 @@
+export const endpoint = `https://discord.com/api/v10`;
+
 export class DiscordSession {
-  endpoint: string = `https://discord.com/api/v10`;
+  endpoint: string = endpoint;
   #authToken: string | null = null;
   #bot: boolean = false;
   get ready(): boolean {

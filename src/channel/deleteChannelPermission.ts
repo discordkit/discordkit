@@ -13,6 +13,8 @@ export const deleteChannelPermissionSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#delete-channel-permission
  */
-export const deleteChannelPermission = mutation(deleteChannelPermissionSchema, async ({ channel, overwrite }) =>
-  remove(`/channels/${channel}/permissions/${overwrite}`)
+export const deleteChannelPermission = mutation(
+  deleteChannelPermissionSchema,
+  async ({ channel, overwrite }) =>
+    remove(`/channels/${channel}/permissions/${overwrite}`)
 );

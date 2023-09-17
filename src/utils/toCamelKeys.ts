@@ -2,7 +2,9 @@ import type { CamelCasedPropertiesDeep } from "type-fest";
 import { isObject } from "./isObject";
 import { toCamelCase } from "./toCamelCase";
 
-export const toCamelKeys = <T extends object>(o: T): CamelCasedPropertiesDeep<T> => {
+export const toCamelKeys = <T extends object>(
+  o: T
+): CamelCasedPropertiesDeep<T> => {
   if (Array.isArray(o)) {
     return o.map(toCamelKeys) as CamelCasedPropertiesDeep<T>;
   } else if (isObject(o)) {

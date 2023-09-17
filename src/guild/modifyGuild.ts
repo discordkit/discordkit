@@ -20,9 +20,13 @@ export const modifyGuildSchema = z.object({
       /** verification level */
       verificationLevel: z.nativeEnum(VerificationLevel).nullable(),
       /** default message notification level */
-      defaultMessageNotifications: z.nativeEnum(DefaultMessageNotificationLevel).nullable(),
+      defaultMessageNotifications: z
+        .nativeEnum(DefaultMessageNotificationLevel)
+        .nullable(),
       /** explicit content filter level */
-      explicitContentFilter: z.nativeEnum(ExplicitContentFilterLevel).nullable(),
+      explicitContentFilter: z
+        .nativeEnum(ExplicitContentFilterLevel)
+        .nullable(),
       /** id for afk channel */
       afkChannelId: z.string().min(1).nullable(),
       /** afk timeout in seconds */
@@ -66,6 +70,7 @@ export const modifyGuildSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#modify-guild
  */
-export const modifyGuild = mutation(modifyGuildSchema, async ({ guild, body }) =>
-  patch<Guild>(`/guilds/${guild}`, body)
+export const modifyGuild = mutation(
+  modifyGuildSchema,
+  async ({ guild, body }) => patch<Guild>(`/guilds/${guild}`, body)
 );

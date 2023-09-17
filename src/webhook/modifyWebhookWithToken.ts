@@ -24,6 +24,8 @@ export const modifyWebhookWithTokenSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/webhook#modify-webhook-with-token
  */
-export const modifyWebhookWithToken = mutation(modifyWebhookWithTokenSchema, async ({ webhook, token, body }) =>
-  patch<Webhook>(`/webhooks/${webhook}/${token}`, body)
+export const modifyWebhookWithToken = mutation(
+  modifyWebhookWithTokenSchema,
+  async ({ webhook, token, body }) =>
+    patch<Webhook>(`/webhooks/${webhook}/${token}`, body)
 );

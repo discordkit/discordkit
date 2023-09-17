@@ -11,6 +11,7 @@ export const getPinnedMessagesSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#get-pinned-messages
  */
-export const getPinnedMessages = query(getPinnedMessagesSchema, ({ channel }) =>
-  get<Message[]>(`/channels/${channel}/pins`)
+export const getPinnedMessages = query(
+  getPinnedMessagesSchema,
+  async ({ input: { channel } }) => get<Message[]>(`/channels/${channel}/pins`)
 );

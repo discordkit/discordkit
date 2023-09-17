@@ -20,6 +20,8 @@ export const listPublicArchivedThreadsSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#list-public-archived-threads
  */
-export const listPublicArchivedThreads = query(listPublicArchivedThreadsSchema, ({ channel, params }) =>
-  get<ArchivedThreads>(`/channels/${channel}/threads/archived/public`, params)
+export const listPublicArchivedThreads = query(
+  listPublicArchivedThreadsSchema,
+  async ({ input: { channel, params } }) =>
+    get<ArchivedThreads>(`/channels/${channel}/threads/archived/public`, params)
 );

@@ -13,4 +13,7 @@ export const getWebhookSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/webhook#get-webhook
  */
-export const getWebhook = query(getWebhookSchema, ({ webhook }) => get<Webhook>(`/webhooks/${webhook}`));
+export const getWebhook = query(
+  getWebhookSchema,
+  async ({ input: { webhook } }) => get<Webhook>(`/webhooks/${webhook}`)
+);

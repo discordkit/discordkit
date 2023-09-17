@@ -21,7 +21,9 @@ export const createGuildSchema = z.object({
     /** verification level */
     verificationLevel: z.nativeEnum(VerificationLevel).optional(),
     /** default message notification level */
-    defaultMessageNotifications: z.nativeEnum(DefaultMessageNotificationLevel).optional(),
+    defaultMessageNotifications: z
+      .nativeEnum(DefaultMessageNotificationLevel)
+      .optional(),
     /** explicit content filter level */
     explicitContentFilter: z.nativeEnum(ExplicitContentFilterLevel).optional(),
     /** new guild roles */
@@ -46,4 +48,6 @@ export const createGuildSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#create-guild
  */
-export const createGuild = mutation(createGuildSchema, async ({ body }) => post<Guild>(`/guilds`, body));
+export const createGuild = mutation(createGuildSchema, async ({ body }) =>
+  post<Guild>(`/guilds`, body)
+);

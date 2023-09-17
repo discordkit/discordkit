@@ -15,6 +15,7 @@ export const pinMessageSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#pin-message
  */
-export const pinMessage = mutation(pinMessageSchema, async ({ channel, message }) =>
-  put(`/channels/${channel}/pins/${message}`)
+export const pinMessage = mutation(
+  pinMessageSchema,
+  async ({ channel, message }) => put(`/channels/${channel}/pins/${message}`)
 );

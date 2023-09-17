@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { get, query } from "../utils";
-import { AuditLogEvent, type AuditLog } from "./types";
+import { type AuditLog, auditLogEvent } from "./types";
 
 export const getGuildAuditLogSchema = z.object({
   guild: z.string().min(1),
@@ -9,7 +9,7 @@ export const getGuildAuditLogSchema = z.object({
       /** Entries from a specific user ID */
       userId: z.string().min(1),
       /** Entries for a specific audit log event */
-      actionType: z.nativeEnum(AuditLogEvent),
+      actionType: auditLogEvent,
       /** Entries that preceded a specific audit log entry ID */
       before: z.string().min(1),
       /** Maximum number of entries (between 1-100) to return, defaults to 50 */
@@ -24,6 +24,8 @@ export const getGuildAuditLogSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/audit-log#get-guild-audit-log
  */
-export const getGuildAuditLog = query(getGuildAuditLogSchema, ({ guild, params }) =>
-  get<AuditLog>(`/guilds/${guild}/audit-logs`, params)
+export const getGuildAuditLog = query(
+  getGuildAuditLogSchema,
+  async ({ input: { guild, params } }) =>
+    get<AuditLog>(`/guilds/${guild}/audit-logs`, params)
 );

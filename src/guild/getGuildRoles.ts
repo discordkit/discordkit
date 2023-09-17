@@ -11,4 +11,7 @@ export const getGuildRolesSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#get-guild-roles
  */
-export const getGuildRoles = query(getGuildRolesSchema, ({ guild }) => get<Role[]>(`/guilds/${guild}/roles`));
+export const getGuildRoles = query(
+  getGuildRolesSchema,
+  async ({ input: { guild } }) => get<Role[]>(`/guilds/${guild}/roles`)
+);

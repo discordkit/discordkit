@@ -12,6 +12,8 @@ export const crosspostMessageSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#crosspost-message
  */
-export const crosspostMessage = mutation(crosspostMessageSchema, async ({ channel, message }) =>
-  post<Message>(`/channels/${channel}/messages/${message}/crosspost`)
+export const crosspostMessage = mutation(
+  crosspostMessageSchema,
+  async ({ channel, message }) =>
+    post<Message>(`/channels/${channel}/messages/${message}/crosspost`)
 );

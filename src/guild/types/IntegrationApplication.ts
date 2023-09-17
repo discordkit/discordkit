@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { user } from "../../user";
+import { user } from "../../user/types/User";
 
 export const integrationApplication = z.object({
   /** the id of the app */

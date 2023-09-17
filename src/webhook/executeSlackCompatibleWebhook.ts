@@ -22,5 +22,6 @@ export const executeSlackCompatibleWebhookSchema = z.object({
  */
 export const executeSlackCompatibleWebhook = mutation(
   executeSlackCompatibleWebhookSchema,
-  async ({ webhook, token, params }) => post(buildURL(`/webhooks/${webhook}/${token}/slack`, params).href)
+  async ({ webhook, token, params }) =>
+    post(buildURL(`/webhooks/${webhook}/${token}/slack`, params).href)
 );

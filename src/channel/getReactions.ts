@@ -22,6 +22,11 @@ export const getReactionsSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#get-reactions
  */
-export const getReactions = query(getReactionsSchema, ({ channel, message, emoji, params }) =>
-  get<Partial<User>[]>(`/channels/${channel}/messages/${message}/reactions/${emoji}`, params)
+export const getReactions = query(
+  getReactionsSchema,
+  async ({ input: { channel, message, emoji, params } }) =>
+    get<Array<Partial<User>>>(
+      `/channels/${channel}/messages/${message}/reactions/${emoji}`,
+      params
+    )
 );

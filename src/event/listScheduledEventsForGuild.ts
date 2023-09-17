@@ -17,6 +17,8 @@ export const listScheduledEventsForGuildSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild-scheduled-event#list-scheduled-events-for-guild
  */
-export const listScheduledEventsForGuild = query(listScheduledEventsForGuildSchema, ({ guild, params }) =>
-  get<ScheduledEvent[]>(`/guilds/${guild}/scheduled-events`, params)
+export const listScheduledEventsForGuild = query(
+  listScheduledEventsForGuildSchema,
+  async ({ input: { guild, params } }) =>
+    get<ScheduledEvent[]>(`/guilds/${guild}/scheduled-events`, params)
 );

@@ -10,4 +10,6 @@ export const leaveGuildSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/user#leave-guild
  */
-export const leaveGuild = mutation(leaveGuildSchema, async ({ guild }) => remove(`/users/@me/guilds/${guild}`));
+export const leaveGuild = mutation(leaveGuildSchema, async ({ guild }) =>
+  remove(`/users/@me/guilds/${guild}`)
+);

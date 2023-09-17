@@ -7,5 +7,7 @@ import type { GuildWidget } from "./types";
  *
  * https://discord.com/developers/docs/resources/guild#get-guild-widget-settings
  */
-export const getGuildWidgetSettings: QueryBuilder<{ guild: string }, GuildWidget> = ({ guild }) =>
-  get(`/guilds/${guild}/widget`);
+export const getGuildWidgetSettings: QueryBuilder<
+  { input: { guild: string } },
+  GuildWidget
+> = async ({ input: { guild } }) => get(`/guilds/${guild}/widget`);

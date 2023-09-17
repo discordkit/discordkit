@@ -11,11 +11,13 @@ export const listActiveGuildThreadsSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#list-active-guild-threads
  */
-export const listActiveGuildThreads = query(listActiveGuildThreadsSchema, ({ guild }) =>
-  get<{
-    /** the active threads */
-    threads: Channel[];
-    /** a thread member object for each returned thread the current user has joined */
-    members: ThreadMember[];
-  }>(`/guilds/${guild}/threads/active`)
+export const listActiveGuildThreads = query(
+  listActiveGuildThreadsSchema,
+  async ({ input: { guild } }) =>
+    get<{
+      /** the active threads */
+      threads: Channel[];
+      /** a thread member object for each returned thread the current user has joined */
+      members: ThreadMember[];
+    }>(`/guilds/${guild}/threads/active`)
 );

@@ -13,6 +13,10 @@ export const deleteUserReactionSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#delete-user-reaction
  */
-export const deleteUserReaction = mutation(deleteUserReactionSchema, async ({ channel, message, emoji, user }) =>
-  remove(`/channels/${channel}/messages/${message}/reactions/${emoji}/${user}`)
+export const deleteUserReaction = mutation(
+  deleteUserReactionSchema,
+  async ({ channel, message, emoji, user }) =>
+    remove(
+      `/channels/${channel}/messages/${message}/reactions/${emoji}/${user}`
+    )
 );

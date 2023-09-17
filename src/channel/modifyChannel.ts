@@ -86,6 +86,7 @@ export const modifyChannelSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#modify-channel
  */
-export const modifyChannel = mutation(modifyChannelSchema, async ({ channel, body }) =>
-  patch<Channel>(`/channels/${channel}`, body)
+export const modifyChannel = mutation(
+  modifyChannelSchema,
+  async ({ channel, body }) => patch<Channel>(`/channels/${channel}`, body)
 );

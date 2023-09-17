@@ -13,6 +13,7 @@ export const unpinMessageSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#unpin-message
  */
-export const unpinMessage = mutation(unpinMessageSchema, async ({ channel, message }) =>
-  remove(`/channels/${channel}/pins/${message}`)
+export const unpinMessage = mutation(
+  unpinMessageSchema,
+  async ({ channel, message }) => remove(`/channels/${channel}/pins/${message}`)
 );

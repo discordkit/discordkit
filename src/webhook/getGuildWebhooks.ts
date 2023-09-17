@@ -13,6 +13,7 @@ export const getGuildWebhooksSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/webhook#get-guild-webhooks
  */
-export const getGuildWebhooks = query(getGuildWebhooksSchema, ({ guild }) =>
-  get<Webhook[]>(`/guilds/${guild}/webhooks`)
+export const getGuildWebhooks = query(
+  getGuildWebhooksSchema,
+  async ({ input: { guild } }) => get<Webhook[]>(`/guilds/${guild}/webhooks`)
 );

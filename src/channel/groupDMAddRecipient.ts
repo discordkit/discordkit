@@ -17,6 +17,8 @@ export const groupDMAddRecipientSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#group-dm-add-recipient
  */
-export const groupDMAddRecipient = mutation(groupDMAddRecipientSchema, async ({ channel, user, body }) =>
-  put(`/channels/${channel}/recipients/${user}`, body)
+export const groupDMAddRecipient = mutation(
+  groupDMAddRecipientSchema,
+  async ({ channel, user, body }) =>
+    put(`/channels/${channel}/recipients/${user}`, body)
 );

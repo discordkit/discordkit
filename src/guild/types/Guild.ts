@@ -1,10 +1,10 @@
 import { z } from "zod";
-import { channel } from "../../channel";
+import { channel } from "../../channel/types/Channel";
 import { emoji } from "../../emoji";
 import { scheduledEvent } from "../../event";
 import { stage } from "../../stage";
 import { sticker } from "../../sticker";
-import { voiceState } from "../../voice";
+import { voiceState } from "../../voice/types/VoiceState";
 import { role } from "./Role";
 import { presence } from "./Presence";
 import { welcomeScreen } from "./WelcomeScreen";

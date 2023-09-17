@@ -26,6 +26,8 @@ export const getChannelMessagesScehma = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#get-channel-messages
  */
-export const getChannelMessages = query(getChannelMessagesScehma, ({ channel, params }) =>
-  get<Message[]>(`/channels/${channel}/messages`, params)
+export const getChannelMessages = query(
+  getChannelMessagesScehma,
+  async ({ input: { channel, params } }) =>
+    get<Message[]>(`/channels/${channel}/messages`, params)
 );

@@ -9,7 +9,12 @@ export const presence = z.object({
   /** id of the guild */
   guildId: z.string(),
   /** either "idle", "dnd", "online", or "offline" */
-  status: z.union([z.literal(`idle`), z.literal(`dnd`), z.literal(`online`), z.literal(`offline`)]),
+  status: z.union([
+    z.literal(`idle`),
+    z.literal(`dnd`),
+    z.literal(`online`),
+    z.literal(`offline`)
+  ]),
   /** user's current activities */
   activities: activity.array(),
   /** user's platform-dependent status */

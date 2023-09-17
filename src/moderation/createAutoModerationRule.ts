@@ -1,6 +1,12 @@
 import { z } from "zod";
 import { mutation, post } from "../utils";
-import { moderationAction, triggerMeta, ModerationEvent, ModerationTrigger, type ModerationRule } from "./types";
+import {
+  moderationAction,
+  triggerMeta,
+  ModerationEvent,
+  ModerationTrigger,
+  type ModerationRule
+} from "./types";
 
 export const createAutoModerationRuleSchema = z.object({
   guild: z.string().min(1),
@@ -31,6 +37,8 @@ export const createAutoModerationRuleSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/auto-moderation#create-auto-moderation-rule
  */
-export const createAutoModerationRule = mutation(createAutoModerationRuleSchema, async ({ guild, body }) =>
-  post<ModerationRule>(`/guilds/${guild}/auto-moderation/rules`, body)
+export const createAutoModerationRule = mutation(
+  createAutoModerationRuleSchema,
+  async ({ guild, body }) =>
+    post<ModerationRule>(`/guilds/${guild}/auto-moderation/rules`, body)
 );

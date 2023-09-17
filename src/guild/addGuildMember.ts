@@ -30,6 +30,8 @@ export const addGuildMemberSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#add-guild-member
  */
-export const addGuildMember = mutation(addGuildMemberSchema, async ({ guild, user, body }) =>
-  put<Member>(`/guilds/${guild}/members/${user}`, body)
+export const addGuildMember = mutation(
+  addGuildMemberSchema,
+  async ({ guild, user, body }) =>
+    put<Member>(`/guilds/${guild}/members/${user}`, body)
 );

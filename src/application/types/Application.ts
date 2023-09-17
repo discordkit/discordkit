@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { user } from "../../user";
+import { user } from "../../user/types/User";
 import { team } from "./Team";
 import { installParams } from "./InstallParams";
 import { applicationFlags } from "./ApplicationFlags";

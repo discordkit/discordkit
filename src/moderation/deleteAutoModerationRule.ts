@@ -13,6 +13,8 @@ export const deleteAutoModerationRuleSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/auto-moderation#delete-auto-moderation-rule
  */
-export const deleteAutoModerationRule = mutation(deleteAutoModerationRuleSchema, async ({ guild, rule }) =>
-  remove(`/guilds/${guild}/auto-moderation/rules/${rule}`)
+export const deleteAutoModerationRule = mutation(
+  deleteAutoModerationRuleSchema,
+  async ({ guild, rule }) =>
+    remove(`/guilds/${guild}/auto-moderation/rules/${rule}`)
 );

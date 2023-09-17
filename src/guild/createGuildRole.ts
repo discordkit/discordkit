@@ -31,6 +31,7 @@ export const createGuildRoleSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#create-guild-role
  */
-export const createGuildRole = mutation(createGuildRoleSchema, async ({ guild, body }) =>
-  post<Role>(`/guilds/${guild}/roles`, body)
+export const createGuildRole = mutation(
+  createGuildRoleSchema,
+  async ({ guild, body }) => post<Role>(`/guilds/${guild}/roles`, body)
 );

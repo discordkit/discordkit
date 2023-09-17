@@ -5,4 +5,6 @@ export enum IntegrationExpireBehavior {
   KICK = 1
 }
 
-export const integrationExpireBehavior = z.nativeEnum(IntegrationExpireBehavior);
+export const integrationExpireBehavior = z.nativeEnum(
+  IntegrationExpireBehavior
+);

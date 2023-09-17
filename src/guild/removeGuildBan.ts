@@ -13,6 +13,7 @@ export const removeGuildBanSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#remove-guild-ban
  */
-export const removeGuildBan = mutation(removeGuildBanSchema, async ({ guild, user }) =>
-  remove(`/guilds/${guild}/bans/${user}`)
+export const removeGuildBan = mutation(
+  removeGuildBanSchema,
+  async ({ guild, user }) => remove(`/guilds/${guild}/bans/${user}`)
 );

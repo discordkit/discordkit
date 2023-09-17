@@ -24,6 +24,8 @@ export const startThreadFromMessageSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#start-thread-from-message
  */
-export const startThreadFromMessage = mutation(startThreadFromMessageSchema, async ({ channel, message, body }) =>
-  post<Channel>(`/channels/${channel}/messages/${message}/threads`, body)
+export const startThreadFromMessage = mutation(
+  startThreadFromMessageSchema,
+  async ({ channel, message, body }) =>
+    post<Channel>(`/channels/${channel}/messages/${message}/threads`, body)
 );

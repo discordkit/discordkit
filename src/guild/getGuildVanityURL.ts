@@ -11,6 +11,8 @@ export const getGuildVanityURLSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#get-guild-vanity-url
  */
-export const getGuildVanityURL = query(getGuildVanityURLSchema, ({ guild }) =>
-  get<Partial<Invite>>(`/guilds/${guild}/vanity-url`)
+export const getGuildVanityURL = query(
+  getGuildVanityURLSchema,
+  async ({ input: { guild } }) =>
+    get<Partial<Invite>>(`/guilds/${guild}/vanity-url`)
 );

@@ -1,4 +1,4 @@
-import { get, type Fetcher } from "../utils";
+import { get } from "../utils";
 import type { Connection } from "./types";
 
 /**
@@ -6,4 +6,5 @@ import type { Connection } from "./types";
  *
  * https://discord.com/developers/docs/resources/user#get-user-connections
  */
-export const getUserConnections = (): Fetcher<Connection> => get(`/users/@me/connections`);
+export const getUserConnections = async (): Promise<Connection> =>
+  get(`/users/@me/connections`);

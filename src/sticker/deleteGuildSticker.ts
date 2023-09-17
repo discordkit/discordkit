@@ -11,6 +11,7 @@ export const deleteGuildStickerSchema = z.object({
  *
  * *This endpoint supports the `X-Audit-Log-Reason` header.*
  */
-export const deleteGuildSticker = mutation(deleteGuildStickerSchema, async ({ guild, sticker }) =>
-  remove(`/guilds/${guild}/stickers/${sticker}`)
+export const deleteGuildSticker = mutation(
+  deleteGuildStickerSchema,
+  async ({ guild, sticker }) => remove(`/guilds/${guild}/stickers/${sticker}`)
 );

@@ -1,12 +1,12 @@
 import { z } from "zod";
 import { mutation, post } from "../utils";
-import { MFALevel } from "./types";
+import { mfaLevel, type MFALevel } from "./types";
 
 export const modifyGuildMFALevelSchema = z.object({
   guild: z.string().min(1),
   body: z.object({
     /** MFA level */
-    level: z.nativeEnum(MFALevel)
+    level: mfaLevel
   })
 });
 
@@ -15,6 +15,7 @@ export const modifyGuildMFALevelSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#modify-guild-mfa-level
  */
-export const modifyGuildMFALevel = mutation(modifyGuildMFALevelSchema, async ({ guild, body }) =>
-  post<MFALevel>(`/guilds/${guild}/mfa`, body)
+export const modifyGuildMFALevel = mutation(
+  modifyGuildMFALevelSchema,
+  async ({ guild, body }) => post<MFALevel>(`/guilds/${guild}/mfa`, body)
 );

@@ -11,6 +11,7 @@ export const getGuildChannelsSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#get-guild-channels
  */
-export const getGuildChannels = query(getGuildChannelsSchema, ({ guild }) =>
-  get<Channel[]>(`/guilds/${guild}/channels`)
+export const getGuildChannels = query(
+  getGuildChannelsSchema,
+  async ({ input: { guild } }) => get<Channel[]>(`/guilds/${guild}/channels`)
 );

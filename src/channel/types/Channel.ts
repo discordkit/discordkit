@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { user } from "../../user";
+import { user } from "../../user/types/User";
 import { autoArchiveDuration } from "./AutoArchiveDuration";
 import { channelType } from "./ChannelType";
 import { overwrite } from "./Overwrite";

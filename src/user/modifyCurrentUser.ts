@@ -18,4 +18,7 @@ export const modifyCurrentUserSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/user#modify-current-user
  */
-export const modifyCurrentUser = mutation(modifyCurrentUserSchema, async ({ body }) => patch<User>(`/users/@me`, body));
+export const modifyCurrentUser = mutation(
+  modifyCurrentUserSchema,
+  async ({ body }) => patch<User>(`/users/@me`, body)
+);

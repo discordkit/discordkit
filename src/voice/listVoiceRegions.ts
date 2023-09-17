@@ -1,4 +1,4 @@
-import { get, type Fetcher } from "../utils";
+import { get } from "../utils";
 import type { VoiceRegion } from "./types";
 
 /**
@@ -6,4 +6,5 @@ import type { VoiceRegion } from "./types";
  *
  * https://discord.com/developers/docs/resources/voice#list-voice-regions
  */
-export const listVoiceRegions = (): Fetcher<VoiceRegion[]> => get(`/voice/regions`);
+export const listVoiceRegions = async (): Promise<VoiceRegion[]> =>
+  get<VoiceRegion[]>(`/voice/regions`);

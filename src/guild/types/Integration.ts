@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { user } from "../../user";
+import { user } from "../../user/types/User";
 import { integrationApplication } from "./IntegrationApplication";
 import { integrationAccount } from "./IntegrationAccount";
 import { integrationExpireBehavior } from "./IntegrationExpireBehavior";

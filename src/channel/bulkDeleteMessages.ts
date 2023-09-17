@@ -20,6 +20,8 @@ export const bulkDeleteMessagesSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#bulk-delete-messages
  */
-export const bulkDeleteMessages = mutation(bulkDeleteMessagesSchema, async ({ channel, body }) =>
-  post(`/channels/${channel}/messages/bulk-delete`, body)
+export const bulkDeleteMessages = mutation(
+  bulkDeleteMessagesSchema,
+  async ({ channel, body }) =>
+    post(`/channels/${channel}/messages/bulk-delete`, body)
 );

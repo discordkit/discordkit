@@ -13,6 +13,8 @@ export const deleteGuildIntegrationSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#delete-guild-integration
  */
-export const deleteGuildIntegration = mutation(deleteGuildIntegrationSchema, async ({ guild, integration }) =>
-  remove(`/guilds/${guild}/integrations/${integration}`)
+export const deleteGuildIntegration = mutation(
+  deleteGuildIntegrationSchema,
+  async ({ guild, integration }) =>
+    remove(`/guilds/${guild}/integrations/${integration}`)
 );

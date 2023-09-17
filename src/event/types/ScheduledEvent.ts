@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { user } from "../../user";
+import { user } from "../../user/types/User";
 import { scheduledEventEntityType } from "./ScheduledEventEntityType";
 import { scheduledEventPrivacyLevel } from "./ScheduledEventPrivacyLevel";
 import { scheduledEventStatus } from "./ScheduledEventStatus";

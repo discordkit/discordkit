@@ -12,4 +12,8 @@ export const getGuildBanSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#get-guild-ban
  */
-export const getGuildBan = query(getGuildBanSchema, ({ guild, user }) => get<Ban>(`/guilds/${guild}/bans/${user}`));
+export const getGuildBan = query(
+  getGuildBanSchema,
+  async ({ input: { guild, user } }) =>
+    get<Ban>(`/guilds/${guild}/bans/${user}`)
+);

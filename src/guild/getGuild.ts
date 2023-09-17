@@ -18,4 +18,7 @@ export const getGuildSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#get-guild
  */
-export const getGuild = query(getGuildSchema, ({ id, params }) => get<Guild>(`/guilds/${id}`, params));
+export const getGuild = query(
+  getGuildSchema,
+  async ({ input: { id, params } }) => get<Guild>(`/guilds/${id}`, params)
+);

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { member } from "../../guild";
+import { member } from "../../guild/types/Member";
 
 export const inviteStageInstance = z.object({
   /** the members speaking in the Stage */

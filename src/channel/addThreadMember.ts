@@ -11,6 +11,8 @@ export const addThreadMemberSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#add-thread-member
  */
-export const addThreadMember = mutation(addThreadMemberSchema, async ({ channel, user }) =>
-  put(`/channels/${channel}/thread-members/${user}`)
+export const addThreadMember = mutation(
+  addThreadMemberSchema,
+  async ({ channel, user }) =>
+    put(`/channels/${channel}/thread-members/${user}`)
 );

@@ -20,6 +20,7 @@ export const getCurrentUserGuildsSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/user#get-current-user-guilds
  */
-export const getCurrentUserGuilds = query(getCurrentUserGuildsSchema, ({ params }) =>
-  get<Guild[]>(`/users/@me/guilds`, params)
+export const getCurrentUserGuilds = query(
+  getCurrentUserGuildsSchema,
+  async ({ input: { params } }) => get<Guild[]>(`/users/@me/guilds`, params)
 );

@@ -11,6 +11,8 @@ export const getGuildIntegrationsSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#get-guild-integrations
  */
-export const getGuildIntegrations = query(getGuildIntegrationsSchema, ({ guild }) =>
-  get<Integration[]>(`/guilds/${guild}/integrations`)
+export const getGuildIntegrations = query(
+  getGuildIntegrationsSchema,
+  async ({ input: { guild } }) =>
+    get<Integration[]>(`/guilds/${guild}/integrations`)
 );

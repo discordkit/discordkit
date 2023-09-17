@@ -29,6 +29,8 @@ export const createChannelInviteSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#create-channel-invite
  */
-export const createChannelInvite = mutation(createChannelInviteSchema, async ({ channel, body }) =>
-  post<Invite>(`/channels/${channel}/invites`, body)
+export const createChannelInvite = mutation(
+  createChannelInviteSchema,
+  async ({ channel, body }) =>
+    post<Invite>(`/channels/${channel}/invites`, body)
 );

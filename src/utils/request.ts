@@ -4,7 +4,11 @@ import { discord } from "../DiscordSession";
 
 export type RequestBody = object | null | undefined;
 
-export const request = async <T>(resource: URL, method = `GET`, body?: RequestBody): Promise<T> => {
+export const request = async <T>(
+  resource: URL,
+  method = `GET`,
+  body?: RequestBody
+): Promise<T> => {
   const token = discord.getSession();
 
   if (!token) {
@@ -20,7 +24,11 @@ export const request = async <T>(resource: URL, method = `GET`, body?: RequestBo
   });
 
   if (!res.ok) {
-    throw new Error(`Request to resource '${resource.toString()}' failed:\n\n${res.statusText}`);
+    throw new Error(
+      `Request to resource '${resource.toString()}' failed:\n\n${
+        res.statusText
+      }`
+    );
   }
 
   return toCamelKeys(await res.json());

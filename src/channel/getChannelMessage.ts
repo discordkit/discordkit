@@ -12,6 +12,8 @@ export const getChannelMessageSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#get-channel-message
  */
-export const getChannelMessage = query(getChannelMessageSchema, ({ channel, message }) =>
-  get<Message>(`/channels/${channel}/messages/${message}`)
+export const getChannelMessage = query(
+  getChannelMessageSchema,
+  async ({ input: { channel, message } }) =>
+    get<Message>(`/channels/${channel}/messages/${message}`)
 );

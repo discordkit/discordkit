@@ -14,6 +14,7 @@ export const modifyGuildWidgetScehma = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#modify-guild-widget
  */
-export const modifyGuildWidget = mutation(modifyGuildWidgetScehma, async ({ guild, body }) =>
-  patch<GuildWidget>(`/guilds/${guild}/widget`, body)
+export const modifyGuildWidget = mutation(
+  modifyGuildWidgetScehma,
+  async ({ guild, body }) => patch<GuildWidget>(`/guilds/${guild}/widget`, body)
 );

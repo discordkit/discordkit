@@ -16,4 +16,7 @@ export const deleteChannelSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#deleteclose-channel
  */
-export const deleteChannel = mutation(deleteChannelSchema, async ({ channel }) => remove(`/channels/${channel}`));
+export const deleteChannel = mutation(
+  deleteChannelSchema,
+  async ({ channel }) => remove(`/channels/${channel}`)
+);

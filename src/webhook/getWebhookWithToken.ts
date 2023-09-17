@@ -14,6 +14,8 @@ export const getWebhookWithTokenSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/webhook#get-webhook-with-token
  */
-export const getWebhookWithToken = query(getWebhookWithTokenSchema, ({ webhook, token }) =>
-  get<Webhook>(`/webhooks/${webhook}/${token}`)
+export const getWebhookWithToken = query(
+  getWebhookWithTokenSchema,
+  async ({ input: { webhook, token } }) =>
+    get<Webhook>(`/webhooks/${webhook}/${token}`)
 );

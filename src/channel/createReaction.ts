@@ -12,6 +12,8 @@ export const createReactionSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#create-reaction
  */
-export const createReaction = mutation(createReactionSchema, async ({ channel, message, emoji }) =>
-  put(`/channels/${channel}/messages/${message}/reactions/${emoji}/@me`)
+export const createReaction = mutation(
+  createReactionSchema,
+  async ({ channel, message, emoji }) =>
+    put(`/channels/${channel}/messages/${message}/reactions/${emoji}/@me`)
 );

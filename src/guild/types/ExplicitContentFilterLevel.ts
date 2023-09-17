@@ -9,4 +9,6 @@ export enum ExplicitContentFilterLevel {
   ALL_MEMBERS = 2
 }
 
-export const explicitContentFilterLevel = z.nativeEnum(ExplicitContentFilterLevel);
+export const explicitContentFilterLevel = z.nativeEnum(
+  ExplicitContentFilterLevel
+);

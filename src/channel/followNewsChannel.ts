@@ -15,6 +15,8 @@ export const followNewsChannelSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#follow-news-channel
  */
-export const followNewsChannel = mutation(followNewsChannelSchema, async ({ channel, body }) =>
-  post<FollowedChannel>(`/channels/${channel}/followers`, body)
+export const followNewsChannel = mutation(
+  followNewsChannelSchema,
+  async ({ channel, body }) =>
+    post<FollowedChannel>(`/channels/${channel}/followers`, body)
 );

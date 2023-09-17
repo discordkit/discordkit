@@ -32,6 +32,8 @@ export const modifyGuildRoleSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#modify-guild-role
  */
-export const modifyGuildRole = mutation(modifyGuildRoleSchema, async ({ guild, role, body }) =>
-  patch<Role>(`/guilds/${guild}/roles/${role}`, body)
+export const modifyGuildRole = mutation(
+  modifyGuildRoleSchema,
+  async ({ guild, role, body }) =>
+    patch<Role>(`/guilds/${guild}/roles/${role}`, body)
 );

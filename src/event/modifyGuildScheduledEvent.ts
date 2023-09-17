@@ -47,6 +47,8 @@ export const modifyGuildScheduledEventSchema = z.object({
  * *This endpoint silently discards `entity_metadata` for non-`EXTERNAL` events.**
  * https://discord.com/developers/docs/resources/guild-scheduled-event#modify-guild-scheduled-event
  */
-export const modifyGuildScheduledEvent = mutation(modifyGuildScheduledEventSchema, async ({ guild, event, body }) =>
-  patch<ScheduledEvent>(`/guilds/${guild}/scheduled-events/${event}`, body)
+export const modifyGuildScheduledEvent = mutation(
+  modifyGuildScheduledEventSchema,
+  async ({ guild, event, body }) =>
+    patch<ScheduledEvent>(`/guilds/${guild}/scheduled-events/${event}`, body)
 );

@@ -11,6 +11,8 @@ export const getGuildWelcomeScreenSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#get-guild-welcome-screen
  */
-export const getGuildWelcomeScreen = query(getGuildWelcomeScreenSchema, ({ guild }) =>
-  get<WelcomeScreen>(`/guilds/${guild}/welcome-screen`)
+export const getGuildWelcomeScreen = query(
+  getGuildWelcomeScreenSchema,
+  async ({ input: { guild } }) =>
+    get<WelcomeScreen>(`/guilds/${guild}/welcome-screen`)
 );

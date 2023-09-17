@@ -23,6 +23,8 @@ export const modifyGuildWelcomeScreenSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#modify-guild-welcome-screen
  */
-export const modifyGuildWelcomeScreen = mutation(modifyGuildWelcomeScreenSchema, async ({ guild, body }) =>
-  patch<WelcomeScreen>(`/guilds/${guild}/welcome-screen`, body)
+export const modifyGuildWelcomeScreen = mutation(
+  modifyGuildWelcomeScreenSchema,
+  async ({ guild, body }) =>
+    patch<WelcomeScreen>(`/guilds/${guild}/welcome-screen`, body)
 );

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { integration } from "../../guild";
+import { integration } from "../../guild/types/Integration";
 import { connectionVisibilty } from "./ConnectionVisibilty";
 
 export const connection = z.object({

@@ -47,5 +47,9 @@ export const editWebhookMessageSchema = z.object({
 export const editWebhookMessage = mutation(
   editWebhookMessageSchema,
   async ({ webhook, token, message, params, body }) =>
-    patch<Message>(buildURL(`/webhooks/${webhook}/${token}/messages/${message}`, params).href, body)
+    patch<Message>(
+      buildURL(`/webhooks/${webhook}/${token}/messages/${message}`, params)
+        .href,
+      body
+    )
 );

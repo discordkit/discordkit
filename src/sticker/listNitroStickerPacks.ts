@@ -1,4 +1,4 @@
-import { get, type Fetcher } from "../utils";
+import { get } from "../utils";
 import type { StickerPack } from "./types";
 
 /**
@@ -6,4 +6,6 @@ import type { StickerPack } from "./types";
  *
  * https://discord.com/developers/docs/resources/sticker#list-nitro-sticker-packs
  */
-export const listNitroStickerPacks = (): Fetcher<{ stickerPacks: StickerPack[] }> => get(`/sticker-packs`);
+export const listNitroStickerPacks = async (): Promise<{
+  stickerPacks: StickerPack[];
+}> => get(`/sticker-packs`);

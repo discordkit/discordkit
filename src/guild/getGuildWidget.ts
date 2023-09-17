@@ -11,6 +11,8 @@ export const getGuildWidgetSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#get-guild-widget
  */
-export const getGuildWidget = query(getGuildWidgetSchema, ({ guild }) =>
-  get<GuildWidget>(`/guilds/${guild}/widget.json`)
+export const getGuildWidget = query(
+  getGuildWidgetSchema,
+  async ({ input: { guild } }) =>
+    get<GuildWidget>(`/guilds/${guild}/widget.json`)
 );

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { mutation, post } from "../utils";
-import { type Emoji } from "./types";
+import type { Emoji } from "./types";
 
 export const createGuildEmojiSchema = z.object({
   guild: z.string().min(1),
@@ -23,6 +23,7 @@ export const createGuildEmojiSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/emoji#create-guild-emoji
  */
-export const createGuildEmoji = mutation(createGuildEmojiSchema, async ({ guild, body }) =>
-  post<Emoji>(`/guilds/${guild}/emojis`, body)
+export const createGuildEmoji = mutation(
+  createGuildEmojiSchema,
+  async ({ guild, body }) => post<Emoji>(`/guilds/${guild}/emojis`, body)
 );

@@ -1,6 +1,13 @@
 import { z } from "zod";
 import { mutation, post } from "../utils";
-import { allowedMention, attachment, embed, MessageFlag, autoArchiveDuration, type Channel } from "./types";
+import {
+  allowedMention,
+  attachment,
+  embed,
+  MessageFlag,
+  autoArchiveDuration,
+  type Channel
+} from "./types";
 
 export const startThreadInForumChannelSchema = z.object({
   channel: z.string().min(1),
@@ -55,6 +62,8 @@ export const startThreadInForumChannelSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#start-thread-in-forum-channel
  */
-export const startThreadInForumChannel = mutation(startThreadInForumChannelSchema, async ({ channel, body }) =>
-  post<Channel>(`/channels/${channel}/threads`, body)
+export const startThreadInForumChannel = mutation(
+  startThreadInForumChannelSchema,
+  async ({ channel, body }) =>
+    post<Channel>(`/channels/${channel}/threads`, body)
 );

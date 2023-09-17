@@ -1,6 +1,11 @@
 import { z } from "zod";
 import { mutation, post } from "../utils";
-import { entityMetadata, ScheduledEventEntityType, ScheduledEventPrivacyLevel, type ScheduledEvent } from "./types";
+import {
+  entityMetadata,
+  ScheduledEventEntityType,
+  ScheduledEventPrivacyLevel,
+  type ScheduledEvent
+} from "./types";
 
 export const createGuildScheduledEventSchema = z.object({
   guild: z.string().min(1),
@@ -35,6 +40,8 @@ export const createGuildScheduledEventSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild-scheduled-event#create-guild-scheduled-event
  */
-export const createGuildScheduledEvent = mutation(createGuildScheduledEventSchema, async ({ guild, body }) =>
-  post<ScheduledEvent>(`/guilds/${guild}/scheduled-events`, body)
+export const createGuildScheduledEvent = mutation(
+  createGuildScheduledEventSchema,
+  async ({ guild, body }) =>
+    post<ScheduledEvent>(`/guilds/${guild}/scheduled-events`, body)
 );

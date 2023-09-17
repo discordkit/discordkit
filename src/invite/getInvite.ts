@@ -22,4 +22,7 @@ export const getInviteSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/invite#get-invite
  */
-export const getInvite = query(getInviteSchema, ({ code, params }) => get<Invite>(`/invites/${code}`, params));
+export const getInvite = query(
+  getInviteSchema,
+  async ({ input: { code, params } }) => get<Invite>(`/invites/${code}`, params)
+);

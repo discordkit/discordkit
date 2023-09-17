@@ -27,6 +27,8 @@ export const createMessageSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#create-message
  */
-export const createMessage = mutation(createMessageSchema, async ({ channel, body }) =>
-  post<Message>(`/channels/${channel}/messages`, body)
+export const createMessage = mutation(
+  createMessageSchema,
+  async ({ channel, body }) =>
+    post<Message>(`/channels/${channel}/messages`, body)
 );

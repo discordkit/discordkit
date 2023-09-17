@@ -17,6 +17,7 @@ export const modifyCurrentMemberSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#modify-current-member
  */
-export const modifyCurrentMember = mutation(modifyCurrentMemberSchema, async ({ guild, body }) =>
-  patch<Member>(`/guilds/${guild}/members/@me`, body)
+export const modifyCurrentMember = mutation(
+  modifyCurrentMemberSchema,
+  async ({ guild, body }) => patch<Member>(`/guilds/${guild}/members/@me`, body)
 );

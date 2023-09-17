@@ -23,6 +23,7 @@ export const modifyStageInstanceSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/stage-instance#modify-stage-instance
  */
-export const modifyStageInstance = mutation(modifyStageInstanceSchema, async ({ channel, body }) =>
-  patch<Stage>(`/stage-instances/${channel}`, body)
+export const modifyStageInstance = mutation(
+  modifyStageInstanceSchema,
+  async ({ channel, body }) => patch<Stage>(`/stage-instances/${channel}`, body)
 );

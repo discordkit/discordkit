@@ -22,6 +22,8 @@ export const listGuildMembersSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#list-guild-members
  */
-export const listGuildMembers = query(listGuildMembersSchema, ({ guild, params }) =>
-  get<Member[]>(`/guilds/${guild}/members`, params)
+export const listGuildMembers = query(
+  listGuildMembersSchema,
+  async ({ input: { guild, params } }) =>
+    get<Member[]>(`/guilds/${guild}/members`, params)
 );

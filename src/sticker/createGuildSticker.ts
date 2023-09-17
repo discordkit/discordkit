@@ -27,6 +27,7 @@ export const createGuildStickerSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/sticker#create-guild-sticker
  */
-export const createGuildSticker = mutation(createGuildStickerSchema, async ({ guild, body }) =>
-  post<Sticker>(`/guilds/${guild}/stickers`, body)
+export const createGuildSticker = mutation(
+  createGuildStickerSchema,
+  async ({ guild, body }) => post<Sticker>(`/guilds/${guild}/stickers`, body)
 );

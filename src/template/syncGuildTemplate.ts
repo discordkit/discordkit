@@ -12,6 +12,8 @@ export const syncGuildTemplateSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild-template#sync-guild-template
  */
-export const syncGuildTemplate = mutation(syncGuildTemplateSchema, async ({ guild, template }) =>
-  put<GuildTemplate>(`/guilds/${guild}/templates/${template}`)
+export const syncGuildTemplate = mutation(
+  syncGuildTemplateSchema,
+  async ({ guild, template }) =>
+    put<GuildTemplate>(`/guilds/${guild}/templates/${template}`)
 );

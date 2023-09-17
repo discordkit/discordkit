@@ -21,6 +21,8 @@ export const getGuildPruneCountSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#get-guild-prune-count
  */
-export const getGuildPruneCount = query(getGuildPruneCountSchema, ({ guild, params }) =>
-  get<{ pruned: number }>(`/guilds/${guild}/prune`, params)
+export const getGuildPruneCount = query(
+  getGuildPruneCountSchema,
+  async ({ input: { guild, params } }) =>
+    get<{ pruned: number }>(`/guilds/${guild}/prune`, params)
 );

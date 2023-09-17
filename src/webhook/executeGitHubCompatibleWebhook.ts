@@ -22,5 +22,6 @@ export const executeGitHubCompatibleWebhookSchema = z.object({
  */
 export const executeGitHubCompatibleWebhook = mutation(
   executeGitHubCompatibleWebhookSchema,
-  async ({ webhook, token, params }) => post(buildURL(`/webhooks/${webhook}/${token}/github`, params).href)
+  async ({ webhook, token, params }) =>
+    post(buildURL(`/webhooks/${webhook}/${token}/github`, params).href)
 );

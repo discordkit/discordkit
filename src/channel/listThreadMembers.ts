@@ -13,6 +13,8 @@ export const listThreadMembersSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#list-thread-members
  */
-export const listThreadMembers = query(listThreadMembersSchema, ({ channel }) =>
-  get<ThreadMember[]>(`/channels/${channel}/thread-members`)
+export const listThreadMembers = query(
+  listThreadMembersSchema,
+  async ({ input: { channel } }) =>
+    get<ThreadMember[]>(`/channels/${channel}/thread-members`)
 );

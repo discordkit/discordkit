@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { mutation, patch } from "../utils";
-import { type Emoji } from "./types";
+import type { Emoji } from "./types";
 
 export const modifyGuildEmojiSchema = z.object({
   guild: z.string().min(1),
@@ -22,6 +22,8 @@ export const modifyGuildEmojiSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/emoji#modify-guild-emoji
  */
-export const modifyGuildEmoji = mutation(modifyGuildEmojiSchema, async ({ guild, emoji, body }) =>
-  patch<Emoji>(`/guilds/${guild}/emojis/${emoji}`, body)
+export const modifyGuildEmoji = mutation(
+  modifyGuildEmojiSchema,
+  async ({ guild, emoji, body }) =>
+    patch<Emoji>(`/guilds/${guild}/emojis/${emoji}`, body)
 );

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { user } from "../../user";
+import { user } from "../../user/types/User";
 import { membershipState } from "./MembershipState";
 
 // https://discord.com/developers/docs/topics/teams#data-models-team-member-object

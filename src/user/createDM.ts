@@ -16,4 +16,6 @@ export const createDMSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/user#create-dm
  */
-export const createDM = mutation(createDMSchema, async ({ body }) => post<Channel>(`/users/@me/channels`, body));
+export const createDM = mutation(createDMSchema, async ({ body }) =>
+  post<Channel>(`/users/@me/channels`, body)
+);

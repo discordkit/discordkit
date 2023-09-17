@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { member } from "../../guild";
+import { member } from "../../guild/types/Member";
 
 // https://discord.com/developers/docs/resources/voice#voice-state-object-voice-state-structure
 /** Used to represent a user's voice connection status. */

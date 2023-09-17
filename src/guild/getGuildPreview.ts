@@ -11,4 +11,7 @@ export const getGuildPreviewSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#get-guild-preview
  */
-export const getGuildPreview = query(getGuildPreviewSchema, ({ guild }) => get<Guild>(`/guilds/${guild}/preview`));
+export const getGuildPreview = query(
+  getGuildPreviewSchema,
+  async ({ input: { guild } }) => get<Guild>(`/guilds/${guild}/preview`)
+);

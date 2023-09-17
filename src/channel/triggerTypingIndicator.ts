@@ -10,6 +10,7 @@ export const triggerTypingIndicatorSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#trigger-typing-indicator
  */
-export const triggerTypingIndicator = mutation(triggerTypingIndicatorSchema, async ({ channel }) =>
-  post(`/channels/${channel}/typing`)
+export const triggerTypingIndicator = mutation(
+  triggerTypingIndicatorSchema,
+  async ({ channel }) => post(`/channels/${channel}/typing`)
 );

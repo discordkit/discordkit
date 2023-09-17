@@ -14,5 +14,6 @@ export const deleteAllReactionsForEmojiSchema = z.object({
  */
 export const deleteAllReactionsForEmoji = mutation(
   deleteAllReactionsForEmojiSchema,
-  async ({ channel, message, emoji }) => remove(`/channels/${channel}/messages/${message}/reactions/${emoji}`)
+  async ({ channel, message, emoji }) =>
+    remove(`/channels/${channel}/messages/${message}/reactions/${emoji}`)
 );

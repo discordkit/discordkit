@@ -21,6 +21,8 @@ export const editMessageSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#edit-message
  */
-export const editMessage = mutation(editMessageSchema, async ({ channel, message, body }) =>
-  patch<Message>(`/channels/${channel}/messages/${message}`, body)
+export const editMessage = mutation(
+  editMessageSchema,
+  async ({ channel, message, body }) =>
+    patch<Message>(`/channels/${channel}/messages/${message}`, body)
 );

@@ -12,6 +12,8 @@ export const deleteOwnReactionSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#delete-own-reaction
  */
-export const deleteOwnReaction = mutation(deleteOwnReactionSchema, async ({ channel, message, emoji }) =>
-  remove(`/channels/${channel}/messages/${message}/reactions/${emoji}/@me`)
+export const deleteOwnReaction = mutation(
+  deleteOwnReactionSchema,
+  async ({ channel, message, emoji }) =>
+    remove(`/channels/${channel}/messages/${message}/reactions/${emoji}/@me`)
 );

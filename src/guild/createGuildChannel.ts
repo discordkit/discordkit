@@ -1,6 +1,11 @@
 import { z } from "zod";
 import type { Channel } from "../channel";
-import { autoArchiveDuration, ChannelType, overwrite, VideoQualityMode } from "../channel";
+import {
+  autoArchiveDuration,
+  ChannelType,
+  overwrite,
+  VideoQualityMode
+} from "../channel";
 import { mutation, post } from "../utils";
 
 export const createGuildChannelSchema = z.object({
@@ -42,6 +47,7 @@ export const createGuildChannelSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#create-guild-channel
  */
-export const createGuildChannel = mutation(createGuildChannelSchema, async ({ guild, body }) =>
-  post<Channel>(`/guilds/${guild}/channels`, body)
+export const createGuildChannel = mutation(
+  createGuildChannelSchema,
+  async ({ guild, body }) => post<Channel>(`/guilds/${guild}/channels`, body)
 );

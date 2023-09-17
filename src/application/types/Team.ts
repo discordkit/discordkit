@@ -9,7 +9,7 @@ export const team = z.object({
   /** the unique id of the team */
   id: z.string(),
   /** the members of the team */
-  members: z.array(teamMember),
+  members: teamMember.array(),
   /** the name of the team */
   name: z.string(),
   /** the user id of the current team owner */

@@ -12,4 +12,7 @@ export const deleteWebhookSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/webhook#delete-webhook
  */
-export const deleteWebhook = mutation(deleteWebhookSchema, async ({ webhook }) => remove(`/webhooks/${webhook}`));
+export const deleteWebhook = mutation(
+  deleteWebhookSchema,
+  async ({ webhook }) => remove(`/webhooks/${webhook}`)
+);

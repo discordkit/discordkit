@@ -11,6 +11,7 @@ export const deleteWebhookWithTokenSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/webhook#delete-webhook-with-token
  */
-export const deleteWebhookWithToken = mutation(deleteWebhookWithTokenSchema, async ({ webhook, token }) =>
-  remove(`/webhooks/${webhook}/${token}`)
+export const deleteWebhookWithToken = mutation(
+  deleteWebhookWithTokenSchema,
+  async ({ webhook, token }) => remove(`/webhooks/${webhook}/${token}`)
 );

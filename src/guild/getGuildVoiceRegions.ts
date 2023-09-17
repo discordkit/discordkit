@@ -11,6 +11,7 @@ export const getGuildVoiceRegionsSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#get-guild-voice-regions
  */
-export const getGuildVoiceRegions = query(getGuildVoiceRegionsSchema, ({ guild }) =>
-  get<VoiceRegion>(`/guilds/${guild}/regions`)
+export const getGuildVoiceRegions = query(
+  getGuildVoiceRegionsSchema,
+  async ({ input: { guild } }) => get<VoiceRegion>(`/guilds/${guild}/regions`)
 );

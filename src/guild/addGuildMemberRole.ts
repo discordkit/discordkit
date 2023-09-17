@@ -14,6 +14,8 @@ export const addGuildMemberRoleSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#add-guild-member-role
  */
-export const addGuildMemberRole = mutation(addGuildMemberRoleSchema, async ({ guild, user, role }) =>
-  put(`/guilds/${guild}/members/${user}/roles/${role}`)
+export const addGuildMemberRole = mutation(
+  addGuildMemberRoleSchema,
+  async ({ guild, user, role }) =>
+    put(`/guilds/${guild}/members/${user}/roles/${role}`)
 );

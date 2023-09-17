@@ -11,6 +11,7 @@ export const deleteGuildEmojiSchema = z.object({
  *
  * *This endpoint supports the `X-Audit-Log-Reason` header.*
  */
-export const deleteGuildEmoji = mutation(deleteGuildEmojiSchema, async ({ guild, emoji }) =>
-  remove(`/guilds/${guild}/emojis/${emoji}`)
+export const deleteGuildEmoji = mutation(
+  deleteGuildEmojiSchema,
+  async ({ guild, emoji }) => remove(`/guilds/${guild}/emojis/${emoji}`)
 );

@@ -23,6 +23,8 @@ export const createGuildBanSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#create-guild-ban
  */
-export const createGuildBan = mutation(createGuildBanSchema, async ({ guild, user, body }) =>
-  put<Ban>(`/guilds/${guild}/bans/${user}`, body)
+export const createGuildBan = mutation(
+  createGuildBanSchema,
+  async ({ guild, user, body }) =>
+    put<Ban>(`/guilds/${guild}/bans/${user}`, body)
 );

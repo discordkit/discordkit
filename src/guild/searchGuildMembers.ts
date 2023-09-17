@@ -17,6 +17,8 @@ export const searchGuildMembersSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#search-guild-members
  */
-export const searchGuildMembers = query(searchGuildMembersSchema, ({ guild, params }) =>
-  get<Member[]>(`/guilds/${guild}/members/search`, params)
+export const searchGuildMembers = query(
+  searchGuildMembersSchema,
+  async ({ input: { guild, params } }) =>
+    get<Member[]>(`/guilds/${guild}/members/search`, params)
 );

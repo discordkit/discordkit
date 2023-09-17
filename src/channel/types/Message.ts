@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { sticker } from "../../sticker";
+import { sticker } from "../../sticker/types/Sticker";
 import { application } from "../../application";
 import { reaction } from "../../emoji";
-import { member } from "../../guild";
+import { member } from "../../guild/types/Member";
 import { user } from "../../user";
 import { channel } from "./Channel";
 import { interactionType } from "./InteractionType";

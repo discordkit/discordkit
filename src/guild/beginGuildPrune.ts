@@ -26,6 +26,8 @@ export const beginGuildPruneSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#begin-guild-prune
  */
-export const beginGuildPrune = mutation(beginGuildPruneSchema, async ({ guild, body }) =>
-  post<{ pruned: number | null }>(`/guilds/${guild}/prune`, body)
+export const beginGuildPrune = mutation(
+  beginGuildPruneSchema,
+  async ({ guild, body }) =>
+    post<{ pruned: number | null }>(`/guilds/${guild}/prune`, body)
 );

@@ -24,6 +24,7 @@ export const createStageInstanceSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/stage-instance#create-stage-instance
  */
-export const createStageInstance = mutation(createStageInstanceSchema, async ({ body }) =>
-  post<Stage>(`/stage-instances`, body)
+export const createStageInstance = mutation(
+  createStageInstanceSchema,
+  async ({ body }) => post<Stage>(`/stage-instances`, body)
 );

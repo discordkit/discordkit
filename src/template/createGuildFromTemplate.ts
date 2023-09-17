@@ -19,6 +19,8 @@ export const createGuildFromTemplateSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild-template#create-guild-from-guild-template
  */
-export const createGuildFromTemplate = mutation(createGuildFromTemplateSchema, async ({ template, body }) =>
-  post<Guild>(`/guilds/templates/${template}`, body)
+export const createGuildFromTemplate = mutation(
+  createGuildFromTemplateSchema,
+  async ({ template, body }) =>
+    post<Guild>(`/guilds/templates/${template}`, body)
 );

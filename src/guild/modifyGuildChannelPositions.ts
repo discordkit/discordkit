@@ -22,6 +22,7 @@ export const modifyGuildChannelPositionsSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#modify-guild-channel-positions
  */
-export const modifyGuildChannelPositions = mutation(modifyGuildChannelPositionsSchema, async ({ guild, body }) =>
-  patch(`/guilds/${guild}/channels`, body)
+export const modifyGuildChannelPositions = mutation(
+  modifyGuildChannelPositionsSchema,
+  async ({ guild, body }) => patch(`/guilds/${guild}/channels`, body)
 );

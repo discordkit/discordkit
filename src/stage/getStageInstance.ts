@@ -11,6 +11,7 @@ export const getStageInstanceSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/stage-instance#get-stage-instance
  */
-export const getStageInstance = query(getStageInstanceSchema, ({ channel }) =>
-  get<Stage>(`/stage-instances/${channel}`)
+export const getStageInstance = query(
+  getStageInstanceSchema,
+  async ({ input: { channel } }) => get<Stage>(`/stage-instances/${channel}`)
 );

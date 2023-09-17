@@ -18,6 +18,7 @@ export const modifyCurrentUserVoiceStateSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#modify-current-user-voice-state
  */
-export const modifyCurrentUserVoiceState = mutation(modifyCurrentUserVoiceStateSchema, async ({ guild, body }) =>
-  patch(`/guilds/${guild}/voice-states/@me`, body)
+export const modifyCurrentUserVoiceState = mutation(
+  modifyCurrentUserVoiceStateSchema,
+  async ({ guild, body }) => patch(`/guilds/${guild}/voice-states/@me`, body)
 );

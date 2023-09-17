@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { get, query } from "../utils";
-import { type Emoji } from "./types";
+import type { Emoji } from "./types";
 
 export const getGuildEmojiSchema = z.object({
   guild: z.string().min(1),
@@ -12,6 +12,8 @@ export const getGuildEmojiSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/emoji#get-guild-emoji
  */
-export const getGuildEmoji = query(getGuildEmojiSchema, ({ guild, emoji }) =>
-  get<Emoji>(`/guilds/${guild}/emojis/${emoji}`)
+export const getGuildEmoji = query(
+  getGuildEmojiSchema,
+  async ({ input: { guild, emoji } }) =>
+    get<Emoji>(`/guilds/${guild}/emojis/${emoji}`)
 );

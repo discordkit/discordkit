@@ -13,6 +13,8 @@ export const getChannelWebhooksSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/webhook#get-channel-webhooks
  */
-export const getChannelWebhooks = query(getChannelWebhooksSchema, ({ channel }) =>
-  get<Webhook[]>(`/channels/${channel}/webhooks`)
+export const getChannelWebhooks = query(
+  getChannelWebhooksSchema,
+  async ({ input: { channel } }) =>
+    get<Webhook[]>(`/channels/${channel}/webhooks`)
 );

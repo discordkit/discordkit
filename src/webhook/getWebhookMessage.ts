@@ -20,6 +20,8 @@ export const getWebhookMessageSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/webhook#get-webhook-message
  */
-export const getWebhookMessage = query(getWebhookMessageSchema, ({ webhook, token, message, params }) =>
-  get<Message>(`/webhooks/${webhook}/${token}/messages/${message}`, params)
+export const getWebhookMessage = query(
+  getWebhookMessageSchema,
+  async ({ input: { webhook, token, message, params } }) =>
+    get<Message>(`/webhooks/${webhook}/${token}/messages/${message}`, params)
 );

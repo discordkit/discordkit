@@ -11,4 +11,6 @@ export const getUserSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/user#get-user
  */
-export const getUser = query(getUserSchema, ({ user }) => get<User>(`/users/${user}`));
+export const getUser = query(getUserSchema, async ({ input: { user } }) =>
+  get<User>(`/users/${user}`)
+);

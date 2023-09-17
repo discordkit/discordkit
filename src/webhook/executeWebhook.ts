@@ -53,6 +53,8 @@ export const executeWebhookSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/webhook#execute-webhook
  */
-export const executeWebhook = mutation(executeWebhookSchema, async ({ webhook, token, params, body }) =>
-  post(buildURL(`/webhooks/${webhook}/${token}`, params).href, body)
+export const executeWebhook = mutation(
+  executeWebhookSchema,
+  async ({ webhook, token, params, body }) =>
+    post(buildURL(`/webhooks/${webhook}/${token}`, params).href, body)
 );

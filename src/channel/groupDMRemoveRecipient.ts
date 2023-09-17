@@ -11,6 +11,7 @@ export const groupDMRemoveRecipientSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#group-dm-remove-recipient
  */
-export const groupDMRemoveRecipient = mutation(groupDMRemoveRecipientSchema, async ({ channel, user }) =>
-  remove(`/channels/${channel}/recipients/${user}`)
+export const groupDMRemoveRecipient = mutation(
+  groupDMRemoveRecipientSchema,
+  async ({ channel, user }) => remove(`/channels/${channel}/recipients/${user}`)
 );

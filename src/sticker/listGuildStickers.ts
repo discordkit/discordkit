@@ -11,6 +11,7 @@ export const listGuildStickersSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/sticker#list-guild-stickers
  */
-export const listGuildStickers = query(listGuildStickersSchema, ({ guild }) =>
-  get<Sticker[]>(`/guilds/${guild}/stickers`)
+export const listGuildStickers = query(
+  listGuildStickersSchema,
+  async ({ input: { guild } }) => get<Sticker[]>(`/guilds/${guild}/stickers`)
 );

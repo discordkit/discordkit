@@ -7,7 +7,7 @@ export const stickerPack = z.object({
   /** id of the sticker pack */
   id: z.string(),
   /** the stickers in the pack */
-  stickers: z.array(sticker),
+  stickers: sticker.array(),
   /** name of the sticker pack */
   name: z.string(),
   /** id of the pack's SKU */

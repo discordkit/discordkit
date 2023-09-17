@@ -12,6 +12,8 @@ export const getThreadMemberSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#get-thread-member
  */
-export const getThreadMember = query(getThreadMemberSchema, ({ channel, user }) =>
-  get<ThreadMember>(`/channels/${channel}/thread-members/${user}`)
+export const getThreadMember = query(
+  getThreadMemberSchema,
+  async ({ input: { channel, user } }) =>
+    get<ThreadMember>(`/channels/${channel}/thread-members/${user}`)
 );
