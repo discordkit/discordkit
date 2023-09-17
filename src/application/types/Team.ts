@@ -1,16 +1,19 @@
-import type { TeamMember } from "./TeamMember";
+import { z } from "zod";
+import { teamMember } from "./TeamMember";
 
 // https://discord.com/developers/docs/topics/teams#data-models-team-object
 
-export interface Team {
+export const team = z.object({
   /** a hash of the image of the team's icon */
-  icon?: string;
+  icon: z.string().optional(),
   /** the unique id of the team */
-  id: string;
+  id: z.string(),
   /** the members of the team */
-  members: TeamMember[];
+  members: z.array(teamMember),
   /** the name of the team */
-  name: string;
+  name: z.string(),
   /** the user id of the current team owner */
-  ownerUserId: string;
-}
+  ownerUserId: z.string()
+});
+
+export type Team = z.infer<typeof team>;

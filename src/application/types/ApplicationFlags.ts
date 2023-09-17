@@ -1,6 +1,8 @@
 /* eslint-disable no-bitwise */
 /* eslint-disable @typescript-eslint/prefer-literal-enum-member */
 
+import { z } from "zod";
+
 // https://discord.com/developers/docs/resources/application#application-object-application-flags
 
 export enum ApplicationFlags {
@@ -21,3 +23,5 @@ export enum ApplicationFlags {
   /** Intent required for bots in under 100 servers to receive message content, found in Bot Settings */
   GATEWAY_MESSAGE_CONTENT_LIMITED = 1 << 19
 }
+
+export const applicationFlags = z.nativeEnum(ApplicationFlags);

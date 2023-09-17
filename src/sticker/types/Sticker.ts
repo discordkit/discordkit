@@ -1,30 +1,33 @@
-import type { User } from "../../user";
-import type { StickerFormatType } from "./StickerFormatType";
-import type { StickerType } from "./StickerType";
+import { z } from "zod";
+import { user } from "../../user";
+import { stickerFormatType } from "./StickerFormatType";
+import { stickerType } from "./StickerType";
 
-export interface Sticker {
+export const sticker = z.object({
   /** id of the sticker */
-  id: string;
+  id: z.string(),
   /** for standard stickers, id of the pack the sticker is from */
-  packId?: string;
+  packId: z.string().optional(),
   /** name of the sticker */
-  name: string;
+  name: z.string(),
   /** description of the sticker */
-  description?: string;
+  description: z.string().optional(),
   /** autocomplete/suggestion tags for the sticker (max 200 characters) */
-  tags: string;
+  tags: z.string(),
   /** @deprecated previously the sticker asset hash, now an empty string */
-  asset: string;
+  asset: z.string(),
   /** type of sticker */
-  type: StickerType;
+  type: stickerType,
   /** type of sticker format */
-  formatType: StickerFormatType;
+  formatType: stickerFormatType,
   /** whether this guild sticker can be used, may be false due to loss of Server Boosts */
-  available?: boolean;
+  available: z.boolean().optional(),
   /** id of the guild that owns this sticker */
-  guildId?: string;
+  guildId: z.string().optional(),
   /** the user that uploaded the guild sticker */
-  user?: User;
+  user: user.optional(),
   /** the standard sticker's sort order within its pack */
-  sortValue?: number;
-}
+  sortValue: z.number().optional()
+});
+
+export type Sticker = z.infer<typeof sticker>;

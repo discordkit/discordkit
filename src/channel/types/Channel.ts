@@ -1,24 +1,24 @@
 import { z } from "zod";
 import { user } from "../../user";
 import { autoArchiveDuration } from "./AutoArchiveDuration";
-import { ChannelType } from "./ChannelType";
+import { channelType } from "./ChannelType";
 import { overwrite } from "./Overwrite";
 import { thread } from "./Thread";
 import { threadMember } from "./ThreadMember";
-import { VideoQualityMode } from "./VideoQualityMode";
+import { videoQualityMode } from "./VideoQualityMode";
 
 // https://discord.com/developers/docs/resources/channel#channel-object-channel-structure
 export const channel = z.object({
   /** the id of this channel */
   id: z.string().min(1),
   /** the type of channel */
-  type: z.nativeEnum(ChannelType),
+  type: channelType,
   /** the id of the guild (may be missing for some channel objects received over gateway guild dispatches) */
   guildId: z.string().min(1).optional(),
   /** sorting position of the channel */
   position: z.number().positive().optional(),
   /** explicit permission overwrites for members and roles */
-  permissionOverwrites: z.array(overwrite).optional(),
+  permissionOverwrites: overwrite.array().optional(),
   /** the name of the channel (1-100 characters) */
   name: z.string().min(1).max(100).optional(),
   /** the channel topic (0-1024 characters) */
@@ -34,7 +34,7 @@ export const channel = z.object({
   /** amount of seconds a user has to wait before sending another message (0-21600); bots, as well as users with the permission manage_messages or manage_channel, are unaffected */
   rateLimitPerUser: z.number().min(0).max(21600).optional(),
   /** the recipients of the DM */
-  recipients: z.array(user).optional(),
+  recipients: user.array().optional(),
   /** icon hash of the group DM */
   icon: z.string().min(1).optional(),
   /** id of the creator of the group DM or thread */
@@ -48,7 +48,7 @@ export const channel = z.object({
   /** voice region id for the voice channel, automatic when set to null */
   rtcRegion: z.string().min(1).optional(),
   /** the camera video quality mode of the voice channel, 1 when not present */
-  videoQualityMode: z.nativeEnum(VideoQualityMode).optional(),
+  videoQualityMode: videoQualityMode.optional(),
   /** an approximate count of messages in a thread, stops counting at 50 */
   messageCount: z.number().optional(),
   /** an approximate count of users in a thread, stops counting at 50 */

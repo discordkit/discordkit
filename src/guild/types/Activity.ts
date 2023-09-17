@@ -1,40 +1,43 @@
-import type { ActivityButton } from "./ActivityButton";
-import type { ActivityFlags } from "./ActivityFlags";
-import type { ActivitySecrets } from "./ActivitySecrets";
-import type { ActivityAssets } from "./ActivityAssets";
-import type { ActivityParty } from "./ActivityParty";
-import type { ActivityEmoji } from "./ActivityEmoji";
-import type { ActivityTimestamps } from "./ActivityTimestamps";
+import { z } from "zod";
+import { activityButton } from "./ActivityButton";
+import { activityFlags } from "./ActivityFlags";
+import { activitySecrets } from "./ActivitySecrets";
+import { activityAssets } from "./ActivityAssets";
+import { activityParty } from "./ActivityParty";
+import { activityEmoji } from "./ActivityEmoji";
+import { activityTimestamps } from "./ActivityTimestamps";
 
-export interface Activity {
+export const activity = z.object({
   /** the activity's name */
-  name: string;
+  name: z.string(),
   /** activity type */
-  type: number;
+  type: z.number(),
   /** stream url, is validated when type is 1 */
-  url?: string;
+  url: z.string().optional(),
   /** unix timestamp (in milliseconds) of when the activity was added to the user's session */
-  createdAt: number;
+  createdAt: z.number(),
   /** unix timestamps for start and/or end of the game */
-  timestamps?: ActivityTimestamps;
+  timestamps: activityTimestamps.optional(),
   /** application id for the game */
-  applicationId?: string;
+  applicationId: z.string().optional(),
   /** what the player is currently doing */
-  details?: string;
+  details: z.string().optional(),
   /** the user's current party status */
-  state?: string;
+  state: z.string().optional(),
   /** the emoji used for a custom status */
-  emoji?: ActivityEmoji;
+  emoji: activityEmoji.optional(),
   /** information for the current party of the player */
-  party?: ActivityParty;
+  party: activityParty.optional(),
   /** images for the presence and their hover texts */
-  assets?: ActivityAssets;
+  assets: activityAssets.optional(),
   /** secrets for Rich Presence joining and spectating */
-  secrets?: ActivitySecrets;
+  secrets: activitySecrets.optional(),
   /** whether or not the activity is an instanced game session */
-  instance?: boolean;
+  instance: z.boolean().optional(),
   /** activity flags ORd together, describes what the payload includes */
-  flags?: ActivityFlags;
+  flags: activityFlags.optional(),
   /** the custom buttons shown in the Rich Presence (max 2) */
-  buttons?: ActivityButton[];
-}
+  buttons: activityButton.array().optional()
+});
+
+export type Activity = z.infer<typeof activity>;

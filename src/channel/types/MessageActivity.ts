@@ -1,8 +1,11 @@
-import type { MessageActivityType } from "./MessageActivityType";
+import { z } from "zod";
+import { messageActivityType } from "./MessageActivityType";
 
-export interface MessageActivity {
+export const messageActivity = z.object({
   /** type of message activity */
-  type: MessageActivityType;
+  type: messageActivityType,
   /** party_id from a Rich Presence event */
-  partyId?: string;
-}
+  partyId: z.string().optional()
+});
+
+export type MessageActivity = z.infer<typeof messageActivity>;

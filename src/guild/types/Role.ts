@@ -23,7 +23,7 @@ export const role = z.object({
   /** whether this role is mentionable */
   mentionable: z.boolean(),
   /** the tags this role has */
-  tags: z.array(roleTag).optional()
+  tags: roleTag.array().optional()
 });
 
 export type Role = z.infer<typeof role>;

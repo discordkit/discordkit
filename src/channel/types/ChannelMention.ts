@@ -1,12 +1,15 @@
-import type { ChannelType } from "./ChannelType";
+import { z } from "zod";
+import { channelType } from "./ChannelType";
 
-export interface ChannelMention {
+export const channelMention = z.object({
   /** id of the channel */
-  id: string;
+  id: z.string(),
   /** id of the guild containing the channel */
-  guildId: string;
+  guildId: z.string(),
   /** the type of channel */
-  type: ChannelType;
+  type: channelType,
   /** the name of the channel */
-  name: string;
-}
+  name: z.string()
+});
+
+export type ChannelMention = z.infer<typeof channelMention>;

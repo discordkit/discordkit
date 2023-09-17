@@ -1,37 +1,40 @@
-import type { User } from "../../user";
-import type { IntegrationApplication } from "./IntegrationApplication";
-import type { IntegrationAccount } from "./IntegrationAccount";
-import type { IntegrationExpireBehavior } from "./IntegrationExpireBehavior";
+import { z } from "zod";
+import { user } from "../../user";
+import { integrationApplication } from "./IntegrationApplication";
+import { integrationAccount } from "./IntegrationAccount";
+import { integrationExpireBehavior } from "./IntegrationExpireBehavior";
 
-export interface Integration {
+export const integration = z.object({
   /** integration id */
-  id: string;
+  id: z.string(),
   /** integration name */
-  name: string;
+  name: z.string(),
   /** integration type (twitch, youtube, or discord) */
-  type: string;
+  type: z.string(),
   /** is this integration enabled */
-  enabled?: boolean;
+  enabled: z.boolean().optional(),
   /** is this integration syncing */
-  syncing?: boolean;
+  syncing: z.boolean().optional(),
   /** id that this integration uses for "subscribers" */
-  roleId?: string;
+  roleId: z.string().optional(),
   /** whether emoticons should be synced for this integration (twitch only currently) */
-  enableEmoticons?: boolean;
+  enableEmoticons: z.boolean().optional(),
   /** the behavior of expiring subscribers */
-  expireBehavior?: IntegrationExpireBehavior;
+  expireBehavior: integrationExpireBehavior.optional(),
   /** the grace period (in days) before expiring subscribers */
-  expireGracePeriod?: number;
+  expireGracePeriod: z.number().optional(),
   /** user for this integration */
-  user?: User;
+  user: user.optional(),
   /** integration account information */
-  account: IntegrationAccount;
+  account: integrationAccount,
   /** when this integration was last synced */
-  syncedAt?: string;
+  syncedAt: z.string().optional(),
   /** how many subscribers this integration has */
-  subscriberCount?: number;
+  subscriberCount: z.number().optional(),
   /** has this integration been revoked */
-  revoked?: boolean;
+  revoked: z.boolean().optional(),
   /** The bot/OAuth2 application for discord integrations */
-  application?: IntegrationApplication;
-}
+  application: integrationApplication.optional()
+});
+
+export type Integration = z.infer<typeof integration>;

@@ -1,124 +1,127 @@
-import type { Channel } from "../../channel";
-import type { Emoji } from "../../emoji";
-import type { ScheduledEvent } from "../../event";
-import type { Stage } from "../../stage";
-import type { Sticker } from "../../sticker";
-import type { VoiceState } from "../../voice";
-import type { Role } from "./Role";
-import type { Presence } from "./Presence";
-import type { WelcomeScreen } from "./WelcomeScreen";
-import type { SystemChannelFlags } from "./SystemChannelFlags";
-import type { PremiumTier } from "./PremiumTier";
-import type { GuildNSFWLevel } from "./GuildNSFWLevel";
-import type { VerificationLevel } from "./VerificationLevel";
-import type { MFALevel } from "./MFALevel";
-import type { ExplicitContentFilterLevel } from "./ExplicitContentFilterLevel";
-import type { DefaultMessageNotificationLevel } from "./DefaultMessageNotificationLevel";
-import type { GuildFeatures } from "./GuildFeatures";
-import type { Member } from "./Member";
+import { z } from "zod";
+import { channel } from "../../channel";
+import { emoji } from "../../emoji";
+import { scheduledEvent } from "../../event";
+import { stage } from "../../stage";
+import { sticker } from "../../sticker";
+import { voiceState } from "../../voice";
+import { role } from "./Role";
+import { presence } from "./Presence";
+import { welcomeScreen } from "./WelcomeScreen";
+import { systemChannelFlags } from "./SystemChannelFlags";
+import { premiumTier } from "./PremiumTier";
+import { guildNSFWLevel } from "./GuildNSFWLevel";
+import { verificationLevel } from "./VerificationLevel";
+import { mfaLevel } from "./MFALevel";
+import { explicitContentFilterLevel } from "./ExplicitContentFilterLevel";
+import { defaultMessageNotificationLevel } from "./DefaultMessageNotificationLevel";
+import { guildFeatures } from "./GuildFeatures";
+import { member } from "./Member";
 
-export interface Guild {
+export const guild = z.object({
   /** guild id */
-  id: string;
+  id: z.string(),
   /** guild name (2-100 characters, excluding trailing and leading whitespace) */
-  name: string;
+  name: z.string(),
   /** icon hash */
-  icon?: string;
+  icon: z.string().optional(),
   /** icon hash, returned when in the template object */
-  iconHash?: string;
+  iconHash: z.string().optional(),
   /** splash hash */
-  splash?: string;
+  splash: z.string().optional(),
   /** discovery splash hash; only present for guilds with the "DISCOVERABLE" feature */
-  discoverySplash?: string;
+  discoverySplash: z.string().optional(),
   /** true if the user is the owner of the guild */
-  owner?: boolean;
+  owner: z.boolean().optional(),
   /** id of owner */
-  ownerId: string;
+  ownerId: z.string(),
   /** total permissions for the user in the guild (excludes overwrites) */
-  permissions?: string;
+  permissions: z.string().optional(),
   /** @deprecated voice region id for the guild */
-  region?: string;
+  region: z.string().optional(),
   /** id of afk channel */
-  afkChannelId?: string;
+  afkChannelId: z.string().optional(),
   /** afk timeout in seconds */
-  afkTimeout: string;
+  afkTimeout: z.string(),
   /** true if the server widget is enabled */
-  widgetEnabled?: boolean;
+  widgetEnabled: z.boolean().optional(),
   /** the channel id that the widget will generate an invite to, or null if set to no invite */
-  widgetChannelId?: string;
+  widgetChannelId: z.string().optional(),
   /** verification level required for the guild */
-  verificationLevel: VerificationLevel;
+  verificationLevel,
   /** default message notifications level */
-  defaultMessageNotifications: DefaultMessageNotificationLevel;
+  defaultMessageNotifications: defaultMessageNotificationLevel,
   /** explicit content filter level */
-  explicitContentFilter: ExplicitContentFilterLevel;
+  explicitContentFilter: explicitContentFilterLevel,
   /** roles in the guild */
-  roles: Role[];
+  roles: role.array(),
   /** custom guild emojis */
-  emojis: Emoji[];
+  emojis: emoji.array(),
   /** enabled guild features */
-  features: GuildFeatures[];
+  features: guildFeatures.array(),
   /** required MFA level for the guild */
-  mfaLevel: MFALevel;
+  mfaLevel,
   /** application id of the guild creator if it is bot-created */
-  applicationId?: string;
+  applicationId: z.string().optional(),
   /** the id of the channel where guild notices such as welcome messages and boost events are posted */
-  systemChannelId?: string;
+  systemChannelId: z.string().optional(),
   /** system channel flags */
-  systemChannelFlags: SystemChannelFlags;
+  systemChannelFlags,
   /** the id of the channel where Community guilds can display rules and/or guidelines */
-  rulesChannelId?: string;
+  rulesChannelId: z.string().optional(),
   /** when this guild was joined at */
-  joinedAt?: number;
+  joinedAt: z.number().optional(),
   /** true if this is considered a large guild */
-  large?: boolean;
+  large: z.boolean().optional(),
   /** true if this guild is unavailable due to an outage */
-  unavailable?: boolean;
+  unavailable: z.boolean().optional(),
   /** total number of members in this guild */
-  memberCount?: number;
+  memberCount: z.number().optional(),
   /** states of members currently in voice channels; lacks the guild_id key */
-  voiceStates?: Partial<VoiceState>[];
+  voiceStates: voiceState.partial().array().optional(),
   /** users in the guild */
-  members?: Member[];
+  members: member.array().optional(),
   /** channels in the guild */
-  channels?: Channel[];
+  channels: channel.array().optional(),
   /** all active threads in the guild that current user has permission to view */
-  threads?: Channel[];
+  threads: channel.array().optional(),
   /** presences of the members in the guild, will only include non-offline members if the size is greater than large threshold */
-  presences?: Presence[];
+  presences: presence.array().optional(),
   /** the maximum number of presences for the guild (null is always returned, apart from the largest of guilds) */
-  maxPresences?: number;
+  maxPresences: z.number().optional(),
   /** the maximum number of members for the guild */
-  maxMembers?: number;
+  maxMembers: z.number().optional(),
   /** the vanity url code for the guild */
-  vanityUrlCode?: string;
+  vanityUrlCode: z.string().optional(),
   /** the description of a Community guild */
-  description?: string;
+  description: z.string().optional(),
   /** banner hash */
-  banner?: string;
+  banner: z.string().optional(),
   /** premium tier (Server Boost level) */
-  premiumTier: PremiumTier;
+  premiumTier,
   /** the number of boosts this guild currently has */
-  premiumSubscriptionCount?: number;
+  premiumSubscriptionCount: z.number().optional(),
   /** the preferred locale of a Community guild; used in server discovery and notices from Discord, and sent in interactions; defaults to "en-US" */
-  preferredLocale: string;
+  preferredLocale: z.string(),
   /** the id of the channel where admins and moderators of Community guilds receive notices from Discord */
-  publicUpdatesChannelId?: string;
+  publicUpdatesChannelId: z.string().optional(),
   /** the maximum amount of users in a video channel */
-  maxVideoChannelUsers?: number;
+  maxVideoChannelUsers: z.number().optional(),
   /** approximate number of members in this guild, returned from the GET /guilds/<id> endpoint when with_counts is true
     approximate_presence_count?	integer	approximate number of non-offline members in this guild, returned from the GET /guilds/<id> endpoint when with_counts is true */
-  approximateMemberCount?: number;
+  approximateMemberCount: z.number().optional(),
   /** the welcome screen of a Community guild, shown to new members, returned in an Invite's guild object */
-  welcomeScreen?: WelcomeScreen;
+  welcomeScreen: welcomeScreen.optional(),
   /** guild NSFW level */
-  nsfwLevel: GuildNSFWLevel;
+  nsfwLevel: guildNSFWLevel,
   /** Stage instances in the guild */
-  stageInstances?: Stage[];
+  stageInstances: stage.array().optional(),
   /** custom guild stickers */
-  stickers?: Sticker[];
+  stickers: sticker.array().optional(),
   /** the scheduled events in the guild */
-  guildScheduledEvents?: ScheduledEvent[];
+  guildScheduledEvents: scheduledEvent.array().optional(),
   /** whether the guild has the boost progress bar enabled */
-  premiumProgressBarEnabled: boolean;
-}
+  premiumProgressBarEnabled: z.boolean()
+});
+
+export type Guild = z.infer<typeof guild>;

@@ -1,5 +1,7 @@
 // https://discord.com/developers/docs/resources/channel#channel-object-channel-types
 
+import { z } from "zod";
+
 export enum ChannelType {
   /** a text channel within a server */
   GUILD_TEXT = 0,
@@ -26,3 +28,5 @@ export enum ChannelType {
   /** a channel that can only contain threads */
   GUILD_FORUM = 15
 }
+
+export const channelType = z.nativeEnum(ChannelType);

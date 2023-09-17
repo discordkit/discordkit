@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export enum ModerationTrigger {
   /** check if content contains words from a user defined list of keywords */
   KEYWORD = 1,
@@ -8,3 +10,5 @@ export enum ModerationTrigger {
   /** check if content contains words from internal pre-defined wordsets */
   KEYWORD_PRESET = 4
 }
+
+export const moderationTrigger = z.nativeEnum(ModerationTrigger);

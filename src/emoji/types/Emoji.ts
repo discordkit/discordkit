@@ -1,20 +1,23 @@
-import { type User } from "../../user";
+import { z } from "zod";
+import { user } from "../../user";
 
-export interface Emoji {
+export const emoji = z.object({
   /** emoji id */
-  id?: string;
+  id: z.string().optional(),
   /** (can be null only in reaction emoji objects)	emoji name */
-  name?: string;
+  name: z.string().optional(),
   /** roles allowed to use this emoji */
-  roles?: string[];
+  roles: z.string().array().optional(),
   /** user that created this emoji */
-  user?: User;
+  user: user.optional(),
   /** whether this emoji must be wrapped in colons */
-  requireColons?: boolean;
+  requireColons: z.boolean().optional(),
   /** whether this emoji is managed */
-  managed?: boolean;
+  managed: z.boolean().optional(),
   /** whether this emoji is animated */
-  animated?: boolean;
+  animated: z.boolean().optional(),
   /** whether this emoji can be used, may be false due to loss of Server Boosts */
-  available?: boolean;
-}
+  available: z.boolean().optional()
+});
+
+export type Emoji = z.infer<typeof emoji>;

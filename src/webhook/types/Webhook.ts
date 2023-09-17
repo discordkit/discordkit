@@ -1,31 +1,34 @@
-import type { Channel } from "../../channel";
-import type { Guild } from "../../guild";
-import type { User } from "../../user";
-import type { WebhookType } from "./WebhookType";
+import { z } from "zod";
+import { channel } from "../../channel";
+import { guild } from "../../guild";
+import { user } from "../../user";
+import { webhookType } from "./WebhookType";
 
-export interface Webhook {
+export const webhook = z.object({
   /** the id of the webhook */
-  id: string;
+  id: z.string(),
   /** the type of the webhook */
-  type: WebhookType;
+  type: webhookType,
   /** the guild id this webhook is for, if any */
-  guildId?: string;
+  guildId: z.string().optional(),
   /** the channel id this webhook is for, if any */
-  channelId: string;
+  channelId: z.string(),
   /** user object	the user this webhook was created by (not returned when getting a webhook with its token) */
-  user?: User;
+  user: user.optional(),
   /** the default name of the webhook */
-  name?: string;
+  name: z.string().optional(),
   /** the default user avatar hash of the webhook */
-  avatar?: string;
+  avatar: z.string().optional(),
   /** the secure token of the webhook (returned for Incoming Webhooks) */
-  token?: string;
+  token: z.string().optional(),
   /** the bot/OAuth2 application that created this webhook */
-  applicationId?: string;
+  applicationId: z.string().optional(),
   /** the guild of the channel that this webhook is following (returned for Channel Follower Webhooks) */
-  sourceGuild?: Partial<Guild>;
+  sourceGuild: guild.partial().optional(),
   /** the channel that this webhook is following (returned for Channel Follower Webhooks) */
-  sourceChannel?: Partial<Channel>;
+  sourceChannel: channel.partial().optional(),
   /** the url used for executing the webhook (returned by the webhooks OAuth2 flow) */
-  url?: string;
-}
+  url: z.string().optional()
+});
+
+export type Webhook = z.infer<typeof webhook>;

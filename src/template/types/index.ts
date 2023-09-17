@@ -1,1 +1,1 @@
-export type { GuildTemplate } from "./GuildTemplate";
+export { guildTemplate, type GuildTemplate } from "./GuildTemplate";

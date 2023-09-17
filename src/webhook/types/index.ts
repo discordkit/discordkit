@@ -1,2 +1,2 @@
-export type { Webhook } from "./Webhook";
-export type { WebhookType } from "./WebhookType";
+export { webhook, type Webhook } from "./Webhook";
+export { webhookType, type WebhookType } from "./WebhookType";

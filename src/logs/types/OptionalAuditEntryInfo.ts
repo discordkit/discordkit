@@ -1,20 +1,24 @@
-export interface OptionalAuditEntryInfo {
+import { z } from "zod";
+
+export const optionalAuditEntryInfo = z.object({
   /** ID of the app whose permissions were targeted */
-  applicationId?: string;
+  applicationId: z.string().optional(),
   /** Channel in which the entities were targeted */
-  channelId?: string;
+  channelId: z.string().optional(),
   /** Number of entities that were targeted */
-  count?: string;
+  count: z.string().optional(),
   /** Number of days after which inactive members were kicked */
-  deleteMemberDays?: string;
+  deleteMemberDays: z.string().optional(),
   /** ID of the overwritten entity */
-  id?: string;
+  id: z.string().optional(),
   /** Number of members removed by the prune */
-  membersRemoved?: string;
+  membersRemoved: z.string().optional(),
   /** ID of the message that was targeted */
-  messageId?: string;
+  messageId: z.string().optional(),
   /** Name of the role if type is "0" (not present if type is "1") */
-  roleName?: string;
+  roleName: z.string().optional(),
   /** Type of overwritten entity - role ("0") or member ("1") */
-  type?: string;
-}
+  type: z.string().optional()
+});
+
+export type OptionalAuditEntryInfo = z.infer<typeof optionalAuditEntryInfo>;

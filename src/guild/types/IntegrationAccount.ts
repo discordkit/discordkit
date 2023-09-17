@@ -1,6 +1,10 @@
-export interface IntegrationAccount {
+import { z } from "zod";
+
+export const integrationAccount = z.object({
   /** id of the account */
-  id: string;
+  id: z.string(),
   /** name of the account */
-  name: string;
-}
+  name: z.string()
+});
+
+export type IntegrationAccount = z.infer<typeof integrationAccount>;

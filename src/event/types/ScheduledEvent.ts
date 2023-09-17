@@ -1,40 +1,43 @@
-import type { User } from "../../user";
-import type { ScheduledEventEntityType } from "./ScheduledEventEntityType";
-import type { ScheduledEventPrivacyLevel } from "./ScheduledEventPrivacyLevel";
-import type { ScheduledEventStatus } from "./ScheduledEventStatus";
-import type { EntityMetadata } from "./EntityMetadata";
+import { z } from "zod";
+import { user } from "../../user";
+import { scheduledEventEntityType } from "./ScheduledEventEntityType";
+import { scheduledEventPrivacyLevel } from "./ScheduledEventPrivacyLevel";
+import { scheduledEventStatus } from "./ScheduledEventStatus";
+import { entityMetadata } from "./EntityMetadata";
 
-export interface ScheduledEvent {
+export const scheduledEvent = z.object({
   /** the id of the scheduled event */
-  id: string;
+  id: z.string(),
   /** the guild id which the scheduled event belongs to */
-  guildId: string;
+  guildId: z.string(),
   /** the channel id in which the scheduled event will be hosted, or null if scheduled entity type is EXTERNAL */
-  channelId?: string;
+  channelId: z.string().optional(),
   /** the id of the user that created the scheduled event */
-  creatorId?: string;
+  creatorId: z.string().optional(),
   /** the name of the scheduled event (1-100 characters) */
-  name: string;
+  name: z.string(),
   /** the description of the scheduled event (1-1000 characters) */
-  description?: string;
+  description: z.string().optional(),
   /** the time the scheduled event will start */
-  scheduledStartTime: string;
+  scheduledStartTime: z.string(),
   /** the time the scheduled event will end, required if entity_type is EXTERNAL */
-  scheduledEndTime?: string;
+  scheduledEndTime: z.string().optional(),
   /** the privacy level of the scheduled event */
-  privacyLevel: ScheduledEventPrivacyLevel;
+  privacyLevel: scheduledEventPrivacyLevel,
   /** the status of the scheduled event */
-  status: ScheduledEventStatus;
+  status: scheduledEventStatus,
   /** the type of the scheduled event */
-  entityType: ScheduledEventEntityType;
+  entityType: scheduledEventEntityType,
   /** the id of an entity associated with a guild scheduled event */
-  entityId?: string;
+  entityId: z.string().optional(),
   /** additional metadata for the guild scheduled event */
-  entityMetadata?: EntityMetadata;
+  entityMetadata: entityMetadata.optional(),
   /** the user that created the scheduled event */
-  creator?: User;
+  creator: user.optional(),
   /** the number of users subscribed to the scheduled event */
-  userCount?: number;
+  userCount: z.number().optional(),
   /** the cover image hash of the scheduled event */
-  image?: string;
-}
+  image: z.string().optional()
+});
+
+export type ScheduledEvent = z.infer<typeof scheduledEvent>;

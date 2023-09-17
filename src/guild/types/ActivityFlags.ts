@@ -1,6 +1,8 @@
 /* eslint-disable no-bitwise */
 /* eslint-disable @typescript-eslint/prefer-literal-enum-member */
 
+import { z } from "zod";
+
 export enum ActivityFlags {
   INSTANCE = 1 << 0,
   JOIN = 1 << 1,
@@ -12,3 +14,5 @@ export enum ActivityFlags {
   PARTY_PRIVACY_VOICE_CHANNEL = 1 << 7,
   EMBEDDED = 1 << 8
 }
+
+export const activityFlags = z.nativeEnum(ActivityFlags);

@@ -1,6 +1,8 @@
 /* eslint-disable no-bitwise */
 /* eslint-disable @typescript-eslint/prefer-literal-enum-member */
 
+import { z } from "zod";
+
 export enum MessageFlag {
   /** this message has been published to subscribed channels (via Channel Following) */
   CROSSPOSTED = 1 << 0,
@@ -21,3 +23,5 @@ export enum MessageFlag {
   /** this message failed to mention some roles and add their members to the thread */
   FAILED_TO_MENTION_SOME_ROLES_IN_THREAD = 1 << 8
 }
+
+export const messageFlag = z.nativeEnum(MessageFlag);

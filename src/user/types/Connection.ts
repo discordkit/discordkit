@@ -1,23 +1,26 @@
-import type { Integration } from "../../guild";
-import type { ConnectionVisibilty } from "./ConnectionVisibilty";
+import { z } from "zod";
+import { integration } from "../../guild";
+import { connectionVisibilty } from "./ConnectionVisibilty";
 
-export interface Connection {
+export const connection = z.object({
   /** id of the connection account */
-  id: string;
+  id: z.string(),
   /** the username of the connection account */
-  name: string;
+  name: z.string(),
   /** the service of the connection (twitch, youtube) */
-  type: string;
+  type: z.string(),
   /** whether the connection is revoked */
-  revoked?: boolean;
+  revoked: z.boolean().optional(),
   /** an array of partial server integrations */
-  integrations?: Integration[];
+  integrations: integration.array().optional(),
   /** whether the connection is verified */
-  verified: boolean;
+  verified: z.boolean(),
   /** whether friend sync is enabled for this connection */
-  friendSync: boolean;
+  friendSync: z.boolean(),
   /** whether activities related to this connection will be shown in presence updates */
-  showActivity: boolean;
+  showActivity: z.boolean(),
   /** visibility of this connection */
-  visibility: ConnectionVisibilty;
-}
+  visibility: connectionVisibilty
+});
+
+export type Connection = z.infer<typeof connection>;

@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export enum AuditLogEvent {
   /** Server settings were updated */
   GUILD_UPDATE = 1,
@@ -104,3 +106,5 @@ export enum AuditLogEvent {
   /** Message was blocked by AutoMod (according to a rule) */
   AUTO_MODERATION_BLOCK_MESSAGE = 143
 }
+
+export const auditLogEvent = z.nativeEnum(AuditLogEvent);

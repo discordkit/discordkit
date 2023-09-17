@@ -18,9 +18,17 @@ export const modifyWebhookSchema = z.object({
 });
 
 /**
- * Modify a webhook. Requires the `MANAGE_WEBHOOKS` permission. Returns the updated webhook object on success.
+ * **PATCH** `/webhooks/{webhook.id}`
  *
- * *This endpoint supports the `X-Audit-Log-Reason` header.*
+ * Modify a webhook. Requires the `MANAGE_WEBHOOKS` permission. Returns the updated [webhook](./types/Webhook.ts) object on success. Fires a [Webhooks Update](https://discord.com/developers/docs/topics/gateway-events#webhooks-update) Gateway event.
+ *
+ * > **NOTE**
+ * >
+ * > All parameters to this endpoint are optional
+ *
+ * > **NOTE**
+ * >
+ * > This endpoint supports the X-Audit-Log-Reason header.
  *
  * https://discord.com/developers/docs/resources/webhook#modify-webhook
  */

@@ -1,8 +1,11 @@
-import type { User } from "../../user";
+import { z } from "zod";
+import { user } from "../../user";
 
-export interface Ban {
+export const ban = z.object({
   /** the reason for the ban */
-  reason: string | null;
+  reason: z.union([z.string(), z.null()]),
   /** the banned user */
-  user: User;
-}
+  user
+});
+
+export type Ban = z.infer<typeof ban>;

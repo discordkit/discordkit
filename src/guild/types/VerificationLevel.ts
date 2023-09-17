@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export enum VerificationLevel {
   /** unrestricted */
   NONE = 0,
@@ -10,3 +12,5 @@ export enum VerificationLevel {
   /** must have a verified phone number */
   VERY_HIGH = 4
 }
+
+export const verificationLevel = z.nativeEnum(VerificationLevel);

@@ -8,6 +8,8 @@ export const getWebhookWithTokenSchema = z.object({
 });
 
 /**
+ * **GET** `/webhooks/{webhook.id}/{webhook.token}`
+ *
  * Same as above, except this call does not require authentication and returns no user in the webhook object.
  *
  * https://discord.com/developers/docs/resources/webhook#get-webhook-with-token

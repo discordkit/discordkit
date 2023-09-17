@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export enum ModerationActionType {
   /** blocks the content of a message according to the rule */
   BLOCK_MESSAGE = 1,
@@ -6,3 +8,5 @@ export enum ModerationActionType {
   /**timeout user for a specified duration */
   TIMEOUT = 3
 }
+
+export const moderationActionType = z.nativeEnum(ModerationActionType);

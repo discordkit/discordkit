@@ -13,14 +13,20 @@ export const createWebhookConfig = z.object({
 });
 
 /**
- * Creates a new webhook and returns a webhook object on success. Requires the `MANAGE_WEBHOOKS` permission.
+ * **POST** `/channels/{channel.id}/webhooks`
+ *
+ * Creates a new webhook and returns a webhook object on success. Requires the `MANAGE_WEBHOOKS` permission. Fires a Webhooks Update Gateway event.
  *
  * An error will be returned if a webhook name (`name`) is not valid. A webhook name is valid if:
  *
- * - It does not contain the substring '**clyde**' (case-insensitive)
+ * - It does not contain the substrings `clyde` or `discord` (case-insensitive)
  * - It follows the nickname guidelines in the [Usernames and Nicknames](https://discord.com/developers/docs/resources/user#usernames-and-nicknames) documentation, with an exception that webhook names can be up to 80 characters
  *
- * *This endpoint supports the `X-Audit-Log-Reason` header.*
+ * > **NOTE**
+ * >
+ * > This endpoint supports the `X-Audit-Log-Reason` header.
+ *
+ * https://discord.com/developers/docs/resources/webhook#create-webhook
  */
 export const createWebhook = mutation(createWebhookConfig, async ({ channel, body }) =>
   post<Webhook>(`/channels/${channel}/webhooks`, body)

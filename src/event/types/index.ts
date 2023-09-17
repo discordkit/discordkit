@@ -1,6 +1,6 @@
 export { entityMetadata, type EntityMetadata } from "./EntityMetadata";
-export { type ScheduledEvent } from "./ScheduledEvent";
-export { ScheduledEventEntityType } from "./ScheduledEventEntityType";
-export { ScheduledEventPrivacyLevel } from "./ScheduledEventPrivacyLevel";
-export { ScheduledEventStatus } from "./ScheduledEventStatus";
-export { type ScheduledEventUser } from "./ScheduledEventUser";
+export { scheduledEvent, type ScheduledEvent } from "./ScheduledEvent";
+export { scheduledEventEntityType, ScheduledEventEntityType } from "./ScheduledEventEntityType";
+export { scheduledEventPrivacyLevel, ScheduledEventPrivacyLevel } from "./ScheduledEventPrivacyLevel";
+export { scheduledEventStatus, ScheduledEventStatus } from "./ScheduledEventStatus";
+export { scheduledEventUser, type ScheduledEventUser } from "./ScheduledEventUser";

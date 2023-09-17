@@ -1,12 +1,15 @@
-import type { Member } from "../../guild";
+import { z } from "zod";
+import { member } from "../../guild";
 
-export interface InviteStageInstance {
+export const inviteStageInstance = z.object({
   /** the members speaking in the Stage */
-  members: Partial<Member>[];
+  members: member.partial().array(),
   /** the number of users in the Stage */
-  participantCount: number;
+  participantCount: z.number(),
   /** the number of users speaking in the Stage */
-  speakerCount: number;
+  speakerCount: z.number(),
   /** the topic of the Stage instance (1-120 characters) */
-  topic: string;
-}
+  topic: z.string()
+});
+
+export type InviteStageInstance = z.infer<typeof inviteStageInstance>;

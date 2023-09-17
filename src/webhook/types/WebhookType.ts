@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export enum WebhookType {
   /** Incoming Webhooks can post messages to channels with a generated token */
   INCOMING = 1,
@@ -6,3 +8,5 @@ export enum WebhookType {
   /** Application webhooks are webhooks used with Interactions */
   APPLICATION = 3
 }
+
+export const webhookType = z.nativeEnum(WebhookType);

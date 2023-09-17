@@ -18,9 +18,9 @@ export const modifyWebhookWithTokenSchema = z.object({
 });
 
 /**
- * Same as modifyWebhook, except this call does not require authentication, does not accept a channel_id parameter in the body, and does not return a user in the webhook object.
+ * **PATCH** `/webhooks/{webhook.id}/{webhook.token}`
  *
- * *This endpoint supports the `X-Audit-Log-Reason` header.*
+ * Same as above, except this call does not require authentication, does not accept a `channel_id` parameter in the body, and does not return a user in the webhook object.
  *
  * https://discord.com/developers/docs/resources/webhook#modify-webhook-with-token
  */

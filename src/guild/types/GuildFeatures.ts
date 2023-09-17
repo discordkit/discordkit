@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export enum GuildFeatures {
   /** guild has access to set an animated guild icon */
   ANIMATED_ICON = `ANIMATED_ICON`,
@@ -44,3 +46,5 @@ export enum GuildFeatures {
   /** guild has enabled the welcome screen */
   WELCOME_SCREEN_ENABLED = `WELCOME_SCREEN_ENABLED`
 }
+
+export const guildFeatures = z.nativeEnum(GuildFeatures);

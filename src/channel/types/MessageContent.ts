@@ -2,7 +2,7 @@ import { z } from "zod";
 import { allowedMention } from "./AllowedMention";
 import { attachment } from "./Attachment";
 import { embed } from "./Embed";
-import { MessageFlag } from "./MessageFlag";
+import { messageFlag } from "./MessageFlag";
 import { messageReference } from "./MessageReference";
 
 export const messageContent = z
@@ -12,23 +12,23 @@ export const messageContent = z
     /** true if this is a TTS message */
     tts: z.boolean(),
     /** Embedded rich content (up to 6000 characters) */
-    embeds: z.array(embed),
+    embeds: embed.array(),
     /** allowed mention object	Allowed mentions for the message */
     allowedMentions: allowedMention,
     /** Include to make your message a reply */
     messageReference,
     /** Components to include with the message */
-    components: z.array(z.unknown()),
+    components: z.unknown().array(),
     /** IDs of up to 3 stickers in the server to send in the message */
-    stickerIds: z.array(z.string()).max(3),
+    stickerIds: z.string().array().max(3),
     /** Contents of the file being sent. See Uploading Files */
     files: z.unknown(),
     /** JSON-encoded body of non-file params, only for multipart/form-data requests. See Uploading Files */
     payloadJson: z.string(),
     /** Attachment objects with filename and description. See Uploading Files */
-    attachments: z.array(attachment.partial()),
+    attachments: attachment.partial().array(),
     /** Message flags combined as a bitfield (only SUPPRESS_EMBEDS can be set) */
-    flags: z.nativeEnum(MessageFlag)
+    flags: messageFlag
   })
   .partial();
 

@@ -1,6 +1,10 @@
-export interface ActivityTimestamps {
+import { z } from "zod";
+
+export const activityTimestamps = z.object({
   /** unix time (in milliseconds) of when the activity started */
-  start?: number;
+  start: z.number().optional(),
   /** unix time (in milliseconds) of when the activity ends */
-  end?: number;
-}
+  end: z.number().optional()
+});
+
+export type ActivityTimestamps = z.infer<typeof activityTimestamps>;

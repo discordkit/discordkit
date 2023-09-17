@@ -1,16 +1,19 @@
-import type { StagePrivacyLevel } from "./StagePrivacyLevel";
+import { z } from "zod";
+import { stagePrivacyLevel } from "./StagePrivacyLevel";
 
-export interface Stage {
+export const stage = z.object({
   /** The id of this Stage instance */
-  id: string;
+  id: z.string(),
   /** The guild id of the associated Stage channel */
-  guildId: string;
+  guildId: z.string(),
   /** The id of the associated Stage channel */
-  channelId: string;
+  channelId: z.string(),
   /** The topic of the Stage instance (1-120 characters) */
-  topic: string;
+  topic: z.string(),
   /** The privacy level of the Stage instance */
-  privacyLevel: StagePrivacyLevel;
+  privacyLevel: stagePrivacyLevel,
   /** @deprecated Whether or not Stage Discovery is disabled */
-  discoverableDisabled: boolean;
-}
+  discoverableDisabled: z.boolean()
+});
+
+export type Stage = z.infer<typeof stage>;

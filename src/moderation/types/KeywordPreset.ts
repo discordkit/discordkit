@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export enum KeywordPreset {
   /** Words that may be considered forms of swearing or cursing */
   PROFANITY = 1,
@@ -6,3 +8,5 @@ export enum KeywordPreset {
   /** Personal insults or words that may be considered hate speech */
   SLURS = 3
 }
+
+export const keywordPreset = z.nativeEnum(KeywordPreset);

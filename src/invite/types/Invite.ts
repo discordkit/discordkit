@@ -1,34 +1,37 @@
-import type { Application } from "../../application";
-import type { Channel } from "../../channel";
-import type { ScheduledEvent } from "../../event";
-import type { Guild } from "../../guild";
-import type { User } from "../../user";
-import type { InviteStageInstance } from "./InviteStageInstance";
-import type { InviteTarget } from "./InviteTarget";
+import { z } from "zod";
+import { application } from "../../application";
+import { channel } from "../../channel";
+import { scheduledEvent } from "../../event";
+import { guild } from "../../guild";
+import { user } from "../../user";
+import { inviteStageInstance } from "./InviteStageInstance";
+import { inviteTarget } from "./InviteTarget";
 
-export interface Invite {
+export const invite = z.object({
   /** the invite code (unique ID) */
-  code: string;
+  code: z.string(),
   /** the guild this invite is for */
-  guild?: Partial<Guild>;
+  guild: guild.partial().optional(),
   /** the channel this invite is for */
-  channel?: Partial<Channel>;
+  channel: channel.partial().optional(),
   /** the user who created the invite */
-  inviter?: User;
+  inviter: user.optional(),
   /** the type of target for this voice channel invite */
-  targetType?: InviteTarget;
+  targetType: inviteTarget.optional(),
   /** the user whose stream to display for this voice channel stream invite */
-  targetUser?: User;
+  targetUser: user.optional(),
   /** the embedded application to open for this voice channel embedded application invite */
-  targetApplication?: Partial<Application>;
+  targetApplication: application.partial().optional(),
   /** approximate count of online members, returned from the GET /invites/<code> endpoint when with_counts is true */
-  approximatePresenceCount?: number;
+  approximatePresenceCount: z.number().optional(),
   /** approximate count of total members, returned from the GET /invites/<code> endpoint when with_counts is true */
-  approximateMemberCount?: number;
+  approximateMemberCount: z.number().optional(),
   /** the expiration date of this invite, returned from the GET /invites/<code> endpoint when with_expiration is true */
-  expiresAt?: string;
+  expiresAt: z.string().optional(),
   /** stage instance data if there is a public Stage instance in the Stage channel this invite is for (deprecated) */
-  stageInstance?: InviteStageInstance;
+  stageInstance: inviteStageInstance.optional(),
   /** guild scheduled event data, only included if guild_scheduled_event_id contains a valid guild scheduled event id */
-  guildScheduledEvent?: ScheduledEvent;
-}
+  guildScheduledEvent: scheduledEvent.optional()
+});
+
+export type Invite = z.infer<typeof invite>;

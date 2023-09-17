@@ -1,6 +1,8 @@
 /* eslint-disable no-bitwise */
 /* eslint-disable @typescript-eslint/prefer-literal-enum-member */
 
+import { z } from "zod";
+
 export enum SystemChannelFlags {
   /** Suppress member join notifications */
   SUPPRESS_JOIN_NOTIFICATIONS = 1 << 0,
@@ -11,3 +13,5 @@ export enum SystemChannelFlags {
   /** Hide member join sticker reply buttons */
   SUPPRESS_JOIN_NOTIFICATION_REPLIES = 1 << 3
 }
+
+export const systemChannelFlags = z.nativeEnum(SystemChannelFlags);

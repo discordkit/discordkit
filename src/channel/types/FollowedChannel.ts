@@ -1,6 +1,10 @@
-export interface FollowedChannel {
+import { z } from "zod";
+
+export const followedChannel = z.object({
   /** source channel id */
-  channelId: string;
+  channelId: z.string(),
   /** created target webhook id */
-  webhookId: string;
-}
+  webhookId: z.string()
+});
+
+export type FollowedChannel = z.infer<typeof followedChannel>;

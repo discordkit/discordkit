@@ -1,4 +1,7 @@
 /* eslint-disable @typescript-eslint/prefer-literal-enum-member */
+
+import { z } from "zod";
+
 /* eslint-disable no-bitwise */
 export enum UserFlags {
   /** None */
@@ -32,3 +35,5 @@ export enum UserFlags {
   /** Bot uses only HTTP interactions and is shown in the online member list */
   BOT_HTTP_INTERACTIONS = 1 << 19
 }
+
+export const userFlags = z.nativeEnum(UserFlags);

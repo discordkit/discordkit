@@ -1,8 +1,11 @@
-import type { WelcomeChannel } from "./WelcomeChannel";
+import { z } from "zod";
+import { welcomeChannel } from "./WelcomeChannel";
 
-export interface WelcomeScreen {
+export const welcomeScreen = z.object({
   /** the server description shown in the welcome screen */
-  description?: string;
+  description: z.string().optional(),
   /** the channels shown in the welcome screen, up to 5 */
-  welcomeChannels: WelcomeChannel[];
-}
+  welcomeChannels: welcomeChannel.array()
+});
+
+export type WelcomeScreen = z.infer<typeof welcomeScreen>;

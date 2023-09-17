@@ -1,11 +1,14 @@
-import type { Member } from "../../guild";
-import type { User } from "../../user";
+import { z } from "zod";
+import { member, Member } from "../../guild";
+import { user, User } from "../../user";
 
-export interface ScheduledEventUser {
+export const scheduledEventUser = z.object({
   /** the scheduled event id which the user subscribed to */
-  guildScheduledEventId: string;
+  guildScheduledEventId: z.string(),
   /** user which subscribed to an event */
-  user: User;
+  user,
   /** guild member data for this user for the guild which this event belongs to, if any */
-  member?: Member;
-}
+  member: member.optional()
+});
+
+export type ScheduledEventUser = z.infer<typeof scheduledEventUser>;

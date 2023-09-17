@@ -1,8 +1,12 @@
-export interface ActivitySecrets {
+import { z } from "zod";
+
+export const activitySecrets = z.object({
   /** the secret for joining a party */
-  join?: string;
+  join: z.string().optional(),
   /** the secret for spectating a game */
-  spectate?: string;
+  spectate: z.string().optional(),
   /** the secret for a specific instanced match */
-  match?: string;
-}
+  match: z.string().optional()
+});
+
+export type ActivitySecrets = z.infer<typeof activitySecrets>;

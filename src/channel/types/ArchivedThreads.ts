@@ -1,11 +1,14 @@
-import type { Channel } from "./Channel";
-import { type ThreadMember } from "./ThreadMember";
+import { z } from "zod";
+import { channel } from "./Channel";
+import { threadMember } from "./ThreadMember";
 
-export interface ArchivedThreads {
+export const archivedThreads = z.object({
   /** the archived threads */
-  threads: Channel[];
+  threads: channel.array(),
   /** a thread member object for each returned thread the current user has joined */
-  members: ThreadMember[];
+  members: threadMember.array(),
   /** whether there are potentially additional threads that could be returned on a subsequent call */
-  hasMore: boolean;
-}
+  hasMore: z.boolean()
+});
+
+export type ArchivedThreads = z.infer<typeof archivedThreads>;

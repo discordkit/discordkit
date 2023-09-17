@@ -1,4 +1,4 @@
-export type { Sticker } from "./Sticker";
-export type { StickerFormatType } from "./StickerFormatType";
-export type { StickerPack } from "./StickerPack";
-export type { StickerType } from "./StickerType";
+export { sticker, type Sticker } from "./Sticker";
+export { stickerFormatType, type StickerFormatType } from "./StickerFormatType";
+export { stickerPack, type StickerPack } from "./StickerPack";
+export { stickerType, type StickerType } from "./StickerType";

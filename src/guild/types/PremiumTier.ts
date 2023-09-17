@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export enum PremiumTier {
   /** guild has not unlocked any Server Boost perks */
   NONE = 0,
@@ -8,3 +10,5 @@ export enum PremiumTier {
   /** guild has unlocked Server Boost level 3 perks */
   TIER_3 = 3
 }
+
+export const premiumTier = z.nativeEnum(PremiumTier);

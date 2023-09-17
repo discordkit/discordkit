@@ -2251,6 +2251,7 @@ __metadata:
     "@babel/preset-typescript": ^7.17.12
     "@release-it/conventional-changelog": ^5.1.1
     "@saeris/eslint-config": ^2.2.0
+    "@trpc/server": ^10.38.3
     "@types/eslint": ^8.4.3
     "@types/jest": ^28.1.3
     "@types/node": 18.0.0
@@ -2376,6 +2377,13 @@ __metadata:
   version: 2.0.0
   resolution: "@tootallnate/once@npm:2.0.0"
   checksum: ad87447820dd3f24825d2d947ebc03072b20a42bfc96cbafec16bff8bbda6c1a81fcb0be56d5b21968560c5359a0af4038a68ba150c3e1694fe4c109a063bed8
+  languageName: node
+  linkType: hard
+
+"@trpc/server@npm:^10.38.3":
+  version: 10.38.3
+  resolution: "@trpc/server@npm:10.38.3"
+  checksum: 215cff159591f9bdde41fe7be07ad548d358efb31982f4b93726041f7931693e9dfbcc86a929db643deed764d42cb3972ec7e1043887f35379ff48c2eb1c80c5
   languageName: node
   linkType: hard
 

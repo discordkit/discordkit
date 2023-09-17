@@ -1,2 +1,2 @@
-export type { VoiceRegion } from "./VoiceRegion";
-export type { VoiceState } from "./VoiceState";
+export { voiceRegion, type VoiceRegion } from "./VoiceRegion";
+export { voiceState, type VoiceState } from "./VoiceState";

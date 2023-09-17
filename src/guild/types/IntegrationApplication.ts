@@ -1,14 +1,17 @@
-import type { User } from "../../user";
+import { z } from "zod";
+import { user } from "../../user";
 
-export interface IntegrationApplication {
+export const integrationApplication = z.object({
   /** the id of the app */
-  id: string;
+  id: z.string(),
   /** the name of the app */
-  name: string;
+  name: z.string(),
   /** the icon hash of the app */
-  icon?: string;
+  icon: z.string().optional(),
   /** the description of the app */
-  description: string;
+  description: z.string(),
   /** the bot associated with this application */
-  bot?: User;
-}
+  bot: user.optional()
+});
+
+export type IntegrationApplication = z.infer<typeof integrationApplication>;

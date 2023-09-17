@@ -1,2 +1,2 @@
-export { type Emoji } from "./Emoji";
-export { type Reaction } from "./Reaction";
+export { emoji, type Emoji } from "./Emoji";
+export { reaction, type Reaction } from "./Reaction";

@@ -1,16 +1,19 @@
-import type { User } from "../../user";
-import type { ClientStatus } from "./ClientStatus";
-import type { Activity } from "./Activity";
+import { z } from "zod";
+import { user } from "../../user";
+import { clientStatus } from "./ClientStatus";
+import { activity } from "./Activity";
 
-export interface Presence {
+export const presence = z.object({
   /** the user presence is being updated for */
-  user: User;
+  user,
   /** id of the guild */
-  guildId: string;
+  guildId: z.string(),
   /** either "idle", "dnd", "online", or "offline" */
-  status: "idle" | "dnd" | "online" | "offline";
+  status: z.union([z.literal(`idle`), z.literal(`dnd`), z.literal(`online`), z.literal(`offline`)]),
   /** user's current activities */
-  activities: Activity[];
+  activities: activity.array(),
   /** user's platform-dependent status */
-  clientStatus: ClientStatus;
-}
+  clientStatus
+});
+
+export type Presence = z.infer<typeof presence>;

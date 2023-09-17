@@ -1,8 +1,12 @@
-export interface ActivityEmoji {
+import { z } from "zod";
+
+export const activityEmoji = z.object({
   /** the name of the emoji */
-  name: string;
+  name: z.string(),
   /** the id of the emoji */
-  id?: string;
+  id: z.string().optional(),
   /** whether this emoji is animated */
-  animated?: boolean;
-}
+  animated: z.boolean().optional()
+});
+
+export type ActivityEmoji = z.infer<typeof activityEmoji>;

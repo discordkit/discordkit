@@ -1,8 +1,12 @@
-export interface AuditLogChange {
+import { z } from "zod";
+
+export const auditLogChange = z.object({
   /** New value of the key */
-  newValue?: unknown;
+  newValue: z.unknown().optional(),
   /** Old value of the key */
-  oldValue?: unknown;
+  oldValue: z.unknown().optional(),
   /** Name of the changed entity, with a few exceptions */
-  key: string;
-}
+  key: z.string()
+});
+
+export type AuditLogChange = z.infer<typeof auditLogChange>;

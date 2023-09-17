@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export enum InteractionType {
   PING = 1,
   APPLICATION_COMMAND = 2,
@@ -5,3 +7,5 @@ export enum InteractionType {
   APPLICATION_COMMAND_AUTOCOMPLETE = 4,
   MODAL_SUBMIT = 5
 }
+
+export const interactionType = z.nativeEnum(InteractionType);

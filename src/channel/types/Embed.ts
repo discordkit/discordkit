@@ -78,8 +78,8 @@ export const embed = z
       proxyIconUrl: z.string().optional()
     }),
     /** fields information */
-    fields: z.array(
-      z.object({
+    fields: z
+      .object({
         /** name of the field */
         name: z.string(),
         /** value of the field */
@@ -87,7 +87,7 @@ export const embed = z
         /** whether or not this field should display inline */
         inline: z.boolean().optional()
       })
-    )
+      .array()
   })
   .partial();
 

@@ -1,10 +1,13 @@
-import { type Emoji } from "./Emoji";
+import { z } from "zod";
+import { emoji } from "./Emoji";
 
-export interface Reaction {
+export const reaction = z.object({
   /** times this emoji has been used to react */
-  count: number;
+  count: z.number(),
   /** whether the current user reacted using this emoji */
-  me: boolean;
+  me: z.boolean(),
   /** emoji information */
-  emoji: Partial<Emoji>;
-}
+  emoji: emoji.partial()
+});
+
+export type Reaction = z.infer<typeof reaction>;

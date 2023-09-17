@@ -1,10 +1,13 @@
-import type { Scopes } from "./Scopes";
+import { z } from "zod";
+import { scopes } from "./Scopes";
 
 // https://discord.com/developers/docs/resources/application#install-params-object-install-params-structure
 
-export interface InstallParams {
+export const installParams = z.object({
   /** the scopes to add the application to the server with */
-  scopes: Scopes[];
+  scopes: scopes.array(),
   /** the permissions to request for the bot role */
-  permissions: string;
-}
+  permissions: z.string()
+});
+
+export type InstallParams = z.infer<typeof installParams>;

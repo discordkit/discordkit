@@ -7,6 +7,8 @@ export const getWebhookSchema = z.object({
 });
 
 /**
+ * **GET** `/webhooks/{webhook.id}`
+ *
  * Returns the new webhook object for the given id.
  *
  * https://discord.com/developers/docs/resources/webhook#get-webhook
