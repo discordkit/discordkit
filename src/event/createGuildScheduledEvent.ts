@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { mutation, post } from "../utils";
+import { post, type Fetcher } from "../utils";
 import {
   entityMetadata,
-  ScheduledEventEntityType,
-  ScheduledEventPrivacyLevel,
+  scheduledEventEntityType,
+  scheduledEventPrivacyLevel,
   type ScheduledEvent
 } from "./types";
 
@@ -17,7 +17,7 @@ export const createGuildScheduledEventSchema = z.object({
     /** the name of the scheduled event */
     name: z.string().min(1),
     /** the privacy level of the scheduled event */
-    privacyLevel: z.nativeEnum(ScheduledEventPrivacyLevel),
+    privacyLevel: scheduledEventPrivacyLevel,
     /** the time to schedule the scheduled event */
     scheduledStartTime: z.string().min(1),
     /** the time when the scheduled event is scheduled to end */
@@ -25,7 +25,7 @@ export const createGuildScheduledEventSchema = z.object({
     /** the description of the scheduled event */
     description: z.string().min(1).optional(),
     /** the entity type of the scheduled event */
-    entityType: z.nativeEnum(ScheduledEventEntityType),
+    entityType: scheduledEventEntityType,
     /** the cover image of the scheduled event */
     image: z.string().min(1).optional()
   })
@@ -40,8 +40,7 @@ export const createGuildScheduledEventSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild-scheduled-event#create-guild-scheduled-event
  */
-export const createGuildScheduledEvent = mutation(
-  createGuildScheduledEventSchema,
-  async ({ guild, body }) =>
-    post<ScheduledEvent>(`/guilds/${guild}/scheduled-events`, body)
-);
+export const createGuildScheduledEvent: Fetcher<
+  typeof createGuildScheduledEventSchema,
+  ScheduledEvent
+> = async ({ guild, body }) => post(`/guilds/${guild}/scheduled-events`, body);

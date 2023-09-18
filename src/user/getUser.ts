@@ -1,6 +1,6 @@
 import { z } from "zod";
+import { get, type Fetcher } from "../utils";
 import type { User } from "./types";
-import { get, query } from "../utils";
 
 export const getUserSchema = z.object({
   user: z.string().min(1)
@@ -11,6 +11,5 @@ export const getUserSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/user#get-user
  */
-export const getUser = query(getUserSchema, async ({ input: { user } }) =>
-  get<User>(`/users/${user}`)
-);
+export const getUser: Fetcher<typeof getUserSchema, User> = async ({ user }) =>
+  get(`/users/${user}`);

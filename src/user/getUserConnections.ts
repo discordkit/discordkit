@@ -1,4 +1,5 @@
-import { get } from "../utils";
+import type { z } from "zod";
+import { get, type Fetcher } from "../utils";
 import type { Connection } from "./types";
 
 /**
@@ -6,5 +7,5 @@ import type { Connection } from "./types";
  *
  * https://discord.com/developers/docs/resources/user#get-user-connections
  */
-export const getUserConnections = async (): Promise<Connection> =>
+export const getUserConnections: Fetcher<z.ZodUnknown, Connection> = async () =>
   get(`/users/@me/connections`);

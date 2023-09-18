@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, patch } from "../utils";
+import { patch, type Fetcher } from "../utils";
 import type { Emoji } from "./types";
 
 export const modifyGuildEmojiSchema = z.object({
@@ -10,7 +10,7 @@ export const modifyGuildEmojiSchema = z.object({
       /** name of the emoji */
       name: z.string().min(1),
       /** roles allowed to use this emoji */
-      roles: z.array(z.string().min(1))
+      roles: z.string().min(1).array()
     })
     .partial()
 });
@@ -22,8 +22,8 @@ export const modifyGuildEmojiSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/emoji#modify-guild-emoji
  */
-export const modifyGuildEmoji = mutation(
-  modifyGuildEmojiSchema,
-  async ({ guild, emoji, body }) =>
-    patch<Emoji>(`/guilds/${guild}/emojis/${emoji}`, body)
-);
+export const modifyGuildEmoji: Fetcher<
+  typeof modifyGuildEmojiSchema,
+  Emoji
+> = async ({ guild, emoji, body }) =>
+  patch(`/guilds/${guild}/emojis/${emoji}`, body);

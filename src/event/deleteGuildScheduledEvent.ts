@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, remove } from "../utils";
+import { remove, type Fetcher } from "../utils";
 
 export const deleteGuildScheduledEventSchema = z.object({
   guild: z.string().min(1),
@@ -11,8 +11,7 @@ export const deleteGuildScheduledEventSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild-scheduled-event#delete-guild-scheduled-event
  */
-export const deleteGuildScheduledEvent = mutation(
-  deleteGuildScheduledEventSchema,
-  async ({ guild, event }) =>
-    remove(`/guilds/${guild}/scheduled-events/${event}`)
-);
+export const deleteGuildScheduledEvent: Fetcher<
+  typeof deleteGuildScheduledEventSchema
+> = async ({ guild, event }) =>
+  remove(`/guilds/${guild}/scheduled-events/${event}`);

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, put } from "../utils";
+import { put, type Fetcher } from "../utils";
 
 export const addGuildMemberRoleSchema = z.object({
   guild: z.string().min(1),
@@ -14,8 +14,7 @@ export const addGuildMemberRoleSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#add-guild-member-role
  */
-export const addGuildMemberRole = mutation(
-  addGuildMemberRoleSchema,
-  async ({ guild, user, role }) =>
-    put(`/guilds/${guild}/members/${user}/roles/${role}`)
-);
+export const addGuildMemberRole: Fetcher<
+  typeof addGuildMemberRoleSchema
+> = async ({ guild, user, role }) =>
+  put(`/guilds/${guild}/members/${user}/roles/${role}`);

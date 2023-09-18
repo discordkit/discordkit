@@ -1,6 +1,6 @@
 import { z } from "zod";
+import { get, type Fetcher } from "../utils";
 import type { Invite } from "../invite";
-import { get, query } from "../utils";
 
 export const getChannelInvitesSchema = z.object({
   channel: z.string().min(1)
@@ -11,8 +11,7 @@ export const getChannelInvitesSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#get-channel-invites
  */
-export const getChannelInvites = query(
-  getChannelInvitesSchema,
-  async ({ input: { channel } }) =>
-    get<Invite[]>(`/channels/${channel}/invites`)
-);
+export const getChannelInvites: Fetcher<
+  typeof getChannelInvitesSchema,
+  Invite[]
+> = async ({ channel }) => get(`/channels/${channel}/invites`);

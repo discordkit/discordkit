@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { allowedMention, attachment, embed, type Message } from "../channel";
-import { mutation, patch, buildURL } from "../utils";
+import { patch, buildURL, type Fetcher } from "../utils";
 
 export const editWebhookMessageSchema = z.object({
   webhook: z.string().min(1),
@@ -18,17 +18,17 @@ export const editWebhookMessageSchema = z.object({
       /** the message contents (up to 2000 characters) */
       content: z.string().min(1).max(200),
       /** embedded rich content */
-      embeds: z.array(embed),
+      embeds: embed.array(),
       /** allowed mentions for the message */
       allowedMentions: allowedMention,
       /** the components to include with the message */
-      components: z.array(z.unknown()),
+      components: z.unknown().array(),
       /** the contents of the file being sent */
       files: z.unknown(),
       /** JSON encoded body of non-file params */
       payloadJson: z.unknown(),
       /** attachment objects with filename and description */
-      attachments: z.array(attachment.partial())
+      attachments: attachment.partial().array()
     })
     .partial()
 });
@@ -44,12 +44,11 @@ export const editWebhookMessageSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/webhook#edit-webhook-message
  */
-export const editWebhookMessage = mutation(
-  editWebhookMessageSchema,
-  async ({ webhook, token, message, params, body }) =>
-    patch<Message>(
-      buildURL(`/webhooks/${webhook}/${token}/messages/${message}`, params)
-        .href,
-      body
-    )
-);
+export const editWebhookMessage: Fetcher<
+  typeof editWebhookMessageSchema,
+  Message
+> = async ({ webhook, token, message, params, body }) =>
+  patch(
+    buildURL(`/webhooks/${webhook}/${token}/messages/${message}`, params).href,
+    body
+  );

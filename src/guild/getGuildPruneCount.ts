@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { get, query } from "../utils";
+import { get, type Fetcher } from "../utils";
 
 export const getGuildPruneCountSchema = z.object({
   guild: z.string().min(1),
@@ -21,8 +21,7 @@ export const getGuildPruneCountSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#get-guild-prune-count
  */
-export const getGuildPruneCount = query(
-  getGuildPruneCountSchema,
-  async ({ input: { guild, params } }) =>
-    get<{ pruned: number }>(`/guilds/${guild}/prune`, params)
-);
+export const getGuildPruneCount: Fetcher<
+  typeof getGuildPruneCountSchema,
+  { pruned: number }
+> = async ({ guild, params }) => get(`/guilds/${guild}/prune`, params);

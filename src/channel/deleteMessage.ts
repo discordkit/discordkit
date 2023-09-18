@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, remove } from "../utils";
+import { remove, type Fetcher } from "../utils";
 
 export const deleteMessageSchema = z.object({
   channel: z.string().min(1),
@@ -13,8 +13,7 @@ export const deleteMessageSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#delete-message
  */
-export const deleteMessage = mutation(
-  deleteMessageSchema,
-  async ({ channel, message }) =>
-    remove(`/channels/${channel}/messages/${message}`)
-);
+export const deleteMessage: Fetcher<typeof deleteMessageSchema> = async ({
+  channel,
+  message
+}) => remove(`/channels/${channel}/messages/${message}`);

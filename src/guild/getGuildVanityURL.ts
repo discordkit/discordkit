@@ -1,6 +1,6 @@
 import { z } from "zod";
+import { get, type Fetcher } from "../utils";
 import type { Invite } from "../invite";
-import { get, query } from "../utils";
 
 export const getGuildVanityURLSchema = z.object({
   guild: z.string().min(1)
@@ -11,8 +11,7 @@ export const getGuildVanityURLSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#get-guild-vanity-url
  */
-export const getGuildVanityURL = query(
-  getGuildVanityURLSchema,
-  async ({ input: { guild } }) =>
-    get<Partial<Invite>>(`/guilds/${guild}/vanity-url`)
-);
+export const getGuildVanityURL: Fetcher<
+  typeof getGuildVanityURLSchema,
+  Partial<Invite>
+> = async ({ guild }) => get(`/guilds/${guild}/vanity-url`);

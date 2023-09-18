@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, remove } from "../utils";
+import { remove, type Fetcher } from "../utils";
 
 export const deleteWebhookWithTokenSchema = z.object({
   webhook: z.string().min(1),
@@ -11,7 +11,6 @@ export const deleteWebhookWithTokenSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/webhook#delete-webhook-with-token
  */
-export const deleteWebhookWithToken = mutation(
-  deleteWebhookWithTokenSchema,
-  async ({ webhook, token }) => remove(`/webhooks/${webhook}/${token}`)
-);
+export const deleteWebhookWithToken: Fetcher<
+  typeof deleteWebhookWithTokenSchema
+> = async ({ webhook, token }) => remove(`/webhooks/${webhook}/${token}`);

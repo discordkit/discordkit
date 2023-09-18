@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, remove } from "../utils";
+import { remove, type Fetcher } from "../utils";
 
 export const removeGuildMemberRoleSchema = z.object({
   guild: z.string().min(1),
@@ -14,8 +14,7 @@ export const removeGuildMemberRoleSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#remove-guild-member-role
  */
-export const removeGuildMemberRole = mutation(
-  removeGuildMemberRoleSchema,
-  async ({ guild, user, role }) =>
-    remove(`/guilds/${guild}/members/${user}/roles/${role}`)
-);
+export const removeGuildMemberRole: Fetcher<
+  typeof removeGuildMemberRoleSchema
+> = async ({ guild, user, role }) =>
+  remove(`/guilds/${guild}/members/${user}/roles/${role}`);

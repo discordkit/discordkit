@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, put } from "../utils";
+import { put, type Fetcher } from "../utils";
 
 export const createReactionSchema = z.object({
   channel: z.string().min(1),
@@ -12,8 +12,8 @@ export const createReactionSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#create-reaction
  */
-export const createReaction = mutation(
-  createReactionSchema,
-  async ({ channel, message, emoji }) =>
-    put(`/channels/${channel}/messages/${message}/reactions/${emoji}/@me`)
-);
+export const createReaction: Fetcher<typeof createReactionSchema> = async ({
+  channel,
+  message,
+  emoji
+}) => put(`/channels/${channel}/messages/${message}/reactions/${emoji}/@me`);

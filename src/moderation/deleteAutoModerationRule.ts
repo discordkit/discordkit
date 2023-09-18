@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, remove } from "../utils";
+import { remove, type Fetcher } from "../utils";
 
 export const deleteAutoModerationRuleSchema = z.object({
   guild: z.string().min(1),
@@ -13,8 +13,7 @@ export const deleteAutoModerationRuleSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/auto-moderation#delete-auto-moderation-rule
  */
-export const deleteAutoModerationRule = mutation(
-  deleteAutoModerationRuleSchema,
-  async ({ guild, rule }) =>
-    remove(`/guilds/${guild}/auto-moderation/rules/${rule}`)
-);
+export const deleteAutoModerationRule: Fetcher<
+  typeof deleteAutoModerationRuleSchema
+> = async ({ guild, rule }) =>
+  remove(`/guilds/${guild}/auto-moderation/rules/${rule}`);

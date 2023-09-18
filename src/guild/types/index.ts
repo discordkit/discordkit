@@ -11,8 +11,14 @@ export {
 } from "./ActivityTimestamps";
 export { ban, type Ban } from "./Ban";
 export { clientStatus, type ClientStatus } from "./ClientStatus";
-export { DefaultMessageNotificationLevel } from "./DefaultMessageNotificationLevel";
-export { ExplicitContentFilterLevel } from "./ExplicitContentFilterLevel";
+export {
+  defaultMessageNotificationLevel,
+  DefaultMessageNotificationLevel
+} from "./DefaultMessageNotificationLevel";
+export {
+  explicitContentFilterLevel,
+  ExplicitContentFilterLevel
+} from "./ExplicitContentFilterLevel";
 export { guild, type Guild } from "./Guild";
 export { guildFeatures, GuildFeatures } from "./GuildFeatures";
 export { guildNSFWLevel, GuildNSFWLevel } from "./GuildNSFWLevel";

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, post } from "../utils";
+import { post, type Fetcher } from "../utils";
 
 export const triggerTypingIndicatorSchema = z.object({
   channel: z.string().min(1)
@@ -10,7 +10,6 @@ export const triggerTypingIndicatorSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#trigger-typing-indicator
  */
-export const triggerTypingIndicator = mutation(
-  triggerTypingIndicatorSchema,
-  async ({ channel }) => post(`/channels/${channel}/typing`)
-);
+export const triggerTypingIndicator: Fetcher<
+  typeof triggerTypingIndicatorSchema
+> = async ({ channel }) => post(`/channels/${channel}/typing`);

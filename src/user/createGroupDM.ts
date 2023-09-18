@@ -1,6 +1,6 @@
 import { z } from "zod";
+import { post, type Fetcher } from "../utils";
 import type { Channel } from "../channel";
-import { mutation, post } from "../utils";
 
 const createGroupDMSchema = z.object({
   body: z.object({
@@ -18,6 +18,7 @@ const createGroupDMSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/user#create-group-dm
  */
-export const createGroupDM = mutation(createGroupDMSchema, async ({ body }) =>
-  post<Channel>(`/users/@me/channels`, body)
-);
+export const createGroupDM: Fetcher<
+  typeof createGroupDMSchema,
+  Channel
+> = async ({ body }) => post(`/users/@me/channels`, body);

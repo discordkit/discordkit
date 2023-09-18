@@ -6,7 +6,7 @@ import {
   overwrite,
   VideoQualityMode
 } from "../channel";
-import { mutation, post } from "../utils";
+import { post, type Fetcher } from "../utils";
 
 export const createGuildChannelSchema = z.object({
   guild: z.string().min(1),
@@ -47,7 +47,7 @@ export const createGuildChannelSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#create-guild-channel
  */
-export const createGuildChannel = mutation(
-  createGuildChannelSchema,
-  async ({ guild, body }) => post<Channel>(`/guilds/${guild}/channels`, body)
-);
+export const createGuildChannel: Fetcher<
+  typeof createGuildChannelSchema,
+  Channel
+> = async ({ guild, body }) => post(`/guilds/${guild}/channels`, body);

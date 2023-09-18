@@ -1,6 +1,6 @@
 import { z } from "zod";
+import { patch, type Fetcher } from "../utils";
 import { messageContent, type Message } from "./types";
-import { mutation, patch } from "../utils";
 
 export const editMessageSchema = z.object({
   channel: z.string().min(1),
@@ -21,8 +21,8 @@ export const editMessageSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#edit-message
  */
-export const editMessage = mutation(
-  editMessageSchema,
-  async ({ channel, message, body }) =>
-    patch<Message>(`/channels/${channel}/messages/${message}`, body)
-);
+export const editMessage: Fetcher<typeof editMessageSchema, Message> = async ({
+  channel,
+  message,
+  body
+}) => patch(`/channels/${channel}/messages/${message}`, body);

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { get, query } from "../utils";
+import { get, type Fetcher } from "../utils";
 import type { Emoji } from "./types";
 
 export const listGuildEmojisSchema = z.object({
@@ -11,7 +11,7 @@ export const listGuildEmojisSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/emoji#list-guild-emojis
  */
-export const listGuildEmojis = query(
-  listGuildEmojisSchema,
-  async ({ input: { guild } }) => get<Emoji[]>(`/guilds/${guild}/emojis`)
-);
+export const listGuildEmojis: Fetcher<
+  typeof listGuildEmojisSchema,
+  Emoji[]
+> = async ({ guild }) => get(`/guilds/${guild}/emojis`);

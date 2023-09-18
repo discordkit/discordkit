@@ -1,6 +1,6 @@
 import { z } from "zod";
+import { get, type Fetcher } from "../utils";
 import type { User } from "../user";
-import { get, query } from "../utils";
 
 export const getReactionsSchema = z.object({
   channel: z.string().min(1),
@@ -22,11 +22,8 @@ export const getReactionsSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#get-reactions
  */
-export const getReactions = query(
-  getReactionsSchema,
-  async ({ input: { channel, message, emoji, params } }) =>
-    get<Array<Partial<User>>>(
-      `/channels/${channel}/messages/${message}/reactions/${emoji}`,
-      params
-    )
-);
+export const getReactions: Fetcher<
+  typeof getReactionsSchema,
+  Array<Partial<User>>
+> = async ({ channel, message, emoji, params }) =>
+  get(`/channels/${channel}/messages/${message}/reactions/${emoji}`, params);

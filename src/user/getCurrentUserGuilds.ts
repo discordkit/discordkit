@@ -1,6 +1,6 @@
 import { z } from "zod";
+import { get, type Fetcher } from "../utils";
 import type { Guild } from "../guild";
-import { get, query } from "../utils";
 
 export const getCurrentUserGuildsSchema = z.object({
   params: z
@@ -20,7 +20,7 @@ export const getCurrentUserGuildsSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/user#get-current-user-guilds
  */
-export const getCurrentUserGuilds = query(
-  getCurrentUserGuildsSchema,
-  async ({ input: { params } }) => get<Guild[]>(`/users/@me/guilds`, params)
-);
+export const getCurrentUserGuilds: Fetcher<
+  typeof getCurrentUserGuildsSchema,
+  Guild[]
+> = async ({ params }) => get(`/users/@me/guilds`, params);

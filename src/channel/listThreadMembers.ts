@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { get, query } from "../utils";
+import { get, type Fetcher } from "../utils";
 import type { ThreadMember } from "./types";
 
 export const listThreadMembersSchema = z.object({
@@ -13,8 +13,7 @@ export const listThreadMembersSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#list-thread-members
  */
-export const listThreadMembers = query(
-  listThreadMembersSchema,
-  async ({ input: { channel } }) =>
-    get<ThreadMember[]>(`/channels/${channel}/thread-members`)
-);
+export const listThreadMembers: Fetcher<
+  typeof listThreadMembersSchema,
+  ThreadMember[]
+> = async ({ channel }) => get(`/channels/${channel}/thread-members`);

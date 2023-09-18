@@ -1,10 +1,10 @@
 import { z } from "zod";
-import { mutation, patch } from "../utils";
+import { patch, type Fetcher } from "../utils";
 
 export const modifyGuildChannelPositionsSchema = z.object({
   guild: z.string().min(1),
-  body: z.array(
-    z.object({
+  body: z
+    .object({
       /** channel id */
       id: z.string().min(1),
       /** sorting position of the channel */
@@ -14,7 +14,7 @@ export const modifyGuildChannelPositionsSchema = z.object({
       /** the new parent ID for the channel that is moved */
       parentId: z.string().min(1).nullable()
     })
-  )
+    .array()
 });
 
 /**
@@ -22,7 +22,6 @@ export const modifyGuildChannelPositionsSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#modify-guild-channel-positions
  */
-export const modifyGuildChannelPositions = mutation(
-  modifyGuildChannelPositionsSchema,
-  async ({ guild, body }) => patch(`/guilds/${guild}/channels`, body)
-);
+export const modifyGuildChannelPositions: Fetcher<
+  typeof modifyGuildChannelPositionsSchema
+> = async ({ guild, body }) => patch(`/guilds/${guild}/channels`, body);

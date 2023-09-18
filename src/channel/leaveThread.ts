@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, remove } from "../utils";
+import { remove, type Fetcher } from "../utils";
 
 export const leaveThreadSchema = z.object({
   channel: z.string().min(1)
@@ -10,6 +10,6 @@ export const leaveThreadSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#leave-thread
  */
-export const leaveThread = mutation(leaveThreadSchema, async ({ channel }) =>
-  remove(`/channels/${channel}/thread-members/@me`)
-);
+export const leaveThread: Fetcher<typeof leaveThreadSchema> = async ({
+  channel
+}) => remove(`/channels/${channel}/thread-members/@me`);

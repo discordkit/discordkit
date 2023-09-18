@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { get, query } from "../utils";
+import { get, type Fetcher } from "../utils";
 import type { ModerationRule } from "./types";
 
 export const getAutoModerationRuleSchema = z.object({
@@ -14,8 +14,8 @@ export const getAutoModerationRuleSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/auto-moderation#get-auto-moderation-rule
  */
-export const getAutoModerationRule = query(
-  getAutoModerationRuleSchema,
-  async ({ input: { guild, rule } }) =>
-    get<ModerationRule>(`/guilds/${guild}/auto-moderation/rules/${rule}`)
-);
+export const getAutoModerationRule: Fetcher<
+  typeof getAutoModerationRuleSchema,
+  ModerationRule
+> = async ({ guild, rule }) =>
+  get(`/guilds/${guild}/auto-moderation/rules/${rule}`);

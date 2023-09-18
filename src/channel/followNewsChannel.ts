@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, post } from "../utils";
+import { post, type Fetcher } from "../utils";
 import type { FollowedChannel } from "./types";
 
 export const followNewsChannelSchema = z.object({
@@ -15,8 +15,7 @@ export const followNewsChannelSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#follow-news-channel
  */
-export const followNewsChannel = mutation(
-  followNewsChannelSchema,
-  async ({ channel, body }) =>
-    post<FollowedChannel>(`/channels/${channel}/followers`, body)
-);
+export const followNewsChannel: Fetcher<
+  typeof followNewsChannelSchema,
+  FollowedChannel
+> = async ({ channel, body }) => post(`/channels/${channel}/followers`, body);

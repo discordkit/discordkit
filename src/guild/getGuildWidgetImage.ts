@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { get, query } from "../utils";
+import { get, type Fetcher } from "../utils";
 
 export const getGuildWidgetImageSchema = z.object({
   guild: z.string().min(1),
@@ -23,8 +23,6 @@ export const getGuildWidgetImageSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#get-guild-widget-image
  */
-export const getGuildWidgetImage = query(
-  getGuildWidgetImageSchema,
-  async ({ input: { guild, params } }) =>
-    get(`/guilds/${guild}/widget.png`, params)
-);
+export const getGuildWidgetImage: Fetcher<
+  typeof getGuildWidgetImageSchema
+> = async ({ guild, params }) => get(`/guilds/${guild}/widget.png`, params);

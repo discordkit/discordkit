@@ -1,6 +1,6 @@
 import { z } from "zod";
+import { get, type Fetcher } from "../utils";
 import type { Message } from "../channel";
-import { query, get } from "../utils";
 
 export const getWebhookMessageSchema = z.object({
   webhook: z.string().min(1),
@@ -20,8 +20,8 @@ export const getWebhookMessageSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/webhook#get-webhook-message
  */
-export const getWebhookMessage = query(
-  getWebhookMessageSchema,
-  async ({ input: { webhook, token, message, params } }) =>
-    get<Message>(`/webhooks/${webhook}/${token}/messages/${message}`, params)
-);
+export const getWebhookMessage: Fetcher<
+  typeof getWebhookMessageSchema,
+  Message
+> = async ({ webhook, token, message, params }) =>
+  get(`/webhooks/${webhook}/${token}/messages/${message}`, params);

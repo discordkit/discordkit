@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, post } from "../utils";
+import { post, type Fetcher } from "../utils";
 
 export const bulkDeleteMessagesSchema = z.object({
   channel: z.string().min(1),
@@ -20,8 +20,7 @@ export const bulkDeleteMessagesSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#bulk-delete-messages
  */
-export const bulkDeleteMessages = mutation(
-  bulkDeleteMessagesSchema,
-  async ({ channel, body }) =>
-    post(`/channels/${channel}/messages/bulk-delete`, body)
-);
+export const bulkDeleteMessages: Fetcher<
+  typeof bulkDeleteMessagesSchema
+> = async ({ channel, body }) =>
+  post(`/channels/${channel}/messages/bulk-delete`, body);

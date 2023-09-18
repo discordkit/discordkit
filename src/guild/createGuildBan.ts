@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, put } from "../utils";
+import { put, type Fetcher } from "../utils";
 import type { Ban } from "./types";
 
 export const createGuildBanSchema = z.object({
@@ -23,8 +23,7 @@ export const createGuildBanSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#create-guild-ban
  */
-export const createGuildBan = mutation(
-  createGuildBanSchema,
-  async ({ guild, user, body }) =>
-    put<Ban>(`/guilds/${guild}/bans/${user}`, body)
-);
+export const createGuildBan: Fetcher<
+  typeof createGuildBanSchema,
+  Ban
+> = async ({ guild, user, body }) => put(`/guilds/${guild}/bans/${user}`, body);

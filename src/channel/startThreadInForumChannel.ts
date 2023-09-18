@@ -1,12 +1,12 @@
 import { z } from "zod";
-import { mutation, post } from "../utils";
+import { post, type Fetcher } from "../utils";
 import {
   allowedMention,
   attachment,
   embed,
-  MessageFlag,
   autoArchiveDuration,
-  type Channel
+  type Channel,
+  messageFlag
 } from "./types";
 
 export const startThreadInForumChannelSchema = z.object({
@@ -24,21 +24,21 @@ export const startThreadInForumChannelSchema = z.object({
         /** Message contents (up to 2000 characters) */
         content: z.string().min(1).max(2000),
         /** Embedded rich content (up to 6000 characters) */
-        embeds: z.array(embed),
+        embeds: embed.array(),
         /** Allowed mentions for the message */
         allowedMentions: allowedMention,
         /** Components to include with the message */
         //components?	array of message component objects
         /** IDs of up to 3 stickers in the server to send in the message */
-        stickerIds: z.array(z.string()).max(3),
+        stickerIds: z.string().array().max(3),
         /** Contents of the file being sent. See Uploading Files */
         files: z.unknown(),
         /** JSON-encoded body of non-file params, only for multipart/form-data requests. See Uploading Files */
         payloadJson: z.unknown(),
         /** Attachment objects with filename and description. See Uploading Files */
-        attachments: z.array(attachment.partial()),
+        attachments: attachment.partial().array(),
         /** Message flags combined as a bitfield (only SUPPRESS_EMBEDS can be set) */
-        flags: z.nativeEnum(MessageFlag)
+        flags: messageFlag
       })
       .partial()
   })
@@ -62,8 +62,7 @@ export const startThreadInForumChannelSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#start-thread-in-forum-channel
  */
-export const startThreadInForumChannel = mutation(
-  startThreadInForumChannelSchema,
-  async ({ channel, body }) =>
-    post<Channel>(`/channels/${channel}/threads`, body)
-);
+export const startThreadInForumChannel: Fetcher<
+  typeof startThreadInForumChannelSchema,
+  Channel
+> = async ({ channel, body }) => post(`/channels/${channel}/threads`, body);

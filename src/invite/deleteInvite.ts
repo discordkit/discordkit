@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, remove } from "../utils";
+import { remove, type Fetcher } from "../utils";
 
 export const deleteInviteSchema = z.object({
   code: z.string().min(1)
@@ -10,6 +10,6 @@ export const deleteInviteSchema = z.object({
  *
  * *This endpoint supports the `X-Audit-Log-Reason` header.*
  */
-export const deleteInvite = mutation(deleteInviteSchema, async ({ code }) =>
-  remove(`/invites/${code}`)
-);
+export const deleteInvite: Fetcher<typeof deleteInviteSchema> = async ({
+  code
+}) => remove(`/invites/${code}`);

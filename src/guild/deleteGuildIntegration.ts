@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, remove } from "../utils";
+import { remove, type Fetcher } from "../utils";
 
 export const deleteGuildIntegrationSchema = z.object({
   guild: z.string().min(1),
@@ -13,8 +13,7 @@ export const deleteGuildIntegrationSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#delete-guild-integration
  */
-export const deleteGuildIntegration = mutation(
-  deleteGuildIntegrationSchema,
-  async ({ guild, integration }) =>
-    remove(`/guilds/${guild}/integrations/${integration}`)
-);
+export const deleteGuildIntegration: Fetcher<
+  typeof deleteGuildIntegrationSchema
+> = async ({ guild, integration }) =>
+  remove(`/guilds/${guild}/integrations/${integration}`);

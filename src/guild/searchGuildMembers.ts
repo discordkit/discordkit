@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { get, query } from "../utils";
+import { get, type Fetcher } from "../utils";
 import type { Member } from "./types";
 
 export const searchGuildMembersSchema = z.object({
@@ -17,8 +17,7 @@ export const searchGuildMembersSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#search-guild-members
  */
-export const searchGuildMembers = query(
-  searchGuildMembersSchema,
-  async ({ input: { guild, params } }) =>
-    get<Member[]>(`/guilds/${guild}/members/search`, params)
-);
+export const searchGuildMembers: Fetcher<
+  typeof searchGuildMembersSchema,
+  Member[]
+> = async ({ guild, params }) => get(`/guilds/${guild}/members/search`, params);

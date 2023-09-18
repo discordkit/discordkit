@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, post } from "../utils";
+import { post, type Fetcher } from "../utils";
 import { mfaLevel, type MFALevel } from "./types";
 
 export const modifyGuildMFALevelSchema = z.object({
@@ -15,7 +15,7 @@ export const modifyGuildMFALevelSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#modify-guild-mfa-level
  */
-export const modifyGuildMFALevel = mutation(
-  modifyGuildMFALevelSchema,
-  async ({ guild, body }) => post<MFALevel>(`/guilds/${guild}/mfa`, body)
-);
+export const modifyGuildMFALevel: Fetcher<
+  typeof modifyGuildMFALevelSchema,
+  MFALevel
+> = async ({ guild, body }) => post(`/guilds/${guild}/mfa`, body);

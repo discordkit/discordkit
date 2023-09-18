@@ -1,10 +1,10 @@
 import { z } from "zod";
-import { mutation, patch } from "../utils";
+import { patch, type Fetcher } from "../utils";
 import {
   entityMetadata,
-  ScheduledEventEntityType,
-  ScheduledEventStatus,
-  ScheduledEventPrivacyLevel,
+  scheduledEventEntityType,
+  scheduledEventStatus,
+  scheduledEventPrivacyLevel,
   type ScheduledEvent
 } from "./types";
 
@@ -20,7 +20,7 @@ export const modifyGuildScheduledEventSchema = z.object({
       /** the name of the scheduled event */
       name: z.string().min(1),
       /** the privacy level of the scheduled event */
-      privacyLevel: z.nativeEnum(ScheduledEventPrivacyLevel),
+      privacyLevel: scheduledEventPrivacyLevel,
       /** the time to schedule the scheduled event */
       scheduledStartTime: z.string().min(1),
       /** the time when the scheduled event is scheduled to end */
@@ -28,9 +28,9 @@ export const modifyGuildScheduledEventSchema = z.object({
       /** the description of the scheduled event */
       description: z.string().min(1),
       /** the entity type of the scheduled event */
-      entityType: z.nativeEnum(ScheduledEventEntityType),
+      entityType: scheduledEventEntityType,
       /** the status of the scheduled event */
-      status: z.nativeEnum(ScheduledEventStatus),
+      status: scheduledEventStatus,
       /** the cover image of the scheduled event */
       image: z.string().min(1)
     })
@@ -47,8 +47,8 @@ export const modifyGuildScheduledEventSchema = z.object({
  * *This endpoint silently discards `entity_metadata` for non-`EXTERNAL` events.**
  * https://discord.com/developers/docs/resources/guild-scheduled-event#modify-guild-scheduled-event
  */
-export const modifyGuildScheduledEvent = mutation(
-  modifyGuildScheduledEventSchema,
-  async ({ guild, event, body }) =>
-    patch<ScheduledEvent>(`/guilds/${guild}/scheduled-events/${event}`, body)
-);
+export const modifyGuildScheduledEvent: Fetcher<
+  typeof modifyGuildScheduledEventSchema,
+  ScheduledEvent
+> = async ({ guild, event, body }) =>
+  patch(`/guilds/${guild}/scheduled-events/${event}`, body);

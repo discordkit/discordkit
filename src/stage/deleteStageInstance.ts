@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, remove } from "../utils";
+import { remove, type Fetcher } from "../utils";
 
 export const deleteStageInstanceSchema = z.object({
   channel: z.string().min(1)
@@ -14,7 +14,6 @@ export const deleteStageInstanceSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/stage-instance#delete-stage-instance
  */
-export const deleteStageInstance = mutation(
-  deleteStageInstanceSchema,
-  async ({ channel }) => remove(`/stage-instances/${channel}`)
-);
+export const deleteStageInstance: Fetcher<
+  typeof deleteStageInstanceSchema
+> = async ({ channel }) => remove(`/stage-instances/${channel}`);

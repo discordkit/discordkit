@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { get, query } from "../utils";
+import { get, type Fetcher } from "../utils";
 import type { VoiceRegion } from "../voice";
 
 export const getGuildVoiceRegionsSchema = z.object({
@@ -11,7 +11,7 @@ export const getGuildVoiceRegionsSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#get-guild-voice-regions
  */
-export const getGuildVoiceRegions = query(
-  getGuildVoiceRegionsSchema,
-  async ({ input: { guild } }) => get<VoiceRegion>(`/guilds/${guild}/regions`)
-);
+export const getGuildVoiceRegions: Fetcher<
+  typeof getGuildVoiceRegionsSchema,
+  VoiceRegion
+> = async ({ guild }) => get(`/guilds/${guild}/regions`);

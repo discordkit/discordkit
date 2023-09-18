@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, post } from "../utils";
+import { post, type Fetcher } from "../utils";
 
 export const beginGuildPruneSchema = z.object({
   guild: z.string().min(1),
@@ -26,8 +26,7 @@ export const beginGuildPruneSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#begin-guild-prune
  */
-export const beginGuildPrune = mutation(
-  beginGuildPruneSchema,
-  async ({ guild, body }) =>
-    post<{ pruned: number | null }>(`/guilds/${guild}/prune`, body)
-);
+export const beginGuildPrune: Fetcher<
+  typeof beginGuildPruneSchema,
+  { pruned: number | null }
+> = async ({ guild, body }) => post(`/guilds/${guild}/prune`, body);

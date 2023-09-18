@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, patch } from "../utils";
+import { patch, type Fetcher } from "../utils";
 import type { Member } from "./types";
 
 export const modifyGuildMemberSchema = z.object({
@@ -9,7 +9,7 @@ export const modifyGuildMemberSchema = z.object({
     /** value to set user's nickname to	(Requires `MANAGE_NICKNAMES` permission) */
     nick: z.string().min(1).optional(),
     /** array of role ids the member is assigned (Requires `MANAGE_ROLES` permission) */
-    roles: z.array(z.string().min(1)).optional(),
+    roles: z.string().min(1).array().optional(),
     /** whether the user is muted in voice channels (Requires `MUTE_MEMBERS` permission) */
     mute: z.boolean().optional(),
     /** whether the user is deafened in voice channels (Requires `DEAFEN_MEMBERS` permission) */
@@ -28,8 +28,8 @@ export const modifyGuildMemberSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#modify-guild-member
  */
-export const modifyGuildMember = mutation(
-  modifyGuildMemberSchema,
-  async ({ guild, user, body }) =>
-    patch<Member>(`/guilds/${guild}/members/${user}`, body)
-);
+export const modifyGuildMember: Fetcher<
+  typeof modifyGuildMemberSchema,
+  Member
+> = async ({ guild, user, body }) =>
+  patch(`/guilds/${guild}/members/${user}`, body);

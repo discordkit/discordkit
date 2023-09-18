@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, put } from "../utils";
+import { put, type Fetcher } from "../utils";
 
 export const joinThreadSchema = z.object({
   channel: z.string().min(1)
@@ -10,6 +10,6 @@ export const joinThreadSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#join-thread
  */
-export const joinThread = mutation(joinThreadSchema, async ({ channel }) =>
-  put(`/channels/${channel}/thread-members/@me`)
-);
+export const joinThread: Fetcher<typeof joinThreadSchema> = async ({
+  channel
+}) => put(`/channels/${channel}/thread-members/@me`);

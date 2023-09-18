@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, post, buildURL } from "../utils";
+import { post, buildURL, type Fetcher } from "../utils";
 
 export const executeSlackCompatibleWebhookSchema = z.object({
   webhook: z.string().min(1),
@@ -20,8 +20,7 @@ export const executeSlackCompatibleWebhookSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/webhook#execute-slackcompatible-webhook
  */
-export const executeSlackCompatibleWebhook = mutation(
-  executeSlackCompatibleWebhookSchema,
-  async ({ webhook, token, params }) =>
-    post(buildURL(`/webhooks/${webhook}/${token}/slack`, params).href)
-);
+export const executeSlackCompatibleWebhook: Fetcher<
+  typeof executeSlackCompatibleWebhookSchema
+> = async ({ webhook, token, params }) =>
+  post(buildURL(`/webhooks/${webhook}/${token}/slack`, params).href);

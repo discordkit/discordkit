@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { post, mutation } from "../utils";
+import { post, type Fetcher } from "../utils";
 import type { Webhook } from "./types";
 
 export const createWebhookConfig = z.object({
@@ -28,8 +28,7 @@ export const createWebhookConfig = z.object({
  *
  * https://discord.com/developers/docs/resources/webhook#create-webhook
  */
-export const createWebhook = mutation(
-  createWebhookConfig,
-  async ({ channel, body }) =>
-    post<Webhook>(`/channels/${channel}/webhooks`, body)
-);
+export const createWebhook: Fetcher<
+  typeof createWebhookConfig,
+  Webhook
+> = async ({ channel, body }) => post(`/channels/${channel}/webhooks`, body);

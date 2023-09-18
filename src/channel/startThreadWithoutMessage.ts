@@ -1,6 +1,7 @@
 import { z } from "zod";
-import { mutation, post } from "../utils";
-import { ChannelType, autoArchiveDuration, type Channel } from "./types";
+import type { Fetcher } from "../utils";
+import { post } from "../utils";
+import { autoArchiveDuration, type Channel, channelType } from "./types";
 
 export const startThreadWithoutMessageSchema = z.object({
   channel: z.string().min(1),
@@ -10,7 +11,7 @@ export const startThreadWithoutMessageSchema = z.object({
     /** duration in minutes to automatically archive the thread after recent activity, can be set to: 60, 1440, 4320, 10080 */
     autoArchiveDuration: autoArchiveDuration.optional(),
     /** the type of thread to create */
-    type: z.nativeEnum(ChannelType).optional(),
+    type: channelType.optional(),
     /** whether non-moderators can add other non-moderators to a thread; only available when creating a private thread */
     invitable: z.boolean().optional(),
     /** amount of seconds a user has to wait before sending another message (0-21600) */
@@ -27,8 +28,7 @@ export const startThreadWithoutMessageSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#start-thread-without-message
  */
-export const startThreadWithoutMessage = mutation(
-  startThreadWithoutMessageSchema,
-  async ({ channel, body }) =>
-    post<Channel>(`/channels/${channel}/threads`, body)
-);
+export const startThreadWithoutMessage: Fetcher<
+  typeof startThreadWithoutMessageSchema,
+  Channel
+> = async ({ channel, body }) => post(`/channels/${channel}/threads`, body);

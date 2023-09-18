@@ -1,6 +1,6 @@
 import { z } from "zod";
+import { post, type Fetcher } from "../utils";
 import { messageContent, type Message } from "./types";
-import { mutation, post } from "../utils";
 
 export const createMessageSchema = z.object({
   channel: z.string().min(1),
@@ -27,8 +27,7 @@ export const createMessageSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#create-message
  */
-export const createMessage = mutation(
-  createMessageSchema,
-  async ({ channel, body }) =>
-    post<Message>(`/channels/${channel}/messages`, body)
-);
+export const createMessage: Fetcher<
+  typeof createMessageSchema,
+  Message
+> = async ({ channel, body }) => post(`/channels/${channel}/messages`, body);

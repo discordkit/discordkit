@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, post } from "../utils";
+import { post, type Fetcher } from "../utils";
 import type { Sticker } from "./types";
 
 export const createGuildStickerSchema = z.object({
@@ -27,7 +27,7 @@ export const createGuildStickerSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/sticker#create-guild-sticker
  */
-export const createGuildSticker = mutation(
-  createGuildStickerSchema,
-  async ({ guild, body }) => post<Sticker>(`/guilds/${guild}/stickers`, body)
-);
+export const createGuildSticker: Fetcher<
+  typeof createGuildStickerSchema,
+  Sticker
+> = async ({ guild, body }) => post(`/guilds/${guild}/stickers`, body);

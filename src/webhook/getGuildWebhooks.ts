@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { get, query } from "../utils";
+import { get, type Fetcher } from "../utils";
 import type { Webhook } from "./types";
 
 export const getGuildWebhooksSchema = z.object({
@@ -13,7 +13,7 @@ export const getGuildWebhooksSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/webhook#get-guild-webhooks
  */
-export const getGuildWebhooks = query(
-  getGuildWebhooksSchema,
-  async ({ input: { guild } }) => get<Webhook[]>(`/guilds/${guild}/webhooks`)
-);
+export const getGuildWebhooks: Fetcher<
+  typeof getGuildWebhooksSchema,
+  Webhook[]
+> = async ({ guild }) => get(`/guilds/${guild}/webhooks`);

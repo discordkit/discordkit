@@ -1,7 +1,12 @@
 import { z } from "zod";
-import { mutation, patch } from "../utils";
-import { VideoQualityMode, ChannelType, autoArchiveDuration } from "./types";
-import type { Channel } from "./types";
+import type { Fetcher } from "../utils";
+import { patch } from "../utils";
+import {
+  type Channel,
+  autoArchiveDuration,
+  videoQualityMode,
+  channelType
+} from "./types";
 
 const sharedChannelOptions = z.object({
   /** 1-100 character channel name */
@@ -35,7 +40,7 @@ const groupDMOptions = sharedChannelOptions
 const guildChannelOptions = sharedChannelOptions
   .extend({
     /** the type of channel; only conversion between text and news is supported and only in guilds with the "NEWS" feature */
-    type: z.nativeEnum(ChannelType),
+    type: channelType,
     /** the position of the channel in the left-hand listing */
     position: z.number(),
     /** 0-1024 character channel topic */
@@ -68,7 +73,7 @@ const guildChannelOptions = sharedChannelOptions
     /** channel voice region id, automatic when set to null */
     rtcRegion: z.string().min(1).nullable(),
     /** the camera video quality mode of the voice channel */
-    videoQualityMode: z.nativeEnum(VideoQualityMode),
+    videoQualityMode,
     /** the default duration that the clients use (not the API) for newly created threads in the channel, in minutes, to automatically archive the thread after recent activity */
     defaultAutoArchiveDuration: autoArchiveDuration
   })
@@ -86,7 +91,7 @@ export const modifyChannelSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#modify-channel
  */
-export const modifyChannel = mutation(
-  modifyChannelSchema,
-  async ({ channel, body }) => patch<Channel>(`/channels/${channel}`, body)
-);
+export const modifyChannel: Fetcher<
+  typeof modifyChannelSchema,
+  Channel
+> = async ({ channel, body }) => patch(`/channels/${channel}`, body);

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, post, buildURL } from "../utils";
+import { post, buildURL, type Fetcher } from "../utils";
 
 export const executeGitHubCompatibleWebhookSchema = z.object({
   webhook: z.string().min(1),
@@ -20,8 +20,7 @@ export const executeGitHubCompatibleWebhookSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/webhook#execute-githubcompatible-webhook
  */
-export const executeGitHubCompatibleWebhook = mutation(
-  executeGitHubCompatibleWebhookSchema,
-  async ({ webhook, token, params }) =>
-    post(buildURL(`/webhooks/${webhook}/${token}/github`, params).href)
-);
+export const executeGitHubCompatibleWebhook: Fetcher<
+  typeof executeGitHubCompatibleWebhookSchema
+> = async ({ webhook, token, params }) =>
+  post(buildURL(`/webhooks/${webhook}/${token}/github`, params).href);

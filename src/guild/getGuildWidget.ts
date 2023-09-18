@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { get, query } from "../utils";
+import { get, type Fetcher } from "../utils";
 import type { GuildWidget } from "./types";
 
 export const getGuildWidgetSchema = z.object({
@@ -11,8 +11,7 @@ export const getGuildWidgetSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#get-guild-widget
  */
-export const getGuildWidget = query(
-  getGuildWidgetSchema,
-  async ({ input: { guild } }) =>
-    get<GuildWidget>(`/guilds/${guild}/widget.json`)
-);
+export const getGuildWidget: Fetcher<
+  typeof getGuildWidgetSchema,
+  GuildWidget
+> = async ({ guild }) => get(`/guilds/${guild}/widget.json`);

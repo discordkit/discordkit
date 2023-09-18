@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { get, query } from "../utils";
+import { get, type Fetcher } from "../utils";
 import type { Message } from "./types";
 
 export const getChannelMessageSchema = z.object({
@@ -12,8 +12,8 @@ export const getChannelMessageSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#get-channel-message
  */
-export const getChannelMessage = query(
-  getChannelMessageSchema,
-  async ({ input: { channel, message } }) =>
-    get<Message>(`/channels/${channel}/messages/${message}`)
-);
+export const getChannelMessage: Fetcher<
+  typeof getChannelMessageSchema,
+  Message
+> = async ({ channel, message }) =>
+  get(`/channels/${channel}/messages/${message}`);

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { get, query } from "../utils";
+import { get, type Fetcher } from "../utils";
 import type { Stage } from "./types";
 
 export const getStageInstanceSchema = z.object({
@@ -11,7 +11,7 @@ export const getStageInstanceSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/stage-instance#get-stage-instance
  */
-export const getStageInstance = query(
-  getStageInstanceSchema,
-  async ({ input: { channel } }) => get<Stage>(`/stage-instances/${channel}`)
-);
+export const getStageInstance: Fetcher<
+  typeof getStageInstanceSchema,
+  Stage
+> = async ({ channel }) => get(`/stage-instances/${channel}`);

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { query, get } from "../utils";
+import { get, type Fetcher } from "../utils";
 import type { Webhook } from "./types";
 
 export const getWebhookSchema = z.object({
@@ -13,7 +13,6 @@ export const getWebhookSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/webhook#get-webhook
  */
-export const getWebhook = query(
-  getWebhookSchema,
-  async ({ input: { webhook } }) => get<Webhook>(`/webhooks/${webhook}`)
-);
+export const getWebhook: Fetcher<typeof getWebhookSchema, Webhook> = async ({
+  webhook
+}) => get(`/webhooks/${webhook}`);

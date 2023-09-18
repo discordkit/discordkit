@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { get, query } from "../utils";
+import { get, type Fetcher } from "../utils";
 import type { ScheduledEvent } from "./types";
 
 export const listScheduledEventsForGuildSchema = z.object({
@@ -17,8 +17,8 @@ export const listScheduledEventsForGuildSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild-scheduled-event#list-scheduled-events-for-guild
  */
-export const listScheduledEventsForGuild = query(
-  listScheduledEventsForGuildSchema,
-  async ({ input: { guild, params } }) =>
-    get<ScheduledEvent[]>(`/guilds/${guild}/scheduled-events`, params)
-);
+export const listScheduledEventsForGuild: Fetcher<
+  typeof listScheduledEventsForGuildSchema,
+  ScheduledEvent[]
+> = async ({ guild, params }) =>
+  get(`/guilds/${guild}/scheduled-events`, params);

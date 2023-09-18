@@ -1,6 +1,6 @@
 import { z } from "zod";
+import { post, type Fetcher } from "../utils";
 import type { Message } from "./types";
-import { mutation, post } from "../utils";
 
 export const crosspostMessageSchema = z.object({
   channel: z.string().min(1),
@@ -12,8 +12,8 @@ export const crosspostMessageSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#crosspost-message
  */
-export const crosspostMessage = mutation(
-  crosspostMessageSchema,
-  async ({ channel, message }) =>
-    post<Message>(`/channels/${channel}/messages/${message}/crosspost`)
-);
+export const crosspostMessage: Fetcher<
+  typeof crosspostMessageSchema,
+  Message
+> = async ({ channel, message }) =>
+  post(`/channels/${channel}/messages/${message}/crosspost`);

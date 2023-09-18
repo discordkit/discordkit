@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, patch } from "../utils";
+import { patch, type Fetcher } from "../utils";
 import type { Webhook } from "./types";
 
 export const modifyWebhookSchema = z.object({
@@ -32,7 +32,7 @@ export const modifyWebhookSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/webhook#modify-webhook
  */
-export const modifyWebhook = mutation(
-  modifyWebhookSchema,
-  async ({ webhook, body }) => patch<Webhook>(`/webhooks/${webhook}`, body)
-);
+export const modifyWebhook: Fetcher<
+  typeof modifyWebhookSchema,
+  Webhook
+> = async ({ webhook, body }) => patch(`/webhooks/${webhook}`, body);

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, put } from "../utils";
+import { put, type Fetcher } from "../utils";
 import type { GuildTemplate } from "./types";
 
 export const syncGuildTemplateSchema = z.object({
@@ -12,8 +12,8 @@ export const syncGuildTemplateSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild-template#sync-guild-template
  */
-export const syncGuildTemplate = mutation(
-  syncGuildTemplateSchema,
-  async ({ guild, template }) =>
-    put<GuildTemplate>(`/guilds/${guild}/templates/${template}`)
-);
+export const syncGuildTemplate: Fetcher<
+  typeof syncGuildTemplateSchema,
+  GuildTemplate
+> = async ({ guild, template }) =>
+  put(`/guilds/${guild}/templates/${template}`);

@@ -1,10 +1,7 @@
-// @ts-check
-const { name } = require(`./package.json`);
+import type { Config } from "@jest/types";
+import { name } from "./package.json";
 
-/**
- * @type {import("@jest/types").Config.InitialOptions}
- */
-module.exports = {
+const config: Config.InitialOptions = {
   displayName: name,
   coverageDirectory: `./coverage/`,
   collectCoverage: true,
@@ -20,12 +17,15 @@ module.exports = {
   ],
   transform: {
     "^.+\\.(js|jsx|ts|tsx)$": [
-      "babel-jest",
+      `babel-jest`,
       {
-        presets: ["@babel/preset-typescript", "@babel/preset-env"]
+        presets: [`@babel/preset-typescript`, `@babel/preset-env`]
       }
     ]
   },
+  setupFilesAfterEnv: [`./jest.setup.ts`],
   testEnvironment: `node`,
   verbose: true
 };
+
+export default config;

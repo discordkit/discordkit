@@ -1,6 +1,6 @@
 import { z } from "zod";
+import { post, type Fetcher } from "../utils";
 import type { Channel } from "../channel";
-import { mutation, post } from "../utils";
 
 export const createDMSchema = z.object({
   body: z.object({
@@ -16,6 +16,6 @@ export const createDMSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/user#create-dm
  */
-export const createDM = mutation(createDMSchema, async ({ body }) =>
-  post<Channel>(`/users/@me/channels`, body)
-);
+export const createDM: Fetcher<typeof createDMSchema, Channel> = async ({
+  body
+}) => post(`/users/@me/channels`, body);

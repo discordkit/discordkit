@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { get, query } from "../utils";
+import { get, type Fetcher } from "../utils";
 import type { GuildTemplate } from "./types";
 
 export const getGuildTemplateSchema = z.object({
@@ -11,8 +11,7 @@ export const getGuildTemplateSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild-template#get-guild-template
  */
-export const getGuildTemplate = query(
-  getGuildTemplateSchema,
-  async ({ input: { template } }) =>
-    get<GuildTemplate>(`/guilds/templates/${template}`)
-);
+export const getGuildTemplate: Fetcher<
+  typeof getGuildTemplateSchema,
+  GuildTemplate
+> = async ({ template }) => get(`/guilds/templates/${template}`);

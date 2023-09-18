@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { get, query } from "../utils";
+import { get, type Fetcher } from "../utils";
 import type { Integration } from "./types";
 
 export const getGuildIntegrationsSchema = z.object({
@@ -11,8 +11,7 @@ export const getGuildIntegrationsSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#get-guild-integrations
  */
-export const getGuildIntegrations = query(
-  getGuildIntegrationsSchema,
-  async ({ input: { guild } }) =>
-    get<Integration[]>(`/guilds/${guild}/integrations`)
-);
+export const getGuildIntegrations: Fetcher<
+  typeof getGuildIntegrationsSchema,
+  Integration[]
+> = async ({ guild }) => get(`/guilds/${guild}/integrations`);

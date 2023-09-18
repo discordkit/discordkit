@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, patch } from "../utils";
+import { patch, type Fetcher } from "../utils";
 import type { User } from "./types";
 
 export const modifyCurrentUserSchema = z.object({
@@ -18,7 +18,7 @@ export const modifyCurrentUserSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/user#modify-current-user
  */
-export const modifyCurrentUser = mutation(
-  modifyCurrentUserSchema,
-  async ({ body }) => patch<User>(`/users/@me`, body)
-);
+export const modifyCurrentUser: Fetcher<
+  typeof modifyCurrentUserSchema,
+  User
+> = async ({ body }) => patch(`/users/@me`, body);

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, remove } from "../utils";
+import { remove, type Fetcher } from "../utils";
 
 export const deleteChannelPermissionSchema = z.object({
   channel: z.string().min(1),
@@ -13,8 +13,7 @@ export const deleteChannelPermissionSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#delete-channel-permission
  */
-export const deleteChannelPermission = mutation(
-  deleteChannelPermissionSchema,
-  async ({ channel, overwrite }) =>
-    remove(`/channels/${channel}/permissions/${overwrite}`)
-);
+export const deleteChannelPermission: Fetcher<
+  typeof deleteChannelPermissionSchema
+> = async ({ channel, overwrite }) =>
+  remove(`/channels/${channel}/permissions/${overwrite}`);

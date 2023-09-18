@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, remove } from "../utils";
+import { remove, type Fetcher } from "../utils";
 
 export const deleteOwnReactionSchema = z.object({
   channel: z.string().min(1),
@@ -12,8 +12,7 @@ export const deleteOwnReactionSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#delete-own-reaction
  */
-export const deleteOwnReaction = mutation(
-  deleteOwnReactionSchema,
-  async ({ channel, message, emoji }) =>
-    remove(`/channels/${channel}/messages/${message}/reactions/${emoji}/@me`)
-);
+export const deleteOwnReaction: Fetcher<
+  typeof deleteOwnReactionSchema
+> = async ({ channel, message, emoji }) =>
+  remove(`/channels/${channel}/messages/${message}/reactions/${emoji}/@me`);

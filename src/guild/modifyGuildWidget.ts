@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, patch } from "../utils";
+import { patch, type Fetcher } from "../utils";
 import { guildWidget, type GuildWidget } from "./types";
 
 export const modifyGuildWidgetScehma = z.object({
@@ -14,7 +14,7 @@ export const modifyGuildWidgetScehma = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#modify-guild-widget
  */
-export const modifyGuildWidget = mutation(
-  modifyGuildWidgetScehma,
-  async ({ guild, body }) => patch<GuildWidget>(`/guilds/${guild}/widget`, body)
-);
+export const modifyGuildWidget: Fetcher<
+  typeof modifyGuildWidgetScehma,
+  GuildWidget
+> = async ({ guild, body }) => patch(`/guilds/${guild}/widget`, body);

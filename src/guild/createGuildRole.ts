@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, post } from "../utils";
+import { post, type Fetcher } from "../utils";
 import type { Role } from "./types";
 
 export const createGuildRoleSchema = z.object({
@@ -31,7 +31,7 @@ export const createGuildRoleSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#create-guild-role
  */
-export const createGuildRole = mutation(
-  createGuildRoleSchema,
-  async ({ guild, body }) => post<Role>(`/guilds/${guild}/roles`, body)
-);
+export const createGuildRole: Fetcher<
+  typeof createGuildRoleSchema,
+  Role
+> = async ({ guild, body }) => post(`/guilds/${guild}/roles`, body);

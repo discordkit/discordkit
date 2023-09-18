@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { allowedMention, attachment, embed, MessageFlag } from "../channel";
-import { mutation, post, buildURL } from "../utils";
+import { post, buildURL, type Fetcher } from "../utils";
+import { allowedMention, attachment, embed, messageFlag } from "../channel";
 
 export const executeWebhookSchema = z.object({
   webhook: z.string().min(1),
@@ -25,7 +25,7 @@ export const executeWebhookSchema = z.object({
       /** true if this is a TTS message */
       tts: z.boolean(),
       /** embedded rich content */
-      embeds: z.array(embed),
+      embeds: embed.array(),
       /** allowed mentions for the message */
       allowedMentions: allowedMention,
       /** the components to include with the message */
@@ -35,9 +35,9 @@ export const executeWebhookSchema = z.object({
       /** JSON encoded body of non-file params */
       payloadJson: z.string(),
       /** attachment objects with filename and description */
-      attachments: z.array(attachment.partial()),
+      attachments: attachment.partial().array(),
       /** message flags combined as a bitfield (only SUPPRESS_EMBEDS can be set) */
-      flags: z.nativeEnum(MessageFlag),
+      flags: messageFlag,
       /** name of thread to create (requires the webhook channel to be a forum channel) */
       threadName: z.string().min(1)
     })
@@ -53,8 +53,9 @@ export const executeWebhookSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/webhook#execute-webhook
  */
-export const executeWebhook = mutation(
-  executeWebhookSchema,
-  async ({ webhook, token, params, body }) =>
-    post(buildURL(`/webhooks/${webhook}/${token}`, params).href, body)
-);
+export const executeWebhook: Fetcher<typeof executeWebhookSchema> = async ({
+  webhook,
+  token,
+  params,
+  body
+}) => post(buildURL(`/webhooks/${webhook}/${token}`, params).href, body);

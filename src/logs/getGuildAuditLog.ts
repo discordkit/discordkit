@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { get, query } from "../utils";
+import { get, type Fetcher } from "../utils";
 import { type AuditLog, auditLogEvent } from "./types";
 
 export const getGuildAuditLogSchema = z.object({
@@ -24,8 +24,7 @@ export const getGuildAuditLogSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/audit-log#get-guild-audit-log
  */
-export const getGuildAuditLog = query(
-  getGuildAuditLogSchema,
-  async ({ input: { guild, params } }) =>
-    get<AuditLog>(`/guilds/${guild}/audit-logs`, params)
-);
+export const getGuildAuditLog: Fetcher<
+  typeof getGuildAuditLogSchema,
+  AuditLog
+> = async ({ guild, params }) => get(`/guilds/${guild}/audit-logs`, params);

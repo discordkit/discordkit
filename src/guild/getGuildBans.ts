@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { get, query } from "../utils";
+import { get, type Fetcher } from "../utils";
 import type { Ban } from "./types";
 
 export const getGuildBansSchema = z.object({
@@ -22,8 +22,7 @@ export const getGuildBansSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#get-guild-bans
  */
-export const getGuildBans = query(
-  getGuildBansSchema,
-  async ({ input: { guild, params } }) =>
-    get<Ban[]>(`/guilds/${guild}/bans`, params)
-);
+export const getGuildBans: Fetcher<typeof getGuildBansSchema, Ban[]> = async ({
+  guild,
+  params
+}) => get(`/guilds/${guild}/bans`, params);

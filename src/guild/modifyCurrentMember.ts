@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, patch } from "../utils";
+import { patch, type Fetcher } from "../utils";
 import type { Member } from "./types";
 
 export const modifyCurrentMemberSchema = z.object({
@@ -17,7 +17,7 @@ export const modifyCurrentMemberSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#modify-current-member
  */
-export const modifyCurrentMember = mutation(
-  modifyCurrentMemberSchema,
-  async ({ guild, body }) => patch<Member>(`/guilds/${guild}/members/@me`, body)
-);
+export const modifyCurrentMember: Fetcher<
+  typeof modifyCurrentMemberSchema,
+  Member
+> = async ({ guild, body }) => patch(`/guilds/${guild}/members/@me`, body);

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, put } from "../utils";
+import { put, type Fetcher } from "../utils";
 
 export const pinMessageSchema = z.object({
   channel: z.string().min(1),
@@ -15,7 +15,7 @@ export const pinMessageSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#pin-message
  */
-export const pinMessage = mutation(
-  pinMessageSchema,
-  async ({ channel, message }) => put(`/channels/${channel}/pins/${message}`)
-);
+export const pinMessage: Fetcher<typeof pinMessageSchema> = async ({
+  channel,
+  message
+}) => put(`/channels/${channel}/pins/${message}`);

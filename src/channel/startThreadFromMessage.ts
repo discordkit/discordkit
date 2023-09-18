@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { autoArchiveDuration, type Channel } from "./types";
-import { mutation, post } from "../utils";
+import { post, type Fetcher } from "../utils";
 
 export const startThreadFromMessageSchema = z.object({
   channel: z.string().min(1),
@@ -24,8 +24,8 @@ export const startThreadFromMessageSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#start-thread-from-message
  */
-export const startThreadFromMessage = mutation(
-  startThreadFromMessageSchema,
-  async ({ channel, message, body }) =>
-    post<Channel>(`/channels/${channel}/messages/${message}/threads`, body)
-);
+export const startThreadFromMessage: Fetcher<
+  typeof startThreadFromMessageSchema,
+  Channel
+> = async ({ channel, message, body }) =>
+  post(`/channels/${channel}/messages/${message}/threads`, body);

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, put } from "../utils";
+import { put, type Fetcher } from "../utils";
 
 export const groupDMAddRecipientSchema = z.object({
   channel: z.string().min(1),
@@ -17,8 +17,7 @@ export const groupDMAddRecipientSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#group-dm-add-recipient
  */
-export const groupDMAddRecipient = mutation(
-  groupDMAddRecipientSchema,
-  async ({ channel, user, body }) =>
-    put(`/channels/${channel}/recipients/${user}`, body)
-);
+export const groupDMAddRecipient: Fetcher<
+  typeof groupDMAddRecipientSchema
+> = async ({ channel, user, body }) =>
+  put(`/channels/${channel}/recipients/${user}`, body);

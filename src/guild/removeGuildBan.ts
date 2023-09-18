@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, remove } from "../utils";
+import { remove, type Fetcher } from "../utils";
 
 export const removeGuildBanSchema = z.object({
   guild: z.string().min(1),
@@ -13,7 +13,7 @@ export const removeGuildBanSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#remove-guild-ban
  */
-export const removeGuildBan = mutation(
-  removeGuildBanSchema,
-  async ({ guild, user }) => remove(`/guilds/${guild}/bans/${user}`)
-);
+export const removeGuildBan: Fetcher<typeof removeGuildBanSchema> = async ({
+  guild,
+  user
+}) => remove(`/guilds/${guild}/bans/${user}`);

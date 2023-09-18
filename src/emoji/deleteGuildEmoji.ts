@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, remove } from "../utils";
+import { remove, type Fetcher } from "../utils";
 
 export const deleteGuildEmojiSchema = z.object({
   guild: z.string().min(1),
@@ -11,7 +11,7 @@ export const deleteGuildEmojiSchema = z.object({
  *
  * *This endpoint supports the `X-Audit-Log-Reason` header.*
  */
-export const deleteGuildEmoji = mutation(
-  deleteGuildEmojiSchema,
-  async ({ guild, emoji }) => remove(`/guilds/${guild}/emojis/${emoji}`)
-);
+export const deleteGuildEmoji: Fetcher<typeof deleteGuildEmojiSchema> = async ({
+  guild,
+  emoji
+}) => remove(`/guilds/${guild}/emojis/${emoji}`);

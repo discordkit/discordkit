@@ -1,17 +1,17 @@
 import { z } from "zod";
-import { mutation, patch } from "../utils";
+import { patch, type Fetcher } from "../utils";
 import type { Role } from "./types";
 
 export const modifyGuildRolePositionsSchema = z.object({
   guild: z.string().min(1),
-  body: z.array(
-    z.object({
+  body: z
+    .object({
       /** role */
       id: z.string().min(1),
       /** sorting position of the role */
       position: z.number().positive().nullable()
     })
-  )
+    .array()
 });
 
 /**
@@ -21,7 +21,7 @@ export const modifyGuildRolePositionsSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#modify-guild-role-positions
  */
-export const modifyGuildRolePositions = mutation(
-  modifyGuildRolePositionsSchema,
-  async ({ guild, body }) => patch<Role[]>(`/guilds/${guild}/roles`, body)
-);
+export const modifyGuildRolePositions: Fetcher<
+  typeof modifyGuildRolePositionsSchema,
+  Role[]
+> = async ({ guild, body }) => patch(`/guilds/${guild}/roles`, body);

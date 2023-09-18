@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, remove } from "../utils";
+import { remove, type Fetcher } from "../utils";
 
 export const unpinMessageSchema = z.object({
   channel: z.string().min(1),
@@ -13,7 +13,7 @@ export const unpinMessageSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#unpin-message
  */
-export const unpinMessage = mutation(
-  unpinMessageSchema,
-  async ({ channel, message }) => remove(`/channels/${channel}/pins/${message}`)
-);
+export const unpinMessage: Fetcher<typeof unpinMessageSchema> = async ({
+  channel,
+  message
+}) => remove(`/channels/${channel}/pins/${message}`);

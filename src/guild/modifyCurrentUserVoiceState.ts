@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, patch } from "../utils";
+import { patch, type Fetcher } from "../utils";
 
 export const modifyCurrentUserVoiceStateSchema = z.object({
   guild: z.string().min(1),
@@ -18,7 +18,6 @@ export const modifyCurrentUserVoiceStateSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#modify-current-user-voice-state
  */
-export const modifyCurrentUserVoiceState = mutation(
-  modifyCurrentUserVoiceStateSchema,
-  async ({ guild, body }) => patch(`/guilds/${guild}/voice-states/@me`, body)
-);
+export const modifyCurrentUserVoiceState: Fetcher<
+  typeof modifyCurrentUserVoiceStateSchema
+> = async ({ guild, body }) => patch(`/guilds/${guild}/voice-states/@me`, body);

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, remove, buildURL } from "../utils";
+import { remove, buildURL, type Fetcher } from "../utils";
 
 export const deleteWebhookMessageSchema = z.object({
   webhook: z.string().min(1),
@@ -18,10 +18,9 @@ export const deleteWebhookMessageSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/webhook#delete-webhook-message
  */
-export const deleteWebhookMessage = mutation(
-  deleteWebhookMessageSchema,
-  async ({ webhook, token, message, params }) =>
-    remove(
-      buildURL(`/webhooks/${webhook}/${token}/messages/${message}`, params).href
-    )
-);
+export const deleteWebhookMessage: Fetcher<
+  typeof deleteWebhookMessageSchema
+> = async ({ webhook, token, message, params }) =>
+  remove(
+    buildURL(`/webhooks/${webhook}/${token}/messages/${message}`, params).href
+  );

@@ -1,13 +1,13 @@
 import { z } from "zod";
-import { mutation, post } from "../utils";
+import { post, type Fetcher } from "../utils";
 import { channel } from "../channel";
 import {
   role,
-  DefaultMessageNotificationLevel,
-  ExplicitContentFilterLevel,
-  VerificationLevel,
-  SystemChannelFlags,
-  type Guild
+  type Guild,
+  explicitContentFilterLevel,
+  defaultMessageNotificationLevel,
+  verificationLevel,
+  systemChannelFlags
 } from "./types";
 
 export const createGuildSchema = z.object({
@@ -19,17 +19,15 @@ export const createGuildSchema = z.object({
     /** icon hash */
     icon: z.string().min(1).optional(),
     /** verification level */
-    verificationLevel: z.nativeEnum(VerificationLevel).optional(),
+    verificationLevel: verificationLevel.optional(),
     /** default message notification level */
-    defaultMessageNotifications: z
-      .nativeEnum(DefaultMessageNotificationLevel)
-      .optional(),
+    defaultMessageNotifications: defaultMessageNotificationLevel.optional(),
     /** explicit content filter level */
-    explicitContentFilter: z.nativeEnum(ExplicitContentFilterLevel).optional(),
+    explicitContentFilter: explicitContentFilterLevel.optional(),
     /** new guild roles */
-    roles: z.array(role).optional(),
+    roles: role.array().optional(),
     /** new guild's channels */
-    channels: z.array(channel.partial()).optional(),
+    channels: channel.partial().array().optional(),
     /** id for afk channel */
     afkChannelId: z.string().min(1).optional(),
     /** afk timeout in seconds */
@@ -37,7 +35,7 @@ export const createGuildSchema = z.object({
     /** the id of the channel where guild notices such as welcome messages and boost events are posted */
     systemChannelId: z.string().min(1).optional(),
     /** system channel flags */
-    systemChannelFlags: z.nativeEnum(SystemChannelFlags).optional()
+    systemChannelFlags: systemChannelFlags.optional()
   })
 });
 
@@ -48,6 +46,6 @@ export const createGuildSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#create-guild
  */
-export const createGuild = mutation(createGuildSchema, async ({ body }) =>
-  post<Guild>(`/guilds`, body)
-);
+export const createGuild: Fetcher<typeof createGuildSchema, Guild> = async ({
+  body
+}) => post(`/guilds`, body);

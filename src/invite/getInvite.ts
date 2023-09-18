@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { get, query } from "../utils";
+import { get, type Fetcher } from "../utils";
 import type { Invite } from "./types";
 
 export const getInviteSchema = z.object({
@@ -22,7 +22,7 @@ export const getInviteSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/invite#get-invite
  */
-export const getInvite = query(
-  getInviteSchema,
-  async ({ input: { code, params } }) => get<Invite>(`/invites/${code}`, params)
-);
+export const getInvite: Fetcher<typeof getInviteSchema, Invite> = async ({
+  code,
+  params
+}) => get(`/invites/${code}`, params);

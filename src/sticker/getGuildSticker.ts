@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { get, query } from "../utils";
+import { get, type Fetcher } from "../utils";
 import type { Sticker } from "./types";
 
 export const getGuildStickerSchema = z.object({
@@ -12,8 +12,7 @@ export const getGuildStickerSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/sticker#get-guild-sticker
  */
-export const getGuildSticker = query(
-  getGuildStickerSchema,
-  async ({ input: { guild, sticker } }) =>
-    get<Sticker>(`/guilds/${guild}/stickers/${sticker}`)
-);
+export const getGuildSticker: Fetcher<
+  typeof getGuildStickerSchema,
+  Sticker
+> = async ({ guild, sticker }) => get(`/guilds/${guild}/stickers/${sticker}`);

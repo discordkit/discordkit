@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { get, query } from "../utils";
+import { get, type Fetcher } from "../utils";
 import type { WelcomeScreen } from "./types";
 
 export const getGuildWelcomeScreenSchema = z.object({
@@ -11,8 +11,7 @@ export const getGuildWelcomeScreenSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild#get-guild-welcome-screen
  */
-export const getGuildWelcomeScreen = query(
-  getGuildWelcomeScreenSchema,
-  async ({ input: { guild } }) =>
-    get<WelcomeScreen>(`/guilds/${guild}/welcome-screen`)
-);
+export const getGuildWelcomeScreen: Fetcher<
+  typeof getGuildWelcomeScreenSchema,
+  WelcomeScreen
+> = async ({ guild }) => get(`/guilds/${guild}/welcome-screen`);

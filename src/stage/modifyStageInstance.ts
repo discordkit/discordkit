@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { mutation, patch } from "../utils";
-import { type Stage, StagePrivacyLevel } from "./types";
+import { patch, type Fetcher } from "../utils";
+import { type Stage, stagePrivacyLevel } from "./types";
 
 export const modifyStageInstanceSchema = z.object({
   channel: z.string().min(1),
@@ -9,7 +9,7 @@ export const modifyStageInstanceSchema = z.object({
       /** The topic of the Stage instance (1-120 characters) */
       topic: z.string().min(1).max(120),
       /** The privacy level of the Stage instance */
-      privacyLevel: z.nativeEnum(StagePrivacyLevel)
+      privacyLevel: stagePrivacyLevel
     })
     .partial()
 });
@@ -23,7 +23,7 @@ export const modifyStageInstanceSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/stage-instance#modify-stage-instance
  */
-export const modifyStageInstance = mutation(
-  modifyStageInstanceSchema,
-  async ({ channel, body }) => patch<Stage>(`/stage-instances/${channel}`, body)
-);
+export const modifyStageInstance: Fetcher<
+  typeof modifyStageInstanceSchema,
+  Stage
+> = async ({ channel, body }) => patch(`/stage-instances/${channel}`, body);

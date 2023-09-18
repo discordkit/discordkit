@@ -1,6 +1,6 @@
 import { z } from "zod";
+import { post, type Fetcher } from "../utils";
 import type { Guild } from "../guild";
-import { mutation, post } from "../utils";
 
 export const createGuildFromTemplateSchema = z.object({
   template: z.string().min(1),
@@ -19,8 +19,7 @@ export const createGuildFromTemplateSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/guild-template#create-guild-from-guild-template
  */
-export const createGuildFromTemplate = mutation(
-  createGuildFromTemplateSchema,
-  async ({ template, body }) =>
-    post<Guild>(`/guilds/templates/${template}`, body)
-);
+export const createGuildFromTemplate: Fetcher<
+  typeof createGuildFromTemplateSchema,
+  Guild
+> = async ({ template, body }) => post(`/guilds/templates/${template}`, body);

@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { mutation, patch } from "../utils";
+import { patch, type Fetcher } from "../utils";
 import {
   moderationAction,
   triggerMeta,
-  ModerationEvent,
+  moderationEvent,
   type ModerationRule
 } from "./types";
 
@@ -15,17 +15,17 @@ export const modifyAutoModerationRuleSchema = z.object({
       /** the rule name */
       name: z.string().min(1),
       /** the event type */
-      eventType: z.nativeEnum(ModerationEvent),
+      eventType: moderationEvent,
       /** the trigger metadata */
       triggerMetadata: triggerMeta,
       /** the actions which will execute when the rule is triggered */
-      actions: z.array(moderationAction),
+      actions: moderationAction.array(),
       /** whether the rule is enabled (False by default) */
       enabled: z.boolean(),
       /** the role ids that should not be affected by the rule (Maximum of 20) */
-      exemptRoles: z.array(z.string().min(1)),
+      exemptRoles: z.string().min(1).array(),
       /** the channel ids that should not be affected by the rule (Maximum of 50) */
-      exemptChannels: z.array(z.string().min(1))
+      exemptChannels: z.string().min(1).array()
     })
     .partial()
 });
@@ -37,11 +37,8 @@ export const modifyAutoModerationRuleSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/auto-moderation#modify-auto-moderation-rule
  */
-export const modifyAutoModerationRule = mutation(
-  modifyAutoModerationRuleSchema,
-  async ({ guild, rule, body }) =>
-    patch<ModerationRule>(
-      `/guilds/${guild}/auto-moderation/rules/${rule}`,
-      body
-    )
-);
+export const modifyAutoModerationRule: Fetcher<
+  typeof modifyAutoModerationRuleSchema,
+  ModerationRule
+> = async ({ guild, rule, body }) =>
+  patch(`/guilds/${guild}/auto-moderation/rules/${rule}`, body);

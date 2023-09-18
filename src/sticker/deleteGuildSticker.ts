@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, remove } from "../utils";
+import { remove, type Fetcher } from "../utils";
 
 export const deleteGuildStickerSchema = z.object({
   guild: z.string().min(1),
@@ -11,7 +11,7 @@ export const deleteGuildStickerSchema = z.object({
  *
  * *This endpoint supports the `X-Audit-Log-Reason` header.*
  */
-export const deleteGuildSticker = mutation(
-  deleteGuildStickerSchema,
-  async ({ guild, sticker }) => remove(`/guilds/${guild}/stickers/${sticker}`)
-);
+export const deleteGuildSticker: Fetcher<
+  typeof deleteGuildStickerSchema
+> = async ({ guild, sticker }) =>
+  remove(`/guilds/${guild}/stickers/${sticker}`);

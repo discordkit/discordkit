@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { get, query } from "../utils";
+import { get, type Fetcher } from "../utils";
 import type { ArchivedThreads } from "./types";
 
 export const listJoinedPrivateArchivedThreadsSchema = z.object({
@@ -20,6 +20,8 @@ export const listJoinedPrivateArchivedThreadsSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#list-joined-private-archived-threads
  */
-export const listJoinedPrivateArchivedThreads = query(listJoinedPrivateArchivedThreadsSchema, async ({ input:{ channel, params } }) =>
-  get<ArchivedThreads>(`/channels/${channel}/users/@me/threads/archived/private`, params)
-);
+export const listJoinedPrivateArchivedThreads: Fetcher<
+  typeof listJoinedPrivateArchivedThreadsSchema,
+  ArchivedThreads
+> = async ({ channel, params }) =>
+  get(`/channels/${channel}/users/@me/threads/archived/private`, params);

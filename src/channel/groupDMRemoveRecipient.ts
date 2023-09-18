@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, remove } from "../utils";
+import { remove, type Fetcher } from "../utils";
 
 export const groupDMRemoveRecipientSchema = z.object({
   channel: z.string().min(1),
@@ -11,7 +11,7 @@ export const groupDMRemoveRecipientSchema = z.object({
  *
  * https://discord.com/developers/docs/resources/channel#group-dm-remove-recipient
  */
-export const groupDMRemoveRecipient = mutation(
-  groupDMRemoveRecipientSchema,
-  async ({ channel, user }) => remove(`/channels/${channel}/recipients/${user}`)
-);
+export const groupDMRemoveRecipient: Fetcher<
+  typeof groupDMRemoveRecipientSchema
+> = async ({ channel, user }) =>
+  remove(`/channels/${channel}/recipients/${user}`);
