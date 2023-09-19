@@ -9,4 +9,4 @@ export enum WebhookType {
   APPLICATION = 3
 }
 
-export const webhookType = z.nativeEnum(WebhookType);
+export const webhookTypeSchema = z.nativeEnum(WebhookType);

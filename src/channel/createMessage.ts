@@ -1,10 +1,10 @@
 import { z } from "zod";
-import { post, type Fetcher } from "../utils";
-import { messageContent, type Message } from "./types";
+import { post, type Fetcher, createProcedure } from "../utils";
+import { messageContentSchema, type Message, messageSchema } from "./types";
 
 export const createMessageSchema = z.object({
   channel: z.string().min(1),
-  body: messageContent
+  body: messageContentSchema
 });
 
 /**
@@ -31,3 +31,10 @@ export const createMessage: Fetcher<
   typeof createMessageSchema,
   Message
 > = async ({ channel, body }) => post(`/channels/${channel}/messages`, body);
+
+export const createMessageProcedure = createProcedure(
+  `mutation`,
+  createMessage,
+  createMessageSchema,
+  messageSchema
+);

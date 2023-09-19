@@ -1,6 +1,6 @@
-import type { z } from "zod";
-import { get, type Fetcher } from "../utils";
-import type { VoiceRegion } from "./types";
+import { z } from "zod";
+import { get, type Fetcher, createProcedure } from "../utils";
+import { voiceRegionSchema, type VoiceRegion } from "./types";
 
 /**
  * Returns an array of voice region objects that can be used when setting a voice or stage channel's [`rtc_region`](https://discord.com/developers/docs/resources/channel#channel-object-channel-structure).
@@ -11,3 +11,10 @@ export const listVoiceRegions: Fetcher<
   z.ZodUnknown,
   VoiceRegion[]
 > = async () => get(`/voice/regions`);
+
+export const listVoiceRegionsProcedure = createProcedure(
+  `query`,
+  listVoiceRegions,
+  z.unknown(),
+  voiceRegionSchema.array()
+);

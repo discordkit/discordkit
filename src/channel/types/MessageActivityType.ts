@@ -7,4 +7,4 @@ export enum MessageActivityType {
   JOIN_REQUEST = 5
 }
 
-export const messageActivityType = z.nativeEnum(MessageActivityType);
+export const messageActivityTypeSchema = z.nativeEnum(MessageActivityType);

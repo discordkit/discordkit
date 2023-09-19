@@ -1,12 +1,12 @@
 import { z } from "zod";
-import { user } from "../../user/types/User";
-import { team } from "./Team";
-import { installParams } from "./InstallParams";
-import { applicationFlags } from "./ApplicationFlags";
+import { userSchema } from "../../user/types/User";
+import { teamSchema } from "./Team";
+import { installParamsSchema } from "./InstallParams";
+import { applicationFlagsSchema } from "./ApplicationFlags";
 
 // https://discord.com/developers/docs/resources/application#application-object-application-structure
 
-export const application = z.object({
+export const applicationSchema = z.object({
   /** the id of the app */
   id: z.string(),
   /** the name of the app */
@@ -26,11 +26,11 @@ export const application = z.object({
   /** the url of the app's privacy policy */
   privacyPolicyUrl: z.string().optional(),
   /** partial user object containing info on the owner of the application */
-  owner: user.partial().optional(),
+  owner: userSchema.partial().optional(),
   /** the hex encoded key for verification in interactions and the GameSDK's GetTicket */
   verifyKey: z.string(),
   /** if the application belongs to a team, this will be a list of the members of that team */
-  team: team.optional(),
+  team: teamSchema.optional(),
   /** if this application is a game sold on Discord, this field will be the guild to which it has been linked */
   guildId: z.string().optional(),
   /** if this application is a game sold on Discord, this field will be the id of the "Game SKU" that is created, if exists */
@@ -40,13 +40,13 @@ export const application = z.object({
   /** the application's default rich presence invite cover image hash */
   coverImage: z.string().optional(),
   /** the application's public flags */
-  flags: applicationFlags.optional(),
+  flags: applicationFlagsSchema.optional(),
   /** up to 5 tags describing the content and functionality of the application */
   tags: z.string().array().optional(),
   /** settings for the application's default in-app authorization link, if enabled */
-  installParams: installParams.optional(),
+  installParams: installParamsSchema.optional(),
   /** the application's default custom authorization link, if enabled */
   customInstallUrl: z.string().optional()
 });
 
-export type Application = z.infer<typeof application>;
+export type Application = z.infer<typeof applicationSchema>;

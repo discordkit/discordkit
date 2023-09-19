@@ -7,4 +7,4 @@ export enum GuildNSFWLevel {
   AGE_RESTRICTED = 3
 }
 
-export const guildNSFWLevel = z.nativeEnum(GuildNSFWLevel);
+export const guildNSFWLevelSchema = z.nativeEnum(GuildNSFWLevel);

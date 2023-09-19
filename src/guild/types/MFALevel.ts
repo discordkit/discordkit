@@ -7,4 +7,4 @@ export enum MFALevel {
   ELEVATED = 1
 }
 
-export const mfaLevel = z.nativeEnum(MFALevel);
+export const mfaLevelSchema = z.nativeEnum(MFALevel);

@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { get, type Fetcher } from "../utils";
-import type { Role } from "./types";
+import { get, type Fetcher, createProcedure } from "../utils";
+import { roleSchema, type Role } from "./types";
 
 export const getGuildRolesSchema = z.object({
   guild: z.string().min(1)
@@ -15,3 +15,10 @@ export const getGuildRoles: Fetcher<
   typeof getGuildRolesSchema,
   Role[]
 > = async ({ guild }) => get(`/guilds/${guild}/roles`);
+
+export const getGuildRolesProcedure = createProcedure(
+  `query`,
+  getGuildRoles,
+  getGuildRolesSchema,
+  roleSchema.array()
+);

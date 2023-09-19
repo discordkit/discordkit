@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { post, type Fetcher } from "../utils";
+import { post, type Fetcher, createProcedure } from "../utils";
 
 export const bulkDeleteMessagesSchema = z.object({
   channel: z.string().min(1),
@@ -24,3 +24,9 @@ export const bulkDeleteMessages: Fetcher<
   typeof bulkDeleteMessagesSchema
 > = async ({ channel, body }) =>
   post(`/channels/${channel}/messages/bulk-delete`, body);
+
+export const bulkDeleteMessagesProcedure = createProcedure(
+  `mutation`,
+  bulkDeleteMessages,
+  bulkDeleteMessagesSchema
+);

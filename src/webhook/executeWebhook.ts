@@ -1,6 +1,11 @@
 import { z } from "zod";
-import { post, buildURL, type Fetcher } from "../utils";
-import { allowedMention, attachment, embed, messageFlag } from "../channel";
+import { post, buildURL, type Fetcher, createProcedure } from "../utils";
+import {
+  allowedMentionSchema,
+  attachmentSchema,
+  embedSchema,
+  messageFlagSchema
+} from "../channel";
 
 export const executeWebhookSchema = z.object({
   webhook: z.string().min(1),
@@ -25,9 +30,9 @@ export const executeWebhookSchema = z.object({
       /** true if this is a TTS message */
       tts: z.boolean(),
       /** embedded rich content */
-      embeds: embed.array(),
+      embeds: embedSchema.array(),
       /** allowed mentions for the message */
-      allowedMentions: allowedMention,
+      allowedMentions: allowedMentionSchema,
       /** the components to include with the message */
       // components?: MessageComponent[];
       /** the contents of the file being sent */
@@ -35,9 +40,9 @@ export const executeWebhookSchema = z.object({
       /** JSON encoded body of non-file params */
       payloadJson: z.string(),
       /** attachment objects with filename and description */
-      attachments: attachment.partial().array(),
+      attachments: attachmentSchema.partial().array(),
       /** message flags combined as a bitfield (only SUPPRESS_EMBEDS can be set) */
-      flags: messageFlag,
+      flags: messageFlagSchema,
       /** name of thread to create (requires the webhook channel to be a forum channel) */
       threadName: z.string().min(1)
     })
@@ -59,3 +64,9 @@ export const executeWebhook: Fetcher<typeof executeWebhookSchema> = async ({
   params,
   body
 }) => post(buildURL(`/webhooks/${webhook}/${token}`, params).href, body);
+
+export const executeWebhookProcedure = createProcedure(
+  `mutation`,
+  executeWebhook,
+  executeWebhookSchema
+);

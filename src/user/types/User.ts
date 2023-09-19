@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { userFlags } from "./UserFlags";
-import { userPremiumType } from "./UserPremiumType";
+import { userFlagsSchema } from "./UserFlags";
+import { userPremiumTypeSchema } from "./UserPremiumType";
 
 // https://discord.com/developers/docs/resources/user#user-object-user-structure
-export const user = z.object({
+export const userSchema = z.object({
   /** the user's id (scope: `identify`) */
   id: z.string().min(1),
   /** the user's username, not unique across the platform (scope: `identify`) */
@@ -29,11 +29,11 @@ export const user = z.object({
   /** the user's email (scope: `email`) */
   email: z.string().min(1).optional(),
   /** the flags on a user's account (scope: `identify`) */
-  flags: userFlags.optional(),
+  flags: userFlagsSchema.optional(),
   /** the type of Nitro subscription on a user's account (scope: `identify`) */
-  premiumType: userPremiumType.optional(),
+  premiumType: userPremiumTypeSchema.optional(),
   /** the public flags on a user's account (scope: `identify`) */
-  publicFlags: userFlags.optional()
+  publicFlags: userFlagsSchema.optional()
 });
 
-export type User = z.infer<typeof user>;
+export type User = z.infer<typeof userSchema>;

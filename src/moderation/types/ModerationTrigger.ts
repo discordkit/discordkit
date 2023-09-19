@@ -11,4 +11,4 @@ export enum ModerationTrigger {
   KEYWORD_PRESET = 4
 }
 
-export const moderationTrigger = z.nativeEnum(ModerationTrigger);
+export const moderationTriggerSchema = z.nativeEnum(ModerationTrigger);

@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { patch, type Fetcher } from "../utils";
-import type { Role } from "./types";
+import { patch, type Fetcher, createProcedure } from "../utils";
+import { roleSchema, type Role } from "./types";
 
 export const modifyGuildRoleSchema = z.object({
   guild: z.string().min(1),
@@ -37,3 +37,10 @@ export const modifyGuildRole: Fetcher<
   Role
 > = async ({ guild, role, body }) =>
   patch(`/guilds/${guild}/roles/${role}`, body);
+
+export const modifyGuildRoleProcedure = createProcedure(
+  `mutation`,
+  modifyGuildRole,
+  modifyGuildRoleSchema,
+  roleSchema
+);

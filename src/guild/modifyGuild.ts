@@ -1,12 +1,13 @@
 import { z } from "zod";
-import { patch, type Fetcher } from "../utils";
+import { patch, type Fetcher, createProcedure } from "../utils";
 import {
-  guildFeatures,
-  defaultMessageNotificationLevel,
-  explicitContentFilterLevel,
-  verificationLevel,
-  systemChannelFlags,
-  type Guild
+  guildFeaturesSchema,
+  defaultMessageNotificationLevelSchema,
+  explicitContentFilterLevelSchema,
+  verificationLevelSchema,
+  systemChannelFlagsSchema,
+  type Guild,
+  guildSchema
 } from "./types";
 
 export const modifyGuildSchema = z.object({
@@ -18,11 +19,12 @@ export const modifyGuildSchema = z.object({
       /** @deprecated guild voice region id */
       region: z.string().min(1).nullable(),
       /** verification level */
-      verificationLevel: verificationLevel.nullable(),
+      verificationLevel: verificationLevelSchema.nullable(),
       /** default message notification level */
-      defaultMessageNotifications: defaultMessageNotificationLevel.nullable(),
+      defaultMessageNotifications:
+        defaultMessageNotificationLevelSchema.nullable(),
       /** explicit content filter level */
-      explicitContentFilter: explicitContentFilterLevel.nullable(),
+      explicitContentFilter: explicitContentFilterLevelSchema.nullable(),
       /** id for afk channel */
       afkChannelId: z.string().min(1).nullable(),
       /** afk timeout in seconds */
@@ -40,7 +42,7 @@ export const modifyGuildSchema = z.object({
       /** the id of the channel where guild notices such as welcome messages and boost events are posted */
       systemChannelId: z.string().min(1).nullable(),
       /** system channel flags */
-      systemChannelFlags,
+      systemChannelFlags: systemChannelFlagsSchema,
       /** the id of the channel where Community guilds display rules and/or guidelines */
       rulesChannelId: z.string().min(1).nullable(),
       /** the id of the channel where admins and moderators of Community guilds receive notices from Discord */
@@ -48,7 +50,7 @@ export const modifyGuildSchema = z.object({
       /** the preferred locale of a Community guild used in server discovery and notices from Discord; defaults to "en-US" */
       preferredLocale: z.string().min(1).nullable(),
       /** enabled guild features */
-      features: guildFeatures.array(),
+      features: guildFeaturesSchema.array(),
       /** the description for the guild */
       description: z.string().min(1).nullable(),
       /** whether the guild's boost progress bar should be enabled */
@@ -70,3 +72,10 @@ export const modifyGuild: Fetcher<typeof modifyGuildSchema, Guild> = async ({
   guild,
   body
 }) => patch(`/guilds/${guild}`, body);
+
+export const modifyGuildProcedure = createProcedure(
+  `mutation`,
+  modifyGuild,
+  modifyGuildSchema,
+  guildSchema
+);

@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { get, type Fetcher } from "../utils";
-import type { WelcomeScreen } from "./types";
+import { get, type Fetcher, createProcedure } from "../utils";
+import { welcomeScreenSchema, type WelcomeScreen } from "./types";
 
 export const getGuildWelcomeScreenSchema = z.object({
   guild: z.string().min(1)
@@ -15,3 +15,10 @@ export const getGuildWelcomeScreen: Fetcher<
   typeof getGuildWelcomeScreenSchema,
   WelcomeScreen
 > = async ({ guild }) => get(`/guilds/${guild}/welcome-screen`);
+
+export const getGuildWelcomeScreenProcedure = createProcedure(
+  `query`,
+  getGuildWelcomeScreen,
+  getGuildWelcomeScreenSchema,
+  welcomeScreenSchema
+);

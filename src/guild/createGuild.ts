@@ -1,13 +1,14 @@
 import { z } from "zod";
-import { post, type Fetcher } from "../utils";
-import { channel } from "../channel";
+import { post, type Fetcher, createProcedure } from "../utils";
+import { channelSchema } from "../channel";
 import {
-  role,
+  roleSchema,
+  guildSchema,
   type Guild,
-  explicitContentFilterLevel,
-  defaultMessageNotificationLevel,
-  verificationLevel,
-  systemChannelFlags
+  explicitContentFilterLevelSchema,
+  defaultMessageNotificationLevelSchema,
+  verificationLevelSchema,
+  systemChannelFlagsSchema
 } from "./types";
 
 export const createGuildSchema = z.object({
@@ -19,15 +20,16 @@ export const createGuildSchema = z.object({
     /** icon hash */
     icon: z.string().min(1).optional(),
     /** verification level */
-    verificationLevel: verificationLevel.optional(),
+    verificationLevel: verificationLevelSchema.optional(),
     /** default message notification level */
-    defaultMessageNotifications: defaultMessageNotificationLevel.optional(),
+    defaultMessageNotifications:
+      defaultMessageNotificationLevelSchema.optional(),
     /** explicit content filter level */
-    explicitContentFilter: explicitContentFilterLevel.optional(),
+    explicitContentFilter: explicitContentFilterLevelSchema.optional(),
     /** new guild roles */
-    roles: role.array().optional(),
+    roles: roleSchema.array().optional(),
     /** new guild's channels */
-    channels: channel.partial().array().optional(),
+    channels: channelSchema.partial().array().optional(),
     /** id for afk channel */
     afkChannelId: z.string().min(1).optional(),
     /** afk timeout in seconds */
@@ -35,7 +37,7 @@ export const createGuildSchema = z.object({
     /** the id of the channel where guild notices such as welcome messages and boost events are posted */
     systemChannelId: z.string().min(1).optional(),
     /** system channel flags */
-    systemChannelFlags: systemChannelFlags.optional()
+    systemChannelFlags: systemChannelFlagsSchema.optional()
   })
 });
 
@@ -49,3 +51,10 @@ export const createGuildSchema = z.object({
 export const createGuild: Fetcher<typeof createGuildSchema, Guild> = async ({
   body
 }) => post(`/guilds`, body);
+
+export const createGuildProcedure = createProcedure(
+  `mutation`,
+  createGuild,
+  createGuildSchema,
+  guildSchema
+);

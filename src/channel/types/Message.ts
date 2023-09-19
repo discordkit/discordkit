@@ -1,25 +1,25 @@
 import { z } from "zod";
-import { sticker } from "../../sticker/types/Sticker";
-import { application } from "../../application";
-import { reaction } from "../../emoji";
-import { member } from "../../guild/types/Member";
-import { user } from "../../user";
-import { channel } from "./Channel";
-import { interactionType } from "./InteractionType";
-import { messageActivity } from "./MessageActivity";
-import { channelMention } from "./ChannelMention";
-import { embed } from "./Embed";
-import { messageReference } from "./MessageReference";
-import { attachment } from "./Attachment";
-import { messageFlag } from "./MessageFlag";
+import { stickerSchema } from "../../sticker/types/Sticker";
+import { applicationSchema } from "../../application/types/Application";
+import { reactionSchema } from "../../emoji/types/Reaction";
+import { memberSchema } from "../../guild/types/Member";
+import { userSchema } from "../../user/types/User";
+import { channelSchema } from "./Channel";
+import { interactionTypeSchema } from "./InteractionType";
+import { messageActivitySchema } from "./MessageActivity";
+import { channelMentionSchema } from "./ChannelMention";
+import { embedSchema } from "./Embed";
+import { messageReferenceSchema } from "./MessageReference";
+import { attachmentSchema } from "./Attachment";
+import { messageFlagSchema } from "./MessageFlag";
 
-const baseMessage = z.object({
+const baseMessageSchema = z.object({
   /** id of the message */
   id: z.string(),
   /** id of the channel the message was sent in */
   channelId: z.string(),
   /** user object	the author of this message (not guaranteed to be a valid user, see below) */
-  author: user.optional(),
+  author: userSchema.optional(),
   /** contents of the message */
   content: z.string(),
   /** when this message was sent */
@@ -31,17 +31,17 @@ const baseMessage = z.object({
   /** whether this message mentions everyone */
   mentionEveryone: z.boolean(),
   /** users specifically mentioned in the message */
-  mentions: user.array(),
+  mentions: userSchema.array(),
   /** roles specifically mentioned in this message */
   mentionRoles: z.string().array(),
   /** channels specifically mentioned in this message */
-  mentionChannels: channelMention.array().optional(),
+  mentionChannels: channelMentionSchema.array().optional(),
   /** any attached files */
-  attachments: attachment.array().optional(),
+  attachments: attachmentSchema.array().optional(),
   /** any embedded content */
-  embeds: embed.array().optional(),
+  embeds: embedSchema.array().optional(),
   /** reactions to the message */
-  reactions: reaction.array().optional(),
+  reactions: reactionSchema.array().optional(),
   /** used for validating a message was sent */
   nonce: z.union([z.number(), z.string()]).optional(),
   /** whether this message is pinned */
@@ -51,41 +51,41 @@ const baseMessage = z.object({
   /** type of message */
   type: z.number(),
   /** sent with Rich Presence-related chat embeds */
-  activity: messageActivity.optional(),
+  activity: messageActivitySchema.optional(),
   /** sent with Rich Presence-related chat embeds */
-  application: application.optional(),
+  application: applicationSchema.optional(),
   /** if the message is an Interaction or application-owned webhook, this is the id of the application */
   applicationId: z.string().optional(),
   /** data showing the source of a crosspost, channel follow add, pin, or reply message */
-  messageReference: messageReference.optional(),
+  messageReference: messageReferenceSchema.optional(),
   /** message flags combined as a bitfield */
-  flags: messageFlag.optional(),
+  flags: messageFlagSchema.optional(),
   /** sent if the message is a response to an Interaction */
   interaction: z
     .object({
       /** id of the interaction */
       id: z.string(),
       /** the type of interaction */
-      type: interactionType,
+      type: interactionTypeSchema,
       /** the name of the application command */
       name: z.string(),
       /** the user who invoked the interaction */
-      user: user.partial(),
+      user: userSchema.partial(),
       /** the member who invoked the interaction in the guild */
-      member: member.partial().optional()
+      member: memberSchema.partial().optional()
     })
     .optional(),
   /** the thread that was started from this message, includes thread member object */
-  thread: channel.optional(),
+  thread: channelSchema.optional(),
   /** sent if the message contains components like buttons, action rows, or other interactive components */
   //components?: MessageComponent[];
   /** sent if the message contains stickers */
-  stickerItems: sticker.array().optional()
+  stickerItems: stickerSchema.array().optional()
 });
 
-export const message = baseMessage.extend({
+export const messageSchema = baseMessageSchema.extend({
   /** the message associated with the message_reference */
-  referencedMessage: z.lazy(() => baseMessage).optional()
+  referencedMessage: z.lazy(() => baseMessageSchema).optional()
 });
 
-export type Message = z.infer<typeof message>;
+export type Message = z.infer<typeof messageSchema>;

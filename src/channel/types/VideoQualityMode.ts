@@ -7,4 +7,4 @@ export enum VideoQualityMode {
   FULL = 2
 }
 
-export const videoQualityMode = z.nativeEnum(VideoQualityMode);
+export const videoQualityModeSchema = z.nativeEnum(VideoQualityMode);

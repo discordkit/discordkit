@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { remove, type Fetcher } from "../utils";
+import { remove, type Fetcher, createProcedure } from "../utils";
 
 export const groupDMRemoveRecipientSchema = z.object({
   channel: z.string().min(1),
@@ -15,3 +15,9 @@ export const groupDMRemoveRecipient: Fetcher<
   typeof groupDMRemoveRecipientSchema
 > = async ({ channel, user }) =>
   remove(`/channels/${channel}/recipients/${user}`);
+
+export const groupDMRemoveRecipientProcedure = createProcedure(
+  `mutation`,
+  groupDMRemoveRecipient,
+  groupDMRemoveRecipientSchema
+);

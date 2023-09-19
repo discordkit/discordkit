@@ -13,4 +13,4 @@ export enum VerificationLevel {
   VERY_HIGH = 4
 }
 
-export const verificationLevel = z.nativeEnum(VerificationLevel);
+export const verificationLevelSchema = z.nativeEnum(VerificationLevel);

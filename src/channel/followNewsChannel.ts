@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { post, type Fetcher } from "../utils";
-import type { FollowedChannel } from "./types";
+import { post, type Fetcher, createProcedure } from "../utils";
+import { followedChannelSchema, type FollowedChannel } from "./types";
 
 export const followNewsChannelSchema = z.object({
   channel: z.string().min(1),
@@ -19,3 +19,10 @@ export const followNewsChannel: Fetcher<
   typeof followNewsChannelSchema,
   FollowedChannel
 > = async ({ channel, body }) => post(`/channels/${channel}/followers`, body);
+
+export const followNewsChannelProcedure = createProcedure(
+  `mutation`,
+  followNewsChannel,
+  followNewsChannelSchema,
+  followedChannelSchema
+);

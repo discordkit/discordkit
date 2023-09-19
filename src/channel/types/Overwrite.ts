@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 // https://discord.com/developers/docs/resources/channel#overwrite-object-overwrite-structure
-export const overwrite = z.object({
+export const overwriteSchema = z.object({
   /** role or user id */
   id: z.string().min(1),
   /** either 0 (role) or 1 (member) */
@@ -12,4 +12,4 @@ export const overwrite = z.object({
   deny: z.string().min(1)
 });
 
-export type Overwrite = z.infer<typeof overwrite>;
+export type Overwrite = z.infer<typeof overwriteSchema>;

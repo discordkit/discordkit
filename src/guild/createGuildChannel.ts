@@ -1,12 +1,13 @@
 import { z } from "zod";
 import type { Channel } from "../channel";
 import {
-  autoArchiveDuration,
-  ChannelType,
-  overwrite,
-  VideoQualityMode
+  autoArchiveDurationSchema,
+  channelSchema,
+  channelTypeSchema,
+  overwriteSchema,
+  videoQualityModeSchema
 } from "../channel";
-import { post, type Fetcher } from "../utils";
+import { post, type Fetcher, createProcedure } from "../utils";
 
 export const createGuildChannelSchema = z.object({
   guild: z.string().min(1),
@@ -14,7 +15,7 @@ export const createGuildChannelSchema = z.object({
     /** channel name (1-100 characters) */
     name: z.string().min(1),
     /** the type of channel */
-    type: z.nativeEnum(ChannelType).optional(),
+    type: channelTypeSchema.optional(),
     /** channel topic (0-1024 characters) */
     topic: z.string().min(0).max(1024).optional(),
     /** the bitrate (in bits) of the voice or stage channel; min 8000 */
@@ -26,7 +27,7 @@ export const createGuildChannelSchema = z.object({
     /** sorting position of the channel */
     position: z.number().positive().optional(),
     /** the channel's permission overwrites */
-    permissionOverwrites: z.array(overwrite.partial()).optional(),
+    permissionOverwrites: overwriteSchema.partial().array().optional(),
     /** id of the parent category for a channel */
     parentId: z.string().min(1).optional(),
     /** whether the channel is nsfw */
@@ -34,9 +35,9 @@ export const createGuildChannelSchema = z.object({
     /** channel voice region id of the voice or stage channel, automatic when set to null */
     rtcRegion: z.string().min(1).optional(),
     /** the camera video quality mode of the voice channel */
-    videoQualityMode: z.nativeEnum(VideoQualityMode).optional(),
+    videoQualityMode: videoQualityModeSchema.optional(),
     /** the default duration that the clients use (not the API) for newly created threads in the channel, in minutes, to automatically archive the thread after recent activity */
-    defaultAutoArchiveDuration: autoArchiveDuration
+    defaultAutoArchiveDuration: autoArchiveDurationSchema
   })
 });
 
@@ -51,3 +52,10 @@ export const createGuildChannel: Fetcher<
   typeof createGuildChannelSchema,
   Channel
 > = async ({ guild, body }) => post(`/guilds/${guild}/channels`, body);
+
+export const createGuildChannelProcedure = createProcedure(
+  `mutation`,
+  createGuildChannel,
+  createGuildChannelSchema,
+  channelSchema
+);

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { get, type Fetcher } from "../utils";
+import { get, type Fetcher, createProcedure } from "../utils";
 
 export const getGuildPruneCountSchema = z.object({
   guild: z.string().min(1),
@@ -14,6 +14,8 @@ export const getGuildPruneCountSchema = z.object({
     .optional()
 });
 
+export const guildPruneCountSchema = z.object({ pruned: z.number() });
+
 /**
  * Returns an object with one `pruned` key indicating the number of members that would be removed in a prune operation. Requires the `KICK_MEMBERS` permission.
  *
@@ -23,5 +25,12 @@ export const getGuildPruneCountSchema = z.object({
  */
 export const getGuildPruneCount: Fetcher<
   typeof getGuildPruneCountSchema,
-  { pruned: number }
+  z.infer<typeof guildPruneCountSchema>
 > = async ({ guild, params }) => get(`/guilds/${guild}/prune`, params);
+
+export const getGuildPruneCountProcedure = createProcedure(
+  `query`,
+  getGuildPruneCount,
+  getGuildPruneCountSchema,
+  guildPruneCountSchema
+);

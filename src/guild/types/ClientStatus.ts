@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 
-export const clientStatus = z.object({
+export const clientStatusSchema = z.object({
   /** the user's status set for an active desktop (Windows, Linux, Mac) application session */
   desktop: z.string().optional(),
   /** the user's status set for an active mobile (iOS, Android) application session */
@@ -11,4 +11,4 @@ export const clientStatus = z.object({
   web: z.string().optional()
 });
 
-export type ClientStatus = z.infer<typeof clientStatus>;
+export type ClientStatus = z.infer<typeof clientStatusSchema>;

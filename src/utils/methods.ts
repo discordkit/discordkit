@@ -3,12 +3,7 @@ import type { RequestParams } from "./addParams";
 import { buildURL } from "./buildURL";
 import type { RequestBody } from "./request";
 import { request } from "./request";
-import type { MutationBuilder, Fetcher } from "./types";
-
-export const toProcedure =
-  <T, S extends z.ZodTypeAny = z.ZodTypeAny>(fn: Fetcher<S, T>) =>
-  async ({ input }: { input: z.infer<S> }): Promise<T> =>
-    fn(input);
+import type { MutationBuilder } from "./types";
 
 export const mutation = <T, S extends z.ZodTypeAny>(
   schema: S,

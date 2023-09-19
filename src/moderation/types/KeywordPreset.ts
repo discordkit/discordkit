@@ -9,4 +9,4 @@ export enum KeywordPreset {
   SLURS = 3
 }
 
-export const keywordPreset = z.nativeEnum(KeywordPreset);
+export const keywordPresetSchema = z.nativeEnum(KeywordPreset);

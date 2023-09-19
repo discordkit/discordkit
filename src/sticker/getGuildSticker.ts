@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { get, type Fetcher } from "../utils";
-import type { Sticker } from "./types";
+import { get, type Fetcher, createProcedure } from "../utils";
+import { stickerSchema, type Sticker } from "./types";
 
 export const getGuildStickerSchema = z.object({
   guild: z.string().min(1),
@@ -16,3 +16,10 @@ export const getGuildSticker: Fetcher<
   typeof getGuildStickerSchema,
   Sticker
 > = async ({ guild, sticker }) => get(`/guilds/${guild}/stickers/${sticker}`);
+
+export const getGuildStickerProcedure = createProcedure(
+  `query`,
+  getGuildSticker,
+  getGuildStickerSchema,
+  stickerSchema
+);

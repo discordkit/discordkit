@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { get, type Fetcher } from "../utils";
-import type { Message } from "./types";
+import { get, type Fetcher, createProcedure } from "../utils";
+import { messageSchema, type Message } from "./types";
 
-export const getChannelMessagesScehma = z.object({
+export const getChannelMessagesSchema = z.object({
   channel: z.string().min(1),
   params: z
     .object({
@@ -27,6 +27,13 @@ export const getChannelMessagesScehma = z.object({
  * https://discord.com/developers/docs/resources/channel#get-channel-messages
  */
 export const getChannelMessages: Fetcher<
-  typeof getChannelMessagesScehma,
+  typeof getChannelMessagesSchema,
   Message[]
 > = async ({ channel, params }) => get(`/channels/${channel}/messages`, params);
+
+export const getChannelMessagesProcedure = createProcedure(
+  `query`,
+  getChannelMessages,
+  getChannelMessagesSchema,
+  messageSchema.array()
+);

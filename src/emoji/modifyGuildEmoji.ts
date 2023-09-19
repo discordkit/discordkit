@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { patch, type Fetcher } from "../utils";
-import type { Emoji } from "./types";
+import { patch, type Fetcher, createProcedure } from "../utils";
+import { emojiSchema, type Emoji } from "./types";
 
 export const modifyGuildEmojiSchema = z.object({
   guild: z.string().min(1),
@@ -27,3 +27,10 @@ export const modifyGuildEmoji: Fetcher<
   Emoji
 > = async ({ guild, emoji, body }) =>
   patch(`/guilds/${guild}/emojis/${emoji}`, body);
+
+export const modifyGuildEmojiProcedure = createProcedure(
+  `mutation`,
+  modifyGuildEmoji,
+  modifyGuildEmojiSchema,
+  emojiSchema
+);

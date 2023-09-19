@@ -1,11 +1,11 @@
 import { z } from "zod";
-import { user } from "../../user/types/User";
-import { scheduledEventEntityType } from "./ScheduledEventEntityType";
-import { scheduledEventPrivacyLevel } from "./ScheduledEventPrivacyLevel";
-import { scheduledEventStatus } from "./ScheduledEventStatus";
-import { entityMetadata } from "./EntityMetadata";
+import { userSchema } from "../../user/types/User";
+import { scheduledEventEntityTypeSchema } from "./ScheduledEventEntityType";
+import { scheduledEventPrivacyLevelSchema } from "./ScheduledEventPrivacyLevel";
+import { scheduledEventStatusSchema } from "./ScheduledEventStatus";
+import { entityMetadataSchema } from "./EntityMetadata";
 
-export const scheduledEvent = z.object({
+export const scheduledEventSchema = z.object({
   /** the id of the scheduled event */
   id: z.string(),
   /** the guild id which the scheduled event belongs to */
@@ -23,21 +23,21 @@ export const scheduledEvent = z.object({
   /** the time the scheduled event will end, required if entity_type is EXTERNAL */
   scheduledEndTime: z.string().optional(),
   /** the privacy level of the scheduled event */
-  privacyLevel: scheduledEventPrivacyLevel,
+  privacyLevel: scheduledEventPrivacyLevelSchema,
   /** the status of the scheduled event */
-  status: scheduledEventStatus,
+  status: scheduledEventStatusSchema,
   /** the type of the scheduled event */
-  entityType: scheduledEventEntityType,
+  entityType: scheduledEventEntityTypeSchema,
   /** the id of an entity associated with a guild scheduled event */
   entityId: z.string().optional(),
   /** additional metadata for the guild scheduled event */
-  entityMetadata: entityMetadata.optional(),
+  entityMetadata: entityMetadataSchema.optional(),
   /** the user that created the scheduled event */
-  creator: user.optional(),
+  creator: userSchema.optional(),
   /** the number of users subscribed to the scheduled event */
   userCount: z.number().optional(),
   /** the cover image hash of the scheduled event */
   image: z.string().optional()
 });
 
-export type ScheduledEvent = z.infer<typeof scheduledEvent>;
+export type ScheduledEvent = z.infer<typeof scheduledEventSchema>;

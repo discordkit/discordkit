@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { put, type Fetcher } from "../utils";
-import type { Ban } from "./types";
+import { put, type Fetcher, createProcedure } from "../utils";
+import { banSchema, type Ban } from "./types";
 
 export const createGuildBanSchema = z.object({
   guild: z.string().min(1),
@@ -27,3 +27,10 @@ export const createGuildBan: Fetcher<
   typeof createGuildBanSchema,
   Ban
 > = async ({ guild, user, body }) => put(`/guilds/${guild}/bans/${user}`, body);
+
+export const createGuildBanProcedure = createProcedure(
+  `mutation`,
+  createGuildBan,
+  createGuildBanSchema,
+  banSchema
+);

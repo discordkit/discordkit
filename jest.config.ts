@@ -10,6 +10,7 @@ const config: Config.InitialOptions = {
     `./src/**/*.ts`,
     `./server/**/*.ts`,
     // exclude
+    `!**/__fixtures__/**/*`,
     `!**/__mocks__/**/*`,
     `!**/__test__/**/*`,
     `!**/node_modules/**`,

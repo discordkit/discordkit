@@ -1,11 +1,11 @@
 import { z } from "zod";
-import { user } from "../../user";
+import { userSchema } from "../../user/types/User";
 
-export const ban = z.object({
+export const banSchema = z.object({
   /** the reason for the ban */
   reason: z.union([z.string(), z.null()]),
   /** the banned user */
-  user
+  user: userSchema
 });
 
-export type Ban = z.infer<typeof ban>;
+export type Ban = z.infer<typeof banSchema>;

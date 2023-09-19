@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { patch, type Fetcher } from "../utils";
-import type { Webhook } from "./types";
+import { patch, type Fetcher, createProcedure } from "../utils";
+import { webhookSchema, type Webhook } from "./types";
 
 export const modifyWebhookSchema = z.object({
   webhook: z.string().min(1),
@@ -36,3 +36,10 @@ export const modifyWebhook: Fetcher<
   typeof modifyWebhookSchema,
   Webhook
 > = async ({ webhook, body }) => patch(`/webhooks/${webhook}`, body);
+
+export const modifyWebhookProcedure = createProcedure(
+  `mutation`,
+  modifyWebhook,
+  modifyWebhookSchema,
+  webhookSchema
+);

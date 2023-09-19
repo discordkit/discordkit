@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { get, type Fetcher } from "../utils";
-import type { User } from "./types";
+import { get, type Fetcher, createProcedure } from "../utils";
+import { userSchema, type User } from "./types";
 
 export const getUserSchema = z.object({
   user: z.string().min(1)
@@ -13,3 +13,10 @@ export const getUserSchema = z.object({
  */
 export const getUser: Fetcher<typeof getUserSchema, User> = async ({ user }) =>
   get(`/users/${user}`);
+
+export const getUserProcedure = createProcedure(
+  `query`,
+  getUser,
+  getUserSchema,
+  userSchema
+);

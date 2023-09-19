@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { get, type Fetcher } from "../utils";
-import type { Invite } from "./types";
+import { get, type Fetcher, createProcedure } from "../utils";
+import { inviteSchema, type Invite } from "./types";
 
 export const getInviteSchema = z.object({
   code: z.string().min(1),
@@ -26,3 +26,10 @@ export const getInvite: Fetcher<typeof getInviteSchema, Invite> = async ({
   code,
   params
 }) => get(`/invites/${code}`, params);
+
+export const getInviteProcedure = createProcedure(
+  `query`,
+  getInvite,
+  getInviteSchema,
+  inviteSchema
+);

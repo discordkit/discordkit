@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 
-export const scopes = z.union([
+export const scopesSchema = z.union([
   /** allows your app to fetch data from a user's "Now Playing/Recently Played" list - requires Discord approval */
   z.literal(`activities.read`),
   /** allows your app to update a user's activity - requires Discord approval (NOT REQUIRED FOR GAMESDK ACTIVITY MANAGER) */
@@ -59,4 +59,4 @@ export const scopes = z.union([
   z.literal(`webhook.incoming`)
 ]);
 
-export type Scopes = z.infer<typeof scopes>;
+export type Scopes = z.infer<typeof scopesSchema>;

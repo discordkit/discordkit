@@ -1,11 +1,12 @@
 import { z } from "zod";
-import { patch, type Fetcher } from "../utils";
+import { patch, type Fetcher, createProcedure } from "../utils";
 import {
-  entityMetadata,
-  scheduledEventEntityType,
-  scheduledEventStatus,
-  scheduledEventPrivacyLevel,
-  type ScheduledEvent
+  entityMetadataSchema,
+  scheduledEventEntityTypeSchema,
+  scheduledEventStatusSchema,
+  scheduledEventPrivacyLevelSchema,
+  type ScheduledEvent,
+  scheduledEventSchema
 } from "./types";
 
 export const modifyGuildScheduledEventSchema = z.object({
@@ -16,11 +17,11 @@ export const modifyGuildScheduledEventSchema = z.object({
       /** the channel id of the scheduled event. */
       channelId: z.string().min(1),
       /** entity metadata	the entity metadata of the scheduled event */
-      entityMetadata,
+      entityMetadata: entityMetadataSchema,
       /** the name of the scheduled event */
       name: z.string().min(1),
       /** the privacy level of the scheduled event */
-      privacyLevel: scheduledEventPrivacyLevel,
+      privacyLevel: scheduledEventPrivacyLevelSchema,
       /** the time to schedule the scheduled event */
       scheduledStartTime: z.string().min(1),
       /** the time when the scheduled event is scheduled to end */
@@ -28,9 +29,9 @@ export const modifyGuildScheduledEventSchema = z.object({
       /** the description of the scheduled event */
       description: z.string().min(1),
       /** the entity type of the scheduled event */
-      entityType: scheduledEventEntityType,
+      entityType: scheduledEventEntityTypeSchema,
       /** the status of the scheduled event */
-      status: scheduledEventStatus,
+      status: scheduledEventStatusSchema,
       /** the cover image of the scheduled event */
       image: z.string().min(1)
     })
@@ -52,3 +53,10 @@ export const modifyGuildScheduledEvent: Fetcher<
   ScheduledEvent
 > = async ({ guild, event, body }) =>
   patch(`/guilds/${guild}/scheduled-events/${event}`, body);
+
+export const modifyGuildScheduledEventProcedure = createProcedure(
+  `mutation`,
+  modifyGuildScheduledEvent,
+  modifyGuildScheduledEventSchema,
+  scheduledEventSchema
+);

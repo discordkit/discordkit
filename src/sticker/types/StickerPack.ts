@@ -1,13 +1,13 @@
 import { z } from "zod";
-import { sticker } from "./Sticker";
+import { stickerSchema } from "./Sticker";
 
 // https://discord.com/developers/docs/resources/sticker#sticker-pack-object
 
-export const stickerPack = z.object({
+export const stickerPackSchema = z.object({
   /** id of the sticker pack */
   id: z.string(),
   /** the stickers in the pack */
-  stickers: sticker.array(),
+  stickers: stickerSchema.array(),
   /** name of the sticker pack */
   name: z.string(),
   /** id of the pack's SKU */
@@ -20,4 +20,4 @@ export const stickerPack = z.object({
   bannerAssetId: z.string().optional()
 });
 
-export type StickerPack = z.infer<typeof stickerPack>;
+export type StickerPack = z.infer<typeof stickerPackSchema>;

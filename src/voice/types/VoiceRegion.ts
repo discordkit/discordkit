@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 
-export const voiceRegion = z.object({
+export const voiceRegionSchema = z.object({
   /** unique ID for the region */
   id: z.string(),
   /** name of the region */
@@ -15,4 +15,4 @@ export const voiceRegion = z.object({
   custom: z.boolean()
 });
 
-export type VoiceRegion = z.infer<typeof voiceRegion>;
+export type VoiceRegion = z.infer<typeof voiceRegionSchema>;

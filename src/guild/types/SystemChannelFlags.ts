@@ -14,4 +14,4 @@ export enum SystemChannelFlags {
   SUPPRESS_JOIN_NOTIFICATION_REPLIES = 1 << 3
 }
 
-export const systemChannelFlags = z.nativeEnum(SystemChannelFlags);
+export const systemChannelFlagsSchema = z.nativeEnum(SystemChannelFlags);

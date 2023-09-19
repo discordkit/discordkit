@@ -6,4 +6,4 @@ export enum StickerFormatType {
   LOTTIE = 3
 }
 
-export const stickerFormatType = z.nativeEnum(StickerFormatType);
+export const stickerFormatTypeSchema = z.nativeEnum(StickerFormatType);

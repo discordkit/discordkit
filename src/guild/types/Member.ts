@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { user } from "../../user/types/User";
+import { userSchema } from "../../user/types/User";
 
-export const member = z.object({
+export const memberSchema = z.object({
   /** the user this guild member represents */
-  user: user.optional(),
+  user: userSchema.optional(),
   /** this user's guild nickname */
   nick: z.string().optional(),
   /** the member's guild avatar hash */
@@ -26,4 +26,4 @@ export const member = z.object({
   communicationDisabledUntil: z.number().optional()
 });
 
-export type Member = z.infer<typeof member>;
+export type Member = z.infer<typeof memberSchema>;

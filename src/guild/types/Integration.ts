@@ -1,10 +1,10 @@
 import { z } from "zod";
-import { user } from "../../user/types/User";
-import { integrationApplication } from "./IntegrationApplication";
-import { integrationAccount } from "./IntegrationAccount";
-import { integrationExpireBehavior } from "./IntegrationExpireBehavior";
+import { userSchema } from "../../user/types/User";
+import { integrationApplicationSchema } from "./IntegrationApplication";
+import { integrationAccountSchema } from "./IntegrationAccount";
+import { integrationExpireBehaviorSchema } from "./IntegrationExpireBehavior";
 
-export const integration = z.object({
+export const integrationSchema = z.object({
   /** integration id */
   id: z.string(),
   /** integration name */
@@ -20,13 +20,13 @@ export const integration = z.object({
   /** whether emoticons should be synced for this integration (twitch only currently) */
   enableEmoticons: z.boolean().optional(),
   /** the behavior of expiring subscribers */
-  expireBehavior: integrationExpireBehavior.optional(),
+  expireBehavior: integrationExpireBehaviorSchema.optional(),
   /** the grace period (in days) before expiring subscribers */
   expireGracePeriod: z.number().optional(),
   /** user for this integration */
-  user: user.optional(),
+  user: userSchema.optional(),
   /** integration account information */
-  account: integrationAccount,
+  account: integrationAccountSchema,
   /** when this integration was last synced */
   syncedAt: z.string().optional(),
   /** how many subscribers this integration has */
@@ -34,7 +34,7 @@ export const integration = z.object({
   /** has this integration been revoked */
   revoked: z.boolean().optional(),
   /** The bot/OAuth2 application for discord integrations */
-  application: integrationApplication.optional()
+  application: integrationApplicationSchema.optional()
 });
 
-export type Integration = z.infer<typeof integration>;
+export type Integration = z.infer<typeof integrationSchema>;

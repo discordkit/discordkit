@@ -7,4 +7,4 @@ export enum StickerType {
   GUILD = 2
 }
 
-export const stickerType = z.nativeEnum(StickerType);
+export const stickerTypeSchema = z.nativeEnum(StickerType);

@@ -1,12 +1,12 @@
 import { z } from "zod";
-import { moderationActionMeta } from "./ModerationActionMeta";
-import { moderationActionType } from "./ModerationActionType";
+import { moderationActionMetaSchema } from "./ModerationActionMeta";
+import { moderationActionTypeSchema } from "./ModerationActionType";
 
-export const moderationAction = z.object({
+export const moderationActionSchema = z.object({
   /** the type of action */
-  type: moderationActionType,
+  type: moderationActionTypeSchema,
   /** action metadata	additional metadata needed during execution for this specific action type */
-  metadata: moderationActionMeta.optional()
+  metadata: moderationActionMetaSchema.optional()
 });
 
-export type ModerationAction = z.infer<typeof moderationAction>;
+export type ModerationAction = z.infer<typeof moderationActionSchema>;

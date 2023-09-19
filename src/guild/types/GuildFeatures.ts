@@ -47,4 +47,4 @@ export enum GuildFeatures {
   WELCOME_SCREEN_ENABLED = `WELCOME_SCREEN_ENABLED`
 }
 
-export const guildFeatures = z.nativeEnum(GuildFeatures);
+export const guildFeaturesSchema = z.nativeEnum(GuildFeatures);

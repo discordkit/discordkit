@@ -107,4 +107,4 @@ export enum AuditLogEvent {
   AUTO_MODERATION_BLOCK_MESSAGE = 143
 }
 
-export const auditLogEvent = z.nativeEnum(AuditLogEvent);
+export const auditLogEventSchema = z.nativeEnum(AuditLogEvent);

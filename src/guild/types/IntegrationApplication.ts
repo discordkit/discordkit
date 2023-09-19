@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { user } from "../../user/types/User";
+import { userSchema } from "../../user/types/User";
 
-export const integrationApplication = z.object({
+export const integrationApplicationSchema = z.object({
   /** the id of the app */
   id: z.string(),
   /** the name of the app */
@@ -11,7 +11,9 @@ export const integrationApplication = z.object({
   /** the description of the app */
   description: z.string(),
   /** the bot associated with this application */
-  bot: user.optional()
+  bot: userSchema.optional()
 });
 
-export type IntegrationApplication = z.infer<typeof integrationApplication>;
+export type IntegrationApplication = z.infer<
+  typeof integrationApplicationSchema
+>;

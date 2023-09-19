@@ -36,4 +36,4 @@ export enum UserFlags {
   BOT_HTTP_INTERACTIONS = 1 << 19
 }
 
-export const userFlags = z.nativeEnum(UserFlags);
+export const userFlagsSchema = z.nativeEnum(UserFlags);

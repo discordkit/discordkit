@@ -29,4 +29,4 @@ export enum ChannelType {
   GUILD_FORUM = 15
 }
 
-export const channelType = z.nativeEnum(ChannelType);
+export const channelTypeSchema = z.nativeEnum(ChannelType);

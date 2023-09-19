@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { get, type Fetcher } from "../utils";
-import { type AuditLog, auditLogEvent } from "./types";
+import { get, type Fetcher, createProcedure } from "../utils";
+import { type AuditLog, auditLogEventSchema, auditLogSchema } from "./types";
 
 export const getGuildAuditLogSchema = z.object({
   guild: z.string().min(1),
@@ -9,7 +9,7 @@ export const getGuildAuditLogSchema = z.object({
       /** Entries from a specific user ID */
       userId: z.string().min(1),
       /** Entries for a specific audit log event */
-      actionType: auditLogEvent,
+      actionType: auditLogEventSchema,
       /** Entries that preceded a specific audit log entry ID */
       before: z.string().min(1),
       /** Maximum number of entries (between 1-100) to return, defaults to 50 */
@@ -28,3 +28,10 @@ export const getGuildAuditLog: Fetcher<
   typeof getGuildAuditLogSchema,
   AuditLog
 > = async ({ guild, params }) => get(`/guilds/${guild}/audit-logs`, params);
+
+export const getGuildAuditLogProcedure = createProcedure(
+  `query`,
+  getGuildAuditLog,
+  getGuildAuditLogSchema,
+  auditLogSchema
+);

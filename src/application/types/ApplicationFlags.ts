@@ -24,4 +24,4 @@ export enum ApplicationFlags {
   GATEWAY_MESSAGE_CONTENT_LIMITED = 1 << 19
 }
 
-export const applicationFlags = z.nativeEnum(ApplicationFlags);
+export const applicationFlagsSchema = z.nativeEnum(ApplicationFlags);

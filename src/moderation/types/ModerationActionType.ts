@@ -9,4 +9,4 @@ export enum ModerationActionType {
   TIMEOUT = 3
 }
 
-export const moderationActionType = z.nativeEnum(ModerationActionType);
+export const moderationActionTypeSchema = z.nativeEnum(ModerationActionType);

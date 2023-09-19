@@ -1,6 +1,10 @@
 import { z } from "zod";
-import { patch, type Fetcher } from "../utils";
-import { welcomeChannel, type WelcomeScreen } from "./types";
+import { patch, type Fetcher, createProcedure } from "../utils";
+import {
+  welcomeChannelSchema,
+  welcomeScreenSchema,
+  type WelcomeScreen
+} from "./types";
 
 export const modifyGuildWelcomeScreenSchema = z.object({
   guild: z.string().min(1),
@@ -9,7 +13,7 @@ export const modifyGuildWelcomeScreenSchema = z.object({
       /** whether the welcome screen is enabled */
       enabled: z.boolean(),
       /** channels linked in the welcome screen and their display options */
-      welcomeChannels: welcomeChannel.array(),
+      welcomeChannels: welcomeChannelSchema.array(),
       /** the server description to show in the welcome screen */
       description: z.string().min(1)
     })
@@ -27,3 +31,10 @@ export const modifyGuildWelcomeScreen: Fetcher<
   typeof modifyGuildWelcomeScreenSchema,
   WelcomeScreen
 > = async ({ guild, body }) => patch(`/guilds/${guild}/welcome-screen`, body);
+
+export const modifyGuildWelcomeScreenProcedure = createProcedure(
+  `mutation`,
+  modifyGuildWelcomeScreen,
+  modifyGuildWelcomeScreenSchema,
+  welcomeScreenSchema
+);

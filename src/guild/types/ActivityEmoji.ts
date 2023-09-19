@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const activityEmoji = z.object({
+export const activityEmojiSchema = z.object({
   /** the name of the emoji */
   name: z.string(),
   /** the id of the emoji */
@@ -9,4 +9,4 @@ export const activityEmoji = z.object({
   animated: z.boolean().optional()
 });
 
-export type ActivityEmoji = z.infer<typeof activityEmoji>;
+export type ActivityEmoji = z.infer<typeof activityEmojiSchema>;

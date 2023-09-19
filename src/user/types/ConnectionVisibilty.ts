@@ -7,4 +7,4 @@ export enum ConnectionVisibilty {
   EVERYONE = 1
 }
 
-export const connectionVisibilty = z.nativeEnum(ConnectionVisibilty);
+export const connectionVisibiltySchema = z.nativeEnum(ConnectionVisibilty);

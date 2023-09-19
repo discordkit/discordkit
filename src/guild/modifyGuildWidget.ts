@@ -1,10 +1,10 @@
 import { z } from "zod";
-import { patch, type Fetcher } from "../utils";
-import { guildWidget, type GuildWidget } from "./types";
+import { patch, type Fetcher, createProcedure } from "../utils";
+import { guildWidgetSchema, type GuildWidget } from "./types";
 
-export const modifyGuildWidgetScehma = z.object({
+export const modifyGuildWidgetSchema = z.object({
   guild: z.string().min(1),
-  body: guildWidget.partial()
+  body: guildWidgetSchema.partial()
 });
 
 /**
@@ -15,6 +15,13 @@ export const modifyGuildWidgetScehma = z.object({
  * https://discord.com/developers/docs/resources/guild#modify-guild-widget
  */
 export const modifyGuildWidget: Fetcher<
-  typeof modifyGuildWidgetScehma,
+  typeof modifyGuildWidgetSchema,
   GuildWidget
 > = async ({ guild, body }) => patch(`/guilds/${guild}/widget`, body);
+
+export const modifyGuildWidgetProcedure = createProcedure(
+  `mutation`,
+  modifyGuildWidget,
+  modifyGuildWidgetSchema,
+  guildWidgetSchema
+);

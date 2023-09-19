@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { put, type Fetcher } from "../utils";
+import { put, type Fetcher, createProcedure } from "../utils";
 
 export const createReactionSchema = z.object({
   channel: z.string().min(1),
@@ -17,3 +17,9 @@ export const createReaction: Fetcher<typeof createReactionSchema> = async ({
   message,
   emoji
 }) => put(`/channels/${channel}/messages/${message}/reactions/${emoji}/@me`);
+
+export const createReactionProcedure = createProcedure(
+  `mutation`,
+  createReaction,
+  createReactionSchema
+);

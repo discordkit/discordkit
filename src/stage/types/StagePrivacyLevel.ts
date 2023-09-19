@@ -7,4 +7,4 @@ export enum StagePrivacyLevel {
   GUILD_ONLY = 2
 }
 
-export const stagePrivacyLevel = z.nativeEnum(StagePrivacyLevel);
+export const stagePrivacyLevelSchema = z.nativeEnum(StagePrivacyLevel);

@@ -5,6 +5,6 @@ export enum ScheduledEventPrivacyLevel {
   GUILD_ONLY = 2
 }
 
-export const scheduledEventPrivacyLevel = z.nativeEnum(
+export const scheduledEventPrivacyLevelSchema = z.nativeEnum(
   ScheduledEventPrivacyLevel
 );

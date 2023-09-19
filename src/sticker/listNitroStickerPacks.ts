@@ -1,6 +1,10 @@
-import type { z } from "zod";
-import { get, type Fetcher } from "../utils";
-import type { StickerPack } from "./types";
+import { z } from "zod";
+import { get, type Fetcher, createProcedure } from "../utils";
+import { stickerPackSchema } from "./types";
+
+export const nitroStickerPacksSchema = z.object({
+  stickerPacks: stickerPackSchema.array()
+});
 
 /**
  * Returns the list of sticker packs available to Nitro subscribers.
@@ -9,7 +13,12 @@ import type { StickerPack } from "./types";
  */
 export const listNitroStickerPacks: Fetcher<
   z.ZodUnknown,
-  {
-    stickerPacks: StickerPack[];
-  }
+  z.infer<typeof nitroStickerPacksSchema>
 > = async () => get(`/sticker-packs`);
+
+export const listNitroStickerPacksProcedure = createProcedure(
+  `query`,
+  listNitroStickerPacks,
+  z.unknown(),
+  nitroStickerPacksSchema
+);

@@ -1,27 +1,21 @@
-export { allowedMention, type AllowedMention } from "./AllowedMention";
-export { archivedThreads, type ArchivedThreads } from "./ArchivedThreads";
-export { attachment, type Attachment } from "./Attachment";
-export {
-  autoArchiveDuration,
-  type AutoArchiveDuration
-} from "./AutoArchiveDuration";
-export { channel, type Channel } from "./Channel";
-export { channelMention, type ChannelMention } from "./ChannelMention";
-export { channelType, ChannelType } from "./ChannelType";
-export { embed, type Embed } from "./Embed";
-export { embedType, type EmbedType } from "./EmbedType";
-export { followedChannel, type FollowedChannel } from "./FollowedChannel";
-export { interactionType, InteractionType } from "./InteractionType";
-export { message, type Message } from "./Message";
-export { messageActivity, type MessageActivity } from "./MessageActivity";
-export {
-  messageActivityType,
-  MessageActivityType
-} from "./MessageActivityType";
-export { messageContent, type MessageContent } from "./MessageContent";
-export { messageFlag, MessageFlag } from "./MessageFlag";
-export { messageReference, type MessageReference } from "./MessageReference";
-export { overwrite, type Overwrite } from "./Overwrite";
-export { thread, type Thread } from "./Thread";
-export { threadMember, type ThreadMember } from "./ThreadMember";
-export { videoQualityMode, VideoQualityMode } from "./VideoQualityMode";
+export * from "./AllowedMention";
+export * from "./ArchivedThreads";
+export * from "./Attachment";
+export * from "./AutoArchiveDuration";
+export * from "./Channel";
+export * from "./ChannelMention";
+export * from "./ChannelType";
+export * from "./Embed";
+export * from "./EmbedType";
+export * from "./FollowedChannel";
+export * from "./InteractionType";
+export * from "./Message";
+export * from "./MessageActivity";
+export * from "./MessageActivityType";
+export * from "./MessageContent";
+export * from "./MessageFlag";
+export * from "./MessageReference";
+export * from "./Overwrite";
+export * from "./Thread";
+export * from "./ThreadMember";
+export * from "./VideoQualityMode";

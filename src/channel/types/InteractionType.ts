@@ -8,4 +8,4 @@ export enum InteractionType {
   MODAL_SUBMIT = 5
 }
 
-export const interactionType = z.nativeEnum(InteractionType);
+export const interactionTypeSchema = z.nativeEnum(InteractionType);

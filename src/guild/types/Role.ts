@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { roleTag } from "./RoleTag";
+import { roleTagSchema } from "./RoleTag";
 
-export const role = z.object({
+export const roleSchema = z.object({
   /** role id */
   id: z.string().min(1),
   /** role name */
@@ -23,7 +23,7 @@ export const role = z.object({
   /** whether this role is mentionable */
   mentionable: z.boolean(),
   /** the tags this role has */
-  tags: roleTag.array().optional()
+  tags: roleTagSchema.array().optional()
 });
 
-export type Role = z.infer<typeof role>;
+export type Role = z.infer<typeof roleSchema>;

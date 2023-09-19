@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { patch, type Fetcher } from "../utils";
-import { type Stage, stagePrivacyLevel } from "./types";
+import { patch, type Fetcher, createProcedure } from "../utils";
+import { type Stage, stagePrivacyLevelSchema, stageSchema } from "./types";
 
 export const modifyStageInstanceSchema = z.object({
   channel: z.string().min(1),
@@ -9,7 +9,7 @@ export const modifyStageInstanceSchema = z.object({
       /** The topic of the Stage instance (1-120 characters) */
       topic: z.string().min(1).max(120),
       /** The privacy level of the Stage instance */
-      privacyLevel: stagePrivacyLevel
+      privacyLevel: stagePrivacyLevelSchema
     })
     .partial()
 });
@@ -27,3 +27,10 @@ export const modifyStageInstance: Fetcher<
   typeof modifyStageInstanceSchema,
   Stage
 > = async ({ channel, body }) => patch(`/stage-instances/${channel}`, body);
+
+export const modifyStageInstanceProcedure = createProcedure(
+  `mutation`,
+  modifyStageInstance,
+  modifyStageInstanceSchema,
+  stageSchema
+);

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const activityAssets = z.object({
+export const activityAssetsSchema = z.object({
   /** see Activity Asset Image */
   largeImage: z.string().optional(),
   /** text displayed when hovering over the large image of the activity */
@@ -11,4 +11,4 @@ export const activityAssets = z.object({
   smallText: z.string().optional()
 });
 
-export type ActivityAssets = z.infer<typeof activityAssets>;
+export type ActivityAssets = z.infer<typeof activityAssetsSchema>;

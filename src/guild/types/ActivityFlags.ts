@@ -15,4 +15,4 @@ export enum ActivityFlags {
   EMBEDDED = 1 << 8
 }
 
-export const activityFlags = z.nativeEnum(ActivityFlags);
+export const activityFlagsSchema = z.nativeEnum(ActivityFlags);

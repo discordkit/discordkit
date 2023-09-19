@@ -1,10 +1,10 @@
 import { z } from "zod";
-import { member } from "../../guild/types/Member";
+import { memberSchema } from "../../guild/types/Member";
 
 // https://discord.com/developers/docs/resources/voice#voice-state-object-voice-state-structure
 /** Used to represent a user's voice connection status. */
 
-export const voiceState = z.object({
+export const voiceStateSchema = z.object({
   /** the guild id this voice state is for */
   guildId: z.string().optional(),
   /** the channel id this user is connected to */
@@ -12,7 +12,7 @@ export const voiceState = z.object({
   /** the user id this voice state is for */
   userId: z.string(),
   /** guild member object	the guild member this voice state is for */
-  member: member.optional(),
+  member: memberSchema.optional(),
   /** the session id for this voice state */
   sessionId: z.string(),
   /** whether this user is deafened by the server */
@@ -33,4 +33,4 @@ export const voiceState = z.object({
   requestToSpeakTimestamp: z.number().optional()
 });
 
-export type VoiceState = z.infer<typeof voiceState>;
+export type VoiceState = z.infer<typeof voiceStateSchema>;

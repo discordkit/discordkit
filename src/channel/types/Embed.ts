@@ -1,12 +1,12 @@
 import { z } from "zod";
-import { embedType } from "./EmbedType";
+import { embedTypeSchema } from "./EmbedType";
 
-export const embed = z
+export const embedSchema = z
   .object({
     /** title of embed */
     title: z.string(),
     /** type of embed (always "rich" for webhook embeds) */
-    type: embedType,
+    type: embedTypeSchema,
     /** description of embed */
     description: z.string(),
     /** url of embed */
@@ -91,4 +91,4 @@ export const embed = z
   })
   .partial();
 
-export type Embed = z.infer<typeof embed>;
+export type Embed = z.infer<typeof embedSchema>;

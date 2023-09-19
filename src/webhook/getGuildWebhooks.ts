@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { get, type Fetcher } from "../utils";
-import type { Webhook } from "./types";
+import { get, type Fetcher, createProcedure } from "../utils";
+import { webhookSchema, type Webhook } from "./types";
 
 export const getGuildWebhooksSchema = z.object({
   guild: z.string().min(1)
@@ -17,3 +17,10 @@ export const getGuildWebhooks: Fetcher<
   typeof getGuildWebhooksSchema,
   Webhook[]
 > = async ({ guild }) => get(`/guilds/${guild}/webhooks`);
+
+export const getGuildWebhooksProcedure = createProcedure(
+  `query`,
+  getGuildWebhooks,
+  getGuildWebhooksSchema,
+  webhookSchema.array()
+);

@@ -6,4 +6,6 @@ export enum ScheduledEventEntityType {
   EXTERNAL = 3
 }
 
-export const scheduledEventEntityType = z.nativeEnum(ScheduledEventEntityType);
+export const scheduledEventEntityTypeSchema = z.nativeEnum(
+  ScheduledEventEntityType
+);

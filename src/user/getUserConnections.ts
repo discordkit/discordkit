@@ -1,6 +1,6 @@
-import type { z } from "zod";
-import { get, type Fetcher } from "../utils";
-import type { Connection } from "./types";
+import { z } from "zod";
+import { get, type Fetcher, createProcedure } from "../utils";
+import { connectionSchema, type Connection } from "./types";
 
 /**
  * Returns a list of connection objects. Requires the `connections` OAuth2 scope.
@@ -9,3 +9,10 @@ import type { Connection } from "./types";
  */
 export const getUserConnections: Fetcher<z.ZodUnknown, Connection> = async () =>
   get(`/users/@me/connections`);
+
+export const getUserConnectionsProcedure = createProcedure(
+  `query`,
+  getUserConnections,
+  z.unknown(),
+  connectionSchema
+);

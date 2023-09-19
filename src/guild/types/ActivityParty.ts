@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const activityParty = z.object({
+export const activityPartySchema = z.object({
   /** the id of the party */
   id: z.string().optional(),
   /** (current_size, max_size)	used to show the party's current and maximum size */
@@ -14,4 +14,4 @@ export const activityParty = z.object({
     .optional()
 });
 
-export type ActivityParty = z.infer<typeof activityParty>;
+export type ActivityParty = z.infer<typeof activityPartySchema>;

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const roleTag = z.object({
+export const roleTagSchema = z.object({
   /** the id of the bot this role belongs to */
   botId: z.string().min(1),
   /** the id of the integration this role belongs to */
@@ -9,4 +9,4 @@ export const roleTag = z.object({
   premiumSubscriber: z.null()
 });
 
-export type RoleTag = z.infer<typeof roleTag>;
+export type RoleTag = z.infer<typeof roleTagSchema>;

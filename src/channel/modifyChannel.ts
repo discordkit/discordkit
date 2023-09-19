@@ -1,11 +1,12 @@
 import { z } from "zod";
 import type { Fetcher } from "../utils";
-import { patch } from "../utils";
+import { createProcedure, patch } from "../utils";
 import {
   type Channel,
-  autoArchiveDuration,
-  videoQualityMode,
-  channelType
+  autoArchiveDurationSchema,
+  videoQualityModeSchema,
+  channelTypeSchema,
+  channelSchema
 } from "./types";
 
 const sharedChannelOptions = z.object({
@@ -18,7 +19,7 @@ const threadOptions = sharedChannelOptions
     /** whether the thread is archived */
     archived: z.boolean(),
     /** duration in minutes to automatically archive the thread after recent activity, can be set to: 60, 1440, 4320, 10080 */
-    autoArchiveDuration,
+    autoArchiveDuration: autoArchiveDurationSchema,
     /** whether the thread is locked; when a thread is locked, only users with MANAGE_THREADS can unarchive it */
     locked: z.boolean(),
     /** whether non-moderators can add other non-moderators to a thread; only available on private threads */
@@ -40,7 +41,7 @@ const groupDMOptions = sharedChannelOptions
 const guildChannelOptions = sharedChannelOptions
   .extend({
     /** the type of channel; only conversion between text and news is supported and only in guilds with the "NEWS" feature */
-    type: channelType,
+    type: channelTypeSchema,
     /** the position of the channel in the left-hand listing */
     position: z.number(),
     /** 0-1024 character channel topic */
@@ -73,9 +74,9 @@ const guildChannelOptions = sharedChannelOptions
     /** channel voice region id, automatic when set to null */
     rtcRegion: z.string().min(1).nullable(),
     /** the camera video quality mode of the voice channel */
-    videoQualityMode,
+    videoQualityMode: videoQualityModeSchema,
     /** the default duration that the clients use (not the API) for newly created threads in the channel, in minutes, to automatically archive the thread after recent activity */
-    defaultAutoArchiveDuration: autoArchiveDuration
+    defaultAutoArchiveDuration: autoArchiveDurationSchema
   })
   .partial();
 
@@ -95,3 +96,10 @@ export const modifyChannel: Fetcher<
   typeof modifyChannelSchema,
   Channel
 > = async ({ channel, body }) => patch(`/channels/${channel}`, body);
+
+export const modifyChannelProcedure = createProcedure(
+  `mutation`,
+  modifyChannel,
+  modifyChannelSchema,
+  channelSchema
+);

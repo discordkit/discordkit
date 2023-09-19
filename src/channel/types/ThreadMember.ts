@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const threadMember = z.object({
+export const threadMemberSchema = z.object({
   /** the id of the thread */
   id: z.string().min(1).optional(),
   /** the id of the user */
@@ -11,4 +11,4 @@ export const threadMember = z.object({
   flags: z.number()
 });
 
-export type ThreadMember = z.infer<typeof threadMember>;
+export type ThreadMember = z.infer<typeof threadMemberSchema>;

@@ -1,11 +1,11 @@
 import { z } from "zod";
-import { KeywordPreset } from "./KeywordPreset";
+import { keywordPresetSchema } from "./KeywordPreset";
 
-export const triggerMeta = z.object({
+export const triggerMetaSchema = z.object({
   /** KEYWORD	substrings which will be searched for in content */
-  keywordFilter: z.array(z.string().min(1)),
+  keywordFilter: z.string().min(1).array(),
   /** KEYWORD_PRESET	the internally pre-defined wordsets which will be searched for in content */
-  presets: z.array(z.nativeEnum(KeywordPreset))
+  presets: keywordPresetSchema.array()
 });
 
-export type TriggerMeta = z.infer<typeof triggerMeta>;
+export type TriggerMeta = z.infer<typeof triggerMetaSchema>;

@@ -7,4 +7,4 @@ export enum MembershipState {
   ACCEPTED = 2
 }
 
-export const membershipState = z.nativeEnum(MembershipState);
+export const membershipStateSchema = z.nativeEnum(MembershipState);

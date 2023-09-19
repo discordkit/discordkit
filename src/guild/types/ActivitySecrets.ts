@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const activitySecrets = z.object({
+export const activitySecretsSchema = z.object({
   /** the secret for joining a party */
   join: z.string().optional(),
   /** the secret for spectating a game */
@@ -9,4 +9,4 @@ export const activitySecrets = z.object({
   match: z.string().optional()
 });
 
-export type ActivitySecrets = z.infer<typeof activitySecrets>;
+export type ActivitySecrets = z.infer<typeof activitySecretsSchema>;

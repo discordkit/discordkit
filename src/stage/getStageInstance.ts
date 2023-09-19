@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { get, type Fetcher } from "../utils";
-import type { Stage } from "./types";
+import { get, type Fetcher, createProcedure } from "../utils";
+import { stageSchema, type Stage } from "./types";
 
 export const getStageInstanceSchema = z.object({
   channel: z.string().min(1)
@@ -15,3 +15,10 @@ export const getStageInstance: Fetcher<
   typeof getStageInstanceSchema,
   Stage
 > = async ({ channel }) => get(`/stage-instances/${channel}`);
+
+export const getStageInstanceProcedure = createProcedure(
+  `query`,
+  getStageInstance,
+  getStageInstanceSchema,
+  stageSchema
+);

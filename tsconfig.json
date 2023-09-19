@@ -4,7 +4,13 @@
     "transpileOnly": true
   },
   "include": ["./src/**/*"],
-  "exclude": ["node_modules", "**/__mocks__/**/*", "**/__test__/**/*", "**/*.spec.ts"],
+  "exclude": [
+    "node_modules",
+    "**/__fixtures__/**/*",
+    "**/__mocks__/**/*",
+    "**/__test__/**/*",
+    "**/*.spec.ts"
+  ],
   "compilerOptions": {
     "outDir": "dist",
     "noEmit": true,

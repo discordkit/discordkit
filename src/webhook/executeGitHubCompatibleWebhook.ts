@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { post, buildURL, type Fetcher } from "../utils";
+import { post, buildURL, type Fetcher, createProcedure } from "../utils";
 
 export const executeGitHubCompatibleWebhookSchema = z.object({
   webhook: z.string().min(1),
@@ -24,3 +24,9 @@ export const executeGitHubCompatibleWebhook: Fetcher<
   typeof executeGitHubCompatibleWebhookSchema
 > = async ({ webhook, token, params }) =>
   post(buildURL(`/webhooks/${webhook}/${token}/github`, params).href);
+
+export const executeGitHubCompatibleWebhookProcedure = createProcedure(
+  `mutation`,
+  executeGitHubCompatibleWebhook,
+  executeGitHubCompatibleWebhookSchema
+);

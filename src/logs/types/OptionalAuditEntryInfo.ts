@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const optionalAuditEntryInfo = z.object({
+export const optionalAuditEntryInfoSchema = z.object({
   /** ID of the app whose permissions were targeted */
   applicationId: z.string().optional(),
   /** Channel in which the entities were targeted */
@@ -21,4 +21,6 @@ export const optionalAuditEntryInfo = z.object({
   type: z.string().optional()
 });
 
-export type OptionalAuditEntryInfo = z.infer<typeof optionalAuditEntryInfo>;
+export type OptionalAuditEntryInfo = z.infer<
+  typeof optionalAuditEntryInfoSchema
+>;

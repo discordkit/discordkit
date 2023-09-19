@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { get, type Fetcher } from "../utils";
-import type { ThreadMember } from "./types";
+import { get, type Fetcher, createProcedure } from "../utils";
+import { threadMemberSchema, type ThreadMember } from "./types";
 
 export const listThreadMembersSchema = z.object({
   channel: z.string().min(1)
@@ -17,3 +17,10 @@ export const listThreadMembers: Fetcher<
   typeof listThreadMembersSchema,
   ThreadMember[]
 > = async ({ channel }) => get(`/channels/${channel}/thread-members`);
+
+export const listThreadMembersProcedure = createProcedure(
+  `query`,
+  listThreadMembers,
+  listThreadMembersSchema,
+  threadMemberSchema.array()
+);

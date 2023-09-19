@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { get, type Fetcher } from "../utils";
-import type { ScheduledEvent } from "./types";
+import { get, type Fetcher, createProcedure } from "../utils";
+import { scheduledEventSchema, type ScheduledEvent } from "./types";
 
 export const getGuildScheduledEventSchema = z.object({
   guild: z.string().min(1),
@@ -24,3 +24,10 @@ export const getGuildScheduledEvent: Fetcher<
   ScheduledEvent
 > = async ({ guild, event, params }) =>
   get(`/guilds/${guild}/scheduled-events/${event}`, params);
+
+export const getGuildScheduledEventProcedure = createProcedure(
+  `query`,
+  getGuildScheduledEvent,
+  getGuildScheduledEventSchema,
+  scheduledEventSchema
+);

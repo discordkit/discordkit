@@ -7,6 +7,6 @@ export enum DefaultMessageNotificationLevel {
   ONLY_MENTIONS = 1
 }
 
-export const defaultMessageNotificationLevel = z.nativeEnum(
+export const defaultMessageNotificationLevelSchema = z.nativeEnum(
   DefaultMessageNotificationLevel
 );

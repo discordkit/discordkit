@@ -1,12 +1,13 @@
 import { z } from "zod";
-import { post, type Fetcher } from "../utils";
+import { post, type Fetcher, createProcedure } from "../utils";
 import {
-  allowedMention,
-  attachment,
-  embed,
-  autoArchiveDuration,
+  allowedMentionSchema,
+  attachmentSchema,
+  embedSchema,
+  autoArchiveDurationSchema,
   type Channel,
-  messageFlag
+  messageFlagSchema,
+  channelSchema
 } from "./types";
 
 export const startThreadInForumChannelSchema = z.object({
@@ -15,7 +16,7 @@ export const startThreadInForumChannelSchema = z.object({
     /** 1-100 character channel name */
     name: z.string().min(1).max(100),
     /** duration in minutes to automatically archive the thread after recent activity, can be set to: 60, 1440, 4320, 10080 */
-    autoArchiveDuration: autoArchiveDuration.optional(),
+    autoArchiveDuration: autoArchiveDurationSchema.optional(),
     /** amount of seconds a user has to wait before sending another message (0-21600) */
     rateLimitPerUser: z.number().min(0).max(21600),
     /** contents of the first message in the forum thread */
@@ -24,9 +25,9 @@ export const startThreadInForumChannelSchema = z.object({
         /** Message contents (up to 2000 characters) */
         content: z.string().min(1).max(2000),
         /** Embedded rich content (up to 6000 characters) */
-        embeds: embed.array(),
+        embeds: embedSchema.array(),
         /** Allowed mentions for the message */
-        allowedMentions: allowedMention,
+        allowedMentions: allowedMentionSchema,
         /** Components to include with the message */
         //components?	array of message component objects
         /** IDs of up to 3 stickers in the server to send in the message */
@@ -36,9 +37,9 @@ export const startThreadInForumChannelSchema = z.object({
         /** JSON-encoded body of non-file params, only for multipart/form-data requests. See Uploading Files */
         payloadJson: z.unknown(),
         /** Attachment objects with filename and description. See Uploading Files */
-        attachments: attachment.partial().array(),
+        attachments: attachmentSchema.partial().array(),
         /** Message flags combined as a bitfield (only SUPPRESS_EMBEDS can be set) */
-        flags: messageFlag
+        flags: messageFlagSchema
       })
       .partial()
   })
@@ -66,3 +67,10 @@ export const startThreadInForumChannel: Fetcher<
   typeof startThreadInForumChannelSchema,
   Channel
 > = async ({ channel, body }) => post(`/channels/${channel}/threads`, body);
+
+export const startThreadInForumChannelProcedure = createProcedure(
+  `mutation`,
+  startThreadInForumChannel,
+  startThreadInForumChannelSchema,
+  channelSchema
+);

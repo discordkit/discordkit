@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const messageReference = z
+export const messageReferenceSchema = z
   .object({
     /** id of the originating message */
     messageId: z.string().min(1),
@@ -13,4 +13,4 @@ export const messageReference = z
   })
   .partial();
 
-export type MessageReference = z.infer<typeof messageReference>;
+export type MessageReference = z.infer<typeof messageReferenceSchema>;

@@ -24,4 +24,4 @@ export enum MessageFlag {
   FAILED_TO_MENTION_SOME_ROLES_IN_THREAD = 1 << 8
 }
 
-export const messageFlag = z.nativeEnum(MessageFlag);
+export const messageFlagSchema = z.nativeEnum(MessageFlag);

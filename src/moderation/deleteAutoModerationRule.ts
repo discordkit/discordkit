@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { remove, type Fetcher } from "../utils";
+import { remove, type Fetcher, createProcedure } from "../utils";
 
 export const deleteAutoModerationRuleSchema = z.object({
   guild: z.string().min(1),
@@ -17,3 +17,9 @@ export const deleteAutoModerationRule: Fetcher<
   typeof deleteAutoModerationRuleSchema
 > = async ({ guild, rule }) =>
   remove(`/guilds/${guild}/auto-moderation/rules/${rule}`);
+
+export const deleteAutoModerationRuleProcedure = createProcedure(
+  `mutation`,
+  deleteAutoModerationRule,
+  deleteAutoModerationRuleSchema
+);

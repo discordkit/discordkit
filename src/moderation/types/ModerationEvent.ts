@@ -5,4 +5,4 @@ export enum ModerationEvent {
   MESSAGE_SEND = 1
 }
 
-export const moderationEvent = z.nativeEnum(ModerationEvent);
+export const moderationEventSchema = z.nativeEnum(ModerationEvent);

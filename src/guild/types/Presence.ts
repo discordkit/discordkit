@@ -1,11 +1,11 @@
 import { z } from "zod";
-import { user } from "../../user";
-import { clientStatus } from "./ClientStatus";
-import { activity } from "./Activity";
+import { userSchema } from "../../user/types/User";
+import { clientStatusSchema } from "./ClientStatus";
+import { activitySchema } from "./Activity";
 
-export const presence = z.object({
+export const presenceSchema = z.object({
   /** the user presence is being updated for */
-  user,
+  user: userSchema,
   /** id of the guild */
   guildId: z.string(),
   /** either "idle", "dnd", "online", or "offline" */
@@ -16,9 +16,9 @@ export const presence = z.object({
     z.literal(`offline`)
   ]),
   /** user's current activities */
-  activities: activity.array(),
+  activities: activitySchema.array(),
   /** user's platform-dependent status */
-  clientStatus
+  clientStatus: clientStatusSchema
 });
 
-export type Presence = z.infer<typeof presence>;
+export type Presence = z.infer<typeof presenceSchema>;

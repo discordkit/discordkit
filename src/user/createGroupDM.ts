@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { post, type Fetcher } from "../utils";
-import type { Channel } from "../channel";
+import { post, type Fetcher, createProcedure } from "../utils";
+import { channelSchema, type Channel } from "../channel/types/Channel";
 
 const createGroupDMSchema = z.object({
   body: z.object({
@@ -22,3 +22,10 @@ export const createGroupDM: Fetcher<
   typeof createGroupDMSchema,
   Channel
 > = async ({ body }) => post(`/users/@me/channels`, body);
+
+export const createGroupDMProcedure = createProcedure(
+  `mutation`,
+  createGroupDM,
+  createGroupDMSchema,
+  channelSchema
+);

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const moderationActionMeta = z.union([
+export const moderationActionMetaSchema = z.union([
   z.object({
     /** channel to which user content should be logged */
     channelId: z.string().min(1).optional()
@@ -11,4 +11,4 @@ export const moderationActionMeta = z.union([
   })
 ]);
 
-export type ModerationActionMeta = z.infer<typeof moderationActionMeta>;
+export type ModerationActionMeta = z.infer<typeof moderationActionMetaSchema>;

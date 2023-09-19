@@ -5,4 +5,4 @@ export enum InviteTarget {
   EMBEDDED_APPLICATION = 2
 }
 
-export const inviteTarget = z.nativeEnum(InviteTarget);
+export const inviteTargetSchema = z.nativeEnum(InviteTarget);

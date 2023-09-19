@@ -1,6 +1,10 @@
 import { z } from "zod";
-import { autoArchiveDuration, type Channel } from "./types";
-import { post, type Fetcher } from "../utils";
+import {
+  autoArchiveDurationSchema,
+  channelSchema,
+  type Channel
+} from "./types";
+import { post, type Fetcher, createProcedure } from "../utils";
 
 export const startThreadFromMessageSchema = z.object({
   channel: z.string().min(1),
@@ -9,7 +13,7 @@ export const startThreadFromMessageSchema = z.object({
     /** 1-100 character channel name */
     name: z.string().min(1).max(100),
     /** duration in minutes to automatically archive the thread after recent activity, can be set to: 60, 1440, 4320, 10080 */
-    autoArchiveDuration: autoArchiveDuration.optional(),
+    autoArchiveDuration: autoArchiveDurationSchema.optional(),
     /** amount of seconds a user has to wait before sending another message (0-21600) */
     rateLimitPerUser: z.number().min(0).max(21600)
   })
@@ -29,3 +33,10 @@ export const startThreadFromMessage: Fetcher<
   Channel
 > = async ({ channel, message, body }) =>
   post(`/channels/${channel}/messages/${message}/threads`, body);
+
+export const startThreadFromMessageProcedure = createProcedure(
+  `mutation`,
+  startThreadFromMessage,
+  startThreadFromMessageSchema,
+  channelSchema
+);

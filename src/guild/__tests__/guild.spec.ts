@@ -1,71 +1,13 @@
-import { initTRPC } from "@trpc/server";
-import {
-  addGuildMember,
-  addGuildMemberRole,
-  addGuildMemberRoleSchema,
-  addGuildMemberSchema,
-  ban,
-  getGuild,
-  getGuildBan,
-  getGuildBanSchema,
-  getGuildBans,
-  getGuildBansSchema,
-  getGuildChannels,
-  getGuildChannelsSchema,
-  getGuildIntegrations,
-  getGuildIntegrationsSchema,
-  getGuildInvites,
-  getGuildInvitesSchema,
-  getGuildSchema,
-  guild,
-  integration,
-  member
-} from "..";
+import { banSchema, guildSchema, integrationSchema, memberSchema } from "..";
 import { mockGet, mockPut } from "../../../jest.setup";
-import { channel } from "../../channel";
-import { invite } from "../../invite";
-import { toProcedure } from "../../utils/methods";
-
-const tRPC = initTRPC.create();
-const appRouter = tRPC.router({
-  addGuildMember: tRPC.procedure
-    .input(addGuildMemberSchema)
-    .output(member)
-    .mutation(toProcedure(addGuildMember)),
-  addGuildMemberRole: tRPC.procedure
-    .input(addGuildMemberRoleSchema)
-    .mutation(toProcedure(addGuildMemberRole)),
-  getGuild: tRPC.procedure
-    .input(getGuildSchema)
-    .output(guild)
-    .query(toProcedure(getGuild)),
-  getGuildBan: tRPC.procedure
-    .input(getGuildBanSchema)
-    .output(ban)
-    .query(toProcedure(getGuildBan)),
-  getGuildBans: tRPC.procedure
-    .input(getGuildBansSchema)
-    .output(ban.array())
-    .query(toProcedure(getGuildBans)),
-  getGuildChannels: tRPC.procedure
-    .input(getGuildChannelsSchema)
-    .output(channel.array())
-    .query(toProcedure(getGuildChannels)),
-  getGuildIntegrations: tRPC.procedure
-    .input(getGuildIntegrationsSchema)
-    .output(integration.array())
-    .query(toProcedure(getGuildIntegrations)),
-  getGuildInvites: tRPC.procedure
-    .input(getGuildInvitesSchema)
-    .output(invite.array())
-    .query(toProcedure(getGuildInvites))
-});
-const caller = appRouter.createCaller({});
+import { channelSchema } from "../../channel";
+import { inviteSchema } from "../../invite";
+import { client } from "../__fixtures__/router";
 
 describe(`guilds`, () => {
   it(`addGuildMember`, async () => {
-    const result = mockPut(`/guilds/:guild/members/:user`, member);
-    const actual = await caller.addGuildMember({
+    const result = mockPut(`/guilds/:guild/members/:user`, memberSchema);
+    const actual = await client.addGuildMember({
       user: `foo`,
       guild: `bar`,
       body: {
@@ -78,7 +20,7 @@ describe(`guilds`, () => {
   it(`addGuildMemberRole`, () => {
     mockPut(`/guilds/:guild/members/:user/roles/:role`);
     expect(async () =>
-      caller.addGuildMemberRole({
+      client.addGuildMemberRole({
         user: `foo`,
         guild: `bar`,
         role: `qux`
@@ -87,8 +29,8 @@ describe(`guilds`, () => {
   });
 
   it(`getGuild`, async () => {
-    const result = mockGet(`/guilds/:id`, guild);
-    const actual = await caller.getGuild({
+    const result = mockGet(`/guilds/:id`, guildSchema);
+    const actual = await client.getGuild({
       id: `foo`,
       params: { withCounts: true }
     });
@@ -96,32 +38,35 @@ describe(`guilds`, () => {
   });
 
   it(`getGuildBan`, async () => {
-    const result = mockGet(`/guilds/:guild/bans/:user`, ban);
-    const actual = await caller.getGuildBan({ user: `foo`, guild: `bar` });
+    const result = mockGet(`/guilds/:guild/bans/:user`, banSchema);
+    const actual = await client.getGuildBan({ user: `foo`, guild: `bar` });
     expect(actual).toStrictEqual(result);
   });
 
   it(`getGuildBans`, async () => {
-    const result = mockGet(`/guilds/:guild/bans`, ban.array());
-    const actual = await caller.getGuildBans({ guild: `bar` });
+    const result = mockGet(`/guilds/:guild/bans`, banSchema.array());
+    const actual = await client.getGuildBans({ guild: `bar` });
     expect(actual).toStrictEqual(result);
   });
 
   it(`getGuildChannels`, async () => {
-    const result = mockGet(`/guilds/:guild/channels`, channel.array());
-    const actual = await caller.getGuildChannels({ guild: `bar` });
+    const result = mockGet(`/guilds/:guild/channels`, channelSchema.array());
+    const actual = await client.getGuildChannels({ guild: `bar` });
     expect(actual).toStrictEqual(result);
   });
 
   it(`getGuildIntegrations`, async () => {
-    const result = mockGet(`/guilds/:guild/integrations`, integration.array());
-    const actual = await caller.getGuildIntegrations({ guild: `bar` });
+    const result = mockGet(
+      `/guilds/:guild/integrations`,
+      integrationSchema.array()
+    );
+    const actual = await client.getGuildIntegrations({ guild: `bar` });
     expect(actual).toStrictEqual(result);
   });
 
   it(`getGuildInvites`, async () => {
-    const result = mockGet(`/guilds/:guild/invites`, invite.array());
-    const actual = await caller.getGuildInvites({ guild: `bar` });
+    const result = mockGet(`/guilds/:guild/invites`, inviteSchema.array());
+    const actual = await client.getGuildInvites({ guild: `bar` });
     expect(actual).toStrictEqual(result);
   });
 });

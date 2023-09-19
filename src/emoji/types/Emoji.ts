@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { user } from "../../user/types/User";
+import { userSchema } from "../../user/types/User";
 
-export const emoji = z.object({
+export const emojiSchema = z.object({
   /** emoji id */
   id: z.string().optional(),
   /** (can be null only in reaction emoji objects)	emoji name */
@@ -9,7 +9,7 @@ export const emoji = z.object({
   /** roles allowed to use this emoji */
   roles: z.string().array().optional(),
   /** user that created this emoji */
-  user: user.optional(),
+  user: userSchema.optional(),
   /** whether this emoji must be wrapped in colons */
   requireColons: z.boolean().optional(),
   /** whether this emoji is managed */
@@ -20,4 +20,4 @@ export const emoji = z.object({
   available: z.boolean().optional()
 });
 
-export type Emoji = z.infer<typeof emoji>;
+export type Emoji = z.infer<typeof emojiSchema>;

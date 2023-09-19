@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { get, type Fetcher } from "../utils";
-import type { Message } from "./types";
+import { get, type Fetcher, createProcedure } from "../utils";
+import { messageSchema, type Message } from "./types";
 
 export const getPinnedMessagesSchema = z.object({
   channel: z.string().min(1)
@@ -15,3 +15,10 @@ export const getPinnedMessages: Fetcher<
   typeof getPinnedMessagesSchema,
   Message[]
 > = async ({ channel }) => get(`/channels/${channel}/pins`);
+
+export const getPinnedMessagesProcedure = createProcedure(
+  `query`,
+  getPinnedMessages,
+  getPinnedMessagesSchema,
+  messageSchema.array()
+);

@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { patch, type Fetcher } from "../utils";
-import type { GuildTemplate } from "./types";
+import { patch, type Fetcher, createProcedure } from "../utils";
+import { guildTemplateSchema, type GuildTemplate } from "./types";
 
 export const modifyGuildTemplateSchema = z.object({
   guild: z.string().min(1),
@@ -25,3 +25,10 @@ export const modifyGuildTemplate: Fetcher<
   GuildTemplate
 > = async ({ guild, template, body }) =>
   patch(`/guilds/${guild}/templates/${template}`, body);
+
+export const modifyGuildTemplateProcedure = createProcedure(
+  `mutation`,
+  modifyGuildTemplate,
+  modifyGuildTemplateSchema,
+  guildTemplateSchema
+);

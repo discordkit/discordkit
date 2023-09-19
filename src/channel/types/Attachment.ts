@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const attachment = z.object({
+export const attachmentSchema = z.object({
   /** attachment id */
   id: z.string(),
   /** name of file attached */
@@ -23,4 +23,4 @@ export const attachment = z.object({
   ephemeral: z.boolean().optional()
 });
 
-export type Attachment = z.infer<typeof attachment>;
+export type Attachment = z.infer<typeof attachmentSchema>;

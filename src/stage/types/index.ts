@@ -1,2 +1,2 @@
-export { stage, type Stage } from "./Stage";
-export { stagePrivacyLevel, StagePrivacyLevel } from "./StagePrivacyLevel";
+export * from "./Stage";
+export * from "./StagePrivacyLevel";

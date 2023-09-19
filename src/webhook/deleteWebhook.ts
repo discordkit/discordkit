@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { remove, type Fetcher } from "../utils";
+import { remove, type Fetcher, createProcedure } from "../utils";
 
 export const deleteWebhookSchema = z.object({
   webhook: z.string().min(1)
@@ -15,3 +15,9 @@ export const deleteWebhookSchema = z.object({
 export const deleteWebhook: Fetcher<typeof deleteWebhookSchema> = async ({
   webhook
 }) => remove(`/webhooks/${webhook}`);
+
+export const deleteWebhookProcedure = createProcedure(
+  `mutation`,
+  deleteWebhook,
+  deleteWebhookSchema
+);

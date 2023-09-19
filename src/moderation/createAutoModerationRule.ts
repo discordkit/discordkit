@@ -1,11 +1,12 @@
 import { z } from "zod";
-import { post, type Fetcher } from "../utils";
+import { post, type Fetcher, createProcedure } from "../utils";
 import {
-  moderationAction,
-  triggerMeta,
-  moderationEvent,
-  moderationTrigger,
-  type ModerationRule
+  moderationActionSchema,
+  triggerMetaSchema,
+  moderationEventSchema,
+  moderationTriggerSchema,
+  type ModerationRule,
+  moderationRuleSchema
 } from "./types";
 
 export const createAutoModerationRuleSchema = z.object({
@@ -14,13 +15,13 @@ export const createAutoModerationRuleSchema = z.object({
     /** the rule name */
     name: z.string().min(1),
     /** the event type */
-    eventType: moderationEvent,
+    eventType: moderationEventSchema,
     /** the trigger type */
-    triggerType: moderationTrigger,
+    triggerType: moderationTriggerSchema,
     /** the trigger metadata */
-    triggerMetadata: triggerMeta.optional(),
+    triggerMetadata: triggerMetaSchema.optional(),
     /** the actions which will execute when the rule is triggered */
-    actions: moderationAction.array(),
+    actions: moderationActionSchema.array(),
     /** whether the rule is enabled (False by default) */
     enabled: z.boolean().optional(),
     /** the role ids that should not be affected by the rule (Maximum of 20) */
@@ -42,3 +43,10 @@ export const createAutoModerationRule: Fetcher<
   ModerationRule
 > = async ({ guild, body }) =>
   post(`/guilds/${guild}/auto-moderation/rules`, body);
+
+export const createAutoModerationRuleProcedure = createProcedure(
+  `mutation`,
+  createAutoModerationRule,
+  createAutoModerationRuleSchema,
+  moderationRuleSchema
+);

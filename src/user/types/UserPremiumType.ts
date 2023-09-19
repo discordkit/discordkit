@@ -8,4 +8,4 @@ export enum UserPremiumType {
   Nitro = 2
 }
 
-export const userPremiumType = z.nativeEnum(UserPremiumType);
+export const userPremiumTypeSchema = z.nativeEnum(UserPremiumType);

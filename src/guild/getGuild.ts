@@ -1,6 +1,6 @@
 import { z } from "zod";
-import type { Guild } from "./types";
-import { get, type Fetcher } from "../utils";
+import { guildSchema, type Guild } from "./types";
+import { get, type Fetcher, createProcedure } from "../utils";
 
 export const getGuildSchema = z.object({
   id: z.string().min(1),
@@ -22,3 +22,10 @@ export const getGuild: Fetcher<typeof getGuildSchema, Guild> = async ({
   id,
   params
 }) => get(`/guilds/${id}`, params);
+
+export const getGuildProcedure = createProcedure(
+  `query`,
+  getGuild,
+  getGuildSchema,
+  guildSchema
+);

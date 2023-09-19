@@ -1,11 +1,11 @@
 import { z } from "zod";
-import { messageActivityType } from "./MessageActivityType";
+import { messageActivityTypeSchema } from "./MessageActivityType";
 
-export const messageActivity = z.object({
+export const messageActivitySchema = z.object({
   /** type of message activity */
-  type: messageActivityType,
+  type: messageActivityTypeSchema,
   /** party_id from a Rich Presence event */
   partyId: z.string().optional()
 });
 
-export type MessageActivity = z.infer<typeof messageActivity>;
+export type MessageActivity = z.infer<typeof messageActivitySchema>;

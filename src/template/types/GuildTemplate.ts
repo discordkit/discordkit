@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { guild } from "../../guild";
+import { guildSchema } from "../../guild/types/Guild";
 
-export const guildTemplate = z.object({
+export const guildTemplateSchema = z.object({
   /** the template code (unique ID) */
   code: z.string(),
   /** template name */
@@ -20,9 +20,9 @@ export const guildTemplate = z.object({
   /** the ID of the guild this template is based on */
   sourceGuildId: z.string(),
   /** the guild snapshot this template contains */
-  serializedSourceGuild: guild.partial(),
+  serializedSourceGuild: guildSchema.partial(),
   /** whether the template has unsynced changes */
   isDirty: z.boolean().optional()
 });
 
-export type GuildTemplate = z.infer<typeof guildTemplate>;
+export type GuildTemplate = z.infer<typeof guildTemplateSchema>;

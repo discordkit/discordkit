@@ -1,27 +1,27 @@
 import { z } from "zod";
-import { channel } from "../../channel";
-import { scheduledEvent } from "../../event";
-import { integration } from "../../guild";
-import { moderationRule } from "../../moderation";
-import { user } from "../../user";
-import { webhook } from "../../webhook";
-import { auditLogEntry } from "./AuditLogEntry";
+import { channelSchema } from "../../channel/types/Channel";
+import { scheduledEventSchema } from "../../event/types/ScheduledEvent";
+import { integrationSchema } from "../../guild/types/Integration";
+import { moderationRuleSchema } from "../../moderation/types/ModerationRule";
+import { userSchema } from "../../user/types/User";
+import { webhookSchema } from "../../webhook/types/Webhook";
+import { auditLogEntrySchema } from "./AuditLogEntry";
 
-export const auditLog = z.object({
+export const auditLogSchema = z.object({
   /** List of audit log entries, sorted from most to least recent */
-  auditLogEntries: auditLogEntry.array(),
+  auditLogEntries: auditLogEntrySchema.array(),
   /** List of auto moderation rules referenced in the audit log */
-  autoModerationRules: moderationRule.array(),
+  autoModerationRules: moderationRuleSchema.array(),
   /** List of guild scheduled events referenced in the audit log */
-  guildScheduledEvents: scheduledEvent.array(),
+  guildScheduledEvents: scheduledEventSchema.array(),
   /** List of partial integration objects */
-  integrations: integration.partial().array(),
+  integrations: integrationSchema.partial().array(),
   /** List of threads referenced in the audit log */
-  threads: channel.array(),
+  threads: channelSchema.array(),
   /** List of users referenced in the audit log */
-  users: user.array(),
+  users: userSchema.array(),
   /** List of webhooks referenced in the audit log */
-  webhooks: webhook.array()
+  webhooks: webhookSchema.array()
 });
 
-export type AuditLog = z.infer<typeof auditLog>;
+export type AuditLog = z.infer<typeof auditLogSchema>;

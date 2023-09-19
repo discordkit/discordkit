@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { get, type Fetcher } from "../utils";
-import type { Webhook } from "./types";
+import { get, type Fetcher, createProcedure } from "../utils";
+import { webhookSchema, type Webhook } from "./types";
 
 export const getChannelWebhooksSchema = z.object({
   channel: z.string().min(1)
@@ -17,3 +17,10 @@ export const getChannelWebhooks: Fetcher<
   typeof getChannelWebhooksSchema,
   Webhook[]
 > = async ({ channel }) => get(`/channels/${channel}/webhooks`);
+
+export const getChannelWebhooksProcedure = createProcedure(
+  `query`,
+  getChannelWebhooks,
+  getChannelWebhooksSchema,
+  webhookSchema.array()
+);

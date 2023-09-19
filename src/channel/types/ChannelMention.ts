@@ -1,15 +1,15 @@
 import { z } from "zod";
-import { channelType } from "./ChannelType";
+import { channelTypeSchema } from "./ChannelType";
 
-export const channelMention = z.object({
+export const channelMentionSchema = z.object({
   /** id of the channel */
   id: z.string(),
   /** id of the guild containing the channel */
   guildId: z.string(),
   /** the type of channel */
-  type: channelType,
+  type: channelTypeSchema,
   /** the name of the channel */
   name: z.string()
 });
 
-export type ChannelMention = z.infer<typeof channelMention>;
+export type ChannelMention = z.infer<typeof channelMentionSchema>;

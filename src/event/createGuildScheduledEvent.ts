@@ -1,10 +1,11 @@
 import { z } from "zod";
-import { post, type Fetcher } from "../utils";
+import { post, type Fetcher, createProcedure } from "../utils";
 import {
-  entityMetadata,
-  scheduledEventEntityType,
-  scheduledEventPrivacyLevel,
-  type ScheduledEvent
+  entityMetadataSchema,
+  scheduledEventEntityTypeSchema,
+  scheduledEventPrivacyLevelSchema,
+  type ScheduledEvent,
+  scheduledEventSchema
 } from "./types";
 
 export const createGuildScheduledEventSchema = z.object({
@@ -13,11 +14,11 @@ export const createGuildScheduledEventSchema = z.object({
     /** the channel id of the scheduled event. */
     channelId: z.string().min(1).optional(),
     /** entity metadata	the entity metadata of the scheduled event */
-    entityMetadata,
+    entityMetadata: entityMetadataSchema,
     /** the name of the scheduled event */
     name: z.string().min(1),
     /** the privacy level of the scheduled event */
-    privacyLevel: scheduledEventPrivacyLevel,
+    privacyLevel: scheduledEventPrivacyLevelSchema,
     /** the time to schedule the scheduled event */
     scheduledStartTime: z.string().min(1),
     /** the time when the scheduled event is scheduled to end */
@@ -25,7 +26,7 @@ export const createGuildScheduledEventSchema = z.object({
     /** the description of the scheduled event */
     description: z.string().min(1).optional(),
     /** the entity type of the scheduled event */
-    entityType: scheduledEventEntityType,
+    entityType: scheduledEventEntityTypeSchema,
     /** the cover image of the scheduled event */
     image: z.string().min(1).optional()
   })
@@ -44,3 +45,10 @@ export const createGuildScheduledEvent: Fetcher<
   typeof createGuildScheduledEventSchema,
   ScheduledEvent
 > = async ({ guild, body }) => post(`/guilds/${guild}/scheduled-events`, body);
+
+export const createGuildScheduledEventProcedure = createProcedure(
+  `mutation`,
+  createGuildScheduledEvent,
+  createGuildScheduledEventSchema,
+  scheduledEventSchema
+);

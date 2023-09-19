@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { member } from "../../guild/types/Member";
+import { memberSchema } from "../../guild/types/Member";
 
-export const inviteStageInstance = z.object({
+export const inviteStageInstanceSchema = z.object({
   /** the members speaking in the Stage */
-  members: member.partial().array(),
+  members: memberSchema.partial().array(),
   /** the number of users in the Stage */
   participantCount: z.number(),
   /** the number of users speaking in the Stage */
@@ -12,4 +12,4 @@ export const inviteStageInstance = z.object({
   topic: z.string()
 });
 
-export type InviteStageInstance = z.infer<typeof inviteStageInstance>;
+export type InviteStageInstance = z.infer<typeof inviteStageInstanceSchema>;

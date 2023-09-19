@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { patch, type Fetcher } from "../utils";
-import type { Sticker } from "./types";
+import { patch, type Fetcher, createProcedure } from "../utils";
+import { stickerSchema, type Sticker } from "./types";
 
 export const modifyGuildStickerSchema = z.object({
   guild: z.string().min(1),
@@ -29,3 +29,10 @@ export const modifyGuildSticker: Fetcher<
   Sticker
 > = async ({ guild, sticker, body }) =>
   patch(`/guilds/${guild}/stickers/${sticker}`, body);
+
+export const modifyGuildStickerProcedure = createProcedure(
+  `query`,
+  modifyGuildSticker,
+  modifyGuildStickerSchema,
+  stickerSchema
+);

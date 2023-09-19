@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const embedType = z.enum([
+export const embedTypeSchema = z.enum([
   /** generic embed rendered from embed attributes */
   `rich`,
   /** image embed */
@@ -15,4 +15,4 @@ export const embedType = z.enum([
   `link`
 ]);
 
-export type EmbedType = z.infer<typeof embedType>;
+export type EmbedType = z.infer<typeof embedTypeSchema>;

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const welcomeChannel = z.object({
+export const welcomeChannelSchema = z.object({
   /** the channel's id */
   channelId: z.string().min(1),
   /** the description shown for the channel */
@@ -11,4 +11,4 @@ export const welcomeChannel = z.object({
   emojiName: z.string().min(1).optional()
 });
 
-export type WelcomeChannel = z.infer<typeof welcomeChannel>;
+export type WelcomeChannel = z.infer<typeof welcomeChannelSchema>;

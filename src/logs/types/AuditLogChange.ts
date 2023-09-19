@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const auditLogChange = z.object({
+export const auditLogChangeSchema = z.object({
   /** New value of the key */
   newValue: z.unknown().optional(),
   /** Old value of the key */
@@ -9,4 +9,4 @@ export const auditLogChange = z.object({
   key: z.string()
 });
 
-export type AuditLogChange = z.infer<typeof auditLogChange>;
+export type AuditLogChange = z.infer<typeof auditLogChangeSchema>;

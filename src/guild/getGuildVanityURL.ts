@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { get, type Fetcher } from "../utils";
-import type { Invite } from "../invite";
+import { get, type Fetcher, createProcedure } from "../utils";
+import { inviteSchema, type Invite } from "../invite";
 
 export const getGuildVanityURLSchema = z.object({
   guild: z.string().min(1)
@@ -15,3 +15,10 @@ export const getGuildVanityURL: Fetcher<
   typeof getGuildVanityURLSchema,
   Partial<Invite>
 > = async ({ guild }) => get(`/guilds/${guild}/vanity-url`);
+
+export const getGuildVanityURLProcedure = createProcedure(
+  `query`,
+  getGuildVanityURL,
+  getGuildVanityURLSchema,
+  inviteSchema.partial()
+);

@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { post, type Fetcher } from "../utils";
-import { type Stage, stagePrivacyLevel } from "./types";
+import { post, type Fetcher, createProcedure } from "../utils";
+import { type Stage, stagePrivacyLevelSchema, stageSchema } from "./types";
 
 export const createStageInstanceSchema = z.object({
   body: z.object({
@@ -9,7 +9,7 @@ export const createStageInstanceSchema = z.object({
     /** The topic of the Stage instance (1-120 characters) */
     topic: z.string().min(1).max(120),
     /** The privacy level of the Stage instance (default GUILD_ONLY) */
-    privacyLevel: stagePrivacyLevel.optional(),
+    privacyLevel: stagePrivacyLevelSchema.optional(),
     /** Notify @everyone that a Stage instance has started */
     sendStartNotification: z.boolean().optional()
   })
@@ -28,3 +28,10 @@ export const createStageInstance: Fetcher<
   typeof createStageInstanceSchema,
   Stage
 > = async ({ body }) => post(`/stage-instances`, body);
+
+export const createStageInstanceProcedure = createProcedure(
+  `mutation`,
+  createStageInstance,
+  createStageInstanceSchema,
+  stageSchema
+);

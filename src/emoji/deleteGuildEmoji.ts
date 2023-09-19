@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { remove, type Fetcher } from "../utils";
+import { remove, type Fetcher, createProcedure } from "../utils";
 
 export const deleteGuildEmojiSchema = z.object({
   guild: z.string().min(1),
@@ -15,3 +15,9 @@ export const deleteGuildEmoji: Fetcher<typeof deleteGuildEmojiSchema> = async ({
   guild,
   emoji
 }) => remove(`/guilds/${guild}/emojis/${emoji}`);
+
+export const deleteGuildEmojiProcedure = createProcedure(
+  `mutation`,
+  deleteGuildEmoji,
+  deleteGuildEmojiSchema
+);

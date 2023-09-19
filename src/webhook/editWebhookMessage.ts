@@ -1,6 +1,12 @@
 import { z } from "zod";
-import { allowedMention, attachment, embed, type Message } from "../channel";
-import { patch, buildURL, type Fetcher } from "../utils";
+import { patch, buildURL, type Fetcher, createProcedure } from "../utils";
+import {
+  allowedMentionSchema,
+  attachmentSchema,
+  embedSchema,
+  messageSchema,
+  type Message
+} from "../channel";
 
 export const editWebhookMessageSchema = z.object({
   webhook: z.string().min(1),
@@ -18,9 +24,9 @@ export const editWebhookMessageSchema = z.object({
       /** the message contents (up to 2000 characters) */
       content: z.string().min(1).max(200),
       /** embedded rich content */
-      embeds: embed.array(),
+      embeds: embedSchema.array(),
       /** allowed mentions for the message */
-      allowedMentions: allowedMention,
+      allowedMentions: allowedMentionSchema,
       /** the components to include with the message */
       components: z.unknown().array(),
       /** the contents of the file being sent */
@@ -28,7 +34,7 @@ export const editWebhookMessageSchema = z.object({
       /** JSON encoded body of non-file params */
       payloadJson: z.unknown(),
       /** attachment objects with filename and description */
-      attachments: attachment.partial().array()
+      attachments: attachmentSchema.partial().array()
     })
     .partial()
 });
@@ -52,3 +58,10 @@ export const editWebhookMessage: Fetcher<
     buildURL(`/webhooks/${webhook}/${token}/messages/${message}`, params).href,
     body
   );
+
+export const editWebhookMessageProcedure = createProcedure(
+  `mutation`,
+  editWebhookMessage,
+  editWebhookMessageSchema,
+  messageSchema
+);

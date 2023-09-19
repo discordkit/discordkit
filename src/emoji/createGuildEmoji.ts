@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { post, type Fetcher } from "../utils";
-import type { Emoji } from "./types";
+import { post, type Fetcher, createProcedure } from "../utils";
+import { emojiSchema, type Emoji } from "./types";
 
 export const createGuildEmojiSchema = z.object({
   guild: z.string().min(1),
@@ -27,3 +27,10 @@ export const createGuildEmoji: Fetcher<
   typeof createGuildEmojiSchema,
   Emoji
 > = async ({ guild, body }) => post(`/guilds/${guild}/emojis`, body);
+
+export const createGuildEmojiProcedure = createProcedure(
+  `mutation`,
+  createGuildEmoji,
+  createGuildEmojiSchema,
+  emojiSchema
+);

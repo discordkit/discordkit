@@ -1,7 +1,7 @@
-export { application, type Application } from "./Application";
-export { applicationFlags, ApplicationFlags } from "./ApplicationFlags";
-export { installParams, type InstallParams } from "./InstallParams";
-export { membershipState, MembershipState } from "./MembershipState";
-export { scopes, type Scopes } from "./Scopes";
-export { team, type Team } from "./Team";
-export { teamMember, type TeamMember } from "./TeamMember";
+export * from "./Application";
+export * from "./ApplicationFlags";
+export * from "./InstallParams";
+export * from "./MembershipState";
+export * from "./Scopes";
+export * from "./Team";
+export * from "./TeamMember";

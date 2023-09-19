@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const allowedMention = z.object({
+export const allowedMentionSchema = z.object({
   /** An array of allowed mention types to parse from the content. */
   parse: z.enum([`role`, `users`, `everyone`]).array(),
   /** Array of role_ids to mention (Max size of 100) */
@@ -11,4 +11,4 @@ export const allowedMention = z.object({
   repliedUser: z.boolean().optional()
 });
 
-export type AllowedMention = z.infer<typeof allowedMention>;
+export type AllowedMention = z.infer<typeof allowedMentionSchema>;

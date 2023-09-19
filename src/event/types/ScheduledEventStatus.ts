@@ -7,4 +7,4 @@ export enum ScheduledEventStatus {
   CANCELED = 4
 }
 
-export const scheduledEventStatus = z.nativeEnum(ScheduledEventStatus);
+export const scheduledEventStatusSchema = z.nativeEnum(ScheduledEventStatus);

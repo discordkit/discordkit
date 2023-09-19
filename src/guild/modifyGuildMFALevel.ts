@@ -1,12 +1,12 @@
 import { z } from "zod";
-import { post, type Fetcher } from "../utils";
-import { mfaLevel, type MFALevel } from "./types";
+import { post, type Fetcher, createProcedure } from "../utils";
+import { mfaLevelSchema, type MFALevel } from "./types";
 
 export const modifyGuildMFALevelSchema = z.object({
   guild: z.string().min(1),
   body: z.object({
     /** MFA level */
-    level: mfaLevel
+    level: mfaLevelSchema
   })
 });
 
@@ -19,3 +19,10 @@ export const modifyGuildMFALevel: Fetcher<
   typeof modifyGuildMFALevelSchema,
   MFALevel
 > = async ({ guild, body }) => post(`/guilds/${guild}/mfa`, body);
+
+export const modifyGuildMFALevelProcedure = createProcedure(
+  `mutation`,
+  modifyGuildMFALevel,
+  modifyGuildMFALevelSchema,
+  mfaLevelSchema
+);

@@ -11,4 +11,4 @@ export enum PremiumTier {
   TIER_3 = 3
 }
 
-export const premiumTier = z.nativeEnum(PremiumTier);
+export const premiumTierSchema = z.nativeEnum(PremiumTier);

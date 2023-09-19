@@ -1,7 +1,12 @@
 import { z } from "zod";
 import type { Fetcher } from "../utils";
-import { post } from "../utils";
-import { autoArchiveDuration, type Channel, channelType } from "./types";
+import { createProcedure, post } from "../utils";
+import {
+  autoArchiveDurationSchema,
+  type Channel,
+  channelTypeSchema,
+  channelSchema
+} from "./types";
 
 export const startThreadWithoutMessageSchema = z.object({
   channel: z.string().min(1),
@@ -9,9 +14,9 @@ export const startThreadWithoutMessageSchema = z.object({
     /** 1-100 character channel name */
     name: z.string().min(1).max(100),
     /** duration in minutes to automatically archive the thread after recent activity, can be set to: 60, 1440, 4320, 10080 */
-    autoArchiveDuration: autoArchiveDuration.optional(),
+    autoArchiveDuration: autoArchiveDurationSchema.optional(),
     /** the type of thread to create */
-    type: channelType.optional(),
+    type: channelTypeSchema.optional(),
     /** whether non-moderators can add other non-moderators to a thread; only available when creating a private thread */
     invitable: z.boolean().optional(),
     /** amount of seconds a user has to wait before sending another message (0-21600) */
@@ -32,3 +37,10 @@ export const startThreadWithoutMessage: Fetcher<
   typeof startThreadWithoutMessageSchema,
   Channel
 > = async ({ channel, body }) => post(`/channels/${channel}/threads`, body);
+
+export const startThreadWithoutMessageProcedure = createProcedure(
+  `mutation`,
+  startThreadWithoutMessage,
+  startThreadWithoutMessageSchema,
+  channelSchema
+);
