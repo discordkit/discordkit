@@ -15,26 +15,21 @@ afterEach(() => msw.resetHandlers());
 
 afterAll(() => msw.close());
 
-export const mockGet = <S extends z.ZodTypeAny>(
-  path: string,
-  schema: S
-): z.infer<S> => {
-  const result = generateMock(schema);
-  msw.use(
-    rest.get(`${endpoint}${path}`, async (_, res, ctx) => res(ctx.json(result)))
-  );
+export const createMock =
+  (type: `delete` | `get` | `patch` | `post` | `put` = `get`) =>
+  <S extends z.ZodTypeAny>(path: string, responseSchema?: S): z.infer<S> => {
+    const result = responseSchema ? generateMock(responseSchema) : null;
+    msw.use(
+      rest[type](`${endpoint}${path}`, (_, res, ctx) => res(ctx.json(result)))
+    );
 
-  return result;
-};
+    return result;
+  };
 
-export const mockPut = <S extends z.ZodTypeAny>(
-  path: string,
-  schema?: S
-): z.infer<S> => {
-  const result = schema ? generateMock(schema) : null;
-  msw.use(
-    rest.put(`${endpoint}${path}`, async (_, res, ctx) => res(ctx.json(result)))
-  );
-
-  return result;
+export const mockRequest = {
+  delete: createMock(`delete`),
+  get: createMock(`get`),
+  patch: createMock(`patch`),
+  post: createMock(`post`),
+  put: createMock(`put`)
 };
