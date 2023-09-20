@@ -12,13 +12,13 @@ export const nitroStickerPacksSchema = z.object({
  * https://discord.com/developers/docs/resources/sticker#list-nitro-sticker-packs
  */
 export const listNitroStickerPacks: Fetcher<
-  z.ZodUnknown,
+  null,
   z.infer<typeof nitroStickerPacksSchema>
 > = async () => get(`/sticker-packs`);
 
 export const listNitroStickerPacksProcedure = createProcedure(
   `query`,
   listNitroStickerPacks,
-  z.unknown(),
+  null,
   nitroStickerPacksSchema
 );

@@ -27,13 +27,13 @@ describe(`users`, () => {
   });
 
   it(`getCurrentUser`, async () => {
-    const result = mockRequest.post(`/users/@me`, userSchema);
-    const actual = await client.getCurrentUser({});
+    const result = mockRequest.get(`/users/@me`, userSchema);
+    const actual = await client.getCurrentUser();
     expect(actual).toStrictEqual(result);
   });
 
   it(`getCurrentUserGuildMember`, async () => {
-    const result = mockRequest.post(
+    const result = mockRequest.get(
       `/users/@me/guilds/:guild/member`,
       memberSchema
     );
@@ -44,13 +44,13 @@ describe(`users`, () => {
   });
 
   it(`getCurrentUserGuilds`, async () => {
-    const result = mockRequest.post(`/users/@me/guilds`, guildSchema.array());
+    const result = mockRequest.get(`/users/@me/guilds`, guildSchema.array());
     const actual = await client.getCurrentUserGuilds({});
     expect(actual).toStrictEqual(result);
   });
 
   it(`getUser`, async () => {
-    const result = mockRequest.post(`/users/:user`, userSchema);
+    const result = mockRequest.get(`/users/:user`, userSchema);
     const actual = await client.getUser({
       user: `foo`
     });
@@ -59,7 +59,7 @@ describe(`users`, () => {
 
   it(`getUserConnections`, async () => {
     const result = mockRequest.get(`/users/@me/connections`, connectionSchema);
-    const actual = await client.getUserConnections({});
+    const actual = await client.getUserConnections();
     expect(actual).toStrictEqual(result);
   });
 

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import type { z } from "zod";
 import type {
   initTRPC,
   AnyRootConfig,
@@ -7,6 +7,7 @@ import type {
 } from "@trpc/server";
 import type { Parser } from "@trpc/server/dist/core/parser";
 import type { UnsetMarker } from "@trpc/server/dist/core/internals/utils";
+import { isNonNullable } from "./isNonNullable";
 import type { Fetcher } from "./types";
 
 type Result<T> = T extends z.ZodTypeAny ? z.infer<T> : void;
@@ -15,8 +16,8 @@ type Base = ReturnType<(typeof initTRPC)["create"]>["procedure"];
 
 type BaseProcedure<
   T extends "mutation" | "query" | "subscription",
-  I extends Parser | undefined = undefined,
-  O extends Parser | undefined = undefined
+  I extends Parser | null = null,
+  O extends Parser | null = null
 > = Procedure<
   T,
   {
@@ -33,8 +34,8 @@ type BaseProcedure<
 export const createProcedure =
   <
     T extends "mutation" | "query" | "subscription",
-    I extends z.ZodTypeAny | undefined = undefined,
-    O extends z.ZodTypeAny | undefined = undefined
+    I extends z.ZodTypeAny | null = null,
+    O extends z.ZodTypeAny | null = null
   >(
     type: T,
     fn: Fetcher<I extends Parser ? I : z.ZodUnknown, Result<O>>,
@@ -42,25 +43,21 @@ export const createProcedure =
     output?: O
   ) =>
   (base: Base): BaseProcedure<T, I, O> => {
-    switch (true) {
-      case typeof input !== `undefined` && typeof output !== `undefined`: {
-        // @ts-expect-error
-        return base
-          .input(input!)
-          .output(output!)
-          [type](async (opts) => fn(opts.input));
-      }
-      case typeof input !== `undefined` && typeof output === `undefined`: {
-        // @ts-expect-error
-        return base.input(input!)[type](async (opts) => fn(opts.input));
-      }
-      case typeof input === `undefined` && typeof output !== `undefined`: {
-        // @ts-expect-error
-        return base.output(output!)[type](async () => fn(z.unknown()));
-      }
-      default: {
-        // @ts-expect-error
-        return base[type](async () => fn(z.unknown()));
-      }
+    if (isNonNullable(input) && isNonNullable(output)) {
+      // @ts-expect-error
+      return base
+        .input(input)
+        .output(output)
+        [type](async (opts) => fn(opts.input));
     }
+    if (isNonNullable(input) && !isNonNullable(output)) {
+      // @ts-expect-error
+      return base.input(input)[type](async (opts) => fn(opts.input));
+    }
+    if (!isNonNullable(input) && isNonNullable(output)) {
+      // @ts-expect-error
+      return base.output(output)[type](async () => fn());
+    }
+    // @ts-expect-error
+    return base[type](async () => fn());
   };

@@ -1,5 +1,7 @@
 import type { z } from "zod";
 
+export type Maybe<T> = T | null | undefined;
+
 type MaybeNullable<T> = T | (T | null);
 
 export interface RequestBodyConfig {
@@ -16,9 +18,12 @@ export type CombinedRequestParamsConfig = RequestBodyConfig &
 export type QueryConfig<T = {}> = T &
   (CombinedRequestParamsConfig | RequestBodyConfig | RequestParamsConfig | {});
 
-export type Fetcher<S extends z.ZodTypeAny, R = void> = (
-  config: z.infer<S>
-) => Promise<R>;
+export type Fetcher<
+  S extends z.ZodTypeAny | null = null,
+  R = void
+> = S extends null
+  ? () => Promise<R>
+  : (config: z.infer<NonNullable<S>>) => Promise<R>;
 
 export type MutationBuilder<T extends QueryConfig, R = void> = (
   config: T

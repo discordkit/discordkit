@@ -1,4 +1,3 @@
-import { z } from "zod";
 import { get, type Fetcher, createProcedure } from "../utils";
 import { userSchema, type User } from "./types";
 
@@ -7,12 +6,12 @@ import { userSchema, type User } from "./types";
  *
  * https://discord.com/developers/docs/resources/user#get-current-user
  */
-export const getCurrentUser: Fetcher<z.ZodUnknown, User> = async () =>
+export const getCurrentUser: Fetcher<null, User> = async () =>
   get(`/users/@me`);
 
 export const getCurrentUserProcedure = createProcedure(
   `query`,
   getCurrentUser,
-  z.unknown(),
+  null,
   userSchema
 );

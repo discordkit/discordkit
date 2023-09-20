@@ -1,4 +1,3 @@
-import { z } from "zod";
 import { get, type Fetcher, createProcedure } from "../utils";
 import { voiceRegionSchema, type VoiceRegion } from "./types";
 
@@ -7,14 +6,12 @@ import { voiceRegionSchema, type VoiceRegion } from "./types";
  *
  * https://discord.com/developers/docs/resources/voice#list-voice-regions
  */
-export const listVoiceRegions: Fetcher<
-  z.ZodUnknown,
-  VoiceRegion[]
-> = async () => get(`/voice/regions`);
+export const listVoiceRegions: Fetcher<null, VoiceRegion[]> = async () =>
+  get(`/voice/regions`);
 
 export const listVoiceRegionsProcedure = createProcedure(
   `query`,
   listVoiceRegions,
-  z.unknown(),
+  null,
   voiceRegionSchema.array()
 );

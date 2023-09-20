@@ -1,4 +1,3 @@
-import { z } from "zod";
 import { get, type Fetcher, createProcedure } from "../utils";
 import { connectionSchema, type Connection } from "./types";
 
@@ -7,12 +6,12 @@ import { connectionSchema, type Connection } from "./types";
  *
  * https://discord.com/developers/docs/resources/user#get-user-connections
  */
-export const getUserConnections: Fetcher<z.ZodUnknown, Connection> = async () =>
+export const getUserConnections: Fetcher<null, Connection> = async () =>
   get(`/users/@me/connections`);
 
 export const getUserConnectionsProcedure = createProcedure(
   `query`,
   getUserConnections,
-  z.unknown(),
+  null,
   connectionSchema
 );
