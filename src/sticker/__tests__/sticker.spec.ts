@@ -1,7 +1,7 @@
 import { mockRequest } from "../../../jest.setup";
 import { client } from "../__fixtures__/router";
-import { guildSchema } from "../../guild";
-import { stickerPackSchema, stickerSchema } from "../types";
+import { stickerSchema } from "../types";
+import { nitroStickerPacksSchema } from "../listNitroStickerPacks";
 
 describe(`stickers`, () => {
   it(`createGuildSticker`, async () => {
@@ -30,7 +30,7 @@ describe(`stickers`, () => {
   it(`getGuildSticker`, async () => {
     const result = mockRequest.get(
       `/guilds/:guild/stickers/:sticker`,
-      guildSchema
+      stickerSchema
     );
     const actual = await client.getGuildSticker({
       guild: `foo`,
@@ -40,7 +40,7 @@ describe(`stickers`, () => {
   });
 
   it(`getSticker`, async () => {
-    const result = mockRequest.post(`/stickers/:sticker`, stickerSchema);
+    const result = mockRequest.get(`/stickers/:sticker`, stickerSchema);
     const actual = await client.getSticker({
       sticker: `foo`
     });
@@ -48,7 +48,7 @@ describe(`stickers`, () => {
   });
 
   it(`listGuildStickers`, async () => {
-    const result = mockRequest.post(
+    const result = mockRequest.get(
       `/guilds/:guild/stickers`,
       stickerSchema.array()
     );
@@ -59,13 +59,13 @@ describe(`stickers`, () => {
   });
 
   it(`listNitroStickerPacks`, async () => {
-    const result = mockRequest.post(`/sticker-packs`, stickerPackSchema);
+    const result = mockRequest.get(`/sticker-packs`, nitroStickerPacksSchema);
     const actual = await client.listNitroStickerPacks();
     expect(actual).toStrictEqual(result);
   });
 
   it(`modifyGuildSticker`, async () => {
-    const result = mockRequest.post(
+    const result = mockRequest.patch(
       `/guilds/:guild/stickers/:sticker`,
       stickerSchema
     );
