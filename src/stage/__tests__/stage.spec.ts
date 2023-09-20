@@ -2,7 +2,7 @@ import { mockRequest } from "../../../jest.setup";
 import { client } from "../__fixtures__/router";
 import { stageSchema } from "../types";
 
-describe(`stickers`, () => {
+describe(`stages`, () => {
   it(`createStageInstance`, async () => {
     const result = mockRequest.post(`/stage-instances`, stageSchema);
     const actual = await client.createStageInstance({
