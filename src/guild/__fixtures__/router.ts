@@ -63,7 +63,7 @@ const appRouter = tRPC.router({
   getGuildChannels: getGuildChannelsProcedure(tRPC.procedure),
   getGuildIntegrations: getGuildIntegrationsProcedure(tRPC.procedure),
   getGuildInvites: getGuildInvitesProcedure(tRPC.procedure),
-  getGuildMembers: getGuildMemberProcedure(tRPC.procedure),
+  getGuildMember: getGuildMemberProcedure(tRPC.procedure),
   getGuildPreview: getGuildPreviewProcedure(tRPC.procedure),
   getGuildPruneCount: getGuildPruneCountProcedure(tRPC.procedure),
   getGuildRoles: getGuildRolesProcedure(tRPC.procedure),
