@@ -1,4 +1,4 @@
-export const endpoint = `https://discord.com/api/v10`;
+export const endpoint = `https://discord.com/api/v10/`;
 
 export class DiscordSession {
   endpoint: string = endpoint;

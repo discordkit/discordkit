@@ -26,7 +26,10 @@ export const createMock =
   ): z.infer<S> => {
     const result = responseSchema ? generateMock(responseSchema, opts) : null;
     msw.use(
-      rest[type](`${endpoint}${path}`, (_, res, ctx) => res(ctx.json(result)))
+      rest[type](
+        new URL(path.replace(/^\//, ``), endpoint).href,
+        (_, res, ctx) => res(ctx.json(result))
+      )
     );
 
     return result;
