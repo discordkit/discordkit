@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { post, type Fetcher, createProcedure } from "../utils";
-import { InviteTarget, type Invite, inviteSchema } from "../invite";
+import { type Invite, inviteSchema, inviteTargetSchema } from "../invite";
 
 export const createChannelInviteSchema = z.object({
   channel: z.string().min(1),
@@ -14,7 +14,7 @@ export const createChannelInviteSchema = z.object({
     /** if true, don't try to reuse a similar invite (useful for creating many unique one time use invites) (default: false) */
     unique: z.boolean(),
     /** the type of target for this voice channel invite */
-    targetType: z.nativeEnum(InviteTarget),
+    targetType: inviteTargetSchema,
     /** the id of the user whose stream to display for this invite, required if target_type is 1, the user must be streaming in the channel	 */
     targetUserId: z.string().min(1),
     /** the id of the embedded application to open for this invite, required if target_type is 2, the application must have the EMBEDDED flag	 */
