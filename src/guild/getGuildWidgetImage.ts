@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { get, type Fetcher, createProcedure } from "../utils";
+import { get, type Fetcher, toProcedure, toQuery } from "../utils";
 
 export const getGuildWidgetImageSchema = z.object({
   guild: z.string().min(1),
@@ -27,8 +27,10 @@ export const getGuildWidgetImage: Fetcher<
   typeof getGuildWidgetImageSchema
 > = async ({ guild, params }) => get(`/guilds/${guild}/widget.png`, params);
 
-export const getGuildWidgetImageProcedure = createProcedure(
+export const getGuildWidgetImageProcedure = toProcedure(
   `query`,
   getGuildWidgetImage,
   getGuildWidgetImageSchema
 );
+
+export const getGuildWidgetImageQuery = toQuery(getGuildWidgetImage);

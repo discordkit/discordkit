@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { get, type Fetcher, createProcedure } from "../utils";
+import { get, type Fetcher, toProcedure, toQuery } from "../utils";
 import { guildWidgetSchema, type GuildWidget } from "./types";
 
 export const getGuildWidgetSchema = z.object({
@@ -16,9 +16,11 @@ export const getGuildWidget: Fetcher<
   GuildWidget
 > = async ({ guild }) => get(`/guilds/${guild}/widget.json`);
 
-export const getGuildWidgetProcedure = createProcedure(
+export const getGuildWidgetProcedure = toProcedure(
   `query`,
   getGuildWidget,
   getGuildWidgetSchema,
   guildWidgetSchema
 );
+
+export const getGuildWidgetQuery = toQuery(getGuildWidget);

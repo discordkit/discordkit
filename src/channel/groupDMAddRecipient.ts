@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { put, type Fetcher, createProcedure } from "../utils";
+import { put, type Fetcher, toProcedure } from "../utils";
 
 export const groupDMAddRecipientSchema = z.object({
   channel: z.string().min(1),
@@ -22,7 +22,7 @@ export const groupDMAddRecipient: Fetcher<
 > = async ({ channel, user, body }) =>
   put(`/channels/${channel}/recipients/${user}`, body);
 
-export const groupDMAddRecipientProcedure = createProcedure(
+export const groupDMAddRecipientProcedure = toProcedure(
   `mutation`,
   groupDMAddRecipient,
   groupDMAddRecipientSchema

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { get, type Fetcher, createProcedure } from "../utils";
+import { get, type Fetcher, toProcedure, toQuery } from "../utils";
 import { banSchema, type Ban } from "./types";
 
 export const getGuildBanSchema = z.object({
@@ -17,9 +17,11 @@ export const getGuildBan: Fetcher<typeof getGuildBanSchema, Ban> = async ({
   user
 }) => get(`/guilds/${guild}/bans/${user}`);
 
-export const getGuildBanProcedure = createProcedure(
+export const getGuildBanProcedure = toProcedure(
   `query`,
   getGuildBan,
   getGuildBanSchema,
   banSchema
 );
+
+export const getGuildBanQuery = toQuery(getGuildBan);

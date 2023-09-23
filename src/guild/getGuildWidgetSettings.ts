@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { get, type Fetcher, createProcedure } from "../utils";
+import { get, type Fetcher, toProcedure, toQuery } from "../utils";
 import { guildWidgetSchema, type GuildWidget } from "./types";
 
-const getGuildWidgetSettingsSchema = z.object({ guild: z.string() });
+export const getGuildWidgetSettingsSchema = z.object({ guild: z.string() });
 
 /**
  * Returns a guild widget settings object. Requires the `MANAGE_GUILD` permission.
@@ -14,9 +14,11 @@ export const getGuildWidgetSettings: Fetcher<
   GuildWidget
 > = async ({ guild }) => get(`/guilds/${guild}/widget`);
 
-export const getGuildWidgetSettingsProcedure = createProcedure(
+export const getGuildWidgetSettingsProcedure = toProcedure(
   `query`,
   getGuildWidgetSettings,
   getGuildWidgetSettingsSchema,
   guildWidgetSchema
 );
+
+export const getGuildWidgetSettingsQuery = toQuery(getGuildWidgetSettings);

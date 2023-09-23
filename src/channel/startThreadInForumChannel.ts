@@ -1,14 +1,11 @@
 import { z } from "zod";
-import { post, type Fetcher, createProcedure } from "../utils";
-import {
-  allowedMentionSchema,
-  attachmentSchema,
-  embedSchema,
-  autoArchiveDurationSchema,
-  type Channel,
-  messageFlagSchema,
-  channelSchema
-} from "./types";
+import { post, type Fetcher, toProcedure } from "../utils";
+import { type Channel, channelSchema } from "./types/Channel";
+import { autoArchiveDurationSchema } from "./types/AutoArchiveDuration";
+import { embedSchema } from "./types/Embed";
+import { allowedMentionSchema } from "./types/AllowedMention";
+import { attachmentSchema } from "./types/Attachment";
+import { messageFlagSchema } from "./types/MessageFlag";
 
 export const startThreadInForumChannelSchema = z.object({
   channel: z.string().min(1),
@@ -68,7 +65,7 @@ export const startThreadInForumChannel: Fetcher<
   Channel
 > = async ({ channel, body }) => post(`/channels/${channel}/threads`, body);
 
-export const startThreadInForumChannelProcedure = createProcedure(
+export const startThreadInForumChannelProcedure = toProcedure(
   `mutation`,
   startThreadInForumChannel,
   startThreadInForumChannelSchema,

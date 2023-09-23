@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { patch, type Fetcher, createProcedure } from "../utils";
+import { patch, type Fetcher, toProcedure } from "../utils";
 import { webhookSchema, type Webhook } from "./types";
 
 export const modifyWebhookWithTokenSchema = z.object({
@@ -30,7 +30,7 @@ export const modifyWebhookWithToken: Fetcher<
 > = async ({ webhook, token, body }) =>
   patch(`/webhooks/${webhook}/${token}`, body);
 
-export const modifyWebhookWithTokenProcedure = createProcedure(
+export const modifyWebhookWithTokenProcedure = toProcedure(
   `mutation`,
   modifyWebhookWithToken,
   modifyWebhookWithTokenSchema,

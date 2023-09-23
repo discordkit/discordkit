@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { patch, type Fetcher, createProcedure } from "../utils";
+import { patch, type Fetcher, toProcedure } from "../utils";
 import {
   moderationActionSchema,
   triggerMetaSchema,
@@ -44,7 +44,7 @@ export const modifyAutoModerationRule: Fetcher<
 > = async ({ guild, rule, body }) =>
   patch(`/guilds/${guild}/auto-moderation/rules/${rule}`, body);
 
-export const modifyAutoModerationRuleProcedure = createProcedure(
+export const modifyAutoModerationRuleProcedure = toProcedure(
   `mutation`,
   modifyAutoModerationRule,
   modifyAutoModerationRuleSchema,

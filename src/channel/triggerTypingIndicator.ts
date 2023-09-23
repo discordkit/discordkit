@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { post, type Fetcher, createProcedure } from "../utils";
+import { post, type Fetcher, toProcedure } from "../utils";
 
 export const triggerTypingIndicatorSchema = z.object({
   channel: z.string().min(1)
@@ -14,7 +14,7 @@ export const triggerTypingIndicator: Fetcher<
   typeof triggerTypingIndicatorSchema
 > = async ({ channel }) => post(`/channels/${channel}/typing`);
 
-export const triggerTypingIndicatorProcedure = createProcedure(
+export const triggerTypingIndicatorProcedure = toProcedure(
   `mutation`,
   triggerTypingIndicator,
   triggerTypingIndicatorSchema

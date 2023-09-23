@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { get, type Fetcher, createProcedure } from "../utils";
+import { get, type Fetcher, toProcedure, toQuery } from "../utils";
 import { scheduledEventUserSchema, type ScheduledEventUser } from "./types";
 
 export const getGuildScheduledEventUsersSchema = z.object({
@@ -31,9 +31,13 @@ export const getGuildScheduledEventUsers: Fetcher<
 > = async ({ guild, event, params }) =>
   get(`/guilds/${guild}/scheduled-events/${event}/users`, params);
 
-export const getGuildScheduledEventUsersProcedure = createProcedure(
+export const getGuildScheduledEventUsersProcedure = toProcedure(
   `query`,
   getGuildScheduledEventUsers,
   getGuildScheduledEventUsersSchema,
   scheduledEventUserSchema.array()
+);
+
+export const getGuildScheduledEventUsersQuery = toQuery(
+  getGuildScheduledEventUsers
 );

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { get, type Fetcher, createProcedure } from "../utils";
+import { get, type Fetcher, toProcedure, toQuery } from "../utils";
 
 export const getGuildPruneCountSchema = z.object({
   guild: z.string().min(1),
@@ -28,9 +28,11 @@ export const getGuildPruneCount: Fetcher<
   z.infer<typeof guildPruneCountSchema>
 > = async ({ guild, params }) => get(`/guilds/${guild}/prune`, params);
 
-export const getGuildPruneCountProcedure = createProcedure(
+export const getGuildPruneCountProcedure = toProcedure(
   `query`,
   getGuildPruneCount,
   getGuildPruneCountSchema,
   guildPruneCountSchema
 );
+
+export const getGuildPruneCountQuery = toQuery(getGuildPruneCount);

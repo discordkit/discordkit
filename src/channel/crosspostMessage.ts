@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { post, type Fetcher, createProcedure } from "../utils";
-import { messageSchema, type Message } from "./types";
+import { post, type Fetcher, toProcedure } from "../utils";
+import { messageSchema, type Message } from "./types/Message";
 
 export const crosspostMessageSchema = z.object({
   channel: z.string().min(1),
@@ -18,7 +18,7 @@ export const crosspostMessage: Fetcher<
 > = async ({ channel, message }) =>
   post(`/channels/${channel}/messages/${message}/crosspost`);
 
-export const crosspostMessageProcedure = createProcedure(
+export const crosspostMessageProcedure = toProcedure(
   `mutation`,
   crosspostMessage,
   crosspostMessageSchema,

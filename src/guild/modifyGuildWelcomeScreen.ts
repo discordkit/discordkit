@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { patch, type Fetcher, createProcedure } from "../utils";
+import { patch, type Fetcher, toProcedure } from "../utils";
 import {
   welcomeChannelSchema,
   welcomeScreenSchema,
@@ -32,7 +32,7 @@ export const modifyGuildWelcomeScreen: Fetcher<
   WelcomeScreen
 > = async ({ guild, body }) => patch(`/guilds/${guild}/welcome-screen`, body);
 
-export const modifyGuildWelcomeScreenProcedure = createProcedure(
+export const modifyGuildWelcomeScreenProcedure = toProcedure(
   `mutation`,
   modifyGuildWelcomeScreen,
   modifyGuildWelcomeScreenSchema,

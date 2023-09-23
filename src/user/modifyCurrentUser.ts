@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { patch, type Fetcher, createProcedure } from "../utils";
+import { patch, type Fetcher, toProcedure } from "../utils";
 import { userSchema, type User } from "./types";
 
 export const modifyCurrentUserSchema = z.object({
@@ -23,7 +23,7 @@ export const modifyCurrentUser: Fetcher<
   User
 > = async ({ body }) => patch(`/users/@me`, body);
 
-export const modifyCurrentUserProcedure = createProcedure(
+export const modifyCurrentUserProcedure = toProcedure(
   `mutation`,
   modifyCurrentUser,
   modifyCurrentUserSchema,

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { remove, type Fetcher, createProcedure } from "../utils";
+import { remove, type Fetcher, toProcedure } from "../utils";
 
 export const unpinMessageSchema = z.object({
   channel: z.string().min(1),
@@ -18,7 +18,7 @@ export const unpinMessage: Fetcher<typeof unpinMessageSchema> = async ({
   message
 }) => remove(`/channels/${channel}/pins/${message}`);
 
-export const unpinMessageProcedure = createProcedure(
+export const unpinMessageProcedure = toProcedure(
   `mutation`,
   unpinMessage,
   unpinMessageSchema

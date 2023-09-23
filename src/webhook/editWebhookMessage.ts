@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { patch, buildURL, type Fetcher, createProcedure } from "../utils";
+import { patch, buildURL, type Fetcher, toProcedure } from "../utils";
 import {
   allowedMentionSchema,
   attachmentSchema,
@@ -59,7 +59,7 @@ export const editWebhookMessage: Fetcher<
     body
   );
 
-export const editWebhookMessageProcedure = createProcedure(
+export const editWebhookMessageProcedure = toProcedure(
   `mutation`,
   editWebhookMessage,
   editWebhookMessageSchema,

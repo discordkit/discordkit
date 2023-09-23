@@ -1,4 +1,5 @@
 export * from "./buildURL";
-export * from "./createProcedure";
+export * from "./toProcedure";
+export * from "./toQuery";
 export * from "./methods";
 export * from "./types";

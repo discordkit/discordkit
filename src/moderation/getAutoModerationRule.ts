@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { get, type Fetcher, createProcedure } from "../utils";
+import { get, type Fetcher, toProcedure, toQuery } from "../utils";
 import { moderationRuleSchema, type ModerationRule } from "./types";
 
 export const getAutoModerationRuleSchema = z.object({
@@ -20,9 +20,11 @@ export const getAutoModerationRule: Fetcher<
 > = async ({ guild, rule }) =>
   get(`/guilds/${guild}/auto-moderation/rules/${rule}`);
 
-export const getAutoModerationRuleProcedure = createProcedure(
+export const getAutoModerationRuleProcedure = toProcedure(
   `query`,
   getAutoModerationRule,
   getAutoModerationRuleSchema,
   moderationRuleSchema
 );
+
+export const getAutoModerationRuleQuery = toQuery(getAutoModerationRule);

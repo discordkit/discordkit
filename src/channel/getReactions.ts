@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { get, type Fetcher, createProcedure } from "../utils";
-import { userSchema, type User } from "../user";
+import { get, type Fetcher, toProcedure, toQuery } from "../utils";
+import { userSchema, type User } from "../user/types/User";
 
 export const getReactionsSchema = z.object({
   channel: z.string().min(1),
@@ -28,9 +28,11 @@ export const getReactions: Fetcher<
 > = async ({ channel, message, emoji, params }) =>
   get(`/channels/${channel}/messages/${message}/reactions/${emoji}`, params);
 
-export const getReactionsProcedure = createProcedure(
+export const getReactionsProcedure = toProcedure(
   `query`,
   getReactions,
   getReactionsSchema,
   userSchema.partial().array()
 );
+
+export const getReactionsQuery = toQuery(getReactions);

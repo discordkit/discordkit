@@ -20,12 +20,16 @@ const config: Config.InitialOptions = {
     "^.+\\.(js|jsx|ts|tsx)$": [
       `babel-jest`,
       {
-        presets: [`@babel/preset-typescript`, `@babel/preset-env`]
+        presets: [
+          `@babel/preset-typescript`,
+          `@babel/preset-env`,
+          [`@babel/preset-react`, { runtime: `automatic` }]
+        ]
       }
     ]
   },
-  setupFilesAfterEnv: [`./jest.setup.ts`],
-  testEnvironment: `node`,
+  setupFilesAfterEnv: [`./scripts/setup.ts`],
+  testEnvironment: `jsdom`,
   verbose: true
 };
 

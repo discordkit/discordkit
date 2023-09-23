@@ -1,6 +1,9 @@
 import { z } from "zod";
-import { get, type Fetcher, createProcedure } from "../utils";
-import { archivedThreadsSchema, type ArchivedThreads } from "./types";
+import { get, type Fetcher, toProcedure, toQuery } from "../utils";
+import {
+  archivedThreadsSchema,
+  type ArchivedThreads
+} from "./types/ArchivedThreads";
 
 export const listJoinedPrivateArchivedThreadsSchema = z.object({
   channel: z.string().min(1),
@@ -26,9 +29,13 @@ export const listJoinedPrivateArchivedThreads: Fetcher<
 > = async ({ channel, params }) =>
   get(`/channels/${channel}/users/@me/threads/archived/private`, params);
 
-export const listJoinedPrivateArchivedThreadsProcedure = createProcedure(
+export const listJoinedPrivateArchivedThreadsProcedure = toProcedure(
   `query`,
   listJoinedPrivateArchivedThreads,
   listJoinedPrivateArchivedThreadsSchema,
   archivedThreadsSchema
+);
+
+export const listJoinedPrivateArchivedThreadsQuery = toQuery(
+  listJoinedPrivateArchivedThreads
 );

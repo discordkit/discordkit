@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { patch, type Fetcher, createProcedure } from "../utils";
+import { patch, type Fetcher, toProcedure } from "../utils";
 import { type Stage, stagePrivacyLevelSchema, stageSchema } from "./types";
 
 export const modifyStageInstanceSchema = z.object({
@@ -28,7 +28,7 @@ export const modifyStageInstance: Fetcher<
   Stage
 > = async ({ channel, body }) => patch(`/stage-instances/${channel}`, body);
 
-export const modifyStageInstanceProcedure = createProcedure(
+export const modifyStageInstanceProcedure = toProcedure(
   `mutation`,
   modifyStageInstance,
   modifyStageInstanceSchema,

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { patch, type Fetcher, createProcedure } from "../utils";
+import { patch, type Fetcher, toProcedure } from "../utils";
 
 export const modifyCurrentUserVoiceStateSchema = z.object({
   guild: z.string().min(1),
@@ -22,7 +22,7 @@ export const modifyCurrentUserVoiceState: Fetcher<
   typeof modifyCurrentUserVoiceStateSchema
 > = async ({ guild, body }) => patch(`/guilds/${guild}/voice-states/@me`, body);
 
-export const modifyCurrentUserVoiceStateProcedure = createProcedure(
+export const modifyCurrentUserVoiceStateProcedure = toProcedure(
   `mutation`,
   modifyCurrentUserVoiceState,
   modifyCurrentUserVoiceStateSchema

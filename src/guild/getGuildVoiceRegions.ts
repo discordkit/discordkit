@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { get, type Fetcher, createProcedure } from "../utils";
+import { get, type Fetcher, toProcedure, toQuery } from "../utils";
 import { voiceRegionSchema, type VoiceRegion } from "../voice";
 
 export const getGuildVoiceRegionsSchema = z.object({
@@ -16,9 +16,11 @@ export const getGuildVoiceRegions: Fetcher<
   VoiceRegion
 > = async ({ guild }) => get(`/guilds/${guild}/regions`);
 
-export const getGuildVoiceRegionsProcedure = createProcedure(
+export const getGuildVoiceRegionsProcedure = toProcedure(
   `query`,
   getGuildVoiceRegions,
   getGuildVoiceRegionsSchema,
   voiceRegionSchema
 );
+
+export const getGuildVoiceRegionsQuery = toQuery(getGuildVoiceRegions);

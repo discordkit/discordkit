@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { get, type Fetcher, createProcedure } from "../utils";
+import { get, type Fetcher, toProcedure, toQuery } from "../utils";
 import { inviteSchema, type Invite } from "../invite";
 
 export const getGuildVanityURLSchema = z.object({
@@ -16,9 +16,11 @@ export const getGuildVanityURL: Fetcher<
   Partial<Invite>
 > = async ({ guild }) => get(`/guilds/${guild}/vanity-url`);
 
-export const getGuildVanityURLProcedure = createProcedure(
+export const getGuildVanityURLProcedure = toProcedure(
   `query`,
   getGuildVanityURL,
   getGuildVanityURLSchema,
   inviteSchema.partial()
 );
+
+export const getGuildVanityURLQuery = toQuery(getGuildVanityURL);

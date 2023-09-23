@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { get, type Fetcher, createProcedure } from "../utils";
+import { get, type Fetcher, toProcedure, toQuery } from "../utils";
 import { memberSchema, type Member } from "../guild/types/Member";
 
-const getCurrentUserGuildMemberSchema = z.object({
+export const getCurrentUserGuildMemberSchema = z.object({
   guild: z.string()
 });
 
@@ -16,9 +16,13 @@ export const getCurrentUserGuildMember: Fetcher<
   Member
 > = async ({ guild }) => get(`/users/@me/guilds/${guild}/member`);
 
-export const getCurrentUserGuildMemberProcedure = createProcedure(
+export const getCurrentUserGuildMemberProcedure = toProcedure(
   `query`,
   getCurrentUserGuildMember,
   getCurrentUserGuildMemberSchema,
   memberSchema
+);
+
+export const getCurrentUserGuildMemberQuery = toQuery(
+  getCurrentUserGuildMember
 );

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { remove, type Fetcher, createProcedure } from "../utils";
+import { remove, type Fetcher, toProcedure } from "../utils";
 
 export const deleteGuildTemplateSchema = z.object({
   guild: z.string().min(1),
@@ -16,7 +16,7 @@ export const deleteGuildTemplate: Fetcher<
 > = async ({ guild, template }) =>
   remove(`/guilds/${guild}/templates/${template}`);
 
-export const deleteGuildTemplateProcedure = createProcedure(
+export const deleteGuildTemplateProcedure = toProcedure(
   `mutation`,
   deleteGuildTemplate,
   deleteGuildTemplateSchema

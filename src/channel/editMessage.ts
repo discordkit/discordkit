@@ -1,6 +1,7 @@
 import { z } from "zod";
-import { patch, type Fetcher, createProcedure } from "../utils";
-import { messageContentSchema, type Message, messageSchema } from "./types";
+import { patch, type Fetcher, toProcedure } from "../utils";
+import { type Message, messageSchema } from "./types/Message";
+import { messageContentSchema } from "./types/MessageContent";
 
 export const editMessageSchema = z.object({
   channel: z.string().min(1),
@@ -27,7 +28,7 @@ export const editMessage: Fetcher<typeof editMessageSchema, Message> = async ({
   body
 }) => patch(`/channels/${channel}/messages/${message}`, body);
 
-export const editMessageProcedure = createProcedure(
+export const editMessageProcedure = toProcedure(
   `mutation`,
   editMessage,
   editMessageSchema,

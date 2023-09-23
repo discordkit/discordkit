@@ -1,4 +1,4 @@
-import { get, type Fetcher, createProcedure } from "../utils";
+import { get, type Fetcher, toProcedure, toQuery } from "../utils";
 import { connectionSchema, type Connection } from "./types";
 
 /**
@@ -9,9 +9,11 @@ import { connectionSchema, type Connection } from "./types";
 export const getUserConnections: Fetcher<null, Connection> = async () =>
   get(`/users/@me/connections`);
 
-export const getUserConnectionsProcedure = createProcedure(
+export const getUserConnectionsProcedure = toProcedure(
   `query`,
   getUserConnections,
   null,
   connectionSchema
 );
+
+export const getUserConnectionsQuery = toQuery(getUserConnections);

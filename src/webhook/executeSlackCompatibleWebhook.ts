@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { post, buildURL, type Fetcher, createProcedure } from "../utils";
+import { post, buildURL, type Fetcher, toProcedure } from "../utils";
 
 export const executeSlackCompatibleWebhookSchema = z.object({
   webhook: z.string().min(1),
@@ -25,7 +25,7 @@ export const executeSlackCompatibleWebhook: Fetcher<
 > = async ({ webhook, token, params }) =>
   post(buildURL(`/webhooks/${webhook}/${token}/slack`, params).href);
 
-export const executeSlackCompatibleWebhookProcedure = createProcedure(
+export const executeSlackCompatibleWebhookProcedure = toProcedure(
   `mutation`,
   executeSlackCompatibleWebhook,
   executeSlackCompatibleWebhookSchema

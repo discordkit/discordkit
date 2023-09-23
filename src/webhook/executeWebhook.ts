@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { post, buildURL, type Fetcher, createProcedure } from "../utils";
+import { post, buildURL, type Fetcher, toProcedure } from "../utils";
 import {
   allowedMentionSchema,
   attachmentSchema,
@@ -65,7 +65,7 @@ export const executeWebhook: Fetcher<typeof executeWebhookSchema> = async ({
   body
 }) => post(buildURL(`/webhooks/${webhook}/${token}`, params).href, body);
 
-export const executeWebhookProcedure = createProcedure(
+export const executeWebhookProcedure = toProcedure(
   `mutation`,
   executeWebhook,
   executeWebhookSchema

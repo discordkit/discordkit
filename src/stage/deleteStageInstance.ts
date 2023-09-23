@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { remove, type Fetcher, createProcedure } from "../utils";
+import { remove, type Fetcher, toProcedure } from "../utils";
 
 export const deleteStageInstanceSchema = z.object({
   channel: z.string().min(1)
@@ -18,7 +18,7 @@ export const deleteStageInstance: Fetcher<
   typeof deleteStageInstanceSchema
 > = async ({ channel }) => remove(`/stage-instances/${channel}`);
 
-export const deleteStageInstanceProcedure = createProcedure(
+export const deleteStageInstanceProcedure = toProcedure(
   `mutation`,
   deleteStageInstance,
   deleteStageInstanceSchema

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { get, type Fetcher, createProcedure } from "../utils";
+import { get, type Fetcher, toProcedure, toQuery } from "../utils";
 import { webhookSchema, type Webhook } from "./types";
 
 export const getWebhookSchema = z.object({
@@ -17,9 +17,11 @@ export const getWebhook: Fetcher<typeof getWebhookSchema, Webhook> = async ({
   webhook
 }) => get(`/webhooks/${webhook}`);
 
-export const getWebhookProcedure = createProcedure(
+export const getWebhookProcedure = toProcedure(
   `query`,
   getWebhook,
   getWebhookSchema,
   webhookSchema
 );
+
+export const getWebhookQuery = toQuery(getWebhook);

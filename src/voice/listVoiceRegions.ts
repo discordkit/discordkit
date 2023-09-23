@@ -1,4 +1,4 @@
-import { get, type Fetcher, createProcedure } from "../utils";
+import { get, type Fetcher, toProcedure, toQuery } from "../utils";
 import { voiceRegionSchema, type VoiceRegion } from "./types";
 
 /**
@@ -9,9 +9,11 @@ import { voiceRegionSchema, type VoiceRegion } from "./types";
 export const listVoiceRegions: Fetcher<null, VoiceRegion[]> = async () =>
   get(`/voice/regions`);
 
-export const listVoiceRegionsProcedure = createProcedure(
+export const listVoiceRegionsProcedure = toProcedure(
   `query`,
   listVoiceRegions,
   null,
   voiceRegionSchema.array()
 );
+
+export const listVoiceRegionsQuery = toQuery(listVoiceRegions);

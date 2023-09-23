@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { get, type Fetcher, createProcedure } from "../utils";
+import { get, type Fetcher, toProcedure, toQuery } from "../utils";
 import { messageSchema, type Message } from "../channel";
 
 export const getWebhookMessageSchema = z.object({
@@ -26,9 +26,11 @@ export const getWebhookMessage: Fetcher<
 > = async ({ webhook, token, message, params }) =>
   get(`/webhooks/${webhook}/${token}/messages/${message}`, params);
 
-export const getWebhookMessageProcedure = createProcedure(
+export const getWebhookMessageProcedure = toProcedure(
   `query`,
   getWebhookMessage,
   getWebhookMessageSchema,
   messageSchema
 );
+
+export const getWebhookMessageQuery = toQuery(getWebhookMessage);

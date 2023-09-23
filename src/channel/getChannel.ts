@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { get, type Fetcher, createProcedure } from "../utils";
-import { channelSchema, type Channel } from "./types";
+import { get, type Fetcher, toProcedure, toQuery } from "../utils";
+import { channelSchema, type Channel } from "./types/Channel";
 
 export const getChannelSchema = z.object({
   channel: z.string().min(1)
@@ -15,9 +15,11 @@ export const getChannel: Fetcher<typeof getChannelSchema, Channel> = async ({
   channel
 }) => get(`/channels/${channel}`);
 
-export const getChannelProcedure = createProcedure(
+export const getChannelProcedure = toProcedure(
   `query`,
   getChannel,
   getChannelSchema,
   channelSchema
 );
+
+export const getChannelQuery = toQuery(getChannel);

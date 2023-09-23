@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { get, type Fetcher, createProcedure } from "../utils";
+import { get, type Fetcher, toProcedure, toQuery } from "../utils";
 import { type AuditLog, auditLogEventSchema, auditLogSchema } from "./types";
 
 export const getGuildAuditLogSchema = z.object({
@@ -29,9 +29,11 @@ export const getGuildAuditLog: Fetcher<
   AuditLog
 > = async ({ guild, params }) => get(`/guilds/${guild}/audit-logs`, params);
 
-export const getGuildAuditLogProcedure = createProcedure(
+export const getGuildAuditLogProcedure = toProcedure(
   `query`,
   getGuildAuditLog,
   getGuildAuditLogSchema,
   auditLogSchema
 );
+
+export const getGuildAuditLogQuery = toQuery(getGuildAuditLog);

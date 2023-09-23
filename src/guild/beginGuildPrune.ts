@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { post, type Fetcher, createProcedure } from "../utils";
+import { post, type Fetcher, toProcedure } from "../utils";
 
 export const beginGuildPruneSchema = z.object({
   guild: z.string().min(1),
@@ -17,7 +17,9 @@ export const beginGuildPruneSchema = z.object({
     .partial()
 });
 
-export const guildPruneResult = z.object({ pruned: z.number().nullable() });
+export const guildPruneResultSchema = z.object({
+  pruned: z.number().nullable()
+});
 
 /**
  * Begin a prune operation. Requires the `KICK_MEMBERS` permission. Returns an object with one `pruned` key indicating the number of members that were removed in the prune operation. For large guilds it's recommended to set the `compute_prune_count` option to `false`, forcing `pruned` to `null`. Fires multiple [Guild Member Remove](https://discord.com/developers/docs/topics/gateway#guild-member-remove) Gateway events.
@@ -30,12 +32,12 @@ export const guildPruneResult = z.object({ pruned: z.number().nullable() });
  */
 export const beginGuildPrune: Fetcher<
   typeof beginGuildPruneSchema,
-  z.infer<typeof guildPruneResult>
+  z.infer<typeof guildPruneResultSchema>
 > = async ({ guild, body }) => post(`/guilds/${guild}/prune`, body);
 
-export const beginGuildPruneProcedure = createProcedure(
+export const beginGuildPruneProcedure = toProcedure(
   `mutation`,
   beginGuildPrune,
   beginGuildPruneSchema,
-  guildPruneResult
+  guildPruneResultSchema
 );

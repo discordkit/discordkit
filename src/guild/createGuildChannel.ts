@@ -7,7 +7,7 @@ import {
   overwriteSchema,
   videoQualityModeSchema
 } from "../channel";
-import { post, type Fetcher, createProcedure } from "../utils";
+import { post, type Fetcher, toProcedure } from "../utils";
 
 export const createGuildChannelSchema = z.object({
   guild: z.string().min(1),
@@ -53,7 +53,7 @@ export const createGuildChannel: Fetcher<
   Channel
 > = async ({ guild, body }) => post(`/guilds/${guild}/channels`, body);
 
-export const createGuildChannelProcedure = createProcedure(
+export const createGuildChannelProcedure = toProcedure(
   `mutation`,
   createGuildChannel,
   createGuildChannelSchema,

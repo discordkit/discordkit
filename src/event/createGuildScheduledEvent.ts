@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { post, type Fetcher, createProcedure } from "../utils";
+import { post, type Fetcher, toProcedure } from "../utils";
 import {
   entityMetadataSchema,
   scheduledEventEntityTypeSchema,
@@ -46,7 +46,7 @@ export const createGuildScheduledEvent: Fetcher<
   ScheduledEvent
 > = async ({ guild, body }) => post(`/guilds/${guild}/scheduled-events`, body);
 
-export const createGuildScheduledEventProcedure = createProcedure(
+export const createGuildScheduledEventProcedure = toProcedure(
   `mutation`,
   createGuildScheduledEvent,
   createGuildScheduledEventSchema,

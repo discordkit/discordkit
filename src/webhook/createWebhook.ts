@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { post, type Fetcher, createProcedure } from "../utils";
+import { post, type Fetcher, toProcedure } from "../utils";
 import { webhookSchema, type Webhook } from "./types";
 
 export const createWebhookSchema = z.object({
@@ -33,7 +33,7 @@ export const createWebhook: Fetcher<
   Webhook
 > = async ({ channel, body }) => post(`/channels/${channel}/webhooks`, body);
 
-export const createWebhookProcedure = createProcedure(
+export const createWebhookProcedure = toProcedure(
   `mutation`,
   createWebhook,
   createWebhookSchema,

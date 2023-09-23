@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { remove, type Fetcher, createProcedure } from "../utils";
+import { remove, type Fetcher, toProcedure } from "../utils";
 
 export const deleteInviteSchema = z.object({
   code: z.string().min(1)
@@ -14,7 +14,7 @@ export const deleteInvite: Fetcher<typeof deleteInviteSchema> = async ({
   code
 }) => remove(`/invites/${code}`);
 
-export const deleteInviteProcedure = createProcedure(
+export const deleteInviteProcedure = toProcedure(
   `mutation`,
   deleteInvite,
   deleteInviteSchema

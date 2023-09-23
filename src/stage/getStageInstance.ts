@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { get, type Fetcher, createProcedure } from "../utils";
+import { get, type Fetcher, toProcedure, toQuery } from "../utils";
 import { stageSchema, type Stage } from "./types";
 
 export const getStageInstanceSchema = z.object({
@@ -16,9 +16,11 @@ export const getStageInstance: Fetcher<
   Stage
 > = async ({ channel }) => get(`/stage-instances/${channel}`);
 
-export const getStageInstanceProcedure = createProcedure(
+export const getStageInstanceProcedure = toProcedure(
   `query`,
   getStageInstance,
   getStageInstanceSchema,
   stageSchema
 );
+
+export const getStageInstanceQuery = toQuery(getStageInstance);

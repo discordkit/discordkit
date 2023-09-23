@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { remove, type Fetcher, createProcedure } from "../utils";
+import { remove, type Fetcher, toProcedure } from "../utils";
 
 export const removeThreadMemberSchema = z.object({
   channel: z.string().min(1),
@@ -16,7 +16,7 @@ export const removeThreadMember: Fetcher<
 > = async ({ channel, user }) =>
   remove(`/channels/${channel}/thread-members/${user}`);
 
-export const removeThreadMemberProcedure = createProcedure(
+export const removeThreadMemberProcedure = toProcedure(
   `mutation`,
   removeThreadMember,
   removeThreadMemberSchema

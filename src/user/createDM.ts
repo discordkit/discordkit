@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { post, type Fetcher, createProcedure } from "../utils";
+import { post, type Fetcher, toProcedure } from "../utils";
 import { channelSchema, type Channel } from "../channel/types/Channel";
 
 export const createDMSchema = z.object({
@@ -20,7 +20,7 @@ export const createDM: Fetcher<typeof createDMSchema, Channel> = async ({
   body
 }) => post(`/users/@me/channels`, body);
 
-export const createDMProcedure = createProcedure(
+export const createDMProcedure = toProcedure(
   `mutation`,
   createDM,
   createDMSchema,

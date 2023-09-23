@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { get, type Fetcher, createProcedure } from "../utils";
+import { get, type Fetcher, toProcedure, toQuery } from "../utils";
 import { stickerPackSchema } from "./types";
 
 export const nitroStickerPacksSchema = z.object({
@@ -16,9 +16,11 @@ export const listNitroStickerPacks: Fetcher<
   z.infer<typeof nitroStickerPacksSchema>
 > = async () => get(`/sticker-packs`);
 
-export const listNitroStickerPacksProcedure = createProcedure(
+export const listNitroStickerPacksProcedure = toProcedure(
   `query`,
   listNitroStickerPacks,
   null,
   nitroStickerPacksSchema
 );
+
+export const listNitroStickerPacksQuery = toQuery(listNitroStickerPacks);

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { get, type Fetcher, createProcedure } from "../utils";
+import { get, type Fetcher, toProcedure, toQuery } from "../utils";
 import { stickerSchema, type Sticker } from "./types";
 
 export const getGuildStickerSchema = z.object({
@@ -17,9 +17,11 @@ export const getGuildSticker: Fetcher<
   Sticker
 > = async ({ guild, sticker }) => get(`/guilds/${guild}/stickers/${sticker}`);
 
-export const getGuildStickerProcedure = createProcedure(
+export const getGuildStickerProcedure = toProcedure(
   `query`,
   getGuildSticker,
   getGuildStickerSchema,
   stickerSchema
 );
+
+export const getGuildStickerQuery = toQuery(getGuildSticker);

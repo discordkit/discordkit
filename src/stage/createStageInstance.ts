@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { post, type Fetcher, createProcedure } from "../utils";
+import { post, type Fetcher, toProcedure } from "../utils";
 import { type Stage, stagePrivacyLevelSchema, stageSchema } from "./types";
 
 export const createStageInstanceSchema = z.object({
@@ -29,7 +29,7 @@ export const createStageInstance: Fetcher<
   Stage
 > = async ({ body }) => post(`/stage-instances`, body);
 
-export const createStageInstanceProcedure = createProcedure(
+export const createStageInstanceProcedure = toProcedure(
   `mutation`,
   createStageInstance,
   createStageInstanceSchema,

@@ -1,6 +1,7 @@
 import { z } from "zod";
-import { post, type Fetcher, createProcedure } from "../utils";
-import { type Invite, inviteSchema, inviteTargetSchema } from "../invite";
+import { post, type Fetcher, toProcedure } from "../utils";
+import { type Invite, inviteSchema } from "../invite/types/Invite";
+import { inviteTargetSchema } from "../invite/types/InviteTarget";
 
 export const createChannelInviteSchema = z.object({
   channel: z.string().min(1),
@@ -34,7 +35,7 @@ export const createChannelInvite: Fetcher<
   Invite
 > = async ({ channel, body }) => post(`/channels/${channel}/invites`, body);
 
-export const createChannelInviteProcedure = createProcedure(
+export const createChannelInviteProcedure = toProcedure(
   `mutation`,
   createChannelInvite,
   createChannelInviteSchema,

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { post, type Fetcher, createProcedure } from "../utils";
+import { post, type Fetcher, toProcedure } from "../utils";
 import { stickerSchema, type Sticker } from "./types";
 
 export const createGuildStickerSchema = z.object({
@@ -32,7 +32,7 @@ export const createGuildSticker: Fetcher<
   Sticker
 > = async ({ guild, body }) => post(`/guilds/${guild}/stickers`, body);
 
-export const createGuildStickerProcedure = createProcedure(
+export const createGuildStickerProcedure = toProcedure(
   `mutation`,
   createGuildSticker,
   createGuildStickerSchema,

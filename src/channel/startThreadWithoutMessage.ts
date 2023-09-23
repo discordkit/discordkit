@@ -1,12 +1,9 @@
 import { z } from "zod";
 import type { Fetcher } from "../utils";
-import { createProcedure, post } from "../utils";
-import {
-  autoArchiveDurationSchema,
-  type Channel,
-  channelTypeSchema,
-  channelSchema
-} from "./types";
+import { toProcedure, post } from "../utils";
+import { type Channel, channelSchema } from "./types/Channel";
+import { autoArchiveDurationSchema } from "./types/AutoArchiveDuration";
+import { channelTypeSchema } from "./types/ChannelType";
 
 export const startThreadWithoutMessageSchema = z.object({
   channel: z.string().min(1),
@@ -38,7 +35,7 @@ export const startThreadWithoutMessage: Fetcher<
   Channel
 > = async ({ channel, body }) => post(`/channels/${channel}/threads`, body);
 
-export const startThreadWithoutMessageProcedure = createProcedure(
+export const startThreadWithoutMessageProcedure = toProcedure(
   `mutation`,
   startThreadWithoutMessage,
   startThreadWithoutMessageSchema,

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { get, type Fetcher, createProcedure } from "../utils";
+import { get, type Fetcher, toProcedure, toQuery } from "../utils";
 import { emojiSchema, type Emoji } from "./types";
 
 export const getGuildEmojiSchema = z.object({
@@ -17,9 +17,11 @@ export const getGuildEmoji: Fetcher<
   Emoji
 > = async ({ guild, emoji }) => get(`/guilds/${guild}/emojis/${emoji}`);
 
-export const getGuildEmojiProcedure = createProcedure(
+export const getGuildEmojiProcedure = toProcedure(
   `query`,
   getGuildEmoji,
   getGuildEmojiSchema,
   emojiSchema
 );
+
+export const getGuildEmojiQuery = toQuery(getGuildEmoji);

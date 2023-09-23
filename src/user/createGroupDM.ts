@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { post, type Fetcher, createProcedure } from "../utils";
+import { post, type Fetcher, toProcedure } from "../utils";
 import { channelSchema, type Channel } from "../channel/types/Channel";
 
-const createGroupDMSchema = z.object({
+export const createGroupDMSchema = z.object({
   body: z.object({
     /** access tokens of users that have granted your app the `gdm.join` scope */
     accessTokens: z.array(z.string()),
@@ -23,7 +23,7 @@ export const createGroupDM: Fetcher<
   Channel
 > = async ({ body }) => post(`/users/@me/channels`, body);
 
-export const createGroupDMProcedure = createProcedure(
+export const createGroupDMProcedure = toProcedure(
   `mutation`,
   createGroupDM,
   createGroupDMSchema,

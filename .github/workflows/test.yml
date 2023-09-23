@@ -2,27 +2,37 @@ name: Node.js CI
 
 on:
   push:
-    branches: [master]
+    branches: ["main"]
   pull_request:
-    branches: [master]
+    types: [opened, synchronize]
 
 jobs:
   test:
+    name: Lint, Test, and Typecheck
+    timeout-minutes: 15
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [14, 16, 18]
+        node-version: [18, 20]
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+          cache: "yarn"
+
       - name: Install dependencies
-        run: yarn ci
-      - name: Run tests
+        run: yarn install --immutable
+
+      - name: Run Checks
         run: yarn test
+
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { put, type Fetcher, createProcedure } from "../utils";
+import { put, type Fetcher, toProcedure } from "../utils";
 import { banSchema, type Ban } from "./types";
 
 export const createGuildBanSchema = z.object({
@@ -28,7 +28,7 @@ export const createGuildBan: Fetcher<
   Ban
 > = async ({ guild, user, body }) => put(`/guilds/${guild}/bans/${user}`, body);
 
-export const createGuildBanProcedure = createProcedure(
+export const createGuildBanProcedure = toProcedure(
   `mutation`,
   createGuildBan,
   createGuildBanSchema,

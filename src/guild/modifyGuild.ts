@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { patch, type Fetcher, createProcedure } from "../utils";
+import { patch, type Fetcher, toProcedure } from "../utils";
 import {
   guildFeaturesSchema,
   defaultMessageNotificationLevelSchema,
@@ -73,7 +73,7 @@ export const modifyGuild: Fetcher<typeof modifyGuildSchema, Guild> = async ({
   body
 }) => patch(`/guilds/${guild}`, body);
 
-export const modifyGuildProcedure = createProcedure(
+export const modifyGuildProcedure = toProcedure(
   `mutation`,
   modifyGuild,
   modifyGuildSchema,

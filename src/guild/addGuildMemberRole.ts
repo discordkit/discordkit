@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { put, type Fetcher, createProcedure } from "../utils";
+import { put, type Fetcher, toProcedure } from "../utils";
 
 export const addGuildMemberRoleSchema = z.object({
   guild: z.string().min(1),
@@ -19,7 +19,7 @@ export const addGuildMemberRole: Fetcher<
 > = async ({ guild, user, role }) =>
   put(`/guilds/${guild}/members/${user}/roles/${role}`);
 
-export const addGuildMemberRoleProcedure = createProcedure(
+export const addGuildMemberRoleProcedure = toProcedure(
   `mutation`,
   addGuildMemberRole,
   addGuildMemberRoleSchema

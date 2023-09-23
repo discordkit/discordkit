@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { get, type Fetcher, createProcedure } from "../utils";
+import { get, type Fetcher, toProcedure, toQuery } from "../utils";
 import { channelMentionSchema, threadMemberSchema } from "../channel";
 
 export const listActiveGuildThreadsSchema = z.object({
@@ -23,9 +23,11 @@ export const listActiveGuildThreads: Fetcher<
   z.infer<typeof activeGuildThreadsSchema>
 > = async ({ guild }) => get(`/guilds/${guild}/threads/active`);
 
-export const listActiveGuildThreadsProcedure = createProcedure(
+export const listActiveGuildThreadsProcedure = toProcedure(
   `query`,
   listActiveGuildThreads,
   listActiveGuildThreadsSchema,
   activeGuildThreadsSchema
 );
+
+export const listActiveGuildThreadsQuery = toQuery(listActiveGuildThreads);

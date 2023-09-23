@@ -1,13 +1,10 @@
 import { z } from "zod";
 import type { Fetcher } from "../utils";
-import { createProcedure, patch } from "../utils";
-import {
-  type Channel,
-  autoArchiveDurationSchema,
-  videoQualityModeSchema,
-  channelTypeSchema,
-  channelSchema
-} from "./types";
+import { toProcedure, patch } from "../utils";
+import { type Channel, channelSchema } from "./types/Channel";
+import { autoArchiveDurationSchema } from "./types/AutoArchiveDuration";
+import { channelTypeSchema } from "./types/ChannelType";
+import { videoQualityModeSchema } from "./types/VideoQualityMode";
 
 const sharedChannelOptions = z.object({
   /** 1-100 character channel name */
@@ -97,7 +94,7 @@ export const modifyChannel: Fetcher<
   Channel
 > = async ({ channel, body }) => patch(`/channels/${channel}`, body);
 
-export const modifyChannelProcedure = createProcedure(
+export const modifyChannelProcedure = toProcedure(
   `mutation`,
   modifyChannel,
   modifyChannelSchema,

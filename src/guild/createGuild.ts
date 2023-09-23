@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { post, type Fetcher, createProcedure } from "../utils";
+import { post, type Fetcher, toProcedure } from "../utils";
 import { channelSchema } from "../channel";
 import {
   roleSchema,
@@ -52,7 +52,7 @@ export const createGuild: Fetcher<typeof createGuildSchema, Guild> = async ({
   body
 }) => post(`/guilds`, body);
 
-export const createGuildProcedure = createProcedure(
+export const createGuildProcedure = toProcedure(
   `mutation`,
   createGuild,
   createGuildSchema,
