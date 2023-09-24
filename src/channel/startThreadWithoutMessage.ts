@@ -1,6 +1,5 @@
 import { z } from "zod";
-import type { Fetcher } from "../utils";
-import { toProcedure, post } from "../utils";
+import { toProcedure, post, type Fetcher } from "../utils";
 import { type Channel, channelSchema } from "./types/Channel";
 import { autoArchiveDurationSchema } from "./types/AutoArchiveDuration";
 import { channelTypeSchema } from "./types/ChannelType";

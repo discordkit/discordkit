@@ -1,12 +1,16 @@
 import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { mockQuery, mockRequest } from "../../../scripts/test-utils";
-import { client } from "../__fixtures__/router";
-import { moderationRuleSchema } from "../types";
 import {
+  runProcedure,
+  runQuery,
+  mockRequest
+} from "../../../scripts/test-utils";
+import {
+  getAutoModerationRuleProcedure,
   getAutoModerationRuleQuery,
   getAutoModerationRuleSchema
 } from "../getAutoModerationRule";
+import { moderationRuleSchema } from "../types/ModerationRule";
 
 describe(`getAutoModerationRule`, () => {
   const expected = mockRequest.get(
@@ -17,12 +21,13 @@ describe(`getAutoModerationRule`, () => {
   const config = generateMock(getAutoModerationRuleSchema);
 
   it(`is tRPC compatible`, async () => {
-    const actual = await client.getAutoModerationRule(config);
-    expect(actual).toStrictEqual(expected);
+    await expect(
+      runProcedure(getAutoModerationRuleProcedure)(config)
+    ).resolves.toStrictEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
-    const { result } = mockQuery(getAutoModerationRuleQuery, config);
+    const { result } = runQuery(getAutoModerationRuleQuery, config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toStrictEqual(expected);
   });

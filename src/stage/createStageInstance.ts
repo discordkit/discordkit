@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { post, type Fetcher, toProcedure } from "../utils";
-import { type Stage, stagePrivacyLevelSchema, stageSchema } from "./types";
+import { type Stage, stageSchema } from "./types/Stage";
+import { stagePrivacyLevelSchema } from "./types/StagePrivacyLevel";
 
 export const createStageInstanceSchema = z.object({
   body: z.object({

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { patch, type Fetcher, toProcedure } from "../utils";
-import { guildWidgetSchema, type GuildWidget } from "./types";
+import { guildWidgetSchema, type GuildWidget } from "./types/GuildWidget";
 
 export const modifyGuildWidgetSchema = z.object({
   guild: z.string().min(1),

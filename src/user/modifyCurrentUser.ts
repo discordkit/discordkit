@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { patch, type Fetcher, toProcedure } from "../utils";
-import { userSchema, type User } from "./types";
+import { userSchema, type User } from "./types/User";
 
 export const modifyCurrentUserSchema = z.object({
   body: z

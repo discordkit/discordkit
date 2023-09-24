@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { post, type Fetcher, toProcedure } from "../utils";
-import { webhookSchema, type Webhook } from "./types";
+import { webhookSchema, type Webhook } from "./types/Webhook";
 
 export const createWebhookSchema = z.object({
   channel: z.string().min(1),

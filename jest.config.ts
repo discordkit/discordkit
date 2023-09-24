@@ -8,8 +8,8 @@ const config: Config.InitialOptions = {
   collectCoverageFrom: [
     // include
     `./src/**/*.ts`,
-    `./server/**/*.ts`,
     // exclude
+    `!**/index.ts`,
     `!**/__fixtures__/**/*`,
     `!**/__mocks__/**/*`,
     `!**/__test__/**/*`,
@@ -17,16 +17,7 @@ const config: Config.InitialOptions = {
     `!**/vendor/**`
   ],
   transform: {
-    "^.+\\.(js|jsx|ts|tsx)$": [
-      `babel-jest`,
-      {
-        presets: [
-          `@babel/preset-typescript`,
-          `@babel/preset-env`,
-          [`@babel/preset-react`, { runtime: `automatic` }]
-        ]
-      }
-    ]
+    "^.+\\.(js|jsx|ts|tsx)$": `@swc/jest`
   },
   setupFilesAfterEnv: [`./scripts/setup.ts`],
   testEnvironment: `jsdom`,

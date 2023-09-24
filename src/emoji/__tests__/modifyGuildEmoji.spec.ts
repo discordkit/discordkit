@@ -1,9 +1,16 @@
 import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { mockMutation, mockRequest } from "../../../scripts/test-utils";
-import { client } from "../__fixtures__/router";
-import { modifyGuildEmoji, modifyGuildEmojiSchema } from "../modifyGuildEmoji";
-import { emojiSchema } from "../types";
+import {
+  runProcedure,
+  runMutation,
+  mockRequest
+} from "../../../scripts/test-utils";
+import {
+  modifyGuildEmoji,
+  modifyGuildEmojiProcedure,
+  modifyGuildEmojiSchema
+} from "../modifyGuildEmoji";
+import { emojiSchema } from "../types/Emoji";
 
 describe(`modifyGuildEmoji`, () => {
   const expected = mockRequest.patch(
@@ -13,12 +20,13 @@ describe(`modifyGuildEmoji`, () => {
   const config = generateMock(modifyGuildEmojiSchema);
 
   it(`is tRPC compatible`, async () => {
-    const actual = await client.modifyGuildEmoji(config);
-    expect(actual).toStrictEqual(expected);
+    await expect(
+      runProcedure(modifyGuildEmojiProcedure)(config)
+    ).resolves.toStrictEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
-    const { result } = mockMutation(modifyGuildEmoji);
+    const { result } = runMutation(modifyGuildEmoji);
     result.current.mutate(config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toStrictEqual(expected);

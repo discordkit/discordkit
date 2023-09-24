@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { patch, type Fetcher, toProcedure } from "../utils";
-import { memberSchema, type Member } from "./types";
+import { memberSchema, type Member } from "./types/Member";
 
 export const modifyCurrentMemberSchema = z.object({
   guild: z.string().min(1),

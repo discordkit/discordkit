@@ -1,12 +1,12 @@
 import { z } from "zod";
 import { post, type Fetcher, toProcedure } from "../utils";
 import {
-  entityMetadataSchema,
-  scheduledEventEntityTypeSchema,
-  scheduledEventPrivacyLevelSchema,
   type ScheduledEvent,
   scheduledEventSchema
-} from "./types";
+} from "./types/ScheduledEvent";
+import { entityMetadataSchema } from "./types/EntityMetadata";
+import { scheduledEventPrivacyLevelSchema } from "./types/ScheduledEventPrivacyLevel";
+import { scheduledEventEntityTypeSchema } from "./types/ScheduledEventEntityType";
 
 export const createGuildScheduledEventSchema = z.object({
   guild: z.string().min(1),

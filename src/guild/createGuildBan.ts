@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { put, type Fetcher, toProcedure } from "../utils";
-import { banSchema, type Ban } from "./types";
+import { banSchema, type Ban } from "./types/Ban";
 
 export const createGuildBanSchema = z.object({
   guild: z.string().min(1),

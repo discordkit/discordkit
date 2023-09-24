@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { get, type Fetcher, toProcedure, toQuery } from "../utils";
-import { guildTemplateSchema, type GuildTemplate } from "./types";
+import { guildTemplateSchema, type GuildTemplate } from "./types/GuildTemplate";
 
 export const getGuildTemplatesSchema = z.object({
   guild: z.string().min(1)

@@ -1,12 +1,16 @@
 import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { mockQuery, mockRequest } from "../../../scripts/test-utils";
-import { client } from "../__fixtures__/router";
-import { stickerSchema } from "../types";
 import {
+  runProcedure,
+  runQuery,
+  mockRequest
+} from "../../../scripts/test-utils";
+import {
+  getGuildStickerProcedure,
   getGuildStickerQuery,
   getGuildStickerSchema
 } from "../getGuildSticker";
+import { stickerSchema } from "../types/Sticker";
 
 describe(`getGuildSticker`, () => {
   const expected = mockRequest.get(
@@ -16,12 +20,13 @@ describe(`getGuildSticker`, () => {
   const config = generateMock(getGuildStickerSchema);
 
   it(`is tRPC compatible`, async () => {
-    const actual = await client.getGuildSticker(config);
-    expect(actual).toStrictEqual(expected);
+    await expect(
+      runProcedure(getGuildStickerProcedure)(config)
+    ).resolves.toStrictEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
-    const { result } = mockQuery(getGuildStickerQuery, config);
+    const { result } = runQuery(getGuildStickerQuery, config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toStrictEqual(expected);
   });

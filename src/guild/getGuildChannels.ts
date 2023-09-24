@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { get, type Fetcher, toProcedure, toQuery } from "../utils";
-import { channelSchema, type Channel } from "../channel";
+import { channelSchema, type Channel } from "../channel/types/Channel";
 
 export const getGuildChannelsSchema = z.object({
   guild: z.string().min(1)

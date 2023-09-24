@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { patch, type Fetcher, toProcedure } from "../utils";
-import { mfaLevelSchema, type MFALevel } from "./types";
+import { mfaLevelSchema, type MFALevel } from "./types/MFALevel";
 
 export const modifyGuildMFALevelSchema = z.object({
   guild: z.string().min(1),

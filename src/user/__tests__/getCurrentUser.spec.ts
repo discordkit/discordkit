@@ -1,19 +1,26 @@
 import { waitFor } from "@testing-library/react";
-import { mockRequest, mockQuery } from "../../../scripts/test-utils";
-import { client } from "../__fixtures__/router";
-import { userSchema } from "../types";
-import { getCurrentUserQuery } from "../getCurrentUser";
+import {
+  runProcedure,
+  runQuery,
+  mockRequest
+} from "../../../scripts/test-utils";
+import {
+  getCurrentUserProcedure,
+  getCurrentUserQuery
+} from "../getCurrentUser";
+import { userSchema } from "../types/User";
 
 describe(`getCurrentUser`, () => {
   const expected = mockRequest.get(`/users/@me`, userSchema);
 
   it(`is tRPC compatible`, async () => {
-    const actual = await client.getCurrentUser();
-    expect(actual).toStrictEqual(expected);
+    await expect(
+      runProcedure(getCurrentUserProcedure)()
+    ).resolves.toStrictEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
-    const { result } = mockQuery(getCurrentUserQuery);
+    const { result } = runQuery(getCurrentUserQuery);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toStrictEqual(expected);
   });

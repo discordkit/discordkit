@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { get, type Fetcher, toProcedure, toQuery } from "../utils";
-import { emojiSchema, type Emoji } from "./types";
+import { emojiSchema, type Emoji } from "./types/Emoji";
 
 export const listGuildEmojisSchema = z.object({
   guild: z.string().min(1)

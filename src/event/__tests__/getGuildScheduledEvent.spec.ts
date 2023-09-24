@@ -1,12 +1,16 @@
 import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { mockQuery, mockRequest } from "../../../scripts/test-utils";
-import { client } from "../__fixtures__/router";
-import { scheduledEventSchema } from "../types";
 import {
+  runProcedure,
+  runQuery,
+  mockRequest
+} from "../../../scripts/test-utils";
+import {
+  getGuildScheduledEventProcedure,
   getGuildScheduledEventQuery,
   getGuildScheduledEventSchema
 } from "../getGuildScheduledEvent";
+import { scheduledEventSchema } from "../types/ScheduledEvent";
 
 describe(`getGuildScheduledEvent`, () => {
   const expected = mockRequest.get(
@@ -16,12 +20,13 @@ describe(`getGuildScheduledEvent`, () => {
   const config = generateMock(getGuildScheduledEventSchema);
 
   it(`is tRPC compatible`, async () => {
-    const actual = await client.getGuildScheduledEvent(config);
-    expect(actual).toStrictEqual(expected);
+    await expect(
+      runProcedure(getGuildScheduledEventProcedure)(config)
+    ).resolves.toStrictEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
-    const { result } = mockQuery(getGuildScheduledEventQuery, config);
+    const { result } = runQuery(getGuildScheduledEventQuery, config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toStrictEqual(expected);
   });

@@ -12,9 +12,9 @@ import type { Fetcher } from "./types";
 
 type Result<T> = T extends z.ZodTypeAny ? z.infer<T> : void;
 
-type Base = ReturnType<(typeof initTRPC)["create"]>["procedure"];
+export type Base = ReturnType<(typeof initTRPC)["create"]>["procedure"];
 
-type BaseProcedure<
+export type BaseProcedure<
   T extends "mutation" | "query" | "subscription",
   I extends Parser | null = null,
   O extends Parser | null = null
@@ -30,6 +30,17 @@ type BaseProcedure<
     _meta: object;
   }
 >;
+
+export type ToProcedure<
+  T extends "mutation" | "query" | "subscription" = "query",
+  I extends z.ZodTypeAny | null = null,
+  O extends z.ZodTypeAny | null = null
+> = (
+  type: T,
+  fn: Fetcher<I extends Parser ? I : z.ZodUnknown, Result<O>>,
+  input?: I,
+  output?: O
+) => (base: Base) => BaseProcedure<T, I, O>;
 
 export const toProcedure =
   <

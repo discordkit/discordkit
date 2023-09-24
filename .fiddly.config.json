@@ -1,9 +1,0 @@
-{
-  "name": "🤖 DiscordKit",
-  "description": "A RESTapi Client for Discord",
-  "noHeader": true,
-  "homepage:": "https://discordkit.saeris.io",
-  "repo": "https://github.com/saeris/discordkit",
-  "favicon": "static/favicon.ico",
-  "styles": "styles/styles.css"
-}

@@ -1,8 +1,12 @@
 import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { mockQuery, mockRequest } from "../../../scripts/test-utils";
-import { client } from "../__fixtures__/router";
 import {
+  runProcedure,
+  runQuery,
+  mockRequest
+} from "../../../scripts/test-utils";
+import {
+  getGuildVanityURLProcedure,
   getGuildVanityURLQuery,
   getGuildVanityURLSchema
 } from "../getGuildVanityURL";
@@ -16,12 +20,13 @@ describe(`getGuildVanityURL`, () => {
   const config = generateMock(getGuildVanityURLSchema);
 
   it(`is tRPC compatible`, async () => {
-    const actual = await client.getGuildVanityURL(config);
-    expect(actual).toStrictEqual(expected);
+    await expect(
+      runProcedure(getGuildVanityURLProcedure)(config)
+    ).resolves.toStrictEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
-    const { result } = mockQuery(getGuildVanityURLQuery, config);
+    const { result } = runQuery(getGuildVanityURLQuery, config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toStrictEqual(expected);
   });

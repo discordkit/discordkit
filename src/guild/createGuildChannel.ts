@@ -1,13 +1,10 @@
 import { z } from "zod";
-import type { Channel } from "../channel";
-import {
-  autoArchiveDurationSchema,
-  channelSchema,
-  channelTypeSchema,
-  overwriteSchema,
-  videoQualityModeSchema
-} from "../channel";
 import { post, type Fetcher, toProcedure } from "../utils";
+import { channelSchema, type Channel } from "../channel/types/Channel";
+import { channelTypeSchema } from "../channel/types/ChannelType";
+import { overwriteSchema } from "../channel/types/Overwrite";
+import { videoQualityModeSchema } from "../channel/types/VideoQualityMode";
+import { autoArchiveDurationSchema } from "../channel/types/AutoArchiveDuration";
 
 export const createGuildChannelSchema = z.object({
   guild: z.string().min(1),

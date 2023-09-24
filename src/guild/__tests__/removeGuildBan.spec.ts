@@ -1,19 +1,28 @@
 import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { mockMutation, mockRequest } from "../../../scripts/test-utils";
-import { client } from "../__fixtures__/router";
-import { removeGuildBan, removeGuildBanSchema } from "../removeGuildBan";
+import {
+  runProcedure,
+  runMutation,
+  mockRequest
+} from "../../../scripts/test-utils";
+import {
+  removeGuildBan,
+  removeGuildBanProcedure,
+  removeGuildBanSchema
+} from "../removeGuildBan";
 
 describe(`removeGuildBan`, () => {
   mockRequest.delete(`/guilds/:guild/bans/:user`);
   const config = generateMock(removeGuildBanSchema);
 
-  it(`is tRPC compatible`, () => {
-    expect(async () => client.removeGuildBan(config)).not.toThrow();
+  it(`is tRPC compatible`, async () => {
+    await expect(
+      runProcedure(removeGuildBanProcedure)(config)
+    ).resolves.not.toThrow();
   });
 
   it(`is react-query compatible`, async () => {
-    const { result } = mockMutation(removeGuildBan);
+    const { result } = runMutation(removeGuildBan);
     result.current.mutate(config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
   });

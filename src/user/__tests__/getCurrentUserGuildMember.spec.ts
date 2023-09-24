@@ -1,12 +1,16 @@
 import { waitFor } from "@testing-library/react";
 import { generateMock } from "@anatine/zod-mock";
-import { mockRequest, mockQuery } from "../../../scripts/test-utils";
-import { client } from "../__fixtures__/router";
-import { memberSchema } from "../../guild/types/Member";
 import {
+  runProcedure,
+  runQuery,
+  mockRequest
+} from "../../../scripts/test-utils";
+import {
+  getCurrentUserGuildMemberProcedure,
   getCurrentUserGuildMemberQuery,
   getCurrentUserGuildMemberSchema
 } from "../getCurrentUserGuildMember";
+import { memberSchema } from "../../guild/types/Member";
 
 describe(`getCurrentUserGuildMember`, () => {
   const expected = mockRequest.get(
@@ -16,12 +20,13 @@ describe(`getCurrentUserGuildMember`, () => {
   const config = generateMock(getCurrentUserGuildMemberSchema);
 
   it(`is tRPC compatible`, async () => {
-    const actual = await client.getCurrentUserGuildMember(config);
-    expect(actual).toStrictEqual(expected);
+    await expect(
+      runProcedure(getCurrentUserGuildMemberProcedure)(config)
+    ).resolves.toStrictEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
-    const { result } = mockQuery(getCurrentUserGuildMemberQuery, config);
+    const { result } = runQuery(getCurrentUserGuildMemberQuery, config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toStrictEqual(expected);
   });

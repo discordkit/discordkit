@@ -1,8 +1,15 @@
 import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { mockMutation, mockRequest } from "../../../scripts/test-utils";
-import { client } from "../__fixtures__/router";
-import { crosspostMessage, crosspostMessageSchema } from "../crosspostMessage";
+import {
+  runProcedure,
+  runMutation,
+  mockRequest
+} from "../../../scripts/test-utils";
+import {
+  crosspostMessage,
+  crosspostMessageProcedure,
+  crosspostMessageSchema
+} from "../crosspostMessage";
 import { messageSchema } from "../types/Message";
 
 describe(`crosspostMessage`, () => {
@@ -13,12 +20,13 @@ describe(`crosspostMessage`, () => {
   const config = generateMock(crosspostMessageSchema);
 
   it(`is tRPC compatible`, async () => {
-    const actual = await client.crosspostMessage(config);
-    expect(actual).toStrictEqual(expected);
+    await expect(
+      runProcedure(crosspostMessageProcedure)(config)
+    ).resolves.toStrictEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
-    const { result } = mockMutation(crosspostMessage);
+    const { result } = runMutation(crosspostMessage);
     result.current.mutate(config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toStrictEqual(expected);

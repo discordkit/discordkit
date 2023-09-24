@@ -1,13 +1,13 @@
 import { z } from "zod";
 import { post, type Fetcher, toProcedure } from "../utils";
 import {
-  moderationActionSchema,
-  triggerMetaSchema,
-  moderationEventSchema,
-  moderationTriggerSchema,
   type ModerationRule,
   moderationRuleSchema
-} from "./types";
+} from "./types/ModerationRule";
+import { moderationEventSchema } from "./types/ModerationEvent";
+import { moderationTriggerSchema } from "./types/ModerationTrigger";
+import { triggerMetaSchema } from "./types/TriggerMeta";
+import { moderationActionSchema } from "./types/ModerationAction";
 
 export const createAutoModerationRuleSchema = z.object({
   guild: z.string().min(1),

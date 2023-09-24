@@ -1,12 +1,16 @@
 import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { mockMutation, mockRequest } from "../../../scripts/test-utils";
-import { client } from "../__fixtures__/router";
-import { guildTemplateSchema } from "../types";
+import {
+  runProcedure,
+  runMutation,
+  mockRequest
+} from "../../../scripts/test-utils";
 import {
   syncGuildTemplate,
+  syncGuildTemplateProcedure,
   syncGuildTemplateSchema
 } from "../syncGuildTemplate";
+import { guildTemplateSchema } from "../types/GuildTemplate";
 
 describe(`syncGuildTemplate`, () => {
   const expected = mockRequest.put(
@@ -16,12 +20,13 @@ describe(`syncGuildTemplate`, () => {
   const config = generateMock(syncGuildTemplateSchema);
 
   it(`is tRPC compatible`, async () => {
-    const actual = await client.syncGuildTemplate(config);
-    expect(actual).toStrictEqual(expected);
+    await expect(
+      runProcedure(syncGuildTemplateProcedure)(config)
+    ).resolves.toStrictEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
-    const { result } = mockMutation(syncGuildTemplate);
+    const { result } = runMutation(syncGuildTemplate);
     result.current.mutate(config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toStrictEqual(expected);

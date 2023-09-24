@@ -1,11 +1,9 @@
 import { z } from "zod";
 import { post, buildURL, type Fetcher, toProcedure } from "../utils";
-import {
-  allowedMentionSchema,
-  attachmentSchema,
-  embedSchema,
-  messageFlagSchema
-} from "../channel";
+import { messageFlagSchema } from "../channel/types/MessageFlag";
+import { embedSchema } from "../channel/types/Embed";
+import { allowedMentionSchema } from "../channel/types/AllowedMention";
+import { attachmentSchema } from "../channel/types/Attachment";
 
 export const executeWebhookSchema = z.object({
   webhook: z.string().min(1),

@@ -1,8 +1,12 @@
 import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { mockQuery, mockRequest } from "../../../scripts/test-utils";
-import { client } from "../__fixtures__/router";
 import {
+  runProcedure,
+  runQuery,
+  mockRequest
+} from "../../../scripts/test-utils";
+import {
+  listPrivateArchivedThreadsProcedure,
   listPrivateArchivedThreadsQuery,
   listPrivateArchivedThreadsSchema
 } from "../listPrivateArchivedThreads";
@@ -16,12 +20,13 @@ describe(`listPrivateArchivedThreads`, () => {
   const config = generateMock(listPrivateArchivedThreadsSchema);
 
   it(`is tRPC compatible`, async () => {
-    const actual = await client.listPrivateArchivedThreads(config);
-    expect(actual).toStrictEqual(expected);
+    await expect(
+      runProcedure(listPrivateArchivedThreadsProcedure)(config)
+    ).resolves.toStrictEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
-    const { result } = mockQuery(listPrivateArchivedThreadsQuery, config);
+    const { result } = runQuery(listPrivateArchivedThreadsQuery, config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toStrictEqual(expected);
   });

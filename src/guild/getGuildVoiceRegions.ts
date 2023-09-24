@@ -1,6 +1,9 @@
 import { z } from "zod";
 import { get, type Fetcher, toProcedure, toQuery } from "../utils";
-import { voiceRegionSchema, type VoiceRegion } from "../voice";
+import {
+  voiceRegionSchema,
+  type VoiceRegion
+} from "../voice/types/VoiceRegion";
 
 export const getGuildVoiceRegionsSchema = z.object({
   guild: z.string().min(1)

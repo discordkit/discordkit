@@ -1,10 +1,7 @@
 import { z } from "zod";
 import { patch, type Fetcher, toProcedure } from "../utils";
-import {
-  welcomeChannelSchema,
-  welcomeScreenSchema,
-  type WelcomeScreen
-} from "./types";
+import { welcomeScreenSchema, type WelcomeScreen } from "./types/WelcomeScreen";
+import { welcomeChannelSchema } from "./types/WelcomeChannel";
 
 export const modifyGuildWelcomeScreenSchema = z.object({
   guild: z.string().min(1),

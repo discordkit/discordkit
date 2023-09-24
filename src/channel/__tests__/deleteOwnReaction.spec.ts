@@ -1,9 +1,13 @@
 import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { mockMutation, mockRequest } from "../../../scripts/test-utils";
-import { client } from "../__fixtures__/router";
+import {
+  runProcedure,
+  runMutation,
+  mockRequest
+} from "../../../scripts/test-utils";
 import {
   deleteOwnReaction,
+  deleteOwnReactionProcedure,
   deleteOwnReactionSchema
 } from "../deleteOwnReaction";
 
@@ -13,12 +17,14 @@ describe(`deleteOwnReaction`, () => {
   );
   const config = generateMock(deleteOwnReactionSchema);
 
-  it(`is tRPC compatible`, () => {
-    expect(async () => client.deleteOwnReaction(config)).not.toThrow();
+  it(`is tRPC compatible`, async () => {
+    await expect(
+      runProcedure(deleteOwnReactionProcedure)(config)
+    ).resolves.not.toThrow();
   });
 
   it(`is react-query compatible`, async () => {
-    const { result } = mockMutation(deleteOwnReaction);
+    const { result } = runMutation(deleteOwnReaction);
     result.current.mutate(config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
   });

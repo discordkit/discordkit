@@ -1,5 +1,5 @@
 import { get, type Fetcher, toProcedure, toQuery } from "../utils";
-import { voiceRegionSchema, type VoiceRegion } from "./types";
+import { voiceRegionSchema, type VoiceRegion } from "./types/VoiceRegion";
 
 /**
  * Returns an array of voice region objects that can be used when setting a voice or stage channel's [`rtc_region`](https://discord.com/developers/docs/resources/channel#channel-object-channel-structure).

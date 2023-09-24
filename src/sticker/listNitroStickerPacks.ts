@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { get, type Fetcher, toProcedure, toQuery } from "../utils";
-import { stickerPackSchema } from "./types";
+import { stickerPackSchema } from "./types/StickerPack";
 
 export const nitroStickerPacksSchema = z.object({
   stickerPacks: stickerPackSchema.array()

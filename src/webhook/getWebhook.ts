@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { get, type Fetcher, toProcedure, toQuery } from "../utils";
-import { webhookSchema, type Webhook } from "./types";
+import { webhookSchema, type Webhook } from "./types/Webhook";
 
 export const getWebhookSchema = z.object({
   webhook: z.string().min(1)

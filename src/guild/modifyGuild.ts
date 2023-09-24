@@ -1,14 +1,11 @@
 import { z } from "zod";
 import { patch, type Fetcher, toProcedure } from "../utils";
-import {
-  guildFeaturesSchema,
-  defaultMessageNotificationLevelSchema,
-  explicitContentFilterLevelSchema,
-  verificationLevelSchema,
-  systemChannelFlagsSchema,
-  type Guild,
-  guildSchema
-} from "./types";
+import { type Guild, guildSchema } from "./types/Guild";
+import { verificationLevelSchema } from "./types/VerificationLevel";
+import { defaultMessageNotificationLevelSchema } from "./types/DefaultMessageNotificationLevel";
+import { explicitContentFilterLevelSchema } from "./types/ExplicitContentFilterLevel";
+import { systemChannelFlagsSchema } from "./types/SystemChannelFlags";
+import { guildFeaturesSchema } from "./types/GuildFeatures";
 
 export const modifyGuildSchema = z.object({
   guild: z.string().min(1),

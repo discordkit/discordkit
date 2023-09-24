@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { get, type Fetcher, toProcedure, toQuery } from "../utils";
-import { inviteSchema, type Invite } from "./types";
+import { inviteSchema, type Invite } from "./types/Invite";
 
 export const getInviteSchema = z.object({
   code: z.string().min(1),

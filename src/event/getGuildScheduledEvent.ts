@@ -1,6 +1,9 @@
 import { z } from "zod";
 import { get, type Fetcher, toProcedure, toQuery } from "../utils";
-import { scheduledEventSchema, type ScheduledEvent } from "./types";
+import {
+  scheduledEventSchema,
+  type ScheduledEvent
+} from "./types/ScheduledEvent";
 
 export const getGuildScheduledEventSchema = z.object({
   guild: z.string().min(1),

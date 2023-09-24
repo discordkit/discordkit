@@ -1,9 +1,16 @@
 import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { mockMutation, mockRequest } from "../../../scripts/test-utils";
-import { client } from "../__fixtures__/router";
-import { webhookSchema } from "../types";
-import { createWebhook, createWebhookSchema } from "../createWebhook";
+import {
+  runProcedure,
+  runMutation,
+  mockRequest
+} from "../../../scripts/test-utils";
+import {
+  createWebhook,
+  createWebhookProcedure,
+  createWebhookSchema
+} from "../createWebhook";
+import { webhookSchema } from "../types/Webhook";
 
 describe(`createWebhook`, () => {
   const expected = mockRequest.post(
@@ -13,12 +20,13 @@ describe(`createWebhook`, () => {
   const config = generateMock(createWebhookSchema);
 
   it(`is tRPC compatible`, async () => {
-    const actual = await client.createWebhook(config);
-    expect(actual).toStrictEqual(expected);
+    await expect(
+      runProcedure(createWebhookProcedure)(config)
+    ).resolves.toStrictEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
-    const { result } = mockMutation(createWebhook);
+    const { result } = runMutation(createWebhook);
     result.current.mutate(config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toStrictEqual(expected);

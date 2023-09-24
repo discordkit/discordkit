@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { get, type Fetcher, toProcedure, toQuery } from "../utils";
-import { integrationSchema, type Integration } from "./types";
+import { integrationSchema, type Integration } from "./types/Integration";
 
 export const getGuildIntegrationsSchema = z.object({
   guild: z.string().min(1)

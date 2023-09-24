@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { get, type Fetcher, toProcedure, toQuery } from "../utils";
-import { type AuditLog, auditLogEventSchema, auditLogSchema } from "./types";
+import { type AuditLog, auditLogSchema } from "./types/AuditLog";
+import { auditLogEventSchema } from "./types/AuditLogEvent";
 
 export const getGuildAuditLogSchema = z.object({
   guild: z.string().min(1),

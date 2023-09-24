@@ -1,12 +1,16 @@
 import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { mockQuery, mockRequest } from "../../../scripts/test-utils";
-import { client } from "../__fixtures__/router";
-import { webhookSchema } from "../types";
 import {
+  runProcedure,
+  runQuery,
+  mockRequest
+} from "../../../scripts/test-utils";
+import {
+  getGuildWebhooksProcedure,
   getGuildWebhooksQuery,
   getGuildWebhooksSchema
 } from "../getGuildWebhooks";
+import { webhookSchema } from "../types/Webhook";
 
 describe(`getGuildWebhooks`, () => {
   const expected = mockRequest.get(
@@ -16,12 +20,13 @@ describe(`getGuildWebhooks`, () => {
   const config = generateMock(getGuildWebhooksSchema);
 
   it(`is tRPC compatible`, async () => {
-    const actual = await client.getGuildWebhooks(config);
-    expect(actual).toStrictEqual(expected);
+    await expect(
+      runProcedure(getGuildWebhooksProcedure)(config)
+    ).resolves.toStrictEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
-    const { result } = mockQuery(getGuildWebhooksQuery, config);
+    const { result } = runQuery(getGuildWebhooksQuery, config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toStrictEqual(expected);
   });

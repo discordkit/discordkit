@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { get, type Fetcher, toProcedure, toQuery } from "../utils";
-import { userSchema, type User } from "./types";
+import { userSchema, type User } from "./types/User";
 
 export const getUserSchema = z.object({
   user: z.string().min(1)

@@ -1,5 +1,5 @@
 import { get, type Fetcher, toProcedure, toQuery } from "../utils";
-import { connectionSchema, type Connection } from "./types";
+import { connectionSchema, type Connection } from "./types/Connection";
 
 /**
  * Returns a list of connection objects. Requires the `connections` OAuth2 scope.

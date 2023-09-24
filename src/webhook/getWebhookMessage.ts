@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { get, type Fetcher, toProcedure, toQuery } from "../utils";
-import { messageSchema, type Message } from "../channel";
+import { messageSchema, type Message } from "../channel/types/Message";
 
 export const getWebhookMessageSchema = z.object({
   webhook: z.string().min(1),

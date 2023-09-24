@@ -7,7 +7,9 @@
     "discord",
     "api",
     "client",
-    "rest"
+    "rest",
+    "trpc",
+    "react-query"
   ],
   "repository": {
     "type": "git",
@@ -39,50 +41,38 @@
     "src"
   ],
   "scripts": {
-    "ci": "yarn install --ignore-scripts --frozen-lockfile --silent --non-interactive",
     "build": "tsup",
-    "build:docs": "fiddly",
-    "lint": "yarn test:lint",
-    "format": "yarn test:lint --fix",
-    "prepare": "is-ci || husky install",
-    "prepublishOnly": "yarn test",
+    "lint": "eslint \"./src/**/*.{j,t}s?(x)\"",
+    "format": "yarn lint --fix",
+    "prepublishOnly": "yarn lint && yarn test",
     "prepack": "yarn build",
     "release": "release-it",
-    "test": "yarn test:lint && yarn test:typecheck && yarn test:unit",
-    "test:lint": "eslint \"./src/**/*.{j,t}s?(x)\"",
-    "test:typecheck": "tsc --noEmit",
-    "test:unit": "jest",
-    "test:watch": "yarn test:unit --watch",
-    "typecheck": "yarn test:typecheck",
-    "version": "yarn build:docs"
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "peerDependencies": {
     "zod": "^3.17.3"
   },
   "devDependencies": {
     "@anatine/zod-mock": "^3.13.2",
-    "@babel/preset-env": "^7.22.20",
-    "@babel/preset-react": "^7.22.15",
-    "@babel/preset-typescript": "^7.22.15",
     "@faker-js/faker": "^8.0.2",
     "@release-it/conventional-changelog": "^7.0.1",
     "@saeris/eslint-config": "^2.5.0",
+    "@swc/core": "^1.3.87",
+    "@swc/jest": "^0.2.29",
     "@tanstack/react-query": "^4.35.3",
     "@testing-library/react": "^14.0.0",
     "@trpc/server": "^10.38.3",
     "@types/eslint": "^8.44.2",
     "@types/jest": "^29.5.5",
     "@types/node": "18.17.17",
-    "commitlint": "^17.7.1",
+    "@types/react": "^18.2.22",
+    "@types/react-dom": "^18.2.7",
     "cross-fetch": "^4.0.0",
     "dotenv-quokka-plugin": "^1.0.0",
     "eslint": "^8.49.0",
-    "fiddly": "^0.12.0",
-    "husky": "^8.0.3",
-    "is-ci": "^3.0.1",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
-    "lint-staged": "^14.0.1",
     "msw": "^1.3.1",
     "prettier": "^3.0.3",
     "react": "^18.2.0",
@@ -139,5 +129,8 @@
     "clean": true
   },
   "packageManager": "yarn@3.1.1",
-  "sideEffects": false
+  "sideEffects": false,
+  "dependencies": {
+    "ts-jest": "^29.1.1"
+  }
 }

@@ -1,8 +1,12 @@
 import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { mockQuery, mockRequest } from "../../../scripts/test-utils";
-import { client } from "../__fixtures__/router";
 import {
+  runProcedure,
+  runQuery,
+  mockRequest
+} from "../../../scripts/test-utils";
+import {
+  listThreadMembersProcedure,
   listThreadMembersQuery,
   listThreadMembersSchema
 } from "../listThreadMembers";
@@ -16,12 +20,13 @@ describe(`listThreadMembers`, () => {
   const config = generateMock(listThreadMembersSchema);
 
   it(`is tRPC compatible`, async () => {
-    const actual = await client.listThreadMembers(config);
-    expect(actual).toStrictEqual(expected);
+    await expect(
+      runProcedure(listThreadMembersProcedure)(config)
+    ).resolves.toStrictEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
-    const { result } = mockQuery(listThreadMembersQuery, config);
+    const { result } = runQuery(listThreadMembersQuery, config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toStrictEqual(expected);
   });

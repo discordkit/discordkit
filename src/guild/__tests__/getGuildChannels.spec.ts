@@ -1,8 +1,12 @@
 import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { mockQuery, mockRequest } from "../../../scripts/test-utils";
-import { client } from "../__fixtures__/router";
 import {
+  runProcedure,
+  runQuery,
+  mockRequest
+} from "../../../scripts/test-utils";
+import {
+  getGuildChannelsProcedure,
   getGuildChannelsQuery,
   getGuildChannelsSchema
 } from "../getGuildChannels";
@@ -16,12 +20,13 @@ describe(`getGuildChannels`, () => {
   const config = generateMock(getGuildChannelsSchema);
 
   it(`is tRPC compatible`, async () => {
-    const actual = await client.getGuildChannels(config);
-    expect(actual).toStrictEqual(expected);
+    await expect(
+      runProcedure(getGuildChannelsProcedure)(config)
+    ).resolves.toStrictEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
-    const { result } = mockQuery(getGuildChannelsQuery, config);
+    const { result } = runQuery(getGuildChannelsQuery, config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toStrictEqual(expected);
   });
