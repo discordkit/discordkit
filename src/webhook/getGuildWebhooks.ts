@@ -7,11 +7,11 @@ export const getGuildWebhooksSchema = z.object({
 });
 
 /**
- * **GET** `/guilds/{guild.id}/webhooks`
+ * ### [Get Guild Webhooks](https://discord.com/developers/docs/resources/webhook#get-guild-webhooks)
+ *
+ * **GET** `/guilds/:guild/webhooks`
  *
  * Returns a list of guild webhook objects. Requires the `MANAGE_WEBHOOKS` permission.
- *
- * https://discord.com/developers/docs/resources/webhook#get-guild-webhooks
  */
 export const getGuildWebhooks: Fetcher<
   typeof getGuildWebhooksSchema,

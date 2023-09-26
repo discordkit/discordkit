@@ -7,17 +7,17 @@ export const emojiSchema = z.object({
   /** (can be null only in reaction emoji objects)	emoji name */
   name: z.string().optional(),
   /** roles allowed to use this emoji */
-  roles: z.string().array().optional(),
+  roles: z.string().array().nullable(),
   /** user that created this emoji */
-  user: userSchema.optional(),
+  user: userSchema.nullable(),
   /** whether this emoji must be wrapped in colons */
-  requireColons: z.boolean().optional(),
+  requireColons: z.boolean().nullable(),
   /** whether this emoji is managed */
-  managed: z.boolean().optional(),
+  managed: z.boolean().nullable(),
   /** whether this emoji is animated */
-  animated: z.boolean().optional(),
+  animated: z.boolean().nullable(),
   /** whether this emoji can be used, may be false due to loss of Server Boosts */
-  available: z.boolean().optional()
+  available: z.boolean().nullable()
 });
 
 export type Emoji = z.infer<typeof emojiSchema>;

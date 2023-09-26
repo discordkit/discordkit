@@ -13,7 +13,10 @@ import {
 import { webhookSchema } from "../types/Webhook";
 
 describe(`getWebhookWithToken`, () => {
-  const expected = mockRequest.get(`/webhooks/:webhook/:token`, webhookSchema);
+  const expected = mockRequest.get(
+    `/webhooks/:webhook/:token`,
+    webhookSchema.omit({ user: true })
+  );
   const config = generateMock(getWebhookWithTokenSchema);
 
   it(`is tRPC compatible`, async () => {

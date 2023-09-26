@@ -10,23 +10,29 @@ export const modifyWebhookWithTokenSchema = z.object({
       /** the default name of the webhook */
       name: z.string().min(1),
       /** image for the default webhook avatar */
-      avatar: z.string().min(1),
-      /** the new channel id this webhook should be moved to */
-      channelId: z.string().min(1)
+      avatar: z.string().url().min(1)
     })
     .partial()
 });
 
 /**
- * **PATCH** `/webhooks/{webhook.id}/{webhook.token}`
+ * ### [Modify Webhook with Token](https://discord.com/developers/docs/resources/webhook#modify-webhook-with-token)
  *
- * Same as above, except this call does not require authentication, does not accept a `channel_id` parameter in the body, and does not return a user in the webhook object.
+ * **PATCH** `/webhooks/:webhook/:token`
  *
- * https://discord.com/developers/docs/resources/webhook#modify-webhook-with-token
+ * Modify a webhook. Requires the `MANAGE_WEBHOOKS` permission. Returns the updated {@link Webhook | webhook object} on success. Fires a Webhooks Update Gateway event. This call does not require authentication and does not return a user in the webhook object.
+ *
+ * > **NOTE**
+ * >
+ * > All parameters to this endpoint are optional
+ *
+ * > **NOTE**
+ * >
+ * > This endpoint supports the `X-Audit-Log-Reason `header.
  */
 export const modifyWebhookWithToken: Fetcher<
   typeof modifyWebhookWithTokenSchema,
-  Webhook
+  Omit<Webhook, "user">
 > = async ({ webhook, token, body }) =>
   patch(`/webhooks/${webhook}/${token}`, body);
 
@@ -34,5 +40,5 @@ export const modifyWebhookWithTokenProcedure = toProcedure(
   `mutation`,
   modifyWebhookWithToken,
   modifyWebhookWithTokenSchema,
-  webhookSchema
+  webhookSchema.omit({ user: true })
 );

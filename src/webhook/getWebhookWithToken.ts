@@ -8,22 +8,22 @@ export const getWebhookWithTokenSchema = z.object({
 });
 
 /**
- * **GET** `/webhooks/{webhook.id}/{webhook.token}`
+ * ### [Get Webhook with Token](https://discord.com/developers/docs/resources/webhook#get-webhook-with-token)
  *
- * Same as above, except this call does not require authentication and returns no user in the webhook object.
+ * **GET** `/webhooks/:webhook/:token`
  *
- * https://discord.com/developers/docs/resources/webhook#get-webhook-with-token
+ * Returns the new {@link Webhook | webhook object} for the given id, except this call does not require authentication and returns no user in the webhook object.
  */
 export const getWebhookWithToken: Fetcher<
   typeof getWebhookWithTokenSchema,
-  Webhook
+  Omit<Webhook, "user">
 > = async ({ webhook, token }) => get(`/webhooks/${webhook}/${token}`);
 
 export const getWebhookWithTokenProcedure = toProcedure(
   `query`,
   getWebhookWithToken,
   getWebhookWithTokenSchema,
-  webhookSchema
+  webhookSchema.omit({ user: true })
 );
 
 export const getWebhookWithTokenQuery = toQuery(getWebhookWithToken);

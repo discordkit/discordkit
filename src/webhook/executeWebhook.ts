@@ -4,15 +4,17 @@ import { messageFlagSchema } from "../channel/types/MessageFlag";
 import { embedSchema } from "../channel/types/Embed";
 import { allowedMentionSchema } from "../channel/types/AllowedMention";
 import { attachmentSchema } from "../channel/types/Attachment";
+import { EmbedType } from "../channel/types/EmbedType";
+import { messageComponentSchema } from "../channel/types/MessageComponent";
 
 export const executeWebhookSchema = z.object({
   webhook: z.string().min(1),
   token: z.string().min(1),
   params: z
     .object({
-      /** waits for server confirmation of message send before response, and returns the created message body (defaults to false; when false a message that is not saved does not return an error) (default: false) */
-      wait: z.boolean(),
-      /** Send a message to the specified thread within a webhook's channel. The thread will automatically be unarchived.	(default: undefined) */
+      /** waits for server confirmation of message send before response, and returns the created message body (defaults to false; when false a message that is not saved does not return an error) */
+      wait: z.boolean().default(false),
+      /** Send a message to the specified thread within a webhook's channel. The thread will automatically be unarchived. */
       threadId: z.string().min(1)
     })
     .partial()
@@ -28,15 +30,16 @@ export const executeWebhookSchema = z.object({
       /** true if this is a TTS message */
       tts: z.boolean(),
       /** embedded rich content */
-      embeds: embedSchema.array(),
+      embeds: embedSchema
+        .extend({ type: z.literal(EmbedType.RICH) })
+        .array()
+        .max(10),
       /** allowed mentions for the message */
       allowedMentions: allowedMentionSchema,
       /** the components to include with the message */
-      // components?: MessageComponent[];
+      components: messageComponentSchema.array(),
       /** the contents of the file being sent */
-      // files?: FileContent;
-      /** JSON encoded body of non-file params */
-      payloadJson: z.string(),
+      files: z.unknown().array(),
       /** attachment objects with filename and description */
       attachments: attachmentSchema.partial().array(),
       /** message flags combined as a bitfield (only SUPPRESS_EMBEDS can be set) */
@@ -48,13 +51,23 @@ export const executeWebhookSchema = z.object({
 });
 
 /**
+ * ### [Execute Webhook](https://discord.com/developers/docs/resources/webhook#execute-webhook)
+ *
+ * **POST** `/webhooks/:webhook/:token`
+ *
  * Refer to Uploading Files for details on attachments and `multipart/form-data` requests. Returns a message or `204 No Content` depending on the `wait` query parameter.
  *
- * *Note that when sending a message, you must provide a value for at **least one of** `content`, `embeds`, or `file`.*
+ * > **NOTE**
+ * >
+ * > Note that when sending a message, you must provide a value for at least one of `content`, `embeds`, `components`, or `file`.
  *
- * *If the webhook channel is a forum channel, you must provide either `thread_id` in the query string params, or `thread_name` in the JSON/form params. If `thread_id` is provided, the message will send in that thread. If `thread_name` is provided, a thread with that name will be created in the forum channel.*
+ * > **NOTE**
+ * >
+ * > If the webhook channel is a forum channel, you must provide either `threadId` in the query string params, or `threadName` in the JSON/form params. If `threadId` is provided, the message will send in that thread. If `threadName` is provided, a thread with that name will be created in the forum channel.
  *
- * https://discord.com/developers/docs/resources/webhook#execute-webhook
+ * > **WARNING**
+ * >
+ * > Discord may strip certain characters from message content, like invalid unicode characters or characters which cause unexpected message formatting. If you are passing user-generated strings into message content, consider sanitizing the data to prevent unexpected behavior and using `allowed_mentions` to prevent unexpected mentions.
  */
 export const executeWebhook: Fetcher<typeof executeWebhookSchema> = async ({
   webhook,

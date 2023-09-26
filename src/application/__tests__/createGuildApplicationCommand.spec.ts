@@ -6,27 +6,27 @@ import {
   mockRequest
 } from "../../../scripts/test-utils";
 import {
-  createGlobalApplicationCommandProcedure,
-  createGlobalApplicationCommand,
-  createGlobalApplicationCommandSchema
-} from "../createGlobalApplicationCommand";
+  createGuildApplicationCommandProcedure,
+  createGuildApplicationCommand,
+  createGuildApplicationCommandSchema
+} from "../createGuildApplicationCommand";
 import { applicationCommandSchema } from "../types/ApplicationCommand";
 
-describe(`createGlobalApplicationCommand`, () => {
+describe(`createGuildApplicationCommand`, () => {
   const expected = mockRequest.post(
-    `/applications/:application/commands`,
+    `/applications/:application/guilds/:guild/commands`,
     applicationCommandSchema
   );
-  const input = generateMock(createGlobalApplicationCommandSchema);
+  const input = generateMock(createGuildApplicationCommandSchema);
 
   it(`is tRPC compatible`, async () => {
     await expect(
-      runProcedure(createGlobalApplicationCommandProcedure)(input)
+      runProcedure(createGuildApplicationCommandProcedure)(input)
     ).resolves.toStrictEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
-    const { result } = runMutation(createGlobalApplicationCommand);
+    const { result } = runMutation(createGuildApplicationCommand);
     result.current.mutate(input);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toStrictEqual(expected);

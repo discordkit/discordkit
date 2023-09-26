@@ -1,18 +1,18 @@
 import { z } from "zod";
 
-export const embedTypeSchema = z.enum([
+export enum EmbedType {
   /** generic embed rendered from embed attributes */
-  `rich`,
+  RICH = `rich`,
   /** image embed */
-  `image`,
+  IMAGE = `image`,
   /** video embed */
-  `video`,
+  VIDEO = `video`,
   /** animated gif image embed rendered as a video embed */
-  `gifv`,
+  GIF = `gifv`,
   /** article embed */
-  `article`,
+  ARTICLE = `article`,
   /** link embed */
-  `link`
-]);
+  LINK = `link`
+}
 
-export type EmbedType = z.infer<typeof embedTypeSchema>;
+export const embedTypeSchema = z.nativeEnum(EmbedType);

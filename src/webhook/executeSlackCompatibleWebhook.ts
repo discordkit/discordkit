@@ -6,19 +6,21 @@ export const executeSlackCompatibleWebhookSchema = z.object({
   token: z.string().min(1),
   params: z
     .object({
-      /** waits for server confirmation of message send before response, and returns the created message body (defaults to false; when false a message that is not saved does not return an error) (default: false) */
-      wait: z.boolean(),
-      /** Send a message to the specified thread within a webhook's channel. The thread will automatically be unarchived.	(default: undefined) */
-      threadId: z.string()
+      /** id of the thread to send the message in */
+      threadId: z.string(),
+      /** waits for server confirmation of message send before response (defaults to `true`; when `false` a message that is not saved does not return an error) */
+      wait: z.boolean().default(true)
     })
     .partial()
     .optional()
 });
 
 /**
- * Refer to [Slack's documentation](https://api.slack.com/incoming-webhooks) for more information. We do not support Slack's `channel`, `icon_emoji`, `mrkdwn`, or `mrkdwn_in` properties.
+ * ### [Execute Slack-Compatible Webhook](https://discord.com/developers/docs/resources/webhook#execute-slackcompatible-webhook)
  *
- * https://discord.com/developers/docs/resources/webhook#execute-slackcompatible-webhook
+ * **POST** `/webhooks/:webhook/:token/slack`
+ *
+ * Refer to [Slack's documentation](https://api.slack.com/incoming-webhooks) for more information. We do not support Slack's `channel`, `icon_emoji`, `mrkdwn`, or `mrkdwn_in` properties.
  */
 export const executeSlackCompatibleWebhook: Fetcher<
   typeof executeSlackCompatibleWebhookSchema

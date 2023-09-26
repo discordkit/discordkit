@@ -15,7 +15,7 @@ import { webhookSchema } from "../types/Webhook";
 describe(`modifyWebhookWithToken`, () => {
   const expected = mockRequest.patch(
     `/webhooks/:webhook/:token`,
-    webhookSchema
+    webhookSchema.omit({ user: true })
   );
   const config = generateMock(modifyWebhookWithTokenSchema);
 

@@ -4,6 +4,8 @@ import { messageSchema, type Message } from "../channel/types/Message";
 import { embedSchema } from "../channel/types/Embed";
 import { allowedMentionSchema } from "../channel/types/AllowedMention";
 import { attachmentSchema } from "../channel/types/Attachment";
+import { messageComponentSchema } from "../channel/types/MessageComponent";
+import { EmbedType } from "../channel/types/EmbedType";
 
 export const editWebhookMessageSchema = z.object({
   webhook: z.string().min(1),
@@ -19,17 +21,18 @@ export const editWebhookMessageSchema = z.object({
   body: z
     .object({
       /** the message contents (up to 2000 characters) */
-      content: z.string().min(1).max(200),
-      /** embedded rich content */
-      embeds: embedSchema.array(),
+      content: z.string().min(1).max(2000),
+      /** embedded `rich` content */
+      embeds: embedSchema
+        .extend({ type: z.literal(EmbedType.RICH) })
+        .array()
+        .max(10),
       /** allowed mentions for the message */
       allowedMentions: allowedMentionSchema,
       /** the components to include with the message */
-      components: z.unknown().array(),
+      components: messageComponentSchema.array(),
       /** the contents of the file being sent */
-      files: z.unknown(),
-      /** JSON encoded body of non-file params */
-      payloadJson: z.unknown(),
+      files: z.unknown().array(),
       /** attachment objects with filename and description */
       attachments: attachmentSchema.partial().array()
     })
@@ -37,15 +40,23 @@ export const editWebhookMessageSchema = z.object({
 });
 
 /**
- * Edits a previously-sent webhook message from the same token. Returns a message object on success.
+ * ### [Edit Webhook Message](https://discord.com/developers/docs/resources/webhook#edit-webhook-message)
  *
- * When the `content` field is edited, the `mentions` array in the message object will be reconstructed from scratch based on the new content. The `allowed_mentions` field of the edit request controls how this happens. If there is no explicit `allowed_mentions` in the edit request, the content will be parsed with default allowances, that is, without regard to whether or not an `allowed_mentions` was present in the request that originally created the message.
+ * **PATCH** `/webhooks/:webhook/:token/messages/:message`
  *
- * *Refer to [Uploading Files](https://discord.com/developers/docs/reference#uploading-files) for details on attachments and `multipart/form-data` requests. Any provided files will be appended to the message. To remove or replace files you will have to supply the `attachments` field which specifies the files to retain on the message after edit.*
+ * Edits a previously-sent webhook message from the same token. Returns a {@link Message | message object} on success.
  *
- * *Starting with API v10, the `attachments` array must contain all attachments that should be present after edit, including **retained and new** attachments provided in the request body.*
+ * When the `content` field is edited, the `mentions` array in the message object will be reconstructed from scratch based on the new content. The `allowedMentions` field of the edit request controls how this happens. If there is no explicit `allowedMentions` in the edit request, the content will be parsed with default allowances, that is, without regard to whether or not an `allowedMentions` was present in the request that originally created the message.
  *
- * https://discord.com/developers/docs/resources/webhook#edit-webhook-message
+ * Refer to Uploading Files for details on attachments and `multipart/form-data` requests. Any provided files will be **appended** to the message. To remove or replace files you will have to supply the `attachments` field which specifies the files to retain on the message after edit.
+ *
+ * > **WARNING**
+ * >
+ * > Starting with API v10, the `attachments` array must contain all attachments that should be present after edit, including **retained and new** attachments provided in the request body.
+ *
+ * > **NOTE**
+ * >
+ * > All parameters to this endpoint are optional and nullable.
  */
 export const editWebhookMessage: Fetcher<
   typeof editWebhookMessageSchema,

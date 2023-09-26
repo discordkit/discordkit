@@ -7,9 +7,15 @@ export const deleteGuildEmojiSchema = z.object({
 });
 
 /**
- * Delete the given emoji. Requires the `MANAGE_EMOJIS_AND_STICKERS` permission. Returns `204 No Content` on success. Fires a [Guild Emojis Update](https://discord.com/developers/docs/topics/gateway#guild-emojis-update) Gateway event
+ * ### [Delete Guild Emoji](https://discord.com/developers/docs/resources/emoji#delete-guild-emoji)
  *
- * *This endpoint supports the `X-Audit-Log-Reason` header.*
+ * **DELETE** `/guilds/:guild/emojis/:emoji`
+ *
+ * Delete the given emoji. Requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns `204 No Content` on success. Fires a Guild Emojis Update Gateway event.
+ *
+ * > **NOTE**
+ * >
+ * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const deleteGuildEmoji: Fetcher<typeof deleteGuildEmojiSchema> = async ({
   guild,

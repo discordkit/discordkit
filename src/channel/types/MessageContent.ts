@@ -4,6 +4,7 @@ import { attachmentSchema } from "./Attachment";
 import { embedSchema } from "./Embed";
 import { messageFlagSchema } from "./MessageFlag";
 import { messageReferenceSchema } from "./MessageReference";
+import { messageComponentSchema } from "./MessageComponent";
 
 export const messageContentSchema = z
   .object({
@@ -18,7 +19,7 @@ export const messageContentSchema = z
     /** Include to make your message a reply */
     messageReference: messageReferenceSchema,
     /** Components to include with the message */
-    components: z.unknown().array(),
+    components: messageComponentSchema,
     /** IDs of up to 3 stickers in the server to send in the message */
     stickerIds: z.string().array().max(3),
     /** Contents of the file being sent. See Uploading Files */

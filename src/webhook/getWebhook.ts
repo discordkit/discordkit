@@ -7,11 +7,11 @@ export const getWebhookSchema = z.object({
 });
 
 /**
- * **GET** `/webhooks/{webhook.id}`
+ * ### [Get Webhook](https://discord.com/developers/docs/resources/webhook#get-webhook)
  *
- * Returns the new webhook object for the given id.
+ * **GET** `/webhooks/:webhook`
  *
- * https://discord.com/developers/docs/resources/webhook#get-webhook
+ * Returns the new {@link Webhook | webhook object} for the given id.
  */
 export const getWebhook: Fetcher<typeof getWebhookSchema, Webhook> = async ({
   webhook

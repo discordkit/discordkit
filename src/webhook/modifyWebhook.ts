@@ -4,13 +4,12 @@ import { webhookSchema, type Webhook } from "./types/Webhook";
 
 export const modifyWebhookSchema = z.object({
   webhook: z.string().min(1),
-  token: z.string().min(1),
   body: z
     .object({
       /** the default name of the webhook */
       name: z.string().min(1),
       /** image for the default webhook avatar */
-      avatar: z.string().min(1),
+      avatar: z.string().url().min(1),
       /** the new channel id this webhook should be moved to */
       channelId: z.string().min(1)
     })
@@ -18,9 +17,11 @@ export const modifyWebhookSchema = z.object({
 });
 
 /**
- * **PATCH** `/webhooks/{webhook.id}`
+ * ### [Modify Webhook](https://discord.com/developers/docs/resources/webhook#modify-webhook)
  *
- * Modify a webhook. Requires the `MANAGE_WEBHOOKS` permission. Returns the updated [webhook](./types/Webhook.ts) object on success. Fires a [Webhooks Update](https://discord.com/developers/docs/topics/gateway-events#webhooks-update) Gateway event.
+ * **PATCH** `/webhooks/:webhook`
+ *
+ * Modify a webhook. Requires the `MANAGE_WEBHOOKS` permission. Returns the updated {@link Webhook | webhook object} on success. Fires a Webhooks Update Gateway event.
  *
  * > **NOTE**
  * >
@@ -28,9 +29,7 @@ export const modifyWebhookSchema = z.object({
  *
  * > **NOTE**
  * >
- * > This endpoint supports the X-Audit-Log-Reason header.
- *
- * https://discord.com/developers/docs/resources/webhook#modify-webhook
+ * > This endpoint supports the `X-Audit-Log-Reason `header.
  */
 export const modifyWebhook: Fetcher<
   typeof modifyWebhookSchema,

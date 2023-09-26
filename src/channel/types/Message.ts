@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { stickerSchema } from "../../sticker/types/Sticker";
 import { applicationSchema } from "../../application/types/Application";
-import { reactionSchema } from "../../emoji/types/Reaction";
+import { reactionSchema } from "./Reaction";
 import { memberSchema } from "../../guild/types/Member";
 import { userSchema } from "../../user/types/User";
 import { channelSchema } from "./Channel";

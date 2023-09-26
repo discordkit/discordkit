@@ -8,15 +8,18 @@ export const deleteWebhookMessageSchema = z.object({
   params: z
     .object({
       /** id of the thread the message is in */
-      threadId: z.string().min(1).optional()
+      threadId: z.string().min(1)
     })
+    .partial()
     .optional()
 });
 
 /**
- * Deletes a message that was created by the webhook. Returns a `204 No Content` response on success.
+ * ### [Delete Webhook Message](https://discord.com/developers/docs/resources/webhook#delete-webhook-message)
  *
- * https://discord.com/developers/docs/resources/webhook#delete-webhook-message
+ * **DELETE** `/webhooks/:webhook/:token/messages/:message`
+ *
+ * Deletes a message that was created by the webhook. Returns a `204 No Content` response on success.
  */
 export const deleteWebhookMessage: Fetcher<
   typeof deleteWebhookMessageSchema

@@ -16,11 +16,19 @@ export const modifyGuildEmojiSchema = z.object({
 });
 
 /**
- * Modify the given emoji. Requires the `MANAGE_EMOJIS_AND_STICKERS` permission. Returns the updated emoji object on success. Fires a [Guild Emojis Update Gateway](https://discord.com/developers/docs/topics/gateway#guild-emojis-update) event.
+ * ### [Modify Guild Emoji](https://discord.com/developers/docs/resources/emoji#modify-guild-emoji)
  *
- * *This endpoint supports the `X-Audit-Log-Reason` header.*
+ * **PATCH* `/guilds/:guild/emojis/:emoji`
  *
- * https://discord.com/developers/docs/resources/emoji#modify-guild-emoji
+ * Modify the given emoji. Requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns the updated {@link Emoji | emoji object} on success. Fires a Guild Emojis Update Gateway event.
+ *
+ * > **NOTE**
+ * >
+ * > All parameters to this endpoint are optional.
+ *
+ * > **NOTE**
+ * >
+ * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const modifyGuildEmoji: Fetcher<
   typeof modifyGuildEmojiSchema,

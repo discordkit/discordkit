@@ -7,11 +7,11 @@ export const getChannelWebhooksSchema = z.object({
 });
 
 /**
- * **GET** `/channels/{channel.id}/webhooks`
+ * ### [Get Channel Webhooks](https://discord.com/developers/docs/resources/webhook#get-channel-webhooks)
+ *
+ * **GET** `/channels/:channel/webhooks`
  *
  * Returns a list of channel webhook objects. Requires the `MANAGE_WEBHOOKS` permission.
- *
- * https://discord.com/developers/docs/resources/webhook#get-channel-webhooks
  */
 export const getChannelWebhooks: Fetcher<
   typeof getChannelWebhooksSchema,

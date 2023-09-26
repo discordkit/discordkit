@@ -16,9 +16,11 @@ export const getWebhookMessageSchema = z.object({
 });
 
 /**
- * Returns a previously-sent webhook message from the same token. Returns a message object on success.
+ * ### [Get Webhook Message](https://discord.com/developers/docs/resources/webhook#get-webhook-message)
  *
- * https://discord.com/developers/docs/resources/webhook#get-webhook-message
+ * **GET** `/webhooks/:ebhook/:token/messages/:message`
+ *
+ * Returns a previously-sent webhook message from the same token. Returns a {@link Message | message object} on success.
  */
 export const getWebhookMessage: Fetcher<
   typeof getWebhookMessageSchema,

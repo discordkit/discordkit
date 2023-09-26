@@ -7,9 +7,11 @@ export const listGuildEmojisSchema = z.object({
 });
 
 /**
- * Returns a list of emoji objects for the given guild.
+ * ### [List Guild Emojis](https://discord.com/developers/docs/resources/emoji#list-guild-emojis)
  *
- * https://discord.com/developers/docs/resources/emoji#list-guild-emojis
+ * **GET** `/guilds/:guild/emojis`
+ *
+ * Returns a list of {@link Emoji | emoji objects} for the given guild.
  */
 export const listGuildEmojis: Fetcher<
   typeof listGuildEmojisSchema,

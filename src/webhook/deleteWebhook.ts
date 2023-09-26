@@ -6,11 +6,15 @@ export const deleteWebhookSchema = z.object({
 });
 
 /**
- * Delete a webhook permanently. Requires the `MANAGE_WEBHOOKS` permission. Returns a `204 No Content` response on success.
+ * ### [Delete Webhook](https://discord.com/developers/docs/resources/webhook#delete-webhook)
  *
- * *This endpoint supports the `X-Audit-Log-Reason` header.*
+ * **DELETE** `/webhooks/:webhook`
  *
- * https://discord.com/developers/docs/resources/webhook#delete-webhook
+ * Delete a webhook permanently. Requires the `MANAGE_WEBHOOKS` permission. Returns a `204 No Content` response on success. Fires a Webhooks Update Gateway event.
+ *
+ * > **NOTE**
+ * >
+ * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const deleteWebhook: Fetcher<typeof deleteWebhookSchema> = async ({
   webhook
