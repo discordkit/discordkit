@@ -31,8 +31,14 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable
 
-      - name: Run Checks
-        run: yarn test
+      - name: Lint
+        run: yarn lint
+
+      - name: Typecheck
+        run: yarn typecheck
+
+      - name: Unit Tests
+        run: yarn test --runInBand
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2

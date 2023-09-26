@@ -10,7 +10,7 @@ import type { UnsetMarker } from "@trpc/server/dist/core/internals/utils";
 import { isNonNullable } from "./isNonNullable";
 import type { Fetcher } from "./types";
 
-type Result<T> = T extends z.ZodTypeAny ? z.infer<T> : void;
+type Result<T = void> = T extends z.ZodTypeAny ? z.infer<T> : T;
 
 export type Base = ReturnType<(typeof initTRPC)["create"]>["procedure"];
 

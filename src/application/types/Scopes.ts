@@ -23,26 +23,28 @@ export const scopesSchema = z.union([
   z.literal(`applications.store.update`),
   /** for oauth2 bots, this puts the bot in the user's selected guild by default */
   z.literal(`bot`),
-  /** allows /users/@me/connections to return linked third-party accounts */
+  /** allows `/users/@me/connections` to return linked third-party accounts */
   z.literal(`connections`),
   /** allows your app to see information about the user's DMs and group DMs - requires Discord approval */
   z.literal(`dm_channels.read`),
-  /** enables /users/@me to return an email */
+  /** enables `/users/@me` to return an email */
   z.literal(`email`),
   /** allows your app to join users to a group dm */
   z.literal(`gdm.join`),
-  /** allows /users/@me/guilds to return basic information about all of a user's guilds */
+  /** allows `/users/@me/guilds` to return basic information about all of a user's guilds */
   z.literal(`guilds`),
-  /** allows /guilds/{guild.id}/members/{user.id} to be used for joining users to a guild */
+  /** allows `/guilds/{guild.id}/members/{user.id}` to be used for joining users to a guild */
   z.literal(`guilds.join`),
-  /** allows /users/@me/guilds/{guild.id}/member to return a user's member information in a guild */
+  /** allows `/users/@me/guilds/{guild.id}/member` to return a user's member information in a guild */
   z.literal(`guilds.members.read`),
-  /** allows /users/@me without email */
+  /** allows `/users/@me` without email */
   z.literal(`identify`),
   /** for local rpc server api access, this allows you to read messages from all client channels (otherwise restricted to channels/guilds your app creates) */
   z.literal(`messages.read`),
   /** allows your app to know a user's friends and implicit relationships - requires Discord approval */
   z.literal(`relationships.read`),
+  /** allows your app to update a user's connection and metadata for the app */
+  z.literal(`role_connections.write`),
   /** for local rpc server access, this allows you to control a user's local Discord client - requires Discord approval */
   z.literal(`rpc`),
   /** for local rpc server access, this allows you to update a user's activity - requires Discord approval */

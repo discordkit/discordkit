@@ -21,6 +21,7 @@ export * from "./IntegrationApplication";
 export * from "./IntegrationExpireBehavior";
 export * from "./Member";
 export * from "./MFALevel";
+export * from "./Permissions";
 export * from "./PremiumTier";
 export * from "./Presence";
 export * from "./Role";

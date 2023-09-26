@@ -48,7 +48,8 @@
     "prepack": "yarn build",
     "release": "release-it",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
     "zod": "^3.17.3"

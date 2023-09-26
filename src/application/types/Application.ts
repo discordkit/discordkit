@@ -12,7 +12,7 @@ export const applicationSchema = z.object({
   /** the name of the app */
   name: z.string(),
   /** the icon hash of the app */
-  icon: z.string().optional(),
+  icon: z.string().nullable(),
   /** the description of the app */
   description: z.string(),
   /** an array of rpc origin urls, if rpc is enabled */
@@ -32,21 +32,25 @@ export const applicationSchema = z.object({
   /** if the application belongs to a team, this will be a list of the members of that team */
   team: teamSchema.optional(),
   /** if this application is a game sold on Discord, this field will be the guild to which it has been linked */
-  guildId: z.string().optional(),
+  guildId: z.string().nullable(),
   /** if this application is a game sold on Discord, this field will be the id of the "Game SKU" that is created, if exists */
-  primarySkuId: z.string().optional(),
+  primarySkuId: z.string().nullable(),
   /** if this application is a game sold on Discord, this field will be the URL slug that links to the store page */
-  slug: z.string().optional(),
+  slug: z.string().nullable(),
   /** the application's default rich presence invite cover image hash */
-  coverImage: z.string().optional(),
+  coverImage: z.string().nullable(),
   /** the application's public flags */
-  flags: applicationFlagsSchema.optional(),
+  flags: applicationFlagsSchema.nullable(),
+  /** an approximate count of the app's guild membership */
+  approximateGuildCount: z.number().int().nullable(),
   /** up to 5 tags describing the content and functionality of the application */
-  tags: z.string().array().optional(),
+  tags: z.string().array().nullable(),
   /** settings for the application's default in-app authorization link, if enabled */
-  installParams: installParamsSchema.optional(),
+  installParams: installParamsSchema.nullable(),
   /** the application's default custom authorization link, if enabled */
-  customInstallUrl: z.string().optional()
+  customInstallUrl: z.string().nullable(),
+  /** the application's role connection verification entry point, which when configured will render the app as a verification method in the guild role verification configuration */
+  roleConnectionsVerificationUrl: z.string().nullable()
 });
 
 export type Application = z.infer<typeof applicationSchema>;

@@ -20,7 +20,7 @@ import type { toQuery, Fetcher, toProcedure } from "../src/utils";
 
 export const msw = setupServer();
 
-export const createMock =
+const createMock =
   (type: `delete` | `get` | `patch` | `post` | `put` = `get`) =>
   <S extends z.ZodTypeAny>(
     path: string,
@@ -59,7 +59,7 @@ const createWrapper =
       children
     );
 
-export const runHook: typeof renderHook = (fn, options) =>
+const runHook: typeof renderHook = (fn, options) =>
   renderHook(fn, { wrapper: createWrapper(), ...options });
 
 export const runQuery = <Q extends ReturnType<typeof toQuery>>(
