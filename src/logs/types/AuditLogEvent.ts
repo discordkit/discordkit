@@ -104,7 +104,15 @@ export enum AuditLogEvent {
   /** Auto Moderation rule was deleted */
   AUTO_MODERATION_RULE_DELETE = 142,
   /** Message was blocked by AutoMod (according to a rule) */
-  AUTO_MODERATION_BLOCK_MESSAGE = 143
+  AUTO_MODERATION_BLOCK_MESSAGE = 143,
+  /** Message was flagged by Auto Moderation	 */
+  AUTO_MODERATION_FLAG_TO_CHANNEL = 144,
+  /** Member was timed out by Auto Moderation */
+  AUTO_MODERATION_USER_COMMUNICATION_DISABLED = 145,
+  /** Creator monetization request was created */
+  CREATOR_MONETIZATION_REQUEST_CREATED = 150,
+  /** Creator monetization terms were accepted */
+  CREATOR_MONETIZATION_TERMS_ACCEPTED = 151
 }
 
 export const auditLogEventSchema = z.nativeEnum(AuditLogEvent);

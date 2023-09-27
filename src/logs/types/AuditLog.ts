@@ -6,8 +6,11 @@ import { moderationRuleSchema } from "../../moderation/types/ModerationRule";
 import { userSchema } from "../../user/types/User";
 import { webhookSchema } from "../../webhook/types/Webhook";
 import { auditLogEntrySchema } from "./AuditLogEntry";
+import { applicationCommandSchema } from "../../application";
 
 export const auditLogSchema = z.object({
+  /** List of application commands referenced in the audit log */
+  applicationCommands: applicationCommandSchema.array(),
   /** List of audit log entries, sorted from most to least recent */
   auditLogEntries: auditLogEntrySchema.array(),
   /** List of auto moderation rules referenced in the audit log */
