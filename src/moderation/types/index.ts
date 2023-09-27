@@ -4,5 +4,5 @@ export * from "./ModerationActionMeta";
 export * from "./ModerationActionType";
 export * from "./ModerationEvent";
 export * from "./ModerationRule";
-export * from "./ModerationTrigger";
+export * from "./ModerationTriggerType";
 export * from "./TriggerMeta";

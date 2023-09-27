@@ -5,7 +5,7 @@ import {
   moderationRuleSchema
 } from "./types/ModerationRule";
 import { moderationEventSchema } from "./types/ModerationEvent";
-import { moderationTriggerSchema } from "./types/ModerationTrigger";
+import { moderationTriggerTypeSchema } from "./types/ModerationTriggerType";
 import { triggerMetaSchema } from "./types/TriggerMeta";
 import { moderationActionSchema } from "./types/ModerationAction";
 
@@ -17,26 +17,34 @@ export const createAutoModerationRuleSchema = z.object({
     /** the event type */
     eventType: moderationEventSchema,
     /** the trigger type */
-    triggerType: moderationTriggerSchema,
+    triggerType: moderationTriggerTypeSchema,
     /** the trigger metadata */
-    triggerMetadata: triggerMetaSchema.optional(),
+    triggerMetadata: triggerMetaSchema.nullable(),
     /** the actions which will execute when the rule is triggered */
     actions: moderationActionSchema.array(),
     /** whether the rule is enabled (False by default) */
-    enabled: z.boolean().optional(),
+    enabled: z.boolean().nullable().default(false),
     /** the role ids that should not be affected by the rule (Maximum of 20) */
-    exemptRoles: z.string().min(1).array().max(20).optional(),
+    exemptRoles: z.string().min(1).array().max(20).nullable(),
     /** the channel ids that should not be affected by the rule (Maximum of 50) */
-    exemptChannels: z.string().min(1).array().max(50).optional()
+    exemptChannels: z.string().min(1).array().max(50).nullable()
   })
 });
 
 /**
- * Create a new rule. Returns an auto moderation rule on success.
+ * ### [Create Auto Moderation Rule](https://discord.com/developers/docs/resources/auto-moderation#create-auto-moderation-rule)
  *
- * *Requires `MANAGE_GUILD` permissions*
+ * **POST** `/guilds/:guild/auto-moderation/rules`
  *
- * https://discord.com/developers/docs/resources/auto-moderation#create-auto-moderation-rule
+ * Create a new rule. Returns an {@link ModerationRule | auto moderation rule} on success. Fires an Auto Moderation Rule Create Gateway event.
+ *
+ * > **NOTE**
+ * >
+ * > This endpoint requires the `MANAGE_GUILD` permission.
+ *
+ * > **NOTE**
+ * >
+ * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const createAutoModerationRule: Fetcher<
   typeof createAutoModerationRuleSchema,

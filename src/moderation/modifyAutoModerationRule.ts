@@ -18,25 +18,36 @@ export const modifyAutoModerationRuleSchema = z.object({
       /** the event type */
       eventType: moderationEventSchema,
       /** the trigger metadata */
-      triggerMetadata: triggerMetaSchema,
+      triggerMetadata: triggerMetaSchema.nullable(),
       /** the actions which will execute when the rule is triggered */
       actions: moderationActionSchema.array(),
       /** whether the rule is enabled (False by default) */
       enabled: z.boolean(),
       /** the role ids that should not be affected by the rule (Maximum of 20) */
-      exemptRoles: z.string().min(1).array(),
+      exemptRoles: z.string().min(1).array().max(20),
       /** the channel ids that should not be affected by the rule (Maximum of 50) */
-      exemptChannels: z.string().min(1).array()
+      exemptChannels: z.string().min(1).array().max(50)
     })
     .partial()
 });
 
 /**
- * Modify an existing rule. Returns an auto moderation rule on success.
+ * ### [Modify Auto Moderation Rule](https://discord.com/developers/docs/resources/auto-moderation#modify-auto-moderation-rule)
+ * **PATCH** `/guilds/:guild/auto-moderation/rules/:rule`
  *
- * *Requires `MANAGE_GUILD` permissions.*
+ * Modify an existing rule. Returns an {@link ModerationRule | auto moderation rule} on success. Fires an Auto Moderation Rule Update Gateway event.
  *
- * https://discord.com/developers/docs/resources/auto-moderation#modify-auto-moderation-rule
+ * > **NOTE**
+ * >
+ * > Requires `MANAGE_GUILD` permissions.
+ *
+ * > **NOTE**
+ * >
+ * > All parameters for this endpoint are optional.
+ *
+ * > **NOTE**
+ * >
+ * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const modifyAutoModerationRule: Fetcher<
   typeof modifyAutoModerationRuleSchema,

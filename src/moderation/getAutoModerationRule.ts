@@ -11,11 +11,15 @@ export const getAutoModerationRuleSchema = z.object({
 });
 
 /**
- * Get a single rule. Returns an auto moderation rule object.
+ * ### [Get Auto Moderation Rule](https://discord.com/developers/docs/resources/auto-moderation#get-auto-moderation-rule)
  *
- * *Requires `MANAGE_GUILD` permissions*
+ * **GET** `/guilds/:guild/auto-moderation/rules/:rule`
  *
- * https://discord.com/developers/docs/resources/auto-moderation#get-auto-moderation-rule
+ * Get a single rule. Returns an {@link ModerationRule | auto moderation rule object}.
+ *
+ * > **NOTE**
+ * >
+ * > This endpoint requires the `MANAGE_GUILD` permission.
  */
 export const getAutoModerationRule: Fetcher<
   typeof getAutoModerationRuleSchema,

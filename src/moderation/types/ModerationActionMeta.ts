@@ -7,7 +7,11 @@ export const moderationActionMetaSchema = z.union([
   }),
   z.object({
     /** timeout duration in seconds */
-    durationSeconds: z.number().positive()
+    durationSeconds: z.number().int().positive().max(2419200)
+  }),
+  z.object({
+    /** additional explanation that will be shown to members whenever their message is blocked */
+    customMessage: z.string().max(150).nullable()
   })
 ]);
 
