@@ -7,9 +7,11 @@ export const getStageInstanceSchema = z.object({
 });
 
 /**
- * Gets the stage instance associated with the Stage channel, if it exists.
+ * ### [Get Stage Instance](https://discord.com/developers/docs/resources/stage-instance#get-stage-instance)
  *
- * https://discord.com/developers/docs/resources/stage-instance#get-stage-instance
+ * **GET** `/stage-instances/:channel`
+ *
+ * Gets the {@link Stage | stage instance} associated with the Stage channel, if it exists.
  */
 export const getStageInstance: Fetcher<
   typeof getStageInstanceSchema,

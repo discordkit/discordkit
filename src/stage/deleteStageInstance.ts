@@ -6,13 +6,17 @@ export const deleteStageInstanceSchema = z.object({
 });
 
 /**
- * Deletes the Stage instance. Returns `204 No Content`.
+ * ### [Delete Stage Instance](https://discord.com/developers/docs/resources/stage-instance#delete-stage-instance)
+ *
+ * **DELETE* `/stage-instances/:channel`
+ *
+ * Deletes the Stage instance. Returns `204 No Content`. Fires a Stage Instance Delete Gateway event.
  *
  * Requires the user to be a moderator of the Stage channel.
  *
- * *This endpoint supports the `X-Audit-Log-Reason` header.*
- *
- * https://discord.com/developers/docs/resources/stage-instance#delete-stage-instance
+ * > **NOTE**
+ * >
+ * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const deleteStageInstance: Fetcher<
   typeof deleteStageInstanceSchema

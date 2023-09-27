@@ -16,13 +16,17 @@ export const modifyStageInstanceSchema = z.object({
 });
 
 /**
- * Updates fields of an existing Stage instance. Returns the updated Stage instance.
+ * ### [Modify Stage Instance](https://discord.com/developers/docs/resources/stage-instance#modify-stage-instance)
+ *
+ * **PATCH** `/stage-instances/:channel`
+ *
+ * Updates fields of an existing Stage instance. Returns the updated {@link Stage | Stage instance}. Fires a Stage Instance Update Gateway event.
  *
  * Requires the user to be a moderator of the Stage channel.
  *
- * *This endpoint supports the `X-Audit-Log-Reason` header.*
- *
- * https://discord.com/developers/docs/resources/stage-instance#modify-stage-instance
+ * > **NOTE**
+ * >
+ * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const modifyStageInstance: Fetcher<
   typeof modifyStageInstanceSchema,

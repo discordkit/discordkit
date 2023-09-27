@@ -10,20 +10,24 @@ export const createStageInstanceSchema = z.object({
     /** The topic of the Stage instance (1-120 characters) */
     topic: z.string().min(1).max(120),
     /** The privacy level of the Stage instance (default GUILD_ONLY) */
-    privacyLevel: stagePrivacyLevelSchema.optional(),
+    privacyLevel: stagePrivacyLevelSchema.nullable(),
     /** Notify @everyone that a Stage instance has started */
-    sendStartNotification: z.boolean().optional()
+    sendStartNotification: z.boolean().nullable()
   })
 });
 
 /**
- * Creates a new Stage instance associated to a Stage channel. Returns that Stage instance.
+ * ### [Create Stage Instance](https://discord.com/developers/docs/resources/stage-instance#create-stage-instance)
+ *
+ * **POST** `/stage-instances`
+ *
+ * Creates a new Stage instance associated to a Stage channel. Returns that {@link Stage | Stage instance}. Fires a Stage Instance Create Gateway event.
  *
  * Requires the user to be a moderator of the Stage channel.
  *
- * *This endpoint supports the `X-Audit-Log-Reason` header.*
- *
- * https://discord.com/developers/docs/resources/stage-instance#create-stage-instance
+ * > **NOTE**
+ * >
+ * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const createStageInstance: Fetcher<
   typeof createStageInstanceSchema,
