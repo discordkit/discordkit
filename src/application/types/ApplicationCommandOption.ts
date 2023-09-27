@@ -5,7 +5,7 @@ import {
 } from "./ApplicationCommandOptionType";
 import { localesSchema } from "./Locales";
 import { applicationCommandOptionChoiceSchema } from "./ApplicationCommandOptionChoice";
-import { channelTypeSchema } from "../../channel";
+import { channelTypeSchema } from "../../channel/types/ChannelType";
 
 const applicationCommandOptionBase = z.object({
   /** Type of option */

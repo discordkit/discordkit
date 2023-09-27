@@ -7,9 +7,11 @@ export const groupDMRemoveRecipientSchema = z.object({
 });
 
 /**
- * Removes a recipient from a Group DM.
+ * ### [Group DM Remove Recipient](https://discord.com/developers/docs/resources/channel#group-dm-remove-recipient)
  *
- * https://discord.com/developers/docs/resources/channel#group-dm-remove-recipient
+ * **DELETE** `/channels/:channel/recipients/:user`
+ *
+ * Removes a recipient from a Group DM.
  */
 export const groupDMRemoveRecipient: Fetcher<
   typeof groupDMRemoveRecipientSchema

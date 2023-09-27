@@ -4,19 +4,30 @@ import { threadMemberSchema, type ThreadMember } from "./types/ThreadMember";
 
 export const getThreadMemberSchema = z.object({
   channel: z.string().min(1),
-  user: z.string().min(1)
+  user: z.string().min(1),
+  params: z
+    .object({
+      /** Whether to include a guild member object for the thread member */
+      withMember: z.boolean().nullable()
+    })
+    .partial()
+    .optional()
 });
 
 /**
- * Returns a [thread member](https://discord.com/developers/docs/resources/channel#thread-member-object) object for the specified user if they are a member of the thread, returns a 404 response otherwise.
+ * ### [Get Thread Member](https://discord.com/developers/docs/resources/channel#get-thread-member)
  *
- * https://discord.com/developers/docs/resources/channel#get-thread-member
+ * **GET** `/channels/:channel/thread-members/:user`
+ *
+ * Returns a {@link ThreadMember | thread member object} for the specified user if they are a member of the thread, returns a `404 response` otherwise.
+ *
+ * When `withMember` is set to `true`, the thread member object will include a member field containing a guild member object.
  */
 export const getThreadMember: Fetcher<
   typeof getThreadMemberSchema,
   ThreadMember
-> = async ({ channel, user }) =>
-  get(`/channels/${channel}/thread-members/${user}`);
+> = async ({ channel, user, params }) =>
+  get(`/channels/${channel}/thread-members/${user}`, params);
 
 export const getThreadMemberProcedure = toProcedure(
   `query`,

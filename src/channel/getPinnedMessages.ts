@@ -7,9 +7,11 @@ export const getPinnedMessagesSchema = z.object({
 });
 
 /**
- * Returns all pinned messages in the channel as an array of message objects.
+ * ### [Get Pinned Messages](https://discord.com/developers/docs/resources/channel#get-pinned-messages)
  *
- * https://discord.com/developers/docs/resources/channel#get-pinned-messages
+ * **GET** `/channels/:channel/pins`
+ *
+ * Returns all pinned messages in the channel as an array of {@link Message | message objects}.
  */
 export const getPinnedMessages: Fetcher<
   typeof getPinnedMessagesSchema,

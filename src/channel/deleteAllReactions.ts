@@ -7,9 +7,11 @@ export const deleteAllReactionsSchema = z.object({
 });
 
 /**
- * Deletes all reactions on a message. This endpoint requires the `MANAGE_MESSAGES` permission to be present on the current user. Fires a [Message Reaction Remove All](https://discord.com/developers/docs/topics/gateway#message-reaction-remove-all) Gateway event.
+ * ### [Delete All Reactions](https://discord.com/developers/docs/resources/channel#delete-all-reactions)
  *
- * https://discord.com/developers/docs/resources/channel#delete-all-reactions
+ * **DELETE** `/channels/:channel/messages/:message/reactions`
+ *
+ * Deletes all reactions on a message. This endpoint requires the `MANAGE_MESSAGES` permission to be present on the current user. Fires a Message Reaction Remove All Gateway event.
  */
 export const deleteAllReactions: Fetcher<
   typeof deleteAllReactionsSchema

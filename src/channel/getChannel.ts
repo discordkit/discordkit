@@ -7,9 +7,11 @@ export const getChannelSchema = z.object({
 });
 
 /**
- * Get a channel by ID. Returns a channel object. If the channel is a thread, a thread member object is included in the returned result.
+ * ### [Get Channel](https://discord.com/developers/docs/resources/channel#get-channel)
  *
- * https://discord.com/developers/docs/resources/channel#get-channel
+ * **GET** `/channels/:channel`
+ *
+ * Get a channel by ID. Returns a {@link Channel | channel object}. If the channel is a thread, a thread member object is included in the returned result.
  */
 export const getChannel: Fetcher<typeof getChannelSchema, Channel> = async ({
   channel

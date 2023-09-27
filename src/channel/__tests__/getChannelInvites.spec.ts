@@ -10,12 +10,12 @@ import {
   getChannelInvitesQuery,
   getChannelInvitesSchema
 } from "../getChannelInvites";
-import { inviteSchema } from "../../invite/types/Invite";
+import { inviteMetadataSchema } from "../../invite/types/InviteMetadata";
 
 describe(`getChannelInvites`, () => {
   const expected = mockRequest.get(
     `/channels/:channel/invites`,
-    inviteSchema.array()
+    inviteMetadataSchema.array()
   );
   const config = generateMock(getChannelInvitesSchema);
 

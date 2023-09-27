@@ -21,7 +21,11 @@ export enum MessageFlag {
   /** this message is an Interaction Response and the bot is "thinking" */
   LOADING = 1 << 7,
   /** this message failed to mention some roles and add their members to the thread */
-  FAILED_TO_MENTION_SOME_ROLES_IN_THREAD = 1 << 8
+  FAILED_TO_MENTION_SOME_ROLES_IN_THREAD = 1 << 8,
+  /** this message will not trigger push and desktop notifications */
+  SUPPRESS_NOTIFICATIONS = 1 << 12,
+  /** this message is a voice message */
+  IS_VOICE_MESSAGE = 1 << 13
 }
 
 export const messageFlagSchema = z.nativeEnum(MessageFlag);

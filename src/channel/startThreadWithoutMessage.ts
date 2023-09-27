@@ -10,24 +10,26 @@ export const startThreadWithoutMessageSchema = z.object({
     /** 1-100 character channel name */
     name: z.string().min(1).max(100),
     /** duration in minutes to automatically archive the thread after recent activity, can be set to: 60, 1440, 4320, 10080 */
-    autoArchiveDuration: autoArchiveDurationSchema.optional(),
+    autoArchiveDuration: autoArchiveDurationSchema.nullable(),
     /** the type of thread to create */
-    type: channelTypeSchema.optional(),
+    type: channelTypeSchema.nullable(),
     /** whether non-moderators can add other non-moderators to a thread; only available when creating a private thread */
-    invitable: z.boolean().optional(),
+    invitable: z.boolean().nullable(),
     /** amount of seconds a user has to wait before sending another message (0-21600) */
-    rateLimitPerUser: z.number().min(0).max(21600).optional()
+    rateLimitPerUser: z.number().int().min(0).max(21600).nullable().optional()
   })
 });
 
 /**
- * Creates a new thread that is not connected to an existing message. Returns a channel on success, and a `400 BAD REQUEST` on invalid parameters. Fires a [Thread Create](https://discord.com/developers/docs/topics/gateway#thread-create) Gateway event.
+ * ### [Start Thread without Message](https://discord.com/developers/docs/resources/channel#start-thread-without-message)
  *
- * *This endpoint supports the `X-Audit-Log-Reason` header.*
+ * **POST** `/channels/:channel/threads`
  *
- * *Creating a private thread requires the server to be boosted. The [guild features](https://discord.com/developers/docs/resources/guild#guild-object-guild-features) will indicate if that is possible for the guild.*
+ * Creates a new thread that is not connected to an existing message. Returns a {@link Channel | channel} on success, and a `400 BAD REQUEST` on invalid parameters. Fires a Thread Create Gateway event.
  *
- * https://discord.com/developers/docs/resources/channel#start-thread-without-message
+ * > **NOTE**
+ * >
+ * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const startThreadWithoutMessage: Fetcher<
   typeof startThreadWithoutMessageSchema,

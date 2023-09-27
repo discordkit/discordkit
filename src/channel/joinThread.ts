@@ -6,9 +6,11 @@ export const joinThreadSchema = z.object({
 });
 
 /**
- * Adds the current user to a thread. Also requires the thread is not archived. Returns a 204 empty response on success. Fires a [Thread Members Update](https://discord.com/developers/docs/topics/gateway#thread-members-update) Gateway event.
+ * ### [Join Thread](https://discord.com/developers/docs/resources/channel#join-thread)
  *
- * https://discord.com/developers/docs/resources/channel#join-thread
+ * **PUT** `/channels/:channel/thread-members/@me`
+ *
+ * Adds the current user to a thread. Also requires the thread is not archived. Returns a `204 empty` response on success. Fires a Thread Members Update and a Thread Create Gateway event.
  */
 export const joinThread: Fetcher<typeof joinThreadSchema> = async ({
   channel

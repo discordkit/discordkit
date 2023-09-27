@@ -13,9 +13,11 @@ export const groupDMAddRecipientSchema = z.object({
 });
 
 /**
- * Adds a recipient to a Group DM using their access token.
+ * ### [Group DM Add Recipient](https://discord.com/developers/docs/resources/channel#group-dm-add-recipient)
  *
- * https://discord.com/developers/docs/resources/channel#group-dm-add-recipient
+ * **PUT** `/channels/:channel/recipients/:user`
+ *
+ * Adds a recipient to a Group DM using their access token.
  */
 export const groupDMAddRecipient: Fetcher<
   typeof groupDMAddRecipientSchema

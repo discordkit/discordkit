@@ -10,18 +10,20 @@ export const listJoinedPrivateArchivedThreadsSchema = z.object({
   params: z
     .object({
       /** returns threads before this timestamp */
-      before: z.string().min(1),
+      before: z.string().datetime().nullable(),
       /** optional maximum number of threads to return */
-      limit: z.number()
+      limit: z.number().int().positive().nullable()
     })
     .partial()
     .optional()
 });
 
 /**
- * Returns archived threads in the channel that are of [type](https://discord.com/developers/docs/resources/channel#channel-object-channel-types) `GUILD_PRIVATE_THREAD`, and the user has joined. Threads are ordered by their `id`, in descending order. Requires the `READ_MESSAGE_HISTORY` permission.
+ * ### [List Joined Private Archived Threads](https://discord.com/developers/docs/resources/channel#list-joined-private-archived-threads)
  *
- * https://discord.com/developers/docs/resources/channel#list-joined-private-archived-threads
+ * **GET** `/channels/:channel/users/@me/threads/archived/private`
+ *
+ * Returns archived threads in the channel that are of type `PRIVATE_THREAD`, and the user has joined. Threads are ordered by their `id`, in descending order. Requires the `READ_MESSAGE_HISTORY` permission.
  */
 export const listJoinedPrivateArchivedThreads: Fetcher<
   typeof listJoinedPrivateArchivedThreadsSchema,

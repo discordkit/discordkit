@@ -7,11 +7,15 @@ export const unpinMessageSchema = z.object({
 });
 
 /**
- * Unpin a message in a channel. Requires the `MANAGE_MESSAGES` permission. Returns a `204 empty` response on success.
+ * ### [Unpin Message](https://discord.com/developers/docs/resources/channel#unpin-message)
  *
- * *This endpoint supports the `X-Audit-Log-Reason` header.*
+ * **DELETE** `/channels/:channel/pins/:message`
  *
- * https://discord.com/developers/docs/resources/channel#unpin-message
+ * Unpin a message in a channel. Requires the `MANAGE_MESSAGES` permission. Returns a `204 empty` response on success. Fires a Channel Pins Update Gateway event.
+ *
+ * > **NOTE**
+ * >
+ * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const unpinMessage: Fetcher<typeof unpinMessageSchema> = async ({
   channel,

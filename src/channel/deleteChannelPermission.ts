@@ -7,11 +7,15 @@ export const deleteChannelPermissionSchema = z.object({
 });
 
 /**
- * Delete a channel permission overwrite for a user or role in a channel. Only usable for guild channels. Requires the `MANAGE_ROLES` permission. Returns a 204 empty response on success. For more information about permissions, see [permissions](https://discord.com/developers/docs/topics/permissions#permissions)
+ * ### [Delete Channel Permission](https://discord.com/developers/docs/resources/channel#delete-channel-permission)
  *
- * *This endpoint supports the `X-Audit-Log-Reason` header.*
+ * **DELETE** `/channels/:channel/permissions/:overwrite`
  *
- * https://discord.com/developers/docs/resources/channel#delete-channel-permission
+ * Delete a channel permission overwrite for a user or role in a channel. Only usable for guild channels. Requires the `MANAGE_ROLES` permission. Returns a `204 empty` response on success. Fires a Channel Update Gateway event. For more information about permissions, see permissions
+ *
+ * > **NOTE**
+ * >
+ * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const deleteChannelPermission: Fetcher<
   typeof deleteChannelPermissionSchema

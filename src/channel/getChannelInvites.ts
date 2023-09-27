@@ -1,26 +1,31 @@
 import { z } from "zod";
 import { get, type Fetcher, toProcedure, toQuery } from "../utils";
-import { inviteSchema, type Invite } from "../invite/types/Invite";
+import {
+  inviteMetadataSchema,
+  type InviteMetadata
+} from "../invite/types/InviteMetadata";
 
 export const getChannelInvitesSchema = z.object({
   channel: z.string().min(1)
 });
 
 /**
- * Returns a list of invite objects (with invite metadata) for the channel. Only usable for guild channels. Requires the `MANAGE_CHANNELS` permission.
+ * ### [Get Channel Invites](https://discord.com/developers/docs/resources/channel#get-channel-invites)
  *
- * https://discord.com/developers/docs/resources/channel#get-channel-invites
+ * **GET** `/channels/:channel/invites`
+ *
+ * Returns a list of {@link InviteMetadata | invite objects} (with invite metadata) for the channel. Only usable for guild channels. Requires the `MANAGE_CHANNELS` permission.
  */
 export const getChannelInvites: Fetcher<
   typeof getChannelInvitesSchema,
-  Invite[]
+  InviteMetadata[]
 > = async ({ channel }) => get(`/channels/${channel}/invites`);
 
 export const getChannelInvitesProcedure = toProcedure(
   `query`,
   getChannelInvites,
   getChannelInvitesSchema,
-  inviteSchema.array()
+  inviteMetadataSchema.array()
 );
 
 export const getChannelInvitesQuery = toQuery(getChannelInvites);

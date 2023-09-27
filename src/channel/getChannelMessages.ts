@@ -7,24 +7,32 @@ export const getChannelMessagesSchema = z.object({
   params: z
     .object({
       /** Get messages around this message ID */
-      around: z.string().min(1),
+      around: z.string().min(1).nullable(),
       /** Get messages before this message ID */
-      before: z.string().min(1),
+      before: z.string().min(1).nullable(),
       /** Get messages after this message ID */
-      after: z.string().min(1),
+      after: z.string().min(1).nullable(),
       /** Max number of messages to return (1-100) Default: 50 */
-      limit: z.number().min(1).max(100)
+      limit: z.number().min(1).max(100).nullable().default(50)
     })
     .partial()
     .optional()
 });
 
 /**
- * Returns the messages for a channel. If operating on a guild channel, this endpoint requires the `VIEW_CHANNEL` permission to be present on the current user. If the current user is missing the `READ_MESSAGE_HISTORY` permission in the channel then this will return no messages (since they cannot read the message history). Returns an array of message objects on success.
+ * ### [Get Channel Messages](https://discord.com/developers/docs/resources/channel#get-channel-messages)
  *
- * *The `before`, `after`, and `around` parameters are mutually exclusive, only one may be passed at a time.*
+ * **GET** `/channels/:channel/messages`
  *
- * https://discord.com/developers/docs/resources/channel#get-channel-messages
+ * Retrieves the messages in a channel. Returns an array of {@link Message | message objects} on success.
+ *
+ * If operating on a guild channel, this endpoint requires the current user to have the `VIEW_CHANNEL` permission. If the channel is a voice channel, they must also have the `CONNECT` permission.
+ *
+ * If the current user is missing the `READ_MESSAGE_HISTORY` permission in the channel, then no messages will be returned.
+ *
+ * > **NOTE**
+ * >
+ * > The `before`, `after`, and `around` parameters are mutually exclusive, only one may be passed at a time.
  */
 export const getChannelMessages: Fetcher<
   typeof getChannelMessagesSchema,

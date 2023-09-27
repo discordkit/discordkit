@@ -5,7 +5,7 @@ export const messageActivitySchema = z.object({
   /** type of message activity */
   type: messageActivityTypeSchema,
   /** party_id from a Rich Presence event */
-  partyId: z.string().optional()
+  partyId: z.string().min(1).nullable()
 });
 
 export type MessageActivity = z.infer<typeof messageActivitySchema>;

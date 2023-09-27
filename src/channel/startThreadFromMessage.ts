@@ -10,20 +10,24 @@ export const startThreadFromMessageSchema = z.object({
     /** 1-100 character channel name */
     name: z.string().min(1).max(100),
     /** duration in minutes to automatically archive the thread after recent activity, can be set to: 60, 1440, 4320, 10080 */
-    autoArchiveDuration: autoArchiveDurationSchema.optional(),
+    autoArchiveDuration: autoArchiveDurationSchema.nullable(),
     /** amount of seconds a user has to wait before sending another message (0-21600) */
-    rateLimitPerUser: z.number().min(0).max(21600)
+    rateLimitPerUser: z.number().int().min(0).max(21600).nullable().optional()
   })
 });
 
 /**
- * Creates a new thread from an existing message. Returns a channel on success, and a `400 BAD REQUEST` on invalid parameters. Fires a [Thread Create](https://discord.com/developers/docs/topics/gateway#thread-create) Gateway event.
+ * ### [Start Thread from Message](https://discord.com/developers/docs/resources/channel#start-thread-from-message)
  *
- * When called on a `GUILD_TEXT` channel, creates a `GUILD_PUBLIC_THREAD`. When called on a `GUILD_NEWS` channel, creates a `GUILD_NEWS_THREAD`. Does not work on a [`GUILD_FORUM`](https://discord.com/developers/docs/resources/channel#start-thread-in-forum-channel) channel. The id of the created thread will be the same as the id of the source message, and as such a message can only have a single thread created from it.
+ * **POST** `/channels/:channel/messages/:message/threads`
  *
- * *This endpoint supports the `X-Audit-Log-Reason` header.*
+ * Creates a new thread from an existing message. Returns a {@link Channel | channel} on success, and a `400 BAD REQUEST` on invalid parameters. Fires a Thread Create and a Message Update Gateway event.
  *
- * https://discord.com/developers/docs/resources/channel#start-thread-from-message
+ * When called on a `GUILD_TEXT` channel, creates a `PUBLIC_THREAD`. When called on a `GUILD_ANNOUNCEMENT` channel, creates a `ANNOUNCEMENT_THREAD`. Does not work on a `GUILD_FORUM` or a `GUILD_MEDIA` channel. The id of the created thread will be the same as the id of the source message, and as such a message can only have a single thread created from it.
+ *
+ * > **NOTE**
+ * >
+ * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const startThreadFromMessage: Fetcher<
   typeof startThreadFromMessageSchema,

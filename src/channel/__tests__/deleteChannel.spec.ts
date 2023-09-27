@@ -10,20 +10,22 @@ import {
   deleteChannelProcedure,
   deleteChannelSchema
 } from "../deleteChannel";
+import { channelSchema } from "../types/Channel";
 
 describe(`deleteChannel`, () => {
-  mockRequest.delete(`/channels/:channel`);
+  const expected = mockRequest.delete(`/channels/:channel`, channelSchema);
   const config = generateMock(deleteChannelSchema);
 
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(deleteChannelProcedure)(config)
-    ).resolves.not.toThrow();
+    ).resolves.toStrictEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runMutation(deleteChannel);
     result.current.mutate(config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result).toBeDefined();
   });
 });

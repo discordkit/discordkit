@@ -6,9 +6,11 @@ export const leaveThreadSchema = z.object({
 });
 
 /**
- * Removes the current user from a thread. Also requires the thread is not archived. Returns a 204 empty response on success. Fires a [Thread Members Update Gateway](https://discord.com/developers/docs/topics/gateway#thread-members-update) event.
+ * ### [Leave Thread](https://discord.com/developers/docs/resources/channel#leave-thread)
  *
- * https://discord.com/developers/docs/resources/channel#leave-thread
+ * **DELETE** `/channels/:channel/thread-members/@me`
+ *
+ * Removes the current user from a thread. Also requires the thread is not archived. Returns a `204 empty` response on success. Fires a Thread Members Update Gateway event.
  */
 export const leaveThread: Fetcher<typeof leaveThreadSchema> = async ({
   channel

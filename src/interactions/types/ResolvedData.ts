@@ -16,7 +16,12 @@ export const resolvedDataSchema = z.object({
   /** the ids and partial Channel objects */
   channels: z.record(z.string().min(1), channelSchema.partial()).nullable(),
   /** the ids and partial Message objects */
-  messages: z.record(z.string().min(1), messageSchema.partial()).nullable(),
+  messages: z
+    .record(
+      z.string().min(1),
+      z.lazy(() => messageSchema.partial())
+    )
+    .nullable(),
   /** the ids and attachment objects */
   attachments: z.record(z.string().min(1), attachmentSchema).nullable()
 });
