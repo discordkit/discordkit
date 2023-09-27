@@ -12,34 +12,40 @@ export const createGuildScheduledEventSchema = z.object({
   guild: z.string().min(1),
   body: z.object({
     /** the channel id of the scheduled event. */
-    channelId: z.string().min(1).optional(),
+    channelId: z.string().min(1).nullable(),
     /** entity metadata	the entity metadata of the scheduled event */
-    entityMetadata: entityMetadataSchema,
+    entityMetadata: entityMetadataSchema.nullable(),
     /** the name of the scheduled event */
     name: z.string().min(1),
     /** the privacy level of the scheduled event */
     privacyLevel: scheduledEventPrivacyLevelSchema,
     /** the time to schedule the scheduled event */
-    scheduledStartTime: z.string().min(1),
+    scheduledStartTime: z.string().datetime(),
     /** the time when the scheduled event is scheduled to end */
-    scheduledEndTime: z.string().min(1).optional(),
+    scheduledEndTime: z.string().datetime().nullable(),
     /** the description of the scheduled event */
-    description: z.string().min(1).optional(),
+    description: z.string().min(1).nullable(),
     /** the entity type of the scheduled event */
     entityType: scheduledEventEntityTypeSchema,
     /** the cover image of the scheduled event */
-    image: z.string().min(1).optional()
+    image: z.string().min(1).nullable()
   })
 });
 
 /**
- * Create a guild scheduled event in the guild. Returns a guild scheduled event object on success.
+ * ### [Create Guild Scheduled Event](https://discord.com/developers/docs/resources/guild-scheduled-event#create-guild-scheduled-event)
  *
- * *A guild can have a maximum of 100 events with `SCHEDULED` or `ACTIVE` status at any time.*
+ * **POST** `/guilds/:guild/scheduled-events`
  *
- * *This endpoint supports the `X-Audit-Log-Reason` header.*
+ * Create a guild scheduled event in the guild. Returns a {@link ScheduledEvent | guild scheduled event object} on success. Fires a Guild Scheduled Event Create Gateway event.
  *
- * https://discord.com/developers/docs/resources/guild-scheduled-event#create-guild-scheduled-event
+ * > **NOTE**
+ * >
+ * > A guild can have a maximum of 100 events with `SCHEDULED` or `ACTIVE` status at any time.
+ *
+ * > **NOTE**
+ * >
+ * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const createGuildScheduledEvent: Fetcher<
   typeof createGuildScheduledEventSchema,

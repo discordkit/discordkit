@@ -12,41 +12,48 @@ import { scheduledEventStatusSchema } from "./types/ScheduledEventStatus";
 export const modifyGuildScheduledEventSchema = z.object({
   guild: z.string().min(1),
   event: z.string().min(1),
-  body: z
-    .object({
-      /** the channel id of the scheduled event. */
-      channelId: z.string().min(1),
-      /** entity metadata	the entity metadata of the scheduled event */
-      entityMetadata: entityMetadataSchema,
-      /** the name of the scheduled event */
-      name: z.string().min(1),
-      /** the privacy level of the scheduled event */
-      privacyLevel: scheduledEventPrivacyLevelSchema,
-      /** the time to schedule the scheduled event */
-      scheduledStartTime: z.string().min(1),
-      /** the time when the scheduled event is scheduled to end */
-      scheduledEndTime: z.string().min(1),
-      /** the description of the scheduled event */
-      description: z.string().min(1),
-      /** the entity type of the scheduled event */
-      entityType: scheduledEventEntityTypeSchema,
-      /** the status of the scheduled event */
-      status: scheduledEventStatusSchema,
-      /** the cover image of the scheduled event */
-      image: z.string().min(1)
-    })
-    .partial()
+  body: z.object({
+    /** the channel id of the scheduled event. */
+    channelId: z.string().min(1).nullable(),
+    /** entity metadata	the entity metadata of the scheduled event */
+    entityMetadata: entityMetadataSchema.nullable().optional(),
+    /** the name of the scheduled event */
+    name: z.string().min(1).nullable(),
+    /** the privacy level of the scheduled event */
+    privacyLevel: scheduledEventPrivacyLevelSchema.nullable(),
+    /** the time to schedule the scheduled event */
+    scheduledStartTime: z.string().datetime().nullable(),
+    /** the time when the scheduled event is scheduled to end */
+    scheduledEndTime: z.string().datetime().nullable(),
+    /** the description of the scheduled event */
+    description: z.string().min(1).nullable().optional(),
+    /** the entity type of the scheduled event */
+    entityType: scheduledEventEntityTypeSchema.nullable(),
+    /** the status of the scheduled event */
+    status: scheduledEventStatusSchema.nullable(),
+    /** the cover image of the scheduled event */
+    image: z.string().min(1).nullable()
+  })
 });
 
 /**
- * Modify a guild scheduled event. Returns the modified guild scheduled event object on success.
+ * ### [Modify Guild Scheduled Event](https://discord.com/developers/docs/resources/guild-scheduled-event#modify-guild-scheduled-event)
  *
- * *To start or end an event, use this endpoint to modify the event's [status](https://discord.com/developers/docs/resources/guild-scheduled-event#guild-scheduled-event-object-guild-scheduled-event-status) field.*
+ * **PATCH** `/guilds/:guild/scheduled-events/:event`
  *
- * *This endpoint supports the `X-Audit-Log-Reason` header.*
+ * Modify a guild scheduled event. Returns the modified {@link ScheduledEvent | guild scheduled event object} on success. Fires a Guild Scheduled Event Update Gateway event.
  *
- * *This endpoint silently discards `entity_metadata` for non-`EXTERNAL` events.**
- * https://discord.com/developers/docs/resources/guild-scheduled-event#modify-guild-scheduled-event
+ * > **NOTE**
+ * >
+ * > To start or end an event, use this endpoint to modify the event's status field.
+ *
+ * > **NOTE**
+ * >
+ * > This endpoint supports the `X-Audit-Log-Reason` header.
+ *
+ * > **NOTE**
+ * >
+ * > This endpoint silently discards `entity_metadata` for non-`EXTERNAL` events.
  */
 export const modifyGuildScheduledEvent: Fetcher<
   typeof modifyGuildScheduledEventSchema,

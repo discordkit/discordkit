@@ -7,9 +7,11 @@ export const deleteGuildScheduledEventSchema = z.object({
 });
 
 /**
- * Delete a guild scheduled event. Returns a `204` on success.
+ * ### [Delete Guild Scheduled Event](https://discord.com/developers/docs/resources/guild-scheduled-event#delete-guild-scheduled-event)
  *
- * https://discord.com/developers/docs/resources/guild-scheduled-event#delete-guild-scheduled-event
+ * **DELETE** `/guilds/:guild/scheduled-events/:event`
+ *
+ * Delete a guild scheduled event. Returns a `204` on success. Fires a Guild Scheduled Event Delete Gateway event.
  */
 export const deleteGuildScheduledEvent: Fetcher<
   typeof deleteGuildScheduledEventSchema

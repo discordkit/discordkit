@@ -17,11 +17,11 @@ export const scheduledEventSchema = z.object({
   /** the name of the scheduled event (1-100 characters) */
   name: z.string(),
   /** the description of the scheduled event (1-1000 characters) */
-  description: z.string().optional(),
+  description: z.string().nullable().optional(),
   /** the time the scheduled event will start */
-  scheduledStartTime: z.string(),
+  scheduledStartTime: z.string().datetime(),
   /** the time the scheduled event will end, required if entity_type is EXTERNAL */
-  scheduledEndTime: z.string().optional(),
+  scheduledEndTime: z.string().datetime().optional(),
   /** the privacy level of the scheduled event */
   privacyLevel: scheduledEventPrivacyLevelSchema,
   /** the status of the scheduled event */
@@ -33,11 +33,11 @@ export const scheduledEventSchema = z.object({
   /** additional metadata for the guild scheduled event */
   entityMetadata: entityMetadataSchema.optional(),
   /** the user that created the scheduled event */
-  creator: userSchema.optional(),
+  creator: userSchema.nullable(),
   /** the number of users subscribed to the scheduled event */
-  userCount: z.number().optional(),
+  userCount: z.number().int().positive().nullable(),
   /** the cover image hash of the scheduled event */
-  image: z.string().optional()
+  image: z.string().nullable().optional()
 });
 
 export type ScheduledEvent = z.infer<typeof scheduledEventSchema>;

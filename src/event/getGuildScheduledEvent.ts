@@ -11,16 +11,18 @@ export const getGuildScheduledEventSchema = z.object({
   params: z
     .object({
       /** include number of users subscribed to this event */
-      withUserCount: z.boolean()
+      withUserCount: z.boolean().nullable()
     })
     .partial()
     .optional()
 });
 
 /**
- * Get a guild scheduled event. Returns a guild scheduled event object on success.
+ * ### [Get Guild Scheduled Event](https://discord.com/developers/docs/resources/guild-scheduled-event#get-guild-scheduled-event)
  *
- * https://discord.com/developers/docs/resources/guild-scheduled-event#get-guild-scheduled-event
+ * **GET** `/guilds/:guild/scheduled-events/:event`
+ *
+ * Get a guild scheduled event. Returns a {@link ScheduledEvent | guild scheduled event object} on success.
  */
 export const getGuildScheduledEvent: Fetcher<
   typeof getGuildScheduledEventSchema,
