@@ -8,9 +8,11 @@ export const getGuildBanSchema = z.object({
 });
 
 /**
- * Returns a ban object for the given user or a 404 not found if the ban cannot be found. Requires the `BAN_MEMBERS` permission.
+ * ### [Get Guild Ban](https://discord.com/developers/docs/resources/guild#get-guild-ban)
  *
- * https://discord.com/developers/docs/resources/guild#get-guild-ban
+ * **GET** `/guilds/:guild/bans/:user`
+ *
+ * Returns a {@link Ban | ban object} for the given user or a `404 not found` if the ban cannot be found. Requires the `BAN_MEMBERS` permission.
  */
 export const getGuildBan: Fetcher<typeof getGuildBanSchema, Ban> = async ({
   guild,

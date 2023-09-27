@@ -15,9 +15,11 @@ export const activeGuildThreadsSchema = z.object({
 });
 
 /**
- * Returns all active threads in the guild, including public and private threads. Threads are ordered by their `id`, in descending order.
+ * ### [List Active Guild Threads](https://discord.com/developers/docs/resources/guild#list-active-guild-threads)
  *
- * https://discord.com/developers/docs/resources/guild#list-active-guild-threads
+ * **GET** `/guilds/:guild/threads/active`
+ *
+ * Returns all active threads in the guild, including public and private threads. Threads are ordered by their `id`, in descending order.
  */
 export const listActiveGuildThreads: Fetcher<
   typeof listActiveGuildThreadsSchema,

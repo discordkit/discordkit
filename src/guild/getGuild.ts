@@ -7,16 +7,18 @@ export const getGuildSchema = z.object({
   params: z
     .object({
       /** when true, will return approximate member and presence counts for the guild */
-      withCounts: z.boolean()
+      withCounts: z.boolean().default(false)
     })
     .partial()
     .optional()
 });
 
 /**
- * Returns the guild object for the given id. If `with_counts` is set to `true`, this endpoint will also return `approximate_member_count` and `approximate_presence_count` for the guild.
+ * ### [Get Guild](https://discord.com/developers/docs/resources/guild#get-guild)
  *
- * https://discord.com/developers/docs/resources/guild#get-guild
+ * **GET** `/guilds/:guild`
+ *
+ * Returns the {@link Guild | guild object} for the given id. If `withCounts` is set to `true`, this endpoint will also return `approximateMemberCount` and `approximatePresenceCount` for the guild.
  */
 export const getGuild: Fetcher<typeof getGuildSchema, Guild> = async ({
   id,

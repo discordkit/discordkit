@@ -7,9 +7,11 @@ export const getGuildWidgetSchema = z.object({
 });
 
 /**
- * Returns the widget for the guild.
+ * ### [Get Guild Widget](https://discord.com/developers/docs/resources/guild#get-guild-widget)
  *
- * https://discord.com/developers/docs/resources/guild#get-guild-widget
+ * **GET** `/guilds/:guild/widget.json`
+ *
+ * Returns the {@link GuildWidget | widget} for the guild.
  */
 export const getGuildWidget: Fetcher<
   typeof getGuildWidgetSchema,

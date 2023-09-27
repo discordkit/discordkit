@@ -8,21 +8,29 @@ export const modifyGuildWelcomeScreenSchema = z.object({
   body: z
     .object({
       /** whether the welcome screen is enabled */
-      enabled: z.boolean(),
+      enabled: z.boolean().nullable(),
       /** channels linked in the welcome screen and their display options */
-      welcomeChannels: welcomeChannelSchema.array(),
+      welcomeChannels: welcomeChannelSchema.array().nullable(),
       /** the server description to show in the welcome screen */
-      description: z.string().min(1)
+      description: z.string().min(1).nullable()
     })
     .partial()
 });
 
 /**
- * Modify the guild's Welcome Screen. Requires the `MANAGE_GUILD` permission. Returns the updated Welcome Screen object.
+ * ### [Modify Guild Welcome Screen](https://discord.com/developers/docs/resources/guild#modify-guild-welcome-screen)
  *
- * *This endpoint supports the `X-Audit-Log-Reason` header.*
+ * **PATCH** `/guilds/:guild/welcome-screen`
  *
- * https://discord.com/developers/docs/resources/guild#modify-guild-welcome-screen
+ * Modify the guild's Welcome Screen. Requires the `MANAGE_GUILD` permission. Returns the updated {@link WelcomeScreen | Welcome Screen object}. May fire a Guild Update Gateway event.
+ *
+ * > **NOTE**
+ * >
+ * > All parameters to this endpoint are optional and nullable
+ *
+ * > **NOTE**
+ * >
+ * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const modifyGuildWelcomeScreen: Fetcher<
   typeof modifyGuildWelcomeScreenSchema,

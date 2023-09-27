@@ -6,27 +6,27 @@ import {
   mockRequest
 } from "../../../scripts/test-utils";
 import {
-  getGuildInvitesProcedure,
-  getGuildInvitesQuery,
-  getGuildInvitesSchema
-} from "../getGuildInvites";
-import { inviteMetadataSchema } from "../../invite/types/InviteMetadata";
+  getGuildOnboardingProcedure,
+  getGuildOnboardingQuery,
+  getGuildOnboardingSchema
+} from "../getGuildOnboarding";
+import { guildOnboardingSchema } from "../types/GuildOnboarding";
 
-describe(`getGuildInvites`, () => {
+describe(`getGuildOnboarding`, () => {
   const expected = mockRequest.get(
-    `/guilds/:guild/invites`,
-    inviteMetadataSchema.array()
+    `/guilds/:guild/onboarding`,
+    guildOnboardingSchema
   );
-  const config = generateMock(getGuildInvitesSchema);
+  const config = generateMock(getGuildOnboardingSchema);
 
   it(`is tRPC compatible`, async () => {
     await expect(
-      runProcedure(getGuildInvitesProcedure)(config)
+      runProcedure(getGuildOnboardingProcedure)(config)
     ).resolves.toStrictEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
-    const { result } = runQuery(getGuildInvitesQuery, config);
+    const { result } = runQuery(getGuildOnboardingQuery, config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toStrictEqual(expected);
   });

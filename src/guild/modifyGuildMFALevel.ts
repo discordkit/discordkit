@@ -11,9 +11,15 @@ export const modifyGuildMFALevelSchema = z.object({
 });
 
 /**
- * Modify a guild's MFA level. Requires guild ownership. Returns the updated level on success. Fires a [Guild Update](https://discord.com/developers/docs/topics/gateway#guild-update) Gateway event.
+ * ### [Modify Guild MFA Level](https://discord.com/developers/docs/resources/guild#modify-guild-mfa-level)
  *
- * https://discord.com/developers/docs/resources/guild#modify-guild-mfa-level
+ * **POST** `/guilds/:guild/mfa`
+ *
+ * Modify a guild's MFA level. Requires guild ownership. Returns the updated {@link MFALevel | level} on success. Fires a Guild Update Gateway event.
+ *
+ * > **NOTE**
+ * >
+ * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const modifyGuildMFALevel: Fetcher<
   typeof modifyGuildMFALevelSchema,

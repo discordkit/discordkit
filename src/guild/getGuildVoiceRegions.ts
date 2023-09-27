@@ -10,9 +10,11 @@ export const getGuildVoiceRegionsSchema = z.object({
 });
 
 /**
- * Returns a list of voice region objects for the guild. Unlike the similar `/voice` route, this returns VIP servers when the guild is VIP-enabled.
+ * ### [Get Guild Voice Regions](https://discord.com/developers/docs/resources/guild#get-guild-voice-regions)
  *
- * https://discord.com/developers/docs/resources/guild#get-guild-voice-regions
+ * **GET** `/guilds/:guild/regions`
+ *
+ * Returns a list of {@link VoiceRegion | voice region objects} for the guild. Unlike the similar `/voice` route, this returns VIP servers when the guild is VIP-enabled.
  */
 export const getGuildVoiceRegions: Fetcher<
   typeof getGuildVoiceRegionsSchema,

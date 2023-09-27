@@ -9,21 +9,21 @@ export const guildPreviewSchema = z.object({
   /** guild name (2-100 characters) */
   name: z.string(),
   /** icon hash */
-  icon: z.union([z.string(), z.null()]),
+  icon: z.string().optional(),
   /** splash hash */
-  splash: z.union([z.string(), z.null()]),
+  splash: z.string().optional(),
   /** discovery splash hash */
-  discoverySplash: z.union([z.string(), z.null()]),
+  discoverySplash: z.string().optional(),
   /** custom guild emojis */
   emojis: emojiSchema.array(),
   /** enabled guild features */
   features: guildFeaturesSchema.array(),
   /** approximate number of members in this guild */
-  approximateMemberCount: z.number(),
+  approximateMemberCount: z.number().int().positive(),
   /** approximate number of online members in this guild */
-  approximatePresenceCount: z.number(),
+  approximatePresenceCount: z.number().int().positive(),
   /** the description for the guild */
-  description: z.union([z.string(), z.null()]),
+  description: z.string().optional(),
   /** custom guild stickers */
   stickers: stickerSchema.array()
 });

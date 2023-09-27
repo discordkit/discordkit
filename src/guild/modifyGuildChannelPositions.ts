@@ -8,19 +8,25 @@ export const modifyGuildChannelPositionsSchema = z.object({
       /** channel id */
       id: z.string().min(1),
       /** sorting position of the channel */
-      position: z.number().positive().nullable(),
+      position: z.number().positive().nullable().optional(),
       /** syncs the permission overwrites with the new parent, if moving to a new category */
-      lockPermissions: z.boolean().nullable(),
+      lockPermissions: z.boolean().nullable().optional(),
       /** the new parent ID for the channel that is moved */
-      parentId: z.string().min(1).nullable()
+      parentId: z.string().min(1).nullable().optional()
     })
     .array()
 });
 
 /**
- * Modify the positions of a set of channel objects for the guild. Requires `MANAGE_CHANNELS` permission. Returns a 204 empty response on success. Fires multiple [Channel Update](https://discord.com/developers/docs/topics/gateway#channel-update) Gateway events.
+ * ### [Modify Guild Channel Positions](https://discord.com/developers/docs/resources/guild#modify-guild-channel-positions)
  *
- * https://discord.com/developers/docs/resources/guild#modify-guild-channel-positions
+ * **PATCH** `/guilds/:guild/channels`
+ *
+ * Modify the positions of a set of channel objects for the guild. Requires `MANAGE_CHANNELS` permission. Returns a `204 empty` response on success. Fires multiple Channel Update Gateway events.
+ *
+ * > **NOTE**
+ * >
+ * > Only channels to be modified are required.
  */
 export const modifyGuildChannelPositions: Fetcher<
   typeof modifyGuildChannelPositionsSchema

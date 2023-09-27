@@ -7,9 +7,11 @@ export const getGuildChannelsSchema = z.object({
 });
 
 /**
- * Returns a list of guild channel objects. Does not include threads.
+ * ### [Get Guild Channels](https://discord.com/developers/docs/resources/guild#get-guild-channels)
  *
- * https://discord.com/developers/docs/resources/guild#get-guild-channels
+ * **GET** `/guilds/:guild/channels`
+ *
+ * Returns a list of guild {@link Channel | channel objects}. Does not include threads.
  */
 export const getGuildChannels: Fetcher<
   typeof getGuildChannelsSchema,

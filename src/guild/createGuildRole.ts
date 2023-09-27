@@ -11,13 +11,13 @@ export const createGuildRoleSchema = z.object({
       /** bitwise value of the enabled/disabled permissions */
       permissions: z.string().min(1),
       /** RGB color value */
-      color: z.number(),
+      color: z.number().int(),
       /** whether the role should be displayed separately in the sidebar */
       hoist: z.boolean(),
       /** the role's icon image (if the guild has the `ROLE_ICONS` feature) */
-      icon: z.string().min(1).nullable(),
+      icon: z.string().min(1).optional(),
       /** the role's unicode emoji as a standard emoji (if the guild has the `ROLE_ICONS` feature) */
-      unicodeEmoji: z.string().min(1).nullable(),
+      unicodeEmoji: z.string().min(1).optional(),
       /** whether the role should be mentionable */
       mentionable: z.boolean()
     })
@@ -25,11 +25,15 @@ export const createGuildRoleSchema = z.object({
 });
 
 /**
- * Create a new role for the guild. Requires the `MANAGE_ROLES` permission. Returns the new role object on success. Fires a [Guild Role Create](https://discord.com/developers/docs/topics/gateway#guild-role-create) Gateway event. All JSON params are optional.
+ * ### [Create Guild Role](https://discord.com/developers/docs/resources/guild#create-guild-role)
  *
- * *This endpoint supports the `X-Audit-Log-Reason` header.*
+ * **POST** `/guilds/:guild/roles`
  *
- * https://discord.com/developers/docs/resources/guild#create-guild-role
+ * Create a new role for the guild. Requires the `MANAGE_ROLES` permission. Returns the new role object on success. Fires a Guild Role Create Gateway event. All JSON params are optional.
+ *
+ * > **NOTE**
+ * >
+ * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const createGuildRole: Fetcher<
   typeof createGuildRoleSchema,

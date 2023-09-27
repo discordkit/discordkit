@@ -7,9 +7,15 @@ export const getGuildIntegrationsSchema = z.object({
 });
 
 /**
- * Returns a list of integration objects for the guild. Requires the `MANAGE_GUILD` permission.
+ * ### [Get Guild Integrations](https://discord.com/developers/docs/resources/guild#get-guild-integrations)
  *
- * https://discord.com/developers/docs/resources/guild#get-guild-integrations
+ * **GET** `/guilds/:guild/integrations`
+ *
+ * Returns a list of {@link Integration | integration objects} for the guild. Requires the `MANAGE_GUILD` permission.
+ *
+ * > **NOTE**
+ * >
+ * > This endpoint returns a maximum of 50 integrations. If a guild has more integrations, they cannot be accessed.
  */
 export const getGuildIntegrations: Fetcher<
   typeof getGuildIntegrationsSchema,

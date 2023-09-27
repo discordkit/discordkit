@@ -14,14 +14,18 @@ export const getGuildPruneCountSchema = z.object({
     .optional()
 });
 
-export const guildPruneCountSchema = z.object({ pruned: z.number() });
+export const guildPruneCountSchema = z.object({
+  pruned: z.number().int().positive()
+});
 
 /**
+ * ### [Get Guild Prune Count](https://discord.com/developers/docs/resources/guild#get-guild-prune-count)
+ *
+ * **GET** `/guilds/:guild/prune`
+ *
  * Returns an object with one `pruned` key indicating the number of members that would be removed in a prune operation. Requires the `KICK_MEMBERS` permission.
  *
- * By default, prune will not remove users with roles. You can optionally include specific roles in your prune by providing the `include_roles` parameter. Any inactive user that has a subset of the provided role(s) will be counted in the prune and users with additional roles will not.
- *
- * https://discord.com/developers/docs/resources/guild#get-guild-prune-count
+ * By default, prune will not remove users with roles. You can optionally include specific roles in your prune by providing the `includeRoles` parameter. Any inactive user that has a subset of the provided role(s) will be counted in the prune and users with additional roles will not.
  */
 export const getGuildPruneCount: Fetcher<
   typeof getGuildPruneCountSchema,

@@ -10,10 +10,13 @@ import {
   getGuildWidgetSettingsQuery,
   getGuildWidgetSettingsSchema
 } from "../getGuildWidgetSettings";
-import { guildWidgetSchema } from "../types/GuildWidget";
+import { guildWidgetSettingsSchema } from "../types/GuildWidgetSettings";
 
 describe(`getGuildWidgetSettings`, () => {
-  const expected = mockRequest.get(`/guilds/:guild/widget`, guildWidgetSchema);
+  const expected = mockRequest.get(
+    `/guilds/:guild/widget`,
+    guildWidgetSettingsSchema
+  );
   const config = generateMock(getGuildWidgetSettingsSchema);
 
   it(`is tRPC compatible`, async () => {
