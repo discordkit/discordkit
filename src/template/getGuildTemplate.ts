@@ -7,9 +7,11 @@ export const getGuildTemplateSchema = z.object({
 });
 
 /**
- * Returns a guild template object for the given code.
+ * ### [Get Guild Template](https://discord.com/developers/docs/resources/guild-template#get-guild-template)
  *
- * https://discord.com/developers/docs/resources/guild-template#get-guild-template
+ * **GET** `/guilds/templates/:template`
+ *
+ * Returns a {@link GuildTemplate | guild template object} for the given code.
  */
 export const getGuildTemplate: Fetcher<
   typeof getGuildTemplateSchema,

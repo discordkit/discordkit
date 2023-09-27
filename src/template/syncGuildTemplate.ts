@@ -8,9 +8,11 @@ export const syncGuildTemplateSchema = z.object({
 });
 
 /**
- * Syncs the template to the guild's current state. Requires the `MANAGE_GUILD` permission. Returns the guild template object on success.
+ * ### [Sync Guild Template](https://discord.com/developers/docs/resources/guild-template#sync-guild-template)
  *
- * https://discord.com/developers/docs/resources/guild-template#sync-guild-template
+ * **PUT** `/guilds/:guild/templates/:template`
+ *
+ * Syncs the template to the guild's current state. Requires the `MANAGE_GUILD` permission. Returns the {@link GuildTemplate | guild template object} on success.
  */
 export const syncGuildTemplate: Fetcher<
   typeof syncGuildTemplateSchema,

@@ -8,17 +8,19 @@ export const modifyGuildTemplateSchema = z.object({
   body: z
     .object({
       /** name of the template (1-100 characters) */
-      name: z.string().min(1).max(120),
+      name: z.string().min(1).max(120).nullable(),
       /** description for the template (0-120 characters) */
-      description: z.string().min(0).max(120)
+      description: z.string().min(0).max(120).nullable().optional()
     })
     .partial()
 });
 
 /**
- * Modifies the template's metadata. Requires the `MANAGE_GUILD` permission. Returns the guild template object on success.
+ * ### [Modify Guild Template](https://discord.com/developers/docs/resources/guild-template#modify-guild-template)
  *
- * https://discord.com/developers/docs/resources/guild-template#modify-guild-template
+ * **PATCH** `/guilds/:guild/templates/:template`
+ *
+ * Modifies the template's metadata. Requires the `MANAGE_GUILD` permission. Returns the {@link GuildTemplate | guild template object} on success.
  */
 export const modifyGuildTemplate: Fetcher<
   typeof modifyGuildTemplateSchema,

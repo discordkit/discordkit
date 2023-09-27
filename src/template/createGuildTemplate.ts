@@ -13,9 +13,11 @@ export const createGuildTemplateSchema = z.object({
 });
 
 /**
- * Creates a template for the guild. Requires the `MANAGE_GUILD` permission. Returns the created guild template object on success.
+ * ### [Create Guild Template](https://discord.com/developers/docs/resources/guild-template#create-guild-template)
  *
- * https://discord.com/developers/docs/resources/guild-template#create-guild-template
+ * **POST** `/guilds/:guild/templates`
+ *
+ * Creates a template for the guild. Requires the `MANAGE_GUILD` permission. Returns the created {@link GuildTemplate | guild template object} on success.
  */
 export const createGuildTemplate: Fetcher<
   typeof createGuildTemplateSchema,

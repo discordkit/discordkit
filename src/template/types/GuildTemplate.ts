@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { guildSchema } from "../../guild/types/Guild";
+import { userSchema } from "../../user/types/User";
 
 export const guildTemplateSchema = z.object({
   /** the template code (unique ID) */
@@ -13,6 +14,8 @@ export const guildTemplateSchema = z.object({
   /** the ID of the user who created the template
     creator	user object	the user who created the template */
   creatorId: z.string(),
+  /** the user who created the template */
+  creator: userSchema,
   /** when this template was created */
   createdAt: z.string(),
   /** when this template was last synced to the source guild */
