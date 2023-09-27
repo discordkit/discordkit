@@ -7,11 +7,15 @@ export const removeGuildMemberSchema = z.object({
 });
 
 /**
- * Remove a member from a guild. Requires `KICK_MEMBERS` permission. Returns a 204 empty response on success. Fires a [Guild Member Remove](https://discord.com/developers/docs/topics/gateway#guild-member-remove) Gateway event.
+ * ### [Remove Guild Member](https://discord.com/developers/docs/resources/guild#remove-guild-member)
  *
- * *This endpoint supports the X-Audit-Log-Reason header.*
+ * **DELETE** `/guilds/:guild/members/:user`
  *
- * https://discord.com/developers/docs/resources/guild#remove-guild-member
+ * Remove a member from a guild. Requires `KICK_MEMBERS` permission. Returns a `204 empty` response on success. Fires a Guild Member Remove Gateway event.
+ *
+ * > **NOTE**
+ * >
+ * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const removeGuildMember: Fetcher<
   typeof removeGuildMemberSchema

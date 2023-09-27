@@ -8,14 +8,20 @@ export const searchGuildMembersSchema = z.object({
     /** Query string to match username(s) and nickname(s) against. */
     query: z.string().min(1),
     /** max number of members to return (1-1000) */
-    limit: z.number().min(1).max(1000).optional()
+    limit: z.number().int().min(1).max(1000).optional()
   })
 });
 
 /**
- * Returns a list of guild member objects whose username or nickname starts with a provided string.
+ * ### [Search Guild Members](https://discord.com/developers/docs/resources/guild#search-guild-members)
  *
- * https://discord.com/developers/docs/resources/guild#search-guild-members
+ * **GET** `/guilds/:guild/members/search`
+ *
+ * Returns a list of {@link Member | guild member objects} whose username or nickname starts with a provided string.
+ *
+ * > **NOTE**
+ * >
+ * > All parameters to this endpoint except for query are optional
  */
 export const searchGuildMembers: Fetcher<
   typeof searchGuildMembersSchema,

@@ -1,24 +1,29 @@
 import { z } from "zod";
 import { get, type Fetcher, toProcedure, toQuery } from "../utils";
-import { guildWidgetSchema, type GuildWidget } from "./types/GuildWidget";
+import {
+  guildWidgetSettingsSchema,
+  type GuildWidgetSettings
+} from "./types/GuildWidgetSettings";
 
 export const getGuildWidgetSettingsSchema = z.object({ guild: z.string() });
 
 /**
- * Returns a guild widget settings object. Requires the `MANAGE_GUILD` permission.
+ * ### [Get Guild Widget Settings](https://discord.com/developers/docs/resources/guild#get-guild-widget-settings)
  *
- * https://discord.com/developers/docs/resources/guild#get-guild-widget-settings
+ * **GET** `/guilds/:guild/widget`
+ *
+ * Returns a {@link GuildWidgetSettings | guild widget settings object}. Requires the `MANAGE_GUILD` permission.
  */
 export const getGuildWidgetSettings: Fetcher<
   typeof getGuildWidgetSettingsSchema,
-  GuildWidget
+  GuildWidgetSettings
 > = async ({ guild }) => get(`/guilds/${guild}/widget`);
 
 export const getGuildWidgetSettingsProcedure = toProcedure(
   `query`,
   getGuildWidgetSettings,
   getGuildWidgetSettingsSchema,
-  guildWidgetSchema
+  guildWidgetSettingsSchema
 );
 
 export const getGuildWidgetSettingsQuery = toQuery(getGuildWidgetSettings);

@@ -11,11 +11,15 @@ export const modifyCurrentMemberSchema = z.object({
 });
 
 /**
- * Modifies the current member in a guild. Returns a `200 OK` with the updated member object on success. Fires a [Guild Member Update](https://discord.com/developers/docs/topics/gateway#guild-member-update) Gateway event.
+ * ### [Modify Current Member](https://discord.com/developers/docs/resources/guild#modify-current-member)
  *
- * *This endpoint supports the `X-Audit-Log-Reason` header.*
+ * **PATCH** `/guilds/:guild/members/@me`
  *
- * https://discord.com/developers/docs/resources/guild#modify-current-member
+ * Modifies the current member in a guild. Returns a `200` with the updated {@link Member | member object} on success. Fires a Guild Member Update Gateway event.
+ *
+ * > **NOTE**
+ * >
+ * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const modifyCurrentMember: Fetcher<
   typeof modifyCurrentMemberSchema,

@@ -8,9 +8,11 @@ export const getGuildMemberSchema = z.object({
 });
 
 /**
- * Returns a guild member object for the specified user.
+ * ### [Get Guild Member](https://discord.com/developers/docs/resources/guild#get-guild-member)
  *
- * https://discord.com/developers/docs/resources/guild#get-guild-member
+ * **GET** `/guilds/:guild/members/:user`
+ *
+ * Returns a {@link Member | guild member object} for the specified user.
  */
 export const getGuildMember: Fetcher<
   typeof getGuildMemberSchema,

@@ -5,45 +5,48 @@ import { verificationLevelSchema } from "./types/VerificationLevel";
 import { defaultMessageNotificationLevelSchema } from "./types/DefaultMessageNotificationLevel";
 import { explicitContentFilterLevelSchema } from "./types/ExplicitContentFilterLevel";
 import { roleSchema } from "./types/Role";
-import { systemChannelFlagsSchema } from "./types/SystemChannelFlags";
 import { guildSchema, type Guild } from "./types/Guild";
 
 export const createGuildSchema = z.object({
   body: z.object({
     /** name of the guild (2-100 characters) */
     name: z.string().min(2).max(100),
-    /** voice region id (deprecated) */
-    region: z.string().min(1).nullable(),
+    /** @deprecated voice region id */
+    region: z.string().min(1).nullable().optional(),
     /** icon hash */
-    icon: z.string().min(1).optional(),
+    icon: z.string().min(1).nullable(),
     /** verification level */
-    verificationLevel: verificationLevelSchema.optional(),
+    verificationLevel: verificationLevelSchema.nullable(),
     /** default message notification level */
     defaultMessageNotifications:
-      defaultMessageNotificationLevelSchema.optional(),
+      defaultMessageNotificationLevelSchema.nullable(),
     /** explicit content filter level */
-    explicitContentFilter: explicitContentFilterLevelSchema.optional(),
+    explicitContentFilter: explicitContentFilterLevelSchema.nullable(),
     /** new guild roles */
-    roles: roleSchema.array().optional(),
+    roles: roleSchema.array().nullable(),
     /** new guild's channels */
-    channels: channelSchema.partial().array().optional(),
+    channels: channelSchema.partial().array().nullable(),
     /** id for afk channel */
-    afkChannelId: z.string().min(1).optional(),
+    afkChannelId: z.string().min(1).nullable(),
     /** afk timeout in seconds */
-    afkTimeout: z.number().positive().optional(),
+    afkTimeout: z.number().int().positive().nullable(),
     /** the id of the channel where guild notices such as welcome messages and boost events are posted */
-    systemChannelId: z.string().min(1).optional(),
+    systemChannelId: z.string().min(1).nullable(),
     /** system channel flags */
-    systemChannelFlags: systemChannelFlagsSchema.optional()
+    systemChannelFlags: z.number().int().optional()
   })
 });
 
 /**
- * Create a new guild. Returns a guild object on success. Fires a Guild Create Gateway event.
+ * ### [Create Guild](https://discord.com/developers/docs/resources/guild#create-guild)
  *
- * *This endpoint can be used only by bots in less than 10 guilds.*
+ * **POST** `/guilds`
  *
- * https://discord.com/developers/docs/resources/guild#create-guild
+ * Create a new guild. Returns a {@link Guild | guild object} on success. Fires a Guild Create Gateway event.
+ *
+ * > **WARNING**
+ * >
+ * > This endpoint can be used only by bots in less than 10 guilds.
  */
 export const createGuild: Fetcher<typeof createGuildSchema, Guild> = async ({
   body

@@ -20,15 +20,21 @@ export const addGuildMemberSchema = z.object({
 });
 
 /**
- * Adds a user to the guild, provided you have a valid oauth2 access token for the user with the `guilds.join` scope. Returns a 201 Created with the guild member as the body, or 204 No Content if the user is already a member of the guild. Fires a [Guild Member Add](https://discord.com/developers/docs/topics/gateway#guild-member-add) Gateway event.
+ * ### [Add Guild Member](https://discord.com/developers/docs/resources/guild#add-guild-member)
  *
- * For guilds with [Membership Screening](https://discord.com/developers/docs/resources/guild#membership-screening-object) enabled, this endpoint will default to adding new members as `pending` in the guild member object. Members that are `pending` will have to complete membership screening before they become full members that can talk.
+ * **PUT** `/guilds/:guild/members/:user`
  *
- * *The Authorization header must be a Bot token (belonging to the same application used for authorization), and the bot must be a member of the guild with `CREATE_INSTANT_INVITE` permission.*
+ * Adds a user to the guild, provided you have a valid oauth2 access token for the user with the `guilds.join` scope. Returns a `201 Created` with the {@link Member | guild member} as the body, or `204 No Content` if the user is already a member of the guild. Fires a Guild Member Add Gateway event.
  *
- * For guilds with Membership Screening enabled, assigning a role using the `roles` parameter will add the user to the guild as a full member (`pending` is false in the member object). A member with a role will bypass membership screening and the guild's verification level, and get immediate access to chat. Therefore, instead of assigning a role when the member joins, it is recommended to grant roles only after the user completes screening.
+ * For guilds with Membership Screening enabled, this endpoint will default to adding new members as `pending` in the guild member object. Members that are `pending` will have to complete membership screening before they become full members that can talk.
  *
- * https://discord.com/developers/docs/resources/guild#add-guild-member
+ * > **NOTE**
+ * >
+ * > All parameters to this endpoint except for `accessToken` are optional.
+ *
+ * > **NOTE**
+ * >
+ * > The Authorization header must be a Bot token (belonging to the same application used for authorization), and the bot must be a member of the guild with `CREATE_INSTANT_INVITE` permission.
  */
 export const addGuildMember: Fetcher<
   typeof addGuildMemberSchema,

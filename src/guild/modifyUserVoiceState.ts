@@ -8,14 +8,16 @@ export const modifyUserVoiceStateSchema = z.object({
     /** the id of the channel the user is currently in */
     channelId: z.string().min(1),
     /** toggles the user's suppress state */
-    suppress: z.boolean().optional()
+    suppress: z.boolean().nullable()
   })
 });
 
 /**
- * Updates another user's voice state. Returns `204 No Content` on success.
+ * ### [Modify User Voice State](https://discord.com/developers/docs/resources/guild#modify-user-voice-state)
  *
- * https://discord.com/developers/docs/resources/guild#modify-user-voice-state
+ * **PATCH** `/guilds/:guild/voice-states/:user`
+ *
+ * Updates another user's voice state. Fires a Voice State Update Gateway event.
  */
 export const modifyUserVoiceState: Fetcher<
   typeof modifyUserVoiceStateSchema

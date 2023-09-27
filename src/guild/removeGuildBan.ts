@@ -7,11 +7,15 @@ export const removeGuildBanSchema = z.object({
 });
 
 /**
- * Remove the ban for a user. Requires the `BAN_MEMBERS` permissions. Returns a 204 empty response on success. Fires a [Guild Ban Remove](https://discord.com/developers/docs/topics/gateway#guild-ban-remove) Gateway event.
+ * ### [Remove Guild Ban](https://discord.com/developers/docs/resources/guild#remove-guild-ban)
  *
- * *This endpoint supports the `X-Audit-Log-Reason` header.*
+ * **DELETE** `/guilds/:guild/bans/:user`
  *
- * https://discord.com/developers/docs/resources/guild#remove-guild-ban
+ * Remove the ban for a user. Requires the BAN_MEMBERS permissions. Returns a `204 empty` response on success. Fires a Guild Ban Remove Gateway event.
+ *
+ * > **NOTE**
+ * >
+ * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const removeGuildBan: Fetcher<typeof removeGuildBanSchema> = async ({
   guild,

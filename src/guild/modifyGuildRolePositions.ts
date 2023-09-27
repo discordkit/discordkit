@@ -9,17 +9,21 @@ export const modifyGuildRolePositionsSchema = z.object({
       /** role */
       id: z.string().min(1),
       /** sorting position of the role */
-      position: z.number().positive().nullable()
+      position: z.number().int().positive().nullable().optional()
     })
     .array()
 });
 
 /**
- * Modify the positions of a set of role objects for the guild. Requires the `MANAGE_ROLES` permission. Returns a list of all of the guild's role objects on success. Fires multiple [Guild Role Update](https://discord.com/developers/docs/topics/gateway#guild-role-update) Gateway events.
+ * ### [Modify Guild Role Positions](https://discord.com/developers/docs/resources/guild#modify-guild-role-positions)
  *
- * *This endpoint supports the `X-Audit-Log-Reason` header.*
+ * **PATCH** `/guilds/:guild/roles`
  *
- * https://discord.com/developers/docs/resources/guild#modify-guild-role-positions
+ * Modify the positions of a set of role objects for the guild. Requires the `MANAGE_ROLES` permission. Returns a list of all of the guild's {@link Role | role objects} on success. Fires multiple Guild Role Update Gateway events.
+ *
+ * > **NOTE**
+ * >
+ * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const modifyGuildRolePositions: Fetcher<
   typeof modifyGuildRolePositionsSchema,

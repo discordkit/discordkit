@@ -1,27 +1,34 @@
 import { z } from "zod";
 import { patch, type Fetcher, toProcedure } from "../utils";
-import { guildWidgetSchema, type GuildWidget } from "./types/GuildWidget";
+import {
+  guildWidgetSettingsSchema,
+  type GuildWidgetSettings
+} from "./types/GuildWidgetSettings";
 
 export const modifyGuildWidgetSchema = z.object({
   guild: z.string().min(1),
-  body: guildWidgetSchema.partial()
+  body: guildWidgetSettingsSchema.partial()
 });
 
 /**
- * Modify a guild widget settings object for the guild. All attributes may be passed in with JSON and modified. Requires the `MANAGE_GUILD` permission. Returns the updated guild widget object.
+ * ### [Modify Guild Widget](https://discord.com/developers/docs/resources/guild#modify-guild-widget)
  *
- * *This endpoint supports the `X-Audit-Log-Reason` header.*
+ * **PATCH** `/guilds/:guild/widget`
  *
- * https://discord.com/developers/docs/resources/guild#modify-guild-widget
+ * Modify a guild widget settings object for the guild. All attributes may be passed in with JSON and modified. Requires the `MANAGE_GUILD` permission. Returns the updated {@link GuildWidgetSettings | guild widget settings object}.
+ *
+ * > **NOTE**
+ * >
+ * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const modifyGuildWidget: Fetcher<
   typeof modifyGuildWidgetSchema,
-  GuildWidget
+  GuildWidgetSettings
 > = async ({ guild, body }) => patch(`/guilds/${guild}/widget`, body);
 
 export const modifyGuildWidgetProcedure = toProcedure(
   `mutation`,
   modifyGuildWidget,
   modifyGuildWidgetSchema,
-  guildWidgetSchema
+  guildWidgetSettingsSchema
 );

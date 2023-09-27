@@ -7,9 +7,11 @@ export const getGuildVanityURLSchema = z.object({
 });
 
 /**
- * Returns a partial invite object for guilds with that feature enabled. Requires the `MANAGE_GUILD` permission. `code` will be null if a vanity url for the guild is not set.
+ * ### [Get Guild Vanity URL](https://discord.com/developers/docs/resources/guild#get-guild-vanity-url)
  *
- * https://discord.com/developers/docs/resources/guild#get-guild-vanity-url
+ * **GET** `/guilds/:guild/vanity-url`
+ *
+ * Returns a partial {@link Invite | invite object} for guilds with that feature enabled. Requires the `MANAGE_GUILD` permission. code will be `null` if a vanity url for the guild is not set.
  */
 export const getGuildVanityURL: Fetcher<
   typeof getGuildVanityURLSchema,

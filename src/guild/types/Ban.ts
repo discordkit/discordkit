@@ -3,7 +3,7 @@ import { userSchema } from "../../user/types/User";
 
 export const banSchema = z.object({
   /** the reason for the ban */
-  reason: z.union([z.string(), z.null()]),
+  reason: z.string().optional(),
   /** the banned user */
   user: userSchema
 });

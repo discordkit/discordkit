@@ -8,11 +8,15 @@ export const addGuildMemberRoleSchema = z.object({
 });
 
 /**
- * Adds a role to a guild member. Requires the `MANAGE_ROLES` permission. Returns a 204 empty response on success. Fires a [Guild Member Update](https://discord.com/developers/docs/topics/gateway#guild-member-update) Gateway event.
+ * ### [Add Guild Member Role](https://discord.com/developers/docs/resources/guild#add-guild-member-role)
  *
- * *This endpoint supports the `X-Audit-Log-Reason` header.*
+ * **PUT** `/guilds/:guild/members/:user/roles/:role`
  *
- * https://discord.com/developers/docs/resources/guild#add-guild-member-role
+ * Adds a role to a guild member. Requires the `MANAGE_ROLES` permission. Returns a `204 empty` response on success. Fires a Guild Member Update Gateway event
+ *
+ * > **NOTE**
+ * >
+ * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const addGuildMemberRole: Fetcher<
   typeof addGuildMemberRoleSchema

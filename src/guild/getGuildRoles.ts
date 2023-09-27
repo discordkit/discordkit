@@ -7,9 +7,11 @@ export const getGuildRolesSchema = z.object({
 });
 
 /**
- * Returns a list of role objects for the guild.
+ * ### [Get Guild Roles](https://discord.com/developers/docs/resources/guild#get-guild-roles)
  *
- * https://discord.com/developers/docs/resources/guild#get-guild-roles
+ * **GET** `/guilds/:guild/roles`
+ *
+ * Returns a list of {@link Role | role objects} for the guild.
  */
 export const getGuildRoles: Fetcher<
   typeof getGuildRolesSchema,

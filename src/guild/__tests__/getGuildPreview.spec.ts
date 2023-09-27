@@ -10,10 +10,13 @@ import {
   getGuildPreviewQuery,
   getGuildPreviewSchema
 } from "../getGuildPreview";
-import { guildSchema } from "../types/Guild";
+import { guildPreviewSchema } from "../types/GuildPreview";
 
 describe(`getGuildPreview`, () => {
-  const expected = mockRequest.get(`/guilds/:guild/preview`, guildSchema);
+  const expected = mockRequest.get(
+    `/guilds/:guild/preview`,
+    guildPreviewSchema
+  );
   const config = generateMock(getGuildPreviewSchema);
 
   it(`is tRPC compatible`, async () => {

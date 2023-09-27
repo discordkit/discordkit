@@ -3,38 +3,41 @@ import { userSchema } from "../../user/types/User";
 import { integrationApplicationSchema } from "./IntegrationApplication";
 import { integrationAccountSchema } from "./IntegrationAccount";
 import { integrationExpireBehaviorSchema } from "./IntegrationExpireBehavior";
+import { scopesSchema } from "../../application";
 
 export const integrationSchema = z.object({
   /** integration id */
-  id: z.string(),
+  id: z.string().min(1),
   /** integration name */
-  name: z.string(),
+  name: z.string().min(1),
   /** integration type (twitch, youtube, or discord) */
   type: z.string(),
   /** is this integration enabled */
-  enabled: z.boolean().optional(),
+  enabled: z.boolean(),
   /** is this integration syncing */
-  syncing: z.boolean().optional(),
+  syncing: z.boolean().nullable(),
   /** id that this integration uses for "subscribers" */
-  roleId: z.string().optional(),
+  roleId: z.string().min(1).nullable(),
   /** whether emoticons should be synced for this integration (twitch only currently) */
-  enableEmoticons: z.boolean().optional(),
+  enableEmoticons: z.boolean().nullable(),
   /** the behavior of expiring subscribers */
-  expireBehavior: integrationExpireBehaviorSchema.optional(),
+  expireBehavior: integrationExpireBehaviorSchema.nullable(),
   /** the grace period (in days) before expiring subscribers */
-  expireGracePeriod: z.number().optional(),
+  expireGracePeriod: z.number().int().positive().nullable(),
   /** user for this integration */
-  user: userSchema.optional(),
+  user: userSchema.nullable(),
   /** integration account information */
   account: integrationAccountSchema,
   /** when this integration was last synced */
-  syncedAt: z.string().optional(),
+  syncedAt: z.string().datetime().nullable(),
   /** how many subscribers this integration has */
-  subscriberCount: z.number().optional(),
+  subscriberCount: z.number().int().positive().nullable(),
   /** has this integration been revoked */
-  revoked: z.boolean().optional(),
+  revoked: z.boolean().nullable(),
   /** The bot/OAuth2 application for discord integrations */
-  application: integrationApplicationSchema.optional()
+  application: integrationApplicationSchema.nullable(),
+  /** the scopes the application has been authorized for */
+  scopes: scopesSchema.array().nullable()
 });
 
 export type Integration = z.infer<typeof integrationSchema>;

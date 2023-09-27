@@ -7,7 +7,7 @@ export const listGuildMembersSchema = z.object({
   params: z
     .object({
       /** max number of members to return (1-1000) */
-      limit: z.number().min(1).max(1000),
+      limit: z.number().int().min(1).max(1000),
       /** the highest user id in the previous page */
       after: z.string().min(1)
     })
@@ -16,11 +16,19 @@ export const listGuildMembersSchema = z.object({
 });
 
 /**
- * Returns a list of guild member objects that are members of the guild.
+ * ### [List Guild Members](https://discord.com/developers/docs/resources/guild#list-guild-members)
  *
- * *This endpoint is restricted according to whether the `GUILD_MEMBERS` [Privileged Intent](https://discord.com/developers/docs/topics/gateway#privileged-intents) is enabled for your application.*
+ * **GET** `/guilds/:guild/members`
  *
- * https://discord.com/developers/docs/resources/guild#list-guild-members
+ * Returns a list of {@link Member | guild member objects} that are members of the guild.
+ *
+ * > **WARNING**
+ * >
+ * > This endpoint is restricted according to whether the `GUILD_MEMBERS` Privileged Intent is enabled for your application.
+ *
+ * > **NOTE**
+ * >
+ * > All parameters to this endpoint are optional
  */
 export const listGuildMembers: Fetcher<
   typeof listGuildMembersSchema,

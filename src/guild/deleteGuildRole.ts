@@ -7,11 +7,15 @@ export const deleteGuildRoleSchema = z.object({
 });
 
 /**
- * Delete a guild role. Requires the `MANAGE_ROLES` permission. Returns a 204 empty response on success. Fires a [Guild Role Delete](https://discord.com/developers/docs/topics/gateway#guild-role-delete) Gateway event.
+ * ### [Delete Guild Role](https://discord.com/developers/docs/resources/guild#delete-guild-role)
  *
- * *This endpoint supports the `X-Audit-Log-Reason` header.*
+ * **DELETE* `/guilds/:guild/roles/:role`
  *
- * https://discord.com/developers/docs/resources/guild#delete-guild-role
+ * Delete a guild role. Requires the `MANAGE_ROLES` permission. Returns a `204 empty` response on success. Fires a Guild Role Delete Gateway event.
+ *
+ * > **NOTE**
+ * >
+ * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const deleteGuildRole: Fetcher<typeof deleteGuildRoleSchema> = async ({
   guild,

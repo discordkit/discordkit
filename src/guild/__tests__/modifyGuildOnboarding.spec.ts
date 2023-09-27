@@ -6,27 +6,27 @@ import {
   mockRequest
 } from "../../../scripts/test-utils";
 import {
-  modifyGuildWidget,
-  modifyGuildWidgetProcedure,
-  modifyGuildWidgetSchema
-} from "../modifyGuildWidget";
-import { guildWidgetSettingsSchema } from "../types/GuildWidgetSettings";
+  modifyGuildOnboarding,
+  modifyGuildOnboardingProcedure,
+  modifyGuildOnboardingSchema
+} from "../modifyGuildOnboarding";
+import { guildOnboardingSchema } from "../types";
 
-describe(`modifyGuildWidget`, () => {
-  const expected = mockRequest.patch(
-    `/guilds/:guild/widget`,
-    guildWidgetSettingsSchema
+describe(`modifyGuildOnboarding`, () => {
+  const expected = mockRequest.put(
+    `/guilds/:guild/onboarding`,
+    guildOnboardingSchema
   );
-  const config = generateMock(modifyGuildWidgetSchema);
+  const config = generateMock(modifyGuildOnboardingSchema);
 
   it(`is tRPC compatible`, async () => {
     await expect(
-      runProcedure(modifyGuildWidgetProcedure)(config)
+      runProcedure(modifyGuildOnboardingProcedure)(config)
     ).resolves.toStrictEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
-    const { result } = runMutation(modifyGuildWidget);
+    const { result } = runMutation(modifyGuildOnboarding);
     result.current.mutate(config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toStrictEqual(expected);
