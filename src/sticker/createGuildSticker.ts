@@ -17,15 +17,25 @@ export const createGuildStickerSchema = z.object({
 });
 
 /**
- * Create a new sticker for the guild. Send a `multipart/form-data` body. Requires the `MANAGE_EMOJIS_AND_STICKERS` permission. Returns the new sticker object on success.
+ * ### [Create Guild Sticker](https://discord.com/developers/docs/resources/sticker#create-guild-sticker)
+ *
+ * **POST** `/guilds/:guild/stickers`
+ *
+ * Create a new sticker for the guild. Send a `multipart/form-data` body. Requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns the new {@link Sticker | sticker object} on success. Fires a Guild Stickers Update Gateway event.
  *
  * Every guilds has five free sticker slots by default, and each Boost level will grant access to more slots.
  *
- * *This endpoint supports the `X-Audit-Log-Reason` header.*
+ * > **NOTE**
+ * >
+ * > This endpoint supports the `X-Audit-Log-Reason` header.
  *
- * *Lottie stickers can only be uploaded on guilds that have either the `VERIFIED` and/or the `PARTNERED` [guild feature](https://discord.com/developers/docs/resources/guild#guild-object-guild-features).*
+ * > **WARNING**
+ * >
+ * > Lottie stickers can only be uploaded on guilds that have either the `VERIFIED` and/or the `PARTNERED` guild feature.
  *
- * https://discord.com/developers/docs/resources/sticker#create-guild-sticker
+ * > **WARNING**
+ * >
+ * > Uploaded stickers are constrained to 5 seconds in length for animated stickers, and 320 x 320 pixels.
  */
 export const createGuildSticker: Fetcher<
   typeof createGuildStickerSchema,

@@ -8,9 +8,11 @@ export const getGuildStickerSchema = z.object({
 });
 
 /**
- * Returns a sticker object for the given guild and sticker IDs. Includes the `user` field if the bot has the `MANAGE_EMOJIS_AND_STICKERS` permission.
+ * ### [Get Guild Sticker](https://discord.com/developers/docs/resources/sticker#get-guild-sticker)
  *
- * https://discord.com/developers/docs/resources/sticker#get-guild-sticker
+ * **GET** `/guilds/:guild/stickers/:sticker`
+ *
+ * Returns a {@link Sticker | sticker object} for the given guild and sticker IDs. Includes the `user` field if the bot has the `MANAGE_GUILD_EXPRESSIONS` permission.
  */
 export const getGuildSticker: Fetcher<
   typeof getGuildStickerSchema,

@@ -5,22 +5,22 @@ import {
   mockRequest
 } from "../../../scripts/test-utils";
 import {
-  listNitroStickerPacksProcedure,
-  listNitroStickerPacksQuery,
-  nitroStickerPacksSchema
-} from "../listNitroStickerPacks";
+  listStickerPacksProcedure,
+  listStickerPacksQuery,
+  stickerPacksSchema
+} from "../listStickerPacks";
 
-describe(`listNitroStickerPacks`, () => {
-  const expected = mockRequest.get(`/sticker-packs`, nitroStickerPacksSchema);
+describe(`listStickerPacks`, () => {
+  const expected = mockRequest.get(`/sticker-packs`, stickerPacksSchema);
 
   it(`is tRPC compatible`, async () => {
     await expect(
-      runProcedure(listNitroStickerPacksProcedure)()
+      runProcedure(listStickerPacksProcedure)()
     ).resolves.toStrictEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
-    const { result } = runQuery(listNitroStickerPacksQuery);
+    const { result } = runQuery(listStickerPacksQuery);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toStrictEqual(expected);
   });

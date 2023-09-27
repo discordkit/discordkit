@@ -7,27 +7,27 @@ export const stickerSchema = z.object({
   /** id of the sticker */
   id: z.string(),
   /** for standard stickers, id of the pack the sticker is from */
-  packId: z.string().optional(),
+  packId: z.string().nullable(),
   /** name of the sticker */
   name: z.string(),
   /** description of the sticker */
   description: z.string().optional(),
   /** autocomplete/suggestion tags for the sticker (max 200 characters) */
-  tags: z.string(),
+  tags: z.string().max(200),
   /** @deprecated previously the sticker asset hash, now an empty string */
-  asset: z.string(),
+  asset: z.string().nullable(),
   /** type of sticker */
   type: stickerTypeSchema,
   /** type of sticker format */
   formatType: stickerFormatTypeSchema,
   /** whether this guild sticker can be used, may be false due to loss of Server Boosts */
-  available: z.boolean().optional(),
+  available: z.boolean().nullable(),
   /** id of the guild that owns this sticker */
-  guildId: z.string().optional(),
+  guildId: z.string().nullable(),
   /** the user that uploaded the guild sticker */
-  user: userSchema.optional(),
+  user: userSchema.nullable(),
   /** the standard sticker's sort order within its pack */
-  sortValue: z.number().optional()
+  sortValue: z.number().int().nullable()
 });
 
 export type Sticker = z.infer<typeof stickerSchema>;

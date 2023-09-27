@@ -7,9 +7,15 @@ export const deleteGuildStickerSchema = z.object({
 });
 
 /**
- * Delete the given sticker. Requires the `MANAGE_EMOJIS_AND_STICKERS` permission. Returns `204 No Content` on success.
+ * ### [Delete Guild Sticker](https://discord.com/developers/docs/resources/sticker#delete-guild-sticker)
  *
- * *This endpoint supports the `X-Audit-Log-Reason` header.*
+ * **DELETE** `/guilds/:guild/stickers/:sticker`
+ *
+ * Delete the given sticker. Requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns `204 No Content` on success. Fires a Guild Stickers Update Gateway event.
+ *
+ * > **NOTE**
+ * >
+ * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const deleteGuildSticker: Fetcher<
   typeof deleteGuildStickerSchema

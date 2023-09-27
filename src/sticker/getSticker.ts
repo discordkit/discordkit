@@ -7,9 +7,11 @@ export const getStickerSchema = z.object({
 });
 
 /**
- * Returns a sticker object for the given sticker ID.
+ * ### [Get Sticker](https://discord.com/developers/docs/resources/sticker#get-sticker)
  *
- * https://discord.com/developers/docs/resources/sticker#get-sticker
+ * **GET** `/stickers/:sticker`
+ *
+ * Returns a {@link Sticker | sticker object} for the given sticker ID.
  */
 export const getSticker: Fetcher<typeof getStickerSchema, Sticker> = async ({
   sticker

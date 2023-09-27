@@ -18,11 +18,19 @@ export const modifyGuildStickerSchema = z.object({
 });
 
 /**
- * Modify the given sticker. Requires the `MANAGE_EMOJIS_AND_STICKERS` permission. Returns the updated sticker object on success.
+ * ### [Modify Guild Sticker](https://discord.com/developers/docs/resources/sticker#modify-guild-sticker)
  *
- * *This endpoint supports the `X-Audit-Log-Reason` header.*
+ * **PATCH** `/guilds/:guild/stickers/:sticker`
  *
- * https://discord.com/developers/docs/resources/sticker#modify-guild-sticker
+ * Modify the given sticker. Requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns the updated {@link Sticker | sticker object} on success. Fires a Guild Stickers Update Gateway event.
+ *
+ * > **NOTE**
+ * >
+ * > All parameters to this endpoint are optional.
+ *
+ * > **NOTE**
+ * >
+ * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const modifyGuildSticker: Fetcher<
   typeof modifyGuildStickerSchema,
