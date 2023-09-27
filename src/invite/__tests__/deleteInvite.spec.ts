@@ -10,15 +10,16 @@ import {
   deleteInviteProcedure,
   deleteInviteSchema
 } from "../deleteInvite";
+import { inviteSchema } from "../types/Invite";
 
 describe(`deleteInvite`, () => {
-  mockRequest.delete(`/invites/:code`);
+  mockRequest.delete(`/invites/:code`, inviteSchema);
   const config = generateMock(deleteInviteSchema);
 
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(deleteInviteProcedure)(config)
-    ).resolves.not.toThrow();
+    ).resolves.toBeDefined();
   });
 
   it(`is react-query compatible`, async () => {

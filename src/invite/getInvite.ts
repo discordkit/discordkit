@@ -18,9 +18,11 @@ export const getInviteSchema = z.object({
 });
 
 /**
- * Returns an invite object for the given code.
+ * ### [Get Invite](https://discord.com/developers/docs/resources/invite#get-invite)
  *
- * https://discord.com/developers/docs/resources/invite#get-invite
+ * **GET** `/invites/:code`
+ *
+ * Returns an {@link Invite | invite object} for the given code.
  */
 export const getInvite: Fetcher<typeof getInviteSchema, Invite> = async ({
   code,
