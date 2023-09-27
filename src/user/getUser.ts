@@ -7,9 +7,11 @@ export const getUserSchema = z.object({
 });
 
 /**
- * Returns a user object for a given user ID.
+ * ### [Get User](https://discord.com/developers/docs/resources/user#get-user)
  *
- * https://discord.com/developers/docs/resources/user#get-user
+ * **GET** `/users/:user`
+ *
+ * Returns a {@link User | user object} for a given user ID.
  */
 export const getUser: Fetcher<typeof getUserSchema, User> = async ({ user }) =>
   get(`/users/${user}`);

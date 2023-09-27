@@ -13,7 +13,10 @@ import {
 import { guildSchema } from "../../guild/types/Guild";
 
 describe(`getCurrentUserGuilds`, () => {
-  const expected = mockRequest.get(`/users/@me/guilds`, guildSchema.array());
+  const expected = mockRequest.get(
+    `/users/@me/guilds`,
+    guildSchema.partial().array().max(200)
+  );
   const config = generateMock(getCurrentUserGuildsSchema);
 
   it(`is tRPC compatible`, async () => {

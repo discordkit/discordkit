@@ -7,6 +7,7 @@ export * from "./ApplicationCommandPermissions";
 export * from "./ApplicationCommandPermissionType";
 export * from "./ApplicationCommandType";
 export * from "./ApplicationFlags";
+export * from "./ApplicationRoleConnection";
 export * from "./ApplicationRoleConnectionMetadata";
 export * from "./ApplicationRoleConnectionMetadataType";
 export * from "./GuildApplicationCommandPermissions";

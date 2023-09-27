@@ -14,9 +14,15 @@ export const modifyCurrentUserSchema = z.object({
 });
 
 /**
- * Modify the requester's user account settings. Returns a user object on success.
+ * ### [Modify Current User](https://discord.com/developers/docs/resources/user#modify-current-user)
  *
- * https://discord.com/developers/docs/resources/user#modify-current-user
+ * **PATCH** `/users/@me`
+ *
+ * Modify the requester's user account settings. Returns a {@link User | user object} on success. Fires a User Update Gateway event.
+ *
+ * > **NOTE**
+ * >
+ * > All parameters to this endpoint are optional.
  */
 export const modifyCurrentUser: Fetcher<
   typeof modifyCurrentUserSchema,

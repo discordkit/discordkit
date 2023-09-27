@@ -1,5 +1,6 @@
 import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
+import { z } from "zod";
 import {
   runProcedure,
   runMutation,
@@ -11,9 +12,13 @@ import {
   createGroupDMSchema
 } from "../createGroupDM";
 import { channelSchema } from "../../channel/types/Channel";
+import { ChannelType } from "../../channel/types/ChannelType";
 
 describe(`createGroupDM`, () => {
-  const expected = mockRequest.post(`/users/@me/channels`, channelSchema);
+  const expected = mockRequest.post(
+    `/users/@me/channels`,
+    channelSchema.extend({ type: z.literal(ChannelType.GROUP_DM) })
+  );
   const config = generateMock(createGroupDMSchema);
 
   it(`is tRPC compatible`, async () => {

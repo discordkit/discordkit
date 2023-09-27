@@ -4,8 +4,6 @@ import { z } from "zod";
 
 /* eslint-disable no-bitwise */
 export enum UserFlags {
-  /** None */
-  None = 0,
   /** Discord Employee */
   STAFF = 1 << 0,
   /** Partnered Server Owner */
@@ -33,7 +31,9 @@ export enum UserFlags {
   /** Discord Certified Moderator */
   CERTIFIED_MODERATOR = 1 << 18,
   /** Bot uses only HTTP interactions and is shown in the online member list */
-  BOT_HTTP_INTERACTIONS = 1 << 19
+  BOT_HTTP_INTERACTIONS = 1 << 19,
+  /** User is an Active Developer */
+  ACTIVE_DEVELOPER = 1 << 22
 }
 
 export const userFlagsSchema = z.nativeEnum(UserFlags);

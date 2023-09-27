@@ -2,10 +2,11 @@
 
 import { z } from "zod";
 
-export enum UserPremiumType {
+export enum PremiumType {
   None = 0,
   NitroClassic = 1,
-  Nitro = 2
+  Nitro = 2,
+  NitroBasic = 3
 }
 
-export const userPremiumTypeSchema = z.nativeEnum(UserPremiumType);
+export const premiumTypeSchema = z.nativeEnum(PremiumType);

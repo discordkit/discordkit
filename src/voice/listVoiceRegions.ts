@@ -2,9 +2,11 @@ import { get, type Fetcher, toProcedure, toQuery } from "../utils";
 import { voiceRegionSchema, type VoiceRegion } from "./types/VoiceRegion";
 
 /**
- * Returns an array of voice region objects that can be used when setting a voice or stage channel's [`rtc_region`](https://discord.com/developers/docs/resources/channel#channel-object-channel-structure).
+ * ### [List Voice Regions](https://discord.com/developers/docs/resources/voice#list-voice-regions)
  *
- * https://discord.com/developers/docs/resources/voice#list-voice-regions
+ * **GET** `/voice/regions`
+ *
+ * Returns an array of {@link VoiceRegion | voice region objects} that can be used when setting a voice or stage channel's `rtcRegion`.
  */
 export const listVoiceRegions: Fetcher<null, VoiceRegion[]> = async () =>
   get(`/voice/regions`);

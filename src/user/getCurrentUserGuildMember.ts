@@ -7,9 +7,11 @@ export const getCurrentUserGuildMemberSchema = z.object({
 });
 
 /**
- * Returns a guild member object for the current user. Requires the `guilds.members.read` OAuth2 scope.
+ * ### [Get Current User Guild Member](https://discord.com/developers/docs/resources/user#get-current-user-guild-member)
  *
- * https://discord.com/developers/docs/resources/user#get-current-user-guild-member
+ * **GET** `/users/@me/guilds/:guild/member`
+ *
+ * Returns a {@link Member | guild member object} for the current user. Requires the `guilds.members.read` OAuth2 scope.
  */
 export const getCurrentUserGuildMember: Fetcher<
   typeof getCurrentUserGuildMemberSchema,

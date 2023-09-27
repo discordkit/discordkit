@@ -6,9 +6,11 @@ export const leaveGuildSchema = z.object({
 });
 
 /**
- * Leave a guild. Returns a `204 empty` response on success.
+ * ### [Leave Guild](https://discord.com/developers/docs/resources/user#leave-guild)
  *
- * https://discord.com/developers/docs/resources/user#leave-guild
+ * **DELETE** `/users/@me/guilds/:guild`
+ *
+ * Leave a guild. Returns a `204 empty` response on success. Fires a Guild Delete Gateway event and a Guild Member Remove Gateway event.
  */
 export const leaveGuild: Fetcher<typeof leaveGuildSchema> = async ({ guild }) =>
   remove(`/users/@me/guilds/${guild}`);

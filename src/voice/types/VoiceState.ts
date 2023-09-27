@@ -6,15 +6,15 @@ import { memberSchema } from "../../guild/types/Member";
 
 export const voiceStateSchema = z.object({
   /** the guild id this voice state is for */
-  guildId: z.string().optional(),
+  guildId: z.string().min(1).nullable(),
   /** the channel id this user is connected to */
-  channelId: z.string().optional(),
+  channelId: z.string().min(1).optional(),
   /** the user id this voice state is for */
-  userId: z.string(),
+  userId: z.string().min(1),
   /** guild member object	the guild member this voice state is for */
-  member: memberSchema.optional(),
+  member: memberSchema.nullable(),
   /** the session id for this voice state */
-  sessionId: z.string(),
+  sessionId: z.string().min(1),
   /** whether this user is deafened by the server */
   deaf: z.boolean(),
   /** whether this user is muted by the server */
@@ -24,13 +24,13 @@ export const voiceStateSchema = z.object({
   /** whether this user is locally muted */
   selfMute: z.boolean(),
   /** whether this user is streaming using "Go Live" */
-  selfStream: z.boolean().optional(),
+  selfStream: z.boolean().nullable(),
   /** whether this user's camera is enabled */
   selfVideo: z.boolean(),
   /** whether this user is muted by the current user */
   suppress: z.boolean(),
   /** the time at which the user requested to speak */
-  requestToSpeakTimestamp: z.number().optional()
+  requestToSpeakTimestamp: z.string().optional()
 });
 
 export type VoiceState = z.infer<typeof voiceStateSchema>;
