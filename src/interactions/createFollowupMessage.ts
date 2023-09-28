@@ -1,11 +1,11 @@
 import { z } from "zod";
-import { post, buildURL, type Fetcher, toProcedure } from "../utils";
-import { messageFlagSchema } from "../channel/types/MessageFlag";
-import { embedSchema } from "../channel/types/Embed";
-import { allowedMentionSchema } from "../channel/types/AllowedMention";
-import { attachmentSchema } from "../channel/types/Attachment";
-import { EmbedType } from "../channel/types/EmbedType";
-import { messageComponentSchema } from "../channel/types/MessageComponent";
+import { post, buildURL, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { messageFlagSchema } from "#/channel/types/MessageFlag.ts";
+import { embedSchema } from "#/channel/types/Embed.ts";
+import { allowedMentionSchema } from "#/channel/types/AllowedMention.ts";
+import { attachmentSchema } from "#/channel/types/Attachment.ts";
+import { EmbedType } from "#/channel/types/EmbedType.ts";
+import { messageComponentSchema } from "#/channel/types/MessageComponent.ts";
 
 export const createFollowupMessageSchema = z.object({
   application: z.string().min(1),

@@ -1,5 +1,5 @@
-import { isNonNullable } from "./isNonNullable";
-import { toSnakeCase } from "./toSnakeCase";
+import { isNonNullable } from "./isNonNullable.ts";
+import { toSnakeCase } from "./toSnakeCase.ts";
 
 export type RequestParams = Partial<
   Record<

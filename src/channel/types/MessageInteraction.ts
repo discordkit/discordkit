@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { interactionTypeSchema } from "../../interactions/types/InteractionType";
-import { userSchema } from "../../user/types/User";
-import { memberSchema } from "../../guild/types/Member";
+import { interactionTypeSchema } from "#/interactions/types/InteractionType.ts";
+import { userSchema } from "#/user/types/User.ts";
+import { memberSchema } from "#/guild/types/Member.ts";
 
 export const messageInteractionSchema = z.object({
   /** id of the interaction */

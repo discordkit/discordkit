@@ -1,11 +1,11 @@
 import { z } from "zod";
+import { channelTypeSchema } from "#/channel/types/ChannelType.ts";
 import {
   ApplicationCommandOptionType,
   applicationCommandOptionTypeSchema
-} from "./ApplicationCommandOptionType";
-import { localesSchema } from "./Locales";
-import { applicationCommandOptionChoiceSchema } from "./ApplicationCommandOptionChoice";
-import { channelTypeSchema } from "../../channel/types/ChannelType";
+} from "./ApplicationCommandOptionType.ts";
+import { localesSchema } from "./Locales.ts";
+import { applicationCommandOptionChoiceSchema } from "./ApplicationCommandOptionChoice.ts";
 
 const applicationCommandOptionBase = z.object({
   /** Type of option */

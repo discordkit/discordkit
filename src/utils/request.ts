@@ -1,6 +1,6 @@
-import { toCamelKeys } from "./toCamelKeys";
-import { toSnakeKeys } from "./toSnakeKeys";
-import { discord } from "../DiscordSession";
+import { discord } from "#/DiscordSession.ts";
+import { toCamelKeys } from "./toCamelKeys.ts";
+import { toSnakeKeys } from "./toSnakeKeys.ts";
 
 export type RequestBody = object | null | undefined;
 

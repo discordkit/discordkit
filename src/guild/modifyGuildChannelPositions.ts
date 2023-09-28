@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { patch, type Fetcher, toProcedure } from "../utils";
+import { patch, type Fetcher, toProcedure } from "#/utils/index.ts";
 
 export const modifyGuildChannelPositionsSchema = z.object({
   guild: z.string().min(1),

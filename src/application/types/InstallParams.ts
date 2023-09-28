@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { scopesSchema } from "./Scopes";
+import { scopesSchema } from "./Scopes.ts";
 
 // https://discord.com/developers/docs/resources/application#install-params-object-install-params-structure
 

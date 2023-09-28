@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { userSchema } from "../../user/types/User";
+import { userSchema } from "#/user/types/User.ts";
 
 export const integrationApplicationSchema = z.object({
   /** the id of the app */

@@ -1,7 +1,7 @@
-export * from "./createGuildEmoji";
-export * from "./deleteGuildEmoji";
-export * from "./getGuildEmoji";
-export * from "./listGuildEmojis";
-export * from "./modifyGuildEmoji";
+export * from "./createGuildEmoji.ts";
+export * from "./deleteGuildEmoji.ts";
+export * from "./getGuildEmoji.ts";
+export * from "./listGuildEmojis.ts";
+export * from "./modifyGuildEmoji.ts";
 
-export * from "./types";
+export * from "./types/index.ts";

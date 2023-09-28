@@ -1,5 +1,5 @@
-import { get, type Fetcher, toProcedure, toQuery } from "../utils";
-import { voiceRegionSchema, type VoiceRegion } from "./types/VoiceRegion";
+import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import { voiceRegionSchema, type VoiceRegion } from "./types/VoiceRegion.ts";
 
 /**
  * ### [List Voice Regions](https://discord.com/developers/docs/resources/voice#list-voice-regions)

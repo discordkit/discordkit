@@ -1,18 +1,18 @@
 import { z } from "zod";
-import { stickerSchema } from "../../sticker/types/Sticker";
-import { applicationSchema } from "../../application/types/Application";
-import { userSchema } from "../../user/types/User";
-import { reactionSchema } from "./Reaction";
-import { channelSchema } from "./Channel";
-import { messageActivitySchema } from "./MessageActivity";
-import { channelMentionSchema } from "./ChannelMention";
-import { embedSchema } from "./Embed";
-import { messageReferenceSchema } from "./MessageReference";
-import { attachmentSchema } from "./Attachment";
-import { messageTypeSchema } from "./MessageType";
-import { messageInteractionSchema } from "./MessageInteraction";
-import { messageComponentSchema } from "./MessageComponent";
-import { roleSubscriptionDataSchema } from "./RoleSubscriptionData";
+import { stickerSchema } from "#/sticker/types/Sticker.ts";
+import { applicationSchema } from "#/application/types/Application.ts";
+import { userSchema } from "#/user/types/User.ts";
+import { reactionSchema } from "./Reaction.ts";
+import { channelSchema } from "./Channel.ts";
+import { messageActivitySchema } from "./MessageActivity.ts";
+import { channelMentionSchema } from "./ChannelMention.ts";
+import { embedSchema } from "./Embed.ts";
+import { messageReferenceSchema } from "./MessageReference.ts";
+import { attachmentSchema } from "./Attachment.ts";
+import { messageTypeSchema } from "./MessageType.ts";
+import { messageInteractionSchema } from "./MessageInteraction.ts";
+import { messageComponentSchema } from "./MessageComponent.ts";
+import { roleSubscriptionDataSchema } from "./RoleSubscriptionData.ts";
 
 const baseMessageSchema = z.object({
   /** id of the message */

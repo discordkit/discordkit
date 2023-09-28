@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "../utils";
-import { userSchema, type User } from "../user/types/User";
+import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import { userSchema, type User } from "#/user/types/User.ts";
 
 export const getReactionsSchema = z.object({
   channel: z.string().min(1),

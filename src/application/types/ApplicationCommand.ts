@@ -1,10 +1,10 @@
 import { z } from "zod";
-import { localesSchema } from "./Locales";
-import { applicationCommandOptionSchema } from "./ApplicationCommandOption";
+import { localesSchema } from "./Locales.ts";
+import { applicationCommandOptionSchema } from "./ApplicationCommandOption.ts";
 import {
   ApplicationCommandType,
   applicationCommandTypeSchema
-} from "./ApplicationCommandType";
+} from "./ApplicationCommandType.ts";
 
 export const applicationCommandSchema = z.object({
   /** Unique ID of command */

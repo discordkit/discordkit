@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { put, type Fetcher, toProcedure } from "../utils";
+import { put, type Fetcher, toProcedure } from "#/utils/index.ts";
 
 export const createReactionSchema = z.object({
   channel: z.string().min(1),

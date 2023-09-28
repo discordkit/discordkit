@@ -1,5 +1,5 @@
-import { get, type Fetcher, toProcedure, toQuery } from "../utils";
-import { connectionSchema, type Connection } from "./types/Connection";
+import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import { connectionSchema, type Connection } from "./types/Connection.ts";
 
 /**
  * ### [Get User Connections](https://discord.com/developers/docs/resources/user#get-user-connections)

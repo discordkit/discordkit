@@ -1,11 +1,11 @@
 import { z } from "zod";
-import { patch, buildURL, type Fetcher, toProcedure } from "../utils";
-import { messageSchema, type Message } from "../channel/types/Message";
-import { embedSchema } from "../channel/types/Embed";
-import { allowedMentionSchema } from "../channel/types/AllowedMention";
-import { attachmentSchema } from "../channel/types/Attachment";
-import { messageComponentSchema } from "../channel/types/MessageComponent";
-import { EmbedType } from "../channel/types/EmbedType";
+import { patch, buildURL, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { messageSchema, type Message } from "#/channel/types/Message.ts";
+import { embedSchema } from "#/channel/types/Embed.ts";
+import { allowedMentionSchema } from "#/channel/types/AllowedMention.ts";
+import { attachmentSchema } from "#/channel/types/Attachment.ts";
+import { messageComponentSchema } from "#/channel/types/MessageComponent.ts";
+import { EmbedType } from "#/channel/types/EmbedType.ts";
 
 export const editWebhookMessageSchema = z.object({
   webhook: z.string().min(1),

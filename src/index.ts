@@ -1,10 +1,10 @@
-export { discord, DiscordSession } from "./DiscordSession";
+export { endpoint, discord, DiscordSession } from "./DiscordSession.ts";
 
-export * from "./channel";
-export * from "./emoji";
-export * from "./guild";
-export * from "./event";
-export * from "./stage";
-export * from "./sticker";
-export * from "./user";
-export * from "./voice";
+export * from "./channel/index.ts";
+export * from "./emoji/index.ts";
+export * from "./guild/index.ts";
+export * from "./event/index.ts";
+export * from "./stage/index.ts";
+export * from "./sticker/index.ts";
+export * from "./user/index.ts";
+export * from "./voice/index.ts";

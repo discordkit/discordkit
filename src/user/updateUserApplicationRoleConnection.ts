@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { put, type Fetcher, toProcedure } from "../utils";
+import { put, type Fetcher, toProcedure } from "#/utils/index.ts";
 import {
   type ApplicationRoleConnection,
   applicationRoleConnectionSchema
-} from "../application/types/ApplicationRoleConnection";
+} from "#/application/types/ApplicationRoleConnection.ts";
 
 export const updateUserApplicationRoleConnectionSchema = z.object({
   application: z.string().min(1),

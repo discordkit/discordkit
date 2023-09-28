@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "../utils";
+import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
 import {
   archivedThreadsSchema,
   type ArchivedThreads
-} from "./types/ArchivedThreads";
+} from "./types/ArchivedThreads.ts";
 
 export const listJoinedPrivateArchivedThreadsSchema = z.object({
   channel: z.string().min(1),

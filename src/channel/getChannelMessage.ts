@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "../utils";
-import { messageSchema, type Message } from "./types/Message";
+import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import { messageSchema, type Message } from "./types/Message.ts";
 
 export const getChannelMessageSchema = z.object({
   channel: z.string().min(1),

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { remove, buildURL, type Fetcher, toProcedure } from "../utils";
+import { remove, buildURL, type Fetcher, toProcedure } from "#/utils/index.ts";
 
 export const deleteWebhookMessageSchema = z.object({
   webhook: z.string().min(1),

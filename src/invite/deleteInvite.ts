@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { remove, type Fetcher, toProcedure } from "../utils";
-import { inviteSchema, type Invite } from "./types/Invite";
+import { remove, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { inviteSchema, type Invite } from "./types/Invite.ts";
 
 export const deleteInviteSchema = z.object({
   code: z.string().min(1)

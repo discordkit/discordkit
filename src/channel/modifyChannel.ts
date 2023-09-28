@@ -1,17 +1,15 @@
 import { z } from "zod";
-import type { Fetcher } from "../utils";
-import { toProcedure, patch } from "../utils";
-import { type Channel, channelSchema } from "./types/Channel";
-import { autoArchiveDurationSchema } from "./types/AutoArchiveDuration";
-import { channelTypeSchema } from "./types/ChannelType";
-import { videoQualityModeSchema } from "./types/VideoQualityMode";
-import {
-  defaultReactionSchema,
-  forumLayoutTypeSchema,
-  forumTagSchema,
-  overwriteSchema,
-  sortOrderTypeSchema
-} from "./types";
+import type { Fetcher } from "#/utils/index.ts";
+import { toProcedure, patch } from "#/utils/index.ts";
+import { type Channel, channelSchema } from "./types/Channel.ts";
+import { autoArchiveDurationSchema } from "./types/AutoArchiveDuration.ts";
+import { channelTypeSchema } from "./types/ChannelType.ts";
+import { videoQualityModeSchema } from "./types/VideoQualityMode.ts";
+import { overwriteSchema } from "./types/Overwrite.ts";
+import { forumTagSchema } from "./types/ForumTag.ts";
+import { defaultReactionSchema } from "./types/DefaultReaction.ts";
+import { sortOrderTypeSchema } from "./types/SortOrderType.ts";
+import { forumLayoutTypeSchema } from "./types/ForumLayoutType.ts";
 
 const sharedChannelOptions = z.object({
   /** 1-100 character channel name */

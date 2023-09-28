@@ -1,15 +1,15 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure } from "../utils";
+import { post, type Fetcher, toProcedure } from "#/utils/index.ts";
 import {
   applicationCommandSchema,
   type ApplicationCommand
-} from "./types/ApplicationCommand";
-import { applicationCommandOptionSchema } from "./types/ApplicationCommandOption";
+} from "./types/ApplicationCommand.ts";
+import { applicationCommandOptionSchema } from "./types/ApplicationCommandOption.ts";
 import {
   ApplicationCommandType,
   applicationCommandTypeSchema
-} from "./types/ApplicationCommandType";
-import { localesSchema } from "./types/Locales";
+} from "./types/ApplicationCommandType.ts";
+import { localesSchema } from "./types/Locales.ts";
 
 export const createGlobalApplicationCommandSchema = z.object({
   application: z.string().min(1),

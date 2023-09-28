@@ -1,12 +1,12 @@
 import { z } from "zod";
-import { patch, type Fetcher, toProcedure } from "../utils";
+import { patch, type Fetcher, toProcedure } from "#/utils/index.ts";
 import {
   type ModerationRule,
   moderationRuleSchema
-} from "./types/ModerationRule";
-import { moderationEventSchema } from "./types/ModerationEvent";
-import { triggerMetaSchema } from "./types/TriggerMeta";
-import { moderationActionSchema } from "./types/ModerationAction";
+} from "./types/ModerationRule.ts";
+import { moderationEventSchema } from "./types/ModerationEvent.ts";
+import { triggerMetaSchema } from "./types/TriggerMeta.ts";
+import { moderationActionSchema } from "./types/ModerationAction.ts";
 
 export const modifyAutoModerationRuleSchema = z.object({
   guild: z.string().min(1),

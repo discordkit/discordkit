@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "../utils";
-import { inviteSchema, type Invite } from "../invite/types/Invite";
+import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import { inviteSchema, type Invite } from "#/invite/types/Invite.ts";
 
 export const getGuildVanityURLSchema = z.object({
   guild: z.string().min(1)

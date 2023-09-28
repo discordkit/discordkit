@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure } from "../utils";
-import { interactionResponseSchema } from "./types/InteractionResponse";
+import { post, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { interactionResponseSchema } from "./types/InteractionResponse.ts";
 
 export const createInteractionResponseSchema = z.object({
   interaction: z.string().min(1),

@@ -1,7 +1,7 @@
 import type { Config } from "@jest/types";
 import { name } from "./package.json";
 
-const config: Config.InitialOptions = {
+export default {
   displayName: name,
   coverageDirectory: `./coverage/`,
   collectCoverage: true,
@@ -22,6 +22,4 @@ const config: Config.InitialOptions = {
   setupFilesAfterEnv: [`./scripts/setup.ts`],
   testEnvironment: `jsdom`,
   verbose: true
-};
-
-export default config;
+} satisfies Config.InitialOptions;

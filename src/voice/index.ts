@@ -1,3 +1,3 @@
-export * from "./listVoiceRegions";
+export * from "./listVoiceRegions.ts";
 
-export * from "./types";
+export * from "./types/index.ts";

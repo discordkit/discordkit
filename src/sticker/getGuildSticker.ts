@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "../utils";
-import { stickerSchema, type Sticker } from "./types/Sticker";
+import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import { stickerSchema, type Sticker } from "./types/Sticker.ts";
 
 export const getGuildStickerSchema = z.object({
   guild: z.string().min(1),

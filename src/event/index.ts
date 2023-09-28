@@ -1,8 +1,8 @@
-export * from "./createGuildScheduledEvent";
-export * from "./deleteGuildScheduledEvent";
-export * from "./getGuildScheduledEvent";
-export * from "./getGuildScheduledEventUsers";
-export * from "./listScheduledEventsForGuild";
-export * from "./modifyGuildScheduledEvent";
+export * from "./createGuildScheduledEvent.ts";
+export * from "./deleteGuildScheduledEvent.ts";
+export * from "./getGuildScheduledEvent.ts";
+export * from "./getGuildScheduledEventUsers.ts";
+export * from "./listScheduledEventsForGuild.ts";
+export * from "./modifyGuildScheduledEvent.ts";
 
-export * from "./types";
+export * from "./types/index.ts";

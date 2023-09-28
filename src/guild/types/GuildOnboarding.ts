@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { onboardingPromptSchema } from "./OnboardingPrompt";
-import { onboardingModeSchema } from "./OnboardingMode";
+import { onboardingPromptSchema } from "./OnboardingPrompt.ts";
+import { onboardingModeSchema } from "./OnboardingMode.ts";
 
 export const guildOnboardingSchema = z.object({
   /** ID of the guild this onboarding is part of */

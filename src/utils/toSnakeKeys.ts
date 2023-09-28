@@ -1,6 +1,6 @@
 import type { SnakeCasedPropertiesDeep } from "type-fest";
-import { isObject } from "./isObject";
-import { toSnakeCase } from "./toSnakeCase";
+import { isObject } from "./isObject.ts";
+import { toSnakeCase } from "./toSnakeCase.ts";
 
 export const toSnakeKeys = <T extends object>(
   o: T

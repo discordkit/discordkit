@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "../utils";
-import { stageSchema, type Stage } from "./types/Stage";
+import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import { stageSchema, type Stage } from "./types/Stage.ts";
 
 export const getStageInstanceSchema = z.object({
   channel: z.string().min(1)

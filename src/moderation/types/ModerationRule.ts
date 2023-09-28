@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { moderationActionSchema } from "./ModerationAction";
-import { moderationEventSchema } from "./ModerationEvent";
-import { moderationTriggerTypeSchema } from "./ModerationTriggerType";
-import { triggerMetaSchema } from "./TriggerMeta";
+import { moderationActionSchema } from "./ModerationAction.ts";
+import { moderationEventSchema } from "./ModerationEvent.ts";
+import { moderationTriggerTypeSchema } from "./ModerationTriggerType.ts";
+import { triggerMetaSchema } from "./TriggerMeta.ts";
 
 export const moderationRuleSchema = z.object({
   /** the id of this rule */

@@ -1,7 +1,7 @@
-import type { RequestParams } from "./addParams";
-import { buildURL } from "./buildURL";
-import type { RequestBody } from "./request";
-import { request } from "./request";
+import type { RequestParams } from "./addParams.ts";
+import { buildURL } from "./buildURL.ts";
+import type { RequestBody } from "./request.ts";
+import { request } from "./request.ts";
 
 export const get = async <T>(url: string, params?: RequestParams): Promise<T> =>
   request(buildURL(url, params));

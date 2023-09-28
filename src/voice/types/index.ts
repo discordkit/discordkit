@@ -1,2 +1,2 @@
-export * from "./VoiceRegion";
-export * from "./VoiceState";
+export * from "./VoiceRegion.ts";
+export * from "./VoiceState.ts";

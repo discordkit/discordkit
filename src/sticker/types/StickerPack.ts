@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { stickerSchema } from "./Sticker";
+import { stickerSchema } from "./Sticker.ts";
 
 export const stickerPackSchema = z.object({
   /** id of the sticker pack */

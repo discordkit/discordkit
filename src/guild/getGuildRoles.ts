@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "../utils";
-import { roleSchema, type Role } from "./types/Role";
+import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import { roleSchema, type Role } from "./types/Role.ts";
 
 export const getGuildRolesSchema = z.object({
   guild: z.string().min(1)

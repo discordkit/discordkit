@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure } from "../utils";
-import { channelSchema, type Channel } from "./types/Channel";
-import { autoArchiveDurationSchema } from "./types/AutoArchiveDuration";
+import { post, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { channelSchema, type Channel } from "./types/Channel.ts";
+import { autoArchiveDurationSchema } from "./types/AutoArchiveDuration.ts";
 
 export const startThreadFromMessageSchema = z.object({
   channel: z.string().min(1),

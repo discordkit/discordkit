@@ -1,11 +1,11 @@
 import { z } from "zod";
-import { activityButtonSchema } from "./ActivityButton";
-import { activityFlagsSchema } from "./ActivityFlags";
-import { activitySecretsSchema } from "./ActivitySecrets";
-import { activityAssetsSchema } from "./ActivityAssets";
-import { activityPartySchema } from "./ActivityParty";
-import { activityEmojiSchema } from "./ActivityEmoji";
-import { activityTimestampsSchema } from "./ActivityTimestamps";
+import { activityButtonSchema } from "./ActivityButton.ts";
+import { activityFlagsSchema } from "./ActivityFlags.ts";
+import { activitySecretsSchema } from "./ActivitySecrets.ts";
+import { activityAssetsSchema } from "./ActivityAssets.ts";
+import { activityPartySchema } from "./ActivityParty.ts";
+import { activityEmojiSchema } from "./ActivityEmoji.ts";
+import { activityTimestampsSchema } from "./ActivityTimestamps.ts";
 
 export const activitySchema = z.object({
   /** the activity's name */

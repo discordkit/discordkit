@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { patch, type Fetcher, toProcedure } from "../utils";
-import { emojiSchema, type Emoji } from "./types/Emoji";
+import { patch, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { emojiSchema, type Emoji } from "./types/Emoji.ts";
 
 export const modifyGuildEmojiSchema = z.object({
   guild: z.string().min(1),

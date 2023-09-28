@@ -1,13 +1,13 @@
 import { z } from "zod";
-import { patch, type Fetcher, toProcedure } from "../utils";
+import { patch, type Fetcher, toProcedure } from "#/utils/index.ts";
 import {
   type ScheduledEvent,
   scheduledEventSchema
-} from "./types/ScheduledEvent";
-import { entityMetadataSchema } from "./types/EntityMetadata";
-import { scheduledEventPrivacyLevelSchema } from "./types/ScheduledEventPrivacyLevel";
-import { scheduledEventEntityTypeSchema } from "./types/ScheduledEventEntityType";
-import { scheduledEventStatusSchema } from "./types/ScheduledEventStatus";
+} from "./types/ScheduledEvent.ts";
+import { entityMetadataSchema } from "./types/EntityMetadata.ts";
+import { scheduledEventPrivacyLevelSchema } from "./types/ScheduledEventPrivacyLevel.ts";
+import { scheduledEventEntityTypeSchema } from "./types/ScheduledEventEntityType.ts";
+import { scheduledEventStatusSchema } from "./types/ScheduledEventStatus.ts";
 
 export const modifyGuildScheduledEventSchema = z.object({
   guild: z.string().min(1),

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure } from "../utils";
+import { post, type Fetcher, toProcedure } from "#/utils/index.ts";
 
 export const triggerTypingIndicatorSchema = z.object({
   channel: z.string().min(1)

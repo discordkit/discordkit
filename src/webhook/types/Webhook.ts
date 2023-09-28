@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { channelSchema } from "../../channel/types/Channel";
-import { guildSchema } from "../../guild/types/Guild";
-import { userSchema } from "../../user/types/User";
-import { webhookTypeSchema } from "./WebhookType";
+import { channelSchema } from "#/channel/types/Channel.ts";
+import { guildSchema } from "#/guild/types/Guild.ts";
+import { userSchema } from "#/user/types/User.ts";
+import { webhookTypeSchema } from "./WebhookType.ts";
 
 export const webhookSchema = z.object({
   /** the id of the webhook */

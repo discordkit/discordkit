@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { channelTypeSchema } from "./ChannelType";
+import { channelTypeSchema } from "./ChannelType.ts";
 
 export const channelMentionSchema = z.object({
   /** id of the channel */

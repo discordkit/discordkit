@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "../utils";
-import { stickerSchema, type Sticker } from "./types/Sticker";
+import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import { stickerSchema, type Sticker } from "./types/Sticker.ts";
 
 export const getStickerSchema = z.object({
   sticker: z.string().min(1)

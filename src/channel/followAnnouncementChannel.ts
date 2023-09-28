@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure } from "../utils";
+import { post, type Fetcher, toProcedure } from "#/utils/index.ts";
 import {
   followedChannelSchema,
   type FollowedChannel
-} from "./types/FollowedChannel";
+} from "./types/FollowedChannel.ts";
 
 export const followAnnouncementChannelSchema = z.object({
   channel: z.string().min(1),

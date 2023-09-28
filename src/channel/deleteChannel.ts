@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { remove, type Fetcher, toProcedure } from "../utils";
-import { type Channel, channelSchema } from "./types/Channel";
+import { remove, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { type Channel, channelSchema } from "./types/Channel.ts";
 
 export const deleteChannelSchema = z.object({
   channel: z.string().min(1)

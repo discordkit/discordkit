@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { applicationCommandPermissionType } from "./ApplicationCommandPermissionType";
+import { applicationCommandPermissionType } from "./ApplicationCommandPermissionType.ts";
 
 export const applicationCommandPermissionsSchema = z.object({
   /** ID of the role, user, or channel. It can also be a permission constant */

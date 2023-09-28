@@ -1,5 +1,5 @@
-import { get, type Fetcher, toProcedure, toQuery } from "../utils";
-import { userSchema, type User } from "./types/User";
+import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import { userSchema, type User } from "./types/User.ts";
 
 /**
  * ### [Get Current User](https://discord.com/developers/docs/resources/user#get-current-user)

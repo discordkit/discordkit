@@ -1,11 +1,11 @@
 import { z } from "zod";
-import { put, type Fetcher, toProcedure } from "../utils";
+import { put, type Fetcher, toProcedure } from "#/utils/index.ts";
 import {
   type GuildOnboarding,
   guildOnboardingSchema
-} from "./types/GuildOnboarding";
-import { onboardingPromptSchema } from "./types/OnboardingPrompt";
-import { onboardingModeSchema } from "./types/OnboardingMode";
+} from "./types/GuildOnboarding.ts";
+import { onboardingPromptSchema } from "./types/OnboardingPrompt.ts";
+import { onboardingModeSchema } from "./types/OnboardingMode.ts";
 
 export const modifyGuildOnboardingSchema = z.object({
   guild: z.string().min(1),

@@ -1,14 +1,14 @@
 import { z } from "zod";
-import { patch, buildURL, type Fetcher, toProcedure } from "../utils";
-import { embedSchema } from "../channel/types/Embed";
-import { allowedMentionSchema } from "../channel/types/AllowedMention";
-import { attachmentSchema } from "../channel/types/Attachment";
-import { messageComponentSchema } from "../channel/types/MessageComponent";
-import { EmbedType } from "../channel/types/EmbedType";
+import { patch, buildURL, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { embedSchema } from "#/channel/types/Embed.ts";
+import { allowedMentionSchema } from "#/channel/types/AllowedMention.ts";
+import { attachmentSchema } from "#/channel/types/Attachment.ts";
+import { messageComponentSchema } from "#/channel/types/MessageComponent.ts";
+import { EmbedType } from "#/channel/types/EmbedType.ts";
 import {
   type InteractionResponse,
   interactionResponseSchema
-} from "./types/InteractionResponse";
+} from "./types/InteractionResponse.ts";
 
 export const editOriginalInteractionResponseSchema = z.object({
   application: z.string().min(1),

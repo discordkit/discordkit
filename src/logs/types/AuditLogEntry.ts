@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { auditLogChangeSchema } from "./AuditLogChange";
-import { auditLogEventSchema } from "./AuditLogEvent";
-import { optionalAuditEntryInfoSchema } from "./OptionalAuditEntryInfo";
+import { auditLogChangeSchema } from "./AuditLogChange.ts";
+import { auditLogEventSchema } from "./AuditLogEvent.ts";
+import { optionalAuditEntryInfoSchema } from "./OptionalAuditEntryInfo.ts";
 
 export const auditLogEntrySchema = z.object({
   /** ID of the affected entity (webhook, user, role, etc.) */

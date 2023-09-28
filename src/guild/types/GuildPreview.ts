@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { emojiSchema } from "../../emoji/types/Emoji";
-import { stickerSchema } from "../../sticker/types/Sticker";
-import { guildFeaturesSchema } from "./GuildFeatures";
+import { emojiSchema } from "#/emoji/types/Emoji.ts";
+import { stickerSchema } from "#/sticker/types/Sticker.ts";
+import { guildFeaturesSchema } from "./GuildFeatures.ts";
 
 export const guildPreviewSchema = z.object({
   /** guild id */

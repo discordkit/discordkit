@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "../utils";
+import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
 import {
   type ApplicationRoleConnectionMetadata,
   applicationRoleConnectionMetadataSchema
-} from "./types/ApplicationRoleConnectionMetadata";
+} from "./types/ApplicationRoleConnectionMetadata.ts";
 
 export const getApplicationRoleConnectionMetadataRecordsSchema = z.object({
   application: z.string().min(1)

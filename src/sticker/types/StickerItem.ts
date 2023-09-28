@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { stickerFormatTypeSchema } from "./StickerFormatType";
+import { stickerFormatTypeSchema } from "./StickerFormatType.ts";
 
 export const stickerItemSchema = z.object({
   /** id of the sticker */

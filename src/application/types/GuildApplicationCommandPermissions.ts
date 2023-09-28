@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { applicationCommandPermissionsSchema } from "./ApplicationCommandPermissions";
+import { applicationCommandPermissionsSchema } from "./ApplicationCommandPermissions.ts";
 
 export const guildApplicationCommandPermissionsSchema = z.object({
   /** ID of the command or the application ID */

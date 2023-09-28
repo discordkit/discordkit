@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "../utils";
-import { threadMemberSchema, type ThreadMember } from "./types/ThreadMember";
+import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import { threadMemberSchema, type ThreadMember } from "./types/ThreadMember.ts";
 
 export const getThreadMemberSchema = z.object({
   channel: z.string().min(1),

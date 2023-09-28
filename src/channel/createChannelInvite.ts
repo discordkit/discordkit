@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure } from "../utils";
-import { type Invite, inviteSchema } from "../invite/types/Invite";
-import { inviteTargetSchema } from "../invite/types/InviteTarget";
+import { post, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { type Invite, inviteSchema } from "#/invite/types/Invite.ts";
+import { inviteTargetSchema } from "#/invite/types/InviteTarget.ts";
 
 export const createChannelInviteSchema = z.object({
   channel: z.string().min(1),

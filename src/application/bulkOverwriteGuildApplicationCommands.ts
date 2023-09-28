@@ -1,12 +1,15 @@
 import { z } from "zod";
-import { put, type Fetcher, toProcedure } from "../utils";
+import { put, type Fetcher, toProcedure } from "#/utils/index.ts";
 import {
   type ApplicationCommand,
   applicationCommandSchema
-} from "./types/ApplicationCommand";
-import { localesSchema } from "./types/Locales";
-import { applicationCommandOptionSchema } from "./types/ApplicationCommandOption";
-import { ApplicationCommandType, applicationCommandTypeSchema } from "./types";
+} from "./types/ApplicationCommand.ts";
+import { localesSchema } from "./types/Locales.ts";
+import { applicationCommandOptionSchema } from "./types/ApplicationCommandOption.ts";
+import {
+  ApplicationCommandType,
+  applicationCommandTypeSchema
+} from "./types/ApplicationCommandType.ts";
 
 export const bulkOverwriteGuildApplicationCommandsSchema = z.object({
   application: z.string().min(1),

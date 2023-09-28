@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "../utils";
-import { banSchema, type Ban } from "./types/Ban";
+import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import { banSchema, type Ban } from "./types/Ban.ts";
 
 export const getGuildBanSchema = z.object({
   guild: z.string().min(1),

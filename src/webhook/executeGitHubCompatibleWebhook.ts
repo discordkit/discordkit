@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { post, buildURL, type Fetcher, toProcedure } from "../utils";
+import { post, buildURL, type Fetcher, toProcedure } from "#/utils/index.ts";
 
 export const executeGitHubCompatibleWebhookSchema = z.object({
   webhook: z.string().min(1),

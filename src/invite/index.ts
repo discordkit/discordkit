@@ -1,4 +1,4 @@
-export * from "./deleteInvite";
-export * from "./getInvite";
+export * from "./deleteInvite.ts";
+export * from "./getInvite.ts";
 
-export * from "./types";
+export * from "./types/index.ts";
