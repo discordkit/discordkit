@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { userSchema } from "../../user/types/User";
-import { scheduledEventEntityTypeSchema } from "./ScheduledEventEntityType";
-import { scheduledEventPrivacyLevelSchema } from "./ScheduledEventPrivacyLevel";
-import { scheduledEventStatusSchema } from "./ScheduledEventStatus";
-import { entityMetadataSchema } from "./EntityMetadata";
+import { userSchema } from "#/user/types/User.ts";
+import { scheduledEventEntityTypeSchema } from "./ScheduledEventEntityType.ts";
+import { scheduledEventPrivacyLevelSchema } from "./ScheduledEventPrivacyLevel.ts";
+import { scheduledEventStatusSchema } from "./ScheduledEventStatus.ts";
+import { entityMetadataSchema } from "./EntityMetadata.ts";
 
 export const scheduledEventSchema = z.object({
   /** the id of the scheduled event */

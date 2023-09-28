@@ -1,6 +1,6 @@
 import type { CamelCasedPropertiesDeep } from "type-fest";
-import { isObject } from "./isObject";
-import { toCamelCase } from "./toCamelCase";
+import { isObject } from "./isObject.ts";
+import { toCamelCase } from "./toCamelCase.ts";
 
 export const toCamelKeys = <T extends object>(
   o: T

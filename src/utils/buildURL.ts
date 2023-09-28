@@ -1,6 +1,6 @@
-import type { RequestParams } from "./addParams";
-import { addParams } from "./addParams";
-import { discord } from "../DiscordSession";
+import { discord } from "#/DiscordSession.ts";
+import type { RequestParams } from "./addParams.ts";
+import { addParams } from "./addParams.ts";
 
 export const buildURL = <P extends RequestParams>(
   resource: string,

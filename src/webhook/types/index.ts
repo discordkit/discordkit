@@ -1,2 +1,2 @@
-export * from "./Webhook";
-export * from "./WebhookType";
+export * from "./Webhook.ts";
+export * from "./WebhookType.ts";

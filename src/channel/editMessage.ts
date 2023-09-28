@@ -1,12 +1,10 @@
 import { z } from "zod";
-import { patch, type Fetcher, toProcedure } from "../utils";
-import { type Message, messageSchema } from "./types/Message";
-import {
-  allowedMentionSchema,
-  attachmentSchema,
-  embedSchema,
-  messageComponentSchema
-} from "./types";
+import { patch, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { type Message, messageSchema } from "./types/Message.ts";
+import { embedSchema } from "./types/Embed.ts";
+import { allowedMentionSchema } from "./types/AllowedMention.ts";
+import { messageComponentSchema } from "./types/MessageComponent.ts";
+import { attachmentSchema } from "./types/Attachment.ts";
 
 export const editMessageSchema = z.object({
   channel: z.string().min(1),

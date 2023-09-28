@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { guildSchema } from "../../guild/types/Guild";
-import { userSchema } from "../../user/types/User";
+import { guildSchema } from "#/guild/types/Guild.ts";
+import { userSchema } from "#/user/types/User.ts";
 
 export const guildTemplateSchema = z.object({
   /** the template code (unique ID) */

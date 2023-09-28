@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { patch, type Fetcher, toProcedure } from "../utils";
-import { type Stage, stageSchema } from "./types/Stage";
-import { stagePrivacyLevelSchema } from "./types/StagePrivacyLevel";
+import { patch, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { type Stage, stageSchema } from "./types/Stage.ts";
+import { stagePrivacyLevelSchema } from "./types/StagePrivacyLevel.ts";
 
 export const modifyStageInstanceSchema = z.object({
   channel: z.string().min(1),

@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { memberSchema } from "../../guild/types/Member";
-import { userSchema } from "../../user/types/User";
+import { memberSchema } from "#/guild/types/Member.ts";
+import { userSchema } from "#/user/types/User.ts";
 
 export const scheduledEventUserSchema = z.object({
   /** the scheduled event id which the user subscribed to */

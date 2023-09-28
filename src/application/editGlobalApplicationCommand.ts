@@ -1,11 +1,11 @@
 import { z } from "zod";
-import { patch, type Fetcher, toProcedure } from "../utils";
+import { patch, type Fetcher, toProcedure } from "#/utils/index.ts";
 import {
   applicationCommandSchema,
   type ApplicationCommand
-} from "./types/ApplicationCommand";
-import { applicationCommandOptionSchema } from "./types/ApplicationCommandOption";
-import { localesSchema } from "./types/Locales";
+} from "./types/ApplicationCommand.ts";
+import { applicationCommandOptionSchema } from "./types/ApplicationCommandOption.ts";
+import { localesSchema } from "./types/Locales.ts";
 
 export const editGlobalApplicationCommandSchema = z.object({
   application: z.string().min(1),

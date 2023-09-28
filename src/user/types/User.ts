@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { userFlagsSchema } from "./UserFlags";
-import { premiumTypeSchema } from "./PremiumType";
-import { localesSchema } from "../../application/types/Locales";
+import { localesSchema } from "#/application/types/Locales.ts";
+import { userFlagsSchema } from "./UserFlags.ts";
+import { premiumTypeSchema } from "./PremiumType.ts";
 
 // https://discord.com/developers/docs/resources/user#user-object-user-structure
 export const userSchema = z.object({

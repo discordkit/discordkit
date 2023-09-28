@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { userSchema } from "../../user/types/User";
-import { teamSchema } from "./Team";
-import { installParamsSchema } from "./InstallParams";
-import { applicationFlagsSchema } from "./ApplicationFlags";
+import { userSchema } from "#/user/types/User.ts";
+import { teamSchema } from "./Team.ts";
+import { installParamsSchema } from "./InstallParams.ts";
+import { applicationFlagsSchema } from "./ApplicationFlags.ts";
 
 // https://discord.com/developers/docs/resources/application#application-object-application-structure
 

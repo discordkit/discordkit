@@ -1,6 +1,6 @@
-export * from "./createStageInstance";
-export * from "./deleteStageInstance";
-export * from "./getStageInstance";
-export * from "./modifyStageInstance";
+export * from "./createStageInstance.ts";
+export * from "./deleteStageInstance.ts";
+export * from "./getStageInstance.ts";
+export * from "./modifyStageInstance.ts";
 
-export * from "./types";
+export * from "./types/index.ts";

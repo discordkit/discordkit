@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "../utils";
-import { stickerPackSchema } from "./types/StickerPack";
+import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import { stickerPackSchema } from "./types/StickerPack.ts";
 
 export const stickerPacksSchema = z.object({
   stickerPacks: stickerPackSchema.array()

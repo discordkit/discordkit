@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { userSchema } from "../../user/types/User";
-import { integrationApplicationSchema } from "./IntegrationApplication";
-import { integrationAccountSchema } from "./IntegrationAccount";
-import { integrationExpireBehaviorSchema } from "./IntegrationExpireBehavior";
-import { scopesSchema } from "../../application";
+import { userSchema } from "#/user/types/User.ts";
+import { scopesSchema } from "#/application/types/Scopes.ts";
+import { integrationApplicationSchema } from "./IntegrationApplication.ts";
+import { integrationAccountSchema } from "./IntegrationAccount.ts";
+import { integrationExpireBehaviorSchema } from "./IntegrationExpireBehavior.ts";
 
 export const integrationSchema = z.object({
   /** integration id */

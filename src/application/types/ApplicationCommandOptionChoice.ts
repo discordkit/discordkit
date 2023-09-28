@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { localesSchema } from "./Locales";
+import { localesSchema } from "./Locales.ts";
 
 export const applicationCommandOptionChoiceSchema = z.object({
   /** 1-100 character choice name */

@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { buttonStyleSchema } from "./ButtonStyle";
-import { emojiSchema } from "../../emoji/types/Emoji";
-import { ComponentType } from "./ComponentType";
+import { emojiSchema } from "#/emoji/types/Emoji.ts";
+import { buttonStyleSchema } from "./ButtonStyle.ts";
+import { ComponentType } from "./ComponentType.ts";
 
 export const buttonSchema = z.object({
   /** 2 for a button */

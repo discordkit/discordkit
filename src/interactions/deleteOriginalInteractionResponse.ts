@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { remove, buildURL, type Fetcher, toProcedure } from "../utils";
+import { remove, buildURL, type Fetcher, toProcedure } from "#/utils/index.ts";
 
 export const deleteOriginalInteractionResponseSchema = z.object({
   application: z.string().min(1),

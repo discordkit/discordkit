@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { put, type Fetcher, toProcedure } from "../utils";
+import { put, type Fetcher, toProcedure } from "#/utils/index.ts";
 import {
   type ApplicationCommand,
   applicationCommandSchema
-} from "./types/ApplicationCommand";
+} from "./types/ApplicationCommand.ts";
 
 export const bulkOverwriteGlobalApplicationCommandsSchema = z.object({
   application: z.string().min(1),

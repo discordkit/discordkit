@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { applicationCommandTypeSchema } from "../../application";
-import { resolvedDataSchema } from "./ResolvedData";
-import { applicationCommandInteractionDataOptionSchema } from "./ApplicationCommandInteractionDataOption";
+import { applicationCommandTypeSchema } from "#/application/types/ApplicationCommandType.ts";
+import { resolvedDataSchema } from "./ResolvedData.ts";
+import { applicationCommandInteractionDataOptionSchema } from "./ApplicationCommandInteractionDataOption.ts";
 
 export const interactionDataSchema = z.object({
   /** the ID of the invoked command */

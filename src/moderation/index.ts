@@ -1,7 +1,7 @@
-export * from "./createAutoModerationRule";
-export * from "./deleteAutoModerationRule";
-export * from "./getAutoModerationRule";
-export * from "./listAutoModerationRulesForGuild";
-export * from "./modifyAutoModerationRule";
+export * from "./createAutoModerationRule.ts";
+export * from "./deleteAutoModerationRule.ts";
+export * from "./getAutoModerationRule.ts";
+export * from "./listAutoModerationRulesForGuild.ts";
+export * from "./modifyAutoModerationRule.ts";
 
-export * from "./types";
+export * from "./types/index.ts";

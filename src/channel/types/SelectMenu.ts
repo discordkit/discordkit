@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { ComponentType } from "./ComponentType";
-import { selectOptionSchema } from "./SelectOption";
-import { selectDefaultValueSchema } from "./SelectDefaultValue";
-import { channelTypeSchema } from "./ChannelType";
+import { ComponentType } from "./ComponentType.ts";
+import { selectOptionSchema } from "./SelectOption.ts";
+import { selectDefaultValueSchema } from "./SelectDefaultValue.ts";
+import { channelTypeSchema } from "./ChannelType.ts";
 
 export const selectMenuSchema = z.object({
   /** Type of select menu component (text: 3, user: 5, role: 6, mentionable: 7, channels: 8) */

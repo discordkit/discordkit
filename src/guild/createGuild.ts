@@ -1,11 +1,11 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure } from "../utils";
-import { channelSchema } from "../channel/types/Channel";
-import { verificationLevelSchema } from "./types/VerificationLevel";
-import { defaultMessageNotificationLevelSchema } from "./types/DefaultMessageNotificationLevel";
-import { explicitContentFilterLevelSchema } from "./types/ExplicitContentFilterLevel";
-import { roleSchema } from "./types/Role";
-import { guildSchema, type Guild } from "./types/Guild";
+import { post, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { channelSchema } from "#/channel/types/Channel.ts";
+import { verificationLevelSchema } from "./types/VerificationLevel.ts";
+import { defaultMessageNotificationLevelSchema } from "./types/DefaultMessageNotificationLevel.ts";
+import { explicitContentFilterLevelSchema } from "./types/ExplicitContentFilterLevel.ts";
+import { roleSchema } from "./types/Role.ts";
+import { guildSchema, type Guild } from "./types/Guild.ts";
 
 export const createGuildSchema = z.object({
   body: z.object({

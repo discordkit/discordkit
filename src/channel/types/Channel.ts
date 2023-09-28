@@ -1,15 +1,18 @@
 import { z } from "zod";
-import { userSchema } from "../../user/types/User";
-import { autoArchiveDurationSchema } from "./AutoArchiveDuration";
-import { channelTypeSchema } from "./ChannelType";
-import { overwriteSchema } from "./Overwrite";
-import { threadMetadataSchema } from "./ThreadMetadata";
-import { threadMemberSchema } from "./ThreadMember";
-import { VideoQualityMode, videoQualityModeSchema } from "./VideoQualityMode";
-import { forumTagSchema } from "./ForumTag";
-import { defaultReactionSchema } from "./DefaultReaction";
-import { sortOrderTypeSchema } from "./SortOrderType";
-import { ForumLayoutType, forumLayoutTypeSchema } from "./ForumLayoutType";
+import { userSchema } from "#/user/types/User.ts";
+import { autoArchiveDurationSchema } from "./AutoArchiveDuration.ts";
+import { channelTypeSchema } from "./ChannelType.ts";
+import { overwriteSchema } from "./Overwrite.ts";
+import { threadMetadataSchema } from "./ThreadMetadata.ts";
+import { threadMemberSchema } from "./ThreadMember.ts";
+import {
+  VideoQualityMode,
+  videoQualityModeSchema
+} from "./VideoQualityMode.ts";
+import { forumTagSchema } from "./ForumTag.ts";
+import { defaultReactionSchema } from "./DefaultReaction.ts";
+import { sortOrderTypeSchema } from "./SortOrderType.ts";
+import { ForumLayoutType, forumLayoutTypeSchema } from "./ForumLayoutType.ts";
 
 // https://discord.com/developers/docs/resources/channel#channel-object-channel-structure
 export const channelSchema = z.object({

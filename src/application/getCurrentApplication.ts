@@ -1,5 +1,5 @@
-import { get, type Fetcher, toProcedure, toQuery } from "../utils";
-import { type Application, applicationSchema } from "./types/Application";
+import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import { type Application, applicationSchema } from "./types/Application.ts";
 
 /**
  * ### [Get Current Application](https://discord.com/developers/docs/resources/application#get-current-application)

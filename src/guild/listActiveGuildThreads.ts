@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "../utils";
-import { threadMemberSchema } from "../channel/types/ThreadMember";
-import { channelMentionSchema } from "../channel/types/ChannelMention";
+import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import { threadMemberSchema } from "#/channel/types/ThreadMember.ts";
+import { channelMentionSchema } from "#/channel/types/ChannelMention.ts";
 
 export const listActiveGuildThreadsSchema = z.object({
   guild: z.string().min(1)

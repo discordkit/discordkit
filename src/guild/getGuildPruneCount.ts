@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "../utils";
+import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
 
 export const getGuildPruneCountSchema = z.object({
   guild: z.string().min(1),

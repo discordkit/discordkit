@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { memberSchema } from "../../guild/types/Member";
+import { memberSchema } from "#/guild/types/Member.ts";
 
 export const threadMemberSchema = z.object({
   /** the id of the thread */

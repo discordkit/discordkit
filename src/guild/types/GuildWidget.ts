@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { channelSchema } from "../../channel/types/Channel";
-import { userSchema } from "../../user";
+import { channelSchema } from "#/channel/types/Channel.ts";
+import { userSchema } from "#/user/types/User.ts";
 
 export const guildWidgetSchema = z.object({
   /** guild id */

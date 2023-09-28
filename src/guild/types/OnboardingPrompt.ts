@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { promptOptionSchema } from "./PromptOption";
-import { promptTypeSchema } from "./PromptType";
+import { promptOptionSchema } from "./PromptOption.ts";
+import { promptTypeSchema } from "./PromptType.ts";
 
 export const onboardingPromptSchema = z.object({
   /** ID of the prompt */

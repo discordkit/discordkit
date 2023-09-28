@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { autoArchiveDurationSchema } from "./AutoArchiveDuration";
+import { autoArchiveDurationSchema } from "./AutoArchiveDuration.ts";
 
 export const threadMetadataSchema = z.object({
   /** whether the thread is archived */

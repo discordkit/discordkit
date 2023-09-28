@@ -1,10 +1,10 @@
 import { z } from "zod";
-import { allowedMentionSchema } from "./AllowedMention";
-import { attachmentSchema } from "./Attachment";
-import { embedSchema } from "./Embed";
-import { messageFlagSchema } from "./MessageFlag";
-import { messageReferenceSchema } from "./MessageReference";
-import { messageComponentSchema } from "./MessageComponent";
+import { allowedMentionSchema } from "./AllowedMention.ts";
+import { attachmentSchema } from "./Attachment.ts";
+import { embedSchema } from "./Embed.ts";
+import { messageFlagSchema } from "./MessageFlag.ts";
+import { messageReferenceSchema } from "./MessageReference.ts";
+import { messageComponentSchema } from "./MessageComponent.ts";
 
 export const messageContentSchema = z
   .object({

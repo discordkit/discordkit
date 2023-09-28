@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { ComponentType } from "./ComponentType";
-import { textInputStyleSchema } from "./TextInputStyle";
+import { ComponentType } from "./ComponentType.ts";
+import { textInputStyleSchema } from "./TextInputStyle.ts";
 
 export const textInputSchema = z.object({
   /** 4 for a text input */

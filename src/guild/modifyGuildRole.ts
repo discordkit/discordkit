@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { patch, type Fetcher, toProcedure } from "../utils";
-import { roleSchema, type Role } from "./types/Role";
+import { patch, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { roleSchema, type Role } from "./types/Role.ts";
 
 export const modifyGuildRoleSchema = z.object({
   guild: z.string().min(1),

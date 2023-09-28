@@ -1,13 +1,12 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure } from "../utils";
-import { type Channel, channelSchema } from "./types/Channel";
-import { autoArchiveDurationSchema } from "./types/AutoArchiveDuration";
-import { embedSchema } from "./types/Embed";
-import { allowedMentionSchema } from "./types/AllowedMention";
-import { attachmentSchema } from "./types/Attachment";
-import { messageComponentSchema } from "./types/MessageComponent";
-import type { Message } from "./types";
-import { messageSchema } from "./types";
+import { post, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { type Channel, channelSchema } from "./types/Channel.ts";
+import { autoArchiveDurationSchema } from "./types/AutoArchiveDuration.ts";
+import { embedSchema } from "./types/Embed.ts";
+import { allowedMentionSchema } from "./types/AllowedMention.ts";
+import { attachmentSchema } from "./types/Attachment.ts";
+import { messageComponentSchema } from "./types/MessageComponent.ts";
+import { type Message, messageSchema } from "./types/Message.ts";
 
 export const startThreadInForumOrMediaChannelSchema = z.object({
   channel: z.string().min(1),

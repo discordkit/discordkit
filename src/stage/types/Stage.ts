@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { stagePrivacyLevelSchema } from "./StagePrivacyLevel";
+import { stagePrivacyLevelSchema } from "./StagePrivacyLevel.ts";
 
 export const stageSchema = z.object({
   /** The id of this Stage instance */

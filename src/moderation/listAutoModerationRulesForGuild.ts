@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "../utils";
+import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
 import {
   moderationRuleSchema,
   type ModerationRule
-} from "./types/ModerationRule";
+} from "./types/ModerationRule.ts";
 
 export const listAutoModerationRulesForGuildSchema = z.object({
   guild: z.string().min(1)

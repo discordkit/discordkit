@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "../utils";
+import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
 import {
   type ApplicationCommand,
   applicationCommandSchema
-} from "./types/ApplicationCommand";
+} from "./types/ApplicationCommand.ts";
 
 export const getGuildApplicationCommandSchema = z.object({
   application: z.string().min(1),

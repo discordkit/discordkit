@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "../utils";
-import { webhookSchema, type Webhook } from "./types/Webhook";
+import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import { webhookSchema, type Webhook } from "./types/Webhook.ts";
 
 export const getGuildWebhooksSchema = z.object({
   guild: z.string().min(1)

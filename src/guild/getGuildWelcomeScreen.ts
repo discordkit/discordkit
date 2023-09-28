@@ -1,6 +1,9 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "../utils";
-import { welcomeScreenSchema, type WelcomeScreen } from "./types/WelcomeScreen";
+import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import {
+  welcomeScreenSchema,
+  type WelcomeScreen
+} from "./types/WelcomeScreen.ts";
 
 export const getGuildWelcomeScreenSchema = z.object({
   guild: z.string().min(1)

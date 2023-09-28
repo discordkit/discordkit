@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure } from "../utils";
-import { messageSchema, type Message } from "./types/Message";
+import { post, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { messageSchema, type Message } from "./types/Message.ts";
 
 export const crosspostMessageSchema = z.object({
   channel: z.string().min(1),

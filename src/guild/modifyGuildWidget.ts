@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { patch, type Fetcher, toProcedure } from "../utils";
+import { patch, type Fetcher, toProcedure } from "#/utils/index.ts";
 import {
   guildWidgetSettingsSchema,
   type GuildWidgetSettings
-} from "./types/GuildWidgetSettings";
+} from "./types/GuildWidgetSettings.ts";
 
 export const modifyGuildWidgetSchema = z.object({
   guild: z.string().min(1),

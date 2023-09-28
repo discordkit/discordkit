@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { embedTypeSchema } from "./EmbedType";
+import { embedTypeSchema } from "./EmbedType.ts";
 
 export const embedSchema = z
   .object({

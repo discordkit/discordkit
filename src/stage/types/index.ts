@@ -1,2 +1,2 @@
-export * from "./Stage";
-export * from "./StagePrivacyLevel";
+export * from "./Stage.ts";
+export * from "./StagePrivacyLevel.ts";

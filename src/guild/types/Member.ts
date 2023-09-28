@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { userSchema } from "../../user/types/User";
+import { userSchema } from "#/user/types/User.ts";
 
 export const memberSchema = z.object({
   /** the user this guild member represents */

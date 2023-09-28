@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { roleTagSchema } from "./RoleTag";
+import { roleTagSchema } from "./RoleTag.ts";
 
 export const roleSchema = z.object({
   /** role id */

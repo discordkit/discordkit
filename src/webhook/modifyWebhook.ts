@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { patch, type Fetcher, toProcedure } from "../utils";
-import { webhookSchema, type Webhook } from "./types/Webhook";
+import { patch, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { webhookSchema, type Webhook } from "./types/Webhook.ts";
 
 export const modifyWebhookSchema = z.object({
   webhook: z.string().min(1),

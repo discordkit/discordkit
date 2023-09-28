@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "../utils";
+import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
 import {
   type InteractionResponse,
   interactionResponseSchema
-} from "./types/InteractionResponse";
+} from "./types/InteractionResponse.ts";
 
 export const getOriginalInteractionResponseSchema = z.object({
   application: z.string().min(1),

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { emojiSchema } from "../../emoji";
+import { emojiSchema } from "#/emoji/types/Emoji.ts";
 
 export const promptOptionSchema = z.object({
   /** ID of the prompt option */

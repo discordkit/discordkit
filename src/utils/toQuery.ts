@@ -1,6 +1,6 @@
 import type { QueryFunction } from "@tanstack/react-query";
 import type { z } from "zod";
-import type { Fetcher } from "./types";
+import type { Fetcher } from "./types.ts";
 
 export const toQuery =
   <S extends z.ZodTypeAny | null, R, T extends Fetcher<S, R>>(

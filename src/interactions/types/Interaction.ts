@@ -1,11 +1,11 @@
 import { z } from "zod";
-import { memberSchema } from "../../guild/types/Member";
-import { localesSchema } from "../../application/types/Locales";
-import { channelSchema } from "../../channel/types/Channel";
-import { messageSchema } from "../../channel/types/Message";
-import { userSchema } from "../../user/types/User";
-import { interactionTypeSchema } from "./InteractionType";
-import { interactionDataSchema } from "./InteractionData";
+import { memberSchema } from "#/guild/types/Member.ts";
+import { localesSchema } from "#/application/types/Locales.ts";
+import { channelSchema } from "#/channel/types/Channel.ts";
+import { messageSchema } from "#/channel/types/Message.ts";
+import { userSchema } from "#/user/types/User.ts";
+import { interactionTypeSchema } from "./InteractionType.ts";
+import { interactionDataSchema } from "./InteractionData.ts";
 
 export const interactionSchema = z.object({
   /** ID of the interaction */

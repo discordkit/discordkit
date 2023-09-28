@@ -1,10 +1,10 @@
 import { z } from "zod";
-import { patch, type Fetcher, toProcedure } from "../utils";
+import { patch, type Fetcher, toProcedure } from "#/utils/index.ts";
 import {
   guildApplicationCommandPermissionsSchema,
   type GuildApplicationCommandPermissions
-} from "./types/GuildApplicationCommandPermissions";
-import { applicationCommandPermissionsSchema } from "./types/ApplicationCommandPermissions";
+} from "./types/GuildApplicationCommandPermissions.ts";
+import { applicationCommandPermissionsSchema } from "./types/ApplicationCommandPermissions.ts";
 
 export const editApplicationCommandPermissionsSchema = z.object({
   application: z.string().min(1),

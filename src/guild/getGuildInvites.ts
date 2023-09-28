@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "../utils";
+import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
 import {
   inviteMetadataSchema,
   type InviteMetadata
-} from "../invite/types/InviteMetadata";
+} from "#/invite/types/InviteMetadata.ts";
 
 export const getGuildInvitesSchema = z.object({
   guild: z.string().min(1)

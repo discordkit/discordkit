@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { userSchema } from "../../user/types/User";
-import { clientStatusSchema } from "./ClientStatus";
-import { activitySchema } from "./Activity";
+import { userSchema } from "#/user/types/User.ts";
+import { clientStatusSchema } from "./ClientStatus.ts";
+import { activitySchema } from "./Activity.ts";
 
 export const presenceSchema = z.object({
   /** the user presence is being updated for */

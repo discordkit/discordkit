@@ -1,16 +1,16 @@
 import { z } from "zod";
-import { emojiSchema } from "../../emoji/types/Emoji";
-import { stickerSchema } from "../../sticker/types/Sticker";
-import { roleSchema } from "./Role";
-import { welcomeScreenSchema } from "./WelcomeScreen";
-import { premiumTierSchema } from "./PremiumTier";
-import { guildNSFWLevelSchema } from "./GuildNSFWLevel";
-import { verificationLevelSchema } from "./VerificationLevel";
-import { mfaLevelSchema } from "./MFALevel";
-import { explicitContentFilterLevelSchema } from "./ExplicitContentFilterLevel";
-import { defaultMessageNotificationLevelSchema } from "./DefaultMessageNotificationLevel";
-import { guildFeaturesSchema } from "./GuildFeatures";
-import { localesSchema } from "../../application";
+import { emojiSchema } from "#/emoji/types/Emoji.ts";
+import { stickerSchema } from "#/sticker/types/Sticker.ts";
+import { localesSchema } from "#/application/types/Locales.ts";
+import { roleSchema } from "./Role.ts";
+import { welcomeScreenSchema } from "./WelcomeScreen.ts";
+import { premiumTierSchema } from "./PremiumTier.ts";
+import { guildNSFWLevelSchema } from "./GuildNSFWLevel.ts";
+import { verificationLevelSchema } from "./VerificationLevel.ts";
+import { mfaLevelSchema } from "./MFALevel.ts";
+import { explicitContentFilterLevelSchema } from "./ExplicitContentFilterLevel.ts";
+import { defaultMessageNotificationLevelSchema } from "./DefaultMessageNotificationLevel.ts";
+import { guildFeaturesSchema } from "./GuildFeatures.ts";
 
 export const guildSchema = z.object({
   /** guild id */

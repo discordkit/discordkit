@@ -1,3 +1,3 @@
-export * from "./getGuildAuditLog";
+export * from "./getGuildAuditLog.ts";
 
-export * from "./types";
+export * from "./types/index.ts";

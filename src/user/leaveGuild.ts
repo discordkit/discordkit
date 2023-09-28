@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { remove, type Fetcher, toProcedure } from "../utils";
+import { remove, type Fetcher, toProcedure } from "#/utils/index.ts";
 
 export const leaveGuildSchema = z.object({
   guild: z.string().min(1)
