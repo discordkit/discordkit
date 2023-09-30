@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { put, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { put, type Fetcher, toProcedure, toValidated } from "#/utils/index.ts";
 import { memberSchema, type Member } from "./types/Member.ts";
 
 export const addGuildMemberSchema = z.object({
@@ -41,6 +41,12 @@ export const addGuildMember: Fetcher<
   Member
 > = async ({ guild, user, body }) =>
   put(`/guilds/${guild}/members/${user}`, body);
+
+export const addGuildMemberSafe = toValidated(
+  addGuildMember,
+  addGuildMemberSchema,
+  memberSchema
+);
 
 export const addGuildMemberProcedure = toProcedure(
   `mutation`,

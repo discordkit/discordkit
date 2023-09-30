@@ -8,12 +8,17 @@ import {
 import {
   leaveThread,
   leaveThreadProcedure,
+  leaveThreadSafe,
   leaveThreadSchema
 } from "../leaveThread";
 
 describe(`leaveThread`, () => {
   mockRequest.delete(`/channels/:channel/thread-members/@me`);
   const config = generateMock(leaveThreadSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(leaveThreadSafe(config)).resolves.not.toThrow();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

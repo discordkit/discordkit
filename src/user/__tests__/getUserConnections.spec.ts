@@ -6,12 +6,17 @@ import {
 } from "../../../scripts/test-utils";
 import {
   getUserConnectionsProcedure,
-  getUserConnectionsQuery
+  getUserConnectionsQuery,
+  getUserConnectionsSafe
 } from "../getUserConnections";
 import { connectionSchema } from "../types/Connection";
 
 describe(`getUserConnections`, () => {
   const expected = mockRequest.get(`/users/@me/connections`, connectionSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(getUserConnectionsSafe()).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

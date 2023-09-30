@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { patch, type Fetcher, toProcedure } from "#/utils/index.ts";
+import {
+  patch,
+  type Fetcher,
+  toProcedure,
+  toValidated
+} from "#/utils/index.ts";
 import { userSchema, type User } from "./types/User.ts";
 
 export const modifyCurrentUserSchema = z.object({
@@ -28,6 +33,12 @@ export const modifyCurrentUser: Fetcher<
   typeof modifyCurrentUserSchema,
   User
 > = async ({ body }) => patch(`/users/@me`, body);
+
+export const modifyCurrentUserSafe = toValidated(
+  modifyCurrentUser,
+  modifyCurrentUserSchema,
+  userSchema
+);
 
 export const modifyCurrentUserProcedure = toProcedure(
   `mutation`,

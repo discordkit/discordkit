@@ -8,6 +8,7 @@ import {
 import {
   createGuildEmoji,
   createGuildEmojiProcedure,
+  createGuildEmojiSafe,
   createGuildEmojiSchema
 } from "../createGuildEmoji";
 import { emojiSchema } from "../types/Emoji";
@@ -15,6 +16,10 @@ import { emojiSchema } from "../types/Emoji";
 describe(`createGuildEmoji`, () => {
   const expected = mockRequest.post(`/guilds/:guild/emojis`, emojiSchema);
   const config = generateMock(createGuildEmojiSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(createGuildEmojiSafe(config)).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

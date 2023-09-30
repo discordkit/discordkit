@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { patch, type Fetcher, toProcedure } from "#/utils/index.ts";
+import {
+  patch,
+  type Fetcher,
+  toProcedure,
+  toValidated
+} from "#/utils/index.ts";
 import { type Message, messageSchema } from "./types/Message.ts";
 import { embedSchema } from "./types/Embed.ts";
 import { allowedMentionSchema } from "./types/AllowedMention.ts";
@@ -55,6 +60,12 @@ export const editMessage: Fetcher<typeof editMessageSchema, Message> = async ({
   message,
   body
 }) => patch(`/channels/${channel}/messages/${message}`, body);
+
+export const editMessageSafe = toValidated(
+  editMessage,
+  editMessageSchema,
+  messageSchema
+);
 
 export const editMessageProcedure = toProcedure(
   `mutation`,

@@ -8,7 +8,8 @@ import {
 import {
   getGuildApplicationCommandPermissionsSchema,
   getGuildApplicationCommandPermissionsProcedure,
-  getGuildApplicationCommandPermissionsQuery
+  getGuildApplicationCommandPermissionsQuery,
+  getGuildApplicationCommandPermissionsSafe
 } from "../getGuildApplicationCommandPermissions";
 import { guildApplicationCommandPermissionsSchema } from "../types/GuildApplicationCommandPermissions";
 
@@ -17,18 +18,24 @@ describe(`getGuildApplicationCommandPermissions`, () => {
     `/applications/:application/guilds/:guild/commands/permissions`,
     guildApplicationCommandPermissionsSchema.array()
   );
-  const input = generateMock(getGuildApplicationCommandPermissionsSchema);
+  const config = generateMock(getGuildApplicationCommandPermissionsSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(
+      getGuildApplicationCommandPermissionsSafe(config)
+    ).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(
-      runProcedure(getGuildApplicationCommandPermissionsProcedure)(input)
+      runProcedure(getGuildApplicationCommandPermissionsProcedure)(config)
     ).resolves.toStrictEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runQuery(
       getGuildApplicationCommandPermissionsQuery,
-      input
+      config
     );
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toStrictEqual(expected);

@@ -8,6 +8,7 @@ import {
 import {
   getGuildIntegrationsProcedure,
   getGuildIntegrationsQuery,
+  getGuildIntegrationsSafe,
   getGuildIntegrationsSchema
 } from "../getGuildIntegrations";
 import { integrationSchema } from "../types/Integration";
@@ -18,6 +19,12 @@ describe(`getGuildIntegrations`, () => {
     integrationSchema.array()
   );
   const config = generateMock(getGuildIntegrationsSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(getGuildIntegrationsSafe(config)).resolves.toStrictEqual(
+      expected
+    );
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

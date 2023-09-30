@@ -1,4 +1,10 @@
-import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import {
+  get,
+  type Fetcher,
+  toProcedure,
+  toQuery,
+  toValidated
+} from "#/utils/index.ts";
 import { userSchema, type User } from "./types/User.ts";
 
 /**
@@ -10,6 +16,8 @@ import { userSchema, type User } from "./types/User.ts";
  */
 export const getCurrentUser: Fetcher<null, User> = async () =>
   get(`/users/@me`);
+
+export const getCurrentUserSafe = toValidated(getCurrentUser, null, userSchema);
 
 export const getCurrentUserProcedure = toProcedure(
   `query`,

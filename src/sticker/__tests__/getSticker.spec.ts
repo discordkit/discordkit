@@ -8,6 +8,7 @@ import {
 import {
   getStickerProcedure,
   getStickerQuery,
+  getStickerSafe,
   getStickerSchema
 } from "../getSticker";
 import { stickerSchema } from "../types/Sticker";
@@ -15,6 +16,10 @@ import { stickerSchema } from "../types/Sticker";
 describe(`getSticker`, () => {
   const expected = mockRequest.get(`/stickers/:sticker`, stickerSchema);
   const config = generateMock(getStickerSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(getStickerSafe(config)).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

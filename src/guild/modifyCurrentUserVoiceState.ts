@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { patch, type Fetcher, toProcedure } from "#/utils/index.ts";
+import {
+  patch,
+  type Fetcher,
+  toProcedure,
+  toValidated
+} from "#/utils/index.ts";
 
 export const modifyCurrentUserVoiceStateSchema = z.object({
   guild: z.string().min(1),
@@ -25,6 +30,11 @@ export const modifyCurrentUserVoiceStateSchema = z.object({
 export const modifyCurrentUserVoiceState: Fetcher<
   typeof modifyCurrentUserVoiceStateSchema
 > = async ({ guild, body }) => patch(`/guilds/${guild}/voice-states/@me`, body);
+
+export const modifyCurrentUserVoiceStateSafe = toValidated(
+  modifyCurrentUserVoiceState,
+  modifyCurrentUserVoiceStateSchema
+);
 
 export const modifyCurrentUserVoiceStateProcedure = toProcedure(
   `mutation`,

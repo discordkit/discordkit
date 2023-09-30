@@ -8,12 +8,17 @@ import {
 import {
   editChannelPermissions,
   editChannelPermissionsProcedure,
+  editChannelPermissionsSafe,
   editChannelPermissionsSchema
 } from "../editChannelPermissions";
 
 describe(`editChannelPermissions`, () => {
   mockRequest.put(`/channels/:channel/permissions/:overwrite`);
   const config = generateMock(editChannelPermissionsSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(editChannelPermissionsSafe(config)).resolves.not.toThrow();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

@@ -8,6 +8,7 @@ import {
 import {
   startThreadFromMessage,
   startThreadFromMessageProcedure,
+  startThreadFromMessageSafe,
   startThreadFromMessageSchema
 } from "../startThreadFromMessage";
 import { channelSchema } from "../types/Channel";
@@ -18,6 +19,12 @@ describe(`startThreadFromMessage`, () => {
     channelSchema
   );
   const config = generateMock(startThreadFromMessageSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(startThreadFromMessageSafe(config)).resolves.toStrictEqual(
+      expected
+    );
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

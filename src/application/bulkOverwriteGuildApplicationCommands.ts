@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { put, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { put, type Fetcher, toProcedure, toValidated } from "#/utils/index.ts";
 import {
   type ApplicationCommand,
   applicationCommandSchema
@@ -67,6 +67,12 @@ export const bulkOverwriteGuildApplicationCommands: Fetcher<
   ApplicationCommand[]
 > = async ({ application, guild, body }) =>
   put(`/applications/${application}/guilds/${guild}/commands`, body);
+
+export const bulkOverwriteGuildApplicationCommandsSafe = toValidated(
+  bulkOverwriteGuildApplicationCommands,
+  bulkOverwriteGuildApplicationCommandsSchema,
+  applicationCommandSchema.array()
+);
 
 export const bulkOverwriteGuildApplicationCommandsProcedure = toProcedure(
   `mutation`,

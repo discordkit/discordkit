@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { post, type Fetcher, toProcedure, toValidated } from "#/utils/index.ts";
 import {
   applicationCommandSchema,
   type ApplicationCommand
@@ -61,6 +61,12 @@ export const createGlobalApplicationCommand: Fetcher<
   ApplicationCommand
 > = async ({ application, body }) =>
   post(`/applications/${application}/commands`, body);
+
+export const createGlobalApplicationCommandSafe = toValidated(
+  createGlobalApplicationCommand,
+  createGlobalApplicationCommandSchema,
+  applicationCommandSchema
+);
 
 export const createGlobalApplicationCommandProcedure = toProcedure(
   `mutation`,

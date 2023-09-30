@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import {
+  get,
+  type Fetcher,
+  toProcedure,
+  toQuery,
+  toValidated
+} from "#/utils/index.ts";
 import { threadMemberSchema } from "#/channel/types/ThreadMember.ts";
 import { channelMentionSchema } from "#/channel/types/ChannelMention.ts";
 
@@ -25,6 +31,12 @@ export const listActiveGuildThreads: Fetcher<
   typeof listActiveGuildThreadsSchema,
   z.infer<typeof activeGuildThreadsSchema>
 > = async ({ guild }) => get(`/guilds/${guild}/threads/active`);
+
+export const listActiveGuildThreadsSafe = toValidated(
+  listActiveGuildThreads,
+  listActiveGuildThreadsSchema,
+  activeGuildThreadsSchema
+);
 
 export const listActiveGuildThreadsProcedure = toProcedure(
   `query`,

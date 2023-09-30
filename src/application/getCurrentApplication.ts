@@ -1,4 +1,10 @@
-import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import {
+  get,
+  type Fetcher,
+  toProcedure,
+  toQuery,
+  toValidated
+} from "#/utils/index.ts";
 import { type Application, applicationSchema } from "./types/Application.ts";
 
 /**
@@ -10,6 +16,12 @@ import { type Application, applicationSchema } from "./types/Application.ts";
  */
 export const getCurrentApplication: Fetcher<null, Application> = async () =>
   get(`/applications/@me`);
+
+export const getCurrentApplicationSafe = toValidated(
+  getCurrentApplication,
+  null,
+  applicationSchema
+);
 
 export const getCurrentApplicationProcedure = toProcedure(
   `query`,

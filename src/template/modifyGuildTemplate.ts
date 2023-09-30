@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { patch, type Fetcher, toProcedure } from "#/utils/index.ts";
+import {
+  patch,
+  type Fetcher,
+  toProcedure,
+  toValidated
+} from "#/utils/index.ts";
 import {
   guildTemplateSchema,
   type GuildTemplate
@@ -30,6 +35,12 @@ export const modifyGuildTemplate: Fetcher<
   GuildTemplate
 > = async ({ guild, template, body }) =>
   patch(`/guilds/${guild}/templates/${template}`, body);
+
+export const modifyGuildTemplateSafe = toValidated(
+  modifyGuildTemplate,
+  modifyGuildTemplateSchema,
+  guildTemplateSchema
+);
 
 export const modifyGuildTemplateProcedure = toProcedure(
   `mutation`,

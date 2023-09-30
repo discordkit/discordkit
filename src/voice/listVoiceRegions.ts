@@ -1,4 +1,10 @@
-import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import {
+  get,
+  type Fetcher,
+  toProcedure,
+  toQuery,
+  toValidated
+} from "#/utils/index.ts";
 import { voiceRegionSchema, type VoiceRegion } from "./types/VoiceRegion.ts";
 
 /**
@@ -10,6 +16,12 @@ import { voiceRegionSchema, type VoiceRegion } from "./types/VoiceRegion.ts";
  */
 export const listVoiceRegions: Fetcher<null, VoiceRegion[]> = async () =>
   get(`/voice/regions`);
+
+export const listVoiceRegionsSafe = toValidated(
+  listVoiceRegions,
+  null,
+  voiceRegionSchema.array()
+);
 
 export const listVoiceRegionsProcedure = toProcedure(
   `query`,

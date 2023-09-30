@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { put, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { put, type Fetcher, toProcedure, toValidated } from "#/utils/index.ts";
 import {
   guildTemplateSchema,
   type GuildTemplate
@@ -22,6 +22,12 @@ export const syncGuildTemplate: Fetcher<
   GuildTemplate
 > = async ({ guild, template }) =>
   put(`/guilds/${guild}/templates/${template}`);
+
+export const syncGuildTemplateSafe = toValidated(
+  syncGuildTemplate,
+  syncGuildTemplateSchema,
+  guildTemplateSchema
+);
 
 export const syncGuildTemplateProcedure = toProcedure(
   `mutation`,

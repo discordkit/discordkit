@@ -8,6 +8,7 @@ import {
 import {
   deleteOwnReaction,
   deleteOwnReactionProcedure,
+  deleteOwnReactionSafe,
   deleteOwnReactionSchema
 } from "../deleteOwnReaction";
 
@@ -16,6 +17,10 @@ describe(`deleteOwnReaction`, () => {
     `/channels/:channel/messages/:message/reactions/:emoji/@me`
   );
   const config = generateMock(deleteOwnReactionSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(deleteOwnReactionSafe(config)).resolves.not.toThrow();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

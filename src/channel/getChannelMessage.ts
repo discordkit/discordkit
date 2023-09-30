@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import {
+  get,
+  type Fetcher,
+  toProcedure,
+  toQuery,
+  toValidated
+} from "#/utils/index.ts";
 import { messageSchema, type Message } from "./types/Message.ts";
 
 export const getChannelMessageSchema = z.object({
@@ -21,6 +27,12 @@ export const getChannelMessage: Fetcher<
   Message
 > = async ({ channel, message }) =>
   get(`/channels/${channel}/messages/${message}`);
+
+export const getChannelMessageSafe = toValidated(
+  getChannelMessage,
+  getChannelMessageSchema,
+  messageSchema
+);
 
 export const getChannelMessageProcedure = toProcedure(
   `query`,

@@ -9,6 +9,7 @@ import {
   activeGuildThreadsSchema,
   listActiveGuildThreadsProcedure,
   listActiveGuildThreadsQuery,
+  listActiveGuildThreadsSafe,
   listActiveGuildThreadsSchema
 } from "../listActiveGuildThreads";
 
@@ -18,6 +19,12 @@ describe(`listActiveGuildThreads`, () => {
     activeGuildThreadsSchema
   );
   const config = generateMock(listActiveGuildThreadsSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(listActiveGuildThreadsSafe(config)).resolves.toStrictEqual(
+      expected
+    );
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

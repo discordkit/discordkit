@@ -8,6 +8,7 @@ import {
 import {
   deleteGuildApplicationCommand,
   deleteGuildApplicationCommandProcedure,
+  deleteGuildApplicationCommandSafe,
   deleteGuildApplicationCommandSchema
 } from "../deleteGuildApplicationCommand";
 
@@ -16,6 +17,12 @@ describe(`deleteGuildApplicationCommand`, () => {
     `/applications/:application/guilds/:guild/commands/:command`
   );
   const config = generateMock(deleteGuildApplicationCommandSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(
+      deleteGuildApplicationCommandSafe(config)
+    ).resolves.not.toThrow();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

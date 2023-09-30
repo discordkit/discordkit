@@ -5,12 +5,21 @@ import {
   runQuery,
   mockRequest
 } from "../../../scripts/test-utils";
-import { getGuildProcedure, getGuildQuery, getGuildSchema } from "../getGuild";
+import {
+  getGuildProcedure,
+  getGuildQuery,
+  getGuildSafe,
+  getGuildSchema
+} from "../getGuild";
 import { guildSchema } from "../types/Guild";
 
 describe(`getGuild`, () => {
   const expected = mockRequest.get(`/guilds/:id`, guildSchema);
   const config = generateMock(getGuildSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(getGuildSafe(config)).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

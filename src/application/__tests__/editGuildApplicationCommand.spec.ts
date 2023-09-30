@@ -8,6 +8,7 @@ import {
 import {
   editGuildApplicationCommand,
   editGuildApplicationCommandProcedure,
+  editGuildApplicationCommandSafe,
   editGuildApplicationCommandSchema
 } from "../editGuildApplicationCommand";
 import { applicationCommandSchema } from "../types/ApplicationCommand";
@@ -17,17 +18,23 @@ describe(`editGuildApplicationCommand`, () => {
     `/applications/:application/guilds/:guild/commands/:command`,
     applicationCommandSchema
   );
-  const input = generateMock(editGuildApplicationCommandSchema);
+  const config = generateMock(editGuildApplicationCommandSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(
+      editGuildApplicationCommandSafe(config)
+    ).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(
-      runProcedure(editGuildApplicationCommandProcedure)(input)
+      runProcedure(editGuildApplicationCommandProcedure)(config)
     ).resolves.toStrictEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runMutation(editGuildApplicationCommand);
-    result.current.mutate(input);
+    result.current.mutate(config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toStrictEqual(expected);
   });

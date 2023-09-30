@@ -8,12 +8,17 @@ import {
 import {
   modifyUserVoiceState,
   modifyUserVoiceStateProcedure,
+  modifyUserVoiceStateSafe,
   modifyUserVoiceStateSchema
 } from "../modifyUserVoiceState";
 
 describe(`modifyUserVoiceState`, () => {
   mockRequest.patch(`/guilds/:guild/voice-states/:user`);
   const config = generateMock(modifyUserVoiceStateSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(modifyUserVoiceStateSafe(config)).resolves.not.toThrow();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

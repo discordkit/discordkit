@@ -8,12 +8,19 @@ import {
 import {
   modifyGuildChannelPositions,
   modifyGuildChannelPositionsProcedure,
+  modifyGuildChannelPositionsSafe,
   modifyGuildChannelPositionsSchema
 } from "../modifyGuildChannelPositions";
 
 describe(`modifyGuildChannelPositions`, () => {
   mockRequest.patch(`/guilds/:guild/channels`);
   const config = generateMock(modifyGuildChannelPositionsSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(
+      modifyGuildChannelPositionsSafe(config)
+    ).resolves.not.toThrow();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

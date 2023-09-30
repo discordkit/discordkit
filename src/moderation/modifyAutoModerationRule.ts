@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { patch, type Fetcher, toProcedure } from "#/utils/index.ts";
+import {
+  patch,
+  type Fetcher,
+  toProcedure,
+  toValidated
+} from "#/utils/index.ts";
 import {
   type ModerationRule,
   moderationRuleSchema
@@ -54,6 +59,12 @@ export const modifyAutoModerationRule: Fetcher<
   ModerationRule
 > = async ({ guild, rule, body }) =>
   patch(`/guilds/${guild}/auto-moderation/rules/${rule}`, body);
+
+export const modifyAutoModerationRuleSafe = toValidated(
+  modifyAutoModerationRule,
+  modifyAutoModerationRuleSchema,
+  moderationRuleSchema
+);
 
 export const modifyAutoModerationRuleProcedure = toProcedure(
   `mutation`,

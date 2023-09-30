@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { remove, type Fetcher, toProcedure } from "#/utils/index.ts";
+import {
+  remove,
+  type Fetcher,
+  toProcedure,
+  toValidated
+} from "#/utils/index.ts";
 
 export const deleteGuildStickerSchema = z.object({
   guild: z.string().min(1),
@@ -21,6 +26,11 @@ export const deleteGuildSticker: Fetcher<
   typeof deleteGuildStickerSchema
 > = async ({ guild, sticker }) =>
   remove(`/guilds/${guild}/stickers/${sticker}`);
+
+export const deleteGuildStickerSafe = toValidated(
+  deleteGuildSticker,
+  deleteGuildStickerSchema
+);
 
 export const deleteGuildStickerProcedure = toProcedure(
   `mutation`,

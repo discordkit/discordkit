@@ -8,12 +8,17 @@ import {
 import {
   deleteStageInstance,
   deleteStageInstanceProcedure,
+  deleteStageInstanceSafe,
   deleteStageInstanceSchema
 } from "../deleteStageInstance";
 
 describe(`deleteStageInstance`, () => {
   mockRequest.delete(`/stage-instances/:channel`);
   const config = generateMock(deleteStageInstanceSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(deleteStageInstanceSafe(config)).resolves.not.toThrow();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import {
+  get,
+  type Fetcher,
+  toProcedure,
+  toQuery,
+  toValidated
+} from "#/utils/index.ts";
 import {
   type ApplicationCommand,
   applicationCommandSchema
@@ -33,7 +39,12 @@ export const getGuildApplicationCommands: Fetcher<
 > = async ({ application, guild, params }) =>
   get(`/applications/${application}/guilds/${guild}/commands`, params);
 
-/** @see getGuildApplicationCommands */
+export const getGuildApplicationCommandsSafe = toValidated(
+  getGuildApplicationCommands,
+  getGuildApplicationCommandsSchema,
+  applicationCommandSchema.array()
+);
+
 export const getGuildApplicationCommandsProcedure = toProcedure(
   `query`,
   getGuildApplicationCommands,

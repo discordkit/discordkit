@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { post, type Fetcher, toProcedure, toValidated } from "#/utils/index.ts";
 import { interactionResponseSchema } from "./types/InteractionResponse.ts";
 
 export const createInteractionResponseSchema = z.object({
@@ -21,6 +21,11 @@ export const createInteractionResponse: Fetcher<
   typeof createInteractionResponseSchema
 > = async ({ interaction, token, body }) =>
   post(`/interactions/${interaction}/${token}/callback`, body);
+
+export const createInteractionResponseSafe = toValidated(
+  createInteractionResponse,
+  createInteractionResponseSchema
+);
 
 export const createInteractionResponseProcedure = toProcedure(
   `mutation`,

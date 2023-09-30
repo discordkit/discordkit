@@ -8,6 +8,7 @@ import {
 import {
   deleteGuildTemplate,
   deleteGuildTemplateProcedure,
+  deleteGuildTemplateSafe,
   deleteGuildTemplateSchema
 } from "../deleteGuildTemplate";
 import { guildTemplateSchema } from "../types/GuildTemplate";
@@ -15,6 +16,10 @@ import { guildTemplateSchema } from "../types/GuildTemplate";
 describe(`deleteGuildTemplate`, () => {
   mockRequest.delete(`/guilds/:guild/templates/:template`, guildTemplateSchema);
   const config = generateMock(deleteGuildTemplateSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(deleteGuildTemplateSafe(config)).resolves.toBeDefined();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { patch, type Fetcher, toProcedure } from "#/utils/index.ts";
+import {
+  patch,
+  type Fetcher,
+  toProcedure,
+  toValidated
+} from "#/utils/index.ts";
 import {
   guildWidgetSettingsSchema,
   type GuildWidgetSettings
@@ -25,6 +30,12 @@ export const modifyGuildWidget: Fetcher<
   typeof modifyGuildWidgetSchema,
   GuildWidgetSettings
 > = async ({ guild, body }) => patch(`/guilds/${guild}/widget`, body);
+
+export const modifyGuildWidgetSafe = toValidated(
+  modifyGuildWidget,
+  modifyGuildWidgetSchema,
+  guildWidgetSettingsSchema
+);
 
 export const modifyGuildWidgetProcedure = toProcedure(
   `mutation`,

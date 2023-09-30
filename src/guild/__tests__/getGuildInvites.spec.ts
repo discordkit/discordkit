@@ -8,6 +8,7 @@ import {
 import {
   getGuildInvitesProcedure,
   getGuildInvitesQuery,
+  getGuildInvitesSafe,
   getGuildInvitesSchema
 } from "../getGuildInvites";
 import { inviteMetadataSchema } from "../../invite/types/InviteMetadata";
@@ -18,6 +19,10 @@ describe(`getGuildInvites`, () => {
     inviteMetadataSchema.array()
   );
   const config = generateMock(getGuildInvitesSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(getGuildInvitesSafe(config)).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import {
+  get,
+  type Fetcher,
+  toProcedure,
+  toQuery,
+  toValidated
+} from "#/utils/index.ts";
 import {
   inviteMetadataSchema,
   type InviteMetadata
@@ -20,6 +26,12 @@ export const getChannelInvites: Fetcher<
   typeof getChannelInvitesSchema,
   InviteMetadata[]
 > = async ({ channel }) => get(`/channels/${channel}/invites`);
+
+export const getChannelInvitesSafe = toValidated(
+  getChannelInvites,
+  getChannelInvitesSchema,
+  inviteMetadataSchema.array()
+);
 
 export const getChannelInvitesProcedure = toProcedure(
   `query`,

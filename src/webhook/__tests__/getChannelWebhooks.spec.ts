@@ -8,6 +8,7 @@ import {
 import {
   getChannelWebhooksProcedure,
   getChannelWebhooksQuery,
+  getChannelWebhooksSafe,
   getChannelWebhooksSchema
 } from "../getChannelWebhooks";
 import { webhookSchema } from "../types/Webhook";
@@ -18,6 +19,12 @@ describe(`getChannelWebhooks`, () => {
     webhookSchema.array()
   );
   const config = generateMock(getChannelWebhooksSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(getChannelWebhooksSafe(config)).resolves.toStrictEqual(
+      expected
+    );
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

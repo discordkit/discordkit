@@ -5,12 +5,21 @@ import {
   runQuery,
   mockRequest
 } from "../../../scripts/test-utils";
-import { getUserProcedure, getUserQuery, getUserSchema } from "../getUser";
+import {
+  getUserProcedure,
+  getUserQuery,
+  getUserSafe,
+  getUserSchema
+} from "../getUser";
 import { userSchema } from "../types/User";
 
 describe(`getUser`, () => {
   const expected = mockRequest.get(`/users/:user`, userSchema);
   const config = generateMock(getUserSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(getUserSafe(config)).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(runProcedure(getUserProcedure)(config)).resolves.toStrictEqual(

@@ -6,12 +6,17 @@ import {
 } from "../../../scripts/test-utils";
 import {
   getCurrentUserProcedure,
-  getCurrentUserQuery
+  getCurrentUserQuery,
+  getCurrentUserSafe
 } from "../getCurrentUser";
 import { userSchema } from "../types/User";
 
 describe(`getCurrentUser`, () => {
   const expected = mockRequest.get(`/users/@me`, userSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(getCurrentUserSafe()).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import {
+  get,
+  type Fetcher,
+  toProcedure,
+  toQuery,
+  toValidated
+} from "#/utils/index.ts";
 import {
   guildTemplateSchema,
   type GuildTemplate
@@ -20,6 +26,12 @@ export const getGuildTemplates: Fetcher<
   typeof getGuildTemplatesSchema,
   GuildTemplate[]
 > = async ({ guild }) => get(`/guilds/${guild}/templates`);
+
+export const getGuildTemplatesSafe = toValidated(
+  getGuildTemplates,
+  getGuildTemplatesSchema,
+  guildTemplateSchema.array()
+);
 
 export const getGuildTemplatesProcedure = toProcedure(
   `query`,

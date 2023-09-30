@@ -8,12 +8,17 @@ import {
 import {
   deleteWebhookMessage,
   deleteWebhookMessageProcedure,
+  deleteWebhookMessageSafe,
   deleteWebhookMessageSchema
 } from "../deleteWebhookMessage";
 
 describe(`deleteWebhookMessage`, () => {
   mockRequest.delete(`/webhooks/:webhook/:token/messages/:message`);
   const config = generateMock(deleteWebhookMessageSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(deleteWebhookMessageSafe(config)).resolves.not.toThrow();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

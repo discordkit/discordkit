@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import {
+  get,
+  type Fetcher,
+  toProcedure,
+  toQuery,
+  toValidated
+} from "#/utils/index.ts";
 import { userSchema, type User } from "./types/User.ts";
 
 export const getUserSchema = z.object({
@@ -15,6 +21,8 @@ export const getUserSchema = z.object({
  */
 export const getUser: Fetcher<typeof getUserSchema, User> = async ({ user }) =>
   get(`/users/${user}`);
+
+export const getUserSafe = toValidated(getUser, getUserSchema, userSchema);
 
 export const getUserProcedure = toProcedure(
   `query`,

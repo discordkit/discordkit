@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { put, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { put, type Fetcher, toProcedure, toValidated } from "#/utils/index.ts";
 
 export const editChannelPermissionsSchema = z.object({
   channel: z.string().min(1),
@@ -29,6 +29,11 @@ export const editChannelPermissions: Fetcher<
   typeof editChannelPermissionsSchema
 > = async ({ channel, overwrite, body }) =>
   put(`/channels/${channel}/permissions/${overwrite}`, body);
+
+export const editChannelPermissionsSafe = toValidated(
+  editChannelPermissions,
+  editChannelPermissionsSchema
+);
 
 export const editChannelPermissionsProcedure = toProcedure(
   `mutation`,

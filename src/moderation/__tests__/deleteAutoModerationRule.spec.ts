@@ -8,12 +8,17 @@ import {
 import {
   deleteAutoModerationRule,
   deleteAutoModerationRuleProcedure,
+  deleteAutoModerationRuleSafe,
   deleteAutoModerationRuleSchema
 } from "../deleteAutoModerationRule";
 
 describe(`deleteAutoModerationRule`, () => {
   mockRequest.delete(`/guilds/:guild/auto-moderation/rules/:rule`);
   const config = generateMock(deleteAutoModerationRuleSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(deleteAutoModerationRuleSafe(config)).resolves.not.toThrow();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

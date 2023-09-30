@@ -8,12 +8,17 @@ import {
 import {
   groupDMAddRecipient,
   groupDMAddRecipientProcedure,
+  groupDMAddRecipientSafe,
   groupDMAddRecipientSchema
 } from "../groupDMAddRecipient";
 
 describe(`groupDMAddRecipient`, () => {
   mockRequest.put(`/channels/:channel/recipients/:user`);
   const config = generateMock(groupDMAddRecipientSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(groupDMAddRecipientSafe(config)).resolves.not.toThrow();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

@@ -8,6 +8,7 @@ import {
 import {
   modifyGuildEmoji,
   modifyGuildEmojiProcedure,
+  modifyGuildEmojiSafe,
   modifyGuildEmojiSchema
 } from "../modifyGuildEmoji";
 import { emojiSchema } from "../types/Emoji";
@@ -18,6 +19,10 @@ describe(`modifyGuildEmoji`, () => {
     emojiSchema
   );
   const config = generateMock(modifyGuildEmojiSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(modifyGuildEmojiSafe(config)).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

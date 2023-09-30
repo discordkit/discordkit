@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { put, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { put, type Fetcher, toProcedure, toValidated } from "#/utils/index.ts";
 import {
   type GuildOnboarding,
   guildOnboardingSchema
@@ -40,6 +40,12 @@ export const modifyGuildOnboarding: Fetcher<
   typeof modifyGuildOnboardingSchema,
   GuildOnboarding
 > = async ({ guild, body }) => put(`/guilds/${guild}/onboarding`, body);
+
+export const modifyGuildOnboardingSafe = toValidated(
+  modifyGuildOnboarding,
+  modifyGuildOnboardingSchema,
+  guildOnboardingSchema
+);
 
 export const modifyGuildOnboardingProcedure = toProcedure(
   `mutation`,

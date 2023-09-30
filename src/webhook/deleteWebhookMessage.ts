@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { remove, buildURL, type Fetcher, toProcedure } from "#/utils/index.ts";
+import {
+  remove,
+  buildURL,
+  type Fetcher,
+  toProcedure,
+  toValidated
+} from "#/utils/index.ts";
 
 export const deleteWebhookMessageSchema = z.object({
   webhook: z.string().min(1),
@@ -27,6 +33,11 @@ export const deleteWebhookMessage: Fetcher<
   remove(
     buildURL(`/webhooks/${webhook}/${token}/messages/${message}`, params).href
   );
+
+export const deleteWebhookMessageSafe = toValidated(
+  deleteWebhookMessage,
+  deleteWebhookMessageSchema
+);
 
 export const deleteWebhookMessageProcedure = toProcedure(
   `mutation`,

@@ -8,6 +8,7 @@ import {
 import {
   getGuildVanityURLProcedure,
   getGuildVanityURLQuery,
+  getGuildVanityURLSafe,
   getGuildVanityURLSchema
 } from "../getGuildVanityURL";
 import { inviteSchema } from "../../invite/types/Invite";
@@ -18,6 +19,12 @@ describe(`getGuildVanityURL`, () => {
     inviteSchema.partial()
   );
   const config = generateMock(getGuildVanityURLSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(getGuildVanityURLSafe(config)).resolves.toStrictEqual(
+      expected
+    );
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

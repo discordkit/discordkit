@@ -8,7 +8,8 @@ import {
 import {
   getGlobalApplicationCommandSchema,
   getGlobalApplicationCommandProcedure,
-  getGlobalApplicationCommandQuery
+  getGlobalApplicationCommandQuery,
+  getGlobalApplicationCommandSafe
 } from "../getGlobalApplicationCommand";
 import { applicationCommandSchema } from "../types/ApplicationCommand";
 
@@ -17,16 +18,22 @@ describe(`getGlobalApplicationCommand`, () => {
     `/applications/:application/commands/:command`,
     applicationCommandSchema
   );
-  const input = generateMock(getGlobalApplicationCommandSchema);
+  const config = generateMock(getGlobalApplicationCommandSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(
+      getGlobalApplicationCommandSafe(config)
+    ).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(
-      runProcedure(getGlobalApplicationCommandProcedure)(input)
+      runProcedure(getGlobalApplicationCommandProcedure)(config)
     ).resolves.toStrictEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
-    const { result } = runQuery(getGlobalApplicationCommandQuery, input);
+    const { result } = runQuery(getGlobalApplicationCommandQuery, config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toStrictEqual(expected);
   });

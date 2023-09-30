@@ -8,6 +8,7 @@ import {
 import {
   getGuildVoiceRegionsProcedure,
   getGuildVoiceRegionsQuery,
+  getGuildVoiceRegionsSafe,
   getGuildVoiceRegionsSchema
 } from "../getGuildVoiceRegions";
 import { voiceRegionSchema } from "../../voice/types/VoiceRegion";
@@ -15,6 +16,12 @@ import { voiceRegionSchema } from "../../voice/types/VoiceRegion";
 describe(`getGuildVoiceRegions`, () => {
   const expected = mockRequest.get(`/guilds/:guild/regions`, voiceRegionSchema);
   const config = generateMock(getGuildVoiceRegionsSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(getGuildVoiceRegionsSafe(config)).resolves.toStrictEqual(
+      expected
+    );
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

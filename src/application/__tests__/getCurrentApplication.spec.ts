@@ -6,12 +6,17 @@ import {
 } from "../../../scripts/test-utils";
 import {
   getCurrentApplicationProcedure,
-  getCurrentApplicationQuery
+  getCurrentApplicationQuery,
+  getCurrentApplicationSafe
 } from "../getCurrentApplication";
 import { applicationSchema } from "../types/Application";
 
 describe(`getCurrentApplication`, () => {
   const expected = mockRequest.get(`/applications/@me`, applicationSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(getCurrentApplicationSafe()).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

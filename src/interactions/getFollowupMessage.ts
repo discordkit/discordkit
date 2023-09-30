@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import {
+  get,
+  type Fetcher,
+  toProcedure,
+  toQuery,
+  toValidated
+} from "#/utils/index.ts";
 import { messageSchema, type Message } from "#/channel/types/Message.ts";
 
 export const getFollowupMessageSchema = z.object({
@@ -27,6 +33,12 @@ export const getFollowupMessage: Fetcher<
   Message
 > = async ({ application, token, message, params }) =>
   get(`/webhooks/${application}/${token}/messages/${message}`, params);
+
+export const getFollowupMessageSafe = toValidated(
+  getFollowupMessage,
+  getFollowupMessageSchema,
+  messageSchema
+);
 
 export const getFollowupMessageProcedure = toProcedure(
   `query`,

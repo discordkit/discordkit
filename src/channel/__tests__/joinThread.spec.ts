@@ -8,12 +8,17 @@ import {
 import {
   joinThread,
   joinThreadProcedure,
+  joinThreadSafe,
   joinThreadSchema
 } from "../joinThread";
 
 describe(`joinThread`, () => {
   mockRequest.put(`/channels/:channel/thread-members/@me`);
   const config = generateMock(joinThreadSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(joinThreadSafe(config)).resolves.not.toThrow();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

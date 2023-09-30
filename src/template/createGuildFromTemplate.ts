@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { post, type Fetcher, toProcedure, toValidated } from "#/utils/index.ts";
 import { guildSchema, type Guild } from "#/guild/types/Guild.ts";
 
 export const createGuildFromTemplateSchema = z.object({
@@ -27,6 +27,12 @@ export const createGuildFromTemplate: Fetcher<
   typeof createGuildFromTemplateSchema,
   Guild
 > = async ({ template, body }) => post(`/guilds/templates/${template}`, body);
+
+export const createGuildFromTemplateSafe = toValidated(
+  createGuildFromTemplate,
+  createGuildFromTemplateSchema,
+  guildSchema
+);
 
 export const createGuildFromTemplateProcedure = toProcedure(
   `mutation`,

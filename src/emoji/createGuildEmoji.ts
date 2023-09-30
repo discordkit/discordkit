@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { post, type Fetcher, toProcedure, toValidated } from "#/utils/index.ts";
 import { emojiSchema, type Emoji } from "./types/Emoji.ts";
 
 export const createGuildEmojiSchema = z.object({
@@ -33,6 +33,12 @@ export const createGuildEmoji: Fetcher<
   typeof createGuildEmojiSchema,
   Emoji
 > = async ({ guild, body }) => post(`/guilds/${guild}/emojis`, body);
+
+export const createGuildEmojiSafe = toValidated(
+  createGuildEmoji,
+  createGuildEmojiSchema,
+  emojiSchema
+);
 
 export const createGuildEmojiProcedure = toProcedure(
   `mutation`,

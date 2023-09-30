@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import {
+  get,
+  type Fetcher,
+  toProcedure,
+  toQuery,
+  toValidated
+} from "#/utils/index.ts";
 import {
   voiceRegionSchema,
   type VoiceRegion
@@ -20,6 +26,12 @@ export const getGuildVoiceRegions: Fetcher<
   typeof getGuildVoiceRegionsSchema,
   VoiceRegion
 > = async ({ guild }) => get(`/guilds/${guild}/regions`);
+
+export const getGuildVoiceRegionsSafe = toValidated(
+  getGuildVoiceRegions,
+  getGuildVoiceRegionsSchema,
+  voiceRegionSchema
+);
 
 export const getGuildVoiceRegionsProcedure = toProcedure(
   `query`,

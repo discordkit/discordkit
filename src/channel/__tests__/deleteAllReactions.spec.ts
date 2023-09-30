@@ -8,12 +8,17 @@ import {
 import {
   deleteAllReactions,
   deleteAllReactionsProcedure,
+  deleteAllReactionsSafe,
   deleteAllReactionsSchema
 } from "../deleteAllReactions";
 
 describe(`deleteAllReactions`, () => {
   mockRequest.delete(`/channels/:channel/messages/:message/reactions`);
   const config = generateMock(deleteAllReactionsSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(deleteAllReactionsSafe(config)).resolves.not.toThrow();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

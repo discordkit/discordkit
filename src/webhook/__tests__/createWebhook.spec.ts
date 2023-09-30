@@ -8,6 +8,7 @@ import {
 import {
   createWebhook,
   createWebhookProcedure,
+  createWebhookSafe,
   createWebhookSchema
 } from "../createWebhook";
 import { webhookSchema } from "../types/Webhook";
@@ -18,6 +19,10 @@ describe(`createWebhook`, () => {
     webhookSchema
   );
   const config = generateMock(createWebhookSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(createWebhookSafe(config)).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

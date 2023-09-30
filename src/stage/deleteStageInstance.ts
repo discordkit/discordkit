@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { remove, type Fetcher, toProcedure } from "#/utils/index.ts";
+import {
+  remove,
+  type Fetcher,
+  toProcedure,
+  toValidated
+} from "#/utils/index.ts";
 
 export const deleteStageInstanceSchema = z.object({
   channel: z.string().min(1)
@@ -21,6 +26,11 @@ export const deleteStageInstanceSchema = z.object({
 export const deleteStageInstance: Fetcher<
   typeof deleteStageInstanceSchema
 > = async ({ channel }) => remove(`/stage-instances/${channel}`);
+
+export const deleteStageInstanceSafe = toValidated(
+  deleteStageInstance,
+  deleteStageInstanceSchema
+);
 
 export const deleteStageInstanceProcedure = toProcedure(
   `mutation`,

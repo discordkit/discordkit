@@ -8,6 +8,7 @@ import {
 import {
   listThreadMembersProcedure,
   listThreadMembersQuery,
+  listThreadMembersSafe,
   listThreadMembersSchema
 } from "../listThreadMembers";
 import { threadMemberSchema } from "../types/ThreadMember";
@@ -18,6 +19,12 @@ describe(`listThreadMembers`, () => {
     threadMemberSchema.array()
   );
   const config = generateMock(listThreadMembersSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(listThreadMembersSafe(config)).resolves.toStrictEqual(
+      expected
+    );
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

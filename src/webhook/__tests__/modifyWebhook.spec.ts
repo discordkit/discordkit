@@ -8,6 +8,7 @@ import {
 import {
   modifyWebhook,
   modifyWebhookProcedure,
+  modifyWebhookSafe,
   modifyWebhookSchema
 } from "../modifyWebhook";
 import { webhookSchema } from "../types/Webhook";
@@ -15,6 +16,10 @@ import { webhookSchema } from "../types/Webhook";
 describe(`modifyWebhook`, () => {
   const expected = mockRequest.patch(`/webhooks/:webhook`, webhookSchema);
   const config = generateMock(modifyWebhookSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(modifyWebhookSafe(config)).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

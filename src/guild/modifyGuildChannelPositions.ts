@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { patch, type Fetcher, toProcedure } from "#/utils/index.ts";
+import {
+  patch,
+  type Fetcher,
+  toProcedure,
+  toValidated
+} from "#/utils/index.ts";
 
 export const modifyGuildChannelPositionsSchema = z.object({
   guild: z.string().min(1),
@@ -31,6 +36,11 @@ export const modifyGuildChannelPositionsSchema = z.object({
 export const modifyGuildChannelPositions: Fetcher<
   typeof modifyGuildChannelPositionsSchema
 > = async ({ guild, body }) => patch(`/guilds/${guild}/channels`, body);
+
+export const modifyGuildChannelPositionsSafe = toValidated(
+  modifyGuildChannelPositions,
+  modifyGuildChannelPositionsSchema
+);
 
 export const modifyGuildChannelPositionsProcedure = toProcedure(
   `mutation`,

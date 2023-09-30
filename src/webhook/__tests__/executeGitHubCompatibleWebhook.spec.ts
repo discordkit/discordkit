@@ -8,12 +8,19 @@ import {
 import {
   executeGitHubCompatibleWebhook,
   executeGitHubCompatibleWebhookProcedure,
+  executeGitHubCompatibleWebhookSafe,
   executeGitHubCompatibleWebhookSchema
 } from "../executeGitHubCompatibleWebhook";
 
 describe(`executeGitHubCompatibleWebhook`, () => {
   mockRequest.post(`/webhooks/:webhook/:token/github`);
   const config = generateMock(executeGitHubCompatibleWebhookSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(
+      executeGitHubCompatibleWebhookSafe(config)
+    ).resolves.not.toThrow();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

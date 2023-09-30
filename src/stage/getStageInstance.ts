@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import {
+  get,
+  type Fetcher,
+  toProcedure,
+  toQuery,
+  toValidated
+} from "#/utils/index.ts";
 import { stageSchema, type Stage } from "./types/Stage.ts";
 
 export const getStageInstanceSchema = z.object({
@@ -17,6 +23,12 @@ export const getStageInstance: Fetcher<
   typeof getStageInstanceSchema,
   Stage
 > = async ({ channel }) => get(`/stage-instances/${channel}`);
+
+export const getStageInstanceSafe = toValidated(
+  getStageInstance,
+  getStageInstanceSchema,
+  stageSchema
+);
 
 export const getStageInstanceProcedure = toProcedure(
   `query`,

@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { patch, type Fetcher, toProcedure } from "#/utils/index.ts";
+import {
+  patch,
+  type Fetcher,
+  toProcedure,
+  toValidated
+} from "#/utils/index.ts";
 import {
   welcomeScreenSchema,
   type WelcomeScreen
@@ -39,6 +44,12 @@ export const modifyGuildWelcomeScreen: Fetcher<
   typeof modifyGuildWelcomeScreenSchema,
   WelcomeScreen
 > = async ({ guild, body }) => patch(`/guilds/${guild}/welcome-screen`, body);
+
+export const modifyGuildWelcomeScreenSafe = toValidated(
+  modifyGuildWelcomeScreen,
+  modifyGuildWelcomeScreenSchema,
+  welcomeScreenSchema
+);
 
 export const modifyGuildWelcomeScreenProcedure = toProcedure(
   `mutation`,

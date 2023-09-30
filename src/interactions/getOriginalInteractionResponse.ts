@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import {
+  get,
+  type Fetcher,
+  toProcedure,
+  toQuery,
+  toValidated
+} from "#/utils/index.ts";
 import {
   type InteractionResponse,
   interactionResponseSchema
@@ -29,6 +35,12 @@ export const getOriginalInteractionResponse: Fetcher<
   InteractionResponse
 > = async ({ application, token, params }) =>
   get(`/webhooks/${application}/${token}/messages/@original`, params);
+
+export const getOriginalInteractionResponseSafe = toValidated(
+  getOriginalInteractionResponse,
+  getOriginalInteractionResponseSchema,
+  interactionResponseSchema
+);
 
 export const getOriginalInteractionResponseProcedure = toProcedure(
   `query`,

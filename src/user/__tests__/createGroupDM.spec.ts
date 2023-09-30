@@ -9,6 +9,7 @@ import {
 import {
   createGroupDM,
   createGroupDMProcedure,
+  createGroupDMSafe,
   createGroupDMSchema
 } from "../createGroupDM";
 import { channelSchema } from "../../channel/types/Channel";
@@ -20,6 +21,10 @@ describe(`createGroupDM`, () => {
     channelSchema.extend({ type: z.literal(ChannelType.GROUP_DM) })
   );
   const config = generateMock(createGroupDMSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(createGroupDMSafe(config)).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

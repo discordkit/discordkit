@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { remove, type Fetcher, toProcedure } from "#/utils/index.ts";
+import {
+  remove,
+  type Fetcher,
+  toProcedure,
+  toValidated
+} from "#/utils/index.ts";
 
 export const leaveThreadSchema = z.object({
   channel: z.string().min(1)
@@ -15,6 +20,8 @@ export const leaveThreadSchema = z.object({
 export const leaveThread: Fetcher<typeof leaveThreadSchema> = async ({
   channel
 }) => remove(`/channels/${channel}/thread-members/@me`);
+
+export const leaveThreadSafe = toValidated(leaveThread, leaveThreadSchema);
 
 export const leaveThreadProcedure = toProcedure(
   `mutation`,

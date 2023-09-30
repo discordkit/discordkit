@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { remove, type Fetcher, toProcedure } from "#/utils/index.ts";
+import {
+  remove,
+  type Fetcher,
+  toProcedure,
+  toValidated
+} from "#/utils/index.ts";
 import { inviteSchema, type Invite } from "./types/Invite.ts";
 
 export const deleteInviteSchema = z.object({
@@ -19,6 +24,12 @@ export const deleteInviteSchema = z.object({
 export const deleteInvite: Fetcher<typeof deleteInviteSchema, Invite> = async ({
   code
 }) => remove(`/invites/${code}`);
+
+export const deleteInviteSafe = toValidated(
+  deleteInvite,
+  deleteInviteSchema,
+  inviteSchema
+);
 
 export const deleteInviteProcedure = toProcedure(
   `mutation`,

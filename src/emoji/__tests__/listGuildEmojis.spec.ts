@@ -8,6 +8,7 @@ import {
 import {
   listGuildEmojisProcedure,
   listGuildEmojisQuery,
+  listGuildEmojisSafe,
   listGuildEmojisSchema
 } from "../listGuildEmojis";
 import { emojiSchema } from "../types/Emoji";
@@ -18,6 +19,10 @@ describe(`listGuildEmojis`, () => {
     emojiSchema.array()
   );
   const config = generateMock(listGuildEmojisSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(listGuildEmojisSafe(config)).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

@@ -8,6 +8,7 @@ import {
 import {
   deleteInvite,
   deleteInviteProcedure,
+  deleteInviteSafe,
   deleteInviteSchema
 } from "../deleteInvite";
 import { inviteSchema } from "../types/Invite";
@@ -15,6 +16,10 @@ import { inviteSchema } from "../types/Invite";
 describe(`deleteInvite`, () => {
   mockRequest.delete(`/invites/:code`, inviteSchema);
   const config = generateMock(deleteInviteSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(deleteInviteSafe(config)).resolves.toBeDefined();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

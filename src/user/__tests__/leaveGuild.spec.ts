@@ -8,12 +8,17 @@ import {
 import {
   leaveGuild,
   leaveGuildProcedure,
+  leaveGuildSafe,
   leaveGuildSchema
 } from "../leaveGuild";
 
 describe(`leaveGuild`, () => {
   mockRequest.delete(`/users/@me/guilds/:guild`);
   const config = generateMock(leaveGuildSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(leaveGuildSafe(config)).resolves.not.toThrow();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

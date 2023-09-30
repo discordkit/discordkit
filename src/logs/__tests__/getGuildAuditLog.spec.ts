@@ -8,6 +8,7 @@ import {
 import {
   getGuildAuditLogProcedure,
   getGuildAuditLogQuery,
+  getGuildAuditLogSafe,
   getGuildAuditLogSchema
 } from "../getGuildAuditLog";
 import { auditLogSchema } from "../types/AuditLog";
@@ -15,6 +16,10 @@ import { auditLogSchema } from "../types/AuditLog";
 describe(`getGuildAuditLog`, () => {
   mockRequest.get(`/guilds/:guild/audit-logs`, auditLogSchema);
   const config = generateMock(getGuildAuditLogSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(getGuildAuditLogSafe(config)).resolves.toBeDefined();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

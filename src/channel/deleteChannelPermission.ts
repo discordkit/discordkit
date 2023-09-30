@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { remove, type Fetcher, toProcedure } from "#/utils/index.ts";
+import {
+  remove,
+  type Fetcher,
+  toProcedure,
+  toValidated
+} from "#/utils/index.ts";
 
 export const deleteChannelPermissionSchema = z.object({
   channel: z.string().min(1),
@@ -21,6 +26,11 @@ export const deleteChannelPermission: Fetcher<
   typeof deleteChannelPermissionSchema
 > = async ({ channel, overwrite }) =>
   remove(`/channels/${channel}/permissions/${overwrite}`);
+
+export const deleteChannelPermissionSafe = toValidated(
+  deleteChannelPermission,
+  deleteChannelPermissionSchema
+);
 
 export const deleteChannelPermissionProcedure = toProcedure(
   `mutation`,

@@ -8,6 +8,7 @@ import {
 import {
   listPublicArchivedThreadsProcedure,
   listPublicArchivedThreadsQuery,
+  listPublicArchivedThreadsSafe,
   listPublicArchivedThreadsSchema
 } from "../listPublicArchivedThreads";
 import { archivedThreadsSchema } from "../types/ArchivedThreads";
@@ -18,6 +19,12 @@ describe(`listPublicArchivedThreads`, () => {
     archivedThreadsSchema
   );
   const config = generateMock(listPublicArchivedThreadsSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(listPublicArchivedThreadsSafe(config)).resolves.toStrictEqual(
+      expected
+    );
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

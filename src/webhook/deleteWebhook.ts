@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { remove, type Fetcher, toProcedure } from "#/utils/index.ts";
+import {
+  remove,
+  type Fetcher,
+  toProcedure,
+  toValidated
+} from "#/utils/index.ts";
 
 export const deleteWebhookSchema = z.object({
   webhook: z.string().min(1)
@@ -19,6 +24,11 @@ export const deleteWebhookSchema = z.object({
 export const deleteWebhook: Fetcher<typeof deleteWebhookSchema> = async ({
   webhook
 }) => remove(`/webhooks/${webhook}`);
+
+export const deleteWebhookSafe = toValidated(
+  deleteWebhook,
+  deleteWebhookSchema
+);
 
 export const deleteWebhookProcedure = toProcedure(
   `mutation`,

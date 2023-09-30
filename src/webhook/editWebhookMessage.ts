@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { patch, buildURL, type Fetcher, toProcedure } from "#/utils/index.ts";
+import {
+  patch,
+  buildURL,
+  type Fetcher,
+  toProcedure,
+  toValidated
+} from "#/utils/index.ts";
 import { messageSchema, type Message } from "#/channel/types/Message.ts";
 import { embedSchema } from "#/channel/types/Embed.ts";
 import { allowedMentionSchema } from "#/channel/types/AllowedMention.ts";
@@ -66,6 +72,12 @@ export const editWebhookMessage: Fetcher<
     buildURL(`/webhooks/${webhook}/${token}/messages/${message}`, params).href,
     body
   );
+
+export const editWebhookMessageSafe = toValidated(
+  editWebhookMessage,
+  editWebhookMessageSchema,
+  messageSchema
+);
 
 export const editWebhookMessageProcedure = toProcedure(
   `mutation`,

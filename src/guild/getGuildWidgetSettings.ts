@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import {
+  get,
+  type Fetcher,
+  toProcedure,
+  toQuery,
+  toValidated
+} from "#/utils/index.ts";
 import {
   guildWidgetSettingsSchema,
   type GuildWidgetSettings
@@ -18,6 +24,12 @@ export const getGuildWidgetSettings: Fetcher<
   typeof getGuildWidgetSettingsSchema,
   GuildWidgetSettings
 > = async ({ guild }) => get(`/guilds/${guild}/widget`);
+
+export const getGuildWidgetSettingsSafe = toValidated(
+  getGuildWidgetSettings,
+  getGuildWidgetSettingsSchema,
+  guildWidgetSettingsSchema
+);
 
 export const getGuildWidgetSettingsProcedure = toProcedure(
   `query`,

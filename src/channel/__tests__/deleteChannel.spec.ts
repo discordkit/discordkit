@@ -8,6 +8,7 @@ import {
 import {
   deleteChannel,
   deleteChannelProcedure,
+  deleteChannelSafe,
   deleteChannelSchema
 } from "../deleteChannel";
 import { channelSchema } from "../types/Channel";
@@ -15,6 +16,10 @@ import { channelSchema } from "../types/Channel";
 describe(`deleteChannel`, () => {
   const expected = mockRequest.delete(`/channels/:channel`, channelSchema);
   const config = generateMock(deleteChannelSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(deleteChannelSafe(config)).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

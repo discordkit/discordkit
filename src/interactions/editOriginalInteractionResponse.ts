@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { patch, buildURL, type Fetcher, toProcedure } from "#/utils/index.ts";
+import {
+  patch,
+  buildURL,
+  type Fetcher,
+  toProcedure,
+  toValidated
+} from "#/utils/index.ts";
 import { embedSchema } from "#/channel/types/Embed.ts";
 import { allowedMentionSchema } from "#/channel/types/AllowedMention.ts";
 import { attachmentSchema } from "#/channel/types/Attachment.ts";
@@ -57,6 +63,12 @@ export const editOriginalInteractionResponse: Fetcher<
       .href,
     body
   );
+
+export const editOriginalInteractionResponseSafe = toValidated(
+  editOriginalInteractionResponse,
+  editOriginalInteractionResponseSchema,
+  interactionResponseSchema
+);
 
 export const editOriginalInteractionResponseProcedure = toProcedure(
   `mutation`,

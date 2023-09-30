@@ -8,12 +8,19 @@ import {
 import {
   deleteOriginalInteractionResponse,
   deleteOriginalInteractionResponseProcedure,
+  deleteOriginalInteractionResponseSafe,
   deleteOriginalInteractionResponseSchema
 } from "../deleteOriginalInteractionResponse";
 
 describe(`deleteOriginalInteractionResponse`, () => {
   mockRequest.delete(`/webhooks/:webhook/:token/messages/:message`);
   const config = generateMock(deleteOriginalInteractionResponseSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(
+      deleteOriginalInteractionResponseSafe(config)
+    ).resolves.not.toThrow();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

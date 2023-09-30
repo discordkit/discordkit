@@ -8,12 +8,17 @@ import {
 import {
   removeThreadMember,
   removeThreadMemberProcedure,
+  removeThreadMemberSafe,
   removeThreadMemberSchema
 } from "../removeThreadMember";
 
 describe(`removeThreadMember`, () => {
   mockRequest.delete(`/channels/:channel/thread-members/:user`);
   const config = generateMock(removeThreadMemberSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(removeThreadMemberSafe(config)).resolves.not.toThrow();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

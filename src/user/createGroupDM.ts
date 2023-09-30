@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { post, type Fetcher, toProcedure, toValidated } from "#/utils/index.ts";
 import { channelSchema, type Channel } from "#/channel/types/Channel.ts";
 import { ChannelType } from "#/channel/types/ChannelType.ts";
 
@@ -27,6 +27,12 @@ export const createGroupDM: Fetcher<
   typeof createGroupDMSchema,
   Channel & { type: typeof ChannelType.GROUP_DM }
 > = async ({ body }) => post(`/users/@me/channels`, body);
+
+export const createGroupDMSafe = toValidated(
+  createGroupDM,
+  createGroupDMSchema,
+  channelSchema.extend({ type: z.literal(ChannelType.GROUP_DM) })
+);
 
 export const createGroupDMProcedure = toProcedure(
   `mutation`,

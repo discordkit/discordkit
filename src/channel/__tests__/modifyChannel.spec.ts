@@ -8,6 +8,7 @@ import {
 import {
   modifyChannel,
   modifyChannelProcedure,
+  modifyChannelSafe,
   modifyChannelSchema
 } from "../modifyChannel";
 import { channelSchema } from "../types/Channel";
@@ -15,6 +16,10 @@ import { channelSchema } from "../types/Channel";
 describe(`modifyChannel`, () => {
   const expected = mockRequest.patch(`/channels/:channel`, channelSchema);
   const config = generateMock(modifyChannelSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(modifyChannelSafe(config)).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

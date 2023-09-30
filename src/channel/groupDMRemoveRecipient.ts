@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { remove, type Fetcher, toProcedure } from "#/utils/index.ts";
+import {
+  remove,
+  type Fetcher,
+  toProcedure,
+  toValidated
+} from "#/utils/index.ts";
 
 export const groupDMRemoveRecipientSchema = z.object({
   channel: z.string().min(1),
@@ -17,6 +22,11 @@ export const groupDMRemoveRecipient: Fetcher<
   typeof groupDMRemoveRecipientSchema
 > = async ({ channel, user }) =>
   remove(`/channels/${channel}/recipients/${user}`);
+
+export const groupDMRemoveRecipientSafe = toValidated(
+  groupDMRemoveRecipient,
+  groupDMRemoveRecipientSchema
+);
 
 export const groupDMRemoveRecipientProcedure = toProcedure(
   `mutation`,

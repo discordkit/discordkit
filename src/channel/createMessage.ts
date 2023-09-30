@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { post, type Fetcher, toProcedure, toValidated } from "#/utils/index.ts";
 import { type Message, messageSchema } from "./types/Message.ts";
 import { messageContentSchema } from "./types/MessageContent.ts";
 
@@ -36,6 +36,12 @@ export const createMessage: Fetcher<
   typeof createMessageSchema,
   Message
 > = async ({ channel, body }) => post(`/channels/${channel}/messages`, body);
+
+export const createMessageSafe = toValidated(
+  createMessage,
+  createMessageSchema,
+  messageSchema
+);
 
 export const createMessageProcedure = toProcedure(
   `mutation`,

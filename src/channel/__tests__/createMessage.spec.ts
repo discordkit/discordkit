@@ -8,6 +8,7 @@ import {
 import {
   createMessage,
   createMessageProcedure,
+  createMessageSafe,
   createMessageSchema
 } from "../createMessage";
 import { messageSchema } from "../types/Message";
@@ -15,6 +16,10 @@ import { messageSchema } from "../types/Message";
 describe(`createMessage`, () => {
   mockRequest.post(`/channels/:channel/messages`, messageSchema);
   const config = generateMock(createMessageSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(createMessageSafe(config)).resolves.toBeDefined();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

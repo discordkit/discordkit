@@ -8,6 +8,7 @@ import {
 import {
   getCurrentUserGuildMemberProcedure,
   getCurrentUserGuildMemberQuery,
+  getCurrentUserGuildMemberSafe,
   getCurrentUserGuildMemberSchema
 } from "../getCurrentUserGuildMember";
 import { memberSchema } from "../../guild/types/Member";
@@ -18,6 +19,12 @@ describe(`getCurrentUserGuildMember`, () => {
     memberSchema
   );
   const config = generateMock(getCurrentUserGuildMemberSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(getCurrentUserGuildMemberSafe(config)).resolves.toStrictEqual(
+      expected
+    );
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

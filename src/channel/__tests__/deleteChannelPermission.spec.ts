@@ -8,12 +8,17 @@ import {
 import {
   deleteChannelPermission,
   deleteChannelPermissionProcedure,
+  deleteChannelPermissionSafe,
   deleteChannelPermissionSchema
 } from "../deleteChannelPermission";
 
 describe(`deleteChannelPermission`, () => {
   mockRequest.delete(`/channels/:channel/permissions/:overwrite`);
   const config = generateMock(deleteChannelPermissionSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(deleteChannelPermissionSafe(config)).resolves.not.toThrow();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

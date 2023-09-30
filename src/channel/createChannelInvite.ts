@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { post, type Fetcher, toProcedure, toValidated } from "#/utils/index.ts";
 import { type Invite, inviteSchema } from "#/invite/types/Invite.ts";
 import { inviteTargetSchema } from "#/invite/types/InviteTarget.ts";
 
@@ -42,6 +42,12 @@ export const createChannelInvite: Fetcher<
   typeof createChannelInviteSchema,
   Invite
 > = async ({ channel, body }) => post(`/channels/${channel}/invites`, body);
+
+export const createChannelInviteSafe = toValidated(
+  createChannelInvite,
+  createChannelInviteSchema,
+  inviteSchema
+);
 
 export const createChannelInviteProcedure = toProcedure(
   `mutation`,

@@ -8,6 +8,7 @@ import {
 import {
   modifyCurrentMember,
   modifyCurrentMemberProcedure,
+  modifyCurrentMemberSafe,
   modifyCurrentMemberSchema
 } from "../modifyCurrentMember";
 import { memberSchema } from "../types/Member";
@@ -18,6 +19,12 @@ describe(`modifyCurrentMember`, () => {
     memberSchema
   );
   const config = generateMock(modifyCurrentMemberSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(modifyCurrentMemberSafe(config)).resolves.toStrictEqual(
+      expected
+    );
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

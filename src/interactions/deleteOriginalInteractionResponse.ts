@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { remove, buildURL, type Fetcher, toProcedure } from "#/utils/index.ts";
+import {
+  remove,
+  buildURL,
+  type Fetcher,
+  toProcedure,
+  toValidated
+} from "#/utils/index.ts";
 
 export const deleteOriginalInteractionResponseSchema = z.object({
   application: z.string().min(1),
@@ -27,6 +33,11 @@ export const deleteOriginalInteractionResponse: Fetcher<
     buildURL(`/webhooks/${application}/${token}/messages/@original}`, params)
       .href
   );
+
+export const deleteOriginalInteractionResponseSafe = toValidated(
+  deleteOriginalInteractionResponse,
+  deleteOriginalInteractionResponseSchema
+);
 
 export const deleteOriginalInteractionResponseProcedure = toProcedure(
   `mutation`,

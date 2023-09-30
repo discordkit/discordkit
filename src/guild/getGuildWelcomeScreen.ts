@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import {
+  get,
+  type Fetcher,
+  toProcedure,
+  toQuery,
+  toValidated
+} from "#/utils/index.ts";
 import {
   welcomeScreenSchema,
   type WelcomeScreen
@@ -19,6 +25,12 @@ export const getGuildWelcomeScreen: Fetcher<
   typeof getGuildWelcomeScreenSchema,
   WelcomeScreen
 > = async ({ guild }) => get(`/guilds/${guild}/welcome-screen`);
+
+export const getGuildWelcomeScreenSafe = toValidated(
+  getGuildWelcomeScreen,
+  getGuildWelcomeScreenSchema,
+  welcomeScreenSchema
+);
 
 export const getGuildWelcomeScreenProcedure = toProcedure(
   `query`,

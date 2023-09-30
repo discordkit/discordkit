@@ -8,12 +8,19 @@ import {
 import {
   executeSlackCompatibleWebhook,
   executeSlackCompatibleWebhookProcedure,
+  executeSlackCompatibleWebhookSafe,
   executeSlackCompatibleWebhookSchema
 } from "../executeSlackCompatibleWebhook";
 
 describe(`executeSlackCompatibleWebhook`, () => {
   mockRequest.post(`/webhooks/:webhook/:token/slack`);
   const config = generateMock(executeSlackCompatibleWebhookSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(
+      executeSlackCompatibleWebhookSafe(config)
+    ).resolves.not.toThrow();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

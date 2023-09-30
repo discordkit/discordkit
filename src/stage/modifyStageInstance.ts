@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { patch, type Fetcher, toProcedure } from "#/utils/index.ts";
+import {
+  patch,
+  type Fetcher,
+  toProcedure,
+  toValidated
+} from "#/utils/index.ts";
 import { type Stage, stageSchema } from "./types/Stage.ts";
 import { stagePrivacyLevelSchema } from "./types/StagePrivacyLevel.ts";
 
@@ -32,6 +37,12 @@ export const modifyStageInstance: Fetcher<
   typeof modifyStageInstanceSchema,
   Stage
 > = async ({ channel, body }) => patch(`/stage-instances/${channel}`, body);
+
+export const modifyStageInstanceSafe = toValidated(
+  modifyStageInstance,
+  modifyStageInstanceSchema,
+  stageSchema
+);
 
 export const modifyStageInstanceProcedure = toProcedure(
   `mutation`,

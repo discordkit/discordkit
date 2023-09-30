@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { put, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { put, type Fetcher, toProcedure, toValidated } from "#/utils/index.ts";
 import {
   type ApplicationRoleConnection,
   applicationRoleConnectionSchema
@@ -38,6 +38,12 @@ export const updateUserApplicationRoleConnection: Fetcher<
   ApplicationRoleConnection
 > = async ({ application, body }) =>
   put(`/users/@me/applications/${application}/role-connection`, body);
+
+export const updateUserApplicationRoleConnectionSafe = toValidated(
+  updateUserApplicationRoleConnection,
+  updateUserApplicationRoleConnectionSchema,
+  applicationRoleConnectionSchema
+);
 
 export const updateUserApplicationRoleConnectionProcedure = toProcedure(
   `mutation`,

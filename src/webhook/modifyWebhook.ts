@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { patch, type Fetcher, toProcedure } from "#/utils/index.ts";
+import {
+  patch,
+  type Fetcher,
+  toProcedure,
+  toValidated
+} from "#/utils/index.ts";
 import { webhookSchema, type Webhook } from "./types/Webhook.ts";
 
 export const modifyWebhookSchema = z.object({
@@ -35,6 +40,12 @@ export const modifyWebhook: Fetcher<
   typeof modifyWebhookSchema,
   Webhook
 > = async ({ webhook, body }) => patch(`/webhooks/${webhook}`, body);
+
+export const modifyWebhookSafe = toValidated(
+  modifyWebhook,
+  modifyWebhookSchema,
+  webhookSchema
+);
 
 export const modifyWebhookProcedure = toProcedure(
   `mutation`,

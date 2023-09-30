@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { patch, type Fetcher, toProcedure } from "#/utils/index.ts";
+import {
+  patch,
+  type Fetcher,
+  toProcedure,
+  toValidated
+} from "#/utils/index.ts";
 import {
   type ScheduledEvent,
   scheduledEventSchema
@@ -60,6 +65,12 @@ export const modifyGuildScheduledEvent: Fetcher<
   ScheduledEvent
 > = async ({ guild, event, body }) =>
   patch(`/guilds/${guild}/scheduled-events/${event}`, body);
+
+export const modifyGuildScheduledEventSafe = toValidated(
+  modifyGuildScheduledEvent,
+  modifyGuildScheduledEventSchema,
+  scheduledEventSchema
+);
 
 export const modifyGuildScheduledEventProcedure = toProcedure(
   `mutation`,

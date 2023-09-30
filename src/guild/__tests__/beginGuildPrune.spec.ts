@@ -8,6 +8,7 @@ import {
 import {
   beginGuildPrune,
   beginGuildPruneProcedure,
+  beginGuildPruneSafe,
   beginGuildPruneSchema,
   guildPruneResultSchema
 } from "../beginGuildPrune";
@@ -18,6 +19,10 @@ describe(`beginGuildPrune`, () => {
     guildPruneResultSchema
   );
   const config = generateMock(beginGuildPruneSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(beginGuildPruneSafe(config)).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

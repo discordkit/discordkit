@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { put, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { put, type Fetcher, toProcedure, toValidated } from "#/utils/index.ts";
 
 export const addGuildMemberRoleSchema = z.object({
   guild: z.string().min(1),
@@ -22,6 +22,11 @@ export const addGuildMemberRole: Fetcher<
   typeof addGuildMemberRoleSchema
 > = async ({ guild, user, role }) =>
   put(`/guilds/${guild}/members/${user}/roles/${role}`);
+
+export const addGuildMemberRoleSafe = toValidated(
+  addGuildMemberRole,
+  addGuildMemberRoleSchema
+);
 
 export const addGuildMemberRoleProcedure = toProcedure(
   `mutation`,

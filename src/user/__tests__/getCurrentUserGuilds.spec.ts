@@ -8,6 +8,7 @@ import {
 import {
   getCurrentUserGuildsProcedure,
   getCurrentUserGuildsQuery,
+  getCurrentUserGuildsSafe,
   getCurrentUserGuildsSchema
 } from "../getCurrentUserGuilds";
 import { guildSchema } from "../../guild/types/Guild";
@@ -18,6 +19,12 @@ describe(`getCurrentUserGuilds`, () => {
     guildSchema.partial().array().max(200)
   );
   const config = generateMock(getCurrentUserGuildsSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(getCurrentUserGuildsSafe(config)).resolves.toStrictEqual(
+      expected
+    );
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

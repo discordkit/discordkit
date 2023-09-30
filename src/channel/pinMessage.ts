@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { put, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { put, type Fetcher, toProcedure, toValidated } from "#/utils/index.ts";
 
 export const pinMessageSchema = z.object({
   channel: z.string().min(1),
@@ -25,6 +25,8 @@ export const pinMessage: Fetcher<typeof pinMessageSchema> = async ({
   channel,
   message
 }) => put(`/channels/${channel}/pins/${message}`);
+
+export const pinMessageSafe = toValidated(pinMessage, pinMessageSchema);
 
 export const pinMessageProcedure = toProcedure(
   `mutation`,

@@ -8,7 +8,8 @@ import {
 import {
   bulkOverwriteGuildApplicationCommandsProcedure,
   bulkOverwriteGuildApplicationCommands,
-  bulkOverwriteGuildApplicationCommandsSchema
+  bulkOverwriteGuildApplicationCommandsSchema,
+  bulkOverwriteGuildApplicationCommandsSafe
 } from "../bulkOverwriteGuildApplicationCommands";
 import { applicationCommandSchema } from "../types/ApplicationCommand";
 
@@ -17,17 +18,23 @@ describe(`bulkOverwriteGuildApplicationCommands`, () => {
     `/applications/:application/guilds/:guild/commands`,
     applicationCommandSchema.array()
   );
-  const input = generateMock(bulkOverwriteGuildApplicationCommandsSchema);
+  const config = generateMock(bulkOverwriteGuildApplicationCommandsSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(
+      bulkOverwriteGuildApplicationCommandsSafe(config)
+    ).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(
-      runProcedure(bulkOverwriteGuildApplicationCommandsProcedure)(input)
+      runProcedure(bulkOverwriteGuildApplicationCommandsProcedure)(config)
     ).resolves.toStrictEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runMutation(bulkOverwriteGuildApplicationCommands);
-    result.current.mutate(input);
+    result.current.mutate(config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toStrictEqual(expected);
   });

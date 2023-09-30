@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { put, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { put, type Fetcher, toProcedure, toValidated } from "#/utils/index.ts";
 
 export const groupDMAddRecipientSchema = z.object({
   channel: z.string().min(1),
@@ -23,6 +23,11 @@ export const groupDMAddRecipient: Fetcher<
   typeof groupDMAddRecipientSchema
 > = async ({ channel, user, body }) =>
   put(`/channels/${channel}/recipients/${user}`, body);
+
+export const groupDMAddRecipientSafe = toValidated(
+  groupDMAddRecipient,
+  groupDMAddRecipientSchema
+);
 
 export const groupDMAddRecipientProcedure = toProcedure(
   `mutation`,

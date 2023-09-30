@@ -8,12 +8,19 @@ import {
 import {
   deleteGlobalApplicationCommand,
   deleteGlobalApplicationCommandProcedure,
+  deleteGlobalApplicationCommandSafe,
   deleteGlobalApplicationCommandSchema
 } from "../deleteGlobalApplicationCommand";
 
 describe(`deleteGlobalApplicationCommand`, () => {
   mockRequest.delete(`/applications/:application/commands/:command`);
   const config = generateMock(deleteGlobalApplicationCommandSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(
+      deleteGlobalApplicationCommandSafe(config)
+    ).resolves.not.toThrow();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

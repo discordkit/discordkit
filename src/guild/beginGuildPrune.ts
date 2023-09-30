@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { post, type Fetcher, toProcedure, toValidated } from "#/utils/index.ts";
 
 export const beginGuildPruneSchema = z.object({
   guild: z.string().min(1),
@@ -38,6 +38,12 @@ export const beginGuildPrune: Fetcher<
   typeof beginGuildPruneSchema,
   z.infer<typeof guildPruneResultSchema>
 > = async ({ guild, body }) => post(`/guilds/${guild}/prune`, body);
+
+export const beginGuildPruneSafe = toValidated(
+  beginGuildPrune,
+  beginGuildPruneSchema,
+  guildPruneResultSchema
+);
 
 export const beginGuildPruneProcedure = toProcedure(
   `mutation`,

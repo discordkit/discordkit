@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { post, type Fetcher, toProcedure, toValidated } from "#/utils/index.ts";
 import { channelSchema, type Channel } from "#/channel/types/Channel.ts";
 import { channelTypeSchema } from "#/channel/types/ChannelType.ts";
 import { overwriteSchema } from "#/channel/types/Overwrite.ts";
@@ -81,6 +81,12 @@ export const createGuildChannel: Fetcher<
   typeof createGuildChannelSchema,
   Channel
 > = async ({ guild, body }) => post(`/guilds/${guild}/channels`, body);
+
+export const createGuildChannelSafe = toValidated(
+  createGuildChannel,
+  createGuildChannelSchema,
+  channelSchema
+);
 
 export const createGuildChannelProcedure = toProcedure(
   `mutation`,

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { post, type Fetcher, toProcedure, toValidated } from "#/utils/index.ts";
 import {
   applicationCommandSchema,
   type ApplicationCommand
@@ -62,6 +62,12 @@ export const createGuildApplicationCommand: Fetcher<
   ApplicationCommand
 > = async ({ application, guild, body }) =>
   post(`/applications/${application}/guilds/${guild}/commands`, body);
+
+export const createGuildApplicationCommandSafe = toValidated(
+  createGuildApplicationCommand,
+  createGuildApplicationCommandSchema,
+  applicationCommandSchema
+);
 
 export const createGuildApplicationCommandProcedure = toProcedure(
   `mutation`,

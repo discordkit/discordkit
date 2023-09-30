@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import {
+  get,
+  type Fetcher,
+  toProcedure,
+  toQuery,
+  toValidated
+} from "#/utils/index.ts";
 import { userSchema, type User } from "#/user/types/User.ts";
 
 export const getReactionsSchema = z.object({
@@ -31,6 +37,12 @@ export const getReactions: Fetcher<typeof getReactionsSchema, User[]> = async ({
   params
 }) =>
   get(`/channels/${channel}/messages/${message}/reactions/${emoji}`, params);
+
+export const getReactionsSafe = toValidated(
+  getReactions,
+  getReactionsSchema,
+  userSchema.array()
+);
 
 export const getReactionsProcedure = toProcedure(
   `query`,

@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { remove, type Fetcher, toProcedure } from "#/utils/index.ts";
+import {
+  remove,
+  type Fetcher,
+  toProcedure,
+  toValidated
+} from "#/utils/index.ts";
 
 export const deleteGuildRoleSchema = z.object({
   guild: z.string().min(1),
@@ -21,6 +26,11 @@ export const deleteGuildRole: Fetcher<typeof deleteGuildRoleSchema> = async ({
   guild,
   role
 }) => remove(`/guilds/${guild}/roles/${role}`);
+
+export const deleteGuildRoleSafe = toValidated(
+  deleteGuildRole,
+  deleteGuildRoleSchema
+);
 
 export const deleteGuildRoleProcedure = toProcedure(
   `mutation`,

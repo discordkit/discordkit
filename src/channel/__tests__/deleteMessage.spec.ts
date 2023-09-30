@@ -8,12 +8,17 @@ import {
 import {
   deleteMessage,
   deleteMessageProcedure,
+  deleteMessageSafe,
   deleteMessageSchema
 } from "../deleteMessage";
 
 describe(`deleteMessage`, () => {
   mockRequest.delete(`/channels/:channel/messages/:message`);
   const config = generateMock(deleteMessageSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(deleteMessageSafe(config)).resolves.not.toThrow();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { patch, type Fetcher, toProcedure } from "#/utils/index.ts";
+import {
+  patch,
+  type Fetcher,
+  toProcedure,
+  toValidated
+} from "#/utils/index.ts";
 import { memberSchema, type Member } from "./types/Member.ts";
 
 export const modifyCurrentMemberSchema = z.object({
@@ -25,6 +30,12 @@ export const modifyCurrentMember: Fetcher<
   typeof modifyCurrentMemberSchema,
   Member
 > = async ({ guild, body }) => patch(`/guilds/${guild}/members/@me`, body);
+
+export const modifyCurrentMemberSafe = toValidated(
+  modifyCurrentMember,
+  modifyCurrentMemberSchema,
+  memberSchema
+);
 
 export const modifyCurrentMemberProcedure = toProcedure(
   `mutation`,

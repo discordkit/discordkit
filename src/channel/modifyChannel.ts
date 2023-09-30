@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { Fetcher } from "#/utils/index.ts";
-import { toProcedure, patch } from "#/utils/index.ts";
+import { toProcedure, patch, toValidated } from "#/utils/index.ts";
 import { type Channel, channelSchema } from "./types/Channel.ts";
 import { autoArchiveDurationSchema } from "./types/AutoArchiveDuration.ts";
 import { channelTypeSchema } from "./types/ChannelType.ts";
@@ -103,6 +103,12 @@ export const modifyChannel: Fetcher<
   typeof modifyChannelSchema,
   Channel
 > = async ({ channel, body }) => patch(`/channels/${channel}`, body);
+
+export const modifyChannelSafe = toValidated(
+  modifyChannel,
+  modifyChannelSchema,
+  channelSchema
+);
 
 export const modifyChannelProcedure = toProcedure(
   `mutation`,

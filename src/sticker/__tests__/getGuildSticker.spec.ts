@@ -8,6 +8,7 @@ import {
 import {
   getGuildStickerProcedure,
   getGuildStickerQuery,
+  getGuildStickerSafe,
   getGuildStickerSchema
 } from "../getGuildSticker";
 import { stickerSchema } from "../types/Sticker";
@@ -18,6 +19,10 @@ describe(`getGuildSticker`, () => {
     stickerSchema
   );
   const config = generateMock(getGuildStickerSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(getGuildStickerSafe(config)).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

@@ -8,12 +8,17 @@ import {
 import {
   removeGuildMember,
   removeGuildMemberProcedure,
+  removeGuildMemberSafe,
   removeGuildMemberSchema
 } from "../removeGuildMember";
 
 describe(`removeGuildMember`, () => {
   mockRequest.delete(`/guilds/:guild/members/:user`);
   const config = generateMock(removeGuildMemberSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(removeGuildMemberSafe(config)).resolves.not.toThrow();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

@@ -8,6 +8,7 @@ import {
 import {
   getChannelMessagesProcedure,
   getChannelMessagesQuery,
+  getChannelMessagesSafe,
   getChannelMessagesSchema
 } from "../getChannelMessages";
 import { messageSchema } from "../types/Message";
@@ -15,6 +16,10 @@ import { messageSchema } from "../types/Message";
 describe(`getChannelMessages`, () => {
   mockRequest.get(`/channels/:channel/messages`, messageSchema.array());
   const config = generateMock(getChannelMessagesSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(getChannelMessagesSafe(config)).resolves.toBeDefined();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

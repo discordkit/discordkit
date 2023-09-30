@@ -8,6 +8,7 @@ import {
 import {
   getApplicationRoleConnectionMetadataRecordsProcedure,
   getApplicationRoleConnectionMetadataRecordsQuery,
+  getApplicationRoleConnectionMetadataRecordsSafe,
   getApplicationRoleConnectionMetadataRecordsSchema
 } from "../getApplicationRoleConnectionMetadataRecords";
 import { applicationRoleConnectionMetadataSchema } from "../types/ApplicationRoleConnectionMetadata";
@@ -17,18 +18,26 @@ describe(`getApplicationRoleConnectionMetadataRecords`, () => {
     `/applications/:application/role-connections/metadata`,
     applicationRoleConnectionMetadataSchema.array()
   );
-  const input = generateMock(getApplicationRoleConnectionMetadataRecordsSchema);
+  const config = generateMock(
+    getApplicationRoleConnectionMetadataRecordsSchema
+  );
+
+  it(`can be used standalone`, async () => {
+    await expect(
+      getApplicationRoleConnectionMetadataRecordsSafe(config)
+    ).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(
-      runProcedure(getApplicationRoleConnectionMetadataRecordsProcedure)(input)
+      runProcedure(getApplicationRoleConnectionMetadataRecordsProcedure)(config)
     ).resolves.toStrictEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runQuery(
       getApplicationRoleConnectionMetadataRecordsQuery,
-      input
+      config
     );
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toStrictEqual(expected);

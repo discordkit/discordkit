@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import {
+  get,
+  type Fetcher,
+  toProcedure,
+  toQuery,
+  toValidated
+} from "#/utils/index.ts";
 import {
   guildApplicationCommandPermissionsSchema,
   type GuildApplicationCommandPermissions
@@ -25,6 +31,12 @@ export const getApplicationCommandPermissions: Fetcher<
   get(
     `/applications/${application}/guilds/${guild}/commands/${command}/permissions`
   );
+
+export const getApplicationCommandPermissionsSafe = toValidated(
+  getApplicationCommandPermissions,
+  getApplicationCommandPermissionsSchema,
+  guildApplicationCommandPermissionsSchema
+);
 
 export const getApplicationCommandPermissionsProcedure = toProcedure(
   `query`,

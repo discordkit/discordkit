@@ -8,6 +8,7 @@ import {
 import {
   getGuildRolesProcedure,
   getGuildRolesQuery,
+  getGuildRolesSafe,
   getGuildRolesSchema
 } from "../getGuildRoles";
 import { roleSchema } from "../types/Role";
@@ -15,6 +16,10 @@ import { roleSchema } from "../types/Role";
 describe(`getGuildRoles`, () => {
   const expected = mockRequest.get(`/guilds/:guild/roles`, roleSchema.array());
   const config = generateMock(getGuildRolesSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(getGuildRolesSafe(config)).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

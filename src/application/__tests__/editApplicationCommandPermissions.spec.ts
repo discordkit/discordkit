@@ -8,6 +8,7 @@ import {
 import {
   editApplicationCommandPermissions,
   editApplicationCommandPermissionsProcedure,
+  editApplicationCommandPermissionsSafe,
   editApplicationCommandPermissionsSchema
 } from "../editApplicationCommandPermissions";
 import { guildApplicationCommandPermissionsSchema } from "../types/GuildApplicationCommandPermissions";
@@ -17,17 +18,23 @@ describe(`editApplicationCommandPermissions`, () => {
     `/applications/:application/guilds/:guild/commands/:command/permissions`,
     guildApplicationCommandPermissionsSchema
   );
-  const input = generateMock(editApplicationCommandPermissionsSchema);
+  const config = generateMock(editApplicationCommandPermissionsSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(
+      editApplicationCommandPermissionsSafe(config)
+    ).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(
-      runProcedure(editApplicationCommandPermissionsProcedure)(input)
+      runProcedure(editApplicationCommandPermissionsProcedure)(config)
     ).resolves.toStrictEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runMutation(editApplicationCommandPermissions);
-    result.current.mutate(input);
+    result.current.mutate(config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toStrictEqual(expected);
   });

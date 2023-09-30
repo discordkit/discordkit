@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { remove, type Fetcher, toProcedure } from "#/utils/index.ts";
+import {
+  remove,
+  type Fetcher,
+  toProcedure,
+  toValidated
+} from "#/utils/index.ts";
 
 export const deleteGuildScheduledEventSchema = z.object({
   guild: z.string().min(1),
@@ -17,6 +22,11 @@ export const deleteGuildScheduledEvent: Fetcher<
   typeof deleteGuildScheduledEventSchema
 > = async ({ guild, event }) =>
   remove(`/guilds/${guild}/scheduled-events/${event}`);
+
+export const deleteGuildScheduledEventSafe = toValidated(
+  deleteGuildScheduledEvent,
+  deleteGuildScheduledEventSchema
+);
 
 export const deleteGuildScheduledEventProcedure = toProcedure(
   `mutation`,

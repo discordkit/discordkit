@@ -8,6 +8,7 @@ import {
 import {
   getUserApplicationRoleConnectionProcedure,
   getUserApplicationRoleConnectionQuery,
+  getUserApplicationRoleConnectionSafe,
   getUserApplicationRoleConnectionSchema
 } from "../getUserApplicationRoleConnection";
 import { applicationRoleConnectionSchema } from "../../application/types/ApplicationRoleConnection";
@@ -18,6 +19,12 @@ describe(`getUserApplicationRoleConnection`, () => {
     applicationRoleConnectionSchema
   );
   const config = generateMock(getUserApplicationRoleConnectionSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(
+      getUserApplicationRoleConnectionSafe(config)
+    ).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import {
+  get,
+  type Fetcher,
+  toProcedure,
+  toQuery,
+  toValidated
+} from "#/utils/index.ts";
 import {
   type ApplicationRoleConnection,
   applicationRoleConnectionSchema
@@ -21,6 +27,12 @@ export const getUserApplicationRoleConnection: Fetcher<
   ApplicationRoleConnection
 > = async ({ application }) =>
   get(`/users/@me/applications/${application}/role-connection`);
+
+export const getUserApplicationRoleConnectionSafe = toValidated(
+  getUserApplicationRoleConnection,
+  getUserApplicationRoleConnectionSchema,
+  applicationRoleConnectionSchema
+);
 
 export const getUserApplicationRoleConnectionProcedure = toProcedure(
   `query`,
