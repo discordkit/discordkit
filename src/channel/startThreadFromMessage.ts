@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { post, type Fetcher, toProcedure, toValidated } from "#/utils/index.ts";
 import { channelSchema, type Channel } from "./types/Channel.ts";
 import { autoArchiveDurationSchema } from "./types/AutoArchiveDuration.ts";
 
@@ -34,6 +34,12 @@ export const startThreadFromMessage: Fetcher<
   Channel
 > = async ({ channel, message, body }) =>
   post(`/channels/${channel}/messages/${message}/threads`, body);
+
+export const startThreadFromMessageSafe = toValidated(
+  startThreadFromMessage,
+  startThreadFromMessageSchema,
+  channelSchema
+);
 
 export const startThreadFromMessageProcedure = toProcedure(
   `mutation`,

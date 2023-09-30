@@ -8,6 +8,7 @@ import {
 import {
   getWebhookProcedure,
   getWebhookQuery,
+  getWebhookSafe,
   getWebhookSchema
 } from "../getWebhook";
 import { webhookSchema } from "../types/Webhook";
@@ -15,6 +16,10 @@ import { webhookSchema } from "../types/Webhook";
 describe(`getWebhook`, () => {
   const expected = mockRequest.get(`/webhooks/:webhook`, webhookSchema);
   const config = generateMock(getWebhookSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(getWebhookSafe(config)).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

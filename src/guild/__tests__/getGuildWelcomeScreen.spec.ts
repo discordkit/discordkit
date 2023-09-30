@@ -8,6 +8,7 @@ import {
 import {
   getGuildWelcomeScreenProcedure,
   getGuildWelcomeScreenQuery,
+  getGuildWelcomeScreenSafe,
   getGuildWelcomeScreenSchema
 } from "../getGuildWelcomeScreen";
 import { welcomeScreenSchema } from "../types/WelcomeScreen";
@@ -18,6 +19,12 @@ describe(`getGuildWelcomeScreen`, () => {
     welcomeScreenSchema
   );
   const config = generateMock(getGuildWelcomeScreenSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(getGuildWelcomeScreenSafe(config)).resolves.toStrictEqual(
+      expected
+    );
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

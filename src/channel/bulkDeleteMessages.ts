@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { post, type Fetcher, toProcedure, toValidated } from "#/utils/index.ts";
 
 export const bulkDeleteMessagesSchema = z.object({
   channel: z.string().min(1),
@@ -30,6 +30,11 @@ export const bulkDeleteMessages: Fetcher<
   typeof bulkDeleteMessagesSchema
 > = async ({ channel, body }) =>
   post(`/channels/${channel}/messages/bulk-delete`, body);
+
+export const bulkDeleteMessagesSafe = toValidated(
+  bulkDeleteMessages,
+  bulkDeleteMessagesSchema
+);
 
 export const bulkDeleteMessagesProcedure = toProcedure(
   `mutation`,

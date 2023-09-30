@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { post, type Fetcher, toProcedure, toValidated } from "#/utils/index.ts";
 import {
   type ScheduledEvent,
   scheduledEventSchema
@@ -51,6 +51,12 @@ export const createGuildScheduledEvent: Fetcher<
   typeof createGuildScheduledEventSchema,
   ScheduledEvent
 > = async ({ guild, body }) => post(`/guilds/${guild}/scheduled-events`, body);
+
+export const createGuildScheduledEventSafe = toValidated(
+  createGuildScheduledEvent,
+  createGuildScheduledEventSchema,
+  scheduledEventSchema
+);
 
 export const createGuildScheduledEventProcedure = toProcedure(
   `mutation`,

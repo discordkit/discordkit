@@ -3,6 +3,7 @@ import { waitFor } from "@testing-library/react";
 import {
   listGuildMembersProcedure,
   listGuildMembersQuery,
+  listGuildMembersSafe,
   listGuildMembersSchema
 } from "../listGuildMembers";
 import {
@@ -18,6 +19,10 @@ describe(`listGuildMembers`, () => {
     memberSchema.array()
   );
   const config = generateMock(listGuildMembersSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(listGuildMembersSafe(config)).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

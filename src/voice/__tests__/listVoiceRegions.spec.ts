@@ -6,12 +6,17 @@ import {
 } from "../../../scripts/test-utils";
 import {
   listVoiceRegionsProcedure,
-  listVoiceRegionsQuery
+  listVoiceRegionsQuery,
+  listVoiceRegionsSafe
 } from "../listVoiceRegions";
 import { voiceRegionSchema } from "../types/VoiceRegion";
 
 describe(`listVoiceRegions`, () => {
   const expected = mockRequest.get(`/voice/regions`, voiceRegionSchema.array());
+
+  it(`can be used standalone`, async () => {
+    await expect(listVoiceRegionsSafe()).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

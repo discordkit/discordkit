@@ -8,6 +8,7 @@ import {
 import {
   getPinnedMessagesProcedure,
   getPinnedMessagesQuery,
+  getPinnedMessagesSafe,
   getPinnedMessagesSchema
 } from "../getPinnedMessages";
 import { messageSchema } from "../types/Message";
@@ -15,6 +16,10 @@ import { messageSchema } from "../types/Message";
 describe(`getPinnedMessages`, () => {
   mockRequest.get(`/channels/:channel/pins`, messageSchema.array());
   const config = generateMock(getPinnedMessagesSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(getPinnedMessagesSafe(config)).resolves.toBeDefined();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

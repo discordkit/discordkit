@@ -8,6 +8,7 @@ import {
 import {
   deleteGuildEmoji,
   deleteGuildEmojiProcedure,
+  deleteGuildEmojiSafe,
   deleteGuildEmojiSchema
 } from "../deleteGuildEmoji";
 import { emojiSchema } from "../types/Emoji";
@@ -15,6 +16,10 @@ import { emojiSchema } from "../types/Emoji";
 describe(`deleteGuildEmoji`, () => {
   mockRequest.delete(`/guilds/:guild/emojis/:emoji`, emojiSchema);
   const config = generateMock(deleteGuildEmojiSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(deleteGuildEmojiSafe(config)).resolves.not.toThrow();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

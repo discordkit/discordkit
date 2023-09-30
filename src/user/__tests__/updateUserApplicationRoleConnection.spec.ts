@@ -8,6 +8,7 @@ import {
 import {
   updateUserApplicationRoleConnection,
   updateUserApplicationRoleConnectionProcedure,
+  updateUserApplicationRoleConnectionSafe,
   updateUserApplicationRoleConnectionSchema
 } from "../updateUserApplicationRoleConnection";
 import { applicationRoleConnectionSchema } from "../../application/types/ApplicationRoleConnection";
@@ -18,6 +19,12 @@ describe(`updateUserApplicationRoleConnection`, () => {
     applicationRoleConnectionSchema
   );
   const config = generateMock(updateUserApplicationRoleConnectionSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(
+      updateUserApplicationRoleConnectionSafe(config)
+    ).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

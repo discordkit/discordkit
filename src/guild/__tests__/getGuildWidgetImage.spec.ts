@@ -8,12 +8,17 @@ import {
 import {
   getGuildWidgetImageProcedure,
   getGuildWidgetImageQuery,
+  getGuildWidgetImageSafe,
   getGuildWidgetImageSchema
 } from "../getGuildWidgetImage";
 
 describe(`getGuildWidgetImage`, () => {
   mockRequest.get(`/guilds/:guild/widget.png`);
   const config = generateMock(getGuildWidgetImageSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(getGuildWidgetImageSafe(config)).resolves.not.toThrow();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

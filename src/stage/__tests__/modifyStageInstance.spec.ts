@@ -8,6 +8,7 @@ import {
 import {
   modifyStageInstance,
   modifyStageInstanceProcedure,
+  modifyStageInstanceSafe,
   modifyStageInstanceSchema
 } from "../modifyStageInstance";
 import { stageSchema } from "../types/Stage";
@@ -15,6 +16,12 @@ import { stageSchema } from "../types/Stage";
 describe(`modifyStageInstance`, () => {
   const expected = mockRequest.patch(`/stage-instances/:channel`, stageSchema);
   const config = generateMock(modifyStageInstanceSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(modifyStageInstanceSafe(config)).resolves.toStrictEqual(
+      expected
+    );
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

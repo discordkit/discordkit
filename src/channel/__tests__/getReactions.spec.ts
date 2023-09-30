@@ -8,6 +8,7 @@ import {
 import {
   getReactionsProcedure,
   getReactionsQuery,
+  getReactionsSafe,
   getReactionsSchema
 } from "../getReactions";
 import { userSchema } from "../../user/types/User";
@@ -18,6 +19,10 @@ describe(`getReactions`, () => {
     userSchema.partial().array()
   );
   const config = generateMock(getReactionsSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(getReactionsSafe(config)).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

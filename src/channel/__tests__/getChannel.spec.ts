@@ -8,6 +8,7 @@ import {
 import {
   getChannelProcedure,
   getChannelQuery,
+  getChannelSafe,
   getChannelSchema
 } from "../getChannel";
 import { channelSchema } from "../types/Channel";
@@ -15,6 +16,10 @@ import { channelSchema } from "../types/Channel";
 describe(`getChannel`, () => {
   const expected = mockRequest.get(`/channels/:channel`, channelSchema);
   const config = generateMock(getChannelSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(getChannelSafe(config)).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

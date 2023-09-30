@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import {
+  get,
+  type Fetcher,
+  toProcedure,
+  toQuery,
+  toValidated
+} from "#/utils/index.ts";
 import { webhookSchema, type Webhook } from "./types/Webhook.ts";
 
 export const getWebhookWithTokenSchema = z.object({
@@ -18,6 +24,12 @@ export const getWebhookWithToken: Fetcher<
   typeof getWebhookWithTokenSchema,
   Omit<Webhook, "user">
 > = async ({ webhook, token }) => get(`/webhooks/${webhook}/${token}`);
+
+export const getWebhookWithTokenSafe = toValidated(
+  getWebhookWithToken,
+  getWebhookWithTokenSchema,
+  webhookSchema.omit({ user: true })
+);
 
 export const getWebhookWithTokenProcedure = toProcedure(
   `query`,

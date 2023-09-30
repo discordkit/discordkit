@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { post, type Fetcher, toProcedure, toValidated } from "#/utils/index.ts";
 import { messageSchema, type Message } from "./types/Message.ts";
 
 export const crosspostMessageSchema = z.object({
@@ -21,6 +21,12 @@ export const crosspostMessage: Fetcher<
   Message
 > = async ({ channel, message }) =>
   post(`/channels/${channel}/messages/${message}/crosspost`);
+
+export const crosspostMessageSafe = toValidated(
+  crosspostMessage,
+  crosspostMessageSchema,
+  messageSchema
+);
 
 export const crosspostMessageProcedure = toProcedure(
   `mutation`,

@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { patch, type Fetcher, toProcedure } from "#/utils/index.ts";
+import {
+  patch,
+  type Fetcher,
+  toProcedure,
+  toValidated
+} from "#/utils/index.ts";
 import {
   guildApplicationCommandPermissionsSchema,
   type GuildApplicationCommandPermissions
@@ -49,6 +54,12 @@ export const editApplicationCommandPermissions: Fetcher<
     `/applications/${application}/guilds/${guild}/commands/${command}/permissions`,
     body
   );
+
+export const editApplicationCommandPermissionsSafe = toValidated(
+  editApplicationCommandPermissions,
+  editApplicationCommandPermissionsSchema,
+  guildApplicationCommandPermissionsSchema
+);
 
 export const editApplicationCommandPermissionsProcedure = toProcedure(
   `mutation`,

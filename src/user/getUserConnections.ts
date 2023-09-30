@@ -1,4 +1,10 @@
-import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import {
+  get,
+  type Fetcher,
+  toProcedure,
+  toQuery,
+  toValidated
+} from "#/utils/index.ts";
 import { connectionSchema, type Connection } from "./types/Connection.ts";
 
 /**
@@ -10,6 +16,12 @@ import { connectionSchema, type Connection } from "./types/Connection.ts";
  */
 export const getUserConnections: Fetcher<null, Connection> = async () =>
   get(`/users/@me/connections`);
+
+export const getUserConnectionsSafe = toValidated(
+  getUserConnections,
+  null,
+  connectionSchema
+);
 
 export const getUserConnectionsProcedure = toProcedure(
   `query`,

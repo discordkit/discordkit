@@ -8,6 +8,7 @@ import {
 import {
   crosspostMessage,
   crosspostMessageProcedure,
+  crosspostMessageSafe,
   crosspostMessageSchema
 } from "../crosspostMessage";
 import { messageSchema } from "../types/Message";
@@ -18,6 +19,10 @@ describe(`crosspostMessage`, () => {
     messageSchema
   );
   const config = generateMock(crosspostMessageSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(crosspostMessageSafe(config)).resolves.not.toThrow();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

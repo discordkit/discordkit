@@ -8,12 +8,17 @@ import {
 import {
   triggerTypingIndicator,
   triggerTypingIndicatorProcedure,
+  triggerTypingIndicatorSafe,
   triggerTypingIndicatorSchema
 } from "../triggerTypingIndicator";
 
 describe(`triggerTypingIndicator`, () => {
   mockRequest.post(`/channels/:channel/typing`);
   const config = generateMock(triggerTypingIndicatorSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(triggerTypingIndicatorSafe(config)).resolves.not.toThrow();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

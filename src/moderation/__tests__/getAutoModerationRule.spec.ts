@@ -8,6 +8,7 @@ import {
 import {
   getAutoModerationRuleProcedure,
   getAutoModerationRuleQuery,
+  getAutoModerationRuleSafe,
   getAutoModerationRuleSchema
 } from "../getAutoModerationRule";
 import { moderationRuleSchema } from "../types/ModerationRule";
@@ -19,6 +20,12 @@ describe(`getAutoModerationRule`, () => {
     { seed: 1 }
   );
   const config = generateMock(getAutoModerationRuleSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(getAutoModerationRuleSafe(config)).resolves.toStrictEqual(
+      expected
+    );
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

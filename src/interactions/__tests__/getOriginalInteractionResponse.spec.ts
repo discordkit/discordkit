@@ -8,6 +8,7 @@ import {
 import {
   getOriginalInteractionResponseProcedure,
   getOriginalInteractionResponseQuery,
+  getOriginalInteractionResponseSafe,
   getOriginalInteractionResponseSchema
 } from "../getOriginalInteractionResponse";
 import { interactionResponseSchema } from "../types/InteractionResponse";
@@ -18,6 +19,12 @@ describe(`getOriginalInteractionResponse`, () => {
     interactionResponseSchema
   );
   const config = generateMock(getOriginalInteractionResponseSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(
+      getOriginalInteractionResponseSafe(config)
+    ).resolves.not.toThrow();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

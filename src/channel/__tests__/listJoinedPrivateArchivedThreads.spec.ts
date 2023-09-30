@@ -8,6 +8,7 @@ import {
 import {
   listJoinedPrivateArchivedThreadsProcedure,
   listJoinedPrivateArchivedThreadsQuery,
+  listJoinedPrivateArchivedThreadsSafe,
   listJoinedPrivateArchivedThreadsSchema
 } from "../listJoinedPrivateArchivedThreads";
 import { archivedThreadsSchema } from "../types/ArchivedThreads";
@@ -18,6 +19,12 @@ describe(`listJoinedPrivateArchivedThreads`, () => {
     archivedThreadsSchema
   );
   const config = generateMock(listJoinedPrivateArchivedThreadsSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(
+      listJoinedPrivateArchivedThreadsSafe(config)
+    ).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

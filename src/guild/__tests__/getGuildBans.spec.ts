@@ -8,6 +8,7 @@ import {
 import {
   getGuildBansProcedure,
   getGuildBansQuery,
+  getGuildBansSafe,
   getGuildBansSchema
 } from "../getGuildBans";
 import { banSchema } from "../types/Ban";
@@ -15,6 +16,10 @@ import { banSchema } from "../types/Ban";
 describe(`getGuildBans`, () => {
   const expected = mockRequest.get(`/guilds/:guild/bans`, banSchema.array());
   const config = generateMock(getGuildBansSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(getGuildBansSafe(config)).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

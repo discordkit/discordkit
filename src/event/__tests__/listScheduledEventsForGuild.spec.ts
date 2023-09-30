@@ -8,6 +8,7 @@ import {
 import {
   listScheduledEventsForGuildProcedure,
   listScheduledEventsForGuildQuery,
+  listScheduledEventsForGuildSafe,
   listScheduledEventsForGuildSchema
 } from "../listScheduledEventsForGuild";
 import { scheduledEventSchema } from "../types/ScheduledEvent";
@@ -18,6 +19,12 @@ describe(`listScheduledEventsForGuild`, () => {
     scheduledEventSchema.array()
   );
   const config = generateMock(listScheduledEventsForGuildSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(
+      listScheduledEventsForGuildSafe(config)
+    ).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

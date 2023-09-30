@@ -8,6 +8,7 @@ import {
 import {
   modifyGuildRolePositions,
   modifyGuildRolePositionsProcedure,
+  modifyGuildRolePositionsSafe,
   modifyGuildRolePositionsSchema
 } from "../modifyGuildRolePositions";
 import { roleSchema } from "../types/Role";
@@ -18,6 +19,12 @@ describe(`modifyGuildRolePositions`, () => {
     roleSchema.array()
   );
   const config = generateMock(modifyGuildRolePositionsSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(modifyGuildRolePositionsSafe(config)).resolves.toStrictEqual(
+      expected
+    );
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

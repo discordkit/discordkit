@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import {
+  get,
+  type Fetcher,
+  toProcedure,
+  toQuery,
+  toValidated
+} from "#/utils/index.ts";
 import {
   scheduledEventSchema,
   type ScheduledEvent
@@ -29,6 +35,12 @@ export const getGuildScheduledEvent: Fetcher<
   ScheduledEvent
 > = async ({ guild, event, params }) =>
   get(`/guilds/${guild}/scheduled-events/${event}`, params);
+
+export const getGuildScheduledEventSafe = toValidated(
+  getGuildScheduledEvent,
+  getGuildScheduledEventSchema,
+  scheduledEventSchema
+);
 
 export const getGuildScheduledEventProcedure = toProcedure(
   `query`,

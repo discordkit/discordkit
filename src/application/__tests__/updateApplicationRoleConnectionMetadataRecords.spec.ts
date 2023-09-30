@@ -8,7 +8,8 @@ import {
 import {
   updateApplicationRoleConnectionMetadataRecordsProcedure,
   updateApplicationRoleConnectionMetadataRecords,
-  updateApplicationRoleConnectionMetadataRecordsSchema
+  updateApplicationRoleConnectionMetadataRecordsSchema,
+  updateApplicationRoleConnectionMetadataRecordsSafe
 } from "../updateApplicationRoleConnectionMetadataRecords";
 import { applicationRoleConnectionMetadataSchema } from "../types/ApplicationRoleConnectionMetadata";
 
@@ -17,14 +18,20 @@ describe(`updateApplicationRoleConnectionMetadataRecords`, () => {
     `/applications/:application/role-connections/metadata`,
     applicationRoleConnectionMetadataSchema.array()
   );
-  const input = generateMock(
+  const config = generateMock(
     updateApplicationRoleConnectionMetadataRecordsSchema
   );
+
+  it(`can be used standalone`, async () => {
+    await expect(
+      updateApplicationRoleConnectionMetadataRecordsSafe(config)
+    ).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(updateApplicationRoleConnectionMetadataRecordsProcedure)(
-        input
+        config
       )
     ).resolves.toStrictEqual(expected);
   });
@@ -33,7 +40,7 @@ describe(`updateApplicationRoleConnectionMetadataRecords`, () => {
     const { result } = runMutation(
       updateApplicationRoleConnectionMetadataRecords
     );
-    result.current.mutate(input);
+    result.current.mutate(config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toStrictEqual(expected);
   });

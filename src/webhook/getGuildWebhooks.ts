@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import {
+  get,
+  type Fetcher,
+  toProcedure,
+  toQuery,
+  toValidated
+} from "#/utils/index.ts";
 import { webhookSchema, type Webhook } from "./types/Webhook.ts";
 
 export const getGuildWebhooksSchema = z.object({
@@ -17,6 +23,12 @@ export const getGuildWebhooks: Fetcher<
   typeof getGuildWebhooksSchema,
   Webhook[]
 > = async ({ guild }) => get(`/guilds/${guild}/webhooks`);
+
+export const getGuildWebhooksSafe = toValidated(
+  getGuildWebhooks,
+  getGuildWebhooksSchema,
+  webhookSchema.array()
+);
 
 export const getGuildWebhooksProcedure = toProcedure(
   `query`,

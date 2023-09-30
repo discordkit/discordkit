@@ -8,6 +8,7 @@ import {
 import {
   getStageInstanceProcedure,
   getStageInstanceQuery,
+  getStageInstanceSafe,
   getStageInstanceSchema
 } from "../getStageInstance";
 import { stageSchema } from "../types/Stage";
@@ -15,6 +16,10 @@ import { stageSchema } from "../types/Stage";
 describe(`getStageInstance`, () => {
   const expected = mockRequest.get(`/stage-instances/:channel`, stageSchema);
   const config = generateMock(getStageInstanceSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(getStageInstanceSafe(config)).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

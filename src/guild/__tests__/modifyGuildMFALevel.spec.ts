@@ -8,6 +8,7 @@ import {
 import {
   modifyGuildMFALevel,
   modifyGuildMFALevelProcedure,
+  modifyGuildMFALevelSafe,
   modifyGuildMFALevelSchema
 } from "../modifyGuildMFALevel";
 import { mfaLevelSchema } from "../types/MFALevel";
@@ -15,6 +16,12 @@ import { mfaLevelSchema } from "../types/MFALevel";
 describe(`modifyGuildMFALevel`, () => {
   const expected = mockRequest.patch(`/guilds/:guild/mfa`, mfaLevelSchema);
   const config = generateMock(modifyGuildMFALevelSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(modifyGuildMFALevelSafe(config)).resolves.toStrictEqual(
+      expected
+    );
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

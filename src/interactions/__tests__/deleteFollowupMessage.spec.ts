@@ -8,12 +8,17 @@ import {
 import {
   deleteFollowupMessage,
   deleteFollowupMessageProcedure,
+  deleteFollowupMessageSafe,
   deleteFollowupMessageSchema
 } from "../deleteFollowupMessage";
 
 describe(`deleteFollowupMessage`, () => {
   mockRequest.delete(`/webhooks/:application/:token/messages/:message`);
   const config = generateMock(deleteFollowupMessageSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(deleteFollowupMessageSafe(config)).resolves.not.toThrow();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

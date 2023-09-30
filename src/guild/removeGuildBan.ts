@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { remove, type Fetcher, toProcedure } from "#/utils/index.ts";
+import {
+  remove,
+  type Fetcher,
+  toProcedure,
+  toValidated
+} from "#/utils/index.ts";
 
 export const removeGuildBanSchema = z.object({
   guild: z.string().min(1),
@@ -21,6 +26,11 @@ export const removeGuildBan: Fetcher<typeof removeGuildBanSchema> = async ({
   guild,
   user
 }) => remove(`/guilds/${guild}/bans/${user}`);
+
+export const removeGuildBanSafe = toValidated(
+  removeGuildBan,
+  removeGuildBanSchema
+);
 
 export const removeGuildBanProcedure = toProcedure(
   `mutation`,

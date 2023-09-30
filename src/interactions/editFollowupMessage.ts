@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { patch, buildURL, type Fetcher, toProcedure } from "#/utils/index.ts";
+import {
+  patch,
+  buildURL,
+  type Fetcher,
+  toProcedure,
+  toValidated
+} from "#/utils/index.ts";
 import { messageSchema, type Message } from "#/channel/types/Message.ts";
 import { embedSchema } from "#/channel/types/Embed.ts";
 import { allowedMentionSchema } from "#/channel/types/AllowedMention.ts";
@@ -55,6 +61,12 @@ export const editFollowupMessage: Fetcher<
       .href,
     body
   );
+
+export const editFollowupMessageSafe = toValidated(
+  editFollowupMessage,
+  editFollowupMessageSchema,
+  messageSchema
+);
 
 export const editFollowupMessageProcedure = toProcedure(
   `mutation`,

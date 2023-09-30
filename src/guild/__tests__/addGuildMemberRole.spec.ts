@@ -8,12 +8,17 @@ import {
 import {
   addGuildMemberRole,
   addGuildMemberRoleProcedure,
+  addGuildMemberRoleSafe,
   addGuildMemberRoleSchema
 } from "../addGuildMemberRole";
 
 describe(`addGuildMemberRole`, () => {
   mockRequest.put(`/guilds/:guild/members/:user/roles/:role`);
   const config = generateMock(addGuildMemberRoleSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(addGuildMemberRoleSafe(config)).resolves.not.toThrow();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

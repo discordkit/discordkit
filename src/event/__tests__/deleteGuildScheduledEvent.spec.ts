@@ -8,12 +8,17 @@ import {
 import {
   deleteGuildScheduledEvent,
   deleteGuildScheduledEventProcedure,
+  deleteGuildScheduledEventSafe,
   deleteGuildScheduledEventSchema
 } from "../deleteGuildScheduledEvent";
 
 describe(`deleteGuildScheduledEvent`, () => {
   mockRequest.delete(`/guilds/:guild/scheduled-events/:event`);
   const config = generateMock(deleteGuildScheduledEventSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(deleteGuildScheduledEventSafe(config)).resolves.not.toThrow();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

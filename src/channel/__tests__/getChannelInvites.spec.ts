@@ -8,6 +8,7 @@ import {
 import {
   getChannelInvitesProcedure,
   getChannelInvitesQuery,
+  getChannelInvitesSafe,
   getChannelInvitesSchema
 } from "../getChannelInvites";
 import { inviteMetadataSchema } from "../../invite/types/InviteMetadata";
@@ -18,6 +19,12 @@ describe(`getChannelInvites`, () => {
     inviteMetadataSchema.array()
   );
   const config = generateMock(getChannelInvitesSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(getChannelInvitesSafe(config)).resolves.toStrictEqual(
+      expected
+    );
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

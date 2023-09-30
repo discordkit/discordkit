@@ -8,6 +8,7 @@ import {
 import {
   getFollowupMessageProcedure,
   getFollowupMessageQuery,
+  getFollowupMessageSafe,
   getFollowupMessageSchema
 } from "../getFollowupMessage";
 import { messageSchema } from "../../channel/types/Message";
@@ -18,6 +19,10 @@ describe(`getFollowupMessage`, () => {
     messageSchema
   );
   const config = generateMock(getFollowupMessageSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(getFollowupMessageSafe(config)).resolves.not.toThrow();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

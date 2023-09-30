@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { patch, type Fetcher, toProcedure } from "#/utils/index.ts";
+import {
+  patch,
+  type Fetcher,
+  toProcedure,
+  toValidated
+} from "#/utils/index.ts";
 import { roleSchema, type Role } from "./types/Role.ts";
 
 export const modifyGuildRoleSchema = z.object({
@@ -45,6 +50,12 @@ export const modifyGuildRole: Fetcher<
   Role
 > = async ({ guild, role, body }) =>
   patch(`/guilds/${guild}/roles/${role}`, body);
+
+export const modifyGuildRoleSafe = toValidated(
+  modifyGuildRole,
+  modifyGuildRoleSchema,
+  roleSchema
+);
 
 export const modifyGuildRoleProcedure = toProcedure(
   `mutation`,

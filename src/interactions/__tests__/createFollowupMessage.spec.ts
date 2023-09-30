@@ -8,12 +8,17 @@ import {
 import {
   createFollowupMessage,
   createFollowupMessageProcedure,
+  createFollowupMessageSafe,
   createFollowupMessageSchema
 } from "../createFollowupMessage";
 
 describe(`createFollowupMessage`, () => {
   mockRequest.post(`/webhooks/:application/:token`);
   const config = generateMock(createFollowupMessageSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(createFollowupMessageSafe(config)).resolves.not.toThrow();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

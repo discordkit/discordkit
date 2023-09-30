@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { remove, type Fetcher, toProcedure } from "#/utils/index.ts";
+import {
+  remove,
+  type Fetcher,
+  toProcedure,
+  toValidated
+} from "#/utils/index.ts";
 
 export const deleteGuildEmojiSchema = z.object({
   guild: z.string().min(1),
@@ -21,6 +26,11 @@ export const deleteGuildEmoji: Fetcher<typeof deleteGuildEmojiSchema> = async ({
   guild,
   emoji
 }) => remove(`/guilds/${guild}/emojis/${emoji}`);
+
+export const deleteGuildEmojiSafe = toValidated(
+  deleteGuildEmoji,
+  deleteGuildEmojiSchema
+);
 
 export const deleteGuildEmojiProcedure = toProcedure(
   `mutation`,

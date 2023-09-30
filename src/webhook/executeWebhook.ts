@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { post, buildURL, type Fetcher, toProcedure } from "#/utils/index.ts";
+import {
+  post,
+  buildURL,
+  type Fetcher,
+  toProcedure,
+  toValidated
+} from "#/utils/index.ts";
 import { messageFlagSchema } from "#/channel/types/MessageFlag.ts";
 import { embedSchema } from "#/channel/types/Embed.ts";
 import { allowedMentionSchema } from "#/channel/types/AllowedMention.ts";
@@ -75,6 +81,11 @@ export const executeWebhook: Fetcher<typeof executeWebhookSchema> = async ({
   params,
   body
 }) => post(buildURL(`/webhooks/${webhook}/${token}`, params).href, body);
+
+export const executeWebhookSafe = toValidated(
+  executeWebhook,
+  executeWebhookSchema
+);
 
 export const executeWebhookProcedure = toProcedure(
   `mutation`,

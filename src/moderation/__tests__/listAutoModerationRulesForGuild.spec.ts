@@ -8,6 +8,7 @@ import {
 import {
   listAutoModerationRulesForGuildProcedure,
   listAutoModerationRulesForGuildQuery,
+  listAutoModerationRulesForGuildSafe,
   listAutoModerationRulesForGuildSchema
 } from "../listAutoModerationRulesForGuild";
 import { moderationRuleSchema } from "../types/ModerationRule";
@@ -19,6 +20,12 @@ describe(`listAutoModerationRulesForGuild`, () => {
     { seed: 1 }
   );
   const config = generateMock(listAutoModerationRulesForGuildSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(
+      listAutoModerationRulesForGuildSafe(config)
+    ).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

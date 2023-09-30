@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { put, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { put, type Fetcher, toProcedure, toValidated } from "#/utils/index.ts";
 
 export const createGuildBanSchema = z.object({
   guild: z.string().min(1),
@@ -31,6 +31,11 @@ export const createGuildBan: Fetcher<typeof createGuildBanSchema> = async ({
   user,
   body
 }) => put(`/guilds/${guild}/bans/${user}`, body);
+
+export const createGuildBanSafe = toValidated(
+  createGuildBan,
+  createGuildBanSchema
+);
 
 export const createGuildBanProcedure = toProcedure(
   `mutation`,

@@ -8,6 +8,7 @@ import {
 import {
   modifyGuildOnboarding,
   modifyGuildOnboardingProcedure,
+  modifyGuildOnboardingSafe,
   modifyGuildOnboardingSchema
 } from "../modifyGuildOnboarding";
 import { guildOnboardingSchema } from "../types";
@@ -18,6 +19,12 @@ describe(`modifyGuildOnboarding`, () => {
     guildOnboardingSchema
   );
   const config = generateMock(modifyGuildOnboardingSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(modifyGuildOnboardingSafe(config)).resolves.toStrictEqual(
+      expected
+    );
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

@@ -8,6 +8,7 @@ import {
 import {
   editOriginalInteractionResponse,
   editOriginalInteractionResponseProcedure,
+  editOriginalInteractionResponseSafe,
   editOriginalInteractionResponseSchema
 } from "../editOriginalInteractionResponse";
 import { interactionResponseSchema } from "../types/InteractionResponse";
@@ -18,6 +19,12 @@ describe(`editOriginalInteractionResponse`, () => {
     interactionResponseSchema
   );
   const config = generateMock(editOriginalInteractionResponseSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(
+      editOriginalInteractionResponseSafe(config)
+    ).resolves.not.toThrow();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

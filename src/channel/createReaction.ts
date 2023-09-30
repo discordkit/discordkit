@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { put, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { put, type Fetcher, toProcedure, toValidated } from "#/utils/index.ts";
 
 export const createReactionSchema = z.object({
   channel: z.string().min(1),
@@ -19,6 +19,11 @@ export const createReaction: Fetcher<typeof createReactionSchema> = async ({
   message,
   emoji
 }) => put(`/channels/${channel}/messages/${message}/reactions/${emoji}/@me`);
+
+export const createReactionSafe = toValidated(
+  createReaction,
+  createReactionSchema
+);
 
 export const createReactionProcedure = toProcedure(
   `mutation`,

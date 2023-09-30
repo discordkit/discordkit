@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import {
+  get,
+  type Fetcher,
+  toProcedure,
+  toQuery,
+  toValidated
+} from "#/utils/index.ts";
 import { threadMemberSchema, type ThreadMember } from "./types/ThreadMember.ts";
 
 export const getThreadMemberSchema = z.object({
@@ -28,6 +34,12 @@ export const getThreadMember: Fetcher<
   ThreadMember
 > = async ({ channel, user, params }) =>
   get(`/channels/${channel}/thread-members/${user}`, params);
+
+export const getThreadMemberSafe = toValidated(
+  getThreadMember,
+  getThreadMemberSchema,
+  threadMemberSchema
+);
 
 export const getThreadMemberProcedure = toProcedure(
   `query`,

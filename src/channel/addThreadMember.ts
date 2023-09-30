@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { put, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { put, type Fetcher, toProcedure, toValidated } from "#/utils/index.ts";
 
 export const addThreadMemberSchema = z.object({
   channel: z.string().min(1),
@@ -17,6 +17,11 @@ export const addThreadMember: Fetcher<typeof addThreadMemberSchema> = async ({
   channel,
   user
 }) => put(`/channels/${channel}/thread-members/${user}`);
+
+export const addThreadMemberSafe = toValidated(
+  addThreadMember,
+  addThreadMemberSchema
+);
 
 export const addThreadMemberProcedure = toProcedure(
   `mutation`,

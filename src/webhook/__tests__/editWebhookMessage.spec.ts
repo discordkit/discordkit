@@ -8,6 +8,7 @@ import {
 import {
   editWebhookMessage,
   editWebhookMessageProcedure,
+  editWebhookMessageSafe,
   editWebhookMessageSchema
 } from "../editWebhookMessage";
 import { messageSchema } from "../../channel/types/Message";
@@ -18,6 +19,10 @@ describe(`editWebhookMessage`, () => {
     messageSchema
   );
   const config = generateMock(editWebhookMessageSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(editWebhookMessageSafe(config)).resolves.toBeDefined();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

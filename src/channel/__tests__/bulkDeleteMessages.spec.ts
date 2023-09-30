@@ -8,12 +8,17 @@ import {
 import {
   bulkDeleteMessages,
   bulkDeleteMessagesProcedure,
+  bulkDeleteMessagesSafe,
   bulkDeleteMessagesSchema
 } from "../bulkDeleteMessages";
 
 describe(`bulkDeleteMessages`, () => {
   mockRequest.post(`/channels/:channel/messages/bulk-delete`);
   const config = generateMock(bulkDeleteMessagesSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(bulkDeleteMessagesSafe(config)).resolves.not.toThrow();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

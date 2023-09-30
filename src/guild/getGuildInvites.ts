@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import {
+  get,
+  type Fetcher,
+  toProcedure,
+  toQuery,
+  toValidated
+} from "#/utils/index.ts";
 import {
   inviteMetadataSchema,
   type InviteMetadata
@@ -20,6 +26,12 @@ export const getGuildInvites: Fetcher<
   typeof getGuildInvitesSchema,
   InviteMetadata[]
 > = async ({ guild }) => get(`/guilds/${guild}/invites`);
+
+export const getGuildInvitesSafe = toValidated(
+  getGuildInvites,
+  getGuildInvitesSchema,
+  inviteMetadataSchema.array()
+);
 
 export const getGuildInvitesProcedure = toProcedure(
   `query`,

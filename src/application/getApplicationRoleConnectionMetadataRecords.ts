@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import {
+  get,
+  type Fetcher,
+  toProcedure,
+  toQuery,
+  toValidated
+} from "#/utils/index.ts";
 import {
   type ApplicationRoleConnectionMetadata,
   applicationRoleConnectionMetadataSchema
@@ -21,6 +27,12 @@ export const getApplicationRoleConnectionMetadataRecords: Fetcher<
   ApplicationRoleConnectionMetadata[]
 > = async ({ application }) =>
   get(`/applications/${application}/role-connections/metadata`);
+
+export const getApplicationRoleConnectionMetadataRecordsSafe = toValidated(
+  getApplicationRoleConnectionMetadataRecords,
+  getApplicationRoleConnectionMetadataRecordsSchema,
+  applicationRoleConnectionMetadataSchema.array()
+);
 
 export const getApplicationRoleConnectionMetadataRecordsProcedure = toProcedure(
   `query`,

@@ -8,6 +8,7 @@ import {
 import {
   startThreadInForumOrMediaChannel,
   startThreadInForumOrMediaChannelProcedure,
+  startThreadInForumOrMediaChannelSafe,
   startThreadInForumOrMediaChannelSchema
 } from "../startThreadInForumOrMediaChannel";
 import { channelSchema } from "../types/Channel";
@@ -19,6 +20,12 @@ describe(`startThreadInForumOrMediaChannel`, () => {
     channelSchema.extend({ message: messageSchema })
   );
   const config = generateMock(startThreadInForumOrMediaChannelSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(
+      startThreadInForumOrMediaChannelSafe(config)
+    ).resolves.toBeDefined();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

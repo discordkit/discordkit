@@ -8,6 +8,7 @@ import {
 import {
   createStageInstance,
   createStageInstanceProcedure,
+  createStageInstanceSafe,
   createStageInstanceSchema
 } from "../createStageInstance";
 import { stageSchema } from "../types/Stage";
@@ -15,6 +16,12 @@ import { stageSchema } from "../types/Stage";
 describe(`createStageInstance`, () => {
   const expected = mockRequest.post(`/stage-instances`, stageSchema);
   const config = generateMock(createStageInstanceSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(createStageInstanceSafe(config)).resolves.toStrictEqual(
+      expected
+    );
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

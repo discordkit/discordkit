@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { remove, type Fetcher, toProcedure } from "#/utils/index.ts";
+import {
+  remove,
+  type Fetcher,
+  toProcedure,
+  toValidated
+} from "#/utils/index.ts";
 
 export const deleteOwnReactionSchema = z.object({
   channel: z.string().min(1),
@@ -18,6 +23,11 @@ export const deleteOwnReaction: Fetcher<
   typeof deleteOwnReactionSchema
 > = async ({ channel, message, emoji }) =>
   remove(`/channels/${channel}/messages/${message}/reactions/${emoji}/@me`);
+
+export const deleteOwnReactionSafe = toValidated(
+  deleteOwnReaction,
+  deleteOwnReactionSchema
+);
 
 export const deleteOwnReactionProcedure = toProcedure(
   `mutation`,

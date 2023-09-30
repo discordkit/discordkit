@@ -8,6 +8,7 @@ import {
 import {
   modifyGuildWelcomeScreen,
   modifyGuildWelcomeScreenProcedure,
+  modifyGuildWelcomeScreenSafe,
   modifyGuildWelcomeScreenSchema
 } from "../modifyGuildWelcomeScreen";
 import { welcomeScreenSchema } from "../types/WelcomeScreen";
@@ -18,6 +19,12 @@ describe(`modifyGuildWelcomeScreen`, () => {
     welcomeScreenSchema
   );
   const config = generateMock(modifyGuildWelcomeScreenSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(modifyGuildWelcomeScreenSafe(config)).resolves.toStrictEqual(
+      expected
+    );
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

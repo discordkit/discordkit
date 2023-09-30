@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { post, type Fetcher, toProcedure, toValidated } from "#/utils/index.ts";
 import { channelSchema } from "#/channel/types/Channel.ts";
 import { verificationLevelSchema } from "./types/VerificationLevel.ts";
 import { defaultMessageNotificationLevelSchema } from "./types/DefaultMessageNotificationLevel.ts";
@@ -51,6 +51,12 @@ export const createGuildSchema = z.object({
 export const createGuild: Fetcher<typeof createGuildSchema, Guild> = async ({
   body
 }) => post(`/guilds`, body);
+
+export const createGuildSafe = toValidated(
+  createGuild,
+  createGuildSchema,
+  guildSchema
+);
 
 export const createGuildProcedure = toProcedure(
   `mutation`,

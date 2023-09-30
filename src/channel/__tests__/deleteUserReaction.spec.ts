@@ -8,6 +8,7 @@ import {
 import {
   deleteUserReaction,
   deleteUserReactionProcedure,
+  deleteUserReactionSafe,
   deleteUserReactionSchema
 } from "../deleteUserReaction";
 
@@ -16,6 +17,10 @@ describe(`deleteUserReaction`, () => {
     `/channels/:channel/messages/:message/reactions/:emoji/:user`
   );
   const config = generateMock(deleteUserReactionSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(deleteUserReactionSafe(config)).resolves.not.toThrow();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

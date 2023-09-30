@@ -8,6 +8,7 @@ import {
 import {
   getGuildPreviewProcedure,
   getGuildPreviewQuery,
+  getGuildPreviewSafe,
   getGuildPreviewSchema
 } from "../getGuildPreview";
 import { guildPreviewSchema } from "../types/GuildPreview";
@@ -18,6 +19,10 @@ describe(`getGuildPreview`, () => {
     guildPreviewSchema
   );
   const config = generateMock(getGuildPreviewSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(getGuildPreviewSafe(config)).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

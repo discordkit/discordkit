@@ -8,7 +8,8 @@ import {
 import {
   bulkOverwriteGlobalApplicationCommandsProcedure,
   bulkOverwriteGlobalApplicationCommands,
-  bulkOverwriteGlobalApplicationCommandsSchema
+  bulkOverwriteGlobalApplicationCommandsSchema,
+  bulkOverwriteGlobalApplicationCommandsSafe
 } from "../bulkOverwriteGlobalApplicationCommands";
 import { applicationCommandSchema } from "../types/ApplicationCommand";
 
@@ -17,17 +18,23 @@ describe(`bulkOverwriteGlobalApplicationCommands`, () => {
     `/applications/:application/commands`,
     applicationCommandSchema.array()
   );
-  const input = generateMock(bulkOverwriteGlobalApplicationCommandsSchema);
+  const config = generateMock(bulkOverwriteGlobalApplicationCommandsSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(
+      bulkOverwriteGlobalApplicationCommandsSafe(config)
+    ).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(
-      runProcedure(bulkOverwriteGlobalApplicationCommandsProcedure)(input)
+      runProcedure(bulkOverwriteGlobalApplicationCommandsProcedure)(config)
     ).resolves.toStrictEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runMutation(bulkOverwriteGlobalApplicationCommands);
-    result.current.mutate(input);
+    result.current.mutate(config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toStrictEqual(expected);
   });

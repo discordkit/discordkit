@@ -8,6 +8,7 @@ import {
 import {
   getGuildTemplatesProcedure,
   getGuildTemplatesQuery,
+  getGuildTemplatesSafe,
   getGuildTemplatesSchema
 } from "../getGuildTemplates";
 import { guildTemplateSchema } from "../types/GuildTemplate";
@@ -18,6 +19,12 @@ describe(`getGuildTemplates`, () => {
     guildTemplateSchema.array()
   );
   const config = generateMock(getGuildTemplatesSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(getGuildTemplatesSafe(config)).resolves.toStrictEqual(
+      expected
+    );
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

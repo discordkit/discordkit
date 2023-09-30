@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { post, type Fetcher, toProcedure, toValidated } from "#/utils/index.ts";
 import { type Stage, stageSchema } from "./types/Stage.ts";
 import { stagePrivacyLevelSchema } from "./types/StagePrivacyLevel.ts";
 
@@ -33,6 +33,12 @@ export const createStageInstance: Fetcher<
   typeof createStageInstanceSchema,
   Stage
 > = async ({ body }) => post(`/stage-instances`, body);
+
+export const createStageInstanceSafe = toValidated(
+  createStageInstance,
+  createStageInstanceSchema,
+  stageSchema
+);
 
 export const createStageInstanceProcedure = toProcedure(
   `mutation`,

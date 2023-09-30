@@ -8,6 +8,7 @@ import {
 import {
   editFollowupMessage,
   editFollowupMessageProcedure,
+  editFollowupMessageSafe,
   editFollowupMessageSchema
 } from "../editFollowupMessage";
 import { messageSchema } from "../../channel/types/Message";
@@ -18,6 +19,10 @@ describe(`editFollowupMessage`, () => {
     messageSchema
   );
   const config = generateMock(editFollowupMessageSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(editFollowupMessageSafe(config)).resolves.not.toThrow();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

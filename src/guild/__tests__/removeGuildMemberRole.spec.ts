@@ -8,12 +8,17 @@ import {
 import {
   removeGuildMemberRole,
   removeGuildMemberRoleProcedure,
+  removeGuildMemberRoleSafe,
   removeGuildMemberRoleSchema
 } from "../removeGuildMemberRole";
 
 describe(`removeGuildMemberRole`, () => {
   mockRequest.delete(`/guilds/:guild/members/:user/roles/:role`);
   const config = generateMock(removeGuildMemberRoleSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(removeGuildMemberRoleSafe(config)).resolves.not.toThrow();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

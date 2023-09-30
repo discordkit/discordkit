@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import {
+  get,
+  type Fetcher,
+  toProcedure,
+  toQuery,
+  toValidated
+} from "#/utils/index.ts";
 import { integrationSchema, type Integration } from "./types/Integration.ts";
 
 export const getGuildIntegrationsSchema = z.object({
@@ -21,6 +27,12 @@ export const getGuildIntegrations: Fetcher<
   typeof getGuildIntegrationsSchema,
   Integration[]
 > = async ({ guild }) => get(`/guilds/${guild}/integrations`);
+
+export const getGuildIntegrationsSafe = toValidated(
+  getGuildIntegrations,
+  getGuildIntegrationsSchema,
+  integrationSchema.array()
+);
 
 export const getGuildIntegrationsProcedure = toProcedure(
   `query`,

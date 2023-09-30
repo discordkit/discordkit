@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { patch, type Fetcher, toProcedure } from "#/utils/index.ts";
+import {
+  patch,
+  type Fetcher,
+  toProcedure,
+  toValidated
+} from "#/utils/index.ts";
 import { roleSchema, type Role } from "./types/Role.ts";
 
 export const modifyGuildRolePositionsSchema = z.object({
@@ -29,6 +34,12 @@ export const modifyGuildRolePositions: Fetcher<
   typeof modifyGuildRolePositionsSchema,
   Role[]
 > = async ({ guild, body }) => patch(`/guilds/${guild}/roles`, body);
+
+export const modifyGuildRolePositionsSafe = toValidated(
+  modifyGuildRolePositions,
+  modifyGuildRolePositionsSchema,
+  roleSchema.array()
+);
 
 export const modifyGuildRolePositionsProcedure = toProcedure(
   `mutation`,

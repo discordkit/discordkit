@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import {
+  get,
+  type Fetcher,
+  toProcedure,
+  toQuery,
+  toValidated
+} from "#/utils/index.ts";
 import { channelSchema, type Channel } from "#/channel/types/Channel.ts";
 
 export const getGuildChannelsSchema = z.object({
@@ -17,6 +23,12 @@ export const getGuildChannels: Fetcher<
   typeof getGuildChannelsSchema,
   Channel[]
 > = async ({ guild }) => get(`/guilds/${guild}/channels`);
+
+export const getGuildChannelsSafe = toValidated(
+  getGuildChannels,
+  getGuildChannelsSchema,
+  channelSchema.array()
+);
 
 export const getGuildChannelsProcedure = toProcedure(
   `query`,

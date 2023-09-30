@@ -8,6 +8,7 @@ import {
 import {
   getWebhookWithTokenProcedure,
   getWebhookWithTokenQuery,
+  getWebhookWithTokenSafe,
   getWebhookWithTokenSchema
 } from "../getWebhookWithToken";
 import { webhookSchema } from "../types/Webhook";
@@ -18,6 +19,12 @@ describe(`getWebhookWithToken`, () => {
     webhookSchema.omit({ user: true })
   );
   const config = generateMock(getWebhookWithTokenSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(getWebhookWithTokenSafe(config)).resolves.toStrictEqual(
+      expected
+    );
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { post, type Fetcher, toProcedure, toValidated } from "#/utils/index.ts";
 import { webhookSchema, type Webhook } from "./types/Webhook.ts";
 
 export const createWebhookSchema = z.object({
@@ -32,6 +32,12 @@ export const createWebhook: Fetcher<
   typeof createWebhookSchema,
   Webhook
 > = async ({ channel, body }) => post(`/channels/${channel}/webhooks`, body);
+
+export const createWebhookSafe = toValidated(
+  createWebhook,
+  createWebhookSchema,
+  webhookSchema
+);
 
 export const createWebhookProcedure = toProcedure(
   `mutation`,

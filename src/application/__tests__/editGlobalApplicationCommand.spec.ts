@@ -8,6 +8,7 @@ import {
 import {
   editGlobalApplicationCommand,
   editGlobalApplicationCommandProcedure,
+  editGlobalApplicationCommandSafe,
   editGlobalApplicationCommandSchema
 } from "../editGlobalApplicationCommand";
 import { applicationCommandSchema } from "../types/ApplicationCommand";
@@ -17,17 +18,23 @@ describe(`editGlobalApplicationCommand`, () => {
     `/applications/:application/commands/:command`,
     applicationCommandSchema
   );
-  const input = generateMock(editGlobalApplicationCommandSchema);
+  const config = generateMock(editGlobalApplicationCommandSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(
+      editGlobalApplicationCommandSafe(config)
+    ).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(
-      runProcedure(editGlobalApplicationCommandProcedure)(input)
+      runProcedure(editGlobalApplicationCommandProcedure)(config)
     ).resolves.toStrictEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runMutation(editGlobalApplicationCommand);
-    result.current.mutate(input);
+    result.current.mutate(config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toStrictEqual(expected);
   });

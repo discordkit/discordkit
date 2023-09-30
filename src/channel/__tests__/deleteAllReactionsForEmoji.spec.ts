@@ -8,12 +8,17 @@ import {
 import {
   deleteAllReactionsForEmoji,
   deleteAllReactionsForEmojiProcedure,
+  deleteAllReactionsForEmojiSafe,
   deleteAllReactionsForEmojiSchema
 } from "../deleteAllReactionsForEmoji";
 
 describe(`deleteAllReactionsForEmoji`, () => {
   mockRequest.delete(`/channels/:channel/messages/:message/reactions/:emoji`);
   const config = generateMock(deleteAllReactionsForEmojiSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(deleteAllReactionsForEmojiSafe(config)).resolves.not.toThrow();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

@@ -8,6 +8,7 @@ import {
 import {
   getGuildWidgetProcedure,
   getGuildWidgetQuery,
+  getGuildWidgetSafe,
   getGuildWidgetSchema
 } from "../getGuildWidget";
 import { guildWidgetSchema } from "../types/GuildWidget";
@@ -18,6 +19,10 @@ describe(`getGuildWidget`, () => {
     guildWidgetSchema
   );
   const config = generateMock(getGuildWidgetSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(getGuildWidgetSafe(config)).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

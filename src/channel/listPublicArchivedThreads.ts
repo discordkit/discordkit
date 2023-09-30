@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import {
+  get,
+  type Fetcher,
+  toProcedure,
+  toQuery,
+  toValidated
+} from "#/utils/index.ts";
 import {
   archivedThreadsSchema,
   type ArchivedThreads
@@ -30,6 +36,12 @@ export const listPublicArchivedThreads: Fetcher<
   ArchivedThreads
 > = async ({ channel, params }) =>
   get(`/channels/${channel}/threads/archived/public`, params);
+
+export const listPublicArchivedThreadsSafe = toValidated(
+  listPublicArchivedThreads,
+  listPublicArchivedThreadsSchema,
+  archivedThreadsSchema
+);
 
 export const listPublicArchivedThreadsProcedure = toProcedure(
   `query`,

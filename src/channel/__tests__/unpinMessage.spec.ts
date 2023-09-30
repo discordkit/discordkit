@@ -8,12 +8,17 @@ import {
 import {
   unpinMessage,
   unpinMessageProcedure,
+  unpinMessageSafe,
   unpinMessageSchema
 } from "../unpinMessage";
 
 describe(`unpinMessage`, () => {
   mockRequest.delete(`/channels/:channel/pins/:message`);
   const config = generateMock(unpinMessageSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(unpinMessageSafe(config)).resolves.not.toThrow();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

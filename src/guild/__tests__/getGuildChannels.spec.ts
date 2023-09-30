@@ -8,6 +8,7 @@ import {
 import {
   getGuildChannelsProcedure,
   getGuildChannelsQuery,
+  getGuildChannelsSafe,
   getGuildChannelsSchema
 } from "../getGuildChannels";
 import { channelSchema } from "../../channel/types/Channel";
@@ -18,6 +19,10 @@ describe(`getGuildChannels`, () => {
     channelSchema.array()
   );
   const config = generateMock(getGuildChannelsSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(getGuildChannelsSafe(config)).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

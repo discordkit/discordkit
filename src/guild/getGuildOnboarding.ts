@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import {
+  get,
+  type Fetcher,
+  toProcedure,
+  toQuery,
+  toValidated
+} from "#/utils/index.ts";
 import {
   guildOnboardingSchema,
   type GuildOnboarding
@@ -20,6 +26,12 @@ export const getGuildOnboarding: Fetcher<
   typeof getGuildOnboardingSchema,
   GuildOnboarding
 > = async ({ guild }) => get(`/guilds/${guild}/onboarding`);
+
+export const getGuildOnboardingSafe = toValidated(
+  getGuildOnboarding,
+  getGuildOnboardingSchema,
+  guildOnboardingSchema
+);
 
 export const getGuildOnboardingProcedure = toProcedure(
   `query`,

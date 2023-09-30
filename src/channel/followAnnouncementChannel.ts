@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure } from "#/utils/index.ts";
+import { post, type Fetcher, toProcedure, toValidated } from "#/utils/index.ts";
 import {
   followedChannelSchema,
   type FollowedChannel
@@ -24,6 +24,12 @@ export const followAnnouncementChannel: Fetcher<
   typeof followAnnouncementChannelSchema,
   FollowedChannel
 > = async ({ channel, body }) => post(`/channels/${channel}/followers`, body);
+
+export const followAnnouncementChannelSafe = toValidated(
+  followAnnouncementChannel,
+  followAnnouncementChannelSchema,
+  followedChannelSchema
+);
 
 export const followAnnouncementChannelProcedure = toProcedure(
   `mutation`,

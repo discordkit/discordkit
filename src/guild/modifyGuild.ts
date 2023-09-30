@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { patch, type Fetcher, toProcedure } from "#/utils/index.ts";
+import {
+  patch,
+  type Fetcher,
+  toProcedure,
+  toValidated
+} from "#/utils/index.ts";
 import { localesSchema } from "#/application/types/Locales.ts";
 import { type Guild, guildSchema } from "./types/Guild.ts";
 import { verificationLevelSchema } from "./types/VerificationLevel.ts";
@@ -81,6 +86,12 @@ export const modifyGuild: Fetcher<typeof modifyGuildSchema, Guild> = async ({
   guild,
   body
 }) => patch(`/guilds/${guild}`, body);
+
+export const modifyGuildSafe = toValidated(
+  modifyGuild,
+  modifyGuildSchema,
+  guildSchema
+);
 
 export const modifyGuildProcedure = toProcedure(
   `mutation`,

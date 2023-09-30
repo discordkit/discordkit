@@ -8,6 +8,7 @@ import {
 import {
   getGuildPruneCountProcedure,
   getGuildPruneCountQuery,
+  getGuildPruneCountSafe,
   getGuildPruneCountSchema,
   guildPruneCountSchema
 } from "../getGuildPruneCount";
@@ -18,6 +19,12 @@ describe(`getGuildPruneCount`, () => {
     guildPruneCountSchema
   );
   const config = generateMock(getGuildPruneCountSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(getGuildPruneCountSafe(config)).resolves.toStrictEqual(
+      expected
+    );
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

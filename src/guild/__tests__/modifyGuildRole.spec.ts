@@ -8,6 +8,7 @@ import {
 import {
   modifyGuildRole,
   modifyGuildRoleProcedure,
+  modifyGuildRoleSafe,
   modifyGuildRoleSchema
 } from "../modifyGuildRole";
 import { roleSchema } from "../types/Role";
@@ -15,6 +16,10 @@ import { roleSchema } from "../types/Role";
 describe(`modifyGuildRole`, () => {
   const expected = mockRequest.patch(`/guilds/:guild/roles/:role`, roleSchema);
   const config = generateMock(modifyGuildRoleSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(modifyGuildRoleSafe(config)).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

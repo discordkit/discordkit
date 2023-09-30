@@ -8,6 +8,7 @@ import {
 import {
   followAnnouncementChannel,
   followAnnouncementChannelProcedure,
+  followAnnouncementChannelSafe,
   followAnnouncementChannelSchema
 } from "../followAnnouncementChannel";
 import { followedChannelSchema } from "../types/FollowedChannel";
@@ -18,6 +19,12 @@ describe(`followAnnouncementChannel`, () => {
     followedChannelSchema
   );
   const config = generateMock(followAnnouncementChannelSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(followAnnouncementChannelSafe(config)).resolves.toStrictEqual(
+      expected
+    );
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

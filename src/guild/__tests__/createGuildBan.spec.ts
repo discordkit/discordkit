@@ -8,6 +8,7 @@ import {
 import {
   createGuildBan,
   createGuildBanProcedure,
+  createGuildBanSafe,
   createGuildBanSchema
 } from "../createGuildBan";
 import { banSchema } from "../types/Ban";
@@ -15,6 +16,10 @@ import { banSchema } from "../types/Ban";
 describe(`createGuildBan`, () => {
   mockRequest.put(`/guilds/:guild/bans/:user`, banSchema);
   const config = generateMock(createGuildBanSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(createGuildBanSafe(config)).resolves.not.toThrow();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

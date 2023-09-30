@@ -8,6 +8,7 @@ import {
 import {
   modifyGuild,
   modifyGuildProcedure,
+  modifyGuildSafe,
   modifyGuildSchema
 } from "../modifyGuild";
 import { guildSchema } from "../types/Guild";
@@ -15,6 +16,10 @@ import { guildSchema } from "../types/Guild";
 describe(`modifyGuild`, () => {
   const expected = mockRequest.patch(`/guilds/:guild`, guildSchema);
   const config = generateMock(modifyGuildSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(modifyGuildSafe(config)).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

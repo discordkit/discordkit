@@ -8,12 +8,17 @@ import {
 import {
   executeWebhook,
   executeWebhookProcedure,
+  executeWebhookSafe,
   executeWebhookSchema
 } from "../executeWebhook";
 
 describe(`executeWebhook`, () => {
   mockRequest.post(`/webhooks/:webhook/:token`);
   const config = generateMock(executeWebhookSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(executeWebhookSafe(config)).resolves.not.toThrow();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

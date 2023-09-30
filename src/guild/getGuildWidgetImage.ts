@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { get, type Fetcher, toProcedure, toQuery } from "#/utils/index.ts";
+import {
+  get,
+  type Fetcher,
+  toProcedure,
+  toQuery,
+  toValidated
+} from "#/utils/index.ts";
 
 export const getGuildWidgetImageSchema = z.object({
   guild: z.string().min(1),
@@ -37,6 +43,11 @@ export const getGuildWidgetImageSchema = z.object({
 export const getGuildWidgetImage: Fetcher<
   typeof getGuildWidgetImageSchema
 > = async ({ guild, params }) => get(`/guilds/${guild}/widget.png`, params);
+
+export const getGuildWidgetImageSafe = toValidated(
+  getGuildWidgetImage,
+  getGuildWidgetImageSchema
+);
 
 export const getGuildWidgetImageProcedure = toProcedure(
   `query`,

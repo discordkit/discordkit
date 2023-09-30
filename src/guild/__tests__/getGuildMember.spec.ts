@@ -8,6 +8,7 @@ import {
 import {
   getGuildMemberProcedure,
   getGuildMemberQuery,
+  getGuildMemberSafe,
   getGuildMemberSchema
 } from "../getGuildMember";
 import { memberSchema } from "../types/Member";
@@ -18,6 +19,10 @@ describe(`getGuildMember`, () => {
     memberSchema
   );
   const config = generateMock(getGuildMemberSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(getGuildMemberSafe(config)).resolves.toStrictEqual(expected);
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(

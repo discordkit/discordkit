@@ -8,6 +8,7 @@ import {
 import {
   getWebhookMessageProcedure,
   getWebhookMessageQuery,
+  getWebhookMessageSafe,
   getWebhookMessageSchema
 } from "../getWebhookMessage";
 import { messageSchema } from "../../channel/types/Message";
@@ -15,6 +16,10 @@ import { messageSchema } from "../../channel/types/Message";
 describe(`getWebhookMessage`, () => {
   mockRequest.get(`/webhooks/:webhook/:token/messages/:message`, messageSchema);
   const config = generateMock(getWebhookMessageSchema);
+
+  it(`can be used standalone`, async () => {
+    await expect(getWebhookMessageSafe(config)).resolves.toBeDefined();
+  });
 
   it(`is tRPC compatible`, async () => {
     await expect(
