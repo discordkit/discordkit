@@ -1,4 +1,4 @@
-export { endpoint, discord, DiscordSession } from "./DiscordSession.ts";
+export { endpoint, discord } from "./DiscordSession.ts";
 
 export * from "./channel/index.ts";
 export * from "./emoji/index.ts";
