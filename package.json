@@ -1,6 +1,6 @@
 {
-  "name": "@saeris/discordkit",
-  "description": "A RESTapi Client for Discord",
+  "name": "@discordkit/client",
+  "description": "A REST API Client for Discord",
   "version": "0.0.1",
   "license": "MIT",
   "keywords": [

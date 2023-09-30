@@ -3,7 +3,7 @@ import { discord } from "../src/DiscordSession";
 import { msw } from "./test-utils";
 
 beforeAll(() => {
-  discord.setToken = `super-secret-token`;
+  discord.setToken(`Bot super-secret-token`);
   msw.listen({ onUnhandledRequest: `error` });
 });
 
