@@ -4,7 +4,8 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import {
   moderationRuleSchema,
@@ -12,7 +13,7 @@ import {
 } from "./types/ModerationRule.ts";
 
 export const listAutoModerationRulesForGuildSchema = z.object({
-  guild: z.string().min(1)
+  guild: snowflake
 });
 
 /**

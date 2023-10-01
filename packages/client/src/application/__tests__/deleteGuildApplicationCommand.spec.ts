@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   deleteGuildApplicationCommand,
   deleteGuildApplicationCommandProcedure,
@@ -12,7 +11,7 @@ describe(`deleteGuildApplicationCommand`, () => {
   mockRequest.delete(
     `/applications/:application/guilds/:guild/commands/:command`
   );
-  const config = generateMock(deleteGuildApplicationCommandSchema);
+  const config = mockSchema(deleteGuildApplicationCommandSchema);
 
   it(`can be used standalone`, async () => {
     await expect(

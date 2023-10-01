@@ -3,12 +3,13 @@ import {
   patch,
   type Fetcher,
   toProcedure,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import { webhookSchema, type Webhook } from "./types/Webhook.ts";
 
 export const modifyWebhookWithTokenSchema = z.object({
-  webhook: z.string().min(1),
+  webhook: snowflake,
   token: z.string().min(1),
   body: z
     .object({

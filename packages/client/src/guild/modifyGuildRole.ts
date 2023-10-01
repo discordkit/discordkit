@@ -3,13 +3,14 @@ import {
   patch,
   type Fetcher,
   toProcedure,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import { roleSchema, type Role } from "./types/Role.ts";
 
 export const modifyGuildRoleSchema = z.object({
-  guild: z.string().min(1),
-  role: z.string().min(1),
+  guild: snowflake,
+  role: snowflake,
   body: z
     .object({
       /** name of the role */

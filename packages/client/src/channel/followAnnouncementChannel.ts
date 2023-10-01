@@ -1,15 +1,21 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure, toValidated } from "@discordkit/core";
+import {
+  post,
+  type Fetcher,
+  toProcedure,
+  toValidated,
+  snowflake
+} from "@discordkit/core";
 import {
   followedChannelSchema,
   type FollowedChannel
 } from "./types/FollowedChannel.ts";
 
 export const followAnnouncementChannelSchema = z.object({
-  channel: z.string().min(1),
+  channel: snowflake,
   body: z.object({
     /** id of target channel */
-    webhookChannelId: z.string().min(1)
+    webhookChannelId: snowflake
   })
 });
 

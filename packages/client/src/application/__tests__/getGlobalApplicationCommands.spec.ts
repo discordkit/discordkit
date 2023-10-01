@@ -1,6 +1,5 @@
 import { waitFor } from "@testing-library/react";
-import { generateMock } from "@anatine/zod-mock";
-import { runProcedure, runQuery, mockRequest } from "test-utils";
+import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
 import {
   getGlobalApplicationCommandsSchema,
   getGlobalApplicationCommandsProcedure,
@@ -14,7 +13,7 @@ describe(`getGlobalApplicationCommands`, () => {
     `/applications/:application/commands`,
     applicationCommandSchema.array().length(1)
   );
-  const config = generateMock(getGlobalApplicationCommandsSchema);
+  const config = mockSchema(getGlobalApplicationCommandsSchema);
 
   it(`can be used standalone`, async () => {
     await expect(

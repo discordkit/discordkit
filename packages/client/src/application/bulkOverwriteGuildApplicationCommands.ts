@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { put, type Fetcher, toProcedure, toValidated } from "@discordkit/core";
+import {
+  put,
+  type Fetcher,
+  toProcedure,
+  toValidated,
+  snowflake
+} from "@discordkit/core";
 import {
   type ApplicationCommand,
   applicationCommandSchema
@@ -12,12 +18,12 @@ import {
 } from "./types/ApplicationCommandType.ts";
 
 export const bulkOverwriteGuildApplicationCommandsSchema = z.object({
-  application: z.string().min(1),
-  guild: z.string().min(1),
+  application: snowflake,
+  guild: snowflake,
   body: z
     .object({
       /** ID of the command, if known */
-      id: z.string().min(1).nullable(),
+      id: snowflake.nullable(),
       /** Name of command, 1-32 characters */
       name: z.string().min(1).max(32),
       /** Localization dictionary for the `name` field. Values follow the same restrictions as `name` */

@@ -3,15 +3,16 @@ import {
   patch,
   type Fetcher,
   toProcedure,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 
 export const modifyUserVoiceStateSchema = z.object({
-  guild: z.string().min(1),
-  user: z.string().min(1),
+  guild: snowflake,
+  user: snowflake,
   body: z.object({
     /** the id of the channel the user is currently in */
-    channelId: z.string().min(1),
+    channelId: snowflake,
     /** toggles the user's suppress state */
     suppress: z.boolean().nullable()
   })

@@ -3,12 +3,13 @@ import {
   remove,
   type Fetcher,
   toProcedure,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 
 export const deleteAutoModerationRuleSchema = z.object({
-  guild: z.string().min(1),
-  rule: z.string().min(1)
+  guild: snowflake,
+  rule: snowflake
 });
 
 /**

@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest } from "test-utils";
+import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
 import {
   listJoinedPrivateArchivedThreadsProcedure,
   listJoinedPrivateArchivedThreadsQuery,
@@ -14,7 +13,7 @@ describe(`listJoinedPrivateArchivedThreads`, () => {
     `/channels/:channel/users/@me/threads/archived/private`,
     archivedThreadsSchema
   );
-  const config = generateMock(listJoinedPrivateArchivedThreadsSchema);
+  const config = mockSchema(listJoinedPrivateArchivedThreadsSchema);
 
   it(`can be used standalone`, async () => {
     await expect(

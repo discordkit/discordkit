@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest } from "test-utils";
+import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
 import {
   getPinnedMessagesProcedure,
   getPinnedMessagesQuery,
@@ -11,7 +10,7 @@ import { messageSchema } from "../types/Message.ts";
 
 describe(`getPinnedMessages`, () => {
   mockRequest.get(`/channels/:channel/pins`, messageSchema.array().length(1));
-  const config = generateMock(getPinnedMessagesSchema);
+  const config = mockSchema(getPinnedMessagesSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getPinnedMessagesSafe(config)).resolves.toBeDefined();

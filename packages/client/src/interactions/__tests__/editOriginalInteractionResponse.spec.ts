@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   editOriginalInteractionResponse,
   editOriginalInteractionResponseProcedure,
@@ -14,7 +13,7 @@ describe(`editOriginalInteractionResponse`, () => {
     `/webhooks/:application/:token/messages/@original`,
     interactionResponseSchema
   );
-  const config = generateMock(editOriginalInteractionResponseSchema);
+  const config = mockSchema(editOriginalInteractionResponseSchema);
 
   it(`can be used standalone`, async () => {
     await expect(

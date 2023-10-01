@@ -4,18 +4,19 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import { userSchema, type User } from "#/user/types/User.ts";
 
 export const getReactionsSchema = z.object({
-  channel: z.string().min(1),
-  message: z.string().min(1),
-  emoji: z.string().min(1),
+  channel: snowflake,
+  message: snowflake,
+  emoji: snowflake,
   params: z
     .object({
       /** Get users after this user ID */
-      after: z.string().min(1).nullable(),
+      after: snowflake.nullable(),
       /** Max number of users to return (1-100) Default: 25 */
       limit: z.number().int().min(1).max(100).nullable().default(25)
     })

@@ -4,13 +4,14 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import { threadMemberSchema } from "#/channel/types/ThreadMember.ts";
 import { channelMentionSchema } from "#/channel/types/ChannelMention.ts";
 
 export const listActiveGuildThreadsSchema = z.object({
-  guild: z.string().min(1)
+  guild: snowflake
 });
 
 export const activeGuildThreadsSchema = z.object({

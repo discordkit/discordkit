@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest } from "test-utils";
+import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
 import {
   listThreadMembersProcedure,
   listThreadMembersQuery,
@@ -14,7 +13,7 @@ describe(`listThreadMembers`, () => {
     `/channels/:channel/thread-members`,
     threadMemberSchema.array().length(1)
   );
-  const config = generateMock(listThreadMembersSchema);
+  const config = mockSchema(listThreadMembersSchema);
 
   it(`can be used standalone`, async () => {
     await expect(listThreadMembersSafe(config)).resolves.toStrictEqual(

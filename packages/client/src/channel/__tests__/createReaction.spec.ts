@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   createReaction,
   createReactionProcedure,
@@ -10,7 +9,7 @@ import {
 
 describe(`createReaction`, () => {
   mockRequest.put(`/channels/:channel/messages/:message/reactions/:emoji/@me`);
-  const config = generateMock(createReactionSchema);
+  const config = mockSchema(createReactionSchema);
 
   it(`can be used standalone`, async () => {
     await expect(createReactionSafe(config)).resolves.not.toThrow();

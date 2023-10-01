@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest } from "test-utils";
+import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
 import {
   getChannelInvitesProcedure,
   getChannelInvitesQuery,
@@ -14,7 +13,7 @@ describe(`getChannelInvites`, () => {
     `/channels/:channel/invites`,
     inviteMetadataSchema.array()
   );
-  const config = generateMock(getChannelInvitesSchema);
+  const config = mockSchema(getChannelInvitesSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getChannelInvitesSafe(config)).resolves.toStrictEqual(

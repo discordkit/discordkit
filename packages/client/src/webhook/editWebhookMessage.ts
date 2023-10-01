@@ -4,7 +4,8 @@ import {
   buildURL,
   type Fetcher,
   toProcedure,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import { messageSchema, type Message } from "#/channel/types/Message.ts";
 import { embedSchema } from "#/channel/types/Embed.ts";
@@ -14,13 +15,13 @@ import { messageComponentSchema } from "#/channel/types/MessageComponent.ts";
 import { EmbedType } from "#/channel/types/EmbedType.ts";
 
 export const editWebhookMessageSchema = z.object({
-  webhook: z.string().min(1),
+  webhook: snowflake,
   token: z.string().min(1),
-  message: z.string().min(1),
+  message: snowflake,
   params: z
     .object({
       /** id of the thread the message is in */
-      threadId: z.string().min(1)
+      threadId: snowflake
     })
     .partial()
     .optional(),

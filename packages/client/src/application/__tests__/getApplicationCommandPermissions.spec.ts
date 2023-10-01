@@ -1,6 +1,5 @@
 import { waitFor } from "@testing-library/react";
-import { generateMock } from "@anatine/zod-mock";
-import { runProcedure, runQuery, mockRequest } from "test-utils";
+import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
 import {
   getApplicationCommandPermissionsProcedure,
   getApplicationCommandPermissionsQuery,
@@ -14,7 +13,7 @@ describe(`getApplicationCommandPermissions`, () => {
     `/applications/:application/guilds/:guild/commands/:command/permissions`,
     guildApplicationCommandPermissionsSchema
   );
-  const config = generateMock(getApplicationCommandPermissionsSchema);
+  const config = mockSchema(getApplicationCommandPermissionsSchema);
 
   it(`can be used standalone`, async () => {
     await expect(

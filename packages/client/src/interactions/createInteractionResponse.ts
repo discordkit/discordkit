@@ -1,9 +1,15 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure, toValidated } from "@discordkit/core";
+import {
+  post,
+  type Fetcher,
+  toProcedure,
+  toValidated,
+  snowflake
+} from "@discordkit/core";
 import { interactionResponseSchema } from "./types/InteractionResponse.ts";
 
 export const createInteractionResponseSchema = z.object({
-  interaction: z.string().min(1),
+  interaction: snowflake,
   token: z.string().min(1),
   body: interactionResponseSchema
 });

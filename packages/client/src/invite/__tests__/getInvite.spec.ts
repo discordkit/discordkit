@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest } from "test-utils";
+import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
 import {
   getInviteProcedure,
   getInviteQuery,
@@ -11,7 +10,7 @@ import { inviteSchema } from "../types/Invite.ts";
 
 describe(`getInvite`, () => {
   mockRequest.get(`/invites/:code`, inviteSchema);
-  const config = generateMock(getInviteSchema);
+  const config = mockSchema(getInviteSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getInviteSafe(config)).resolves.toBeDefined();

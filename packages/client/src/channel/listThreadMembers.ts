@@ -4,18 +4,19 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import { threadMemberSchema, type ThreadMember } from "./types/ThreadMember.ts";
 
 export const listThreadMembersSchema = z.object({
-  channel: z.string().min(1),
+  channel: snowflake,
   params: z
     .object({
       /** Whether to include a guild member object for each thread member */
       withMember: z.boolean().nullable(),
       /** Get thread members after this user ID */
-      after: z.string().min(1).nullable(),
+      after: snowflake.nullable(),
       /** Max number of thread members to return (1-100). Defaults to 100. */
       limit: z.number().int().min(1).max(100).nullable().default(100)
     })

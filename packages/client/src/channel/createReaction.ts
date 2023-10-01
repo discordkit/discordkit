@@ -1,10 +1,16 @@
 import { z } from "zod";
-import { put, type Fetcher, toProcedure, toValidated } from "@discordkit/core";
+import {
+  put,
+  type Fetcher,
+  toProcedure,
+  toValidated,
+  snowflake
+} from "@discordkit/core";
 
 export const createReactionSchema = z.object({
-  channel: z.string().min(1),
-  message: z.string().min(1),
-  emoji: z.string().min(1)
+  channel: snowflake,
+  message: snowflake,
+  emoji: snowflake
 });
 
 /**

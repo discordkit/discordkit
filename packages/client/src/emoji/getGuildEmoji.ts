@@ -4,13 +4,14 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import { emojiSchema, type Emoji } from "./types/Emoji.ts";
 
 export const getGuildEmojiSchema = z.object({
-  guild: z.string().min(1),
-  emoji: z.string().min(1)
+  guild: snowflake,
+  emoji: snowflake
 });
 
 /**

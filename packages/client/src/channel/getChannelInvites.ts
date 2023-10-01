@@ -4,7 +4,8 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import {
   inviteMetadataSchema,
@@ -12,7 +13,7 @@ import {
 } from "#/invite/types/InviteMetadata.ts";
 
 export const getChannelInvitesSchema = z.object({
-  channel: z.string().min(1)
+  channel: snowflake
 });
 
 /**

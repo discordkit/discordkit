@@ -1,12 +1,18 @@
 import { z } from "zod";
-import { type Fetcher, toProcedure, put, toValidated } from "@discordkit/core";
+import {
+  type Fetcher,
+  toProcedure,
+  put,
+  toValidated,
+  snowflake
+} from "@discordkit/core";
 import {
   type ApplicationRoleConnectionMetadata,
   applicationRoleConnectionMetadataSchema
 } from "./types/ApplicationRoleConnectionMetadata.ts";
 
 export const updateApplicationRoleConnectionMetadataRecordsSchema = z.object({
-  application: z.string().min(1),
+  application: snowflake,
   body: z.object({
     records: applicationRoleConnectionMetadataSchema.array()
   })

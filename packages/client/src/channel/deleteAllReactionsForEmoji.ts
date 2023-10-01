@@ -3,13 +3,14 @@ import {
   remove,
   type Fetcher,
   toProcedure,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 
 export const deleteAllReactionsForEmojiSchema = z.object({
-  channel: z.string().min(1),
-  message: z.string().min(1),
-  emoji: z.string().min(1)
+  channel: snowflake,
+  message: snowflake,
+  emoji: snowflake
 });
 
 /**

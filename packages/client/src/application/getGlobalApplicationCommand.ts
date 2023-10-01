@@ -4,7 +4,8 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import {
   type ApplicationCommand,
@@ -12,8 +13,8 @@ import {
 } from "./types/ApplicationCommand.ts";
 
 export const getGlobalApplicationCommandSchema = z.object({
-  application: z.string().min(1),
-  command: z.string().min(1)
+  application: snowflake,
+  command: snowflake
 });
 
 /**

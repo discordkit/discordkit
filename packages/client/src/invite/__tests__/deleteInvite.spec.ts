@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   deleteInvite,
   deleteInviteProcedure,
@@ -11,7 +10,7 @@ import { inviteSchema } from "../types/Invite.ts";
 
 describe(`deleteInvite`, () => {
   mockRequest.delete(`/invites/:code`, inviteSchema);
-  const config = generateMock(deleteInviteSchema);
+  const config = mockSchema(deleteInviteSchema);
 
   it(`can be used standalone`, async () => {
     await expect(deleteInviteSafe(config)).resolves.toBeDefined();

@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   addGuildMemberRole,
   addGuildMemberRoleProcedure,
@@ -10,7 +9,7 @@ import {
 
 describe(`addGuildMemberRole`, () => {
   mockRequest.put(`/guilds/:guild/members/:user/roles/:role`);
-  const config = generateMock(addGuildMemberRoleSchema);
+  const config = mockSchema(addGuildMemberRoleSchema);
 
   it(`can be used standalone`, async () => {
     await expect(addGuildMemberRoleSafe(config)).resolves.not.toThrow();

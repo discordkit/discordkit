@@ -1,10 +1,16 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure, toValidated } from "@discordkit/core";
+import {
+  post,
+  type Fetcher,
+  toProcedure,
+  toValidated,
+  snowflake
+} from "@discordkit/core";
 import { type Message, messageSchema } from "./types/Message.ts";
 import { messageContentSchema } from "./types/MessageContent.ts";
 
 export const createMessageSchema = z.object({
-  channel: z.string().min(1),
+  channel: snowflake,
   body: messageContentSchema
 });
 

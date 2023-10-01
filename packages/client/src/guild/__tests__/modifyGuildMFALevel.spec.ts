@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   modifyGuildMFALevel,
   modifyGuildMFALevelProcedure,
@@ -11,7 +10,7 @@ import { mfaLevelSchema } from "../types/MFALevel.ts";
 
 describe(`modifyGuildMFALevel`, () => {
   const expected = mockRequest.patch(`/guilds/:guild/mfa`, mfaLevelSchema);
-  const config = generateMock(modifyGuildMFALevelSchema);
+  const config = mockSchema(modifyGuildMFALevelSchema);
 
   it(`can be used standalone`, async () => {
     await expect(modifyGuildMFALevelSafe(config)).resolves.toStrictEqual(

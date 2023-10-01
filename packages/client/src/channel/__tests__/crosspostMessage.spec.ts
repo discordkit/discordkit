@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   crosspostMessage,
   crosspostMessageProcedure,
@@ -14,7 +13,7 @@ describe(`crosspostMessage`, () => {
     `/channels/:channel/messages/:message/crosspost`,
     messageSchema
   );
-  const config = generateMock(crosspostMessageSchema);
+  const config = mockSchema(crosspostMessageSchema);
 
   it(`can be used standalone`, async () => {
     await expect(crosspostMessageSafe(config)).resolves.not.toThrow();

@@ -1,9 +1,15 @@
 import { z } from "zod";
-import { put, type Fetcher, toProcedure, toValidated } from "@discordkit/core";
+import {
+  put,
+  type Fetcher,
+  toProcedure,
+  toValidated,
+  snowflake
+} from "@discordkit/core";
 
 export const editChannelPermissionsSchema = z.object({
-  channel: z.string().min(1),
-  overwrite: z.string().min(1),
+  channel: snowflake,
+  overwrite: snowflake,
   body: z.object({
     /** the bitwise value of all allowed permissions (default "0") */
     allow: z.string().nullable().optional().default(`0`),

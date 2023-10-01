@@ -3,7 +3,8 @@ import {
   patch,
   type Fetcher,
   toProcedure,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import {
   guildTemplateSchema,
@@ -11,8 +12,8 @@ import {
 } from "./types/GuildTemplate.ts";
 
 export const modifyGuildTemplateSchema = z.object({
-  guild: z.string().min(1),
-  template: z.string().min(1),
+  guild: snowflake,
+  template: snowflake,
   body: z
     .object({
       /** name of the template (1-100 characters) */

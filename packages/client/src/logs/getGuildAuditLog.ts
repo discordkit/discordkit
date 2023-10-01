@@ -4,25 +4,26 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import { type AuditLog, auditLogSchema } from "./types/AuditLog.ts";
 import { auditLogEventSchema } from "./types/AuditLogEvent.ts";
 
 export const getGuildAuditLogSchema = z.object({
-  guild: z.string().min(1),
+  guild: snowflake,
   params: z
     .object({
       /** Entries from a specific user ID */
-      userId: z.string().min(1).nullable(),
+      userId: snowflake.nullable(),
       /** Entries for a specific audit log event */
       actionType: auditLogEventSchema.nullable(),
       /** Entries that preceded a specific audit log entry ID */
-      before: z.string().min(1).nullable(),
+      before: snowflake.nullable(),
       /** Entries with ID greater than a specific audit log entry ID */
-      after: z.string().min(1).nullable(),
+      after: snowflake.nullable(),
       /** Maximum number of entries (between 1-100) to return, defaults to 50 */
-      limit: z.number().min(1).max(100).nullable()
+      limit: z.number().int().min(1).max(100).nullable().default(50)
     })
     .partial()
     .optional()

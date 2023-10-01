@@ -1,13 +1,14 @@
 import { z } from "zod";
+import { snowflake } from "@discordkit/core";
 import { stagePrivacyLevelSchema } from "./StagePrivacyLevel.ts";
 
 export const stageSchema = z.object({
   /** The id of this Stage instance */
-  id: z.string().min(1),
+  id: snowflake,
   /** The guild id of the associated Stage channel */
-  guildId: z.string().min(1),
+  guildId: snowflake,
   /** The id of the associated Stage channel */
-  channelId: z.string().min(1),
+  channelId: snowflake,
   /** The topic of the Stage instance (1-120 characters) */
   topic: z.string(),
   /** The privacy level of the Stage instance */
@@ -15,7 +16,7 @@ export const stageSchema = z.object({
   /** @deprecated Whether or not Stage Discovery is disabled */
   discoverableDisabled: z.boolean(),
   /** The id of the scheduled event for this Stage instance */
-  guildScheduledEventId: z.string().min(1).optional()
+  guildScheduledEventId: snowflake.optional()
 });
 
 export type Stage = z.infer<typeof stageSchema>;

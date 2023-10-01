@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   deleteChannel,
   deleteChannelProcedure,
@@ -11,7 +10,7 @@ import { channelSchema } from "../types/Channel.ts";
 
 describe(`deleteChannel`, () => {
   const expected = mockRequest.delete(`/channels/:channel`, channelSchema);
-  const config = generateMock(deleteChannelSchema);
+  const config = mockSchema(deleteChannelSchema);
 
   it(`can be used standalone`, async () => {
     await expect(deleteChannelSafe(config)).resolves.toStrictEqual(expected);

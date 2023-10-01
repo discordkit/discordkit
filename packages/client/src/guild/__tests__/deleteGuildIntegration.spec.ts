@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   deleteGuildIntegration,
   deleteGuildIntegrationProcedure,
@@ -10,7 +9,7 @@ import {
 
 describe(`deleteGuildIntegration`, () => {
   mockRequest.delete(`/guilds/:guild/integrations/:integration`);
-  const config = generateMock(deleteGuildIntegrationSchema);
+  const config = mockSchema(deleteGuildIntegrationSchema);
 
   it(`can be used standalone`, async () => {
     await expect(deleteGuildIntegrationSafe(config)).resolves.not.toThrow();

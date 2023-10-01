@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   modifyCurrentUser,
   modifyCurrentUserProcedure,
@@ -11,7 +10,7 @@ import { userSchema } from "../types/User.ts";
 
 describe(`modifyCurrentUser`, () => {
   const expected = mockRequest.patch(`/users/@me`, userSchema);
-  const config = generateMock(modifyCurrentUserSchema);
+  const config = mockSchema(modifyCurrentUserSchema);
 
   it(`can be used standalone`, async () => {
     await expect(modifyCurrentUserSafe(config)).resolves.toStrictEqual(

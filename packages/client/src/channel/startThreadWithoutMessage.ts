@@ -1,11 +1,17 @@
 import { z } from "zod";
-import { toProcedure, post, type Fetcher, toValidated } from "@discordkit/core";
+import {
+  toProcedure,
+  post,
+  type Fetcher,
+  toValidated,
+  snowflake
+} from "@discordkit/core";
 import { type Channel, channelSchema } from "./types/Channel.ts";
 import { autoArchiveDurationSchema } from "./types/AutoArchiveDuration.ts";
 import { channelTypeSchema } from "./types/ChannelType.ts";
 
 export const startThreadWithoutMessageSchema = z.object({
-  channel: z.string().min(1),
+  channel: snowflake,
   body: z.object({
     /** 1-100 character channel name */
     name: z.string().min(1).max(100),

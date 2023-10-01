@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   modifyGuildWelcomeScreen,
   modifyGuildWelcomeScreenProcedure,
@@ -14,7 +13,7 @@ describe(`modifyGuildWelcomeScreen`, () => {
     `/guilds/:guild/welcome-screen`,
     welcomeScreenSchema
   );
-  const config = generateMock(modifyGuildWelcomeScreenSchema);
+  const config = mockSchema(modifyGuildWelcomeScreenSchema);
 
   it(`can be used standalone`, async () => {
     await expect(modifyGuildWelcomeScreenSafe(config)).resolves.toStrictEqual(

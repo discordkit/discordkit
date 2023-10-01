@@ -1,12 +1,18 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure, toValidated } from "@discordkit/core";
+import {
+  post,
+  type Fetcher,
+  toProcedure,
+  toValidated,
+  snowflake
+} from "@discordkit/core";
 import { channelSchema, type Channel } from "#/channel/types/Channel.ts";
 import { ChannelType } from "#/channel/types/ChannelType.ts";
 
 export const createDMSchema = z.object({
   body: z.object({
     /** the recipient to open a DM channel with */
-    recipientId: z.string().min(1)
+    recipientId: snowflake
   })
 });
 

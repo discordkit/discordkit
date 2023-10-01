@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure, toValidated } from "@discordkit/core";
+import {
+  post,
+  type Fetcher,
+  toProcedure,
+  toValidated,
+  snowflake
+} from "@discordkit/core";
 import { channelSchema, type Channel } from "#/channel/types/Channel.ts";
 import { channelTypeSchema } from "#/channel/types/ChannelType.ts";
 import { overwriteSchema } from "#/channel/types/Overwrite.ts";
@@ -11,7 +17,7 @@ import { sortOrderTypeSchema } from "#channel/types/SortOrderType.ts";
 import { forumLayoutTypeSchema } from "#channel/types/ForumLayoutType.ts";
 
 export const createGuildChannelSchema = z.object({
-  guild: z.string().min(1),
+  guild: snowflake,
   body: z.object({
     /** channel name (1-100 characters) */
     name: z.string().min(1),
@@ -34,7 +40,7 @@ export const createGuildChannelSchema = z.object({
       .nullable()
       .optional(),
     /** id of the parent category for a channel */
-    parentId: z.string().min(1).nullable().optional(),
+    parentId: snowflake.nullable().optional(),
     /** whether the channel is nsfw */
     nsfw: z.boolean().nullable().optional(),
     /** channel voice region id of the voice or stage channel, automatic when set to null */

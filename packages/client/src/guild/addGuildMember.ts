@@ -1,17 +1,23 @@
 import { z } from "zod";
-import { put, type Fetcher, toProcedure, toValidated } from "@discordkit/core";
+import {
+  put,
+  type Fetcher,
+  toProcedure,
+  toValidated,
+  snowflake
+} from "@discordkit/core";
 import { memberSchema, type Member } from "./types/Member.ts";
 
 export const addGuildMemberSchema = z.object({
-  guild: z.string().min(1),
-  user: z.string().min(1),
+  guild: snowflake,
+  user: snowflake,
   body: z.object({
     /** an oauth2 access token granted with the `guilds.join` to the bot's application for the user you want to add to the guild */
     accessToken: z.string().min(1),
     /** value to set user's nickname to	(Requires `MANAGE_NICKNAMES` permission) */
     nick: z.string().min(1).optional(),
     /** array of role ids the member is assigned (Requires `MANAGE_ROLES` permission) */
-    roles: z.array(z.string().min(1)).optional(),
+    roles: snowflake.array().optional(),
     /** whether the user is muted in voice channels (Requires `MUTE_MEMBERS` permission) */
     mute: z.boolean().optional(),
     /** whether the user is deafened in voice channels (Requires `DEAFEN_MEMBERS` permission) */

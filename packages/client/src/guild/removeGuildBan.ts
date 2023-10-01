@@ -3,12 +3,13 @@ import {
   remove,
   type Fetcher,
   toProcedure,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 
 export const removeGuildBanSchema = z.object({
-  guild: z.string().min(1),
-  user: z.string().min(1)
+  guild: snowflake,
+  user: snowflake
 });
 
 /**

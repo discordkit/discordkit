@@ -3,7 +3,8 @@ import {
   patch,
   type Fetcher,
   toProcedure,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import {
   guildApplicationCommandPermissionsSchema,
@@ -12,9 +13,9 @@ import {
 import { applicationCommandPermissionsSchema } from "./types/ApplicationCommandPermissions.ts";
 
 export const editApplicationCommandPermissionsSchema = z.object({
-  application: z.string().min(1),
-  guild: z.string().min(1),
-  command: z.string().min(1),
+  application: snowflake,
+  guild: snowflake,
+  command: snowflake,
   body: z.object({
     /** Permissions for the command in the guild */
     permissions: applicationCommandPermissionsSchema.array().max(100)

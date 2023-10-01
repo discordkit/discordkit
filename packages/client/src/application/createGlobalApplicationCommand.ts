@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure, toValidated } from "@discordkit/core";
+import {
+  post,
+  type Fetcher,
+  toProcedure,
+  toValidated,
+  snowflake
+} from "@discordkit/core";
 import {
   applicationCommandSchema,
   type ApplicationCommand
@@ -12,7 +18,7 @@ import {
 import { localesSchema } from "./types/Locales.ts";
 
 export const createGlobalApplicationCommandSchema = z.object({
-  application: z.string().min(1),
+  application: snowflake,
   body: z.object({
     /** Name of command, 1-32 characters */
     name: z.string().min(1).max(32),

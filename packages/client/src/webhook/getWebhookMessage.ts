@@ -4,18 +4,19 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import { messageSchema, type Message } from "#/channel/types/Message.ts";
 
 export const getWebhookMessageSchema = z.object({
-  webhook: z.string().min(1),
+  webhook: snowflake,
   token: z.string().min(1),
-  message: z.string().min(1),
+  message: snowflake,
   params: z
     .object({
       /** id of the thread the message is in */
-      threadId: z.string().min(1)
+      threadId: snowflake
     })
     .partial()
     .optional()

@@ -1,9 +1,15 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure, toValidated } from "@discordkit/core";
+import {
+  post,
+  type Fetcher,
+  toProcedure,
+  toValidated,
+  snowflake
+} from "@discordkit/core";
 import { stickerSchema, type Sticker } from "./types/Sticker.ts";
 
 export const createGuildStickerSchema = z.object({
-  guild: z.string().min(2),
+  guild: snowflake,
   body: z.object({
     /** name of the sticker (2-30 characters) */
     name: z.string().min(2).max(30),

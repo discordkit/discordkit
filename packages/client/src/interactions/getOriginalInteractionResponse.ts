@@ -4,7 +4,8 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import {
   type InteractionResponse,
@@ -12,12 +13,12 @@ import {
 } from "./types/InteractionResponse.ts";
 
 export const getOriginalInteractionResponseSchema = z.object({
-  application: z.string().min(1),
+  application: snowflake,
   token: z.string().min(1),
   params: z
     .object({
       /** id of the thread the message is in */
-      threadId: z.string().min(1)
+      threadId: snowflake
     })
     .partial()
     .optional()

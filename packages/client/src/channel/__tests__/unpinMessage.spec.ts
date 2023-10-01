@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   unpinMessage,
   unpinMessageProcedure,
@@ -10,7 +9,7 @@ import {
 
 describe(`unpinMessage`, () => {
   mockRequest.delete(`/channels/:channel/pins/:message`);
-  const config = generateMock(unpinMessageSchema);
+  const config = mockSchema(unpinMessageSchema);
 
   it(`can be used standalone`, async () => {
     await expect(unpinMessageSafe(config)).resolves.not.toThrow();

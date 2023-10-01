@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest } from "test-utils";
+import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
 import {
   getGuildAuditLogProcedure,
   getGuildAuditLogQuery,
@@ -11,7 +10,7 @@ import { auditLogSchema } from "../types/AuditLog.ts";
 
 describe(`getGuildAuditLog`, () => {
   mockRequest.get(`/guilds/:guild/audit-logs`, auditLogSchema);
-  const config = generateMock(getGuildAuditLogSchema);
+  const config = mockSchema(getGuildAuditLogSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getGuildAuditLogSafe(config)).resolves.toBeDefined();

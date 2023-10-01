@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { userSchema } from "#/user/types/User.ts";
+import { snowflake } from "@discordkit/core";
 import { autoArchiveDurationSchema } from "./AutoArchiveDuration.ts";
 import { channelTypeSchema } from "./ChannelType.ts";
 import { overwriteSchema } from "./Overwrite.ts";
@@ -17,11 +18,11 @@ import { ForumLayoutType, forumLayoutTypeSchema } from "./ForumLayoutType.ts";
 // https://discord.com/developers/docs/resources/channel#channel-object-channel-structure
 export const channelSchema = z.object({
   /** the id of this channel */
-  id: z.string().min(1),
+  id: snowflake,
   /** the type of channel */
   type: channelTypeSchema,
   /** the id of the guild (may be missing for some channel objects received over gateway guild dispatches) */
-  guildId: z.string().min(1).nullable(),
+  guildId: snowflake.nullable(),
   /** sorting position of the channel */
   position: z.number().positive().nullable(),
   /** explicit permission overwrites for members and roles */
@@ -45,9 +46,9 @@ export const channelSchema = z.object({
   /** icon hash of the group DM */
   icon: z.string().min(1).nullable().optional(),
   /** id of the creator of the group DM or thread */
-  ownerId: z.string().min(1).nullable(),
+  ownerId: snowflake.nullable(),
   /** application id of the group DM creator if it is bot-created */
-  applicationId: z.string().min(1).nullable(),
+  applicationId: snowflake.nullable(),
   /** for group DM channels: whether the channel is managed by an application via the gdm.join OAuth2 scope */
   managed: z.boolean().nullable(),
   /** for guild channels: id of the parent category for a channel (each parent category can contain up to 50 channels), for threads: id of the text channel this thread was created */
@@ -79,7 +80,7 @@ export const channelSchema = z.object({
   /** the set of tags that can be used in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */
   availableTags: forumTagSchema.array().nullable(),
   /** the IDs of the set of tags that have been applied to a thread in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */
-  appliedTags: z.string().min(1).array().nullable(),
+  appliedTags: snowflake.array().nullable(),
   /** the emoji to show in the add reaction button on a thread in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */
   defaultReactionEmoji: defaultReactionSchema.nullable().optional(),
   /** the initial rateLimitPerUser to set on newly created threads in a channel. this field is copied to the thread at creation time and does not live update */

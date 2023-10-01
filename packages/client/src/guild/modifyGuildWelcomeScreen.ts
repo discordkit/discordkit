@@ -3,7 +3,8 @@ import {
   patch,
   type Fetcher,
   toProcedure,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import {
   welcomeScreenSchema,
@@ -12,7 +13,7 @@ import {
 import { welcomeChannelSchema } from "./types/WelcomeChannel.ts";
 
 export const modifyGuildWelcomeScreenSchema = z.object({
-  guild: z.string().min(1),
+  guild: snowflake,
   body: z
     .object({
       /** whether the welcome screen is enabled */

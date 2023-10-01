@@ -4,20 +4,21 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import { messageSchema, type Message } from "./types/Message.ts";
 
 export const getChannelMessagesSchema = z.object({
-  channel: z.string().min(1),
+  channel: snowflake,
   params: z
     .object({
       /** Get messages around this message ID */
-      around: z.string().min(1).nullable(),
+      around: snowflake.nullable(),
       /** Get messages before this message ID */
-      before: z.string().min(1).nullable(),
+      before: snowflake.nullable(),
       /** Get messages after this message ID */
-      after: z.string().min(1).nullable(),
+      after: snowflake.nullable(),
       /** Max number of messages to return (1-100) Default: 50 */
       limit: z.number().min(1).max(100).nullable().default(50)
     })

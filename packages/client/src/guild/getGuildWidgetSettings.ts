@@ -4,14 +4,15 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import {
   guildWidgetSettingsSchema,
   type GuildWidgetSettings
 } from "./types/GuildWidgetSettings.ts";
 
-export const getGuildWidgetSettingsSchema = z.object({ guild: z.string() });
+export const getGuildWidgetSettingsSchema = z.object({ guild: snowflake });
 
 /**
  * ### [Get Guild Widget Settings](https://discord.com/developers/docs/resources/guild#get-guild-widget-settings)

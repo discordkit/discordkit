@@ -4,12 +4,13 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import { memberSchema, type Member } from "./types/Member.ts";
 
 export const searchGuildMembersSchema = z.object({
-  guild: z.string().min(1),
+  guild: snowflake,
   params: z.object({
     /** Query string to match username(s) and nickname(s) against. */
     query: z.string().min(1),

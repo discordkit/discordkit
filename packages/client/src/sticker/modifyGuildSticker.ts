@@ -3,13 +3,14 @@ import {
   patch,
   type Fetcher,
   toProcedure,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import { stickerSchema, type Sticker } from "./types/Sticker.ts";
 
 export const modifyGuildStickerSchema = z.object({
-  guild: z.string().min(1),
-  sticker: z.string().min(1),
+  guild: snowflake,
+  sticker: snowflake,
   body: z
     .object({
       /** name of the sticker (2-30 characters) */

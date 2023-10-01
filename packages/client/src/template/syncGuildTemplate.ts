@@ -1,13 +1,19 @@
 import { z } from "zod";
-import { put, type Fetcher, toProcedure, toValidated } from "@discordkit/core";
+import {
+  put,
+  type Fetcher,
+  toProcedure,
+  toValidated,
+  snowflake
+} from "@discordkit/core";
 import {
   guildTemplateSchema,
   type GuildTemplate
 } from "./types/GuildTemplate.ts";
 
 export const syncGuildTemplateSchema = z.object({
-  guild: z.string().min(1),
-  template: z.string().min(1)
+  guild: snowflake,
+  template: snowflake
 });
 
 /**

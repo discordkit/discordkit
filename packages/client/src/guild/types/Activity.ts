@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { snowflake } from "@discordkit/core";
 import { activityButtonSchema } from "./ActivityButton.ts";
 import { activityFlagsSchema } from "./ActivityFlags.ts";
 import { activitySecretsSchema } from "./ActivitySecrets.ts";
@@ -15,11 +16,11 @@ export const activitySchema = z.object({
   /** stream url, is validated when type is 1 */
   url: z.string().optional(),
   /** unix timestamp (in milliseconds) of when the activity was added to the user's session */
-  createdAt: z.number(),
+  createdAt: z.string().datetime(),
   /** unix timestamps for start and/or end of the game */
   timestamps: activityTimestampsSchema.optional(),
   /** application id for the game */
-  applicationId: z.string().optional(),
+  applicationId: snowflake.optional(),
   /** what the player is currently doing */
   details: z.string().optional(),
   /** the user's current party status */

@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   editMessage,
   editMessageProcedure,
@@ -11,7 +10,7 @@ import { messageSchema } from "../types/Message.ts";
 
 describe(`editMessage`, () => {
   mockRequest.patch(`/channels/:channel/messages/:message`, messageSchema);
-  const config = generateMock(editMessageSchema);
+  const config = mockSchema(editMessageSchema);
 
   it(`can be used standalone`, async () => {
     await expect(editMessageSafe(config)).resolves.toBeDefined();

@@ -1,6 +1,5 @@
 import { waitFor } from "@testing-library/react";
-import { generateMock } from "@anatine/zod-mock";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   deleteStageInstance,
   deleteStageInstanceProcedure,
@@ -10,7 +9,7 @@ import {
 
 describe(`deleteStageInstance`, () => {
   mockRequest.delete(`/stage-instances/:channel`);
-  const config = generateMock(deleteStageInstanceSchema);
+  const config = mockSchema(deleteStageInstanceSchema);
 
   it(`can be used standalone`, async () => {
     await expect(deleteStageInstanceSafe(config)).resolves.not.toThrow();

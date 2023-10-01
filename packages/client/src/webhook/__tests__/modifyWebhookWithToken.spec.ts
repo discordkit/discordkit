@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   modifyWebhookWithToken,
   modifyWebhookWithTokenProcedure,
@@ -14,7 +13,7 @@ describe(`modifyWebhookWithToken`, () => {
     `/webhooks/:webhook/:token`,
     webhookSchema.omit({ user: true })
   );
-  const config = generateMock(modifyWebhookWithTokenSchema);
+  const config = mockSchema(modifyWebhookWithTokenSchema);
 
   it(`can be used standalone`, async () => {
     await expect(modifyWebhookWithTokenSafe(config)).resolves.toStrictEqual(

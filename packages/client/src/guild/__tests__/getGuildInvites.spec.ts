@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest } from "test-utils";
+import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
 import {
   getGuildInvitesProcedure,
   getGuildInvitesQuery,
@@ -14,7 +13,7 @@ describe(`getGuildInvites`, () => {
     `/guilds/:guild/invites`,
     inviteMetadataSchema.array().length(1)
   );
-  const config = generateMock(getGuildInvitesSchema);
+  const config = mockSchema(getGuildInvitesSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getGuildInvitesSafe(config)).resolves.toStrictEqual(expected);

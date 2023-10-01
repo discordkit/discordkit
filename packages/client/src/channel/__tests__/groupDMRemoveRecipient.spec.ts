@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   groupDMRemoveRecipient,
   groupDMRemoveRecipientProcedure,
@@ -10,7 +9,7 @@ import {
 
 describe(`groupDMRemoveRecipient`, () => {
   mockRequest.delete(`/channels/:channel/recipients/:user`);
-  const config = generateMock(groupDMRemoveRecipientSchema);
+  const config = mockSchema(groupDMRemoveRecipientSchema);
 
   it(`can be used standalone`, async () => {
     await expect(groupDMRemoveRecipientSafe(config)).resolves.not.toThrow();

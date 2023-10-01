@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest } from "test-utils";
+import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
 import {
   getUserApplicationRoleConnectionProcedure,
   getUserApplicationRoleConnectionQuery,
@@ -14,7 +13,7 @@ describe(`getUserApplicationRoleConnection`, () => {
     `/users/@me/applications/:application/role-connection`,
     applicationRoleConnectionSchema
   );
-  const config = generateMock(getUserApplicationRoleConnectionSchema);
+  const config = mockSchema(getUserApplicationRoleConnectionSchema);
 
   it(`can be used standalone`, async () => {
     await expect(

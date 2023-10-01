@@ -4,18 +4,19 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import { memberSchema, type Member } from "./types/Member.ts";
 
 export const listGuildMembersSchema = z.object({
-  guild: z.string().min(1),
+  guild: snowflake,
   params: z
     .object({
       /** max number of members to return (1-1000) */
       limit: z.number().int().min(1).max(1000),
       /** the highest user id in the previous page */
-      after: z.string().min(1)
+      after: snowflake
     })
     .partial()
     .optional()

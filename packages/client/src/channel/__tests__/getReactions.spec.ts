@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest } from "test-utils";
+import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
 import {
   getReactionsProcedure,
   getReactionsQuery,
@@ -14,7 +13,7 @@ describe(`getReactions`, () => {
     `/channels/:channel/messages/:message/reactions/:emoji`,
     userSchema.partial().array().length(1)
   );
-  const config = generateMock(getReactionsSchema);
+  const config = mockSchema(getReactionsSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getReactionsSafe(config)).resolves.toStrictEqual(expected);

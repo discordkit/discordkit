@@ -3,12 +3,13 @@ import {
   patch,
   type Fetcher,
   toProcedure,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import { mfaLevelSchema, type MFALevel } from "./types/MFALevel.ts";
 
 export const modifyGuildMFALevelSchema = z.object({
-  guild: z.string().min(1),
+  guild: snowflake,
   body: z.object({
     /** MFA level */
     level: mfaLevelSchema

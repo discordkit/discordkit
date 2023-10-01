@@ -3,21 +3,22 @@ import {
   patch,
   type Fetcher,
   toProcedure,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 
 export const modifyGuildChannelPositionsSchema = z.object({
-  guild: z.string().min(1),
+  guild: snowflake,
   body: z
     .object({
       /** channel id */
-      id: z.string().min(1),
+      id: snowflake,
       /** sorting position of the channel */
       position: z.number().positive().nullable().optional(),
       /** syncs the permission overwrites with the new parent, if moving to a new category */
       lockPermissions: z.boolean().nullable().optional(),
       /** the new parent ID for the channel that is moved */
-      parentId: z.string().min(1).nullable().optional()
+      parentId: snowflake.nullable().optional()
     })
     .array()
 });

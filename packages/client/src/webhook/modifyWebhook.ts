@@ -3,12 +3,13 @@ import {
   patch,
   type Fetcher,
   toProcedure,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import { webhookSchema, type Webhook } from "./types/Webhook.ts";
 
 export const modifyWebhookSchema = z.object({
-  webhook: z.string().min(1),
+  webhook: snowflake,
   body: z
     .object({
       /** the default name of the webhook */
@@ -16,7 +17,7 @@ export const modifyWebhookSchema = z.object({
       /** image for the default webhook avatar */
       avatar: z.string().url().min(1),
       /** the new channel id this webhook should be moved to */
-      channelId: z.string().min(1)
+      channelId: snowflake
     })
     .partial()
 });

@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest } from "test-utils";
+import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
 import {
   listGuildEmojisProcedure,
   listGuildEmojisQuery,
@@ -14,7 +13,7 @@ describe(`listGuildEmojis`, () => {
     `/guilds/:guild/emojis`,
     emojiSchema.array().length(1)
   );
-  const config = generateMock(listGuildEmojisSchema);
+  const config = mockSchema(listGuildEmojisSchema);
 
   it(`can be used standalone`, async () => {
     await expect(listGuildEmojisSafe(config)).resolves.toStrictEqual(expected);

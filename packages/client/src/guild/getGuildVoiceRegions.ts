@@ -4,7 +4,8 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import {
   voiceRegionSchema,
@@ -12,7 +13,7 @@ import {
 } from "#/voice/types/VoiceRegion.ts";
 
 export const getGuildVoiceRegionsSchema = z.object({
-  guild: z.string().min(1)
+  guild: snowflake
 });
 
 /**

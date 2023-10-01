@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest } from "test-utils";
+import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
 import {
   getGuildPruneCountProcedure,
   getGuildPruneCountQuery,
@@ -14,7 +13,7 @@ describe(`getGuildPruneCount`, () => {
     `/guilds/:guild/prune`,
     guildPruneCountSchema
   );
-  const config = generateMock(getGuildPruneCountSchema);
+  const config = mockSchema(getGuildPruneCountSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getGuildPruneCountSafe(config)).resolves.toStrictEqual(

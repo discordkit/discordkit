@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   modifyChannel,
   modifyChannelProcedure,
@@ -11,7 +10,7 @@ import { channelSchema } from "../types/Channel.ts";
 
 describe(`modifyChannel`, () => {
   const expected = mockRequest.patch(`/channels/:channel`, channelSchema);
-  const config = generateMock(modifyChannelSchema);
+  const config = mockSchema(modifyChannelSchema);
 
   it(`can be used standalone`, async () => {
     await expect(modifyChannelSafe(config)).resolves.toStrictEqual(expected);

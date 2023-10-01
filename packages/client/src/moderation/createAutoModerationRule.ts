@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure, toValidated } from "@discordkit/core";
+import {
+  post,
+  type Fetcher,
+  toProcedure,
+  toValidated,
+  snowflake
+} from "@discordkit/core";
 import {
   type ModerationRule,
   moderationRuleSchema
@@ -10,7 +16,7 @@ import { triggerMetaSchema } from "./types/TriggerMeta.ts";
 import { moderationActionSchema } from "./types/ModerationAction.ts";
 
 export const createAutoModerationRuleSchema = z.object({
-  guild: z.string().min(1),
+  guild: snowflake,
   body: z.object({
     /** the rule name */
     name: z.string().min(1),
@@ -25,9 +31,9 @@ export const createAutoModerationRuleSchema = z.object({
     /** whether the rule is enabled (False by default) */
     enabled: z.boolean().nullable().default(false),
     /** the role ids that should not be affected by the rule (Maximum of 20) */
-    exemptRoles: z.string().min(1).array().max(20).nullable(),
+    exemptRoles: snowflake.array().max(20).nullable(),
     /** the channel ids that should not be affected by the rule (Maximum of 50) */
-    exemptChannels: z.string().min(1).array().max(50).nullable()
+    exemptChannels: snowflake.array().max(50).nullable()
   })
 });
 

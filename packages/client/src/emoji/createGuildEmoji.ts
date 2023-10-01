@@ -1,16 +1,22 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure, toValidated } from "@discordkit/core";
+import {
+  post,
+  type Fetcher,
+  toProcedure,
+  toValidated,
+  snowflake
+} from "@discordkit/core";
 import { emojiSchema, type Emoji } from "./types/Emoji.ts";
 
 export const createGuildEmojiSchema = z.object({
-  guild: z.string().min(1),
+  guild: snowflake,
   body: z.object({
     /** name of the emoji */
     name: z.string().min(1),
     /** the 128x128 emoji image */
     image: z.string().url(),
     /** roles allowed to use this emoji */
-    roles: z.string().min(1).array()
+    roles: snowflake.array()
   })
 });
 

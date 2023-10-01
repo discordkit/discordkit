@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   deleteAutoModerationRule,
   deleteAutoModerationRuleProcedure,
@@ -10,7 +9,7 @@ import {
 
 describe(`deleteAutoModerationRule`, () => {
   mockRequest.delete(`/guilds/:guild/auto-moderation/rules/:rule`);
-  const config = generateMock(deleteAutoModerationRuleSchema);
+  const config = mockSchema(deleteAutoModerationRuleSchema);
 
   it(`can be used standalone`, async () => {
     await expect(deleteAutoModerationRuleSafe(config)).resolves.not.toThrow();

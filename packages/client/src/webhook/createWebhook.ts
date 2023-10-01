@@ -1,9 +1,15 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure, toValidated } from "@discordkit/core";
+import {
+  post,
+  type Fetcher,
+  toProcedure,
+  toValidated,
+  snowflake
+} from "@discordkit/core";
 import { webhookSchema, type Webhook } from "./types/Webhook.ts";
 
 export const createWebhookSchema = z.object({
-  channel: z.string().min(1),
+  channel: snowflake,
   body: z.object({
     /** name of the webhook (1-80 characters) */
     name: z.string().min(1).max(80),

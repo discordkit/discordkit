@@ -3,25 +3,26 @@ import {
   patch,
   type Fetcher,
   toProcedure,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import { memberSchema, type Member } from "./types/Member.ts";
 
 export const modifyGuildMemberSchema = z.object({
-  guild: z.string().min(1),
-  user: z.string().min(1),
+  guild: snowflake,
+  user: snowflake,
   body: z
     .object({
       /** value to set user's nickname to	(Requires `MANAGE_NICKNAMES` permission) */
       nick: z.string().min(1).nullable(),
       /** array of role ids the member is assigned (Requires `MANAGE_ROLES` permission) */
-      roles: z.string().min(1).array().nullable(),
+      roles: snowflake.array().nullable(),
       /** whether the user is muted in voice channels (Requires `MUTE_MEMBERS` permission) */
       mute: z.boolean().nullable(),
       /** whether the user is deafened in voice channels (Requires `DEAFEN_MEMBERS` permission) */
       deaf: z.boolean().nullable(),
       /** id of channel to move user to (if they are connected to voice) (Requires `MOVE_MEMBERS` permission) */
-      channelId: z.string().min(1).nullable(),
+      channelId: snowflake.nullable(),
       /** when the user's timeout will expire and the user will be able to communicate in the guild again (up to 28 days in the future), set to null to remove timeout. Will throw a 403 error if the user has the `ADMINISTRATOR` permission or is the owner of the guild (Requires `MODERATE_MEMBERS` permission) */
       communicationDisabledUntil: z.string().datetime().nullable(),
       /** guild member flags */

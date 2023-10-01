@@ -4,7 +4,8 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import {
   guildTemplateSchema,
@@ -12,7 +13,7 @@ import {
 } from "./types/GuildTemplate.ts";
 
 export const getGuildTemplateSchema = z.object({
-  template: z.string().min(1)
+  template: snowflake
 });
 
 /**

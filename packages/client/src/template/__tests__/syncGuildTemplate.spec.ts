@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   syncGuildTemplate,
   syncGuildTemplateProcedure,
@@ -14,7 +13,7 @@ describe(`syncGuildTemplate`, () => {
     `/guilds/:guild/templates/:template`,
     guildTemplateSchema
   );
-  const config = generateMock(syncGuildTemplateSchema);
+  const config = mockSchema(syncGuildTemplateSchema);
 
   it(`can be used standalone`, async () => {
     await expect(syncGuildTemplateSafe(config)).resolves.toStrictEqual(

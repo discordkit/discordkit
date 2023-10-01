@@ -1,13 +1,14 @@
 import { z } from "zod";
 import { userSchema } from "#/user/types/User.ts";
+import { snowflake } from "@discordkit/core";
 import { stickerFormatTypeSchema } from "./StickerFormatType.ts";
 import { stickerTypeSchema } from "./StickerType.ts";
 
 export const stickerSchema = z.object({
   /** id of the sticker */
-  id: z.string(),
+  id: snowflake,
   /** for standard stickers, id of the pack the sticker is from */
-  packId: z.string().nullable(),
+  packId: snowflake.nullable(),
   /** name of the sticker */
   name: z.string(),
   /** description of the sticker */
@@ -23,7 +24,7 @@ export const stickerSchema = z.object({
   /** whether this guild sticker can be used, may be false due to loss of Server Boosts */
   available: z.boolean().nullable(),
   /** id of the guild that owns this sticker */
-  guildId: z.string().nullable(),
+  guildId: snowflake.nullable(),
   /** the user that uploaded the guild sticker */
   user: userSchema.nullable(),
   /** the standard sticker's sort order within its pack */

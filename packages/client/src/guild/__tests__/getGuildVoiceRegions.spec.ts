@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest } from "test-utils";
+import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
 import {
   getGuildVoiceRegionsProcedure,
   getGuildVoiceRegionsQuery,
@@ -11,7 +10,7 @@ import { voiceRegionSchema } from "../../voice/types/VoiceRegion.ts";
 
 describe(`getGuildVoiceRegions`, () => {
   const expected = mockRequest.get(`/guilds/:guild/regions`, voiceRegionSchema);
-  const config = generateMock(getGuildVoiceRegionsSchema);
+  const config = mockSchema(getGuildVoiceRegionsSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getGuildVoiceRegionsSafe(config)).resolves.toStrictEqual(

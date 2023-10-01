@@ -4,7 +4,8 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import {
   type ApplicationCommand,
@@ -12,8 +13,8 @@ import {
 } from "./types/ApplicationCommand.ts";
 
 export const getGuildApplicationCommandsSchema = z.object({
-  application: z.string().min(1),
-  guild: z.string().min(1),
+  application: snowflake,
+  guild: snowflake,
   params: z
     .object({
       /** Whether to include full localization dictionaries (nameLocalizations and descriptionLocalizations) in the returned objects, instead of the nameLocalized and descriptionLocalized fields. Default false. */

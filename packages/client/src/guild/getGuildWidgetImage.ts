@@ -4,11 +4,12 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 
 export const getGuildWidgetImageSchema = z.object({
-  guild: z.string().min(1),
+  guild: snowflake,
   params: z
     .object({
       /** style of the widget image returned */

@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   deleteChannelPermission,
   deleteChannelPermissionProcedure,
@@ -10,7 +9,7 @@ import {
 
 describe(`deleteChannelPermission`, () => {
   mockRequest.delete(`/channels/:channel/permissions/:overwrite`);
-  const config = generateMock(deleteChannelPermissionSchema);
+  const config = mockSchema(deleteChannelPermissionSchema);
 
   it(`can be used standalone`, async () => {
     await expect(deleteChannelPermissionSafe(config)).resolves.not.toThrow();

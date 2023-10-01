@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   editChannelPermissions,
   editChannelPermissionsProcedure,
@@ -10,7 +9,7 @@ import {
 
 describe(`editChannelPermissions`, () => {
   mockRequest.put(`/channels/:channel/permissions/:overwrite`);
-  const config = generateMock(editChannelPermissionsSchema);
+  const config = mockSchema(editChannelPermissionsSchema);
 
   it(`can be used standalone`, async () => {
     await expect(editChannelPermissionsSafe(config)).resolves.not.toThrow();

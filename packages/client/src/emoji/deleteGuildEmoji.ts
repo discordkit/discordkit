@@ -3,12 +3,13 @@ import {
   remove,
   type Fetcher,
   toProcedure,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 
 export const deleteGuildEmojiSchema = z.object({
-  guild: z.string().min(1),
-  emoji: z.string().min(1)
+  guild: snowflake,
+  emoji: snowflake
 });
 
 /**

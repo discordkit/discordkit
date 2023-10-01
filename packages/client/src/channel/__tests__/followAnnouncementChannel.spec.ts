@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   followAnnouncementChannel,
   followAnnouncementChannelProcedure,
@@ -14,7 +13,7 @@ describe(`followAnnouncementChannel`, () => {
     `/channels/:channel/followers`,
     followedChannelSchema
   );
-  const config = generateMock(followAnnouncementChannelSchema);
+  const config = mockSchema(followAnnouncementChannelSchema);
 
   it(`can be used standalone`, async () => {
     await expect(followAnnouncementChannelSafe(config)).resolves.toStrictEqual(

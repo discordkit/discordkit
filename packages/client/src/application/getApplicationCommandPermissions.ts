@@ -4,7 +4,8 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import {
   guildApplicationCommandPermissionsSchema,
@@ -12,9 +13,9 @@ import {
 } from "./types/GuildApplicationCommandPermissions.ts";
 
 export const getApplicationCommandPermissionsSchema = z.object({
-  application: z.string().min(1),
-  guild: z.string().min(1),
-  command: z.string().min(1)
+  application: snowflake,
+  guild: snowflake,
+  command: snowflake
 });
 
 /**

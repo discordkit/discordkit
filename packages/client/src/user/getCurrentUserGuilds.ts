@@ -4,7 +4,8 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import { guildSchema, type Guild } from "#/guild/types/Guild.ts";
 
@@ -12,11 +13,11 @@ export const getCurrentUserGuildsSchema = z.object({
   params: z
     .object({
       /** get guilds before this guild ID */
-      before: z.string().min(1),
+      before: snowflake,
       /** get guilds after this guild ID */
-      after: z.string().min(1),
+      after: snowflake,
       /** max number of guilds to return (1-200) */
-      limit: z.number().max(200).default(200),
+      limit: z.number().int().max(200).default(200),
       /** include approximate member and presence counts in response */
       withCounts: z.boolean().default(false)
     })

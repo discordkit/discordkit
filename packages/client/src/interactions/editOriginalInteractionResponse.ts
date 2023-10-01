@@ -4,7 +4,8 @@ import {
   buildURL,
   type Fetcher,
   toProcedure,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import { embedSchema } from "#/channel/types/Embed.ts";
 import { allowedMentionSchema } from "#/channel/types/AllowedMention.ts";
@@ -17,12 +18,12 @@ import {
 } from "./types/InteractionResponse.ts";
 
 export const editOriginalInteractionResponseSchema = z.object({
-  application: z.string().min(1),
+  application: snowflake,
   token: z.string().min(1),
   params: z
     .object({
       /** id of the thread the message is in */
-      threadId: z.string().min(1)
+      threadId: snowflake
     })
     .partial()
     .optional(),

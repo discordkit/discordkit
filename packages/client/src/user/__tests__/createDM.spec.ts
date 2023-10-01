@@ -1,7 +1,6 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
 import { z } from "zod";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   createDM,
   createDMProcedure,
@@ -16,7 +15,7 @@ describe(`createDM`, () => {
     `/users/@me/channels`,
     channelSchema.extend({ type: z.literal(ChannelType.DM) })
   );
-  const config = generateMock(createDMSchema);
+  const config = mockSchema(createDMSchema);
 
   it(`can be used standalone`, async () => {
     await expect(createDMSafe(config)).resolves.toStrictEqual(expected);

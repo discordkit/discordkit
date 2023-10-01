@@ -4,24 +4,25 @@ import { localesSchema } from "#/application/types/Locales.ts";
 import { channelSchema } from "#/channel/types/Channel.ts";
 import { messageSchema } from "#/channel/types/Message.ts";
 import { userSchema } from "#/user/types/User.ts";
+import { snowflake } from "@discordkit/core";
 import { interactionTypeSchema } from "./InteractionType.ts";
 import { interactionDataSchema } from "./InteractionData.ts";
 
 export const interactionSchema = z.object({
   /** ID of the interaction */
-  id: z.string().min(1),
+  id: snowflake,
   /** ID of the application this interaction is for */
-  applicationId: z.string().min(1),
+  applicationId: snowflake,
   /** Type of interaction */
   type: interactionTypeSchema,
   /** Interaction data payload */
   data: interactionDataSchema.nullable(),
   /** Guild that the interaction was sent from */
-  guildId: z.string().min(1).nullable(),
+  guildId: snowflake.nullable(),
   /** Channel that the interaction was sent from */
   channel: channelSchema.partial().nullable(),
   /** Channel that the interaction was sent from */
-  channelId: z.string().min(1).nullable(),
+  channelId: snowflake.nullable(),
   /** Guild member data for the invoking user, including permissions */
   member: memberSchema.nullable(),
   /** User object for the invoking user, if invoked in a DM */

@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest } from "test-utils";
+import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
 import {
   listGuildMembersProcedure,
   listGuildMembersQuery,
@@ -14,7 +13,7 @@ describe(`listGuildMembers`, () => {
     `/guilds/:guild/members`,
     memberSchema.array().length(1)
   );
-  const config = generateMock(listGuildMembersSchema);
+  const config = mockSchema(listGuildMembersSchema);
 
   it(`can be used standalone`, async () => {
     await expect(listGuildMembersSafe(config)).resolves.toStrictEqual(expected);

@@ -3,11 +3,12 @@ import {
   remove,
   type Fetcher,
   toProcedure,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 
 export const leaveThreadSchema = z.object({
-  channel: z.string().min(1)
+  channel: snowflake
 });
 
 /**

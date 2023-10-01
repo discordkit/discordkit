@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   joinThread,
   joinThreadProcedure,
@@ -10,7 +9,7 @@ import {
 
 describe(`joinThread`, () => {
   mockRequest.put(`/channels/:channel/thread-members/@me`);
-  const config = generateMock(joinThreadSchema);
+  const config = mockSchema(joinThreadSchema);
 
   it(`can be used standalone`, async () => {
     await expect(joinThreadSafe(config)).resolves.not.toThrow();

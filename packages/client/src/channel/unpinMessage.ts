@@ -3,12 +3,13 @@ import {
   remove,
   type Fetcher,
   toProcedure,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 
 export const unpinMessageSchema = z.object({
-  channel: z.string().min(1),
-  message: z.string().min(1)
+  channel: snowflake,
+  message: snowflake
 });
 
 /**

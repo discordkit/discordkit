@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   deleteOwnReaction,
   deleteOwnReactionProcedure,
@@ -12,7 +11,7 @@ describe(`deleteOwnReaction`, () => {
   mockRequest.delete(
     `/channels/:channel/messages/:message/reactions/:emoji/@me`
   );
-  const config = generateMock(deleteOwnReactionSchema);
+  const config = mockSchema(deleteOwnReactionSchema);
 
   it(`can be used standalone`, async () => {
     await expect(deleteOwnReactionSafe(config)).resolves.not.toThrow();

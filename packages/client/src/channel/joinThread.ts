@@ -1,8 +1,14 @@
 import { z } from "zod";
-import { put, type Fetcher, toProcedure, toValidated } from "@discordkit/core";
+import {
+  put,
+  type Fetcher,
+  toProcedure,
+  toValidated,
+  snowflake
+} from "@discordkit/core";
 
 export const joinThreadSchema = z.object({
-  channel: z.string().min(1)
+  channel: snowflake
 });
 
 /**

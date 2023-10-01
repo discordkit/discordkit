@@ -4,13 +4,14 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import { stickerSchema, type Sticker } from "./types/Sticker.ts";
 
 export const getGuildStickerSchema = z.object({
-  guild: z.string().min(1),
-  sticker: z.string().min(1)
+  guild: snowflake,
+  sticker: snowflake
 });
 
 /**

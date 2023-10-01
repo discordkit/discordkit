@@ -3,12 +3,13 @@ import {
   remove,
   type Fetcher,
   toProcedure,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 
 export const deleteGlobalApplicationCommandSchema = z.object({
-  application: z.string().min(1),
-  command: z.string().min(1)
+  application: snowflake,
+  command: snowflake
 });
 
 /**

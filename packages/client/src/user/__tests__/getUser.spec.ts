@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest } from "test-utils";
+import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
 import {
   getUserProcedure,
   getUserQuery,
@@ -11,7 +10,7 @@ import { userSchema } from "../types/User.ts";
 
 describe(`getUser`, () => {
   const expected = mockRequest.get(`/users/:user`, userSchema);
-  const config = generateMock(getUserSchema);
+  const config = mockSchema(getUserSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getUserSafe(config)).resolves.toStrictEqual(expected);

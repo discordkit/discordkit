@@ -1,11 +1,12 @@
 import { z } from "zod";
 import { memberSchema } from "#/guild/types/Member.ts";
+import { snowflake } from "@discordkit/core";
 
 export const threadMemberSchema = z.object({
   /** the id of the thread */
-  id: z.string().min(1).nullable(),
+  id: snowflake.nullable(),
   /** the id of the user */
-  userId: z.string().min(1).nullable(),
+  userId: snowflake.nullable(),
   /** the time the current user last joined the thread */
   joinTimestamp: z.string().datetime(),
   /** any user-thread settings, currently only used for notifications */

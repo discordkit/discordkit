@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   deleteGuildEmoji,
   deleteGuildEmojiProcedure,
@@ -11,7 +10,7 @@ import { emojiSchema } from "../types/Emoji.ts";
 
 describe(`deleteGuildEmoji`, () => {
   mockRequest.delete(`/guilds/:guild/emojis/:emoji`, emojiSchema);
-  const config = generateMock(deleteGuildEmojiSchema);
+  const config = mockSchema(deleteGuildEmojiSchema);
 
   it(`can be used standalone`, async () => {
     await expect(deleteGuildEmojiSafe(config)).resolves.not.toThrow();

@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest } from "test-utils";
+import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
 import {
   getChannelWebhooksProcedure,
   getChannelWebhooksQuery,
@@ -14,7 +13,7 @@ describe(`getChannelWebhooks`, () => {
     `/channels/:channel/webhooks`,
     webhookSchema.array().length(1)
   );
-  const config = generateMock(getChannelWebhooksSchema);
+  const config = mockSchema(getChannelWebhooksSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getChannelWebhooksSafe(config)).resolves.toStrictEqual(

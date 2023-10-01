@@ -4,7 +4,7 @@ import { messageActivityTypeSchema } from "./MessageActivityType.ts";
 export const messageActivitySchema = z.object({
   /** type of message activity */
   type: messageActivityTypeSchema,
-  /** party_id from a Rich Presence event */
+  /** partyId from a Rich Presence event */
   partyId: z.string().min(1).nullable()
 });
 

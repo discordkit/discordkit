@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { userSchema } from "#/user/types/User.ts";
+import { snowflake } from "@discordkit/core";
 import { clientStatusSchema } from "./ClientStatus.ts";
 import { activitySchema } from "./Activity.ts";
 
@@ -7,7 +8,7 @@ export const presenceSchema = z.object({
   /** the user presence is being updated for */
   user: userSchema,
   /** id of the guild */
-  guildId: z.string(),
+  guildId: snowflake,
   /** either "idle", "dnd", "online", or "offline" */
   status: z.union([
     z.literal(`idle`),

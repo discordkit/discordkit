@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest } from "test-utils";
+import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
 import {
   getChannelMessageProcedure,
   getChannelMessageQuery,
@@ -11,7 +10,7 @@ import { messageSchema } from "../types/Message.ts";
 
 describe(`getChannelMessage`, () => {
   mockRequest.get(`/channels/:channel/messages/:message`, messageSchema);
-  const config = generateMock(getChannelMessageSchema);
+  const config = mockSchema(getChannelMessageSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getChannelMessageSafe(config)).resolves.toBeDefined();

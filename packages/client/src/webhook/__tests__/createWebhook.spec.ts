@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   createWebhook,
   createWebhookProcedure,
@@ -14,7 +13,7 @@ describe(`createWebhook`, () => {
     `/channels/:channel/webhooks`,
     webhookSchema
   );
-  const config = generateMock(createWebhookSchema);
+  const config = mockSchema(createWebhookSchema);
 
   it(`can be used standalone`, async () => {
     await expect(createWebhookSafe(config)).resolves.toStrictEqual(expected);

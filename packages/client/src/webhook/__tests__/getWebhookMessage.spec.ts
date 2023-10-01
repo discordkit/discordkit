@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest } from "test-utils";
+import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
 import {
   getWebhookMessageProcedure,
   getWebhookMessageQuery,
@@ -11,7 +10,7 @@ import { messageSchema } from "../../channel/types/Message.ts";
 
 describe(`getWebhookMessage`, () => {
   mockRequest.get(`/webhooks/:webhook/:token/messages/:message`, messageSchema);
-  const config = generateMock(getWebhookMessageSchema);
+  const config = mockSchema(getWebhookMessageSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getWebhookMessageSafe(config)).resolves.toBeDefined();

@@ -3,16 +3,17 @@ import {
   patch,
   type Fetcher,
   toProcedure,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import { roleSchema, type Role } from "./types/Role.ts";
 
 export const modifyGuildRolePositionsSchema = z.object({
-  guild: z.string().min(1),
+  guild: snowflake,
   body: z
     .object({
       /** role */
-      id: z.string().min(1),
+      id: snowflake,
       /** sorting position of the role */
       position: z.number().int().positive().nullable().optional()
     })

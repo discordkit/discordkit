@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   startThreadFromMessage,
   startThreadFromMessageProcedure,
@@ -14,7 +13,7 @@ describe(`startThreadFromMessage`, () => {
     `/channels/:channel/messages/:message/threads`,
     channelSchema
   );
-  const config = generateMock(startThreadFromMessageSchema);
+  const config = mockSchema(startThreadFromMessageSchema);
 
   it(`can be used standalone`, async () => {
     await expect(startThreadFromMessageSafe(config)).resolves.toStrictEqual(

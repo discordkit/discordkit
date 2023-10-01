@@ -1,6 +1,5 @@
 import { waitFor } from "@testing-library/react";
-import { generateMock } from "@anatine/zod-mock";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   updateApplicationRoleConnectionMetadataRecordsProcedure,
   updateApplicationRoleConnectionMetadataRecords,
@@ -14,7 +13,7 @@ describe(`updateApplicationRoleConnectionMetadataRecords`, () => {
     `/applications/:application/role-connections/metadata`,
     applicationRoleConnectionMetadataSchema.array().length(1)
   );
-  const config = generateMock(
+  const config = mockSchema(
     updateApplicationRoleConnectionMetadataRecordsSchema
   );
 

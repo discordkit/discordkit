@@ -1,10 +1,11 @@
 import { z } from "zod";
+import { snowflake } from "@discordkit/core";
 import { promptOptionSchema } from "./PromptOption.ts";
 import { promptTypeSchema } from "./PromptType.ts";
 
 export const onboardingPromptSchema = z.object({
   /** ID of the prompt */
-  id: z.string().min(1),
+  id: snowflake,
   /** Type of prompt */
   type: promptTypeSchema,
   /** Options available within the prompt */

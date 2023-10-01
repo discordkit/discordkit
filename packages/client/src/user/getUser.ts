@@ -4,12 +4,13 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import { userSchema, type User } from "./types/User.ts";
 
 export const getUserSchema = z.object({
-  user: z.string().min(1)
+  user: snowflake
 });
 
 /**

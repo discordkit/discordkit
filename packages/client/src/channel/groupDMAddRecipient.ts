@@ -1,9 +1,15 @@
 import { z } from "zod";
-import { put, type Fetcher, toProcedure, toValidated } from "@discordkit/core";
+import {
+  put,
+  type Fetcher,
+  toProcedure,
+  toValidated,
+  snowflake
+} from "@discordkit/core";
 
 export const groupDMAddRecipientSchema = z.object({
-  channel: z.string().min(1),
-  user: z.string().min(1),
+  channel: snowflake,
+  user: snowflake,
   body: z.object({
     /** access token of a user that has granted your app the gdm.join scope */
     accessToken: z.string().min(1),

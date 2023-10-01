@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { snowflake } from "@discordkit/core";
 import { moderationActionSchema } from "./ModerationAction.ts";
 import { moderationEventSchema } from "./ModerationEvent.ts";
 import { moderationTriggerTypeSchema } from "./ModerationTriggerType.ts";
@@ -6,13 +7,13 @@ import { triggerMetaSchema } from "./TriggerMeta.ts";
 
 export const moderationRuleSchema = z.object({
   /** the id of this rule */
-  id: z.string().min(1),
+  id: snowflake,
   /** the guild which this rule belongs to */
-  guildId: z.string().min(1),
+  guildId: snowflake,
   /** the rule name */
   name: z.string().min(1),
   /** the user which first created this rule */
-  creatorId: z.string().min(1),
+  creatorId: snowflake,
   /** the rule event type */
   eventType: moderationEventSchema,
   /** the rule trigger type */
@@ -24,9 +25,9 @@ export const moderationRuleSchema = z.object({
   /** whether the rule is enabled */
   enabled: z.boolean(),
   /** the role ids that should not be affected by the rule (Maximum of 20) */
-  exemptRoles: z.string().min(1).array(),
+  exemptRoles: snowflake.array().max(20),
   /** the channel ids that should not be affected by the rule (Maximum of 50) */
-  exemptChannels: z.string().min(1).array()
+  exemptChannels: snowflake.array().max(50)
 });
 
 export type ModerationRule = z.infer<typeof moderationRuleSchema>;

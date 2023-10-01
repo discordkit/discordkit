@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest } from "test-utils";
+import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
 import {
   getGuildOnboardingProcedure,
   getGuildOnboardingQuery,
@@ -14,7 +13,7 @@ describe(`getGuildOnboarding`, () => {
     `/guilds/:guild/onboarding`,
     guildOnboardingSchema
   );
-  const config = generateMock(getGuildOnboardingSchema);
+  const config = mockSchema(getGuildOnboardingSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getGuildOnboardingSafe(config)).resolves.toStrictEqual(

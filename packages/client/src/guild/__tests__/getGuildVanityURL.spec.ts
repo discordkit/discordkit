@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest } from "test-utils";
+import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
 import {
   getGuildVanityURLProcedure,
   getGuildVanityURLQuery,
@@ -14,7 +13,7 @@ describe(`getGuildVanityURL`, () => {
     `/guilds/:guild/vanity-url`,
     inviteSchema.partial()
   );
-  const config = generateMock(getGuildVanityURLSchema);
+  const config = mockSchema(getGuildVanityURLSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getGuildVanityURLSafe(config)).resolves.toStrictEqual(

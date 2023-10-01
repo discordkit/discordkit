@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { userSchema } from "#/user/types/User.ts";
+import { snowflake } from "@discordkit/core";
 
 export const memberSchema = z.object({
   /** the user this guild member represents */
@@ -9,7 +10,7 @@ export const memberSchema = z.object({
   /** the member's guild avatar hash */
   avatar: z.string().nullable().optional(),
   /** array of role object ids */
-  roles: z.string().min(1).array(),
+  roles: snowflake.array(),
   /** when the user joined the guild */
   joinedAt: z.string().datetime(),
   /** when the user started boosting the guild */

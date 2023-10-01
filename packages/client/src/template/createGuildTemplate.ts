@@ -1,12 +1,18 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure, toValidated } from "@discordkit/core";
+import {
+  post,
+  type Fetcher,
+  toProcedure,
+  toValidated,
+  snowflake
+} from "@discordkit/core";
 import {
   guildTemplateSchema,
   type GuildTemplate
 } from "./types/GuildTemplate.ts";
 
 export const createGuildTemplateSchema = z.object({
-  guild: z.string().min(1),
+  guild: snowflake,
   body: z.object({
     /** name of the template (1-100 characters) */
     name: z.string().min(1).max(100),

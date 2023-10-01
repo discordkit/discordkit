@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   deleteGuildSticker,
   deleteGuildStickerProcedure,
@@ -10,7 +9,7 @@ import {
 
 describe(`deleteGuildSticker`, () => {
   mockRequest.delete(`/guilds/:guild/stickers/:sticker`);
-  const config = generateMock(deleteGuildStickerSchema);
+  const config = mockSchema(deleteGuildStickerSchema);
 
   it(`can be used standalone`, async () => {
     await expect(deleteGuildStickerSafe(config)).resolves.not.toThrow();

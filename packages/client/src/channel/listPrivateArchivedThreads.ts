@@ -4,7 +4,8 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import {
   archivedThreadsSchema,
@@ -12,7 +13,7 @@ import {
 } from "./types/ArchivedThreads.ts";
 
 export const listPrivateArchivedThreadsSchema = z.object({
-  channel: z.string().min(1),
+  channel: snowflake,
   params: z
     .object({
       /** returns threads before this timestamp */

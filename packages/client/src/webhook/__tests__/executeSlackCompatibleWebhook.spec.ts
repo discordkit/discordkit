@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   executeSlackCompatibleWebhook,
   executeSlackCompatibleWebhookProcedure,
@@ -10,7 +9,7 @@ import {
 
 describe(`executeSlackCompatibleWebhook`, () => {
   mockRequest.post(`/webhooks/:webhook/:token/slack`);
-  const config = generateMock(executeSlackCompatibleWebhookSchema);
+  const config = mockSchema(executeSlackCompatibleWebhookSchema);
 
   it(`can be used standalone`, async () => {
     await expect(

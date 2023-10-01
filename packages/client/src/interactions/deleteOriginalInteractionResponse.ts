@@ -4,16 +4,17 @@ import {
   buildURL,
   type Fetcher,
   toProcedure,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 
 export const deleteOriginalInteractionResponseSchema = z.object({
-  application: z.string().min(1),
+  application: snowflake,
   token: z.string().min(1),
   params: z
     .object({
       /** id of the thread the message is in */
-      threadId: z.string().min(1)
+      threadId: snowflake
     })
     .partial()
     .optional()

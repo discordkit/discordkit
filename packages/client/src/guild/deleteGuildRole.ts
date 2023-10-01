@@ -3,12 +3,13 @@ import {
   remove,
   type Fetcher,
   toProcedure,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 
 export const deleteGuildRoleSchema = z.object({
-  guild: z.string().min(1),
-  role: z.string().min(1)
+  guild: snowflake,
+  role: snowflake
 });
 
 /**

@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { put, type Fetcher, toProcedure, toValidated } from "@discordkit/core";
+import {
+  put,
+  type Fetcher,
+  toProcedure,
+  toValidated,
+  snowflake
+} from "@discordkit/core";
 import {
   type GuildOnboarding,
   guildOnboardingSchema
@@ -8,12 +14,12 @@ import { onboardingPromptSchema } from "./types/OnboardingPrompt.ts";
 import { onboardingModeSchema } from "./types/OnboardingMode.ts";
 
 export const modifyGuildOnboardingSchema = z.object({
-  guild: z.string().min(1),
+  guild: snowflake,
   body: z.object({
     /** Prompts shown during onboarding and in customize community */
     prompts: onboardingPromptSchema.array(),
     /** Channel IDs that members get opted into automatically */
-    defaultChannelIds: z.string().min(1).array(),
+    defaultChannelIds: snowflake.array(),
     /** Whether onboarding is enabled in the guild */
     enabled: z.boolean(),
     /** Current mode of onboarding */

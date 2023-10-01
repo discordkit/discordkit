@@ -3,7 +3,8 @@ import {
   patch,
   type Fetcher,
   toProcedure,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import {
   type ModerationRule,
@@ -14,8 +15,8 @@ import { triggerMetaSchema } from "./types/TriggerMeta.ts";
 import { moderationActionSchema } from "./types/ModerationAction.ts";
 
 export const modifyAutoModerationRuleSchema = z.object({
-  guild: z.string().min(1),
-  rule: z.string().min(1),
+  guild: snowflake,
+  rule: snowflake,
   body: z
     .object({
       /** the rule name */
@@ -29,9 +30,9 @@ export const modifyAutoModerationRuleSchema = z.object({
       /** whether the rule is enabled (False by default) */
       enabled: z.boolean(),
       /** the role ids that should not be affected by the rule (Maximum of 20) */
-      exemptRoles: z.string().min(1).array().max(20),
+      exemptRoles: snowflake.array().max(20),
       /** the channel ids that should not be affected by the rule (Maximum of 50) */
-      exemptChannels: z.string().min(1).array().max(50)
+      exemptChannels: snowflake.array().max(50)
     })
     .partial()
 });

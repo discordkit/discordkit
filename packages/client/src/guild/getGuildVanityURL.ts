@@ -4,12 +4,13 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import { inviteSchema, type Invite } from "#/invite/types/Invite.ts";
 
 export const getGuildVanityURLSchema = z.object({
-  guild: z.string().min(1)
+  guild: snowflake
 });
 
 /**

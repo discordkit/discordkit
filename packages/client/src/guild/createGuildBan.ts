@@ -1,9 +1,15 @@
 import { z } from "zod";
-import { put, type Fetcher, toProcedure, toValidated } from "@discordkit/core";
+import {
+  put,
+  type Fetcher,
+  toProcedure,
+  toValidated,
+  snowflake
+} from "@discordkit/core";
 
 export const createGuildBanSchema = z.object({
-  guild: z.string().min(1),
-  user: z.string().min(1),
+  guild: snowflake,
+  user: snowflake,
   body: z
     .object({
       /** number of days to delete messages for (0-7) */

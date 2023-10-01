@@ -1,10 +1,16 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure, toValidated } from "@discordkit/core";
+import {
+  post,
+  type Fetcher,
+  toProcedure,
+  toValidated,
+  snowflake
+} from "@discordkit/core";
 import { type Invite, inviteSchema } from "#/invite/types/Invite.ts";
 import { inviteTargetSchema } from "#/invite/types/InviteTarget.ts";
 
 export const createChannelInviteSchema = z.object({
-  channel: z.string().min(1),
+  channel: snowflake,
   body: z
     .object({
       /** duration of invite in seconds before expiry, or 0 for never. between 0 and 604800 (7 days) (default: 86400 (24 hours)) */
@@ -18,9 +24,9 @@ export const createChannelInviteSchema = z.object({
       /** the type of target for this voice channel invite */
       targetType: inviteTargetSchema,
       /** the id of the user whose stream to display for this invite, required if target_type is 1, the user must be streaming in the channel	 */
-      targetUserId: z.string().min(1),
+      targetUserId: snowflake,
       /** the id of the embedded application to open for this invite, required if target_type is 2, the application must have the EMBEDDED flag	 */
-      targetApplicationId: z.string().min(1)
+      targetApplicationId: snowflake
     })
     .partial()
     .optional()

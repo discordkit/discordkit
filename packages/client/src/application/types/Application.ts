@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { userSchema } from "#/user/types/User.ts";
+import { snowflake } from "@discordkit/core";
 import { teamSchema } from "./Team.ts";
 import { installParamsSchema } from "./InstallParams.ts";
 import { applicationFlagsSchema } from "./ApplicationFlags.ts";
@@ -8,7 +9,7 @@ import { applicationFlagsSchema } from "./ApplicationFlags.ts";
 
 export const applicationSchema = z.object({
   /** the id of the app */
-  id: z.string(),
+  id: snowflake,
   /** the name of the app */
   name: z.string(),
   /** the icon hash of the app */

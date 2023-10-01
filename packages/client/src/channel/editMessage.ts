@@ -3,7 +3,8 @@ import {
   patch,
   type Fetcher,
   toProcedure,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import { type Message, messageSchema } from "./types/Message.ts";
 import { embedSchema } from "./types/Embed.ts";
@@ -12,8 +13,8 @@ import { messageComponentSchema } from "./types/MessageComponent.ts";
 import { attachmentSchema } from "./types/Attachment.ts";
 
 export const editMessageSchema = z.object({
-  channel: z.string().min(1),
-  message: z.string().min(1),
+  channel: snowflake,
+  message: snowflake,
   body: z
     .object({
       /** Message contents (up to 2000 characters) */

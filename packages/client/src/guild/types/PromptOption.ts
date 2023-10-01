@@ -1,13 +1,14 @@
 import { z } from "zod";
 import { emojiSchema } from "#/emoji/types/Emoji.ts";
+import { snowflake } from "@discordkit/core";
 
 export const promptOptionSchema = z.object({
   /** ID of the prompt option */
-  id: z.string().min(1),
+  id: snowflake,
   /** IDs for channels a member is added to when the option is selected */
-  channelIds: z.string().min(1).array(),
+  channelIds: snowflake.array(),
   /** IDs for roles assigned to a member when the option is selected */
-  roleIds: z.string().min(1).array(),
+  roleIds: snowflake.array(),
   /** Emoji of the option */
   emoji: emojiSchema,
   /** Title of the option */

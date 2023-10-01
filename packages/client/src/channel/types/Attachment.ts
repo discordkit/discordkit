@@ -1,8 +1,9 @@
+import { snowflake } from "@discordkit/core";
 import { z } from "zod";
 
 export const attachmentSchema = z.object({
   /** attachment id */
-  id: z.string().min(1),
+  id: snowflake,
   /** name of file attached */
   filename: z.string().min(1),
   /** description for the file */

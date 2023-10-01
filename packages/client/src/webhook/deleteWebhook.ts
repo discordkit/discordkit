@@ -3,11 +3,12 @@ import {
   remove,
   type Fetcher,
   toProcedure,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 
 export const deleteWebhookSchema = z.object({
-  webhook: z.string().min(1)
+  webhook: snowflake
 });
 
 /**

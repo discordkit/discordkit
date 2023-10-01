@@ -4,12 +4,13 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import { integrationSchema, type Integration } from "./types/Integration.ts";
 
 export const getGuildIntegrationsSchema = z.object({
-  guild: z.string().min(1)
+  guild: snowflake
 });
 
 /**

@@ -4,12 +4,13 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import { messageSchema, type Message } from "./types/Message.ts";
 
 export const getPinnedMessagesSchema = z.object({
-  channel: z.string().min(1)
+  channel: snowflake
 });
 
 /**

@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   deleteWebhook,
   deleteWebhookProcedure,
@@ -10,7 +9,7 @@ import {
 
 describe(`deleteWebhook`, () => {
   mockRequest.delete(`/webhooks/:webhook`);
-  const config = generateMock(deleteWebhookSchema);
+  const config = mockSchema(deleteWebhookSchema);
 
   it(`can be used standalone`, async () => {
     await expect(deleteWebhookSafe(config)).resolves.not.toThrow();

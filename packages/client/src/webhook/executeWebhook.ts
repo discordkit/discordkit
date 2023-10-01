@@ -4,7 +4,8 @@ import {
   buildURL,
   type Fetcher,
   toProcedure,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import { messageFlagSchema } from "#/channel/types/MessageFlag.ts";
 import { embedSchema } from "#/channel/types/Embed.ts";
@@ -14,14 +15,14 @@ import { EmbedType } from "#/channel/types/EmbedType.ts";
 import { messageComponentSchema } from "#/channel/types/MessageComponent.ts";
 
 export const executeWebhookSchema = z.object({
-  webhook: z.string().min(1),
+  webhook: snowflake,
   token: z.string().min(1),
   params: z
     .object({
-      /** waits for server confirmation of message send before response, and returns the created message body (defaults to false; when false a message that is not saved does not return an error) */
-      wait: z.boolean().default(false),
       /** Send a message to the specified thread within a webhook's channel. The thread will automatically be unarchived. */
-      threadId: z.string().min(1)
+      threadId: snowflake,
+      /** waits for server confirmation of message send before response, and returns the created message body (defaults to false; when false a message that is not saved does not return an error) */
+      wait: z.boolean().default(false)
     })
     .partial()
     .optional(),

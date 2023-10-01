@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   createFollowupMessage,
   createFollowupMessageProcedure,
@@ -10,7 +9,7 @@ import {
 
 describe(`createFollowupMessage`, () => {
   mockRequest.post(`/webhooks/:application/:token`);
-  const config = generateMock(createFollowupMessageSchema);
+  const config = mockSchema(createFollowupMessageSchema);
 
   it(`can be used standalone`, async () => {
     await expect(createFollowupMessageSafe(config)).resolves.not.toThrow();

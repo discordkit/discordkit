@@ -1,13 +1,14 @@
 import { z } from "zod";
 import { userSchema } from "#/user/types/User.ts";
+import { snowflake } from "@discordkit/core";
 
 export const emojiSchema = z.object({
   /** emoji id */
-  id: z.string().optional(),
+  id: snowflake.optional(),
   /** (can be null only in reaction emoji objects)	emoji name */
   name: z.string().optional(),
   /** roles allowed to use this emoji */
-  roles: z.string().array().nullable(),
+  roles: snowflake.array().nullable(),
   /** user that created this emoji */
   user: userSchema.nullable(),
   /** whether this emoji must be wrapped in colons */

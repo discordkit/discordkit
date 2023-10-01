@@ -1,12 +1,13 @@
 import { z } from "zod";
 import { localesSchema } from "#/application/types/Locales.ts";
+import { snowflake } from "@discordkit/core";
 import { userFlagsSchema } from "./UserFlags.ts";
 import { premiumTypeSchema } from "./PremiumType.ts";
 
 // https://discord.com/developers/docs/resources/user#user-object-user-structure
 export const userSchema = z.object({
   /** the user's id (scope: `identify`) */
-  id: z.string().min(1),
+  id: snowflake,
   /** the user's username, not unique across the platform (scope: `identify`) */
   username: z.string().min(1),
   /** the user's 4-digit discord-tag (scope: `identify`) */

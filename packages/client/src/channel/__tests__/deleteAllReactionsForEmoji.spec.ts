@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   deleteAllReactionsForEmoji,
   deleteAllReactionsForEmojiProcedure,
@@ -10,7 +9,7 @@ import {
 
 describe(`deleteAllReactionsForEmoji`, () => {
   mockRequest.delete(`/channels/:channel/messages/:message/reactions/:emoji`);
-  const config = generateMock(deleteAllReactionsForEmojiSchema);
+  const config = mockSchema(deleteAllReactionsForEmojiSchema);
 
   it(`can be used standalone`, async () => {
     await expect(deleteAllReactionsForEmojiSafe(config)).resolves.not.toThrow();

@@ -4,12 +4,13 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import { guildPreviewSchema, type GuildPreview } from "./types/GuildPreview.ts";
 
 export const getGuildPreviewSchema = z.object({
-  guild: z.string().min(1)
+  guild: snowflake
 });
 
 /**

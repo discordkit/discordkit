@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest } from "test-utils";
+import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
 import {
   listScheduledEventsForGuildProcedure,
   listScheduledEventsForGuildQuery,
@@ -14,7 +13,7 @@ describe(`listScheduledEventsForGuild`, () => {
     `/guilds/:guild/scheduled-events`,
     scheduledEventSchema.array().length(1)
   );
-  const config = generateMock(listScheduledEventsForGuildSchema);
+  const config = mockSchema(listScheduledEventsForGuildSchema);
 
   it(`can be used standalone`, async () => {
     await expect(

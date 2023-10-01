@@ -4,7 +4,8 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import {
   scheduledEventUserSchema,
@@ -12,8 +13,8 @@ import {
 } from "./types/ScheduledEventUser.ts";
 
 export const getGuildScheduledEventUsersSchema = z.object({
-  guild: z.string().min(1),
-  event: z.string().min(1),
+  guild: snowflake,
+  event: snowflake,
   params: z
     .object({
       /** number of users to return (up to maximum 100) (default: 100) */
@@ -21,9 +22,9 @@ export const getGuildScheduledEventUsersSchema = z.object({
       /** include guild member data if it exists (default: false) */
       withMember: z.boolean().nullable().default(false),
       /** consider only users before given user id (default: null) */
-      before: z.string().min(1).nullable().default(null),
+      before: snowflake.nullable().default(null),
       /** consider only users after given user id (default: null) */
-      after: z.string().min(1).nullable().default(null)
+      after: snowflake.nullable().default(null)
     })
     .partial()
     .optional()

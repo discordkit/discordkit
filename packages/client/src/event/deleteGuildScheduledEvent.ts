@@ -3,12 +3,13 @@ import {
   remove,
   type Fetcher,
   toProcedure,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 
 export const deleteGuildScheduledEventSchema = z.object({
-  guild: z.string().min(1),
-  event: z.string().min(1)
+  guild: snowflake,
+  event: snowflake
 });
 
 /**

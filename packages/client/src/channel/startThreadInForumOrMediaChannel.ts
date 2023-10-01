@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure, toValidated } from "@discordkit/core";
+import {
+  post,
+  type Fetcher,
+  toProcedure,
+  toValidated,
+  snowflake
+} from "@discordkit/core";
 import { type Channel, channelSchema } from "./types/Channel.ts";
 import { autoArchiveDurationSchema } from "./types/AutoArchiveDuration.ts";
 import { embedSchema } from "./types/Embed.ts";
@@ -9,7 +15,7 @@ import { messageComponentSchema } from "./types/MessageComponent.ts";
 import { type Message, messageSchema } from "./types/Message.ts";
 
 export const startThreadInForumOrMediaChannelSchema = z.object({
-  channel: z.string().min(1),
+  channel: snowflake,
   body: z.object({
     /** 1-100 character channel name */
     name: z.string().min(1).max(100),
@@ -39,7 +45,7 @@ export const startThreadInForumOrMediaChannelSchema = z.object({
       })
       .partial(),
     /** the IDs of the set of tags that have been applied to a thread in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */
-    appliedTags: z.string().min(1).array().nullable()
+    appliedTags: snowflake.array().nullable()
   })
 });
 

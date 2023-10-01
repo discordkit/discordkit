@@ -1,9 +1,10 @@
 import { z } from "zod";
+import { snowflake } from "@discordkit/core";
 import { roleTagSchema } from "./RoleTag.ts";
 
 export const roleSchema = z.object({
   /** role id */
-  id: z.string().min(1),
+  id: snowflake,
   /** role name */
   name: z.string().min(1),
   /** integer representation of hexadecimal color code */

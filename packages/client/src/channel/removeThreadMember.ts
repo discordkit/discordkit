@@ -3,12 +3,13 @@ import {
   remove,
   type Fetcher,
   toProcedure,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 
 export const removeThreadMemberSchema = z.object({
-  channel: z.string().min(1),
-  user: z.string().min(1)
+  channel: snowflake,
+  user: snowflake
 });
 
 /**

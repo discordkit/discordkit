@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest } from "test-utils";
+import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
 import {
   getGuildPreviewProcedure,
   getGuildPreviewQuery,
@@ -14,7 +13,7 @@ describe(`getGuildPreview`, () => {
     `/guilds/:guild/preview`,
     guildPreviewSchema
   );
-  const config = generateMock(getGuildPreviewSchema);
+  const config = mockSchema(getGuildPreviewSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getGuildPreviewSafe(config)).resolves.toStrictEqual(expected);

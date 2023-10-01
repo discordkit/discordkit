@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure, toValidated } from "@discordkit/core";
+import {
+  post,
+  type Fetcher,
+  toProcedure,
+  toValidated,
+  snowflake
+} from "@discordkit/core";
 import { channelSchema } from "#/channel/types/Channel.ts";
 import { verificationLevelSchema } from "./types/VerificationLevel.ts";
 import { defaultMessageNotificationLevelSchema } from "./types/DefaultMessageNotificationLevel.ts";
@@ -27,11 +33,11 @@ export const createGuildSchema = z.object({
     /** new guild's channels */
     channels: channelSchema.partial().array().nullable(),
     /** id for afk channel */
-    afkChannelId: z.string().min(1).nullable(),
+    afkChannelId: snowflake.nullable(),
     /** afk timeout in seconds */
     afkTimeout: z.number().int().positive().nullable(),
     /** the id of the channel where guild notices such as welcome messages and boost events are posted */
-    systemChannelId: z.string().min(1).nullable(),
+    systemChannelId: snowflake.nullable(),
     /** system channel flags */
     systemChannelFlags: z.number().int().optional()
   })

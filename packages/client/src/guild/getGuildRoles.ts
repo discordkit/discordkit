@@ -4,12 +4,13 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import { roleSchema, type Role } from "./types/Role.ts";
 
 export const getGuildRolesSchema = z.object({
-  guild: z.string().min(1)
+  guild: snowflake
 });
 
 /**

@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   modifyWebhook,
   modifyWebhookProcedure,
@@ -11,7 +10,7 @@ import { webhookSchema } from "../types/Webhook.ts";
 
 describe(`modifyWebhook`, () => {
   const expected = mockRequest.patch(`/webhooks/:webhook`, webhookSchema);
-  const config = generateMock(modifyWebhookSchema);
+  const config = mockSchema(modifyWebhookSchema);
 
   it(`can be used standalone`, async () => {
     await expect(modifyWebhookSafe(config)).resolves.toStrictEqual(expected);

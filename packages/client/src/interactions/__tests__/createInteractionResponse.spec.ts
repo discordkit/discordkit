@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   createInteractionResponse,
   createInteractionResponseProcedure,
@@ -10,7 +9,7 @@ import {
 
 describe(`createInteractionResponse`, () => {
   mockRequest.post(`/interactions/:interaction/:token/callback`);
-  const config = generateMock(createInteractionResponseSchema);
+  const config = mockSchema(createInteractionResponseSchema);
 
   it(`can be used standalone`, async () => {
     await expect(createInteractionResponseSafe(config)).resolves.not.toThrow();

@@ -4,16 +4,17 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 
 export const getGuildPruneCountSchema = z.object({
-  guild: z.string().min(1),
+  guild: snowflake,
   params: z
     .object({
       /** number of days to count prune for (1-30) */
-      days: z.number().min(1).max(30),
-      /** role(s) to include */
+      days: z.number().int().min(1).max(30).default(7),
+      /** string; comma-delimited array of snowflakes */
       includeRoles: z.string().min(1)
     })
     .partial()

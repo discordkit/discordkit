@@ -4,7 +4,8 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import {
   welcomeScreenSchema,
@@ -12,7 +13,7 @@ import {
 } from "./types/WelcomeScreen.ts";
 
 export const getGuildWelcomeScreenSchema = z.object({
-  guild: z.string().min(1)
+  guild: snowflake
 });
 
 /**

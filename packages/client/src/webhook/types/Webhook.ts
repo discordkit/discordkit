@@ -2,17 +2,18 @@ import { z } from "zod";
 import { channelSchema } from "#/channel/types/Channel.ts";
 import { guildSchema } from "#/guild/types/Guild.ts";
 import { userSchema } from "#/user/types/User.ts";
+import { snowflake } from "@discordkit/core";
 import { webhookTypeSchema } from "./WebhookType.ts";
 
 export const webhookSchema = z.object({
   /** the id of the webhook */
-  id: z.string(),
+  id: snowflake,
   /** the type of the webhook */
   type: webhookTypeSchema,
   /** the guild id this webhook is for, if any */
-  guildId: z.string().nullable().optional(),
+  guildId: snowflake.nullable().optional(),
   /** the channel id this webhook is for, if any */
-  channelId: z.string().optional(),
+  channelId: snowflake.optional(),
   /** user object	the user this webhook was created by (not returned when getting a webhook with its token) */
   user: userSchema.nullable(),
   /** the default name of the webhook */
@@ -22,7 +23,7 @@ export const webhookSchema = z.object({
   /** the secure token of the webhook (returned for Incoming Webhooks) */
   token: z.string().nullable(),
   /** the bot/OAuth2 application that created this webhook */
-  applicationId: z.string().optional(),
+  applicationId: snowflake.optional(),
   /** the guild of the channel that this webhook is following (returned for Channel Follower Webhooks) */
   sourceGuild: guildSchema.partial().nullable(),
   /** the channel that this webhook is following (returned for Channel Follower Webhooks) */

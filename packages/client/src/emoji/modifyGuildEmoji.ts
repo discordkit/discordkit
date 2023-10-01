@@ -3,19 +3,20 @@ import {
   patch,
   type Fetcher,
   toProcedure,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import { emojiSchema, type Emoji } from "./types/Emoji.ts";
 
 export const modifyGuildEmojiSchema = z.object({
-  guild: z.string().min(1),
-  emoji: z.string().min(1),
+  guild: snowflake,
+  emoji: snowflake,
   body: z
     .object({
       /** name of the emoji */
       name: z.string().min(1),
       /** roles allowed to use this emoji */
-      roles: z.string().min(1).array()
+      roles: snowflake.array()
     })
     .partial()
 });

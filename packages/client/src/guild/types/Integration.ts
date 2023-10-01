@@ -1,13 +1,14 @@
 import { z } from "zod";
 import { userSchema } from "#/user/types/User.ts";
 import { scopesSchema } from "#/application/types/Scopes.ts";
+import { snowflake } from "@discordkit/core";
 import { integrationApplicationSchema } from "./IntegrationApplication.ts";
 import { integrationAccountSchema } from "./IntegrationAccount.ts";
 import { integrationExpireBehaviorSchema } from "./IntegrationExpireBehavior.ts";
 
 export const integrationSchema = z.object({
   /** integration id */
-  id: z.string().min(1),
+  id: snowflake,
   /** integration name */
   name: z.string().min(1),
   /** integration type (twitch, youtube, or discord) */
@@ -17,7 +18,7 @@ export const integrationSchema = z.object({
   /** is this integration syncing */
   syncing: z.boolean().nullable(),
   /** id that this integration uses for "subscribers" */
-  roleId: z.string().min(1).nullable(),
+  roleId: snowflake.nullable(),
   /** whether emoticons should be synced for this integration (twitch only currently) */
   enableEmoticons: z.boolean().nullable(),
   /** the behavior of expiring subscribers */

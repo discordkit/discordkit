@@ -1,9 +1,10 @@
+import { snowflake } from "@discordkit/core";
 import { z } from "zod";
 
 export const moderationActionMetaSchema = z.union([
   z.object({
     /** channel to which user content should be logged */
-    channelId: z.string().min(1).optional()
+    channelId: snowflake.optional()
   }),
   z.object({
     /** timeout duration in seconds */

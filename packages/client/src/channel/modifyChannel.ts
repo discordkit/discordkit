@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { Fetcher } from "@discordkit/core";
-import { toProcedure, patch, toValidated } from "@discordkit/core";
+import { toProcedure, patch, toValidated, snowflake } from "@discordkit/core";
 import { type Channel, channelSchema } from "./types/Channel.ts";
 import { autoArchiveDurationSchema } from "./types/AutoArchiveDuration.ts";
 import { channelTypeSchema } from "./types/ChannelType.ts";
@@ -31,7 +31,7 @@ const threadOptions = sharedChannelOptions
     /** channel flags combined as a bitfield; PINNED can only be set for threads in forum channels */
     flags: z.number().int().nullable(),
     /** the IDs of the set of tags that have been applied to a thread in a `GUILD_FORUM` or a `GUILD_MEDIA` channel; limited to 5 */
-    appliedTags: z.string().min(1).array().max(5).nullable()
+    appliedTags: snowflake.array().max(5).nullable()
   })
   .partial();
 
@@ -61,7 +61,7 @@ const guildChannelOptions = sharedChannelOptions
     /** channel or category-specific permissions */
     permissionOverwrites: overwriteSchema.partial().array(),
     /** id of the new parent category for a channel */
-    parentId: z.string().min(1),
+    parentId: snowflake,
     /** channel voice region id, automatic when set to null */
     rtcRegion: z.string().min(1).optional(),
     /** the camera video quality mode of the voice channel */
@@ -84,7 +84,7 @@ const guildChannelOptions = sharedChannelOptions
   .partial();
 
 export const modifyChannelSchema = z.object({
-  channel: z.string().min(1),
+  channel: snowflake,
   body: z.union([groupDMOptions, guildChannelOptions, threadOptions])
 });
 

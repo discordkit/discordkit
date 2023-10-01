@@ -4,12 +4,13 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import { channelSchema, type Channel } from "./types/Channel.ts";
 
 export const getChannelSchema = z.object({
-  channel: z.string().min(1)
+  channel: snowflake
 });
 
 /**

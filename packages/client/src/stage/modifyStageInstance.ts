@@ -3,13 +3,14 @@ import {
   patch,
   type Fetcher,
   toProcedure,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import { type Stage, stageSchema } from "./types/Stage.ts";
 import { stagePrivacyLevelSchema } from "./types/StagePrivacyLevel.ts";
 
 export const modifyStageInstanceSchema = z.object({
-  channel: z.string().min(1),
+  channel: snowflake,
   body: z
     .object({
       /** The topic of the Stage instance (1-120 characters) */

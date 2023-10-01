@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest } from "test-utils";
+import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
 import {
   getStickerProcedure,
   getStickerQuery,
@@ -11,7 +10,7 @@ import { stickerSchema } from "../types/Sticker.ts";
 
 describe(`getSticker`, () => {
   const expected = mockRequest.get(`/stickers/:sticker`, stickerSchema);
-  const config = generateMock(getStickerSchema);
+  const config = mockSchema(getStickerSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getStickerSafe(config)).resolves.toStrictEqual(expected);

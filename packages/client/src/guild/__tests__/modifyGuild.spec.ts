@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   modifyGuild,
   modifyGuildProcedure,
@@ -11,7 +10,7 @@ import { guildSchema } from "../types/Guild.ts";
 
 describe(`modifyGuild`, () => {
   const expected = mockRequest.patch(`/guilds/:guild`, guildSchema);
-  const config = generateMock(modifyGuildSchema);
+  const config = mockSchema(modifyGuildSchema);
 
   it(`can be used standalone`, async () => {
     await expect(modifyGuildSafe(config)).resolves.toStrictEqual(expected);

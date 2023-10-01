@@ -2,10 +2,11 @@ import { z } from "zod";
 import { interactionTypeSchema } from "#/interactions/types/InteractionType.ts";
 import { userSchema } from "#/user/types/User.ts";
 import { memberSchema } from "#/guild/types/Member.ts";
+import { snowflake } from "@discordkit/core";
 
 export const messageInteractionSchema = z.object({
   /** id of the interaction */
-  id: z.string().min(1),
+  id: snowflake,
   /** the type of interaction */
   type: interactionTypeSchema,
   /** the name of the application command */

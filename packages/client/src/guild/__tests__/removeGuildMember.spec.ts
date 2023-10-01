@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   removeGuildMember,
   removeGuildMemberProcedure,
@@ -10,7 +9,7 @@ import {
 
 describe(`removeGuildMember`, () => {
   mockRequest.delete(`/guilds/:guild/members/:user`);
-  const config = generateMock(removeGuildMemberSchema);
+  const config = mockSchema(removeGuildMemberSchema);
 
   it(`can be used standalone`, async () => {
     await expect(removeGuildMemberSafe(config)).resolves.not.toThrow();

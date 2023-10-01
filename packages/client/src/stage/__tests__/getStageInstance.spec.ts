@@ -1,6 +1,5 @@
 import { waitFor } from "@testing-library/react";
-import { generateMock } from "@anatine/zod-mock";
-import { runProcedure, runQuery, mockRequest } from "test-utils";
+import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
 import {
   getStageInstanceProcedure,
   getStageInstanceQuery,
@@ -11,7 +10,7 @@ import { stageSchema } from "../types/Stage.ts";
 
 describe(`getStageInstance`, () => {
   const expected = mockRequest.get(`/stage-instances/:channel`, stageSchema);
-  const config = generateMock(getStageInstanceSchema);
+  const config = mockSchema(getStageInstanceSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getStageInstanceSafe(config)).resolves.toStrictEqual(expected);

@@ -1,10 +1,11 @@
+import { snowflake } from "@discordkit/core";
 import { z } from "zod";
 
 export const roleTagSchema = z.object({
   /** the id of the bot this role belongs to */
-  botId: z.string().min(1),
+  botId: snowflake,
   /** the id of the integration this role belongs to */
-  integrationId: z.string().min(1),
+  integrationId: snowflake,
   /** whether this is the guild's premium subscriber role */
   premiumSubscriber: z.null()
 });

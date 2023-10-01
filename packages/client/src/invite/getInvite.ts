@@ -4,7 +4,8 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import { inviteSchema, type Invite } from "./types/Invite.ts";
 
@@ -17,7 +18,7 @@ export const getInviteSchema = z.object({
       /** whether the invite should contain the expiration date */
       withExpiration: z.boolean(),
       /** the guild scheduled event to include with the invite */
-      guildScheduledEventId: z.string().min(1)
+      guildScheduledEventId: snowflake
     })
     .partial()
     .optional()

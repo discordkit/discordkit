@@ -4,12 +4,13 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import { stageSchema, type Stage } from "./types/Stage.ts";
 
 export const getStageInstanceSchema = z.object({
-  channel: z.string().min(1)
+  channel: snowflake
 });
 
 /**

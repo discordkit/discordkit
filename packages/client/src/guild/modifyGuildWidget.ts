@@ -3,7 +3,8 @@ import {
   patch,
   type Fetcher,
   toProcedure,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import {
   guildWidgetSettingsSchema,
@@ -11,7 +12,7 @@ import {
 } from "./types/GuildWidgetSettings.ts";
 
 export const modifyGuildWidgetSchema = z.object({
-  guild: z.string().min(1),
+  guild: snowflake,
   body: guildWidgetSettingsSchema.partial()
 });
 

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { snowflake } from "@discordkit/core";
 import { localesSchema } from "./Locales.ts";
 import { applicationCommandOptionSchema } from "./ApplicationCommandOption.ts";
 import {
@@ -8,15 +9,15 @@ import {
 
 export const applicationCommandSchema = z.object({
   /** Unique ID of command */
-  id: z.string().min(1),
+  id: snowflake,
   /** Type of command, defaults to 1 */
   type: applicationCommandTypeSchema
     .nullable()
     .default(ApplicationCommandType.CHAT_INPUT),
   /** ID of the parent application */
-  applicationId: z.string().min(1),
+  applicationId: snowflake,
   /** Guild ID of the command, if not global */
-  guildId: z.string().min(1).nullable(),
+  guildId: snowflake.nullable(),
   /** Name of command, 1-32 characters */
   name: z.string().min(1).max(32),
   /** Localization dictionary for name field. Values follow the same restrictions as name */
@@ -42,7 +43,7 @@ export const applicationCommandSchema = z.object({
   /** Indicates whether the command is age-restricted, defaults to false */
   nsfw: z.boolean().nullable(),
   /** Autoincrementing version identifier updated during substantial record changes */
-  version: z.string().min(1)
+  version: snowflake
 });
 
 export type ApplicationCommand = z.infer<typeof applicationCommandSchema>;

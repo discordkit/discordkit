@@ -1,12 +1,18 @@
 import { z } from "zod";
-import { put, type Fetcher, toProcedure, toValidated } from "@discordkit/core";
+import {
+  put,
+  type Fetcher,
+  toProcedure,
+  toValidated,
+  snowflake
+} from "@discordkit/core";
 import {
   type ApplicationCommand,
   applicationCommandSchema
 } from "./types/ApplicationCommand.ts";
 
 export const bulkOverwriteGlobalApplicationCommandsSchema = z.object({
-  application: z.string().min(1),
+  application: snowflake,
   body: applicationCommandSchema.array().max(25)
 });
 

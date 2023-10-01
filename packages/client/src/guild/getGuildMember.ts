@@ -4,13 +4,14 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import { memberSchema, type Member } from "./types/Member.ts";
 
 export const getGuildMemberSchema = z.object({
-  guild: z.string().min(1),
-  user: z.string().min(1)
+  guild: snowflake,
+  user: snowflake
 });
 
 /**

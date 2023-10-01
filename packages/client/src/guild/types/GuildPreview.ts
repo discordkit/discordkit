@@ -1,11 +1,12 @@
 import { z } from "zod";
 import { emojiSchema } from "#/emoji/types/Emoji.ts";
 import { stickerSchema } from "#/sticker/types/Sticker.ts";
+import { snowflake } from "@discordkit/core";
 import { guildFeaturesSchema } from "./GuildFeatures.ts";
 
 export const guildPreviewSchema = z.object({
   /** guild id */
-  id: z.string(),
+  id: snowflake,
   /** guild name (2-100 characters) */
   name: z.string(),
   /** icon hash */

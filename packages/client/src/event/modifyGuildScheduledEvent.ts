@@ -3,7 +3,8 @@ import {
   patch,
   type Fetcher,
   toProcedure,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import {
   type ScheduledEvent,
@@ -15,11 +16,11 @@ import { scheduledEventEntityTypeSchema } from "./types/ScheduledEventEntityType
 import { scheduledEventStatusSchema } from "./types/ScheduledEventStatus.ts";
 
 export const modifyGuildScheduledEventSchema = z.object({
-  guild: z.string().min(1),
-  event: z.string().min(1),
+  guild: snowflake,
+  event: snowflake,
   body: z.object({
     /** the channel id of the scheduled event. */
-    channelId: z.string().min(1).nullable(),
+    channelId: snowflake.nullable(),
     /** entity metadata	the entity metadata of the scheduled event */
     entityMetadata: entityMetadataSchema.nullable().optional(),
     /** the name of the scheduled event */

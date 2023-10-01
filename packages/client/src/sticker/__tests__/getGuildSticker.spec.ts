@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest } from "test-utils";
+import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
 import {
   getGuildStickerProcedure,
   getGuildStickerQuery,
@@ -14,7 +13,7 @@ describe(`getGuildSticker`, () => {
     `/guilds/:guild/stickers/:sticker`,
     stickerSchema
   );
-  const config = generateMock(getGuildStickerSchema);
+  const config = mockSchema(getGuildStickerSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getGuildStickerSafe(config)).resolves.toStrictEqual(expected);

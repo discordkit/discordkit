@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   startThreadInForumOrMediaChannel,
   startThreadInForumOrMediaChannelProcedure,
@@ -15,7 +14,7 @@ describe(`startThreadInForumOrMediaChannel`, () => {
     `/channels/:channel/threads`,
     channelSchema.extend({ message: messageSchema })
   );
-  const config = generateMock(startThreadInForumOrMediaChannelSchema);
+  const config = mockSchema(startThreadInForumOrMediaChannelSchema);
 
   it(`can be used standalone`, async () => {
     await expect(

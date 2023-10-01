@@ -2,6 +2,7 @@ import { z } from "zod";
 import { emojiSchema } from "#/emoji/types/Emoji.ts";
 import { stickerSchema } from "#/sticker/types/Sticker.ts";
 import { localesSchema } from "#/application/types/Locales.ts";
+import { snowflake } from "@discordkit/core";
 import { roleSchema } from "./Role.ts";
 import { welcomeScreenSchema } from "./WelcomeScreen.ts";
 import { premiumTierSchema } from "./PremiumTier.ts";
@@ -14,7 +15,7 @@ import { guildFeaturesSchema } from "./GuildFeatures.ts";
 
 export const guildSchema = z.object({
   /** guild id */
-  id: z.string().min(1),
+  id: snowflake,
   /** guild name (2-100 characters, excluding trailing and leading whitespace) */
   name: z.string().min(2).max(100),
   /** icon hash */
@@ -28,19 +29,19 @@ export const guildSchema = z.object({
   /** true if the user is the owner of the guild */
   owner: z.boolean().nullable().optional(),
   /** id of owner */
-  ownerId: z.string().min(1),
+  ownerId: snowflake,
   /** total permissions for the user in the guild (excludes overwrites) */
   permissions: z.string().nullable(),
   /** @deprecated voice region id for the guild */
   region: z.string().min(1).nullable().optional(),
   /** id of afk channel */
-  afkChannelId: z.string().min(1).optional(),
+  afkChannelId: snowflake.optional(),
   /** afk timeout in seconds */
   afkTimeout: z.number().int().positive(),
   /** true if the server widget is enabled */
   widgetEnabled: z.boolean().nullable(),
   /** the channel id that the widget will generate an invite to, or null if set to no invite */
-  widgetChannelId: z.string().min(1).nullable().optional(),
+  widgetChannelId: snowflake.nullable().optional(),
   /** verification level required for the guild */
   verificationLevel: verificationLevelSchema,
   /** default message notifications level */
@@ -56,13 +57,13 @@ export const guildSchema = z.object({
   /** required MFA level for the guild */
   mfaLevel: mfaLevelSchema,
   /** application id of the guild creator if it is bot-created */
-  applicationId: z.string().min(1).optional(),
+  applicationId: snowflake.optional(),
   /** the id of the channel where guild notices such as welcome messages and boost events are posted */
-  systemChannelId: z.string().min(1).optional(),
+  systemChannelId: snowflake.optional(),
   /** system channel flags */
   systemChannelFlags: z.number().int(),
   /** the id of the channel where Community guilds can display rules and/or guidelines */
-  rulesChannelId: z.string().min(1).optional(),
+  rulesChannelId: snowflake.optional(),
   /** the maximum number of presences for the guild (null is always returned, apart from the largest of guilds) */
   maxPresences: z.number().int().positive().nullable().optional(),
   /** the maximum number of members for the guild */
@@ -80,7 +81,7 @@ export const guildSchema = z.object({
   /** the preferred locale of a Community guild; used in server discovery and notices from Discord, and sent in interactions; defaults to "en-US" */
   preferredLocale: localesSchema,
   /** the id of the channel where admins and moderators of Community guilds receive notices from Discord */
-  publicUpdatesChannelId: z.string().min(1).optional(),
+  publicUpdatesChannelId: snowflake.optional(),
   /** the maximum amount of users in a video channel */
   maxVideoChannelUsers: z.number().int().positive().nullable(),
   /** the maximum amount of users in a stage video channel */
@@ -98,7 +99,7 @@ export const guildSchema = z.object({
   /** whether the guild has the boost progress bar enabled */
   premiumProgressBarEnabled: z.boolean(),
   /** the id of the channel where admins and moderators of Community guilds receive safety alerts from Discord */
-  safetyAlertsChannelId: z.string().min(1).optional()
+  safetyAlertsChannelId: snowflake.optional()
 });
 
 export type Guild = z.infer<typeof guildSchema>;

@@ -4,7 +4,8 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import {
   scheduledEventSchema,
@@ -12,7 +13,7 @@ import {
 } from "./types/ScheduledEvent.ts";
 
 export const listScheduledEventsForGuildSchema = z.object({
-  guild: z.string().min(1),
+  guild: snowflake,
   params: z
     .object({
       withUserCount: z.boolean().nullable()

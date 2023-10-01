@@ -3,7 +3,8 @@ import {
   patch,
   type Fetcher,
   toProcedure,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import {
   applicationCommandSchema,
@@ -13,8 +14,8 @@ import { applicationCommandOptionSchema } from "./types/ApplicationCommandOption
 import { localesSchema } from "./types/Locales.ts";
 
 export const editGlobalApplicationCommandSchema = z.object({
-  application: z.string().min(1),
-  command: z.string().min(1),
+  application: snowflake,
+  command: snowflake,
   body: z
     .object({
       /** Name of command, 1-32 characters */

@@ -3,12 +3,13 @@ import {
   patch,
   type Fetcher,
   toProcedure,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import { memberSchema, type Member } from "./types/Member.ts";
 
 export const modifyCurrentMemberSchema = z.object({
-  guild: z.string().min(1),
+  guild: snowflake,
   body: z.object({
     /** value to set user's nickname to (Requires `CHANGE_NICKNAME` permission) */
     nick: z.string().min(1).nullish()

@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   addThreadMember,
   addThreadMemberProcedure,
@@ -10,7 +9,7 @@ import {
 
 describe(`addThreadMember`, () => {
   mockRequest.put(`/channels/:channel/thread-members/:user`);
-  const config = generateMock(addThreadMemberSchema);
+  const config = mockSchema(addThreadMemberSchema);
 
   it(`can be used standalone`, async () => {
     await expect(addThreadMemberSafe(config)).resolves.not.toThrow();

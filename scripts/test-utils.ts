@@ -21,12 +21,32 @@ import {
   endpoint,
   type toQuery,
   type Fetcher,
-  type toProcedure
+  type toProcedure,
+  snowflake
 } from "@discordkit/core";
+import { Snowflake } from "nodejs-snowflake";
 
 type UnsetMarker = typeof unsetMarker;
 
 export const msw: SetupServer = setupServer();
+
+const uid = new Snowflake({ custom_epoch: 1420070400000 });
+
+export const mockSchema = <T extends z.ZodTypeAny>(
+  schema: T,
+  opts?: Parameters<typeof generateMock>[1]
+): z.infer<T> =>
+  generateMock(schema, {
+    ...opts,
+    backupMocks: {
+      ZodAny: (ref) => {
+        // @ts-expect-error
+        if (ref === (snowflake as z.ZodEffects<z.ZodAny>)._def.schema) {
+          return uid.getUniqueID().toString();
+        }
+      }
+    }
+  });
 
 const createMock =
   (type: `delete` | `get` | `patch` | `post` | `put` = `get`) =>
@@ -36,7 +56,7 @@ const createMock =
     // eslint-disable-next-line no-undefined
     opts: GenerateMockOptions | undefined = undefined
   ): z.infer<S> => {
-    const result = responseSchema ? generateMock(responseSchema, opts) : null;
+    const result = responseSchema ? mockSchema(responseSchema, opts) : null;
 
     beforeEach(() => {
       msw.use(

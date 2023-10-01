@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   triggerTypingIndicator,
   triggerTypingIndicatorProcedure,
@@ -10,7 +9,7 @@ import {
 
 describe(`triggerTypingIndicator`, () => {
   mockRequest.post(`/channels/:channel/typing`);
-  const config = generateMock(triggerTypingIndicatorSchema);
+  const config = mockSchema(triggerTypingIndicatorSchema);
 
   it(`can be used standalone`, async () => {
     await expect(triggerTypingIndicatorSafe(config)).resolves.not.toThrow();

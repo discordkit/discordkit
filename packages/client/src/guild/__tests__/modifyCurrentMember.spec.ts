@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   modifyCurrentMember,
   modifyCurrentMemberProcedure,
@@ -14,7 +13,7 @@ describe(`modifyCurrentMember`, () => {
     `/guilds/:guild/members/@me`,
     memberSchema
   );
-  const config = generateMock(modifyCurrentMemberSchema);
+  const config = mockSchema(modifyCurrentMemberSchema);
 
   it(`can be used standalone`, async () => {
     await expect(modifyCurrentMemberSafe(config)).resolves.toStrictEqual(

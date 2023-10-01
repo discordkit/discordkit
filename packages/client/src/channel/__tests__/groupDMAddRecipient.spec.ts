@@ -1,6 +1,5 @@
 import { waitFor } from "@testing-library/react";
-import { generateMock } from "@anatine/zod-mock";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   groupDMAddRecipient,
   groupDMAddRecipientProcedure,
@@ -10,7 +9,7 @@ import {
 
 describe(`groupDMAddRecipient`, () => {
   mockRequest.put(`/channels/:channel/recipients/:user`);
-  const config = generateMock(groupDMAddRecipientSchema);
+  const config = mockSchema(groupDMAddRecipientSchema);
 
   it(`can be used standalone`, async () => {
     await expect(groupDMAddRecipientSafe(config)).resolves.not.toThrow();

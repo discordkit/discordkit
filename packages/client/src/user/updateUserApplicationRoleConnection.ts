@@ -1,12 +1,18 @@
 import { z } from "zod";
-import { put, type Fetcher, toProcedure, toValidated } from "@discordkit/core";
+import {
+  put,
+  type Fetcher,
+  toProcedure,
+  toValidated,
+  snowflake
+} from "@discordkit/core";
 import {
   type ApplicationRoleConnection,
   applicationRoleConnectionSchema
 } from "#/application/types/ApplicationRoleConnection.ts";
 
 export const updateUserApplicationRoleConnectionSchema = z.object({
-  application: z.string().min(1),
+  application: snowflake,
   body: z
     .object({
       /** the vanity name of the platform a bot has connected (max 50 characters) */

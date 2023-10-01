@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   createAutoModerationRule,
   createAutoModerationRuleProcedure,
@@ -15,7 +14,7 @@ describe(`createAutoModerationRule`, () => {
     moderationRuleSchema,
     { seed: 1 }
   );
-  const config = generateMock(createAutoModerationRuleSchema);
+  const config = mockSchema(createAutoModerationRuleSchema);
 
   it(`can be used standalone`, async () => {
     await expect(createAutoModerationRuleSafe(config)).resolves.toStrictEqual(

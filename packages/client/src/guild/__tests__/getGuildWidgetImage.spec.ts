@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest } from "test-utils";
+import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
 import {
   getGuildWidgetImageProcedure,
   getGuildWidgetImageQuery,
@@ -10,7 +9,7 @@ import {
 
 describe(`getGuildWidgetImage`, () => {
   mockRequest.get(`/guilds/:guild/widget.png`);
-  const config = generateMock(getGuildWidgetImageSchema);
+  const config = mockSchema(getGuildWidgetImageSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getGuildWidgetImageSafe(config)).resolves.not.toThrow();

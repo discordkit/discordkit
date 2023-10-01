@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   createGuildChannel,
   createGuildChannelProcedure,
@@ -11,7 +10,7 @@ import { channelSchema } from "../../channel/types/Channel.ts";
 
 describe(`createGuildChannel`, () => {
   const expected = mockRequest.post(`/guilds/:guild/channels`, channelSchema);
-  const config = generateMock(createGuildChannelSchema);
+  const config = mockSchema(createGuildChannelSchema);
 
   it(`can be used standalone`, async () => {
     await expect(createGuildChannelSafe(config)).resolves.toStrictEqual(

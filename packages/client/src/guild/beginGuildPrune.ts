@@ -1,8 +1,14 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure, toValidated } from "@discordkit/core";
+import {
+  post,
+  type Fetcher,
+  toProcedure,
+  toValidated,
+  snowflake
+} from "@discordkit/core";
 
 export const beginGuildPruneSchema = z.object({
-  guild: z.string().min(1),
+  guild: snowflake,
   body: z
     .object({
       /** number of days to prune (1-30) */
@@ -10,7 +16,7 @@ export const beginGuildPruneSchema = z.object({
       /** whether pruned is returned, discouraged for large guilds */
       computePruneCount: z.boolean(),
       /** role(s) to include */
-      includeRoles: z.array(z.string().min(1)),
+      includeRoles: snowflake.array(),
       /** @deprecated reason for the prune */
       reason: z.string().min(1)
     })

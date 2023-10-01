@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest } from "test-utils";
+import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
 import {
   getGuildWidgetSettingsProcedure,
   getGuildWidgetSettingsQuery,
@@ -14,7 +13,7 @@ describe(`getGuildWidgetSettings`, () => {
     `/guilds/:guild/widget`,
     guildWidgetSettingsSchema
   );
-  const config = generateMock(getGuildWidgetSettingsSchema);
+  const config = mockSchema(getGuildWidgetSettingsSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getGuildWidgetSettingsSafe(config)).resolves.toStrictEqual(

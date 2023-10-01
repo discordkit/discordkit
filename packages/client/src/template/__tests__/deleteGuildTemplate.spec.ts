@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   deleteGuildTemplate,
   deleteGuildTemplateProcedure,
@@ -11,7 +10,7 @@ import { guildTemplateSchema } from "../types/GuildTemplate.ts";
 
 describe(`deleteGuildTemplate`, () => {
   mockRequest.delete(`/guilds/:guild/templates/:template`, guildTemplateSchema);
-  const config = generateMock(deleteGuildTemplateSchema);
+  const config = mockSchema(deleteGuildTemplateSchema);
 
   it(`can be used standalone`, async () => {
     await expect(deleteGuildTemplateSafe(config)).resolves.toBeDefined();

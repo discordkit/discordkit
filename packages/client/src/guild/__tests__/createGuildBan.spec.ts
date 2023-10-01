@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   createGuildBan,
   createGuildBanProcedure,
@@ -11,7 +10,7 @@ import { banSchema } from "../types/Ban.ts";
 
 describe(`createGuildBan`, () => {
   mockRequest.put(`/guilds/:guild/bans/:user`, banSchema);
-  const config = generateMock(createGuildBanSchema);
+  const config = mockSchema(createGuildBanSchema);
 
   it(`can be used standalone`, async () => {
     await expect(createGuildBanSafe(config)).resolves.not.toThrow();

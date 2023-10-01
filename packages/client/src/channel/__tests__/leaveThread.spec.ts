@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   leaveThread,
   leaveThreadProcedure,
@@ -10,7 +9,7 @@ import {
 
 describe(`leaveThread`, () => {
   mockRequest.delete(`/channels/:channel/thread-members/@me`);
-  const config = generateMock(leaveThreadSchema);
+  const config = mockSchema(leaveThreadSchema);
 
   it(`can be used standalone`, async () => {
     await expect(leaveThreadSafe(config)).resolves.not.toThrow();

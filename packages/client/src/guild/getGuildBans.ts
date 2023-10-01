@@ -4,20 +4,21 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import { banSchema, type Ban } from "./types/Ban.ts";
 
 export const getGuildBansSchema = z.object({
-  guild: z.string().min(1),
+  guild: snowflake,
   params: z
     .object({
       /** of users to return (up to maximum 1000) */
       limit: z.number().int().min(1).max(1000).nullable(),
       /** consider only users before given user id */
-      before: z.string().min(1).nullable(),
+      before: snowflake.nullable(),
       /** consider only users after given user id */
-      after: z.string().min(1).nullable()
+      after: snowflake.nullable()
     })
     .partial()
     .optional()

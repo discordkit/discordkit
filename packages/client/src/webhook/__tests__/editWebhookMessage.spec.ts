@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   editWebhookMessage,
   editWebhookMessageProcedure,
@@ -14,7 +13,7 @@ describe(`editWebhookMessage`, () => {
     `/webhooks/:webhook/:token/messages/:message`,
     messageSchema
   );
-  const config = generateMock(editWebhookMessageSchema);
+  const config = mockSchema(editWebhookMessageSchema);
 
   it(`can be used standalone`, async () => {
     await expect(editWebhookMessageSafe(config)).resolves.toBeDefined();

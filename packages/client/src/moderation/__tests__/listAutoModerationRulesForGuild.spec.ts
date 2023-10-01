@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest } from "test-utils";
+import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
 import {
   listAutoModerationRulesForGuildProcedure,
   listAutoModerationRulesForGuildQuery,
@@ -15,7 +14,7 @@ describe(`listAutoModerationRulesForGuild`, () => {
     moderationRuleSchema.array().length(1),
     { seed: 1 }
   );
-  const config = generateMock(listAutoModerationRulesForGuildSchema);
+  const config = mockSchema(listAutoModerationRulesForGuildSchema);
 
   it(`can be used standalone`, async () => {
     await expect(

@@ -1,16 +1,17 @@
 import { z } from "zod";
 import { memberSchema } from "#/guild/types/Member.ts";
+import { snowflake } from "@discordkit/core";
 
 // https://discord.com/developers/docs/resources/voice#voice-state-object-voice-state-structure
 /** Used to represent a user's voice connection status. */
 
 export const voiceStateSchema = z.object({
   /** the guild id this voice state is for */
-  guildId: z.string().min(1).nullable(),
+  guildId: snowflake.nullable(),
   /** the channel id this user is connected to */
-  channelId: z.string().min(1).optional(),
+  channelId: snowflake.optional(),
   /** the user id this voice state is for */
-  userId: z.string().min(1),
+  userId: snowflake,
   /** guild member object	the guild member this voice state is for */
   member: memberSchema.nullable(),
   /** the session id for this voice state */
@@ -30,7 +31,7 @@ export const voiceStateSchema = z.object({
   /** whether this user is muted by the current user */
   suppress: z.boolean(),
   /** the time at which the user requested to speak */
-  requestToSpeakTimestamp: z.string().optional()
+  requestToSpeakTimestamp: z.string().datetime().optional()
 });
 
 export type VoiceState = z.infer<typeof voiceStateSchema>;

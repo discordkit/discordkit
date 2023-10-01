@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   removeThreadMember,
   removeThreadMemberProcedure,
@@ -10,7 +9,7 @@ import {
 
 describe(`removeThreadMember`, () => {
   mockRequest.delete(`/channels/:channel/thread-members/:user`);
-  const config = generateMock(removeThreadMemberSchema);
+  const config = mockSchema(removeThreadMemberSchema);
 
   it(`can be used standalone`, async () => {
     await expect(removeThreadMemberSafe(config)).resolves.not.toThrow();

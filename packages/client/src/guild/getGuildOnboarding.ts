@@ -4,7 +4,8 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import {
   guildOnboardingSchema,
@@ -12,7 +13,7 @@ import {
 } from "./types/GuildOnboarding.ts";
 
 export const getGuildOnboardingSchema = z.object({
-  guild: z.string().min(1)
+  guild: snowflake
 });
 
 /**

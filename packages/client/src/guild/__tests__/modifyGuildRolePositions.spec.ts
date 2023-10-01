@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   modifyGuildRolePositions,
   modifyGuildRolePositionsProcedure,
@@ -14,7 +13,7 @@ describe(`modifyGuildRolePositions`, () => {
     `/guilds/:guild/roles`,
     roleSchema.array().length(1)
   );
-  const config = generateMock(modifyGuildRolePositionsSchema);
+  const config = mockSchema(modifyGuildRolePositionsSchema);
 
   it(`can be used standalone`, async () => {
     await expect(modifyGuildRolePositionsSafe(config)).resolves.toStrictEqual(

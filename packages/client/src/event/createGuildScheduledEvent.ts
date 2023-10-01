@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure, toValidated } from "@discordkit/core";
+import {
+  post,
+  type Fetcher,
+  toProcedure,
+  toValidated,
+  snowflake
+} from "@discordkit/core";
 import {
   type ScheduledEvent,
   scheduledEventSchema
@@ -9,10 +15,10 @@ import { scheduledEventPrivacyLevelSchema } from "./types/ScheduledEventPrivacyL
 import { scheduledEventEntityTypeSchema } from "./types/ScheduledEventEntityType.ts";
 
 export const createGuildScheduledEventSchema = z.object({
-  guild: z.string().min(1),
+  guild: snowflake,
   body: z.object({
     /** the channel id of the scheduled event. */
-    channelId: z.string().min(1).nullable(),
+    channelId: snowflake.nullable(),
     /** entity metadata	the entity metadata of the scheduled event */
     entityMetadata: entityMetadataSchema.nullable(),
     /** the name of the scheduled event */

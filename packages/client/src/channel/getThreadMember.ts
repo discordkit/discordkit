@@ -4,13 +4,14 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import { threadMemberSchema, type ThreadMember } from "./types/ThreadMember.ts";
 
 export const getThreadMemberSchema = z.object({
-  channel: z.string().min(1),
-  user: z.string().min(1),
+  channel: snowflake,
+  user: snowflake,
   params: z
     .object({
       /** Whether to include a guild member object for the thread member */

@@ -1,11 +1,17 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure, toValidated } from "@discordkit/core";
+import {
+  post,
+  type Fetcher,
+  toProcedure,
+  toValidated,
+  snowflake
+} from "@discordkit/core";
 
 export const bulkDeleteMessagesSchema = z.object({
-  channel: z.string().min(1),
+  channel: snowflake,
   body: z.object({
     /** an array of message ids to delete (2-100) */
-    messages: z.string().min(1).array().min(2).max(100)
+    messages: snowflake.array().min(2).max(100)
   })
 });
 

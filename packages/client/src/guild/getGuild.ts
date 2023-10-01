@@ -4,12 +4,13 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import { guildSchema, type Guild } from "./types/Guild.ts";
 
 export const getGuildSchema = z.object({
-  id: z.string().min(1),
+  id: snowflake,
   params: z
     .object({
       /** when true, will return approximate member and presence counts for the guild */

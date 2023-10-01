@@ -1,6 +1,5 @@
 import { waitFor } from "@testing-library/react";
-import { generateMock } from "@anatine/zod-mock";
-import { runProcedure, runQuery, mockRequest } from "test-utils";
+import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
 import {
   getApplicationRoleConnectionMetadataRecordsProcedure,
   getApplicationRoleConnectionMetadataRecordsQuery,
@@ -14,9 +13,7 @@ describe(`getApplicationRoleConnectionMetadataRecords`, () => {
     `/applications/:application/role-connections/metadata`,
     applicationRoleConnectionMetadataSchema.array().length(1)
   );
-  const config = generateMock(
-    getApplicationRoleConnectionMetadataRecordsSchema
-  );
+  const config = mockSchema(getApplicationRoleConnectionMetadataRecordsSchema);
 
   it(`can be used standalone`, async () => {
     await expect(

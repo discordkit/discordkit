@@ -1,12 +1,18 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure, toValidated } from "@discordkit/core";
+import {
+  post,
+  type Fetcher,
+  toProcedure,
+  toValidated,
+  snowflake
+} from "@discordkit/core";
 import { type Stage, stageSchema } from "./types/Stage.ts";
 import { stagePrivacyLevelSchema } from "./types/StagePrivacyLevel.ts";
 
 export const createStageInstanceSchema = z.object({
   body: z.object({
     /** The id of the Stage channel */
-    channelId: z.string().min(1),
+    channelId: snowflake,
     /** The topic of the Stage instance (1-120 characters) */
     topic: z.string().min(1).max(120),
     /** The privacy level of the Stage instance (default GUILD_ONLY) */

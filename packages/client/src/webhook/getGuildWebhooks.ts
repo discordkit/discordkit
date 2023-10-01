@@ -4,12 +4,13 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import { webhookSchema, type Webhook } from "./types/Webhook.ts";
 
 export const getGuildWebhooksSchema = z.object({
-  guild: z.string().min(1)
+  guild: snowflake
 });
 
 /**

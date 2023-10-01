@@ -1,10 +1,16 @@
 import { z } from "zod";
-import { put, type Fetcher, toProcedure, toValidated } from "@discordkit/core";
+import {
+  put,
+  type Fetcher,
+  toProcedure,
+  toValidated,
+  snowflake
+} from "@discordkit/core";
 
 export const addGuildMemberRoleSchema = z.object({
-  guild: z.string().min(1),
-  user: z.string().min(1),
-  role: z.string().min(1)
+  guild: snowflake,
+  user: snowflake,
+  role: snowflake
 });
 
 /**

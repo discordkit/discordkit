@@ -4,7 +4,8 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import {
   type ApplicationRoleConnectionMetadata,
@@ -12,7 +13,7 @@ import {
 } from "./types/ApplicationRoleConnectionMetadata.ts";
 
 export const getApplicationRoleConnectionMetadataRecordsSchema = z.object({
-  application: z.string().min(1)
+  application: snowflake
 });
 
 /**

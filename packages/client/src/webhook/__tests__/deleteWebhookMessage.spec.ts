@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   deleteWebhookMessage,
   deleteWebhookMessageProcedure,
@@ -10,7 +9,7 @@ import {
 
 describe(`deleteWebhookMessage`, () => {
   mockRequest.delete(`/webhooks/:webhook/:token/messages/:message`);
-  const config = generateMock(deleteWebhookMessageSchema);
+  const config = mockSchema(deleteWebhookMessageSchema);
 
   it(`can be used standalone`, async () => {
     await expect(deleteWebhookMessageSafe(config)).resolves.not.toThrow();

@@ -3,12 +3,13 @@ import {
   remove,
   type Fetcher,
   toProcedure,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 
 export const deleteGuildStickerSchema = z.object({
-  guild: z.string().min(1),
-  sticker: z.string().min(1)
+  guild: snowflake,
+  sticker: snowflake
 });
 
 /**

@@ -1,8 +1,14 @@
 import { z } from "zod";
-import { post, type Fetcher, toProcedure, toValidated } from "@discordkit/core";
+import {
+  post,
+  type Fetcher,
+  toProcedure,
+  toValidated,
+  snowflake
+} from "@discordkit/core";
 
 export const triggerTypingIndicatorSchema = z.object({
-  channel: z.string().min(1)
+  channel: snowflake
 });
 
 /**

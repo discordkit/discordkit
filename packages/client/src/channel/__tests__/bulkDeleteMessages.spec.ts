@@ -1,6 +1,5 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   bulkDeleteMessages,
   bulkDeleteMessagesProcedure,
@@ -10,7 +9,7 @@ import {
 
 describe(`bulkDeleteMessages`, () => {
   mockRequest.post(`/channels/:channel/messages/bulk-delete`);
-  const config = generateMock(bulkDeleteMessagesSchema);
+  const config = mockSchema(bulkDeleteMessagesSchema);
 
   it(`can be used standalone`, async () => {
     await expect(bulkDeleteMessagesSafe(config)).resolves.not.toThrow();

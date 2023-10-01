@@ -1,7 +1,6 @@
-import { generateMock } from "@anatine/zod-mock";
 import { waitFor } from "@testing-library/react";
 import { z } from "zod";
-import { runProcedure, runMutation, mockRequest } from "test-utils";
+import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
 import {
   createGroupDM,
   createGroupDMProcedure,
@@ -16,7 +15,7 @@ describe(`createGroupDM`, () => {
     `/users/@me/channels`,
     channelSchema.extend({ type: z.literal(ChannelType.GROUP_DM) })
   );
-  const config = generateMock(createGroupDMSchema);
+  const config = mockSchema(createGroupDMSchema);
 
   it(`can be used standalone`, async () => {
     await expect(createGroupDMSafe(config)).resolves.toStrictEqual(expected);

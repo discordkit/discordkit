@@ -1,10 +1,11 @@
 import { z } from "zod";
 import { channelSchema } from "#/channel/types/Channel.ts";
 import { userSchema } from "#/user/types/User.ts";
+import { snowflake } from "@discordkit/core";
 
 export const guildWidgetSchema = z.object({
   /** guild id */
-  id: z.string().min(1),
+  id: snowflake,
   /** guild name (2-100 characters) */
   name: z.string().min(2).max(100),
   /** instant invite for the guilds specified widget invite channel */

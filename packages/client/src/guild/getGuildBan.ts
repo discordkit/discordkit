@@ -4,13 +4,14 @@ import {
   type Fetcher,
   toProcedure,
   toQuery,
-  toValidated
+  toValidated,
+  snowflake
 } from "@discordkit/core";
 import { banSchema, type Ban } from "./types/Ban.ts";
 
 export const getGuildBanSchema = z.object({
-  guild: z.string().min(1),
-  user: z.string().min(1)
+  guild: snowflake,
+  user: snowflake
 });
 
 /**
