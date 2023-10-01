@@ -3,16 +3,19 @@
     "esm": true,
     "swc": true
   },
-  "include": ["./src/**/*"],
-  "exclude": [
-    "node_modules",
-    "**/__fixtures__/**/*",
-    "**/__mocks__/**/*",
-    "**/__test__/**/*",
-    "**/*.spec.ts"
+  "include": [
+    "./examples/**/*.*",
+    "./packages/**/*.ts",
+    "./packages/**/*.d.ts",
+    "./scripts/*.ts",
+    "./*.ts"
+  ],
+  "exclude": ["node_modules"],
+  "references": [
+    { "path": "packages/client/tsconfig.build.json" },
+    { "path": "packages/core/tsconfig.build.json" }
   ],
   "compilerOptions": {
-    "outDir": "dist",
     "noEmit": true,
     "isolatedModules": true,
     // Always include these settings
@@ -26,6 +29,7 @@
       "ESNext", // adds support for ESNext functionality
       "DOM" // adds support for 'window' other dom methods
     ],
+    "types": ["vitest/globals"],
     "allowJs": true,
     /* JSX support */
     "jsx": "preserve",
@@ -38,18 +42,17 @@
     "noFallthroughCasesInSwitch": true,
     // "strictFunctionTypes": true,
     /* Module Resolution Options */
-    "baseUrl": "./",
-    "paths": {
-      "#*": ["./src/*"]
-    },
     "moduleResolution": "NodeNext",
     "allowImportingTsExtensions": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "test-utils": ["./scripts/test-utils.ts"]
+    },
     /* Advanced Options */
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "incremental": true,
     "noErrorTruncation": true
   }
 }

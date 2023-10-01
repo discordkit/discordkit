@@ -1,6 +1,6 @@
-import "cross-fetch/polyfill";
-import { discord } from "../src/DiscordSession";
-import { msw } from "./test-utils";
+import { beforeAll, afterAll } from "vitest";
+import { discord } from "@discordkit/core";
+import { msw } from "./test-utils.ts";
 
 beforeAll(() => {
   discord.setToken(`Bot super-secret-token`);

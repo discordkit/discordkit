@@ -1,4 +1,6 @@
-import React from "react";
+import { beforeEach } from "vitest";
+import type React from "react";
+import { createElement } from "react";
 import type { UseMutationResult, UseQueryResult } from "@tanstack/react-query";
 import {
   QueryClient,
@@ -7,18 +9,24 @@ import {
   useQuery
 } from "@tanstack/react-query";
 import { rest } from "msw";
-import { setupServer } from "msw/node";
+import { type SetupServer, setupServer } from "msw/node";
 import type { GenerateMockOptions } from "@anatine/zod-mock";
 import { generateMock } from "@anatine/zod-mock";
 import type { z } from "zod";
 import type { RenderHookResult } from "@testing-library/react";
 import { renderHook } from "@testing-library/react";
+import type { unsetMarker } from "@trpc/server";
 import { initTRPC } from "@trpc/server";
-import type { UnsetMarker } from "@trpc/server/dist/core/internals/utils";
-import { endpoint } from "../src/DiscordSession";
-import type { toQuery, Fetcher, toProcedure } from "../src/utils";
+import {
+  endpoint,
+  type toQuery,
+  type Fetcher,
+  type toProcedure
+} from "@discordkit/core";
 
-export const msw = setupServer();
+type UnsetMarker = typeof unsetMarker;
+
+export const msw: SetupServer = setupServer();
 
 const createMock =
   (type: `delete` | `get` | `patch` | `post` | `put` = `get`) =>
@@ -53,11 +61,7 @@ export const mockRequest = {
 const createWrapper =
   (): React.FC<{ children: React.ReactNode }> =>
   ({ children }) =>
-    React.createElement(
-      QueryClientProvider,
-      { client: new QueryClient() },
-      children
-    );
+    createElement(QueryClientProvider, { client: new QueryClient() }, children);
 
 const runHook: typeof renderHook = (fn, options) =>
   renderHook(fn, { wrapper: createWrapper(), ...options });

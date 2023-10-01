@@ -1,0 +1,39 @@
+{
+  "name": "@discordkit/core",
+  "description": "Core utility functions for Discordkit",
+  "version": "0.0.1",
+  "license": "MIT",
+  "author": "Drake Costa <drake@saeris.gg> (https://saeris.gg)",
+  "keywords": [
+    "discordkit",
+    "core",
+    "itilities"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/discordkit/discordkit.git",
+    "directory": "packages/core"
+  },
+  "homepage": "https://github.com/discordkit/discordkit#readme",
+  "type": "module",
+  "sideEffects": false,
+  "imports": {
+    "#*": [
+      "./src/*",
+      "./src/*.ts",
+      "./src/*/index.ts"
+    ]
+  },
+  "exports": {
+    "./package.json": "./package.json",
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint \"./src/**/*.{j,t}s?(x)\"",
+    "build": "node ../../scripts/build.js",
+    "clean": "node ../../scripts/clean.js"
+  },
+  "peerDependencies": {
+    "zod": "^3.17.3"
+  }
+}
