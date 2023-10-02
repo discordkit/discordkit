@@ -8,13 +8,13 @@ import {
 } from "../getGlobalApplicationCommands.ts";
 import { applicationCommandSchema } from "../types/ApplicationCommand.ts";
 
-describe(`getGlobalApplicationCommands`, () => {
-  const expected = mockRequest.get(
-    `/applications/:application/commands`,
-    applicationCommandSchema.array().length(1)
-  );
-  const config = mockSchema(getGlobalApplicationCommandsSchema);
+const expected = mockRequest.get(
+  `/applications/:application/commands`,
+  applicationCommandSchema.array().length(1)
+);
+const config = mockSchema(getGlobalApplicationCommandsSchema);
 
+describe(`getGlobalApplicationCommands`, () => {
   it(`can be used standalone`, async () => {
     await expect(
       getGlobalApplicationCommandsSafe(config)

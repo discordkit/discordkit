@@ -8,13 +8,13 @@ import {
 } from "../editGlobalApplicationCommand.ts";
 import { applicationCommandSchema } from "../types/ApplicationCommand.ts";
 
-describe(`editGlobalApplicationCommand`, () => {
-  const expected = mockRequest.patch(
-    `/applications/:application/commands/:command`,
-    applicationCommandSchema
-  );
-  const config = mockSchema(editGlobalApplicationCommandSchema);
+const expected = mockRequest.patch(
+  `/applications/:application/commands/:command`,
+  applicationCommandSchema
+);
+const config = mockSchema(editGlobalApplicationCommandSchema);
 
+describe(`editGlobalApplicationCommand`, () => {
   it(`can be used standalone`, async () => {
     await expect(
       editGlobalApplicationCommandSafe(config)

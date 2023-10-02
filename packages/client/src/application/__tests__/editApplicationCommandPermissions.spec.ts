@@ -8,13 +8,13 @@ import {
 } from "../editApplicationCommandPermissions.ts";
 import { guildApplicationCommandPermissionsSchema } from "../types/GuildApplicationCommandPermissions.ts";
 
-describe(`editApplicationCommandPermissions`, () => {
-  const expected = mockRequest.patch(
-    `/applications/:application/guilds/:guild/commands/:command/permissions`,
-    guildApplicationCommandPermissionsSchema
-  );
-  const config = mockSchema(editApplicationCommandPermissionsSchema);
+const expected = mockRequest.patch(
+  `/applications/:application/guilds/:guild/commands/:command/permissions`,
+  guildApplicationCommandPermissionsSchema
+);
+const config = mockSchema(editApplicationCommandPermissionsSchema);
 
+describe(`editApplicationCommandPermissions`, () => {
   it(`can be used standalone`, async () => {
     await expect(
       editApplicationCommandPermissionsSafe(config)

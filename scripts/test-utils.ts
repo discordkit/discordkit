@@ -25,9 +25,6 @@ import {
   snowflake
 } from "@discordkit/core";
 import { Snowflake } from "nodejs-snowflake";
-import { fetch } from "cross-fetch";
-
-global.fetch = fetch;
 
 type UnsetMarker = typeof unsetMarker;
 

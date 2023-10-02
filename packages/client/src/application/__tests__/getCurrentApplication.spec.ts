@@ -7,9 +7,9 @@ import {
 } from "../getCurrentApplication.ts";
 import { applicationSchema } from "../types/Application.ts";
 
-describe(`getCurrentApplication`, () => {
-  const expected = mockRequest.get(`/applications/@me`, applicationSchema);
+const expected = mockRequest.get(`/applications/@me`, applicationSchema);
 
+describe(`getCurrentApplication`, () => {
   it(`can be used standalone`, async () => {
     await expect(getCurrentApplicationSafe()).resolves.toStrictEqual(expected);
   });
