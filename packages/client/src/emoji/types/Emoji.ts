@@ -8,17 +8,17 @@ export const emojiSchema = z.object({
   /** (can be null only in reaction emoji objects)	emoji name */
   name: z.string().optional(),
   /** roles allowed to use this emoji */
-  roles: snowflake.array().nullable(),
+  roles: snowflake.array().nullish(),
   /** user that created this emoji */
-  user: userSchema.nullable(),
+  user: userSchema.nullish(),
   /** whether this emoji must be wrapped in colons */
-  requireColons: z.boolean().nullable(),
+  requireColons: z.boolean().nullish(),
   /** whether this emoji is managed */
-  managed: z.boolean().nullable(),
+  managed: z.boolean().nullish(),
   /** whether this emoji is animated */
-  animated: z.boolean().nullable(),
+  animated: z.boolean().nullish(),
   /** whether this emoji can be used, may be false due to loss of Server Boosts */
-  available: z.boolean().nullable()
+  available: z.boolean().nullish()
 });
 
 export type Emoji = z.infer<typeof emojiSchema>;

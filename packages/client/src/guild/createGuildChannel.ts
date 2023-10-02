@@ -22,49 +22,39 @@ export const createGuildChannelSchema = z.object({
     /** channel name (1-100 characters) */
     name: z.string().min(1),
     /** the type of channel */
-    type: channelTypeSchema.nullable().optional(),
+    type: channelTypeSchema.nullish(),
     /** channel topic (0-1024 characters) */
-    topic: z.string().min(0).max(1024).nullable().optional(),
+    topic: z.string().min(0).max(1024).nullish(),
     /** the bitrate (in bits) of the voice or stage channel; min 8000 */
-    bitrate: z.number().min(8000).nullable().optional(),
+    bitrate: z.number().min(8000).nullish(),
     /** the user limit of the voice channel */
-    userLimit: z.number().int().positive().nullable().optional(),
+    userLimit: z.number().int().positive().nullish(),
     /** amount of seconds a user has to wait before sending another message (0-21600); bots, as well as users with the permission manage_messages or manage_channel, are unaffected */
-    rateLimitPerYser: z.number().int().min(0).max(21600).nullable().optional(),
+    rateLimitPerYser: z.number().int().min(0).max(21600).nullish(),
     /** sorting position of the channel */
-    position: z.number().int().positive().nullable().optional(),
+    position: z.number().int().positive().nullish(),
     /** the channel's permission overwrites */
-    permissionOverwrites: overwriteSchema
-      .partial()
-      .array()
-      .nullable()
-      .optional(),
+    permissionOverwrites: overwriteSchema.partial().array().nullish(),
     /** id of the parent category for a channel */
-    parentId: snowflake.nullable().optional(),
+    parentId: snowflake.nullish(),
     /** whether the channel is nsfw */
-    nsfw: z.boolean().nullable().optional(),
+    nsfw: z.boolean().nullish(),
     /** channel voice region id of the voice or stage channel, automatic when set to null */
-    rtcRegion: z.string().min(1).nullable().optional(),
+    rtcRegion: z.string().min(1).nullish(),
     /** the camera video quality mode of the voice channel */
-    videoQualityMode: videoQualityModeSchema.nullable().optional(),
+    videoQualityMode: videoQualityModeSchema.nullish(),
     /** the default duration that the clients use (not the API) for newly created threads in the channel, in minutes, to automatically archive the thread after recent activity */
-    defaultAutoArchiveDuration: autoArchiveDurationSchema.nullable().optional(),
+    defaultAutoArchiveDuration: autoArchiveDurationSchema.nullish(),
     /** emoji to show in the add reaction button on a thread in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */
-    defaultReactionEmoji: defaultReactionSchema.nullable().optional(),
+    defaultReactionEmoji: defaultReactionSchema.nullish(),
     /** set of tags that can be used in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */
-    availableTags: forumTagSchema.array().nullable().optional(),
+    availableTags: forumTagSchema.array().nullish(),
     /** the default sort order type used to order posts in `GUILD_FORUM` and `GUILD_MEDIA` channels */
-    defaultSortOrder: sortOrderTypeSchema.nullable().optional(),
+    defaultSortOrder: sortOrderTypeSchema.nullish(),
     /** the default forum layout view used to display posts in `GUILD_FORUM` channels */
-    defaultForumLayout: forumLayoutTypeSchema.nullable().optional(),
+    defaultForumLayout: forumLayoutTypeSchema.nullish(),
     /** the initial `rateLimitPerUser` to set on newly created threads in a channel. this field is copied to the thread at creation time and does not live update. */
-    defaultThreadRateLimitPerUser: z
-      .number()
-      .int()
-      .min(0)
-      .max(21600)
-      .nullable()
-      .optional()
+    defaultThreadRateLimitPerUser: z.number().int().min(0).max(21600).nullish()
   })
 });
 

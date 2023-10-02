@@ -1,14 +1,17 @@
 {
   "$schema": "https://turborepo.org/schema.json",
+  "globalDependencies": ["tsconfig.json", "vitest.config.ts"],
   "pipeline": {
     "//#lint": {},
     "//#test": {
-      "outputs": [".coverage/**"],
-      "dependsOn": []
+      "inputs": ["./pacakges/*/src/**"],
+      "outputs": [".coverage/**"]
     },
     "//#build:types": {
       "outputs": ["./packages/*/dist/**"]
     },
-    "build": {}
+    "build": {
+      "dependsOn": ["//#build:types"]
+    }
   }
 }

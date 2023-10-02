@@ -18,9 +18,9 @@ export const createGuildScheduledEventSchema = z.object({
   guild: snowflake,
   body: z.object({
     /** the channel id of the scheduled event. */
-    channelId: snowflake.nullable(),
+    channelId: snowflake.nullish(),
     /** entity metadata	the entity metadata of the scheduled event */
-    entityMetadata: entityMetadataSchema.nullable(),
+    entityMetadata: entityMetadataSchema.nullish(),
     /** the name of the scheduled event */
     name: z.string().min(1),
     /** the privacy level of the scheduled event */
@@ -28,13 +28,13 @@ export const createGuildScheduledEventSchema = z.object({
     /** the time to schedule the scheduled event */
     scheduledStartTime: z.string().datetime(),
     /** the time when the scheduled event is scheduled to end */
-    scheduledEndTime: z.string().datetime().nullable(),
+    scheduledEndTime: z.string().datetime().nullish(),
     /** the description of the scheduled event */
-    description: z.string().min(1).nullable(),
+    description: z.string().min(1).nullish(),
     /** the entity type of the scheduled event */
     entityType: scheduledEventEntityTypeSchema,
     /** the cover image of the scheduled event */
-    image: z.string().min(1).nullable()
+    image: z.string().min(1).nullish()
   })
 });
 

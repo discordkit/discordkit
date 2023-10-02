@@ -15,15 +15,15 @@ export const getGuildAuditLogSchema = z.object({
   params: z
     .object({
       /** Entries from a specific user ID */
-      userId: snowflake.nullable(),
+      userId: snowflake.nullish(),
       /** Entries for a specific audit log event */
-      actionType: auditLogEventSchema.nullable(),
+      actionType: auditLogEventSchema.nullish(),
       /** Entries that preceded a specific audit log entry ID */
-      before: snowflake.nullable(),
+      before: snowflake.nullish(),
       /** Entries with ID greater than a specific audit log entry ID */
-      after: snowflake.nullable(),
+      after: snowflake.nullish(),
       /** Maximum number of entries (between 1-100) to return, defaults to 50 */
-      limit: z.number().int().min(1).max(100).nullable().default(50)
+      limit: z.number().int().min(1).max(100).nullish().default(50)
     })
     .partial()
     .optional()

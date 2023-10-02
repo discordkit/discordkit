@@ -1,9 +1,5 @@
 {
-  "include": [
-    "./examples/**/*.*",
-    "./packages/*/src/**/*.ts",
-    "./packages/*/src/**/*.d.ts"
-  ],
+  "include": ["./packages/*/src/**/*.ts", "./packages/*/src/**/*.d.ts"],
   "exclude": ["node_modules"],
   "references": [
     { "path": "packages/client/tsconfig.build.json" },

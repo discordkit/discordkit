@@ -14,13 +14,13 @@ export const getChannelMessagesSchema = z.object({
   params: z
     .object({
       /** Get messages around this message ID */
-      around: snowflake.nullable(),
+      around: snowflake.nullish(),
       /** Get messages before this message ID */
-      before: snowflake.nullable(),
+      before: snowflake.nullish(),
       /** Get messages after this message ID */
-      after: snowflake.nullable(),
+      after: snowflake.nullish(),
       /** Max number of messages to return (1-100) Default: 50 */
-      limit: z.number().min(1).max(100).nullable().default(50)
+      limit: z.number().min(1).max(100).nullish().default(50)
     })
     .partial()
     .optional()

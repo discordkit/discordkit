@@ -12,11 +12,11 @@ export const modifyCurrentUserVoiceStateSchema = z.object({
   body: z
     .object({
       /** the id of the channel the user is currently in */
-      channelId: snowflake.nullable(),
+      channelId: snowflake.nullish(),
       /** toggles the user's suppress state */
-      suppress: z.boolean().nullable(),
+      suppress: z.boolean().nullish(),
       /** sets the user's request to speak */
-      requestToSpeakTimestamp: z.string().datetime().nullable().optional()
+      requestToSpeakTimestamp: z.string().datetime().nullish()
     })
     .partial()
 });

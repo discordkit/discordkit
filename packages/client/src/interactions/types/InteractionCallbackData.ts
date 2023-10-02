@@ -6,19 +6,19 @@ import { attachmentSchema } from "../../channel/types/Attachment.ts";
 
 export const interactionCallbackDataSchema = z.object({
   /** is the response TTS */
-  tts: z.boolean().nullable(),
+  tts: z.boolean().nullish(),
   /** message content */
-  content: z.string().nullable(),
+  content: z.string().nullish(),
   /** supports up to 10 embeds */
-  embeds: embedSchema.array().max(10).nullable(),
+  embeds: embedSchema.array().max(10).nullish(),
   /** allowed mentions object */
-  allowedMentions: allowedMentionSchema.nullable(),
+  allowedMentions: allowedMentionSchema.nullish(),
   /** message flags combined as a bitfield (only SUPPRESS_EMBEDS and EPHEMERAL can be set) */
-  flags: z.number().int().nullable(),
+  flags: z.number().int().nullish(),
   /** message components */
-  components: messageComponentSchema.nullable(),
+  components: messageComponentSchema.nullish(),
   /** attachment objects with filename and description */
-  attachments: attachmentSchema.partial().array().nullable()
+  attachments: attachmentSchema.partial().array().nullish()
 });
 
 export type InteractionCallbackData = z.infer<

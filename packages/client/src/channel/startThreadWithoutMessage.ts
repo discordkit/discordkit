@@ -16,13 +16,13 @@ export const startThreadWithoutMessageSchema = z.object({
     /** 1-100 character channel name */
     name: z.string().min(1).max(100),
     /** duration in minutes to automatically archive the thread after recent activity, can be set to: 60, 1440, 4320, 10080 */
-    autoArchiveDuration: autoArchiveDurationSchema.nullable(),
+    autoArchiveDuration: autoArchiveDurationSchema.nullish(),
     /** the type of thread to create */
-    type: channelTypeSchema.nullable(),
+    type: channelTypeSchema.nullish(),
     /** whether non-moderators can add other non-moderators to a thread; only available when creating a private thread */
-    invitable: z.boolean().nullable(),
+    invitable: z.boolean().nullish(),
     /** amount of seconds a user has to wait before sending another message (0-21600) */
-    rateLimitPerUser: z.number().int().min(0).max(21600).nullable().optional()
+    rateLimitPerUser: z.number().int().min(0).max(21600).nullish()
   })
 });
 

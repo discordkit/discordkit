@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { snowflake } from "@discordkit/core";
 import { activityButtonSchema } from "./ActivityButton.ts";
-import { activityFlagsSchema } from "./ActivityFlags.ts";
 import { activitySecretsSchema } from "./ActivitySecrets.ts";
 import { activityAssetsSchema } from "./ActivityAssets.ts";
 import { activityPartySchema } from "./ActivityParty.ts";
@@ -36,7 +35,7 @@ export const activitySchema = z.object({
   /** whether or not the activity is an instanced game session */
   instance: z.boolean().optional(),
   /** activity flags ORd together, describes what the payload includes */
-  flags: activityFlagsSchema.optional(),
+  flags: z.number().int().optional(),
   /** the custom buttons shown in the Rich Presence (max 2) */
   buttons: activityButtonSchema.array().optional()
 });

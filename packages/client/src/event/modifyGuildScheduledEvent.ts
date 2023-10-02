@@ -20,25 +20,25 @@ export const modifyGuildScheduledEventSchema = z.object({
   event: snowflake,
   body: z.object({
     /** the channel id of the scheduled event. */
-    channelId: snowflake.nullable(),
+    channelId: snowflake.nullish(),
     /** entity metadata	the entity metadata of the scheduled event */
-    entityMetadata: entityMetadataSchema.nullable().optional(),
+    entityMetadata: entityMetadataSchema.nullish(),
     /** the name of the scheduled event */
-    name: z.string().min(1).nullable(),
+    name: z.string().min(1).nullish(),
     /** the privacy level of the scheduled event */
-    privacyLevel: scheduledEventPrivacyLevelSchema.nullable(),
+    privacyLevel: scheduledEventPrivacyLevelSchema.nullish(),
     /** the time to schedule the scheduled event */
-    scheduledStartTime: z.string().datetime().nullable(),
+    scheduledStartTime: z.string().datetime().nullish(),
     /** the time when the scheduled event is scheduled to end */
-    scheduledEndTime: z.string().datetime().nullable(),
+    scheduledEndTime: z.string().datetime().nullish(),
     /** the description of the scheduled event */
-    description: z.string().min(1).nullable().optional(),
+    description: z.string().min(1).nullish(),
     /** the entity type of the scheduled event */
-    entityType: scheduledEventEntityTypeSchema.nullable(),
+    entityType: scheduledEventEntityTypeSchema.nullish(),
     /** the status of the scheduled event */
-    status: scheduledEventStatusSchema.nullable(),
+    status: scheduledEventStatusSchema.nullish(),
     /** the cover image of the scheduled event */
-    image: z.string().min(1).nullable()
+    image: z.string().min(1).nullish()
   })
 });
 

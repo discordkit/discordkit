@@ -7,11 +7,11 @@ export const selectOptionSchema = z.object({
   /** Dev-defined value of the option; max 100 characters */
   value: z.string().max(100),
   /** Additional description of the option; max 100 characters */
-  description: z.string().max(100).nullable(),
+  description: z.string().max(100).nullish(),
   /** id, name, and animated */
-  emoji: emojiSchema.pick({ id: true, name: true, animated: true }).nullable(),
+  emoji: emojiSchema.pick({ id: true, name: true, animated: true }).nullish(),
   /** Will show this option as selected by default */
-  default: z.boolean().nullable()
+  default: z.boolean().nullish()
 });
 
 export type SelectOption = z.infer<typeof selectOptionSchema>;

@@ -14,11 +14,11 @@ export const modifyGuildChannelPositionsSchema = z.object({
       /** channel id */
       id: snowflake,
       /** sorting position of the channel */
-      position: z.number().positive().nullable().optional(),
+      position: z.number().positive().nullish(),
       /** syncs the permission overwrites with the new parent, if moving to a new category */
-      lockPermissions: z.boolean().nullable().optional(),
+      lockPermissions: z.boolean().nullish(),
       /** the new parent ID for the channel that is moved */
-      parentId: snowflake.nullable().optional()
+      parentId: snowflake.nullish()
     })
     .array()
 });

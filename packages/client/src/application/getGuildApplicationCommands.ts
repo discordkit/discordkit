@@ -18,7 +18,7 @@ export const getGuildApplicationCommandsSchema = z.object({
   params: z
     .object({
       /** Whether to include full localization dictionaries (nameLocalizations and descriptionLocalizations) in the returned objects, instead of the nameLocalized and descriptionLocalized fields. Default false. */
-      withLocalizations: z.boolean().default(false).nullable()
+      withLocalizations: z.boolean().default(false).nullish()
     })
     .optional()
 });

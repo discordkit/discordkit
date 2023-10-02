@@ -18,26 +18,26 @@ export const createGuildSchema = z.object({
     /** name of the guild (2-100 characters) */
     name: z.string().min(2).max(100),
     /** @deprecated voice region id */
-    region: z.string().min(1).nullable().optional(),
+    region: z.string().min(1).nullish(),
     /** icon hash */
-    icon: z.string().min(1).nullable(),
+    icon: z.string().min(1).nullish(),
     /** verification level */
-    verificationLevel: verificationLevelSchema.nullable(),
+    verificationLevel: verificationLevelSchema.nullish(),
     /** default message notification level */
     defaultMessageNotifications:
-      defaultMessageNotificationLevelSchema.nullable(),
+      defaultMessageNotificationLevelSchema.nullish(),
     /** explicit content filter level */
-    explicitContentFilter: explicitContentFilterLevelSchema.nullable(),
+    explicitContentFilter: explicitContentFilterLevelSchema.nullish(),
     /** new guild roles */
-    roles: roleSchema.array().nullable(),
+    roles: roleSchema.array().nullish(),
     /** new guild's channels */
-    channels: channelSchema.partial().array().nullable(),
+    channels: channelSchema.partial().array().nullish(),
     /** id for afk channel */
-    afkChannelId: snowflake.nullable(),
+    afkChannelId: snowflake.nullish(),
     /** afk timeout in seconds */
-    afkTimeout: z.number().int().positive().nullable(),
+    afkTimeout: z.number().int().positive().nullish(),
     /** the id of the channel where guild notices such as welcome messages and boost events are posted */
-    systemChannelId: snowflake.nullable(),
+    systemChannelId: snowflake.nullish(),
     /** system channel flags */
     systemChannelFlags: z.number().int().optional()
   })

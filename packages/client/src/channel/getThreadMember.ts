@@ -15,7 +15,7 @@ export const getThreadMemberSchema = z.object({
   params: z
     .object({
       /** Whether to include a guild member object for the thread member */
-      withMember: z.boolean().nullable()
+      withMember: z.boolean().nullish()
     })
     .partial()
     .optional()

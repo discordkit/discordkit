@@ -16,9 +16,9 @@ export const updateUserApplicationRoleConnectionSchema = z.object({
   body: z
     .object({
       /** the vanity name of the platform a bot has connected (max 50 characters) */
-      platformName: z.string().nullable(),
+      platformName: z.string().nullish(),
       /** the username on the platform a bot has connected (max 100 characters) */
-      platformUsername: z.string().nullable(),
+      platformUsername: z.string().nullish(),
       /** object mapping application role connection metadata keys to their string-ified value (max 100 characters) for the user on the platform a bot has connected */
       metadata: z.record(
         z
@@ -26,7 +26,7 @@ export const updateUserApplicationRoleConnectionSchema = z.object({
           .min(1)
           .max(50)
           .regex(/[a-z0-9_]/),
-        z.string().max(100).nullable()
+        z.string().max(100).nullish()
       )
     })
     .partial()

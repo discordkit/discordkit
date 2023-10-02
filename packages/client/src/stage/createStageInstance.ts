@@ -16,9 +16,9 @@ export const createStageInstanceSchema = z.object({
     /** The topic of the Stage instance (1-120 characters) */
     topic: z.string().min(1).max(120),
     /** The privacy level of the Stage instance (default GUILD_ONLY) */
-    privacyLevel: stagePrivacyLevelSchema.nullable(),
+    privacyLevel: stagePrivacyLevelSchema.nullish(),
     /** Notify @everyone that a Stage instance has started */
-    sendStartNotification: z.boolean().nullable()
+    sendStartNotification: z.boolean().nullish()
   })
 });
 

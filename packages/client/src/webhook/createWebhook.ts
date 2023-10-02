@@ -14,7 +14,7 @@ export const createWebhookSchema = z.object({
     /** name of the webhook (1-80 characters) */
     name: z.string().min(1).max(80),
     /** image for the default webhook avatar */
-    avatar: z.string().url().nullable().optional()
+    avatar: z.string().url().nullish()
   })
 });
 

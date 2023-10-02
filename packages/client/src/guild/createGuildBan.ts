@@ -13,9 +13,9 @@ export const createGuildBanSchema = z.object({
   body: z
     .object({
       /** number of days to delete messages for (0-7) */
-      deleteMessageDays: z.number().int().min(1).max(7).nullable(),
+      deleteMessageDays: z.number().int().min(1).max(7).nullish(),
       /** number of seconds to delete messages for, between 0 and 604800 (7 days) */
-      deleteMessageSeconds: z.number().int().min(1).max(7).nullable()
+      deleteMessageSeconds: z.number().int().min(1).max(7).nullish()
     })
     .partial()
     .optional()

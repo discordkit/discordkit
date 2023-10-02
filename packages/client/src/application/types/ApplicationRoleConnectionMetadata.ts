@@ -14,11 +14,11 @@ export const applicationRoleConnectionMetadataSchema = z.object({
   /** name of the metadata field (1-100 characters) */
   name: z.string().min(1).max(100),
   /** translations of the name */
-  nameLocalizations: z.record(localesSchema, z.string()).nullable(),
+  nameLocalizations: z.record(localesSchema, z.string()).nullish(),
   /** description of the metadata field (1-200 characters) */
   description: z.string().min(1).max(200),
   /** translations of the description */
-  descriptionLocalizations: z.record(localesSchema, z.string()).nullable()
+  descriptionLocalizations: z.record(localesSchema, z.string()).nullish()
 });
 
 export type ApplicationRoleConnectionMetadata = z.infer<

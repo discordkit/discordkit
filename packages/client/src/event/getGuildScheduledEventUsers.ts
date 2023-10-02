@@ -18,13 +18,13 @@ export const getGuildScheduledEventUsersSchema = z.object({
   params: z
     .object({
       /** number of users to return (up to maximum 100) (default: 100) */
-      limit: z.number().min(1).max(100).nullable().default(100),
+      limit: z.number().min(1).max(100).nullish().default(100),
       /** include guild member data if it exists (default: false) */
-      withMember: z.boolean().nullable().default(false),
+      withMember: z.boolean().nullish().default(false),
       /** consider only users before given user id (default: null) */
-      before: snowflake.nullable().default(null),
+      before: snowflake.nullish().default(null),
       /** consider only users after given user id (default: null) */
-      after: snowflake.nullable().default(null)
+      after: snowflake.nullish().default(null)
     })
     .partial()
     .optional()

@@ -20,32 +20,32 @@ export const startThreadInForumOrMediaChannelSchema = z.object({
     /** 1-100 character channel name */
     name: z.string().min(1).max(100),
     /** duration in minutes to automatically archive the thread after recent activity, can be set to: 60, 1440, 4320, 10080 */
-    autoArchiveDuration: autoArchiveDurationSchema.nullable(),
+    autoArchiveDuration: autoArchiveDurationSchema.nullish(),
     /** amount of seconds a user has to wait before sending another message (0-21600) */
-    rateLimitPerUser: z.number().int().min(0).max(21600).nullable().optional(),
+    rateLimitPerUser: z.number().int().min(0).max(21600).nullish(),
     /** contents of the first message in the forum thread */
     message: z
       .object({
         /** Message contents (up to 2000 characters) */
-        content: z.string().min(1).max(2000).nullable(),
+        content: z.string().min(1).max(2000).nullish(),
         /** Embedded rich content (up to 6000 characters) */
-        embeds: embedSchema.array().nullable(),
+        embeds: embedSchema.array().nullish(),
         /** Allowed mentions for the message */
-        allowedMentions: allowedMentionSchema.nullable(),
+        allowedMentions: allowedMentionSchema.nullish(),
         /** Components to include with the message */
-        components: messageComponentSchema.nullable(),
+        components: messageComponentSchema.nullish(),
         /** IDs of up to 3 stickers in the server to send in the message */
-        stickerIds: z.string().array().max(3).nullable(),
+        stickerIds: z.string().array().max(3).nullish(),
         /** Contents of the file being sent. See Uploading Files */
         files: z.unknown().optional(),
         /** Attachment objects with filename and description. See Uploading Files */
-        attachments: attachmentSchema.partial().array().nullable(),
+        attachments: attachmentSchema.partial().array().nullish(),
         /** Message flags combined as a bitfield (only SUPPRESS_EMBEDS can be set) */
-        flags: z.number().int().nullable()
+        flags: z.number().int().nullish()
       })
       .partial(),
     /** the IDs of the set of tags that have been applied to a thread in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */
-    appliedTags: snowflake.array().nullable()
+    appliedTags: snowflake.array().nullish()
   })
 });
 

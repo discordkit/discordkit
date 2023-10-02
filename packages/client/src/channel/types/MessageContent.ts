@@ -2,7 +2,6 @@ import { z } from "zod";
 import { allowedMentionSchema } from "./AllowedMention.ts";
 import { attachmentSchema } from "./Attachment.ts";
 import { embedSchema } from "./Embed.ts";
-import { messageFlagSchema } from "./MessageFlag.ts";
 import { messageReferenceSchema } from "./MessageReference.ts";
 import { messageComponentSchema } from "./MessageComponent.ts";
 
@@ -29,7 +28,7 @@ export const messageContentSchema = z
     /** Attachment objects with filename and description. See Uploading Files */
     attachments: attachmentSchema.partial().array(),
     /** Message flags combined as a bitfield (only SUPPRESS_EMBEDS can be set) */
-    flags: messageFlagSchema
+    flags: z.number().int()
   })
   .partial();
 

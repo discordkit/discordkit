@@ -17,11 +17,11 @@ export const modifyGuildWelcomeScreenSchema = z.object({
   body: z
     .object({
       /** whether the welcome screen is enabled */
-      enabled: z.boolean().nullable(),
+      enabled: z.boolean().nullish(),
       /** channels linked in the welcome screen and their display options */
-      welcomeChannels: welcomeChannelSchema.array().nullable(),
+      welcomeChannels: welcomeChannelSchema.array().nullish(),
       /** the server description to show in the welcome screen */
-      description: z.string().min(1).nullable()
+      description: z.string().min(1).nullish()
     })
     .partial()
 });

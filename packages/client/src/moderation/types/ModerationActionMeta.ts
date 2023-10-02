@@ -12,7 +12,7 @@ export const moderationActionMetaSchema = z.union([
   }),
   z.object({
     /** additional explanation that will be shown to members whenever their message is blocked */
-    customMessage: z.string().max(150).nullable()
+    customMessage: z.string().max(150).nullish()
   })
 ]);
 

@@ -12,13 +12,13 @@ export const interactionDataSchema = z.object({
   /** the type of the invoked command */
   type: applicationCommandTypeSchema,
   /** converted users + roles + channels + attachments */
-  resolved: resolvedDataSchema.nullable(),
+  resolved: resolvedDataSchema.nullish(),
   /** the params + values from the user */
-  options: applicationCommandInteractionDataOptionSchema.array().nullable(),
+  options: applicationCommandInteractionDataOptionSchema.array().nullish(),
   /** the id of the guild the command is registered to */
-  guildId: snowflake.nullable(),
+  guildId: snowflake.nullish(),
   /** id of the user or message targeted by a user or message command */
-  targetId: snowflake.nullable()
+  targetId: snowflake.nullish()
 });
 
 export type InteractionDataSchema = z.infer<typeof interactionDataSchema>;

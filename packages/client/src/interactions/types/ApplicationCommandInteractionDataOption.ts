@@ -9,9 +9,9 @@ const base = z.object({
   /** Value of the option resulting from user input */
   value: z
     .union([z.string(), z.number().int(), z.number(), z.boolean()])
-    .nullable(),
+    .nullish(),
   /** true if this option is the currently focused option for autocomplete */
-  focused: z.boolean().nullable()
+  focused: z.boolean().nullish()
 });
 
 type Base = z.infer<typeof base> & {
@@ -22,7 +22,7 @@ export const applicationCommandInteractionDataOptionSchema: z.ZodType<Base> =
   base.extend({
     /** Present if this option is a group or subcommand */
     options: z.lazy<z.ZodType<Base[] | null>>(
-      () => base.array().nullable() as z.ZodType<Base[] | null>
+      () => base.array().nullish() as z.ZodType<Base[] | null>
     )
   });
 

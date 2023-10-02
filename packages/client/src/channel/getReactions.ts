@@ -16,9 +16,9 @@ export const getReactionsSchema = z.object({
   params: z
     .object({
       /** Get users after this user ID */
-      after: snowflake.nullable(),
+      after: snowflake.nullish(),
       /** Max number of users to return (1-100) Default: 25 */
-      limit: z.number().int().min(1).max(100).nullable().default(25)
+      limit: z.number().int().min(1).max(100).nullish().default(25)
     })
     .partial()
     .optional()

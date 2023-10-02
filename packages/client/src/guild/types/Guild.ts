@@ -21,27 +21,27 @@ export const guildSchema = z.object({
   /** icon hash */
   icon: z.string().min(1).optional(),
   /** icon hash, returned when in the template object */
-  iconHash: z.string().min(1).nullable().optional(),
+  iconHash: z.string().min(1).nullish(),
   /** splash hash */
   splash: z.string().min(1).optional(),
   /** discovery splash hash; only present for guilds with the "DISCOVERABLE" feature */
   discoverySplash: z.string().min(1).optional(),
   /** true if the user is the owner of the guild */
-  owner: z.boolean().nullable().optional(),
+  owner: z.boolean().nullish(),
   /** id of owner */
   ownerId: snowflake,
   /** total permissions for the user in the guild (excludes overwrites) */
-  permissions: z.string().nullable(),
+  permissions: z.string().nullish(),
   /** @deprecated voice region id for the guild */
-  region: z.string().min(1).nullable().optional(),
+  region: z.string().min(1).nullish(),
   /** id of afk channel */
   afkChannelId: snowflake.optional(),
   /** afk timeout in seconds */
   afkTimeout: z.number().int().positive(),
   /** true if the server widget is enabled */
-  widgetEnabled: z.boolean().nullable(),
+  widgetEnabled: z.boolean().nullish(),
   /** the channel id that the widget will generate an invite to, or null if set to no invite */
-  widgetChannelId: snowflake.nullable().optional(),
+  widgetChannelId: snowflake.nullish(),
   /** verification level required for the guild */
   verificationLevel: verificationLevelSchema,
   /** default message notifications level */
@@ -65,9 +65,9 @@ export const guildSchema = z.object({
   /** the id of the channel where Community guilds can display rules and/or guidelines */
   rulesChannelId: snowflake.optional(),
   /** the maximum number of presences for the guild (null is always returned, apart from the largest of guilds) */
-  maxPresences: z.number().int().positive().nullable().optional(),
+  maxPresences: z.number().int().positive().nullish(),
   /** the maximum number of members for the guild */
-  maxMembers: z.number().int().positive().nullable(),
+  maxMembers: z.number().int().positive().nullish(),
   /** the vanity url code for the guild */
   vanityUrlCode: z.string().min(1).optional(),
   /** the description of a Community guild */
@@ -77,25 +77,25 @@ export const guildSchema = z.object({
   /** premium tier (Server Boost level) */
   premiumTier: premiumTierSchema,
   /** the number of boosts this guild currently has */
-  premiumSubscriptionCount: z.number().int().positive().nullable(),
+  premiumSubscriptionCount: z.number().int().positive().nullish(),
   /** the preferred locale of a Community guild; used in server discovery and notices from Discord, and sent in interactions; defaults to "en-US" */
   preferredLocale: localesSchema,
   /** the id of the channel where admins and moderators of Community guilds receive notices from Discord */
   publicUpdatesChannelId: snowflake.optional(),
   /** the maximum amount of users in a video channel */
-  maxVideoChannelUsers: z.number().int().positive().nullable(),
+  maxVideoChannelUsers: z.number().int().positive().nullish(),
   /** the maximum amount of users in a stage video channel */
-  maxStageVideoChannelUsers: z.number().int().positive().nullable(),
+  maxStageVideoChannelUsers: z.number().int().positive().nullish(),
   /** approximate number of members in this guild, returned from the **GET** `/guilds/:guild` endpoint when `withCounts` is `true` */
-  approximateMemberCount: z.number().int().positive().nullable(),
+  approximateMemberCount: z.number().int().positive().nullish(),
   /** approximate number of non-offline members in this guild, returned from the **GET** `/guilds/:guild` endpoint when `withCounts` is `true` */ approximatePresenceCount:
-    z.number().int().positive().nullable(),
+    z.number().int().positive().nullish(),
   /** the welcome screen of a Community guild, shown to new members, returned in an Invite's guild object */
-  welcomeScreen: welcomeScreenSchema.nullable(),
+  welcomeScreen: welcomeScreenSchema.nullish(),
   /** guild NSFW level */
   nsfwLevel: guildNSFWLevelSchema,
   /** custom guild stickers */
-  stickers: stickerSchema.array().nullable(),
+  stickers: stickerSchema.array().nullish(),
   /** whether the guild has the boost progress bar enabled */
   premiumProgressBarEnabled: z.boolean(),
   /** the id of the channel where admins and moderators of Community guilds receive safety alerts from Discord */

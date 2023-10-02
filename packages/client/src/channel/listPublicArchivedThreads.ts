@@ -17,9 +17,9 @@ export const listPublicArchivedThreadsSchema = z.object({
   params: z
     .object({
       /** returns threads before this timestamp */
-      before: z.string().datetime().nullable(),
+      before: z.string().datetime().nullish(),
       /** optional maximum number of threads to return */
-      limit: z.number().int().positive().nullable()
+      limit: z.number().int().positive().nullish()
     })
     .partial()
     .optional()

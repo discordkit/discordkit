@@ -9,15 +9,15 @@ export const buttonSchema = z.object({
   /** A button style */
   style: buttonStyleSchema,
   /** Text that appears on the button; max 80 characters */
-  label: z.string().max(80).nullable(),
+  label: z.string().max(80).nullish(),
   /** name, id, and animated */
-  emoji: emojiSchema.pick({ id: true, name: true, animated: true }).nullable(),
+  emoji: emojiSchema.pick({ id: true, name: true, animated: true }).nullish(),
   /** Developer-defined identifier for the button; max 100 characters */
-  customId: z.string().max(100).nullable(),
+  customId: z.string().max(100).nullish(),
   /** URL for link-style buttons */
-  url: z.string().url().nullable(),
+  url: z.string().url().nullish(),
   /** Whether the button is disabled (defaults to false) */
-  disabled: z.boolean().nullable().default(false)
+  disabled: z.boolean().nullish().default(false)
 });
 
 export type Button = z.infer<typeof buttonSchema>;

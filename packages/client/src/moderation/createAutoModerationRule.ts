@@ -25,15 +25,15 @@ export const createAutoModerationRuleSchema = z.object({
     /** the trigger type */
     triggerType: moderationTriggerTypeSchema,
     /** the trigger metadata */
-    triggerMetadata: triggerMetaSchema.nullable(),
+    triggerMetadata: triggerMetaSchema.nullish(),
     /** the actions which will execute when the rule is triggered */
     actions: moderationActionSchema.array(),
     /** whether the rule is enabled (False by default) */
-    enabled: z.boolean().nullable().default(false),
+    enabled: z.boolean().nullish().default(false),
     /** the role ids that should not be affected by the rule (Maximum of 20) */
-    exemptRoles: snowflake.array().max(20).nullable(),
+    exemptRoles: snowflake.array().max(20).nullish(),
     /** the channel ids that should not be affected by the rule (Maximum of 50) */
-    exemptChannels: snowflake.array().max(50).nullable()
+    exemptChannels: snowflake.array().max(50).nullish()
   })
 });
 

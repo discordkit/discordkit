@@ -24,7 +24,7 @@ export const modifyAutoModerationRuleSchema = z.object({
       /** the event type */
       eventType: moderationEventSchema,
       /** the trigger metadata */
-      triggerMetadata: triggerMetaSchema.nullable(),
+      triggerMetadata: triggerMetaSchema.nullish(),
       /** the actions which will execute when the rule is triggered */
       actions: moderationActionSchema.array(),
       /** whether the rule is enabled (False by default) */

@@ -15,7 +15,7 @@ export const modifyGuildRolePositionsSchema = z.object({
       /** role */
       id: snowflake,
       /** sorting position of the role */
-      position: z.number().int().positive().nullable().optional()
+      position: z.number().int().positive().nullish()
     })
     .array()
 });

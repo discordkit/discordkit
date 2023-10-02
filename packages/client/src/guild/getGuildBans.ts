@@ -14,11 +14,11 @@ export const getGuildBansSchema = z.object({
   params: z
     .object({
       /** of users to return (up to maximum 1000) */
-      limit: z.number().int().min(1).max(1000).nullable(),
+      limit: z.number().int().min(1).max(1000).nullish(),
       /** consider only users before given user id */
-      before: snowflake.nullable(),
+      before: snowflake.nullish(),
       /** consider only users after given user id */
-      after: snowflake.nullable()
+      after: snowflake.nullish()
     })
     .partial()
     .optional()

@@ -18,7 +18,7 @@ export const getGuildScheduledEventSchema = z.object({
   params: z
     .object({
       /** include number of users subscribed to this event */
-      withUserCount: z.boolean().nullable()
+      withUserCount: z.boolean().nullish()
     })
     .partial()
     .optional()

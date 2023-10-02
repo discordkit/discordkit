@@ -14,11 +14,11 @@ export const listThreadMembersSchema = z.object({
   params: z
     .object({
       /** Whether to include a guild member object for each thread member */
-      withMember: z.boolean().nullable(),
+      withMember: z.boolean().nullish(),
       /** Get thread members after this user ID */
-      after: snowflake.nullable(),
+      after: snowflake.nullish(),
       /** Max number of thread members to return (1-100). Defaults to 100. */
-      limit: z.number().int().min(1).max(100).nullable().default(100)
+      limit: z.number().int().min(1).max(100).nullish().default(100)
     })
     .partial()
     .optional()

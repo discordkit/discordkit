@@ -14,7 +14,7 @@ export const modifyUserVoiceStateSchema = z.object({
     /** the id of the channel the user is currently in */
     channelId: snowflake,
     /** toggles the user's suppress state */
-    suppress: z.boolean().nullable()
+    suppress: z.boolean().nullish()
   })
 });
 

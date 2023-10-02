@@ -12,7 +12,7 @@ export const integrationApplicationSchema = z.object({
   /** the description of the app */
   description: z.string(),
   /** the bot associated with this application */
-  bot: userSchema.nullable()
+  bot: userSchema.nullish()
 });
 
 export type IntegrationApplication = z.infer<

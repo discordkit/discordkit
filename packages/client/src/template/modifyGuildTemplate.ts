@@ -17,9 +17,9 @@ export const modifyGuildTemplateSchema = z.object({
   body: z
     .object({
       /** name of the template (1-100 characters) */
-      name: z.string().min(1).max(120).nullable(),
+      name: z.string().min(1).max(120).nullish(),
       /** description for the template (0-120 characters) */
-      description: z.string().min(0).max(120).nullable().optional()
+      description: z.string().min(0).max(120).nullish()
     })
     .partial()
 });

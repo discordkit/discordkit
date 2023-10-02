@@ -16,7 +16,7 @@ export const listScheduledEventsForGuildSchema = z.object({
   guild: snowflake,
   params: z
     .object({
-      withUserCount: z.boolean().nullable()
+      withUserCount: z.boolean().nullish()
     })
     .partial()
     .optional()

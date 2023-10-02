@@ -14,19 +14,19 @@ export const modifyGuildMemberSchema = z.object({
   body: z
     .object({
       /** value to set user's nickname to	(Requires `MANAGE_NICKNAMES` permission) */
-      nick: z.string().min(1).nullable(),
+      nick: z.string().min(1).nullish(),
       /** array of role ids the member is assigned (Requires `MANAGE_ROLES` permission) */
-      roles: snowflake.array().nullable(),
+      roles: snowflake.array().nullish(),
       /** whether the user is muted in voice channels (Requires `MUTE_MEMBERS` permission) */
-      mute: z.boolean().nullable(),
+      mute: z.boolean().nullish(),
       /** whether the user is deafened in voice channels (Requires `DEAFEN_MEMBERS` permission) */
-      deaf: z.boolean().nullable(),
+      deaf: z.boolean().nullish(),
       /** id of channel to move user to (if they are connected to voice) (Requires `MOVE_MEMBERS` permission) */
-      channelId: snowflake.nullable(),
+      channelId: snowflake.nullish(),
       /** when the user's timeout will expire and the user will be able to communicate in the guild again (up to 28 days in the future), set to null to remove timeout. Will throw a 403 error if the user has the `ADMINISTRATOR` permission or is the owner of the guild (Requires `MODERATE_MEMBERS` permission) */
-      communicationDisabledUntil: z.string().datetime().nullable(),
+      communicationDisabledUntil: z.string().datetime().nullish(),
       /** guild member flags */
-      flags: z.number().int().nullable()
+      flags: z.number().int().nullish()
     })
     .partial()
 });

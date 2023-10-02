@@ -15,28 +15,26 @@ const applicationCommandOptionBase = z.object({
   /** Localization dictionary for the name field. Values follow the same restrictions as name */
   nameLocalizations: z
     .record(localesSchema, z.string().min(1).max(32))
-    .nullable()
-    .optional(),
+    .nullish(),
   /** 1-100 character description */
   description: z.string().min(1).max(100),
   /** Localization dictionary for the description field. Values follow the same restrictions as description */
   descriptionLocalizations: z
     .record(localesSchema, z.string().min(1).max(100))
-    .nullable()
-    .optional(),
+    .nullish(),
   /** If the parameter is required or optional--default false */
-  required: z.boolean().nullable().default(false),
+  required: z.boolean().nullish().default(false),
   /** Choices for STRING, INTEGER, and NUMBER types for the user to pick from, max 25 */
-  choices: applicationCommandOptionChoiceSchema.array().max(25).nullable(),
+  choices: applicationCommandOptionChoiceSchema.array().max(25).nullish(),
   /** If the option is a channel type, the channels shown will be restricted to these types */
-  channelTypes: channelTypeSchema.array().nullable(),
+  channelTypes: channelTypeSchema.array().nullish(),
   /** If autocomplete interactions are enabled for this STRING, INTEGER, or NUMBER type option */
-  autocomplete: z.boolean().nullable()
+  autocomplete: z.boolean().nullish()
 });
 
 const applicationCommandOptionRecursive = applicationCommandOptionBase.extend({
   /** If the option is a subcommand or subcommand group type, these nested options will be the parameters */
-  options: z.lazy(() => applicationCommandOptionBase.array().nullable())
+  options: z.lazy(() => applicationCommandOptionBase.array().nullish())
 });
 
 export const applicationCommandOptionSchema = z.intersection(

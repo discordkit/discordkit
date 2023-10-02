@@ -11,9 +11,9 @@ export const connectionSchema = z.object({
   /** the service of the connection (twitch, youtube) */
   type: servicesSchema,
   /** whether the connection is revoked */
-  revoked: z.boolean().nullable(),
+  revoked: z.boolean().nullish(),
   /** an array of partial server integrations */
-  integrations: integrationSchema.array().nullable(),
+  integrations: integrationSchema.array().nullish(),
   /** whether the connection is verified */
   verified: z.boolean(),
   /** whether friend sync is enabled for this connection */

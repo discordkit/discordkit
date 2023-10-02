@@ -9,7 +9,7 @@ export const scheduledEventUserSchema = z.object({
   /** user which subscribed to an event */
   user: userSchema,
   /** guild member data for this user for the guild which this event belongs to, if any */
-  member: memberSchema.nullable()
+  member: memberSchema.nullish()
 });
 
 export type ScheduledEventUser = z.infer<typeof scheduledEventUserSchema>;

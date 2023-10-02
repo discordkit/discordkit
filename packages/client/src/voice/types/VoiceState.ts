@@ -7,13 +7,13 @@ import { memberSchema } from "../../guild/types/Member.ts";
 
 export const voiceStateSchema = z.object({
   /** the guild id this voice state is for */
-  guildId: snowflake.nullable(),
+  guildId: snowflake.nullish(),
   /** the channel id this user is connected to */
   channelId: snowflake.optional(),
   /** the user id this voice state is for */
   userId: snowflake,
   /** guild member object	the guild member this voice state is for */
-  member: memberSchema.nullable(),
+  member: memberSchema.nullish(),
   /** the session id for this voice state */
   sessionId: z.string().min(1),
   /** whether this user is deafened by the server */
@@ -25,7 +25,7 @@ export const voiceStateSchema = z.object({
   /** whether this user is locally muted */
   selfMute: z.boolean(),
   /** whether this user is streaming using "Go Live" */
-  selfStream: z.boolean().nullable(),
+  selfStream: z.boolean().nullish(),
   /** whether this user's camera is enabled */
   selfVideo: z.boolean(),
   /** whether this user is muted by the current user */

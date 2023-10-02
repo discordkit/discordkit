@@ -29,9 +29,9 @@ const threadOptions = sharedChannelOptions
     /** amount of seconds a user has to wait before sending another message (0-21600); bots, as well as users with the permission `manage_messages`, `manage_thread`, or `manage_channel`, are unaffected */
     rateLimitPerUser: z.number().min(0).max(21600),
     /** channel flags combined as a bitfield; PINNED can only be set for threads in forum channels */
-    flags: z.number().int().nullable(),
+    flags: z.number().int().nullish(),
     /** the IDs of the set of tags that have been applied to a thread in a `GUILD_FORUM` or a `GUILD_MEDIA` channel; limited to 5 */
-    appliedTags: snowflake.array().max(5).nullable()
+    appliedTags: snowflake.array().max(5).nullish()
   })
   .partial();
 

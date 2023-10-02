@@ -11,9 +11,9 @@ export const threadMetadataSchema = z.object({
   /** whether the thread is locked; when a thread is locked, only users with MANAGE_THREADS can unarchive it */
   locked: z.boolean(),
   /** whether non-moderators can add other non-moderators to a thread; only available on private threads */
-  invitable: z.boolean().nullable(),
+  invitable: z.boolean().nullish(),
   /** timestamp when the thread was created; only populated for threads created after 2022-01-09 */
-  createTimestamp: z.string().datetime().nullable().optional()
+  createTimestamp: z.string().datetime().nullish()
 });
 
 export type ThreadMetadata = z.infer<typeof threadMetadataSchema>;

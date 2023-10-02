@@ -14,7 +14,7 @@ export const createGuildFromTemplateSchema = z.object({
     /** name of the guild (2-100 characters) */
     name: z.string().min(2).max(100),
     /** base64 128x128 image for the guild icon */
-    icon: z.string().nullable()
+    icon: z.string().nullish()
   })
 });
 

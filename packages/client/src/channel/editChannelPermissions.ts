@@ -12,9 +12,9 @@ export const editChannelPermissionsSchema = z.object({
   overwrite: snowflake,
   body: z.object({
     /** the bitwise value of all allowed permissions (default "0") */
-    allow: z.string().nullable().optional().default(`0`),
+    allow: z.string().nullish().default(`0`),
     /** the bitwise value of all disallowed permissions (default "0") */
-    deny: z.string().nullable().optional().default(`0`),
+    deny: z.string().nullish().default(`0`),
     /** 0 for a role or 1 for a member */
     type: z.union([z.literal(0), z.literal(1)])
   })

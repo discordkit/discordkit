@@ -14,7 +14,7 @@ export const messageInteractionSchema = z.object({
   /** the user who invoked the interaction */
   user: userSchema,
   /** the member who invoked the interaction in the guild */
-  member: memberSchema.partial().nullable()
+  member: memberSchema.partial().nullish()
 });
 
 export type MessageInteraction = z.infer<typeof messageInteractionSchema>;

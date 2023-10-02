@@ -23,35 +23,33 @@ export const bulkOverwriteGuildApplicationCommandsSchema = z.object({
   body: z
     .object({
       /** ID of the command, if known */
-      id: snowflake.nullable(),
+      id: snowflake.nullish(),
       /** Name of command, 1-32 characters */
       name: z.string().min(1).max(32),
       /** Localization dictionary for the `name` field. Values follow the same restrictions as `name` */
       nameLocalizations: z
         .record(localesSchema, z.string().min(1).max(32))
-        .nullable()
-        .optional(),
+        .nullish(),
       /** 1-100 character description */
       description: z.string().min(1).max(100),
       /** Localization dictionary for the `description` field. Values follow the same restrictions as `description` */
       descriptionLocalizations: z
         .record(localesSchema, z.string().min(1).max(100))
-        .nullable()
-        .optional(),
+        .nullish(),
       /** Parameters for the command */
-      options: applicationCommandOptionSchema.array().nullable(),
+      options: applicationCommandOptionSchema.array().nullish(),
       /** Set of permissions represented as a bit set */
-      defaultMemberPermissions: z.string().nullable().optional(),
+      defaultMemberPermissions: z.string().nullish(),
       /** Indicates whether the command is available in DMs with the app, only for globally-scoped commands. By default, commands are visible. */
-      dmPermission: z.boolean().nullable().optional(),
+      dmPermission: z.boolean().nullish(),
       /** Replaced by `defaultMemberPermissions` and will be deprecated in the future. Indicates whether the command is enabled by default when the app is added to a guild. Defaults to `true` */
-      defaultPermission: z.boolean().default(true).nullable(),
+      defaultPermission: z.boolean().default(true).nullish(),
       /** Type of command, defaults `1` if not set */
       type: applicationCommandTypeSchema
         .default(ApplicationCommandType.CHAT_INPUT)
-        .nullable(),
+        .nullish(),
       /** Indicates whether the command is age-restricted */
-      nsfw: z.boolean().nullable()
+      nsfw: z.boolean().nullish()
     })
     .array()
     .max(25)

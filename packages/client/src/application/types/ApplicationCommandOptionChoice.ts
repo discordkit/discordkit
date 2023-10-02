@@ -7,8 +7,7 @@ export const applicationCommandOptionChoiceSchema = z.object({
   /** Localization dictionary for the name field. Values follow the same restrictions as name */
   nameLocalizations: z
     .record(localesSchema, z.string().min(1).max(100))
-    .nullable()
-    .optional(),
+    .nullish(),
   /** Value for the choice, up to 100 characters if string */
   value: z.union([z.string().min(1).max(100), z.number().int(), z.number()])
 });

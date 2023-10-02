@@ -9,6 +9,7 @@
   "packageManager": "yarn@3.6.3",
   "private": true,
   "workspaces": [
+    "examples/*",
     "packages/*"
   ],
   "type": "module",
@@ -54,6 +55,7 @@
   "eslintConfig": {
     "extends": [
       "@saeris/eslint-config/base",
+      "@saeris/eslint-config/next",
       "@saeris/eslint-config/typescript",
       "@saeris/eslint-config/type-aware"
     ],
@@ -65,7 +67,7 @@
         "typescript": {
           "project": [
             "./tsconfig.json",
-            "packages/*/tsconfig.json"
+            "examples/*/tsconfig.json"
           ]
         }
       }
