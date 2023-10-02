@@ -58,13 +58,18 @@ const createMock =
   ): z.infer<S> => {
     const result = responseSchema ? mockSchema(responseSchema, opts) : null;
 
-    beforeAll(() => {
-      msw.use(
-        rest[type](
-          new URL(path.replace(/^\//, ``), endpoint).href,
-          (_, res, ctx) => res(ctx.json(result))
-        )
-      );
+    beforeAll(async () => {
+      await new Promise((resolve) => {
+        setTimeout(() => {
+          msw.use(
+            rest[type](
+              new URL(path.replace(/^\//, ``), endpoint).href,
+              (_, res, ctx) => res(ctx.json(result))
+            )
+          );
+          resolve(null);
+        }, 100);
+      });
     });
 
     return result;
