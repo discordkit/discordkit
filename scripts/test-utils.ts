@@ -68,8 +68,6 @@ const createMock =
             })
         )
       );
-
-      console.log({ handlers: msw.listHandlers().map(({ info }) => info) });
     });
 
     return result;

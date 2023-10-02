@@ -10,7 +10,7 @@ jobs:
   test:
     name: Lint, Test, and Typecheck
     timeout-minutes: 15
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     env:
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
