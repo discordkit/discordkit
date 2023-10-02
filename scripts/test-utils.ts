@@ -56,17 +56,19 @@ const createMock =
   ): z.infer<S> => {
     const result = responseSchema ? mockSchema(responseSchema, opts) : null;
 
-    msw.use(
-      http[type](
-        new URL(path.replace(/^\//, ``), endpoint).href,
-        () =>
-          new Response(JSON.stringify(result), {
-            headers: {
-              "Content-Type": `application/json`
-            }
-          })
-      )
-    );
+    beforeEach(() => {
+      msw.use(
+        http[type](
+          new URL(path.replace(/^\//, ``), endpoint).href,
+          () =>
+            new Response(JSON.stringify(result), {
+              headers: {
+                "Content-Type": `application/json`
+              }
+            })
+        )
+      );
+    });
 
     return result;
   };

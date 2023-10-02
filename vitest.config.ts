@@ -6,7 +6,7 @@ export default defineConfig({
     name: `discordkit`,
     globals: true,
     watch: false,
-    environment: `jsdom`,
+    environment: `happy-dom`,
     setupFiles: `./scripts/setup.ts`
   },
   resolve: {

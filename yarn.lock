@@ -2811,6 +2811,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"css.escape@npm:^1.5.1":
+  version: 1.5.1
+  resolution: "css.escape@npm:1.5.1"
+  checksum: f6d38088d870a961794a2580b2b2af1027731bb43261cfdce14f19238a88664b351cc8978abc20f06cc6bbde725699dec8deb6fe9816b139fc3f2af28719e774
+  languageName: node
+  linkType: hard
+
 "cssesc@npm:^3.0.0":
   version: 3.0.0
   resolution: "cssesc@npm:3.0.0"
@@ -3109,6 +3116,7 @@ __metadata:
     eslint: ^8.50.0
     eslint-import-resolver-typescript: ^3.6.1
     eslint-plugin-vitest: ^0.3.1
+    happy-dom: ^12.6.0
     jsdom: ^22.1.0
     msw: next
     nodejs-snowflake: ^2.0.1
@@ -3245,7 +3253,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"entities@npm:^4.4.0":
+"entities@npm:^4.4.0, entities@npm:^4.5.0":
   version: 4.5.0
   resolution: "entities@npm:4.5.0"
   checksum: 853f8ebd5b425d350bffa97dd6958143179a5938352ccae092c62d1267c4e392a039be1bae7d51b6e4ffad25f51f9617531fedf5237f15df302ccfb452cbf2d7
@@ -4601,6 +4609,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"happy-dom@npm:^12.6.0":
+  version: 12.6.0
+  resolution: "happy-dom@npm:12.6.0"
+  dependencies:
+    css.escape: ^1.5.1
+    entities: ^4.5.0
+    iconv-lite: ^0.6.3
+    webidl-conversions: ^7.0.0
+    whatwg-encoding: ^2.0.0
+    whatwg-mimetype: ^3.0.0
+  checksum: 7811395dd7233611eaaa6ff6e0f654a4b26facf6fdc5be9db5530a5bc381951a2cad0acd6dd0d51acd9887c3a921ed15844bdad8fefbd04a544fc0cf33097c22
+  languageName: node
+  linkType: hard
+
 "has-bigints@npm:^1.0.1, has-bigints@npm:^1.0.2":
   version: 1.0.2
   resolution: "has-bigints@npm:1.0.2"
@@ -4790,7 +4812,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"iconv-lite@npm:0.6.3, iconv-lite@npm:^0.6.2":
+"iconv-lite@npm:0.6.3, iconv-lite@npm:^0.6.2, iconv-lite@npm:^0.6.3":
   version: 0.6.3
   resolution: "iconv-lite@npm:0.6.3"
   dependencies:

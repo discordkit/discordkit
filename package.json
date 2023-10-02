@@ -154,5 +154,8 @@
         }
       }
     }
+  },
+  "devDependencies": {
+    "happy-dom": "^12.6.0"
   }
 }
