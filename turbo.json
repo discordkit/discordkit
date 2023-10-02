@@ -3,7 +3,7 @@
   "globalDependencies": ["tsconfig.json", "vitest.config.ts"],
   "pipeline": {
     "//#lint": {},
-    "//#test:ci": {
+    "//#test": {
       "inputs": ["./pacakges/*/src/**"],
       "outputs": [".coverage/**"]
     },
