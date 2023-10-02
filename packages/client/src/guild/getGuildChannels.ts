@@ -7,7 +7,7 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { channelSchema, type Channel } from "#/channel/types/Channel.ts";
+import { channelSchema, type Channel } from "../channel/types/Channel.ts";
 
 export const getGuildChannelsSchema = z.object({
   guild: snowflake

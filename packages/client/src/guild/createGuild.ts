@@ -6,7 +6,7 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { channelSchema } from "#/channel/types/Channel.ts";
+import { channelSchema } from "../channel/types/Channel.ts";
 import { verificationLevelSchema } from "./types/VerificationLevel.ts";
 import { defaultMessageNotificationLevelSchema } from "./types/DefaultMessageNotificationLevel.ts";
 import { explicitContentFilterLevelSchema } from "./types/ExplicitContentFilterLevel.ts";

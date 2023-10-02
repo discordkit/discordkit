@@ -13,14 +13,13 @@
   ],
   "type": "module",
   "scripts": {
-    "build": "tsup",
-    "lint": "eslint \"./src/**/*.{j,t}s?(x)\"",
+    "build:types": "tsc -b",
+    "lint": "eslint \"./packages/**/*.{j,t}s?(x)\" --cache",
     "format": "yarn lint --fix",
     "prepublishOnly": "yarn lint && yarn test",
     "prepack": "yarn build",
     "release": "release-it",
-    "test": "vitest",
-    "typecheck": "tsc --noEmit"
+    "test": "vitest"
   },
   "dependencies": {
     "@anatine/zod-mock": "^3.13.2",
@@ -124,17 +123,6 @@
     "trailingComma": "none",
     "bracketSpacing": true,
     "jsxBracketSameLine": false
-  },
-  "tsup": {
-    "entry": [
-      "src/index.ts"
-    ],
-    "format": [
-      "esm"
-    ],
-    "treeshake": true,
-    "sourcemap": true,
-    "clean": true
   },
   "release-it": {
     "git": {

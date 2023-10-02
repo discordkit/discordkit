@@ -7,15 +7,15 @@ import type {
   unsetMarker
 } from "@trpc/server";
 import { isNonNullable } from "./isNonNullable.ts";
-import type { Fetcher } from "./types.ts";
+import type { Fetcher } from "./methods.ts";
 
 type Result<T = void> = T extends z.ZodTypeAny ? z.infer<T> : T;
 
-export type Base = ReturnType<(typeof initTRPC)["create"]>["procedure"];
+type ProcedureBuilder = ReturnType<(typeof initTRPC)["create"]>["procedure"];
 
 type UnsetMarker = typeof unsetMarker;
 
-export type BaseProcedure<
+type BaseProcedure<
   T extends "mutation" | "query" | "subscription",
   I extends z.ZodTypeAny | null = null,
   O extends z.ZodTypeAny | null = null
@@ -32,17 +32,12 @@ export type BaseProcedure<
   }
 >;
 
-export type ToProcedure<
-  T extends "mutation" | "query" | "subscription" = "query",
-  I extends z.ZodTypeAny | null = null,
-  O extends z.ZodTypeAny | null = null
-> = (
-  type: T,
-  fn: Fetcher<I extends z.ZodTypeAny ? I : z.ZodUnknown, Result<O>>,
-  input?: I,
-  output?: O
-) => (base: Base) => BaseProcedure<T, I, O>;
-
+/**
+ * Given a {@link Fetcher | Fetcher} function and it's associated input and
+ * output Zod schemas, this produces a function which accepts a tRPC procedure
+ * builder of the given procedure type. This can then be used in a tRPC router
+ * to scaffold an API route to forward a request to Discord's API.
+ */
 export const toProcedure =
   <
     T extends "mutation" | "query" | "subscription",
@@ -54,22 +49,22 @@ export const toProcedure =
     input?: I,
     output?: O
   ) =>
-  (base: Base): BaseProcedure<T, I, O> => {
+  (procedure: ProcedureBuilder): BaseProcedure<T, I, O> => {
     if (isNonNullable(input) && isNonNullable(output)) {
       // @ts-expect-error
-      return base
+      return procedure
         .input(input)
         .output(output)
         [type](async (opts) => fn(opts.input));
     }
     if (isNonNullable(input) && !isNonNullable(output)) {
       // @ts-expect-error
-      return base.input(input)[type](async (opts) => fn(opts.input));
+      return procedure.input(input)[type](async (opts) => fn(opts.input));
     }
     if (!isNonNullable(input) && isNonNullable(output)) {
       // @ts-expect-error
-      return base.output(output)[type](async () => fn());
+      return procedure.output(output)[type](async () => fn());
     }
     // @ts-expect-error
-    return base[type](async () => fn());
+    return procedure[type](async () => fn());
   };

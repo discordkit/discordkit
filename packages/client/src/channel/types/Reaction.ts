@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { emojiSchema } from "#/emoji/types/Emoji.ts";
+import { emojiSchema } from "../../emoji/types/Emoji.ts";
 import { reactionCountDetailsSchema } from "./ReactionCountDetails.ts";
 
 export const reactionSchema = z.object({

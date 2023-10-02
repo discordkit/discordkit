@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { post, type Fetcher, toProcedure, toValidated } from "@discordkit/core";
-import { channelSchema, type Channel } from "#/channel/types/Channel.ts";
-import { ChannelType } from "#/channel/types/ChannelType.ts";
+import { channelSchema, type Channel } from "../channel/types/Channel.ts";
+import { ChannelType } from "../channel/types/ChannelType.ts";
 
 export const createGroupDMSchema = z.object({
   body: z.object({

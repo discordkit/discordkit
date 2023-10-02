@@ -12,10 +12,6 @@
     "outDir": "dist",
     "composite": true,
     "noEmit": false,
-    "emitDeclarationOnly": true,
-    "baseUrl": ".",
-    "paths": {
-      "#*": ["./src/*"]
-    }
+    "emitDeclarationOnly": true
   }
 }

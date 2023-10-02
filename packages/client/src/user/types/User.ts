@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { localesSchema } from "#/application/types/Locales.ts";
 import { snowflake } from "@discordkit/core";
+import { localesSchema } from "../../application/types/Locales.ts";
 import { userFlagsSchema } from "./UserFlags.ts";
 import { premiumTypeSchema } from "./PremiumType.ts";
 

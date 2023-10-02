@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { allowedMentionSchema } from "#/channel/types/AllowedMention.ts";
-import { embedSchema } from "#/channel/types/Embed.ts";
-import { messageComponentSchema } from "#/channel/types/MessageComponent.ts";
-import { attachmentSchema } from "#/channel/types/Attachment.ts";
+import { allowedMentionSchema } from "../../channel/types/AllowedMention.ts";
+import { embedSchema } from "../../channel/types/Embed.ts";
+import { messageComponentSchema } from "../../channel/types/MessageComponent.ts";
+import { attachmentSchema } from "../../channel/types/Attachment.ts";
 
 export const interactionCallbackDataSchema = z.object({
   /** is the response TTS */

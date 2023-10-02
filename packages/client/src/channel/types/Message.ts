@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { stickerSchema } from "#/sticker/types/Sticker.ts";
-import { applicationSchema } from "#/application/types/Application.ts";
-import { userSchema } from "#/user/types/User.ts";
 import { snowflake } from "@discordkit/core";
+import { stickerSchema } from "../../sticker/types/Sticker.ts";
+import { applicationSchema } from "../../application/types/Application.ts";
+import { userSchema } from "../../user/types/User.ts";
 import { reactionSchema } from "./Reaction.ts";
 import { channelSchema } from "./Channel.ts";
 import { messageActivitySchema } from "./MessageActivity.ts";

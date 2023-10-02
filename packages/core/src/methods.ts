@@ -1,7 +1,15 @@
+import type { z } from "zod";
 import type { RequestParams } from "./addParams.ts";
 import { buildURL } from "./buildURL.ts";
 import type { RequestBody } from "./request.ts";
 import { request } from "./request.ts";
+
+export type Fetcher<
+  S extends z.ZodTypeAny | null = null,
+  R = void
+> = S extends null
+  ? () => Promise<R>
+  : (config: z.infer<NonNullable<S>>) => Promise<R>;
 
 export const get = async <T>(url: string, params?: RequestParams): Promise<T> =>
   request(buildURL(url, params));

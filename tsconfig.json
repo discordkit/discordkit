@@ -1,14 +1,8 @@
 {
-  "ts-node": {
-    "esm": true,
-    "swc": true
-  },
   "include": [
     "./examples/**/*.*",
-    "./packages/**/*.ts",
-    "./packages/**/*.d.ts",
-    "./scripts/*.ts",
-    "./*.ts"
+    "./packages/*/src/**/*.ts",
+    "./packages/*/src/**/*.d.ts"
   ],
   "exclude": ["node_modules"],
   "references": [
@@ -17,42 +11,30 @@
   ],
   "compilerOptions": {
     "noEmit": true,
-    "isolatedModules": true,
-    // Always include these settings
-    "declarationMap": true,
+    "declaration": true,
     "sourceMap": true,
-    "importHelpers": true,
-    /* Basic Options */
+    "lib": ["ESNext", "DOM"],
+    "types": ["node", "vitest/globals"],
     "target": "ESNext",
     "module": "NodeNext",
-    "lib": [
-      "ESNext", // adds support for ESNext functionality
-      "DOM" // adds support for 'window' other dom methods
-    ],
-    "types": ["vitest/globals"],
-    "allowJs": true,
-    /* JSX support */
-    "jsx": "preserve",
-    "declaration": true,
-    /* Strict Type-Checking Options */
-    "strict": false,
-    "strictNullChecks": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    // "strictFunctionTypes": true,
-    /* Module Resolution Options */
     "moduleResolution": "NodeNext",
-    "allowImportingTsExtensions": true,
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
     "baseUrl": ".",
     "paths": {
       "test-utils": ["./scripts/test-utils.ts"]
     },
-    /* Advanced Options */
-    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "allowJs": true,
+    "allowImportingTsExtensions": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "importHelpers": true,
     "skipLibCheck": true,
-    "noErrorTruncation": true
+    "forceConsistentCasingInFileNames": true,
+    "noErrorTruncation": true,
+    "strict": false,
+    "strictNullChecks": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
   }
 }

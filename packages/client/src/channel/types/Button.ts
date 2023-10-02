@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { emojiSchema } from "#/emoji/types/Emoji.ts";
+import { emojiSchema } from "../../emoji/types/Emoji.ts";
 import { buttonStyleSchema } from "./ButtonStyle.ts";
 import { ComponentType } from "./ComponentType.ts";
 

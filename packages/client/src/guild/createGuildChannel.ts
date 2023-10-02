@@ -6,15 +6,15 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { channelSchema, type Channel } from "#/channel/types/Channel.ts";
-import { channelTypeSchema } from "#/channel/types/ChannelType.ts";
-import { overwriteSchema } from "#/channel/types/Overwrite.ts";
-import { videoQualityModeSchema } from "#/channel/types/VideoQualityMode.ts";
-import { autoArchiveDurationSchema } from "#/channel/types/AutoArchiveDuration.ts";
-import { defaultReactionSchema } from "#channel/types/DefaultReaction.ts";
-import { forumTagSchema } from "#channel/types/ForumTag.ts";
-import { sortOrderTypeSchema } from "#channel/types/SortOrderType.ts";
-import { forumLayoutTypeSchema } from "#channel/types/ForumLayoutType.ts";
+import { channelSchema, type Channel } from "../channel/types/Channel.ts";
+import { channelTypeSchema } from "../channel/types/ChannelType.ts";
+import { overwriteSchema } from "../channel/types/Overwrite.ts";
+import { videoQualityModeSchema } from "../channel/types/VideoQualityMode.ts";
+import { autoArchiveDurationSchema } from "../channel/types/AutoArchiveDuration.ts";
+import { defaultReactionSchema } from "../channel/types/DefaultReaction.ts";
+import { forumTagSchema } from "../channel/types/ForumTag.ts";
+import { sortOrderTypeSchema } from "../channel/types/SortOrderType.ts";
+import { forumLayoutTypeSchema } from "../channel/types/ForumLayoutType.ts";
 
 export const createGuildChannelSchema = z.object({
   guild: snowflake,

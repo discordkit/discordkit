@@ -6,7 +6,7 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { localesSchema } from "#/application/types/Locales.ts";
+import { localesSchema } from "../application/types/Locales.ts";
 import { type Guild, guildSchema } from "./types/Guild.ts";
 import { verificationLevelSchema } from "./types/VerificationLevel.ts";
 import { defaultMessageNotificationLevelSchema } from "./types/DefaultMessageNotificationLevel.ts";

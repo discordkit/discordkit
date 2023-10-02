@@ -6,8 +6,8 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { channelSchema, type Channel } from "#/channel/types/Channel.ts";
-import { ChannelType } from "#/channel/types/ChannelType.ts";
+import { channelSchema, type Channel } from "../channel/types/Channel.ts";
+import { ChannelType } from "../channel/types/ChannelType.ts";
 
 export const createDMSchema = z.object({
   body: z.object({

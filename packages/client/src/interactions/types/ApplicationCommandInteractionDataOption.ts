@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { applicationCommandOptionTypeSchema } from "#/application/types/ApplicationCommandOptionType.ts";
+import { applicationCommandOptionTypeSchema } from "../../application/types/ApplicationCommandOptionType.ts";
 
 const base = z.object({
   /** Name of the parameter */

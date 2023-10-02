@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { userSchema } from "#/user/types/User.ts";
-import { scopesSchema } from "#/application/types/Scopes.ts";
 import { snowflake } from "@discordkit/core";
+import { userSchema } from "../../user/types/User.ts";
+import { scopesSchema } from "../../application/types/Scopes.ts";
 import { integrationApplicationSchema } from "./IntegrationApplication.ts";
 import { integrationAccountSchema } from "./IntegrationAccount.ts";
 import { integrationExpireBehaviorSchema } from "./IntegrationExpireBehavior.ts";

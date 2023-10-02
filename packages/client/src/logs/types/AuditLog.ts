@@ -1,11 +1,11 @@
 import { z } from "zod";
-import { channelSchema } from "#/channel/types/Channel.ts";
-import { scheduledEventSchema } from "#/event/types/ScheduledEvent.ts";
-import { integrationSchema } from "#/guild/types/Integration.ts";
-import { moderationRuleSchema } from "#/moderation/types/ModerationRule.ts";
-import { userSchema } from "#/user/types/User.ts";
-import { webhookSchema } from "#/webhook/types/Webhook.ts";
-import { applicationCommandSchema } from "#/application/types/ApplicationCommand.ts";
+import { channelSchema } from "../../channel/types/Channel.ts";
+import { scheduledEventSchema } from "../../event/types/ScheduledEvent.ts";
+import { integrationSchema } from "../../guild/types/Integration.ts";
+import { moderationRuleSchema } from "../../moderation/types/ModerationRule.ts";
+import { userSchema } from "../../user/types/User.ts";
+import { webhookSchema } from "../../webhook/types/Webhook.ts";
+import { applicationCommandSchema } from "../../application/types/ApplicationCommand.ts";
 import { auditLogEntrySchema } from "./AuditLogEntry.ts";
 
 export const auditLogSchema = z.object({

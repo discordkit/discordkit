@@ -7,7 +7,7 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { inviteSchema, type Invite } from "#/invite/types/Invite.ts";
+import { inviteSchema, type Invite } from "../invite/types/Invite.ts";
 
 export const getGuildVanityURLSchema = z.object({
   guild: snowflake

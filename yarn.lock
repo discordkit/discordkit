@@ -82,6 +82,7 @@ __metadata:
   resolution: "@discordkit/client@workspace:packages/client"
   dependencies:
     "@discordkit/core": "workspace:^"
+    tsup: ^7.2.0
   peerDependencies:
     zod: ^3.17.3
   languageName: unknown
@@ -90,6 +91,8 @@ __metadata:
 "@discordkit/core@workspace:^, @discordkit/core@workspace:packages/core":
   version: 0.0.0-use.local
   resolution: "@discordkit/core@workspace:packages/core"
+  dependencies:
+    tsup: ^7.2.0
   peerDependencies:
     zod: ^3.17.3
   languageName: unknown

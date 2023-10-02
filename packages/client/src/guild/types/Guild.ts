@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { emojiSchema } from "#/emoji/types/Emoji.ts";
-import { stickerSchema } from "#/sticker/types/Sticker.ts";
-import { localesSchema } from "#/application/types/Locales.ts";
 import { snowflake } from "@discordkit/core";
+import { emojiSchema } from "../../emoji/types/Emoji.ts";
+import { stickerSchema } from "../../sticker/types/Sticker.ts";
+import { localesSchema } from "../../application/types/Locales.ts";
 import { roleSchema } from "./Role.ts";
 import { welcomeScreenSchema } from "./WelcomeScreen.ts";
 import { premiumTierSchema } from "./PremiumTier.ts";

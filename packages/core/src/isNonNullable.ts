@@ -1,4 +1,4 @@
-import type { Maybe } from "./types.ts";
+type Maybe<T> = T | null | undefined;
 
 /**
  * Used to test whether a `Maybe` typed value is `null` or `undefined`.

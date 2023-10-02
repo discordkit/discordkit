@@ -5,12 +5,12 @@
   ],
   "pipeline": {
     "build": {
+      "dependsOn": [
+        "^build"
+      ],
       "outputs": [
         "dist/"
       ]
-    },
-    "lint": {
-      "outputs": []
     }
   }
 }

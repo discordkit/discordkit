@@ -1,7 +1,12 @@
 import type { QueryFunction } from "@tanstack/react-query";
 import type { z } from "zod";
-import type { Fetcher } from "./types.ts";
+import type { Fetcher } from "./methods.ts";
 
+/**
+ * Given a {@link Fetcher | Fetcher} function, transforms it into a curried function
+ * which can then be used with React-Query as a query function without
+ * the need for any additional boilerplate.
+ */
 export const toQuery =
   <S extends z.ZodTypeAny | null, R, T extends Fetcher<S, R>>(
     fn: T

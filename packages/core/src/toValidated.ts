@@ -1,7 +1,7 @@
 import type { z } from "zod";
 import { isNonNullable } from "./isNonNullable.ts";
 import { isObject } from "./isObject.ts";
-import type { Fetcher } from "./types.ts";
+import type { Fetcher } from "./methods.ts";
 
 const isSchema = (val: unknown): val is z.ZodTypeAny =>
   isNonNullable(val) && isObject(val) && `parse` in val;
@@ -34,6 +34,13 @@ type ToValidated = <
     : never
 ) => F;
 
+/**
+ * Given a {@link Fetcher | Fetcher} function and it's associated input
+ * and output Zod schemas, this returns a new validated {@link Fetcher | Fetcher} function which will validate it's input and result at runtime.
+ * This is useful in contexts where you want strong guarantees on runtime
+ * type-safety when dealing with raw user input in a framework agnostic
+ * environment.
+ */
 export const toValidated: ToValidated =
   (fn, input, output) =>
   // @ts-expect-error

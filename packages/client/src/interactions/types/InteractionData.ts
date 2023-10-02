@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { applicationCommandTypeSchema } from "#/application/types/ApplicationCommandType.ts";
 import { snowflake } from "@discordkit/core";
+import { applicationCommandTypeSchema } from "../../application/types/ApplicationCommandType.ts";
 import { resolvedDataSchema } from "./ResolvedData.ts";
 import { applicationCommandInteractionDataOptionSchema } from "./ApplicationCommandInteractionDataOption.ts";
 

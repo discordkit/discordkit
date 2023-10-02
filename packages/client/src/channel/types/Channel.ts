@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { userSchema } from "#/user/types/User.ts";
 import { snowflake } from "@discordkit/core";
+import { userSchema } from "../../user/types/User.ts";
 import { autoArchiveDurationSchema } from "./AutoArchiveDuration.ts";
 import { channelTypeSchema } from "./ChannelType.ts";
 import { overwriteSchema } from "./Overwrite.ts";

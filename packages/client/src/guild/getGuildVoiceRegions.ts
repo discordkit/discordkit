@@ -10,7 +10,7 @@ import {
 import {
   voiceRegionSchema,
   type VoiceRegion
-} from "#/voice/types/VoiceRegion.ts";
+} from "../voice/types/VoiceRegion.ts";
 
 export const getGuildVoiceRegionsSchema = z.object({
   guild: snowflake

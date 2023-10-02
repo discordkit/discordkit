@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { userSchema } from "#/user/types/User.ts";
+import { userSchema } from "../../user/types/User.ts";
 import { membershipStateSchema } from "./MembershipState.ts";
 import { teamMemberRoleSchema } from "./TeamMemberRole.ts";
 

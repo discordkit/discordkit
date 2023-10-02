@@ -1,11 +1,11 @@
 import { z } from "zod";
-import { userSchema } from "#/user/types/User.ts";
-import { memberSchema } from "#/guild/types/Member.ts";
-import { roleSchema } from "#/guild/types/Role.ts";
-import { attachmentSchema } from "#/channel/types/Attachment.ts";
-import { channelSchema } from "#/channel/types/Channel.ts";
-import { messageSchema } from "#/channel/types/Message.ts";
 import { snowflake } from "@discordkit/core";
+import { userSchema } from "../../user/types/User.ts";
+import { memberSchema } from "../../guild/types/Member.ts";
+import { roleSchema } from "../../guild/types/Role.ts";
+import { attachmentSchema } from "../../channel/types/Attachment.ts";
+import { channelSchema } from "../../channel/types/Channel.ts";
+import { messageSchema } from "../../channel/types/Message.ts";
 
 export const resolvedDataSchema = z.object({
   /** the ids and User objects */

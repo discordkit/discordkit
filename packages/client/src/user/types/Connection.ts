@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { integrationSchema } from "#/guild/types/Integration.ts";
+import { integrationSchema } from "../../guild/types/Integration.ts";
 import { connectionVisibiltySchema } from "./ConnectionVisibilty.ts";
 import { servicesSchema } from "./Services.ts";
 

@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { userSchema } from "#/user/types/User.ts";
 import { snowflake } from "@discordkit/core";
+import { userSchema } from "../../user/types/User.ts";
 import { scheduledEventEntityTypeSchema } from "./ScheduledEventEntityType.ts";
 import { scheduledEventPrivacyLevelSchema } from "./ScheduledEventPrivacyLevel.ts";
 import { scheduledEventStatusSchema } from "./ScheduledEventStatus.ts";

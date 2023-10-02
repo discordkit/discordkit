@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { channelTypeSchema } from "#/channel/types/ChannelType.ts";
+import { channelTypeSchema } from "../../channel/types/ChannelType.ts";
 import {
   ApplicationCommandOptionType,
   applicationCommandOptionTypeSchema

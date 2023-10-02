@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { channelSchema } from "#/channel/types/Channel.ts";
-import { guildSchema } from "#/guild/types/Guild.ts";
-import { userSchema } from "#/user/types/User.ts";
 import { snowflake } from "@discordkit/core";
+import { channelSchema } from "../../channel/types/Channel.ts";
+import { guildSchema } from "../../guild/types/Guild.ts";
+import { userSchema } from "../../user/types/User.ts";
 import { webhookTypeSchema } from "./WebhookType.ts";
 
 export const webhookSchema = z.object({

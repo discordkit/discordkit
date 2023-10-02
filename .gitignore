@@ -74,6 +74,7 @@ storybook-static/
 .turbo
 .next/
 .cache/
+**/dist/
 coverage/
 **/public/workbox-*.js*
 **/public/sw.js*

@@ -7,12 +7,12 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { messageSchema, type Message } from "#/channel/types/Message.ts";
-import { embedSchema } from "#/channel/types/Embed.ts";
-import { allowedMentionSchema } from "#/channel/types/AllowedMention.ts";
-import { attachmentSchema } from "#/channel/types/Attachment.ts";
-import { messageComponentSchema } from "#/channel/types/MessageComponent.ts";
-import { EmbedType } from "#/channel/types/EmbedType.ts";
+import { messageSchema, type Message } from "../channel/types/Message.ts";
+import { embedSchema } from "../channel/types/Embed.ts";
+import { allowedMentionSchema } from "../channel/types/AllowedMention.ts";
+import { attachmentSchema } from "../channel/types/Attachment.ts";
+import { messageComponentSchema } from "../channel/types/MessageComponent.ts";
+import { EmbedType } from "../channel/types/EmbedType.ts";
 
 export const editWebhookMessageSchema = z.object({
   webhook: snowflake,
