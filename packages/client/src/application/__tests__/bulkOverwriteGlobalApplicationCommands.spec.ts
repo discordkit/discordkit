@@ -8,13 +8,13 @@ import {
 } from "../bulkOverwriteGlobalApplicationCommands.ts";
 import { applicationCommandSchema } from "../types/ApplicationCommand.ts";
 
-const expected = mockRequest.put(
-  `/applications/:application/commands`,
-  applicationCommandSchema.array().length(1)
-);
-const config = mockSchema(bulkOverwriteGlobalApplicationCommandsSchema);
-
 describe(`bulkOverwriteGlobalApplicationCommands`, () => {
+  const expected = mockRequest.put(
+    `/applications/:application/commands`,
+    applicationCommandSchema.array().length(1)
+  );
+  const config = mockSchema(bulkOverwriteGlobalApplicationCommandsSchema);
+
   it(`can be used standalone`, async () => {
     await expect(
       bulkOverwriteGlobalApplicationCommandsSafe(config)

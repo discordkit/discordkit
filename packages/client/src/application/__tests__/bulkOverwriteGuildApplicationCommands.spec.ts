@@ -8,13 +8,13 @@ import {
 } from "../bulkOverwriteGuildApplicationCommands.ts";
 import { applicationCommandSchema } from "../types/ApplicationCommand.ts";
 
-const expected = mockRequest.put(
-  `/applications/:application/guilds/:guild/commands`,
-  applicationCommandSchema.array().length(1)
-);
-const config = mockSchema(bulkOverwriteGuildApplicationCommandsSchema);
-
 describe(`bulkOverwriteGuildApplicationCommands`, () => {
+  const expected = mockRequest.put(
+    `/applications/:application/guilds/:guild/commands`,
+    applicationCommandSchema.array().length(1)
+  );
+  const config = mockSchema(bulkOverwriteGuildApplicationCommandsSchema);
+
   it(`can be used standalone`, async () => {
     await expect(
       bulkOverwriteGuildApplicationCommandsSafe(config)

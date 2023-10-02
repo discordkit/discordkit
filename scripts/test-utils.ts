@@ -1,4 +1,4 @@
-import { beforeEach } from "vitest";
+import { beforeAll } from "vitest";
 import type React from "react";
 import { createElement } from "react";
 import type { UseMutationResult, UseQueryResult } from "@tanstack/react-query";
@@ -58,7 +58,7 @@ const createMock =
   ): z.infer<S> => {
     const result = responseSchema ? mockSchema(responseSchema, opts) : null;
 
-    beforeEach(() => {
+    beforeAll(() => {
       msw.use(
         rest[type](
           new URL(path.replace(/^\//, ``), endpoint).href,

@@ -7,10 +7,10 @@ import {
   deleteGlobalApplicationCommandSchema
 } from "../deleteGlobalApplicationCommand.ts";
 
-mockRequest.delete(`/applications/:application/commands/:command`);
-const config = mockSchema(deleteGlobalApplicationCommandSchema);
-
 describe(`deleteGlobalApplicationCommand`, () => {
+  mockRequest.delete(`/applications/:application/commands/:command`);
+  const config = mockSchema(deleteGlobalApplicationCommandSchema);
+
   it(`can be used standalone`, async () => {
     await expect(
       deleteGlobalApplicationCommandSafe(config)

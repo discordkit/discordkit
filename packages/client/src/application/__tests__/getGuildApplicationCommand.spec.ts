@@ -8,13 +8,13 @@ import {
 } from "../getGuildApplicationCommand.ts";
 import { applicationCommandSchema } from "../types/ApplicationCommand.ts";
 
-const expected = mockRequest.get(
-  `/applications/:application/guilds/:guild/commands/:command`,
-  applicationCommandSchema
-);
-const config = mockSchema(getGuildApplicationCommandSchema);
-
 describe(`getGuildApplicationCommand`, () => {
+  const expected = mockRequest.get(
+    `/applications/:application/guilds/:guild/commands/:command`,
+    applicationCommandSchema
+  );
+  const config = mockSchema(getGuildApplicationCommandSchema);
+
   it(`can be used standalone`, async () => {
     await expect(getGuildApplicationCommandSafe(config)).resolves.toStrictEqual(
       expected

@@ -8,13 +8,15 @@ import {
 } from "../updateApplicationRoleConnectionMetadataRecords.ts";
 import { applicationRoleConnectionMetadataSchema } from "../types/ApplicationRoleConnectionMetadata.ts";
 
-const expected = mockRequest.put(
-  `/applications/:application/role-connections/metadata`,
-  applicationRoleConnectionMetadataSchema.array().length(1)
-);
-const config = mockSchema(updateApplicationRoleConnectionMetadataRecordsSchema);
-
 describe(`updateApplicationRoleConnectionMetadataRecords`, () => {
+  const expected = mockRequest.put(
+    `/applications/:application/role-connections/metadata`,
+    applicationRoleConnectionMetadataSchema.array().length(1)
+  );
+  const config = mockSchema(
+    updateApplicationRoleConnectionMetadataRecordsSchema
+  );
+
   it(`can be used standalone`, async () => {
     await expect(
       updateApplicationRoleConnectionMetadataRecordsSafe(config)

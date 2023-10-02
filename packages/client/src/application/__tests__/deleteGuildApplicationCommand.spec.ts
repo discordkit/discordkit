@@ -7,12 +7,12 @@ import {
   deleteGuildApplicationCommandSchema
 } from "../deleteGuildApplicationCommand.ts";
 
-mockRequest.delete(
-  `/applications/:application/guilds/:guild/commands/:command`
-);
-const config = mockSchema(deleteGuildApplicationCommandSchema);
-
 describe(`deleteGuildApplicationCommand`, () => {
+  mockRequest.delete(
+    `/applications/:application/guilds/:guild/commands/:command`
+  );
+  const config = mockSchema(deleteGuildApplicationCommandSchema);
+
   it(`can be used standalone`, async () => {
     await expect(
       deleteGuildApplicationCommandSafe(config)

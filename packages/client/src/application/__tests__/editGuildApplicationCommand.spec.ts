@@ -8,13 +8,13 @@ import {
 } from "../editGuildApplicationCommand.ts";
 import { applicationCommandSchema } from "../types/ApplicationCommand.ts";
 
-const expected = mockRequest.patch(
-  `/applications/:application/guilds/:guild/commands/:command`,
-  applicationCommandSchema
-);
-const config = mockSchema(editGuildApplicationCommandSchema);
-
 describe(`editGuildApplicationCommand`, () => {
+  const expected = mockRequest.patch(
+    `/applications/:application/guilds/:guild/commands/:command`,
+    applicationCommandSchema
+  );
+  const config = mockSchema(editGuildApplicationCommandSchema);
+
   it(`can be used standalone`, async () => {
     await expect(
       editGuildApplicationCommandSafe(config)
