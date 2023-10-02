@@ -56,7 +56,7 @@ const createMock =
   ): z.infer<S> => {
     const result = responseSchema ? mockSchema(responseSchema, opts) : null;
 
-    beforeEach(() => {
+    beforeAll(() => {
       msw.use(
         http[type](
           new URL(path.replace(/^\//, ``), endpoint).href,
@@ -68,6 +68,8 @@ const createMock =
             })
         )
       );
+
+      console.log({ handlers: msw.listHandlers().map(({ info }) => info) });
     });
 
     return result;
