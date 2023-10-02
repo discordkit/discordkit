@@ -7,7 +7,7 @@ import {
   useMutation,
   useQuery
 } from "@tanstack/react-query";
-import { rest } from "msw";
+import { http, HttpResponse } from "msw";
 import { type SetupServer, setupServer } from "msw/node";
 import type { GenerateMockOptions } from "@anatine/zod-mock";
 import { generateMock } from "@anatine/zod-mock";
@@ -58,9 +58,10 @@ const createMock =
     const result = responseSchema ? mockSchema(responseSchema, opts) : null;
 
     msw.use(
-      rest[type](
+      http[type](
         new URL(path.replace(/^\//, ``), endpoint).href,
-        (_, res, ctx) => res(ctx.json(result))
+        // @ts-expect-error
+        () => HttpResponse.json(result)
       )
     );
 
