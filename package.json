@@ -18,9 +18,10 @@
     "lint": "eslint \"./packages/**/*.{j,t}s?(x)\" --cache",
     "format": "yarn lint --fix",
     "prepublishOnly": "yarn lint && yarn test",
-    "prepack": "yarn build",
+    "prepack": "turbo run build",
     "release": "release-it",
-    "test": "vitest"
+    "test": "vitest --single-thread",
+    "test:ci": "vitest --single-thread --changed HEAD~1"
   },
   "dependencies": {
     "@anatine/zod-mock": "^3.13.2",
