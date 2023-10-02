@@ -7,7 +7,7 @@ import {
   useMutation,
   useQuery
 } from "@tanstack/react-query";
-import { http, HttpResponse } from "msw";
+import { http } from "msw";
 import { type SetupServer, setupServer } from "msw/node";
 import type { GenerateMockOptions } from "@anatine/zod-mock";
 import { generateMock } from "@anatine/zod-mock";
@@ -48,20 +48,23 @@ export const mockSchema = <T extends z.ZodTypeAny>(
   });
 
 const createMock =
-  (type: `delete` | `get` | `patch` | `post` | `put` = `get`) =>
+  (type: keyof typeof http) =>
   <S extends z.ZodTypeAny>(
     path: string,
     responseSchema?: S,
-    // eslint-disable-next-line no-undefined
-    opts: GenerateMockOptions | undefined = undefined
+    opts?: GenerateMockOptions
   ): z.infer<S> => {
     const result = responseSchema ? mockSchema(responseSchema, opts) : null;
 
     msw.use(
       http[type](
         new URL(path.replace(/^\//, ``), endpoint).href,
-        // @ts-expect-error
-        () => HttpResponse.json(result)
+        () =>
+          new Response(JSON.stringify(result), {
+            headers: {
+              "Content-Type": `application/json`
+            }
+          })
       )
     );
 
