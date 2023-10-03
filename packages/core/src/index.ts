@@ -1,5 +1,6 @@
 export { endpoint, discord } from "./DiscordSession.ts";
 export * from "./buildURL.ts";
+export * from "./getAsset.ts";
 export * from "./methods.ts";
 export * from "./toProcedure.ts";
 export * from "./toQuery.ts";

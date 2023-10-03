@@ -5,6 +5,7 @@ export * from "./channel/index.ts";
 export * from "./emoji/index.ts";
 export * from "./event/index.ts";
 export * from "./guild/index.ts";
+export * from "./images/index.ts";
 export * from "./interactions/index.ts";
 export * from "./invite/index.ts";
 export * from "./logs/index.ts";
