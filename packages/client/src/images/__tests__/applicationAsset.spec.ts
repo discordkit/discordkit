@@ -1,9 +1,9 @@
 import { mockSchema } from "test-utils";
+import { z } from "zod";
 import {
   applicationAsset,
   applicationAssetSchema
 } from "../applicationAsset.ts";
-import { z } from "zod";
 
 describe(`applicationAsset`, () => {
   it(`produces a valid URL`, () => {

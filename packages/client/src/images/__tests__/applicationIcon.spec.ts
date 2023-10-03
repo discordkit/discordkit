@@ -1,6 +1,6 @@
 import { mockSchema } from "test-utils";
-import { applicationIcon, applicationIconSchema } from "../applicationIcon.ts";
 import { z } from "zod";
+import { applicationIcon, applicationIconSchema } from "../applicationIcon.ts";
 
 describe(`applicationIcon`, () => {
   it(`produces a valid URL`, () => {

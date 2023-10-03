@@ -1,9 +1,9 @@
 import { mockSchema } from "test-utils";
+import { z } from "zod";
 import {
   guildScheduledEventCover,
   guildScheduledEventCoverSchema
 } from "../guildScheduledEventCover.ts";
-import { z } from "zod";
 
 describe(`guildScheduledEventCover`, () => {
   it(`produces a valid URL`, () => {

@@ -1,6 +1,6 @@
 import { mockSchema } from "test-utils";
-import { guildIcon, guildIconSchema } from "../guildIcon.ts";
 import { z } from "zod";
+import { guildIcon, guildIconSchema } from "../guildIcon.ts";
 
 describe(`guildIcon`, () => {
   it(`produces a valid URL`, () => {

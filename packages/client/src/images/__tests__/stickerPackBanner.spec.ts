@@ -1,9 +1,9 @@
 import { mockSchema } from "test-utils";
+import { z } from "zod";
 import {
   stickerPackBanner,
   stickerPackBannerSchema
 } from "../stickerPackBanner.ts";
-import { z } from "zod";
 
 describe(`stickerPackBanner`, () => {
   it(`produces a valid URL`, () => {

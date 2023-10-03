@@ -1,9 +1,9 @@
 import { mockSchema } from "test-utils";
+import { z } from "zod";
 import {
   userAvatarDecoration,
   userAvatarDecorationSchema
 } from "../userAvatarDecoration.ts";
-import { z } from "zod";
 
 describe(`userAvatarDecoration`, () => {
   it(`produces a valid URL`, () => {

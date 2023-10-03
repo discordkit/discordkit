@@ -1,6 +1,6 @@
 import { mockSchema } from "test-utils";
-import { storePageAsset, storePageAssetSchema } from "../storePageAsset.ts";
 import { z } from "zod";
+import { storePageAsset, storePageAssetSchema } from "../storePageAsset.ts";
 
 describe(`storePageAsset`, () => {
   it(`produces a valid URL`, () => {

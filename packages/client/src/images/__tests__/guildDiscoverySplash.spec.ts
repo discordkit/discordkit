@@ -1,9 +1,9 @@
 import { mockSchema } from "test-utils";
+import { z } from "zod";
 import {
   guildDiscoverySplash,
   guildDiscoverySplashSchema
 } from "../guildDiscoverySplash.ts";
-import { z } from "zod";
 
 describe(`guildDiscoverySplash`, () => {
   it(`produces a valid URL`, () => {

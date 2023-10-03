@@ -1,6 +1,6 @@
 import { mockSchema } from "test-utils";
-import { userBanner, userBannerSchema } from "../userBanner.ts";
 import { z } from "zod";
+import { userBanner, userBannerSchema } from "../userBanner.ts";
 
 describe(`userBanner`, () => {
   it(`produces a valid URL`, () => {

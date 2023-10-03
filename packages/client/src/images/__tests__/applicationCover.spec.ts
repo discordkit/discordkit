@@ -1,9 +1,9 @@
 import { mockSchema } from "test-utils";
+import { z } from "zod";
 import {
   applicationCover,
   applicationCoverSchema
 } from "../applicationCover.ts";
-import { z } from "zod";
 
 describe(`applicationCover`, () => {
   it(`produces a valid URL`, () => {

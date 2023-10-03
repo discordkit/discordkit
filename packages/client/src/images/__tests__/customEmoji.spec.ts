@@ -1,6 +1,6 @@
 import { mockSchema } from "test-utils";
-import { customEmoji, customEmojiSchema } from "../customEmoji.ts";
 import { z } from "zod";
+import { customEmoji, customEmojiSchema } from "../customEmoji.ts";
 
 describe(`customEmoji`, () => {
   it(`produces a valid URL`, () => {

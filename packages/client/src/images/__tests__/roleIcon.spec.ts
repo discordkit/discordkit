@@ -1,6 +1,6 @@
 import { mockSchema } from "test-utils";
-import { roleIcon, roleIconSchema } from "../roleIcon.ts";
 import { z } from "zod";
+import { roleIcon, roleIconSchema } from "../roleIcon.ts";
 
 describe(`roleIcon`, () => {
   it(`produces a valid URL`, () => {

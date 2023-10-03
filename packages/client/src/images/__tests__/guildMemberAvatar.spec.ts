@@ -1,9 +1,9 @@
 import { mockSchema } from "test-utils";
+import { z } from "zod";
 import {
   guildMemberAvatar,
   guildMemberAvatarSchema
 } from "../guildMemberAvatar.ts";
-import { z } from "zod";
 
 describe(`guildMemberAvatar`, () => {
   it(`produces a valid URL`, () => {

@@ -1,6 +1,6 @@
 import { mockSchema } from "test-utils";
-import { teamIcon, teamIconSchema } from "../teamIcon.ts";
 import { z } from "zod";
+import { teamIcon, teamIconSchema } from "../teamIcon.ts";
 
 describe(`teamIcon`, () => {
   it(`produces a valid URL`, () => {

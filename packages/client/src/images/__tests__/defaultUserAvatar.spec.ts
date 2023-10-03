@@ -1,9 +1,9 @@
 import { mockSchema } from "test-utils";
+import { z } from "zod";
 import {
   defaultUserAvatar,
   defaultUserAvatarSchema
 } from "../defaultUserAvatar.ts";
-import { z } from "zod";
 
 describe(`defaultUserAvatar`, () => {
   it(`produces a valid URL`, () => {

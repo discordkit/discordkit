@@ -1,9 +1,9 @@
 import { mockSchema } from "test-utils";
+import { z } from "zod";
 import {
   guildMemberBanner,
   guildMemberBannerSchema
 } from "../guildMemberBanner.ts";
-import { z } from "zod";
 
 describe(`guildMemberBanner`, () => {
   it(`produces a valid URL`, () => {
