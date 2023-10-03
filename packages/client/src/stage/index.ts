@@ -4,3 +4,4 @@ export * from "./getStageInstance.ts";
 export * from "./modifyStageInstance.ts";
 
 export * from "./types/index.ts";
+export * as stageProcedures from "./procedures.ts";

@@ -15,3 +15,4 @@ export * from "./modifyWebhook.ts";
 export * from "./modifyWebhookWithToken.ts";
 
 export * from "./types/index.ts";
+export * as webhookProcedures from "./procedures.ts";

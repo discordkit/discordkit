@@ -45,3 +45,4 @@ export * from "./removeGuildMemberRole.ts";
 export * from "./searchGuildMembers.ts";
 
 export * from "./types/index.ts";
+export * as guildProcedures from "./procedures.ts";

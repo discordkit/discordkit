@@ -7,3 +7,4 @@ export * from "./modifyGuildTemplate.ts";
 export * from "./syncGuildTemplate.ts";
 
 export * from "./types/index.ts";
+export * as tempalteProcedures from "./procedures.ts";

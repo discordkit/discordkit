@@ -11,3 +11,4 @@ export * from "./modifyCurrentUser.ts";
 export * from "./updateUserApplicationRoleConnection.ts";
 
 export * from "./types/index.ts";
+export * as userProcedures from "./procedures.ts";

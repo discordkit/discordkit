@@ -7,3 +7,4 @@ export * from "./listStickerPacks.ts";
 export * from "./modifyGuildSticker.ts";
 
 export * from "./types/index.ts";
+export * as stickerProcedures from "./procedures.ts";

@@ -6,3 +6,4 @@ export * from "./listScheduledEventsForGuild.ts";
 export * from "./modifyGuildScheduledEvent.ts";
 
 export * from "./types/index.ts";
+export * as eventProcedures from "./procedures.ts";

@@ -5,3 +5,4 @@ export * from "./listGuildEmojis.ts";
 export * from "./modifyGuildEmoji.ts";
 
 export * from "./types/index.ts";
+export * as emojiProcedures from "./procedures.ts";

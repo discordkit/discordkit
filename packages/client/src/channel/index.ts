@@ -39,3 +39,4 @@ export * from "./triggerTypingIndicator.ts";
 export * from "./unpinMessage.ts";
 
 export * from "./types/index.ts";
+export * as channelProcedures from "./procedures.ts";

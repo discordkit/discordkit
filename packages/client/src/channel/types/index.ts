@@ -17,7 +17,6 @@ export * from "./EmbedType.ts";
 export * from "./FollowedChannel.ts";
 export * from "./ForumLayoutType.ts";
 export * from "./ForumTag.ts";
-export * from "./InteractionType.ts";
 export * from "./Message.ts";
 export * from "./MessageActivity.ts";
 export * from "./MessageActivityType.ts";

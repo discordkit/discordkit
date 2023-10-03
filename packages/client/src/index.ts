@@ -15,3 +15,5 @@ export * from "./template/index.ts";
 export * from "./user/index.ts";
 export * from "./voice/index.ts";
 export * from "./webhook/index.ts";
+
+export * as allProcedures from "./procedures.ts";

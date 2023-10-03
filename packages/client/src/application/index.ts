@@ -18,3 +18,4 @@ export * from "./getGuildApplicationCommands.ts";
 export * from "./updateApplicationRoleConnectionMetadataRecords.ts";
 
 export * from "./types/index.ts";
+export * as applicationProcedures from "./procedures.ts";
