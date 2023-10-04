@@ -5,6 +5,9 @@
     "build": {
       "dependsOn": ["^build"]
     },
+    "build:examples": {
+      "dependsOn": ["^build"]
+    },
     "//#lint": {},
     "//#test": {
       "dependsOn": ["@discordkit/core#build"],

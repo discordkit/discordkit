@@ -4,7 +4,7 @@
     "//"
   ],
   "pipeline": {
-    "build": {
+    "build:examples": {
       "outputs": [
         ".next/**",
         "!.next/cache/**"
