@@ -10,7 +10,7 @@ import {
 import {
   type ApplicationRoleConnection,
   applicationRoleConnectionSchema
-} from "../application/types/ApplicationRoleConnection.ts";
+} from "../application/types/ApplicationRoleConnection.js";
 
 export const getUserApplicationRoleConnectionSchema = z.object({
   application: snowflake

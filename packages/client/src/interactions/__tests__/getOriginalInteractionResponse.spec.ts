@@ -5,8 +5,8 @@ import {
   getOriginalInteractionResponseQuery,
   getOriginalInteractionResponseSafe,
   getOriginalInteractionResponseSchema
-} from "../getOriginalInteractionResponse.ts";
-import { interactionResponseSchema } from "../types/InteractionResponse.ts";
+} from "../getOriginalInteractionResponse.js";
+import { interactionResponseSchema } from "../types/InteractionResponse.js";
 
 describe(`getOriginalInteractionResponse`, () => {
   mockRequest.get(

@@ -6,7 +6,7 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { type Channel, channelSchema } from "./types/Channel.ts";
+import { type Channel, channelSchema } from "./types/Channel.js";
 
 export const deleteChannelSchema = z.object({
   channel: snowflake

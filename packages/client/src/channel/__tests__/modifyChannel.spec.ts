@@ -5,8 +5,8 @@ import {
   modifyChannelProcedure,
   modifyChannelSafe,
   modifyChannelSchema
-} from "../modifyChannel.ts";
-import { channelSchema } from "../types/Channel.ts";
+} from "../modifyChannel.js";
+import { channelSchema } from "../types/Channel.js";
 
 describe(`modifyChannel`, () => {
   const expected = mockRequest.patch(`/channels/:channel`, channelSchema);

@@ -5,7 +5,7 @@ import {
   deleteGuildIntegrationProcedure,
   deleteGuildIntegrationSafe,
   deleteGuildIntegrationSchema
-} from "../deleteGuildIntegration.ts";
+} from "../deleteGuildIntegration.js";
 
 describe(`deleteGuildIntegration`, () => {
   mockRequest.delete(`/guilds/:guild/integrations/:integration`);

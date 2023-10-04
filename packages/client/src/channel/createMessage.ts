@@ -6,8 +6,8 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { type Message, messageSchema } from "./types/Message.ts";
-import { messageContentSchema } from "./types/MessageContent.ts";
+import { type Message, messageSchema } from "./types/Message.js";
+import { messageContentSchema } from "./types/MessageContent.js";
 
 export const createMessageSchema = z.object({
   channel: snowflake,

@@ -18,16 +18,41 @@
   "type": "module",
   "sideEffects": false,
   "exports": {
-    "./package.json": "./package.json",
-    ".": "./src/index.ts"
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./package.json": "./package.json"
   },
   "scripts": {
-    "build": "tsup ./src/index.ts --format cjs,esm"
+    "dev": "tsup --watch",
+    "build": "tsup"
   },
   "peerDependencies": {
     "zod": "^3.17.3"
   },
   "devDependencies": {
     "tsup": "^7.2.0"
+  },
+  "tsup": {
+    "entry": [
+      "src/index.ts"
+    ],
+    "format": [
+      "esm",
+      "cjs"
+    ],
+    "tsconfig": "./tsconfig.build.json",
+    "dts": true,
+    "minify": true,
+    "metafile": true,
+    "sourcemap": true,
+    "clean": true
   }
 }

@@ -10,7 +10,7 @@ import {
 import {
   guildOnboardingSchema,
   type GuildOnboarding
-} from "./types/GuildOnboarding.ts";
+} from "./types/GuildOnboarding.js";
 
 export const getGuildOnboardingSchema = z.object({
   guild: snowflake

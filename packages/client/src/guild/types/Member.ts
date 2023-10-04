@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { snowflake } from "@discordkit/core";
-import { userSchema } from "../../user/types/User.ts";
+import { userSchema } from "../../user/types/User.js";
 
 export const memberSchema = z.object({
   /** the user this guild member represents */

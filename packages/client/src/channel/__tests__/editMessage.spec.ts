@@ -5,8 +5,8 @@ import {
   editMessageProcedure,
   editMessageSafe,
   editMessageSchema
-} from "../editMessage.ts";
-import { messageSchema } from "../types/Message.ts";
+} from "../editMessage.js";
+import { messageSchema } from "../types/Message.js";
 
 describe(`editMessage`, () => {
   mockRequest.patch(`/channels/:channel/messages/:message`, messageSchema);

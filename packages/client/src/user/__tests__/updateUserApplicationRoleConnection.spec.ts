@@ -5,8 +5,8 @@ import {
   updateUserApplicationRoleConnectionProcedure,
   updateUserApplicationRoleConnectionSafe,
   updateUserApplicationRoleConnectionSchema
-} from "../updateUserApplicationRoleConnection.ts";
-import { applicationRoleConnectionSchema } from "../../application/types/ApplicationRoleConnection.ts";
+} from "../updateUserApplicationRoleConnection.js";
+import { applicationRoleConnectionSchema } from "../../application/types/ApplicationRoleConnection.js";
 
 describe(`updateUserApplicationRoleConnection`, () => {
   const expected = mockRequest.put(

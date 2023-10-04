@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { snowflake } from "@discordkit/core";
-import { localesSchema } from "../../application/types/Locales.ts";
-import { premiumTypeSchema } from "./PremiumType.ts";
+import { localesSchema } from "../../application/types/Locales.js";
+import { premiumTypeSchema } from "./PremiumType.js";
 
 // https://discord.com/developers/docs/resources/user#user-object-user-structure
 export const userSchema = z.object({

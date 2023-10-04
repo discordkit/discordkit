@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { welcomeChannelSchema } from "./WelcomeChannel.ts";
+import { welcomeChannelSchema } from "./WelcomeChannel.js";
 
 export const welcomeScreenSchema = z.object({
   /** the server description shown in the welcome screen */

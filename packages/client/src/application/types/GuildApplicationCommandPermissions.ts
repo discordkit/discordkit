@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { snowflake } from "@discordkit/core";
-import { applicationCommandPermissionsSchema } from "./ApplicationCommandPermissions.ts";
+import { applicationCommandPermissionsSchema } from "./ApplicationCommandPermissions.js";
 
 export const guildApplicationCommandPermissionsSchema = z.object({
   /** ID of the command or the application ID */

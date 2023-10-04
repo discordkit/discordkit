@@ -5,8 +5,8 @@ import {
   deleteChannelProcedure,
   deleteChannelSafe,
   deleteChannelSchema
-} from "../deleteChannel.ts";
-import { channelSchema } from "../types/Channel.ts";
+} from "../deleteChannel.js";
+import { channelSchema } from "../types/Channel.js";
 
 describe(`deleteChannel`, () => {
   const expected = mockRequest.delete(`/channels/:channel`, channelSchema);

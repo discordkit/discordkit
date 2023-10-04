@@ -6,8 +6,8 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { type Stage, stageSchema } from "./types/Stage.ts";
-import { stagePrivacyLevelSchema } from "./types/StagePrivacyLevel.ts";
+import { type Stage, stageSchema } from "./types/Stage.js";
+import { stagePrivacyLevelSchema } from "./types/StagePrivacyLevel.js";
 
 export const modifyStageInstanceSchema = z.object({
   channel: snowflake,

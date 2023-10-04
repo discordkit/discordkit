@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { snowflake } from "@discordkit/core";
-import { userSchema } from "../../user/types/User.ts";
-import { stickerFormatTypeSchema } from "./StickerFormatType.ts";
-import { stickerTypeSchema } from "./StickerType.ts";
+import { userSchema } from "../../user/types/User.js";
+import { stickerFormatTypeSchema } from "./StickerFormatType.js";
+import { stickerTypeSchema } from "./StickerType.js";
 
 export const stickerSchema = z.object({
   /** id of the sticker */

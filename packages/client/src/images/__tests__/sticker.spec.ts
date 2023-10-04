@@ -1,6 +1,6 @@
 import { mockSchema } from "test-utils";
 import { z } from "zod";
-import { sticker, stickerImageSchema } from "../sticker.ts";
+import { sticker, stickerImageSchema } from "../sticker.js";
 
 describe(`sticker`, () => {
   it(`produces a valid URL`, () => {

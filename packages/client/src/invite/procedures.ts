@@ -1,2 +1,2 @@
-export { deleteInviteProcedure } from "./deleteInvite.ts";
-export { getInviteProcedure } from "./getInvite.ts";
+export { deleteInviteProcedure } from "./deleteInvite.js";
+export { getInviteProcedure } from "./getInvite.js";

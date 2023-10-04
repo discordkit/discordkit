@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { keywordPresetSchema } from "./KeywordPreset.ts";
+import { keywordPresetSchema } from "./KeywordPreset.js";
 
 export const triggerMetaSchema = z.object({
   /** KEYWORD	substrings which will be searched for in content (Maximum of 1000) */

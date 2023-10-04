@@ -3,7 +3,7 @@ import { z } from "zod";
 import {
   guildMemberAvatar,
   guildMemberAvatarSchema
-} from "../guildMemberAvatar.ts";
+} from "../guildMemberAvatar.js";
 
 describe(`guildMemberAvatar`, () => {
   it(`produces a valid URL`, () => {

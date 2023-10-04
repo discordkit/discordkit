@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { userSchema } from "../../user/types/User.ts";
+import { userSchema } from "../../user/types/User.js";
 
 export const banSchema = z.object({
   /** the reason for the ban */

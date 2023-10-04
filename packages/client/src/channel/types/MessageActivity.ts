@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { messageActivityTypeSchema } from "./MessageActivityType.ts";
+import { messageActivityTypeSchema } from "./MessageActivityType.js";
 
 export const messageActivitySchema = z.object({
   /** type of message activity */

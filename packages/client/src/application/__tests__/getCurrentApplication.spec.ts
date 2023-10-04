@@ -4,8 +4,8 @@ import {
   getCurrentApplicationProcedure,
   getCurrentApplicationQuery,
   getCurrentApplicationSafe
-} from "../getCurrentApplication.ts";
-import { applicationSchema } from "../types/Application.ts";
+} from "../getCurrentApplication.js";
+import { applicationSchema } from "../types/Application.js";
 
 describe(`getCurrentApplication`, () => {
   const expected = mockRequest.get(`/applications/@me`, applicationSchema);

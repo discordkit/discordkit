@@ -5,7 +5,7 @@ import {
   modifyGuildChannelPositionsProcedure,
   modifyGuildChannelPositionsSafe,
   modifyGuildChannelPositionsSchema
-} from "../modifyGuildChannelPositions.ts";
+} from "../modifyGuildChannelPositions.js";
 
 describe(`modifyGuildChannelPositions`, () => {
   mockRequest.patch(`/guilds/:guild/channels`);

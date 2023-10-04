@@ -9,13 +9,13 @@ import {
 import {
   type ApplicationCommand,
   applicationCommandSchema
-} from "./types/ApplicationCommand.ts";
-import { localesSchema } from "./types/Locales.ts";
-import { applicationCommandOptionSchema } from "./types/ApplicationCommandOption.ts";
+} from "./types/ApplicationCommand.js";
+import { localesSchema } from "./types/Locales.js";
+import { applicationCommandOptionSchema } from "./types/ApplicationCommandOption.js";
 import {
   ApplicationCommandType,
   applicationCommandTypeSchema
-} from "./types/ApplicationCommandType.ts";
+} from "./types/ApplicationCommandType.js";
 
 export const bulkOverwriteGuildApplicationCommandsSchema = z.object({
   application: snowflake,

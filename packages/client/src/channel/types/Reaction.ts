@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { emojiSchema } from "../../emoji/types/Emoji.ts";
-import { reactionCountDetailsSchema } from "./ReactionCountDetails.ts";
+import { emojiSchema } from "../../emoji/types/Emoji.js";
+import { reactionCountDetailsSchema } from "./ReactionCountDetails.js";
 
 export const reactionSchema = z.object({
   /** times this emoji has been used to react */

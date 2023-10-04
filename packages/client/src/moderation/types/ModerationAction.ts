@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { moderationActionMetaSchema } from "./ModerationActionMeta.ts";
-import { moderationActionTypeSchema } from "./ModerationActionType.ts";
+import { moderationActionMetaSchema } from "./ModerationActionMeta.js";
+import { moderationActionTypeSchema } from "./ModerationActionType.js";
 
 export const moderationActionSchema = z.object({
   /** the type of action */

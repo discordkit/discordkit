@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { isNonNullable } from "./isNonNullable.ts";
+import { isNonNullable } from "./isNonNullable.js";
 
 export const snowflake = z
   .custom<string>((val) => {

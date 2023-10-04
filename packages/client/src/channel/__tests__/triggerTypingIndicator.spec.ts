@@ -5,7 +5,7 @@ import {
   triggerTypingIndicatorProcedure,
   triggerTypingIndicatorSafe,
   triggerTypingIndicatorSchema
-} from "../triggerTypingIndicator.ts";
+} from "../triggerTypingIndicator.js";
 
 describe(`triggerTypingIndicator`, () => {
   mockRequest.post(`/channels/:channel/typing`);

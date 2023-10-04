@@ -5,8 +5,8 @@ import {
   editGuildApplicationCommandProcedure,
   editGuildApplicationCommandSafe,
   editGuildApplicationCommandSchema
-} from "../editGuildApplicationCommand.ts";
-import { applicationCommandSchema } from "../types/ApplicationCommand.ts";
+} from "../editGuildApplicationCommand.js";
+import { applicationCommandSchema } from "../types/ApplicationCommand.js";
 
 describe(`editGuildApplicationCommand`, () => {
   const expected = mockRequest.patch(

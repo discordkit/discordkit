@@ -3,7 +3,7 @@ import { z } from "zod";
 import {
   guildScheduledEventCover,
   guildScheduledEventCoverSchema
-} from "../guildScheduledEventCover.ts";
+} from "../guildScheduledEventCover.js";
 
 describe(`guildScheduledEventCover`, () => {
   it(`produces a valid URL`, () => {

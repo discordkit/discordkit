@@ -5,7 +5,7 @@ import {
   executeGitHubCompatibleWebhookProcedure,
   executeGitHubCompatibleWebhookSafe,
   executeGitHubCompatibleWebhookSchema
-} from "../executeGitHubCompatibleWebhook.ts";
+} from "../executeGitHubCompatibleWebhook.js";
 
 describe(`executeGitHubCompatibleWebhook`, () => {
   mockRequest.post(`/webhooks/:webhook/:token/github`);

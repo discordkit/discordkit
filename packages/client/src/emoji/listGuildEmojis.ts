@@ -7,7 +7,7 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { emojiSchema, type Emoji } from "./types/Emoji.ts";
+import { emojiSchema, type Emoji } from "./types/Emoji.js";
 
 export const listGuildEmojisSchema = z.object({
   guild: snowflake

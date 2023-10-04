@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { userSchema } from "../../user/types/User.ts";
-import { membershipStateSchema } from "./MembershipState.ts";
-import { teamMemberRoleSchema } from "./TeamMemberRole.ts";
+import { userSchema } from "../../user/types/User.js";
+import { membershipStateSchema } from "./MembershipState.js";
+import { teamMemberRoleSchema } from "./TeamMemberRole.js";
 
 // https://discord.com/developers/docs/topics/teams#data-models-team-member-object
 

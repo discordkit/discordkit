@@ -1,20 +1,20 @@
 export { discord } from "@discordkit/core";
 
-export * from "./application/index.ts";
-export * from "./channel/index.ts";
-export * from "./emoji/index.ts";
-export * from "./event/index.ts";
-export * from "./guild/index.ts";
-export * from "./images/index.ts";
-export * from "./interactions/index.ts";
-export * from "./invite/index.ts";
-export * from "./logs/index.ts";
-export * from "./moderation/index.ts";
-export * from "./stage/index.ts";
-export * from "./sticker/index.ts";
-export * from "./template/index.ts";
-export * from "./user/index.ts";
-export * from "./voice/index.ts";
-export * from "./webhook/index.ts";
+export * from "./application/index.js";
+export * from "./channel/index.js";
+export * from "./emoji/index.js";
+export * from "./event/index.js";
+export * from "./guild/index.js";
+export * from "./images/index.js";
+export * from "./interactions/index.js";
+export * from "./invite/index.js";
+export * from "./logs/index.js";
+export * from "./moderation/index.js";
+export * from "./stage/index.js";
+export * from "./sticker/index.js";
+export * from "./template/index.js";
+export * from "./user/index.js";
+export * from "./voice/index.js";
+export * from "./webhook/index.js";
 
-export * as allProcedures from "./procedures.ts";
+export * as allProcedures from "./procedures.js";

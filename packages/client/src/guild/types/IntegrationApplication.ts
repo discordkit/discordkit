@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { snowflake } from "@discordkit/core";
-import { userSchema } from "../../user/types/User.ts";
+import { userSchema } from "../../user/types/User.js";
 
 export const integrationApplicationSchema = z.object({
   /** the id of the app */

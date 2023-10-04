@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { channelSchema } from "./Channel.ts";
-import { threadMemberSchema } from "./ThreadMember.ts";
+import { channelSchema } from "./Channel.js";
+import { threadMemberSchema } from "./ThreadMember.js";
 
 export const archivedThreadsSchema = z.object({
   /** the archived threads */

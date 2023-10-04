@@ -7,7 +7,7 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { banSchema, type Ban } from "./types/Ban.ts";
+import { banSchema, type Ban } from "./types/Ban.js";
 
 export const getGuildBanSchema = z.object({
   guild: snowflake,

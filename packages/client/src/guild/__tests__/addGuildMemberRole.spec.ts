@@ -5,7 +5,7 @@ import {
   addGuildMemberRoleProcedure,
   addGuildMemberRoleSafe,
   addGuildMemberRoleSchema
-} from "../addGuildMemberRole.ts";
+} from "../addGuildMemberRole.js";
 
 describe(`addGuildMemberRole`, () => {
   mockRequest.put(`/guilds/:guild/members/:user/roles/:role`);

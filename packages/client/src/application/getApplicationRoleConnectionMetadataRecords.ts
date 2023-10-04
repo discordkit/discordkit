@@ -10,7 +10,7 @@ import {
 import {
   type ApplicationRoleConnectionMetadata,
   applicationRoleConnectionMetadataSchema
-} from "./types/ApplicationRoleConnectionMetadata.ts";
+} from "./types/ApplicationRoleConnectionMetadata.js";
 
 export const getApplicationRoleConnectionMetadataRecordsSchema = z.object({
   application: snowflake

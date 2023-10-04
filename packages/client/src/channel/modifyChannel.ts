@@ -1,15 +1,15 @@
 import { z } from "zod";
 import type { Fetcher } from "@discordkit/core";
 import { toProcedure, patch, toValidated, snowflake } from "@discordkit/core";
-import { type Channel, channelSchema } from "./types/Channel.ts";
-import { autoArchiveDurationSchema } from "./types/AutoArchiveDuration.ts";
-import { channelTypeSchema } from "./types/ChannelType.ts";
-import { videoQualityModeSchema } from "./types/VideoQualityMode.ts";
-import { overwriteSchema } from "./types/Overwrite.ts";
-import { forumTagSchema } from "./types/ForumTag.ts";
-import { defaultReactionSchema } from "./types/DefaultReaction.ts";
-import { sortOrderTypeSchema } from "./types/SortOrderType.ts";
-import { forumLayoutTypeSchema } from "./types/ForumLayoutType.ts";
+import { type Channel, channelSchema } from "./types/Channel.js";
+import { autoArchiveDurationSchema } from "./types/AutoArchiveDuration.js";
+import { channelTypeSchema } from "./types/ChannelType.js";
+import { videoQualityModeSchema } from "./types/VideoQualityMode.js";
+import { overwriteSchema } from "./types/Overwrite.js";
+import { forumTagSchema } from "./types/ForumTag.js";
+import { defaultReactionSchema } from "./types/DefaultReaction.js";
+import { sortOrderTypeSchema } from "./types/SortOrderType.js";
+import { forumLayoutTypeSchema } from "./types/ForumLayoutType.js";
 
 const sharedChannelOptions = z.object({
   /** 1-100 character channel name */

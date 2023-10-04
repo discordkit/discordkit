@@ -5,8 +5,8 @@ import {
   getCurrentUserGuildsQuery,
   getCurrentUserGuildsSafe,
   getCurrentUserGuildsSchema
-} from "../getCurrentUserGuilds.ts";
-import { guildSchema } from "../../guild/types/Guild.ts";
+} from "../getCurrentUserGuilds.js";
+import { guildSchema } from "../../guild/types/Guild.js";
 
 describe(`getCurrentUserGuilds`, () => {
   const expected = mockRequest.get(

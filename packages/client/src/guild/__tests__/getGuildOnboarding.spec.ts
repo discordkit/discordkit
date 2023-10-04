@@ -5,8 +5,8 @@ import {
   getGuildOnboardingQuery,
   getGuildOnboardingSafe,
   getGuildOnboardingSchema
-} from "../getGuildOnboarding.ts";
-import { guildOnboardingSchema } from "../types/GuildOnboarding.ts";
+} from "../getGuildOnboarding.js";
+import { guildOnboardingSchema } from "../types/GuildOnboarding.js";
 
 describe(`getGuildOnboarding`, () => {
   const expected = mockRequest.get(

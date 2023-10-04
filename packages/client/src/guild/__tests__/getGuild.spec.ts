@@ -5,8 +5,8 @@ import {
   getGuildQuery,
   getGuildSafe,
   getGuildSchema
-} from "../getGuild.ts";
-import { guildSchema } from "../types/Guild.ts";
+} from "../getGuild.js";
+import { guildSchema } from "../types/Guild.js";
 
 describe(`getGuild`, () => {
   const expected = mockRequest.get(`/guilds/:id`, guildSchema);

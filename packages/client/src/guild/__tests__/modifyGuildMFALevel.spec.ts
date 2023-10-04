@@ -5,8 +5,8 @@ import {
   modifyGuildMFALevelProcedure,
   modifyGuildMFALevelSafe,
   modifyGuildMFALevelSchema
-} from "../modifyGuildMFALevel.ts";
-import { mfaLevelSchema } from "../types/MFALevel.ts";
+} from "../modifyGuildMFALevel.js";
+import { mfaLevelSchema } from "../types/MFALevel.js";
 
 describe(`modifyGuildMFALevel`, () => {
   const expected = mockRequest.patch(`/guilds/:guild/mfa`, mfaLevelSchema);

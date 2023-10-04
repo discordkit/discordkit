@@ -1,11 +1,11 @@
 import { z } from "zod";
-import { applicationSchema } from "../../application/types/Application.ts";
-import { channelSchema } from "../../channel/types/Channel.ts";
-import { scheduledEventSchema } from "../../event/types/ScheduledEvent.ts";
-import { guildSchema } from "../../guild/types/Guild.ts";
-import { userSchema } from "../../user/types/User.ts";
-import { inviteStageInstanceSchema } from "./InviteStageInstance.ts";
-import { inviteTargetSchema } from "./InviteTarget.ts";
+import { applicationSchema } from "../../application/types/Application.js";
+import { channelSchema } from "../../channel/types/Channel.js";
+import { scheduledEventSchema } from "../../event/types/ScheduledEvent.js";
+import { guildSchema } from "../../guild/types/Guild.js";
+import { userSchema } from "../../user/types/User.js";
+import { inviteStageInstanceSchema } from "./InviteStageInstance.js";
+import { inviteTargetSchema } from "./InviteTarget.js";
 
 export const inviteSchema = z.object({
   /** the invite code (unique ID) */

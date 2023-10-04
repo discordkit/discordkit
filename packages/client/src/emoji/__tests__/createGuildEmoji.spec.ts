@@ -5,8 +5,8 @@ import {
   createGuildEmojiProcedure,
   createGuildEmojiSafe,
   createGuildEmojiSchema
-} from "../createGuildEmoji.ts";
-import { emojiSchema } from "../types/Emoji.ts";
+} from "../createGuildEmoji.js";
+import { emojiSchema } from "../types/Emoji.js";
 
 describe(`createGuildEmoji`, () => {
   const expected = mockRequest.post(`/guilds/:guild/emojis`, emojiSchema);

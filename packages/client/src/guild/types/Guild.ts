@@ -1,17 +1,17 @@
 import { z } from "zod";
 import { snowflake } from "@discordkit/core";
-import { emojiSchema } from "../../emoji/types/Emoji.ts";
-import { stickerSchema } from "../../sticker/types/Sticker.ts";
-import { localesSchema } from "../../application/types/Locales.ts";
-import { roleSchema } from "./Role.ts";
-import { welcomeScreenSchema } from "./WelcomeScreen.ts";
-import { premiumTierSchema } from "./PremiumTier.ts";
-import { guildNSFWLevelSchema } from "./GuildNSFWLevel.ts";
-import { verificationLevelSchema } from "./VerificationLevel.ts";
-import { mfaLevelSchema } from "./MFALevel.ts";
-import { explicitContentFilterLevelSchema } from "./ExplicitContentFilterLevel.ts";
-import { defaultMessageNotificationLevelSchema } from "./DefaultMessageNotificationLevel.ts";
-import { guildFeaturesSchema } from "./GuildFeatures.ts";
+import { emojiSchema } from "../../emoji/types/Emoji.js";
+import { stickerSchema } from "../../sticker/types/Sticker.js";
+import { localesSchema } from "../../application/types/Locales.js";
+import { roleSchema } from "./Role.js";
+import { welcomeScreenSchema } from "./WelcomeScreen.js";
+import { premiumTierSchema } from "./PremiumTier.js";
+import { guildNSFWLevelSchema } from "./GuildNSFWLevel.js";
+import { verificationLevelSchema } from "./VerificationLevel.js";
+import { mfaLevelSchema } from "./MFALevel.js";
+import { explicitContentFilterLevelSchema } from "./ExplicitContentFilterLevel.js";
+import { defaultMessageNotificationLevelSchema } from "./DefaultMessageNotificationLevel.js";
+import { guildFeaturesSchema } from "./GuildFeatures.js";
 
 export const guildSchema = z.object({
   /** guild id */

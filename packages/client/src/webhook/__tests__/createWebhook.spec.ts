@@ -5,8 +5,8 @@ import {
   createWebhookProcedure,
   createWebhookSafe,
   createWebhookSchema
-} from "../createWebhook.ts";
-import { webhookSchema } from "../types/Webhook.ts";
+} from "../createWebhook.js";
+import { webhookSchema } from "../types/Webhook.js";
 
 describe(`createWebhook`, () => {
   const expected = mockRequest.post(

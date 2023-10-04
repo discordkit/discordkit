@@ -10,7 +10,7 @@ import {
 import {
   type InteractionResponse,
   interactionResponseSchema
-} from "./types/InteractionResponse.ts";
+} from "./types/InteractionResponse.js";
 
 export const getOriginalInteractionResponseSchema = z.object({
   application: snowflake,

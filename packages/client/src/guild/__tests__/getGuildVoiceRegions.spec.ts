@@ -5,8 +5,8 @@ import {
   getGuildVoiceRegionsQuery,
   getGuildVoiceRegionsSafe,
   getGuildVoiceRegionsSchema
-} from "../getGuildVoiceRegions.ts";
-import { voiceRegionSchema } from "../../voice/types/VoiceRegion.ts";
+} from "../getGuildVoiceRegions.js";
+import { voiceRegionSchema } from "../../voice/types/VoiceRegion.js";
 
 describe(`getGuildVoiceRegions`, () => {
   const expected = mockRequest.get(`/guilds/:guild/regions`, voiceRegionSchema);

@@ -5,7 +5,7 @@ import {
   toProcedure,
   toValidated
 } from "@discordkit/core";
-import { inviteSchema, type Invite } from "./types/Invite.ts";
+import { inviteSchema, type Invite } from "./types/Invite.js";
 
 export const deleteInviteSchema = z.object({
   code: z.string().min(1)

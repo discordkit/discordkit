@@ -2,16 +2,15 @@
   "$schema": "https://turborepo.org/schema.json",
   "globalDependencies": ["tsconfig.json", "vitest.config.ts"],
   "pipeline": {
+    "build": {
+      "dependsOn": ["^build"]
+    },
     "//#lint": {},
     "//#test": {
+      "dependsOn": ["@discordkit/core#build"],
       "inputs": ["./pacakges/*/src/**"],
       "outputs": [".coverage/**"]
     },
-    "//#build:types": {
-      "outputs": ["./packages/*/dist/**"]
-    },
-    "build": {
-      "dependsOn": ["//#build:types"]
-    }
+    "dev": {}
   }
 }

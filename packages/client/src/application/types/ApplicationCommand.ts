@@ -1,11 +1,11 @@
 import { z } from "zod";
 import { snowflake } from "@discordkit/core";
-import { localesSchema } from "./Locales.ts";
-import { applicationCommandOptionSchema } from "./ApplicationCommandOption.ts";
+import { localesSchema } from "./Locales.js";
+import { applicationCommandOptionSchema } from "./ApplicationCommandOption.js";
 import {
   ApplicationCommandType,
   applicationCommandTypeSchema
-} from "./ApplicationCommandType.ts";
+} from "./ApplicationCommandType.js";
 
 export const applicationCommandSchema = z.object({
   /** Unique ID of command */

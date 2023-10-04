@@ -6,8 +6,8 @@ import type {
   Procedure,
   unsetMarker
 } from "@trpc/server";
-import { isNonNullable } from "./isNonNullable.ts";
-import type { Fetcher } from "./methods.ts";
+import { isNonNullable } from "./isNonNullable.js";
+import type { Fetcher } from "./methods.js";
 
 type Result<T = void> = T extends z.ZodTypeAny ? z.infer<T> : T;
 

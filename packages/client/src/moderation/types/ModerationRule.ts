@@ -1,9 +1,9 @@
 import { z } from "zod";
 import { snowflake } from "@discordkit/core";
-import { moderationActionSchema } from "./ModerationAction.ts";
-import { moderationEventSchema } from "./ModerationEvent.ts";
-import { moderationTriggerTypeSchema } from "./ModerationTriggerType.ts";
-import { triggerMetaSchema } from "./TriggerMeta.ts";
+import { moderationActionSchema } from "./ModerationAction.js";
+import { moderationEventSchema } from "./ModerationEvent.js";
+import { moderationTriggerTypeSchema } from "./ModerationTriggerType.js";
+import { triggerMetaSchema } from "./TriggerMeta.js";
 
 export const moderationRuleSchema = z.object({
   /** the id of this rule */

@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { snowflake } from "@discordkit/core";
-import { onboardingPromptSchema } from "./OnboardingPrompt.ts";
-import { onboardingModeSchema } from "./OnboardingMode.ts";
+import { onboardingPromptSchema } from "./OnboardingPrompt.js";
+import { onboardingModeSchema } from "./OnboardingMode.js";
 
 export const guildOnboardingSchema = z.object({
   /** ID of the guild this onboarding is part of */

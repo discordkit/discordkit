@@ -3,7 +3,7 @@ import { z } from "zod";
 import {
   guildDiscoverySplash,
   guildDiscoverySplashSchema
-} from "../guildDiscoverySplash.ts";
+} from "../guildDiscoverySplash.js";
 
 describe(`guildDiscoverySplash`, () => {
   it(`produces a valid URL`, () => {

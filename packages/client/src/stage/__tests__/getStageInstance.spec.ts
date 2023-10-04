@@ -5,8 +5,8 @@ import {
   getStageInstanceQuery,
   getStageInstanceSafe,
   getStageInstanceSchema
-} from "../getStageInstance.ts";
-import { stageSchema } from "../types/Stage.ts";
+} from "../getStageInstance.js";
+import { stageSchema } from "../types/Stage.js";
 
 describe(`getStageInstance`, () => {
   const expected = mockRequest.get(`/stage-instances/:channel`, stageSchema);

@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { integrationSchema } from "../../guild/types/Integration.ts";
-import { connectionVisibiltySchema } from "./ConnectionVisibilty.ts";
-import { servicesSchema } from "./Services.ts";
+import { integrationSchema } from "../../guild/types/Integration.js";
+import { connectionVisibiltySchema } from "./ConnectionVisibilty.js";
+import { servicesSchema } from "./Services.js";
 
 export const connectionSchema = z.object({
   /** id of the connection account */

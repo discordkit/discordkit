@@ -5,8 +5,8 @@ import {
   modifyCurrentUserProcedure,
   modifyCurrentUserSafe,
   modifyCurrentUserSchema
-} from "../modifyCurrentUser.ts";
-import { userSchema } from "../types/User.ts";
+} from "../modifyCurrentUser.js";
+import { userSchema } from "../types/User.js";
 
 describe(`modifyCurrentUser`, () => {
   const expected = mockRequest.patch(`/users/@me`, userSchema);

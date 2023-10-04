@@ -7,7 +7,7 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { stickerSchema, type Sticker } from "./types/Sticker.ts";
+import { stickerSchema, type Sticker } from "./types/Sticker.js";
 
 export const getStickerSchema = z.object({
   sticker: snowflake

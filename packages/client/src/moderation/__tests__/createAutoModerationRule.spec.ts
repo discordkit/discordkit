@@ -5,8 +5,8 @@ import {
   createAutoModerationRuleProcedure,
   createAutoModerationRuleSafe,
   createAutoModerationRuleSchema
-} from "../createAutoModerationRule.ts";
-import { moderationRuleSchema } from "../types/ModerationRule.ts";
+} from "../createAutoModerationRule.js";
+import { moderationRuleSchema } from "../types/ModerationRule.js";
 
 describe(`createAutoModerationRule`, () => {
   const expected = mockRequest.post(

@@ -9,10 +9,10 @@ import {
 import {
   type ScheduledEvent,
   scheduledEventSchema
-} from "./types/ScheduledEvent.ts";
-import { entityMetadataSchema } from "./types/EntityMetadata.ts";
-import { scheduledEventPrivacyLevelSchema } from "./types/ScheduledEventPrivacyLevel.ts";
-import { scheduledEventEntityTypeSchema } from "./types/ScheduledEventEntityType.ts";
+} from "./types/ScheduledEvent.js";
+import { entityMetadataSchema } from "./types/EntityMetadata.js";
+import { scheduledEventPrivacyLevelSchema } from "./types/ScheduledEventPrivacyLevel.js";
+import { scheduledEventEntityTypeSchema } from "./types/ScheduledEventEntityType.js";
 
 export const createGuildScheduledEventSchema = z.object({
   guild: snowflake,

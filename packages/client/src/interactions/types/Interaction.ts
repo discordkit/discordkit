@@ -1,12 +1,12 @@
 import { z } from "zod";
 import { snowflake } from "@discordkit/core";
-import { memberSchema } from "../../guild/types/Member.ts";
-import { localesSchema } from "../../application/types/Locales.ts";
-import { channelSchema } from "../../channel/types/Channel.ts";
-import { messageSchema } from "../../channel/types/Message.ts";
-import { userSchema } from "../../user/types/User.ts";
-import { interactionTypeSchema } from "./InteractionType.ts";
-import { interactionDataSchema } from "./InteractionData.ts";
+import { memberSchema } from "../../guild/types/Member.js";
+import { localesSchema } from "../../application/types/Locales.js";
+import { channelSchema } from "../../channel/types/Channel.js";
+import { messageSchema } from "../../channel/types/Message.js";
+import { userSchema } from "../../user/types/User.js";
+import { interactionTypeSchema } from "./InteractionType.js";
+import { interactionDataSchema } from "./InteractionData.js";
 
 export const interactionSchema = z.object({
   /** ID of the interaction */

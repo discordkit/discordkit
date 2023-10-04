@@ -5,7 +5,7 @@ import {
   modifyUserVoiceStateProcedure,
   modifyUserVoiceStateSafe,
   modifyUserVoiceStateSchema
-} from "../modifyUserVoiceState.ts";
+} from "../modifyUserVoiceState.js";
 
 describe(`modifyUserVoiceState`, () => {
   mockRequest.patch(`/guilds/:guild/voice-states/:user`);

@@ -3,7 +3,7 @@ import { z } from "zod";
 import {
   stickerPackBanner,
   stickerPackBannerSchema
-} from "../stickerPackBanner.ts";
+} from "../stickerPackBanner.js";
 
 describe(`stickerPackBanner`, () => {
   it(`produces a valid URL`, () => {

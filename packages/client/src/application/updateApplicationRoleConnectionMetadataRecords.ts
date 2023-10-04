@@ -9,7 +9,7 @@ import {
 import {
   type ApplicationRoleConnectionMetadata,
   applicationRoleConnectionMetadataSchema
-} from "./types/ApplicationRoleConnectionMetadata.ts";
+} from "./types/ApplicationRoleConnectionMetadata.js";
 
 export const updateApplicationRoleConnectionMetadataRecordsSchema = z.object({
   application: snowflake,

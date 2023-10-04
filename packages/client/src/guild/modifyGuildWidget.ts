@@ -9,7 +9,7 @@ import {
 import {
   guildWidgetSettingsSchema,
   type GuildWidgetSettings
-} from "./types/GuildWidgetSettings.ts";
+} from "./types/GuildWidgetSettings.js";
 
 export const modifyGuildWidgetSchema = z.object({
   guild: snowflake,

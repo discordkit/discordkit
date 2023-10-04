@@ -1,10 +1,10 @@
 import { z } from "zod";
 import { snowflake } from "@discordkit/core";
-import { userSchema } from "../../user/types/User.ts";
-import { scheduledEventEntityTypeSchema } from "./ScheduledEventEntityType.ts";
-import { scheduledEventPrivacyLevelSchema } from "./ScheduledEventPrivacyLevel.ts";
-import { scheduledEventStatusSchema } from "./ScheduledEventStatus.ts";
-import { entityMetadataSchema } from "./EntityMetadata.ts";
+import { userSchema } from "../../user/types/User.js";
+import { scheduledEventEntityTypeSchema } from "./ScheduledEventEntityType.js";
+import { scheduledEventPrivacyLevelSchema } from "./ScheduledEventPrivacyLevel.js";
+import { scheduledEventStatusSchema } from "./ScheduledEventStatus.js";
+import { entityMetadataSchema } from "./EntityMetadata.js";
 
 export const scheduledEventSchema = z.object({
   /** the id of the scheduled event */

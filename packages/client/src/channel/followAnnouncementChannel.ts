@@ -9,7 +9,7 @@ import {
 import {
   followedChannelSchema,
   type FollowedChannel
-} from "./types/FollowedChannel.ts";
+} from "./types/FollowedChannel.js";
 
 export const followAnnouncementChannelSchema = z.object({
   channel: snowflake,

@@ -1,1 +1,1 @@
-export * from "./GuildTemplate.ts";
+export * from "./GuildTemplate.js";

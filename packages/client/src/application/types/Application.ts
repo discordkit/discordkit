@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { snowflake } from "@discordkit/core";
-import { userSchema } from "../../user/types/User.ts";
-import { teamSchema } from "./Team.ts";
+import { userSchema } from "../../user/types/User.js";
+import { teamSchema } from "./Team.js";
 
 // https://discord.com/developers/docs/resources/application#application-object-application-structure
 

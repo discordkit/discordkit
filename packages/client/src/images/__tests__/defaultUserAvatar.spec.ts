@@ -3,7 +3,7 @@ import { z } from "zod";
 import {
   defaultUserAvatar,
   defaultUserAvatarSchema
-} from "../defaultUserAvatar.ts";
+} from "../defaultUserAvatar.js";
 
 describe(`defaultUserAvatar`, () => {
   it(`produces a valid URL`, () => {

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { snowflake } from "@discordkit/core";
-import { stagePrivacyLevelSchema } from "./StagePrivacyLevel.ts";
+import { stagePrivacyLevelSchema } from "./StagePrivacyLevel.js";
 
 export const stageSchema = z.object({
   /** The id of this Stage instance */

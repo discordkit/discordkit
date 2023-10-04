@@ -5,8 +5,8 @@ import {
   getGlobalApplicationCommandsProcedure,
   getGlobalApplicationCommandsQuery,
   getGlobalApplicationCommandsSafe
-} from "../getGlobalApplicationCommands.ts";
-import { applicationCommandSchema } from "../types/ApplicationCommand.ts";
+} from "../getGlobalApplicationCommands.js";
+import { applicationCommandSchema } from "../types/ApplicationCommand.js";
 
 describe(`getGlobalApplicationCommands`, () => {
   const expected = mockRequest.get(

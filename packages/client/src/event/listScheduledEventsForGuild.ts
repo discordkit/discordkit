@@ -10,7 +10,7 @@ import {
 import {
   scheduledEventSchema,
   type ScheduledEvent
-} from "./types/ScheduledEvent.ts";
+} from "./types/ScheduledEvent.js";
 
 export const listScheduledEventsForGuildSchema = z.object({
   guild: snowflake,

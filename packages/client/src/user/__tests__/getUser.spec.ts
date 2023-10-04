@@ -5,8 +5,8 @@ import {
   getUserQuery,
   getUserSafe,
   getUserSchema
-} from "../getUser.ts";
-import { userSchema } from "../types/User.ts";
+} from "../getUser.js";
+import { userSchema } from "../types/User.js";
 
 describe(`getUser`, () => {
   const expected = mockRequest.get(`/users/:user`, userSchema);

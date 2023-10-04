@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { snowflake } from "@discordkit/core";
-import { roleTagSchema } from "./RoleTag.ts";
+import { roleTagSchema } from "./RoleTag.js";
 
 export const roleSchema = z.object({
   /** role id */

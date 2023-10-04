@@ -16,6 +16,7 @@ import type { RenderHookResult } from "@testing-library/react";
 import { renderHook } from "@testing-library/react";
 import type { unsetMarker } from "@trpc/server";
 import { initTRPC } from "@trpc/server";
+import { Snowflake } from "nodejs-snowflake";
 import {
   endpoint,
   type toQuery,
@@ -23,7 +24,6 @@ import {
   type toProcedure,
   snowflake
 } from "@discordkit/core";
-import { Snowflake } from "nodejs-snowflake";
 
 type UnsetMarker = typeof unsetMarker;
 

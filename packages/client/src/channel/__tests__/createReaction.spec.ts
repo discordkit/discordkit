@@ -5,7 +5,7 @@ import {
   createReactionProcedure,
   createReactionSafe,
   createReactionSchema
-} from "../createReaction.ts";
+} from "../createReaction.js";
 
 describe(`createReaction`, () => {
   mockRequest.put(`/channels/:channel/messages/:message/reactions/:emoji/@me`);

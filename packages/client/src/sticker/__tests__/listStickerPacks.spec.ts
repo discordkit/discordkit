@@ -5,7 +5,7 @@ import {
   listStickerPacksQuery,
   listStickerPacksSafe,
   stickerPacksSchema
-} from "../listStickerPacks.ts";
+} from "../listStickerPacks.js";
 
 describe(`listStickerPacks`, () => {
   const expected = mockRequest.get(`/sticker-packs`, stickerPacksSchema);

@@ -1,1 +1,1 @@
-export * from "./Emoji.ts";
+export * from "./Emoji.js";

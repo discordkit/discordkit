@@ -1,6 +1,6 @@
 import { mockSchema } from "test-utils";
 import { z } from "zod";
-import { achievementIcon, achievementIconSchema } from "../achievementIcon.ts";
+import { achievementIcon, achievementIconSchema } from "../achievementIcon.js";
 
 describe(`achievementIcon`, () => {
   it(`produces a valid URL`, () => {

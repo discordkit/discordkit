@@ -5,7 +5,7 @@ import {
   editChannelPermissionsProcedure,
   editChannelPermissionsSafe,
   editChannelPermissionsSchema
-} from "../editChannelPermissions.ts";
+} from "../editChannelPermissions.js";
 
 describe(`editChannelPermissions`, () => {
   mockRequest.put(`/channels/:channel/permissions/:overwrite`);

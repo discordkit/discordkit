@@ -6,8 +6,8 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { type Invite, inviteSchema } from "../invite/types/Invite.ts";
-import { inviteTargetSchema } from "../invite/types/InviteTarget.ts";
+import { type Invite, inviteSchema } from "../invite/types/Invite.js";
+import { inviteTargetSchema } from "../invite/types/InviteTarget.js";
 
 export const createChannelInviteSchema = z.object({
   channel: snowflake,

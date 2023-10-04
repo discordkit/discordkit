@@ -1,4 +1,4 @@
-import { buildURL } from "./buildURL.ts";
+import { buildURL } from "./buildURL.js";
 
 export const getAsset = (
   resource: string,

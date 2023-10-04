@@ -5,8 +5,8 @@ import {
   createGuildScheduledEventProcedure,
   createGuildScheduledEventSafe,
   createGuildScheduledEventSchema
-} from "../createGuildScheduledEvent.ts";
-import { scheduledEventSchema } from "../types/ScheduledEvent.ts";
+} from "../createGuildScheduledEvent.js";
+import { scheduledEventSchema } from "../types/ScheduledEvent.js";
 
 describe(`createGuildScheduledEvent`, () => {
   const expected = mockRequest.post(

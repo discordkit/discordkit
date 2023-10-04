@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { snowflake } from "@discordkit/core";
-import { interactionTypeSchema } from "../../interactions/types/InteractionType.ts";
-import { userSchema } from "../../user/types/User.ts";
-import { memberSchema } from "../../guild/types/Member.ts";
+import { interactionTypeSchema } from "../../interactions/types/InteractionType.js";
+import { userSchema } from "../../user/types/User.js";
+import { memberSchema } from "../../guild/types/Member.js";
 
 export const messageInteractionSchema = z.object({
   /** id of the interaction */

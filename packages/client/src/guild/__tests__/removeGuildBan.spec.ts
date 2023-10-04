@@ -5,7 +5,7 @@ import {
   removeGuildBanProcedure,
   removeGuildBanSafe,
   removeGuildBanSchema
-} from "../removeGuildBan.ts";
+} from "../removeGuildBan.js";
 
 describe(`removeGuildBan`, () => {
   mockRequest.delete(`/guilds/:guild/bans/:user`);

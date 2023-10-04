@@ -6,9 +6,9 @@ import {
   createDMProcedure,
   createDMSafe,
   createDMSchema
-} from "../createDM.ts";
-import { channelSchema } from "../../channel/types/Channel.ts";
-import { ChannelType } from "../../channel/types/ChannelType.ts";
+} from "../createDM.js";
+import { channelSchema } from "../../channel/types/Channel.js";
+import { ChannelType } from "../../channel/types/ChannelType.js";
 
 describe(`createDM`, () => {
   const expected = mockRequest.post(

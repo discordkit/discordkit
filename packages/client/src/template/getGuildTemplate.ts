@@ -10,7 +10,7 @@ import {
 import {
   guildTemplateSchema,
   type GuildTemplate
-} from "./types/GuildTemplate.ts";
+} from "./types/GuildTemplate.js";
 
 export const getGuildTemplateSchema = z.object({
   template: snowflake

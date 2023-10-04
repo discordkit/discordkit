@@ -1,4 +1,4 @@
-import { DiscordSession } from "../DiscordSession.ts";
+import { DiscordSession } from "../DiscordSession.js";
 
 describe(`discordSession`, () => {
   it(`supports setting the auth token`, () => {

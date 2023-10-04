@@ -5,7 +5,7 @@ import {
   addThreadMemberProcedure,
   addThreadMemberSafe,
   addThreadMemberSchema
-} from "../addThreadMember.ts";
+} from "../addThreadMember.js";
 
 describe(`addThreadMember`, () => {
   mockRequest.put(`/channels/:channel/thread-members/:user`);

@@ -1,1 +1,1 @@
-export * from "./ImageSizes.ts";
+export * from "./ImageSizes.js";

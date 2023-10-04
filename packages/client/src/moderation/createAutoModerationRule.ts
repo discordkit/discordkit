@@ -9,11 +9,11 @@ import {
 import {
   type ModerationRule,
   moderationRuleSchema
-} from "./types/ModerationRule.ts";
-import { moderationEventSchema } from "./types/ModerationEvent.ts";
-import { moderationTriggerTypeSchema } from "./types/ModerationTriggerType.ts";
-import { triggerMetaSchema } from "./types/TriggerMeta.ts";
-import { moderationActionSchema } from "./types/ModerationAction.ts";
+} from "./types/ModerationRule.js";
+import { moderationEventSchema } from "./types/ModerationEvent.js";
+import { moderationTriggerTypeSchema } from "./types/ModerationTriggerType.js";
+import { triggerMetaSchema } from "./types/TriggerMeta.js";
+import { moderationActionSchema } from "./types/ModerationAction.js";
 
 export const createAutoModerationRuleSchema = z.object({
   guild: snowflake,

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { snowflake } from "@discordkit/core";
-import { channelTypeSchema } from "./ChannelType.ts";
+import { channelTypeSchema } from "./ChannelType.js";
 
 export const channelMentionSchema = z.object({
   /** id of the channel */

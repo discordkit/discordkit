@@ -1,6 +1,6 @@
 import { getAsset, snowflake } from "@discordkit/core";
 import { z } from "zod";
-import { imageSizes } from "./types/ImageSizes.ts";
+import { imageSizes } from "./types/ImageSizes.js";
 
 export const customEmojiSchema = z.object({
   emoji: snowflake,
@@ -11,8 +11,8 @@ export const customEmojiSchema = z.object({
       z.literal(`webp`),
       z.literal(`gif`)
     ])
-    .optional()
-    .default(`png`),
+    .default(`png`)
+    .optional(),
   params: z
     .object({
       size: imageSizes
@@ -25,4 +25,4 @@ export const customEmoji = ({
   format,
   params
 }: z.infer<typeof customEmojiSchema>): string =>
-  getAsset(`/emojis/${emoji}.${format}`, params);
+  getAsset(`/emojis/${emoji}.${format ?? `png`}`, params);

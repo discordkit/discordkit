@@ -5,8 +5,8 @@ import {
   createMessageProcedure,
   createMessageSafe,
   createMessageSchema
-} from "../createMessage.ts";
-import { messageSchema } from "../types/Message.ts";
+} from "../createMessage.js";
+import { messageSchema } from "../types/Message.js";
 
 describe(`createMessage`, () => {
   mockRequest.post(`/channels/:channel/messages`, messageSchema);

@@ -1,5 +1,5 @@
-export { createAutoModerationRuleProcedure } from "./createAutoModerationRule.ts";
-export { deleteAutoModerationRuleProcedure } from "./deleteAutoModerationRule.ts";
-export { getAutoModerationRuleProcedure } from "./getAutoModerationRule.ts";
-export { listAutoModerationRulesForGuildProcedure } from "./listAutoModerationRulesForGuild.ts";
-export { modifyAutoModerationRuleProcedure } from "./modifyAutoModerationRule.ts";
+export { createAutoModerationRuleProcedure } from "./createAutoModerationRule.js";
+export { deleteAutoModerationRuleProcedure } from "./deleteAutoModerationRule.js";
+export { getAutoModerationRuleProcedure } from "./getAutoModerationRule.js";
+export { listAutoModerationRulesForGuildProcedure } from "./listAutoModerationRulesForGuild.js";
+export { modifyAutoModerationRuleProcedure } from "./modifyAutoModerationRule.js";

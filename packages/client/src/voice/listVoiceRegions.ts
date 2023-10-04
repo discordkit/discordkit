@@ -5,7 +5,7 @@ import {
   toQuery,
   toValidated
 } from "@discordkit/core";
-import { voiceRegionSchema, type VoiceRegion } from "./types/VoiceRegion.ts";
+import { voiceRegionSchema, type VoiceRegion } from "./types/VoiceRegion.js";
 
 /**
  * ### [List Voice Regions](https://discord.com/developers/docs/resources/voice#list-voice-regions)

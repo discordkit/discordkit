@@ -7,7 +7,7 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { threadMemberSchema, type ThreadMember } from "./types/ThreadMember.ts";
+import { threadMemberSchema, type ThreadMember } from "./types/ThreadMember.js";
 
 export const listThreadMembersSchema = z.object({
   channel: snowflake,

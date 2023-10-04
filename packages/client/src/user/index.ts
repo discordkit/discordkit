@@ -1,14 +1,14 @@
-export * from "./createDM.ts";
-export * from "./createGroupDM.ts";
-export * from "./getCurrentUser.ts";
-export * from "./getCurrentUserGuildMember.ts";
-export * from "./getCurrentUserGuilds.ts";
-export * from "./getUser.ts";
-export * from "./getUserApplicationRoleConnection.ts";
-export * from "./getUserConnections.ts";
-export * from "./leaveGuild.ts";
-export * from "./modifyCurrentUser.ts";
-export * from "./updateUserApplicationRoleConnection.ts";
+export * from "./createDM.js";
+export * from "./createGroupDM.js";
+export * from "./getCurrentUser.js";
+export * from "./getCurrentUserGuildMember.js";
+export * from "./getCurrentUserGuilds.js";
+export * from "./getUser.js";
+export * from "./getUserApplicationRoleConnection.js";
+export * from "./getUserConnections.js";
+export * from "./leaveGuild.js";
+export * from "./modifyCurrentUser.js";
+export * from "./updateUserApplicationRoleConnection.js";
 
-export * from "./types/index.ts";
-export * as userProcedures from "./procedures.ts";
+export * from "./types/index.js";
+export * as userProcedures from "./procedures.js";

@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { snowflake } from "@discordkit/core";
-import { memberSchema } from "../../guild/types/Member.ts";
-import { userSchema } from "../../user/types/User.ts";
+import { memberSchema } from "../../guild/types/Member.js";
+import { userSchema } from "../../user/types/User.js";
 
 export const scheduledEventUserSchema = z.object({
   /** the scheduled event id which the user subscribed to */

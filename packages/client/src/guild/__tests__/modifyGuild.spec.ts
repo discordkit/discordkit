@@ -5,8 +5,8 @@ import {
   modifyGuildProcedure,
   modifyGuildSafe,
   modifyGuildSchema
-} from "../modifyGuild.ts";
-import { guildSchema } from "../types/Guild.ts";
+} from "../modifyGuild.js";
+import { guildSchema } from "../types/Guild.js";
 
 describe(`modifyGuild`, () => {
   const expected = mockRequest.patch(`/guilds/:guild`, guildSchema);

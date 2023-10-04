@@ -5,7 +5,7 @@ import {
   groupDMAddRecipientProcedure,
   groupDMAddRecipientSafe,
   groupDMAddRecipientSchema
-} from "../groupDMAddRecipient.ts";
+} from "../groupDMAddRecipient.js";
 
 describe(`groupDMAddRecipient`, () => {
   mockRequest.put(`/channels/:channel/recipients/:user`);

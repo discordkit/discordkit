@@ -5,8 +5,8 @@ import {
   createGuildTemplateProcedure,
   createGuildTemplateSafe,
   createGuildTemplateSchema
-} from "../createGuildTemplate.ts";
-import { guildTemplateSchema } from "../types/GuildTemplate.ts";
+} from "../createGuildTemplate.js";
+import { guildTemplateSchema } from "../types/GuildTemplate.js";
 
 describe(`createGuildTemplate`, () => {
   const expected = mockRequest.post(

@@ -5,8 +5,8 @@ import {
   getGuildPreviewQuery,
   getGuildPreviewSafe,
   getGuildPreviewSchema
-} from "../getGuildPreview.ts";
-import { guildPreviewSchema } from "../types/GuildPreview.ts";
+} from "../getGuildPreview.js";
+import { guildPreviewSchema } from "../types/GuildPreview.js";
 
 describe(`getGuildPreview`, () => {
   const expected = mockRequest.get(

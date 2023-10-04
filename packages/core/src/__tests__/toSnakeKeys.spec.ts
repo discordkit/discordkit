@@ -1,4 +1,4 @@
-import { toSnakeKeys } from "../toSnakeKeys.ts";
+import { toSnakeKeys } from "../toSnakeKeys.js";
 
 describe(`toSnakeKeys`, () => {
   it(`converts object camelCase keys to snake_case keys`, () => {

@@ -5,8 +5,8 @@ import {
   getGuildEmojiQuery,
   getGuildEmojiSafe,
   getGuildEmojiSchema
-} from "../getGuildEmoji.ts";
-import { emojiSchema } from "../types/Emoji.ts";
+} from "../getGuildEmoji.js";
+import { emojiSchema } from "../types/Emoji.js";
 
 describe(`getGuildEmoji`, () => {
   const expected = mockRequest.get(`/guilds/:guild/emojis/:emoji`, emojiSchema);

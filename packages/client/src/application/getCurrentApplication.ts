@@ -5,7 +5,7 @@ import {
   toQuery,
   toValidated
 } from "@discordkit/core";
-import { type Application, applicationSchema } from "./types/Application.ts";
+import { type Application, applicationSchema } from "./types/Application.js";
 
 /**
  * ### [Get Current Application](https://discord.com/developers/docs/resources/application#get-current-application)

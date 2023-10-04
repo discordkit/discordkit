@@ -5,8 +5,8 @@ import {
   modifyGuildRoleProcedure,
   modifyGuildRoleSafe,
   modifyGuildRoleSchema
-} from "../modifyGuildRole.ts";
-import { roleSchema } from "../types/Role.ts";
+} from "../modifyGuildRole.js";
+import { roleSchema } from "../types/Role.js";
 
 describe(`modifyGuildRole`, () => {
   const expected = mockRequest.patch(`/guilds/:guild/roles/:role`, roleSchema);

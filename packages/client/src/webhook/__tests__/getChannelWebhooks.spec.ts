@@ -5,8 +5,8 @@ import {
   getChannelWebhooksQuery,
   getChannelWebhooksSafe,
   getChannelWebhooksSchema
-} from "../getChannelWebhooks.ts";
-import { webhookSchema } from "../types/Webhook.ts";
+} from "../getChannelWebhooks.js";
+import { webhookSchema } from "../types/Webhook.js";
 
 describe(`getChannelWebhooks`, () => {
   const expected = mockRequest.get(

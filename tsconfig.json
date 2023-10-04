@@ -1,14 +1,10 @@
 {
   "include": [
+    "./examples/*/src/**/*.ts",
     "./packages/*/src/**/*.ts",
-    "./packages/*/src/**/*.d.ts",
-    "scripts/vitest.d.ts"
+    "./scripts/**/*.ts"
   ],
   "exclude": ["node_modules"],
-  "references": [
-    { "path": "packages/client/tsconfig.build.json" },
-    { "path": "packages/core/tsconfig.build.json" }
-  ],
   "compilerOptions": {
     "noEmit": true,
     "declaration": true,
@@ -24,7 +20,6 @@
     },
     "isolatedModules": true,
     "allowJs": true,
-    "allowImportingTsExtensions": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "importHelpers": true,

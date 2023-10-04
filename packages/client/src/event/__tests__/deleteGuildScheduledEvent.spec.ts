@@ -5,7 +5,7 @@ import {
   deleteGuildScheduledEventProcedure,
   deleteGuildScheduledEventSafe,
   deleteGuildScheduledEventSchema
-} from "../deleteGuildScheduledEvent.ts";
+} from "../deleteGuildScheduledEvent.js";
 
 describe(`deleteGuildScheduledEvent`, () => {
   mockRequest.delete(`/guilds/:guild/scheduled-events/:event`);

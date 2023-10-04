@@ -5,9 +5,9 @@ import {
   startThreadInForumOrMediaChannelProcedure,
   startThreadInForumOrMediaChannelSafe,
   startThreadInForumOrMediaChannelSchema
-} from "../startThreadInForumOrMediaChannel.ts";
-import { channelSchema } from "../types/Channel.ts";
-import { messageSchema } from "../types/Message.ts";
+} from "../startThreadInForumOrMediaChannel.js";
+import { channelSchema } from "../types/Channel.js";
+import { messageSchema } from "../types/Message.js";
 
 describe(`startThreadInForumOrMediaChannel`, () => {
   mockRequest.post(

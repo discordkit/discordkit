@@ -5,8 +5,8 @@ import {
   deleteGuildEmojiProcedure,
   deleteGuildEmojiSafe,
   deleteGuildEmojiSchema
-} from "../deleteGuildEmoji.ts";
-import { emojiSchema } from "../types/Emoji.ts";
+} from "../deleteGuildEmoji.js";
+import { emojiSchema } from "../types/Emoji.js";
 
 describe(`deleteGuildEmoji`, () => {
   mockRequest.delete(`/guilds/:guild/emojis/:emoji`, emojiSchema);

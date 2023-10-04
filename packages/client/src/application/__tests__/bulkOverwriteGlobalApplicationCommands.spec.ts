@@ -5,8 +5,8 @@ import {
   bulkOverwriteGlobalApplicationCommands,
   bulkOverwriteGlobalApplicationCommandsSchema,
   bulkOverwriteGlobalApplicationCommandsSafe
-} from "../bulkOverwriteGlobalApplicationCommands.ts";
-import { applicationCommandSchema } from "../types/ApplicationCommand.ts";
+} from "../bulkOverwriteGlobalApplicationCommands.js";
+import { applicationCommandSchema } from "../types/ApplicationCommand.js";
 
 describe(`bulkOverwriteGlobalApplicationCommands`, () => {
   const expected = mockRequest.put(

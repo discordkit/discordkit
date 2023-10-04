@@ -5,8 +5,8 @@ import {
   createGuildBanProcedure,
   createGuildBanSafe,
   createGuildBanSchema
-} from "../createGuildBan.ts";
-import { banSchema } from "../types/Ban.ts";
+} from "../createGuildBan.js";
+import { banSchema } from "../types/Ban.js";
 
 describe(`createGuildBan`, () => {
   mockRequest.put(`/guilds/:guild/bans/:user`, banSchema);

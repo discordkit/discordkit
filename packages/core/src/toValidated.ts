@@ -1,7 +1,7 @@
 import type { z } from "zod";
-import { isNonNullable } from "./isNonNullable.ts";
-import { isObject } from "./isObject.ts";
-import type { Fetcher } from "./methods.ts";
+import { isNonNullable } from "./isNonNullable.js";
+import { isObject } from "./isObject.js";
+import type { Fetcher } from "./methods.js";
 
 const isSchema = (val: unknown): val is z.ZodTypeAny =>
   isNonNullable(val) && isObject(val) && `parse` in val;

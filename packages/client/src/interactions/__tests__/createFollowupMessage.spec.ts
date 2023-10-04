@@ -5,7 +5,7 @@ import {
   createFollowupMessageProcedure,
   createFollowupMessageSafe,
   createFollowupMessageSchema
-} from "../createFollowupMessage.ts";
+} from "../createFollowupMessage.js";
 
 describe(`createFollowupMessage`, () => {
   mockRequest.post(`/webhooks/:application/:token`);

@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { snowflake } from "@discordkit/core";
-import { applicationCommandTypeSchema } from "../../application/types/ApplicationCommandType.ts";
-import { resolvedDataSchema } from "./ResolvedData.ts";
-import { applicationCommandInteractionDataOptionSchema } from "./ApplicationCommandInteractionDataOption.ts";
+import { applicationCommandTypeSchema } from "../../application/types/ApplicationCommandType.js";
+import { resolvedDataSchema } from "./ResolvedData.js";
+import { applicationCommandInteractionDataOptionSchema } from "./ApplicationCommandInteractionDataOption.js";
 
 export const interactionDataSchema = z.object({
   /** the ID of the invoked command */

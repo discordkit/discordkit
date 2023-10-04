@@ -5,8 +5,8 @@ import {
   followAnnouncementChannelProcedure,
   followAnnouncementChannelSafe,
   followAnnouncementChannelSchema
-} from "../followAnnouncementChannel.ts";
-import { followedChannelSchema } from "../types/FollowedChannel.ts";
+} from "../followAnnouncementChannel.js";
+import { followedChannelSchema } from "../types/FollowedChannel.js";
 
 describe(`followAnnouncementChannel`, () => {
   const expected = mockRequest.post(

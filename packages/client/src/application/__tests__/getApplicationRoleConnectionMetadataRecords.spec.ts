@@ -5,8 +5,8 @@ import {
   getApplicationRoleConnectionMetadataRecordsQuery,
   getApplicationRoleConnectionMetadataRecordsSafe,
   getApplicationRoleConnectionMetadataRecordsSchema
-} from "../getApplicationRoleConnectionMetadataRecords.ts";
-import { applicationRoleConnectionMetadataSchema } from "../types/ApplicationRoleConnectionMetadata.ts";
+} from "../getApplicationRoleConnectionMetadataRecords.js";
+import { applicationRoleConnectionMetadataSchema } from "../types/ApplicationRoleConnectionMetadata.js";
 
 describe(`getApplicationRoleConnectionMetadataRecords`, () => {
   const expected = mockRequest.get(

@@ -6,13 +6,13 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { type Channel, channelSchema } from "./types/Channel.ts";
-import { autoArchiveDurationSchema } from "./types/AutoArchiveDuration.ts";
-import { embedSchema } from "./types/Embed.ts";
-import { allowedMentionSchema } from "./types/AllowedMention.ts";
-import { attachmentSchema } from "./types/Attachment.ts";
-import { messageComponentSchema } from "./types/MessageComponent.ts";
-import { type Message, messageSchema } from "./types/Message.ts";
+import { type Channel, channelSchema } from "./types/Channel.js";
+import { autoArchiveDurationSchema } from "./types/AutoArchiveDuration.js";
+import { embedSchema } from "./types/Embed.js";
+import { allowedMentionSchema } from "./types/AllowedMention.js";
+import { attachmentSchema } from "./types/Attachment.js";
+import { messageComponentSchema } from "./types/MessageComponent.js";
+import { type Message, messageSchema } from "./types/Message.js";
 
 export const startThreadInForumOrMediaChannelSchema = z.object({
   channel: snowflake,

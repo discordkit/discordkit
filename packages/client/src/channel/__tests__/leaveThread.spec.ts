@@ -5,7 +5,7 @@ import {
   leaveThreadProcedure,
   leaveThreadSafe,
   leaveThreadSchema
-} from "../leaveThread.ts";
+} from "../leaveThread.js";
 
 describe(`leaveThread`, () => {
   mockRequest.delete(`/channels/:channel/thread-members/@me`);

@@ -5,7 +5,7 @@ import {
   deleteGlobalApplicationCommandProcedure,
   deleteGlobalApplicationCommandSafe,
   deleteGlobalApplicationCommandSchema
-} from "../deleteGlobalApplicationCommand.ts";
+} from "../deleteGlobalApplicationCommand.js";
 
 describe(`deleteGlobalApplicationCommand`, () => {
   mockRequest.delete(`/applications/:application/commands/:command`);

@@ -6,7 +6,7 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { mfaLevelSchema, type MFALevel } from "./types/MFALevel.ts";
+import { mfaLevelSchema, type MFALevel } from "./types/MFALevel.js";
 
 export const modifyGuildMFALevelSchema = z.object({
   guild: snowflake,

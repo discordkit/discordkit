@@ -3,7 +3,7 @@ import { z } from "zod";
 import {
   applicationCover,
   applicationCoverSchema
-} from "../applicationCover.ts";
+} from "../applicationCover.js";
 
 describe(`applicationCover`, () => {
   it(`produces a valid URL`, () => {

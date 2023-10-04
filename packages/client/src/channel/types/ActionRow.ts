@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { ComponentType } from "./ComponentType.ts";
-import { buttonSchema } from "./Button.ts";
-import { selectMenuSchema } from "./SelectMenu.ts";
-import { textInputSchema } from "./TextInput.ts";
+import { ComponentType } from "./ComponentType.js";
+import { buttonSchema } from "./Button.js";
+import { selectMenuSchema } from "./SelectMenu.js";
+import { textInputSchema } from "./TextInput.js";
 
 export const actionRowSchema = z.object({
   type: z.literal(ComponentType.ActionRow),

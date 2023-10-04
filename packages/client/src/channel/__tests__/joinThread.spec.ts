@@ -5,7 +5,7 @@ import {
   joinThreadProcedure,
   joinThreadSafe,
   joinThreadSchema
-} from "../joinThread.ts";
+} from "../joinThread.js";
 
 describe(`joinThread`, () => {
   mockRequest.put(`/channels/:channel/thread-members/@me`);

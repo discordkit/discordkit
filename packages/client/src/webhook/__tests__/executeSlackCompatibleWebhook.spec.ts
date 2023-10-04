@@ -5,7 +5,7 @@ import {
   executeSlackCompatibleWebhookProcedure,
   executeSlackCompatibleWebhookSafe,
   executeSlackCompatibleWebhookSchema
-} from "../executeSlackCompatibleWebhook.ts";
+} from "../executeSlackCompatibleWebhook.js";
 
 describe(`executeSlackCompatibleWebhook`, () => {
   mockRequest.post(`/webhooks/:webhook/:token/slack`);

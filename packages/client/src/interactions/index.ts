@@ -1,11 +1,11 @@
-export * from "./createFollowupMessage.ts";
-export * from "./createInteractionResponse.ts";
-export * from "./deleteFollowupMessage.ts";
-export * from "./deleteOriginalInteractionResponse.ts";
-export * from "./editFollowupMessage.ts";
-export * from "./editOriginalInteractionResponse.ts";
-export * from "./getFollowupMessage.ts";
-export * from "./getOriginalInteractionResponse.ts";
+export * from "./createFollowupMessage.js";
+export * from "./createInteractionResponse.js";
+export * from "./deleteFollowupMessage.js";
+export * from "./deleteOriginalInteractionResponse.js";
+export * from "./editFollowupMessage.js";
+export * from "./editOriginalInteractionResponse.js";
+export * from "./getFollowupMessage.js";
+export * from "./getOriginalInteractionResponse.js";
 
-export * from "./types/index.ts";
-export * as interactionProcedures from "./procedures.ts";
+export * from "./types/index.js";
+export * as interactionProcedures from "./procedures.js";

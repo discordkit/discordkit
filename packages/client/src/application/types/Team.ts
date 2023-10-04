@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { teamMemberSchema } from "./TeamMember.ts";
+import { teamMemberSchema } from "./TeamMember.js";
 
 // https://discord.com/developers/docs/topics/teams#data-models-team-object
 

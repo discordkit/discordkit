@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { allowedMentionSchema } from "./AllowedMention.ts";
-import { attachmentSchema } from "./Attachment.ts";
-import { embedSchema } from "./Embed.ts";
-import { messageReferenceSchema } from "./MessageReference.ts";
-import { messageComponentSchema } from "./MessageComponent.ts";
+import { allowedMentionSchema } from "./AllowedMention.js";
+import { attachmentSchema } from "./Attachment.js";
+import { embedSchema } from "./Embed.js";
+import { messageReferenceSchema } from "./MessageReference.js";
+import { messageComponentSchema } from "./MessageComponent.js";
 
 export const messageContentSchema = z
   .object({

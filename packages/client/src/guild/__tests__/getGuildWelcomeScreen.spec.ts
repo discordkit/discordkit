@@ -5,8 +5,8 @@ import {
   getGuildWelcomeScreenQuery,
   getGuildWelcomeScreenSafe,
   getGuildWelcomeScreenSchema
-} from "../getGuildWelcomeScreen.ts";
-import { welcomeScreenSchema } from "../types/WelcomeScreen.ts";
+} from "../getGuildWelcomeScreen.js";
+import { welcomeScreenSchema } from "../types/WelcomeScreen.js";
 
 describe(`getGuildWelcomeScreen`, () => {
   const expected = mockRequest.get(

@@ -5,7 +5,7 @@ import {
   deleteWebhookWithTokenProcedure,
   deleteWebhookWithTokenSafe,
   deleteWebhookWithTokenSchema
-} from "../deleteWebhookWithToken.ts";
+} from "../deleteWebhookWithToken.js";
 
 describe(`deleteWebhookWithToken`, () => {
   mockRequest.delete(`/webhooks/:webhook/:token`);

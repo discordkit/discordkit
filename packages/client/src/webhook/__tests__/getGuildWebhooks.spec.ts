@@ -5,8 +5,8 @@ import {
   getGuildWebhooksQuery,
   getGuildWebhooksSafe,
   getGuildWebhooksSchema
-} from "../getGuildWebhooks.ts";
-import { webhookSchema } from "../types/Webhook.ts";
+} from "../getGuildWebhooks.js";
+import { webhookSchema } from "../types/Webhook.js";
 
 describe(`getGuildWebhooks`, () => {
   const expected = mockRequest.get(

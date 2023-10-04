@@ -5,8 +5,8 @@ import {
   listGuildEmojisQuery,
   listGuildEmojisSafe,
   listGuildEmojisSchema
-} from "../listGuildEmojis.ts";
-import { emojiSchema } from "../types/Emoji.ts";
+} from "../listGuildEmojis.js";
+import { emojiSchema } from "../types/Emoji.js";
 
 describe(`listGuildEmojis`, () => {
   const expected = mockRequest.get(

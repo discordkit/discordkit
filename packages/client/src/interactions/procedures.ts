@@ -1,8 +1,8 @@
-export { createFollowupMessageProcedure } from "./createFollowupMessage.ts";
-export { createInteractionResponseProcedure } from "./createInteractionResponse.ts";
-export { deleteFollowupMessageProcedure } from "./deleteFollowupMessage.ts";
-export { deleteOriginalInteractionResponseProcedure } from "./deleteOriginalInteractionResponse.ts";
-export { editFollowupMessageProcedure } from "./editFollowupMessage.ts";
-export { editOriginalInteractionResponseProcedure } from "./editOriginalInteractionResponse.ts";
-export { getFollowupMessageProcedure } from "./getFollowupMessage.ts";
-export { getOriginalInteractionResponseProcedure } from "./getOriginalInteractionResponse.ts";
+export { createFollowupMessageProcedure } from "./createFollowupMessage.js";
+export { createInteractionResponseProcedure } from "./createInteractionResponse.js";
+export { deleteFollowupMessageProcedure } from "./deleteFollowupMessage.js";
+export { deleteOriginalInteractionResponseProcedure } from "./deleteOriginalInteractionResponse.js";
+export { editFollowupMessageProcedure } from "./editFollowupMessage.js";
+export { editOriginalInteractionResponseProcedure } from "./editOriginalInteractionResponse.js";
+export { getFollowupMessageProcedure } from "./getFollowupMessage.js";
+export { getOriginalInteractionResponseProcedure } from "./getOriginalInteractionResponse.js";

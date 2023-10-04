@@ -3,7 +3,7 @@ import { z } from "zod";
 import {
   userAvatarDecoration,
   userAvatarDecorationSchema
-} from "../userAvatarDecoration.ts";
+} from "../userAvatarDecoration.js";
 
 describe(`userAvatarDecoration`, () => {
   it(`produces a valid URL`, () => {

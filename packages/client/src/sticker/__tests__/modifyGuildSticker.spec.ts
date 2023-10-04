@@ -5,8 +5,8 @@ import {
   modifyGuildStickerProcedure,
   modifyGuildStickerSafe,
   modifyGuildStickerSchema
-} from "../modifyGuildSticker.ts";
-import { stickerSchema } from "../types/Sticker.ts";
+} from "../modifyGuildSticker.js";
+import { stickerSchema } from "../types/Sticker.js";
 
 describe(`modifyGuildSticker`, () => {
   const expected = mockRequest.patch(

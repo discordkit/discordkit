@@ -5,8 +5,8 @@ import {
   editFollowupMessageProcedure,
   editFollowupMessageSafe,
   editFollowupMessageSchema
-} from "../editFollowupMessage.ts";
-import { messageSchema } from "../../channel/types/Message.ts";
+} from "../editFollowupMessage.js";
+import { messageSchema } from "../../channel/types/Message.js";
 
 describe(`editFollowupMessage`, () => {
   mockRequest.patch(

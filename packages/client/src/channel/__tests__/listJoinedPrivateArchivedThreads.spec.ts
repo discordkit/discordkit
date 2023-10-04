@@ -5,8 +5,8 @@ import {
   listJoinedPrivateArchivedThreadsQuery,
   listJoinedPrivateArchivedThreadsSafe,
   listJoinedPrivateArchivedThreadsSchema
-} from "../listJoinedPrivateArchivedThreads.ts";
-import { archivedThreadsSchema } from "../types/ArchivedThreads.ts";
+} from "../listJoinedPrivateArchivedThreads.js";
+import { archivedThreadsSchema } from "../types/ArchivedThreads.js";
 
 describe(`listJoinedPrivateArchivedThreads`, () => {
   const expected = mockRequest.get(

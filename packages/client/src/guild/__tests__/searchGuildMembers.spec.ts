@@ -5,8 +5,8 @@ import {
   searchGuildMembersQuery,
   searchGuildMembersSafe,
   searchGuildMembersSchema
-} from "../searchGuildMembers.ts";
-import { memberSchema } from "../types/Member.ts";
+} from "../searchGuildMembers.js";
+import { memberSchema } from "../types/Member.js";
 
 describe(`searchGuildMembers`, () => {
   const expected = mockRequest.get(

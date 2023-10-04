@@ -5,7 +5,7 @@ import {
   deleteOwnReactionProcedure,
   deleteOwnReactionSafe,
   deleteOwnReactionSchema
-} from "../deleteOwnReaction.ts";
+} from "../deleteOwnReaction.js";
 
 describe(`deleteOwnReaction`, () => {
   mockRequest.delete(

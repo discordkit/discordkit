@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { snowflake } from "@discordkit/core";
-import { emojiSchema } from "../../emoji/types/Emoji.ts";
+import { emojiSchema } from "../../emoji/types/Emoji.js";
 
 export const promptOptionSchema = z.object({
   /** ID of the prompt option */

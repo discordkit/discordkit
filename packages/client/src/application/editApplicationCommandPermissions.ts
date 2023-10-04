@@ -9,8 +9,8 @@ import {
 import {
   guildApplicationCommandPermissionsSchema,
   type GuildApplicationCommandPermissions
-} from "./types/GuildApplicationCommandPermissions.ts";
-import { applicationCommandPermissionsSchema } from "./types/ApplicationCommandPermissions.ts";
+} from "./types/GuildApplicationCommandPermissions.js";
+import { applicationCommandPermissionsSchema } from "./types/ApplicationCommandPermissions.js";
 
 export const editApplicationCommandPermissionsSchema = z.object({
   application: snowflake,

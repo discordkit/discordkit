@@ -5,8 +5,8 @@ import {
   modifyGuildWidgetProcedure,
   modifyGuildWidgetSafe,
   modifyGuildWidgetSchema
-} from "../modifyGuildWidget.ts";
-import { guildWidgetSettingsSchema } from "../types/GuildWidgetSettings.ts";
+} from "../modifyGuildWidget.js";
+import { guildWidgetSettingsSchema } from "../types/GuildWidgetSettings.js";
 
 describe(`modifyGuildWidget`, () => {
   const expected = mockRequest.patch(

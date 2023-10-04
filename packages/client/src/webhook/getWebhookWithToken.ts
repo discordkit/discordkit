@@ -7,7 +7,7 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { webhookSchema, type Webhook } from "./types/Webhook.ts";
+import { webhookSchema, type Webhook } from "./types/Webhook.js";
 
 export const getWebhookWithTokenSchema = z.object({
   webhook: snowflake,

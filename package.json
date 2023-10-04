@@ -14,7 +14,6 @@
   ],
   "type": "module",
   "scripts": {
-    "build:types": "tsc -b",
     "lint": "eslint \"./packages/**/*.{j,t}s?(x)\" --cache",
     "format": "yarn lint --fix",
     "prepublishOnly": "yarn lint && yarn test",
@@ -64,26 +63,18 @@
     },
     "settings": {
       "import/resolver": {
-        "typescript": {
-          "project": [
-            "./tsconfig.json",
-            "examples/*/tsconfig.json"
-          ]
-        }
+        "typescript": true,
+        "node": true
       }
     },
     "overrides": [
       {
-        "files": "./packages/**/src/**",
+        "files": [
+          "./scripts/*.ts",
+          "./packages/**/src/**"
+        ],
         "excludedFiles": "*.spec.ts",
         "rules": {
-          "import/extensions": [
-            "error",
-            "ignorePackages",
-            {
-              "ignorePackages": true
-            }
-          ],
           "import/no-useless-path-segments": [
             "error",
             {

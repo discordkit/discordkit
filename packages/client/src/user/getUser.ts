@@ -7,7 +7,7 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { userSchema, type User } from "./types/User.ts";
+import { userSchema, type User } from "./types/User.js";
 
 export const getUserSchema = z.object({
   user: snowflake

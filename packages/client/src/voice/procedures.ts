@@ -1,1 +1,1 @@
-export { listVoiceRegionsProcedure } from "./listVoiceRegions.ts";
+export { listVoiceRegionsProcedure } from "./listVoiceRegions.js";

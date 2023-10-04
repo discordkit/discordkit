@@ -9,9 +9,9 @@ import {
 import {
   type GuildOnboarding,
   guildOnboardingSchema
-} from "./types/GuildOnboarding.ts";
-import { onboardingPromptSchema } from "./types/OnboardingPrompt.ts";
-import { onboardingModeSchema } from "./types/OnboardingMode.ts";
+} from "./types/GuildOnboarding.js";
+import { onboardingPromptSchema } from "./types/OnboardingPrompt.js";
+import { onboardingModeSchema } from "./types/OnboardingMode.js";
 
 export const modifyGuildOnboardingSchema = z.object({
   guild: snowflake,

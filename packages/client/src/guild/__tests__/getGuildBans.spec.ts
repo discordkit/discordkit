@@ -5,8 +5,8 @@ import {
   getGuildBansQuery,
   getGuildBansSafe,
   getGuildBansSchema
-} from "../getGuildBans.ts";
-import { banSchema } from "../types/Ban.ts";
+} from "../getGuildBans.js";
+import { banSchema } from "../types/Ban.js";
 
 describe(`getGuildBans`, () => {
   const expected = mockRequest.get(

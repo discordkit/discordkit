@@ -5,7 +5,7 @@ import {
   deleteAutoModerationRuleProcedure,
   deleteAutoModerationRuleSafe,
   deleteAutoModerationRuleSchema
-} from "../deleteAutoModerationRule.ts";
+} from "../deleteAutoModerationRule.js";
 
 describe(`deleteAutoModerationRule`, () => {
   mockRequest.delete(`/guilds/:guild/auto-moderation/rules/:rule`);

@@ -7,7 +7,7 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { integrationSchema, type Integration } from "./types/Integration.ts";
+import { integrationSchema, type Integration } from "./types/Integration.js";
 
 export const getGuildIntegrationsSchema = z.object({
   guild: snowflake

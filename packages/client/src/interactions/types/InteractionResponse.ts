@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { interactionCallbackSchema } from "./InteractionCallbackType.ts";
-import { interactionCallbackDataSchema } from "./InteractionCallbackData.ts";
+import { interactionCallbackSchema } from "./InteractionCallbackType.js";
+import { interactionCallbackDataSchema } from "./InteractionCallbackData.js";
 
 export const interactionResponseSchema = z.object({
   /** the type of response */

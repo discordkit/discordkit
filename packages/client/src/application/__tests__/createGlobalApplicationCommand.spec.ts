@@ -5,8 +5,8 @@ import {
   createGlobalApplicationCommand,
   createGlobalApplicationCommandSchema,
   createGlobalApplicationCommandSafe
-} from "../createGlobalApplicationCommand.ts";
-import { applicationCommandSchema } from "../types/ApplicationCommand.ts";
+} from "../createGlobalApplicationCommand.js";
+import { applicationCommandSchema } from "../types/ApplicationCommand.js";
 
 describe(`createGlobalApplicationCommand`, () => {
   const expected = mockRequest.post(

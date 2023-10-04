@@ -9,13 +9,13 @@ import {
 import {
   applicationCommandSchema,
   type ApplicationCommand
-} from "./types/ApplicationCommand.ts";
-import { applicationCommandOptionSchema } from "./types/ApplicationCommandOption.ts";
+} from "./types/ApplicationCommand.js";
+import { applicationCommandOptionSchema } from "./types/ApplicationCommandOption.js";
 import {
   ApplicationCommandType,
   applicationCommandTypeSchema
-} from "./types/ApplicationCommandType.ts";
-import { localesSchema } from "./types/Locales.ts";
+} from "./types/ApplicationCommandType.js";
+import { localesSchema } from "./types/Locales.js";
 
 export const createGuildApplicationCommandSchema = z.object({
   application: snowflake,

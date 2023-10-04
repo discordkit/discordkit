@@ -7,7 +7,7 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { inviteSchema, type Invite } from "./types/Invite.ts";
+import { inviteSchema, type Invite } from "./types/Invite.js";
 
 export const getInviteSchema = z.object({
   code: z.string().min(1),

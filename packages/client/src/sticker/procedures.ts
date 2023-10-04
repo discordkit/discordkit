@@ -1,7 +1,7 @@
-export { createGuildStickerProcedure } from "./createGuildSticker.ts";
-export { deleteGuildStickerProcedure } from "./deleteGuildSticker.ts";
-export { getGuildStickerProcedure } from "./getGuildSticker.ts";
-export { getStickerProcedure } from "./getSticker.ts";
-export { listGuildStickersProcedure } from "./listGuildStickers.ts";
-export { listStickerPacksProcedure } from "./listStickerPacks.ts";
-export { modifyGuildStickerProcedure } from "./modifyGuildSticker.ts";
+export { createGuildStickerProcedure } from "./createGuildSticker.js";
+export { deleteGuildStickerProcedure } from "./deleteGuildSticker.js";
+export { getGuildStickerProcedure } from "./getGuildSticker.js";
+export { getStickerProcedure } from "./getSticker.js";
+export { listGuildStickersProcedure } from "./listGuildStickers.js";
+export { listStickerPacksProcedure } from "./listStickerPacks.js";
+export { modifyGuildStickerProcedure } from "./modifyGuildSticker.js";

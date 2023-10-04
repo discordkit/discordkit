@@ -5,8 +5,8 @@ import {
   getGuildApplicationCommandPermissionsProcedure,
   getGuildApplicationCommandPermissionsQuery,
   getGuildApplicationCommandPermissionsSafe
-} from "../getGuildApplicationCommandPermissions.ts";
-import { guildApplicationCommandPermissionsSchema } from "../types/GuildApplicationCommandPermissions.ts";
+} from "../getGuildApplicationCommandPermissions.js";
+import { guildApplicationCommandPermissionsSchema } from "../types/GuildApplicationCommandPermissions.js";
 
 describe(`getGuildApplicationCommandPermissions`, () => {
   const expected = mockRequest.get(

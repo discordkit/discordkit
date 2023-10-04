@@ -5,8 +5,8 @@ import {
   getGuildVanityURLQuery,
   getGuildVanityURLSafe,
   getGuildVanityURLSchema
-} from "../getGuildVanityURL.ts";
-import { inviteSchema } from "../../invite/types/Invite.ts";
+} from "../getGuildVanityURL.js";
+import { inviteSchema } from "../../invite/types/Invite.js";
 
 describe(`getGuildVanityURL`, () => {
   const expected = mockRequest.get(

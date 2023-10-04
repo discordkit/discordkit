@@ -5,8 +5,8 @@ import {
   deleteInviteProcedure,
   deleteInviteSafe,
   deleteInviteSchema
-} from "../deleteInvite.ts";
-import { inviteSchema } from "../types/Invite.ts";
+} from "../deleteInvite.js";
+import { inviteSchema } from "../types/Invite.js";
 
 describe(`deleteInvite`, () => {
   mockRequest.delete(`/invites/:code`, inviteSchema);

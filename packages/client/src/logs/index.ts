@@ -1,4 +1,4 @@
-export * from "./getGuildAuditLog.ts";
+export * from "./getGuildAuditLog.js";
 
-export * from "./types/index.ts";
-export * as logsProcedures from "./procedures.ts";
+export * from "./types/index.js";
+export * as logsProcedures from "./procedures.js";

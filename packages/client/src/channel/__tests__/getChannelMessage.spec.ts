@@ -5,8 +5,8 @@ import {
   getChannelMessageQuery,
   getChannelMessageSafe,
   getChannelMessageSchema
-} from "../getChannelMessage.ts";
-import { messageSchema } from "../types/Message.ts";
+} from "../getChannelMessage.js";
+import { messageSchema } from "../types/Message.js";
 
 describe(`getChannelMessage`, () => {
   mockRequest.get(`/channels/:channel/messages/:message`, messageSchema);

@@ -10,7 +10,7 @@ import {
 import {
   type ApplicationCommand,
   applicationCommandSchema
-} from "./types/ApplicationCommand.ts";
+} from "./types/ApplicationCommand.js";
 
 export const getGuildApplicationCommandsSchema = z.object({
   application: snowflake,

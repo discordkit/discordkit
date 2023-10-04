@@ -10,7 +10,7 @@ import {
 import {
   archivedThreadsSchema,
   type ArchivedThreads
-} from "./types/ArchivedThreads.ts";
+} from "./types/ArchivedThreads.js";
 
 export const listPrivateArchivedThreadsSchema = z.object({
   channel: snowflake,

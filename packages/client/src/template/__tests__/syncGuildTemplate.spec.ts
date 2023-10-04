@@ -5,8 +5,8 @@ import {
   syncGuildTemplateProcedure,
   syncGuildTemplateSafe,
   syncGuildTemplateSchema
-} from "../syncGuildTemplate.ts";
-import { guildTemplateSchema } from "../types/GuildTemplate.ts";
+} from "../syncGuildTemplate.js";
+import { guildTemplateSchema } from "../types/GuildTemplate.js";
 
 describe(`syncGuildTemplate`, () => {
   const expected = mockRequest.put(

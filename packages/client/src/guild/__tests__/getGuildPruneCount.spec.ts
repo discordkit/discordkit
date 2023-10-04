@@ -6,7 +6,7 @@ import {
   getGuildPruneCountSafe,
   getGuildPruneCountSchema,
   guildPruneCountSchema
-} from "../getGuildPruneCount.ts";
+} from "../getGuildPruneCount.js";
 
 describe(`getGuildPruneCount`, () => {
   const expected = mockRequest.get(

@@ -1,1 +1,1 @@
-export { getGuildAuditLogProcedure } from "./getGuildAuditLog.ts";
+export { getGuildAuditLogProcedure } from "./getGuildAuditLog.js";

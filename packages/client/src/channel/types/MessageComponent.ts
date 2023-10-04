@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import { actionRowSchema } from "./ActionRow.ts";
+import { actionRowSchema } from "./ActionRow.js";
 
 export const messageComponentSchema = actionRowSchema.array().max(5);
 

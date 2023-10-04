@@ -5,8 +5,8 @@ import {
   startThreadWithoutMessageProcedure,
   startThreadWithoutMessageSafe,
   startThreadWithoutMessageSchema
-} from "../startThreadWithoutMessage.ts";
-import { channelSchema } from "../types/Channel.ts";
+} from "../startThreadWithoutMessage.js";
+import { channelSchema } from "../types/Channel.js";
 
 describe(`startThreadWithoutMessage`, () => {
   const expected = mockRequest.post(

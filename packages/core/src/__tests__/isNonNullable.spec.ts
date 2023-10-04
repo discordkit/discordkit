@@ -1,4 +1,4 @@
-import { isNonNullable } from "../isNonNullable.ts";
+import { isNonNullable } from "../isNonNullable.js";
 
 describe(`isNonNullable`, () => {
   it.each([

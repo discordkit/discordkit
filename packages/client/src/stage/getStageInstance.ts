@@ -7,7 +7,7 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { stageSchema, type Stage } from "./types/Stage.ts";
+import { stageSchema, type Stage } from "./types/Stage.js";
 
 export const getStageInstanceSchema = z.object({
   channel: snowflake

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { snowflake } from "@discordkit/core";
-import { applicationCommandPermissionType } from "./ApplicationCommandPermissionType.ts";
+import { applicationCommandPermissionType } from "./ApplicationCommandPermissionType.js";
 
 export const applicationCommandPermissionsSchema = z.object({
   /** ID of the role, user, or channel. It can also be a permission constant */

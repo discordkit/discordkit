@@ -5,8 +5,8 @@ import {
   getGuildInvitesQuery,
   getGuildInvitesSafe,
   getGuildInvitesSchema
-} from "../getGuildInvites.ts";
-import { inviteMetadataSchema } from "../../invite/types/InviteMetadata.ts";
+} from "../getGuildInvites.js";
+import { inviteMetadataSchema } from "../../invite/types/InviteMetadata.js";
 
 describe(`getGuildInvites`, () => {
   const expected = mockRequest.get(

@@ -5,8 +5,8 @@ import {
   deleteGuildTemplateProcedure,
   deleteGuildTemplateSafe,
   deleteGuildTemplateSchema
-} from "../deleteGuildTemplate.ts";
-import { guildTemplateSchema } from "../types/GuildTemplate.ts";
+} from "../deleteGuildTemplate.js";
+import { guildTemplateSchema } from "../types/GuildTemplate.js";
 
 describe(`deleteGuildTemplate`, () => {
   mockRequest.delete(`/guilds/:guild/templates/:template`, guildTemplateSchema);

@@ -5,7 +5,7 @@ import {
   deleteStageInstanceProcedure,
   deleteStageInstanceSafe,
   deleteStageInstanceSchema
-} from "../deleteStageInstance.ts";
+} from "../deleteStageInstance.js";
 
 describe(`deleteStageInstance`, () => {
   mockRequest.delete(`/stage-instances/:channel`);

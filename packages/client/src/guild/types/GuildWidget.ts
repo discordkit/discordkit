@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { snowflake } from "@discordkit/core";
-import { channelSchema } from "../../channel/types/Channel.ts";
-import { userSchema } from "../../user/types/User.ts";
+import { channelSchema } from "../../channel/types/Channel.js";
+import { userSchema } from "../../user/types/User.js";
 
 export const guildWidgetSchema = z.object({
   /** guild id */

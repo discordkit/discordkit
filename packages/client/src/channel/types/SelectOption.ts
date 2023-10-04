@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { emojiSchema } from "../../emoji/types/Emoji.ts";
+import { emojiSchema } from "../../emoji/types/Emoji.js";
 
 export const selectOptionSchema = z.object({
   /** User-facing name of the option; max 100 characters */

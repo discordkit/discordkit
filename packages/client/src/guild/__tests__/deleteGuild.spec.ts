@@ -5,7 +5,7 @@ import {
   deleteGuildProcedure,
   deleteGuildSafe,
   deleteGuildSchema
-} from "../deleteGuild.ts";
+} from "../deleteGuild.js";
 
 describe(`deleteGuild`, () => {
   mockRequest.delete(`/guilds/:guild`);

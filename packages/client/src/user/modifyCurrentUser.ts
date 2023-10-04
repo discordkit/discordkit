@@ -5,7 +5,7 @@ import {
   toProcedure,
   toValidated
 } from "@discordkit/core";
-import { userSchema, type User } from "./types/User.ts";
+import { userSchema, type User } from "./types/User.js";
 
 export const modifyCurrentUserSchema = z.object({
   body: z

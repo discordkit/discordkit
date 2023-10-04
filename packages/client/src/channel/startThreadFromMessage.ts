@@ -6,8 +6,8 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { channelSchema, type Channel } from "./types/Channel.ts";
-import { autoArchiveDurationSchema } from "./types/AutoArchiveDuration.ts";
+import { channelSchema, type Channel } from "./types/Channel.js";
+import { autoArchiveDurationSchema } from "./types/AutoArchiveDuration.js";
 
 export const startThreadFromMessageSchema = z.object({
   channel: snowflake,

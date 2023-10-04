@@ -5,8 +5,8 @@ import {
   createChannelInviteProcedure,
   createChannelInviteSafe,
   createChannelInviteSchema
-} from "../createChannelInvite.ts";
-import { inviteSchema } from "../../invite/types/Invite.ts";
+} from "../createChannelInvite.js";
+import { inviteSchema } from "../../invite/types/Invite.js";
 
 describe(`createChannelInvite`, () => {
   const expected = mockRequest.post(`/channels/:channel/invites`, inviteSchema);

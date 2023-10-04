@@ -1,7 +1,6 @@
 import { beforeAll, afterAll } from "vitest";
-// eslint-disable-next-line import/no-relative-packages
-import { discord } from "../packages/core/src/DiscordSession";
-import { msw } from "./test-utils";
+import { discord } from "@discordkit/core";
+import { msw } from "./test-utils.js";
 
 beforeAll(() => {
   discord.setToken(`Bot super-secret-token`);

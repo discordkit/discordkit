@@ -5,8 +5,8 @@ import {
   crosspostMessageProcedure,
   crosspostMessageSafe,
   crosspostMessageSchema
-} from "../crosspostMessage.ts";
-import { messageSchema } from "../types/Message.ts";
+} from "../crosspostMessage.js";
+import { messageSchema } from "../types/Message.js";
 
 describe(`crosspostMessage`, () => {
   mockRequest.post(

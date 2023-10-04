@@ -5,8 +5,8 @@ import {
   getWebhookQuery,
   getWebhookSafe,
   getWebhookSchema
-} from "../getWebhook.ts";
-import { webhookSchema } from "../types/Webhook.ts";
+} from "../getWebhook.js";
+import { webhookSchema } from "../types/Webhook.js";
 
 describe(`getWebhook`, () => {
   const expected = mockRequest.get(`/webhooks/:webhook`, webhookSchema);

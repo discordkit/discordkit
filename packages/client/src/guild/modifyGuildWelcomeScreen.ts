@@ -9,8 +9,8 @@ import {
 import {
   welcomeScreenSchema,
   type WelcomeScreen
-} from "./types/WelcomeScreen.ts";
-import { welcomeChannelSchema } from "./types/WelcomeChannel.ts";
+} from "./types/WelcomeScreen.js";
+import { welcomeChannelSchema } from "./types/WelcomeChannel.js";
 
 export const modifyGuildWelcomeScreenSchema = z.object({
   guild: snowflake,

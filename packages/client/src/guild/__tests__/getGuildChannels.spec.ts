@@ -5,8 +5,8 @@ import {
   getGuildChannelsQuery,
   getGuildChannelsSafe,
   getGuildChannelsSchema
-} from "../getGuildChannels.ts";
-import { channelSchema } from "../../channel/types/Channel.ts";
+} from "../getGuildChannels.js";
+import { channelSchema } from "../../channel/types/Channel.js";
 
 describe(`getGuildChannels`, () => {
   const expected = mockRequest.get(

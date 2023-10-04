@@ -5,8 +5,8 @@ import {
   getGuildStickerQuery,
   getGuildStickerSafe,
   getGuildStickerSchema
-} from "../getGuildSticker.ts";
-import { stickerSchema } from "../types/Sticker.ts";
+} from "../getGuildSticker.js";
+import { stickerSchema } from "../types/Sticker.js";
 
 describe(`getGuildSticker`, () => {
   const expected = mockRequest.get(

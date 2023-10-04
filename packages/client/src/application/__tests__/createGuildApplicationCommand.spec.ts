@@ -5,8 +5,8 @@ import {
   createGuildApplicationCommand,
   createGuildApplicationCommandSchema,
   createGuildApplicationCommandSafe
-} from "../createGuildApplicationCommand.ts";
-import { applicationCommandSchema } from "../types/ApplicationCommand.ts";
+} from "../createGuildApplicationCommand.js";
+import { applicationCommandSchema } from "../types/ApplicationCommand.js";
 
 describe(`createGuildApplicationCommand`, () => {
   const expected = mockRequest.post(

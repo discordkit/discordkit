@@ -5,7 +5,7 @@ import {
   leaveGuildProcedure,
   leaveGuildSafe,
   leaveGuildSchema
-} from "../leaveGuild.ts";
+} from "../leaveGuild.js";
 
 describe(`leaveGuild`, () => {
   mockRequest.delete(`/users/@me/guilds/:guild`);

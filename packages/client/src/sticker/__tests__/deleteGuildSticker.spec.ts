@@ -5,7 +5,7 @@ import {
   deleteGuildStickerProcedure,
   deleteGuildStickerSafe,
   deleteGuildStickerSchema
-} from "../deleteGuildSticker.ts";
+} from "../deleteGuildSticker.js";
 
 describe(`deleteGuildSticker`, () => {
   mockRequest.delete(`/guilds/:guild/stickers/:sticker`);

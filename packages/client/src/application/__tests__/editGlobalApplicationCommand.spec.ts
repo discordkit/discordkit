@@ -5,8 +5,8 @@ import {
   editGlobalApplicationCommandProcedure,
   editGlobalApplicationCommandSafe,
   editGlobalApplicationCommandSchema
-} from "../editGlobalApplicationCommand.ts";
-import { applicationCommandSchema } from "../types/ApplicationCommand.ts";
+} from "../editGlobalApplicationCommand.js";
+import { applicationCommandSchema } from "../types/ApplicationCommand.js";
 
 describe(`editGlobalApplicationCommand`, () => {
   const expected = mockRequest.patch(

@@ -5,8 +5,8 @@ import {
   editApplicationCommandPermissionsProcedure,
   editApplicationCommandPermissionsSafe,
   editApplicationCommandPermissionsSchema
-} from "../editApplicationCommandPermissions.ts";
-import { guildApplicationCommandPermissionsSchema } from "../types/GuildApplicationCommandPermissions.ts";
+} from "../editApplicationCommandPermissions.js";
+import { guildApplicationCommandPermissionsSchema } from "../types/GuildApplicationCommandPermissions.js";
 
 describe(`editApplicationCommandPermissions`, () => {
   const expected = mockRequest.patch(

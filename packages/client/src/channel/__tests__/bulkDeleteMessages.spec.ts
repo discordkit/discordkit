@@ -5,7 +5,7 @@ import {
   bulkDeleteMessagesProcedure,
   bulkDeleteMessagesSafe,
   bulkDeleteMessagesSchema
-} from "../bulkDeleteMessages.ts";
+} from "../bulkDeleteMessages.js";
 
 describe(`bulkDeleteMessages`, () => {
   mockRequest.post(`/channels/:channel/messages/bulk-delete`);

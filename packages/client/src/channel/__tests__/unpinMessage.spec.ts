@@ -5,7 +5,7 @@ import {
   unpinMessageProcedure,
   unpinMessageSafe,
   unpinMessageSchema
-} from "../unpinMessage.ts";
+} from "../unpinMessage.js";
 
 describe(`unpinMessage`, () => {
   mockRequest.delete(`/channels/:channel/pins/:message`);

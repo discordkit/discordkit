@@ -5,7 +5,7 @@ import {
   pinMessageProcedure,
   pinMessageSafe,
   pinMessageSchema
-} from "../pinMessage.ts";
+} from "../pinMessage.js";
 
 describe(`pinMessage`, () => {
   mockRequest.put(`/channels/:channel/pins/:message`);

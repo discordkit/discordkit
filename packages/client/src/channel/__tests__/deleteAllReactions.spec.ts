@@ -5,7 +5,7 @@ import {
   deleteAllReactionsProcedure,
   deleteAllReactionsSafe,
   deleteAllReactionsSchema
-} from "../deleteAllReactions.ts";
+} from "../deleteAllReactions.js";
 
 describe(`deleteAllReactions`, () => {
   mockRequest.delete(`/channels/:channel/messages/:message/reactions`);

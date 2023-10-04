@@ -1,5 +1,5 @@
-export * from "./deleteInvite.ts";
-export * from "./getInvite.ts";
+export * from "./deleteInvite.js";
+export * from "./getInvite.js";
 
-export * from "./types/index.ts";
-export * as inviteProcedures from "./procedures.ts";
+export * from "./types/index.js";
+export * as inviteProcedures from "./procedures.js";

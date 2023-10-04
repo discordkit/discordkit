@@ -5,8 +5,8 @@ import {
   modifyWebhookProcedure,
   modifyWebhookSafe,
   modifyWebhookSchema
-} from "../modifyWebhook.ts";
-import { webhookSchema } from "../types/Webhook.ts";
+} from "../modifyWebhook.js";
+import { webhookSchema } from "../types/Webhook.js";
 
 describe(`modifyWebhook`, () => {
   const expected = mockRequest.patch(`/webhooks/:webhook`, webhookSchema);

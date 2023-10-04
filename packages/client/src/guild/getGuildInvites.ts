@@ -10,7 +10,7 @@ import {
 import {
   inviteMetadataSchema,
   type InviteMetadata
-} from "../invite/types/InviteMetadata.ts";
+} from "../invite/types/InviteMetadata.js";
 
 export const getGuildInvitesSchema = z.object({
   guild: snowflake

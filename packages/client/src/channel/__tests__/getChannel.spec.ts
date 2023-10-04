@@ -5,8 +5,8 @@ import {
   getChannelQuery,
   getChannelSafe,
   getChannelSchema
-} from "../getChannel.ts";
-import { channelSchema } from "../types/Channel.ts";
+} from "../getChannel.js";
+import { channelSchema } from "../types/Channel.js";
 
 describe(`getChannel`, () => {
   const expected = mockRequest.get(`/channels/:channel`, channelSchema);

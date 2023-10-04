@@ -1,5 +1,5 @@
-import { endpoint } from "./DiscordSession.ts";
-import { addParams, type RequestParams } from "./addParams.ts";
+import { endpoint } from "./DiscordSession.js";
+import { addParams, type RequestParams } from "./addParams.js";
 
 export const buildURL = <P extends RequestParams>(
   resource: string,

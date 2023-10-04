@@ -5,7 +5,7 @@ import {
   toQuery,
   toValidated
 } from "@discordkit/core";
-import { connectionSchema, type Connection } from "./types/Connection.ts";
+import { connectionSchema, type Connection } from "./types/Connection.js";
 
 /**
  * ### [Get User Connections](https://discord.com/developers/docs/resources/user#get-user-connections)

@@ -5,7 +5,7 @@ import {
   deleteChannelPermissionProcedure,
   deleteChannelPermissionSafe,
   deleteChannelPermissionSchema
-} from "../deleteChannelPermission.ts";
+} from "../deleteChannelPermission.js";
 
 describe(`deleteChannelPermission`, () => {
   mockRequest.delete(`/channels/:channel/permissions/:overwrite`);

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { inviteSchema } from "./Invite.ts";
+import { inviteSchema } from "./Invite.js";
 
 export const inviteMetadataSchema = inviteSchema.extend({
   /** number of times this invite has been used */

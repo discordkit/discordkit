@@ -5,7 +5,7 @@ import {
   deleteGuildRoleProcedure,
   deleteGuildRoleSafe,
   deleteGuildRoleSchema
-} from "../deleteGuildRole.ts";
+} from "../deleteGuildRole.js";
 
 describe(`deleteGuildRole`, () => {
   mockRequest.delete(`/guilds/:guild/roles/:role`);

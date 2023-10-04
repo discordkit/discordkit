@@ -5,8 +5,8 @@ import {
   startThreadFromMessageProcedure,
   startThreadFromMessageSafe,
   startThreadFromMessageSchema
-} from "../startThreadFromMessage.ts";
-import { channelSchema } from "../types/Channel.ts";
+} from "../startThreadFromMessage.js";
+import { channelSchema } from "../types/Channel.js";
 
 describe(`startThreadFromMessage`, () => {
   const expected = mockRequest.post(

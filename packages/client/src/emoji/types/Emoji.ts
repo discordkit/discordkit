@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { snowflake } from "@discordkit/core";
-import { userSchema } from "../../user/types/User.ts";
+import { userSchema } from "../../user/types/User.js";
 
 export const emojiSchema = z.object({
   /** emoji id */

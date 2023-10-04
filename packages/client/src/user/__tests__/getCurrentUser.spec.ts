@@ -4,8 +4,8 @@ import {
   getCurrentUserProcedure,
   getCurrentUserQuery,
   getCurrentUserSafe
-} from "../getCurrentUser.ts";
-import { userSchema } from "../types/User.ts";
+} from "../getCurrentUser.js";
+import { userSchema } from "../types/User.js";
 
 describe(`getCurrentUser`, () => {
   const expected = mockRequest.get(`/users/@me`, userSchema);

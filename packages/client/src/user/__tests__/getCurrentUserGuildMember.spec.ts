@@ -5,8 +5,8 @@ import {
   getCurrentUserGuildMemberQuery,
   getCurrentUserGuildMemberSafe,
   getCurrentUserGuildMemberSchema
-} from "../getCurrentUserGuildMember.ts";
-import { memberSchema } from "../../guild/types/Member.ts";
+} from "../getCurrentUserGuildMember.js";
+import { memberSchema } from "../../guild/types/Member.js";
 
 describe(`getCurrentUserGuildMember`, () => {
   const expected = mockRequest.get(

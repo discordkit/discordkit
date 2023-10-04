@@ -5,8 +5,8 @@ import {
   editWebhookMessageProcedure,
   editWebhookMessageSafe,
   editWebhookMessageSchema
-} from "../editWebhookMessage.ts";
-import { messageSchema } from "../../channel/types/Message.ts";
+} from "../editWebhookMessage.js";
+import { messageSchema } from "../../channel/types/Message.js";
 
 describe(`editWebhookMessage`, () => {
   mockRequest.patch(

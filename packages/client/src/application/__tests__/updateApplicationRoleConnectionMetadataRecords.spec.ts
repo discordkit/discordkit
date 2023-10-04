@@ -5,8 +5,8 @@ import {
   updateApplicationRoleConnectionMetadataRecords,
   updateApplicationRoleConnectionMetadataRecordsSchema,
   updateApplicationRoleConnectionMetadataRecordsSafe
-} from "../updateApplicationRoleConnectionMetadataRecords.ts";
-import { applicationRoleConnectionMetadataSchema } from "../types/ApplicationRoleConnectionMetadata.ts";
+} from "../updateApplicationRoleConnectionMetadataRecords.js";
+import { applicationRoleConnectionMetadataSchema } from "../types/ApplicationRoleConnectionMetadata.js";
 
 describe(`updateApplicationRoleConnectionMetadataRecords`, () => {
   const expected = mockRequest.put(

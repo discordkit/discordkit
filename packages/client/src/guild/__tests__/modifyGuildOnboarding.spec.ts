@@ -5,8 +5,8 @@ import {
   modifyGuildOnboardingProcedure,
   modifyGuildOnboardingSafe,
   modifyGuildOnboardingSchema
-} from "../modifyGuildOnboarding.ts";
-import { guildOnboardingSchema } from "../types/GuildOnboarding.ts";
+} from "../modifyGuildOnboarding.js";
+import { guildOnboardingSchema } from "../types/GuildOnboarding.js";
 
 describe(`modifyGuildOnboarding`, () => {
   const expected = mockRequest.put(

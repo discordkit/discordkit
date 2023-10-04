@@ -1,8 +1,8 @@
-export { endpoint, discord } from "./DiscordSession.ts";
-export * from "./buildURL.ts";
-export * from "./getAsset.ts";
-export * from "./methods.ts";
-export * from "./toProcedure.ts";
-export * from "./toQuery.ts";
-export * from "./toValidated.ts";
-export * from "./snowflake.ts";
+export { endpoint, discord } from "./DiscordSession.js";
+export * from "./buildURL.js";
+export * from "./getAsset.js";
+export * from "./methods.js";
+export * from "./toProcedure.js";
+export * from "./toQuery.js";
+export * from "./toValidated.js";
+export * from "./snowflake.js";

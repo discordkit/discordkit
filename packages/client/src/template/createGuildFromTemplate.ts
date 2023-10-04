@@ -6,7 +6,7 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { guildSchema, type Guild } from "../guild/types/Guild.ts";
+import { guildSchema, type Guild } from "../guild/types/Guild.js";
 
 export const createGuildFromTemplateSchema = z.object({
   template: snowflake,

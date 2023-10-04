@@ -5,8 +5,8 @@ import {
   getAutoModerationRuleQuery,
   getAutoModerationRuleSafe,
   getAutoModerationRuleSchema
-} from "../getAutoModerationRule.ts";
-import { moderationRuleSchema } from "../types/ModerationRule.ts";
+} from "../getAutoModerationRule.js";
+import { moderationRuleSchema } from "../types/ModerationRule.js";
 
 describe(`getAutoModerationRule`, () => {
   const expected = mockRequest.get(

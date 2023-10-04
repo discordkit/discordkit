@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { snowflake } from "@discordkit/core";
-import { memberSchema } from "../../guild/types/Member.ts";
+import { memberSchema } from "../../guild/types/Member.js";
 
 // https://discord.com/developers/docs/resources/voice#voice-state-object-voice-state-structure
 /** Used to represent a user's voice connection status. */

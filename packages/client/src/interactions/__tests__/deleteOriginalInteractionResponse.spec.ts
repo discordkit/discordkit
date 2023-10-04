@@ -5,7 +5,7 @@ import {
   deleteOriginalInteractionResponseProcedure,
   deleteOriginalInteractionResponseSafe,
   deleteOriginalInteractionResponseSchema
-} from "../deleteOriginalInteractionResponse.ts";
+} from "../deleteOriginalInteractionResponse.js";
 
 describe(`deleteOriginalInteractionResponse`, () => {
   mockRequest.delete(`/webhooks/:webhook/:token/messages/:message`);

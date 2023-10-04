@@ -9,9 +9,9 @@ import {
 import {
   applicationCommandSchema,
   type ApplicationCommand
-} from "./types/ApplicationCommand.ts";
-import { applicationCommandOptionSchema } from "./types/ApplicationCommandOption.ts";
-import { localesSchema } from "./types/Locales.ts";
+} from "./types/ApplicationCommand.js";
+import { applicationCommandOptionSchema } from "./types/ApplicationCommandOption.js";
+import { localesSchema } from "./types/Locales.js";
 
 export const editGuildApplicationCommandSchema = z.object({
   application: snowflake,

@@ -10,7 +10,7 @@ import {
 import {
   moderationRuleSchema,
   type ModerationRule
-} from "./types/ModerationRule.ts";
+} from "./types/ModerationRule.js";
 
 export const getAutoModerationRuleSchema = z.object({
   guild: snowflake,

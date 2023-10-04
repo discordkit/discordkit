@@ -7,7 +7,7 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { userSchema, type User } from "../user/types/User.ts";
+import { userSchema, type User } from "../user/types/User.js";
 
 export const getReactionsSchema = z.object({
   channel: snowflake,

@@ -5,8 +5,8 @@ import {
   getWebhookMessageQuery,
   getWebhookMessageSafe,
   getWebhookMessageSchema
-} from "../getWebhookMessage.ts";
-import { messageSchema } from "../../channel/types/Message.ts";
+} from "../getWebhookMessage.js";
+import { messageSchema } from "../../channel/types/Message.js";
 
 describe(`getWebhookMessage`, () => {
   mockRequest.get(`/webhooks/:webhook/:token/messages/:message`, messageSchema);

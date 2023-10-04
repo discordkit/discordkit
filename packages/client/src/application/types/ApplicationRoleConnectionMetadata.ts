@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { applicationRoleConnectionMetadataTypeSchema } from "./ApplicationRoleConnectionMetadataType.ts";
-import { localesSchema } from "./Locales.ts";
+import { applicationRoleConnectionMetadataTypeSchema } from "./ApplicationRoleConnectionMetadataType.js";
+import { localesSchema } from "./Locales.js";
 
 export const applicationRoleConnectionMetadataSchema = z.object({
   /** type of metadata value */

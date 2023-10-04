@@ -5,8 +5,8 @@ import {
   getGuildIntegrationsQuery,
   getGuildIntegrationsSafe,
   getGuildIntegrationsSchema
-} from "../getGuildIntegrations.ts";
-import { integrationSchema } from "../types/Integration.ts";
+} from "../getGuildIntegrations.js";
+import { integrationSchema } from "../types/Integration.js";
 
 describe(`getGuildIntegrations`, () => {
   const expected = mockRequest.get(

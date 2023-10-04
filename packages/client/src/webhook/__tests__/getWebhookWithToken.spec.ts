@@ -5,8 +5,8 @@ import {
   getWebhookWithTokenQuery,
   getWebhookWithTokenSafe,
   getWebhookWithTokenSchema
-} from "../getWebhookWithToken.ts";
-import { webhookSchema } from "../types/Webhook.ts";
+} from "../getWebhookWithToken.js";
+import { webhookSchema } from "../types/Webhook.js";
 
 describe(`getWebhookWithToken`, () => {
   const expected = mockRequest.get(

@@ -5,7 +5,7 @@ import {
   executeWebhookProcedure,
   executeWebhookSafe,
   executeWebhookSchema
-} from "../executeWebhook.ts";
+} from "../executeWebhook.js";
 
 describe(`executeWebhook`, () => {
   mockRequest.post(`/webhooks/:webhook/:token`);

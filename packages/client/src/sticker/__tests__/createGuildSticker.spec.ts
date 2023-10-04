@@ -5,8 +5,8 @@ import {
   createGuildStickerProcedure,
   createGuildStickerSafe,
   createGuildStickerSchema
-} from "../createGuildSticker.ts";
-import { stickerSchema } from "../types/Sticker.ts";
+} from "../createGuildSticker.js";
+import { stickerSchema } from "../types/Sticker.js";
 
 describe(`createGuildSticker`, () => {
   const expected = mockRequest.post(`/guilds/:guild/stickers`, stickerSchema);

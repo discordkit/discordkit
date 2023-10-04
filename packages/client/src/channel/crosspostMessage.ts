@@ -6,7 +6,7 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { messageSchema, type Message } from "./types/Message.ts";
+import { messageSchema, type Message } from "./types/Message.js";
 
 export const crosspostMessageSchema = z.object({
   channel: snowflake,

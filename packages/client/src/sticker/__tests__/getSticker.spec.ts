@@ -5,8 +5,8 @@ import {
   getStickerQuery,
   getStickerSafe,
   getStickerSchema
-} from "../getSticker.ts";
-import { stickerSchema } from "../types/Sticker.ts";
+} from "../getSticker.js";
+import { stickerSchema } from "../types/Sticker.js";
 
 describe(`getSticker`, () => {
   const expected = mockRequest.get(`/stickers/:sticker`, stickerSchema);

@@ -1,4 +1,4 @@
-export * from "./listVoiceRegions.ts";
+export * from "./listVoiceRegions.js";
 
-export * from "./types/index.ts";
-export * as voiceProcedures from "./procedures.ts";
+export * from "./types/index.js";
+export * as voiceProcedures from "./procedures.js";

@@ -5,8 +5,8 @@ import {
   getGuildTemplateQuery,
   getGuildTemplateSafe,
   getGuildTemplateSchema
-} from "../getGuildTemplate.ts";
-import { guildTemplateSchema } from "../types/GuildTemplate.ts";
+} from "../getGuildTemplate.js";
+import { guildTemplateSchema } from "../types/GuildTemplate.js";
 
 describe(`getGuildTemplate`, () => {
   const expected = mockRequest.get(

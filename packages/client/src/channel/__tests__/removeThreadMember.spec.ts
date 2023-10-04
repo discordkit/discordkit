@@ -5,7 +5,7 @@ import {
   removeThreadMemberProcedure,
   removeThreadMemberSafe,
   removeThreadMemberSchema
-} from "../removeThreadMember.ts";
+} from "../removeThreadMember.js";
 
 describe(`removeThreadMember`, () => {
   mockRequest.delete(`/channels/:channel/thread-members/:user`);

@@ -5,8 +5,8 @@ import {
   getReactionsQuery,
   getReactionsSafe,
   getReactionsSchema
-} from "../getReactions.ts";
-import { userSchema } from "../../user/types/User.ts";
+} from "../getReactions.js";
+import { userSchema } from "../../user/types/User.js";
 
 describe(`getReactions`, () => {
   const expected = mockRequest.get(

@@ -5,8 +5,8 @@ import {
   bulkOverwriteGuildApplicationCommands,
   bulkOverwriteGuildApplicationCommandsSchema,
   bulkOverwriteGuildApplicationCommandsSafe
-} from "../bulkOverwriteGuildApplicationCommands.ts";
-import { applicationCommandSchema } from "../types/ApplicationCommand.ts";
+} from "../bulkOverwriteGuildApplicationCommands.js";
+import { applicationCommandSchema } from "../types/ApplicationCommand.js";
 
 describe(`bulkOverwriteGuildApplicationCommands`, () => {
   const expected = mockRequest.put(

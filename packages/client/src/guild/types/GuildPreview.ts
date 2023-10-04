@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { snowflake } from "@discordkit/core";
-import { emojiSchema } from "../../emoji/types/Emoji.ts";
-import { stickerSchema } from "../../sticker/types/Sticker.ts";
-import { guildFeaturesSchema } from "./GuildFeatures.ts";
+import { emojiSchema } from "../../emoji/types/Emoji.js";
+import { stickerSchema } from "../../sticker/types/Sticker.js";
+import { guildFeaturesSchema } from "./GuildFeatures.js";
 
 export const guildPreviewSchema = z.object({
   /** guild id */

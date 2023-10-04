@@ -5,7 +5,7 @@ import {
   createInteractionResponseProcedure,
   createInteractionResponseSafe,
   createInteractionResponseSchema
-} from "../createInteractionResponse.ts";
+} from "../createInteractionResponse.js";
 
 describe(`createInteractionResponse`, () => {
   mockRequest.post(`/interactions/:interaction/:token/callback`);

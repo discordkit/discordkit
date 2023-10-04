@@ -5,8 +5,8 @@ import {
   modifyWebhookWithTokenProcedure,
   modifyWebhookWithTokenSafe,
   modifyWebhookWithTokenSchema
-} from "../modifyWebhookWithToken.ts";
-import { webhookSchema } from "../types/Webhook.ts";
+} from "../modifyWebhookWithToken.js";
+import { webhookSchema } from "../types/Webhook.js";
 
 describe(`modifyWebhookWithToken`, () => {
   const expected = mockRequest.patch(

@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { snowflake } from "@discordkit/core";
-import { guildSchema } from "../../guild/types/Guild.ts";
-import { userSchema } from "../../user/types/User.ts";
+import { guildSchema } from "../../guild/types/Guild.js";
+import { userSchema } from "../../user/types/User.js";
 
 export const guildTemplateSchema = z.object({
   /** the template code (unique ID) */

@@ -4,8 +4,8 @@ import {
   listVoiceRegionsProcedure,
   listVoiceRegionsQuery,
   listVoiceRegionsSafe
-} from "../listVoiceRegions.ts";
-import { voiceRegionSchema } from "../types/VoiceRegion.ts";
+} from "../listVoiceRegions.js";
+import { voiceRegionSchema } from "../types/VoiceRegion.js";
 
 describe(`listVoiceRegions`, () => {
   const expected = mockRequest.get(

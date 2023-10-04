@@ -5,7 +5,7 @@ import {
   removeGuildMemberRoleProcedure,
   removeGuildMemberRoleSafe,
   removeGuildMemberRoleSchema
-} from "../removeGuildMemberRole.ts";
+} from "../removeGuildMemberRole.js";
 
 describe(`removeGuildMemberRole`, () => {
   mockRequest.delete(`/guilds/:guild/members/:user/roles/:role`);

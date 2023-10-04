@@ -5,7 +5,7 @@ import {
   deleteGuildApplicationCommandProcedure,
   deleteGuildApplicationCommandSafe,
   deleteGuildApplicationCommandSchema
-} from "../deleteGuildApplicationCommand.ts";
+} from "../deleteGuildApplicationCommand.js";
 
 describe(`deleteGuildApplicationCommand`, () => {
   mockRequest.delete(

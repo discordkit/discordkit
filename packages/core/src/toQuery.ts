@@ -1,6 +1,6 @@
 import type { QueryFunction } from "@tanstack/react-query";
 import type { z } from "zod";
-import type { Fetcher } from "./methods.ts";
+import type { Fetcher } from "./methods.js";
 
 /**
  * Given a {@link Fetcher | Fetcher} function, transforms it into a curried function

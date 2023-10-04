@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { memberSchema } from "../../guild/types/Member.ts";
+import { memberSchema } from "../../guild/types/Member.js";
 
 export const inviteStageInstanceSchema = z.object({
   /** the members speaking in the Stage */

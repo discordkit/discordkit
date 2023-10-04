@@ -1,11 +1,11 @@
 import { z } from "zod";
 import { snowflake } from "@discordkit/core";
-import { activityButtonSchema } from "./ActivityButton.ts";
-import { activitySecretsSchema } from "./ActivitySecrets.ts";
-import { activityAssetsSchema } from "./ActivityAssets.ts";
-import { activityPartySchema } from "./ActivityParty.ts";
-import { activityEmojiSchema } from "./ActivityEmoji.ts";
-import { activityTimestampsSchema } from "./ActivityTimestamps.ts";
+import { activityButtonSchema } from "./ActivityButton.js";
+import { activitySecretsSchema } from "./ActivitySecrets.js";
+import { activityAssetsSchema } from "./ActivityAssets.js";
+import { activityPartySchema } from "./ActivityParty.js";
+import { activityEmojiSchema } from "./ActivityEmoji.js";
+import { activityTimestampsSchema } from "./ActivityTimestamps.js";
 
 export const activitySchema = z.object({
   /** the activity's name */

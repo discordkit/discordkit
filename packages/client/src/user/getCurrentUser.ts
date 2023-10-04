@@ -5,7 +5,7 @@ import {
   toQuery,
   toValidated
 } from "@discordkit/core";
-import { userSchema, type User } from "./types/User.ts";
+import { userSchema, type User } from "./types/User.js";
 
 /**
  * ### [Get Current User](https://discord.com/developers/docs/resources/user#get-current-user)

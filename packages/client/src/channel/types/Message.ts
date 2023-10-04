@@ -1,19 +1,19 @@
 import { z } from "zod";
 import { snowflake } from "@discordkit/core";
-import { stickerSchema } from "../../sticker/types/Sticker.ts";
-import { applicationSchema } from "../../application/types/Application.ts";
-import { userSchema } from "../../user/types/User.ts";
-import { reactionSchema } from "./Reaction.ts";
-import { channelSchema } from "./Channel.ts";
-import { messageActivitySchema } from "./MessageActivity.ts";
-import { channelMentionSchema } from "./ChannelMention.ts";
-import { embedSchema } from "./Embed.ts";
-import { messageReferenceSchema } from "./MessageReference.ts";
-import { attachmentSchema } from "./Attachment.ts";
-import { messageTypeSchema } from "./MessageType.ts";
-import { messageInteractionSchema } from "./MessageInteraction.ts";
-import { messageComponentSchema } from "./MessageComponent.ts";
-import { roleSubscriptionDataSchema } from "./RoleSubscriptionData.ts";
+import { stickerSchema } from "../../sticker/types/Sticker.js";
+import { applicationSchema } from "../../application/types/Application.js";
+import { userSchema } from "../../user/types/User.js";
+import { reactionSchema } from "./Reaction.js";
+import { channelSchema } from "./Channel.js";
+import { messageActivitySchema } from "./MessageActivity.js";
+import { channelMentionSchema } from "./ChannelMention.js";
+import { embedSchema } from "./Embed.js";
+import { messageReferenceSchema } from "./MessageReference.js";
+import { attachmentSchema } from "./Attachment.js";
+import { messageTypeSchema } from "./MessageType.js";
+import { messageInteractionSchema } from "./MessageInteraction.js";
+import { messageComponentSchema } from "./MessageComponent.js";
+import { roleSubscriptionDataSchema } from "./RoleSubscriptionData.js";
 
 export const messageSchema = z.object({
   /** id of the message */

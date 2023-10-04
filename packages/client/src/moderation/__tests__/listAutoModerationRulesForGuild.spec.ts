@@ -5,8 +5,8 @@ import {
   listAutoModerationRulesForGuildQuery,
   listAutoModerationRulesForGuildSafe,
   listAutoModerationRulesForGuildSchema
-} from "../listAutoModerationRulesForGuild.ts";
-import { moderationRuleSchema } from "../types/ModerationRule.ts";
+} from "../listAutoModerationRulesForGuild.js";
+import { moderationRuleSchema } from "../types/ModerationRule.js";
 
 describe(`listAutoModerationRulesForGuild`, () => {
   const expected = mockRequest.get(

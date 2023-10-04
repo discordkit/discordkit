@@ -5,8 +5,8 @@ import {
   createGuildRoleProcedure,
   createGuildRoleSafe,
   createGuildRoleSchema
-} from "../createGuildRole.ts";
-import { roleSchema } from "../types/Role.ts";
+} from "../createGuildRole.js";
+import { roleSchema } from "../types/Role.js";
 
 describe(`createGuildRole`, () => {
   const expected = mockRequest.post(`/guilds/:guild/roles`, roleSchema);

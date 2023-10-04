@@ -1,8 +1,8 @@
 import type { z } from "zod";
-import type { RequestParams } from "./addParams.ts";
-import { buildURL } from "./buildURL.ts";
-import type { RequestBody } from "./request.ts";
-import { request } from "./request.ts";
+import type { RequestParams } from "./addParams.js";
+import { buildURL } from "./buildURL.js";
+import type { RequestBody } from "./request.js";
+import { request } from "./request.js";
 
 export type Fetcher<
   S extends z.ZodTypeAny | null = null,

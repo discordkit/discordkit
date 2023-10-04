@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { snowflake } from "@discordkit/core";
-import { memberSchema } from "../../guild/types/Member.ts";
+import { memberSchema } from "../../guild/types/Member.js";
 
 export const threadMemberSchema = z.object({
   /** the id of the thread */

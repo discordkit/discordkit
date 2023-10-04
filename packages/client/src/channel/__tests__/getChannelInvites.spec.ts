@@ -5,8 +5,8 @@ import {
   getChannelInvitesQuery,
   getChannelInvitesSafe,
   getChannelInvitesSchema
-} from "../getChannelInvites.ts";
-import { inviteMetadataSchema } from "../../invite/types/InviteMetadata.ts";
+} from "../getChannelInvites.js";
+import { inviteMetadataSchema } from "../../invite/types/InviteMetadata.js";
 
 describe(`getChannelInvites`, () => {
   const expected = mockRequest.get(

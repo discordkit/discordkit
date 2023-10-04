@@ -5,8 +5,8 @@ import {
   modifyGuildScheduledEventProcedure,
   modifyGuildScheduledEventSafe,
   modifyGuildScheduledEventSchema
-} from "../modifyGuildScheduledEvent.ts";
-import { scheduledEventSchema } from "../types/ScheduledEvent.ts";
+} from "../modifyGuildScheduledEvent.js";
+import { scheduledEventSchema } from "../types/ScheduledEvent.js";
 
 describe(`modifyGuildScheduledEvent`, () => {
   const expected = mockRequest.patch(

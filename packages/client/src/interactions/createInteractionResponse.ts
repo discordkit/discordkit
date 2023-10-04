@@ -6,7 +6,7 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { interactionResponseSchema } from "./types/InteractionResponse.ts";
+import { interactionResponseSchema } from "./types/InteractionResponse.js";
 
 export const createInteractionResponseSchema = z.object({
   interaction: snowflake,

@@ -5,8 +5,8 @@ import {
   listThreadMembersQuery,
   listThreadMembersSafe,
   listThreadMembersSchema
-} from "../listThreadMembers.ts";
-import { threadMemberSchema } from "../types/ThreadMember.ts";
+} from "../listThreadMembers.js";
+import { threadMemberSchema } from "../types/ThreadMember.js";
 
 describe(`listThreadMembers`, () => {
   const expected = mockRequest.get(

@@ -5,8 +5,8 @@ import {
   getThreadMemberQuery,
   getThreadMemberSafe,
   getThreadMemberSchema
-} from "../getThreadMember.ts";
-import { threadMemberSchema } from "../types/ThreadMember.ts";
+} from "../getThreadMember.js";
+import { threadMemberSchema } from "../types/ThreadMember.js";
 
 describe(`getThreadMember`, () => {
   const expected = mockRequest.get(

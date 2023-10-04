@@ -5,12 +5,12 @@ export const stickerImageSchema = z.object({
   sticker: snowflake,
   format: z
     .union([z.literal(`png`), z.literal(`json`), z.literal(`gif`)])
-    .optional()
     .default(`png`)
+    .optional()
 });
 
 export const sticker = ({
   sticker: id,
   format
 }: z.infer<typeof stickerImageSchema>): string =>
-  getAsset(`/stickers/${id}.${format}`);
+  getAsset(`/stickers/${id}.${format ?? `png`}`);

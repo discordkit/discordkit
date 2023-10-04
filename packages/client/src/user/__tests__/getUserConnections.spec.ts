@@ -4,8 +4,8 @@ import {
   getUserConnectionsProcedure,
   getUserConnectionsQuery,
   getUserConnectionsSafe
-} from "../getUserConnections.ts";
-import { connectionSchema } from "../types/Connection.ts";
+} from "../getUserConnections.js";
+import { connectionSchema } from "../types/Connection.js";
 
 describe(`getUserConnections`, () => {
   const expected = mockRequest.get(`/users/@me/connections`, connectionSchema);

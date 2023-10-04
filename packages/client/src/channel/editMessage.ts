@@ -6,11 +6,11 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { type Message, messageSchema } from "./types/Message.ts";
-import { embedSchema } from "./types/Embed.ts";
-import { allowedMentionSchema } from "./types/AllowedMention.ts";
-import { messageComponentSchema } from "./types/MessageComponent.ts";
-import { attachmentSchema } from "./types/Attachment.ts";
+import { type Message, messageSchema } from "./types/Message.js";
+import { embedSchema } from "./types/Embed.js";
+import { allowedMentionSchema } from "./types/AllowedMention.js";
+import { messageComponentSchema } from "./types/MessageComponent.js";
+import { attachmentSchema } from "./types/Attachment.js";
 
 export const editMessageSchema = z.object({
   channel: snowflake,

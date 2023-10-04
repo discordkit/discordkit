@@ -5,8 +5,8 @@ import {
   createGuildChannelProcedure,
   createGuildChannelSafe,
   createGuildChannelSchema
-} from "../createGuildChannel.ts";
-import { channelSchema } from "../../channel/types/Channel.ts";
+} from "../createGuildChannel.js";
+import { channelSchema } from "../../channel/types/Channel.js";
 
 describe(`createGuildChannel`, () => {
   const expected = mockRequest.post(`/guilds/:guild/channels`, channelSchema);

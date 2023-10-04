@@ -7,15 +7,15 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { embedSchema } from "../channel/types/Embed.ts";
-import { allowedMentionSchema } from "../channel/types/AllowedMention.ts";
-import { attachmentSchema } from "../channel/types/Attachment.ts";
-import { messageComponentSchema } from "../channel/types/MessageComponent.ts";
-import { EmbedType } from "../channel/types/EmbedType.ts";
+import { embedSchema } from "../channel/types/Embed.js";
+import { allowedMentionSchema } from "../channel/types/AllowedMention.js";
+import { attachmentSchema } from "../channel/types/Attachment.js";
+import { messageComponentSchema } from "../channel/types/MessageComponent.js";
+import { EmbedType } from "../channel/types/EmbedType.js";
 import {
   type InteractionResponse,
   interactionResponseSchema
-} from "./types/InteractionResponse.ts";
+} from "./types/InteractionResponse.js";
 
 export const editOriginalInteractionResponseSchema = z.object({
   application: snowflake,

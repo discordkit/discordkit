@@ -6,7 +6,7 @@ import {
   beginGuildPruneSafe,
   beginGuildPruneSchema,
   guildPruneResultSchema
-} from "../beginGuildPrune.ts";
+} from "../beginGuildPrune.js";
 
 describe(`beginGuildPrune`, () => {
   const expected = mockRequest.post(

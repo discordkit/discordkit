@@ -6,7 +6,7 @@ import {
   toQuery,
   toValidated
 } from "@discordkit/core";
-import { stickerPackSchema } from "./types/StickerPack.ts";
+import { stickerPackSchema } from "./types/StickerPack.js";
 
 export const stickerPacksSchema = z.object({
   stickerPacks: stickerPackSchema.array()

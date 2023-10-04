@@ -1,4 +1,4 @@
-export { createStageInstanceProcedure } from "./createStageInstance.ts";
-export { deleteStageInstanceProcedure } from "./deleteStageInstance.ts";
-export { getStageInstanceProcedure } from "./getStageInstance.ts";
-export { modifyStageInstanceProcedure } from "./modifyStageInstance.ts";
+export { createStageInstanceProcedure } from "./createStageInstance.js";
+export { deleteStageInstanceProcedure } from "./deleteStageInstance.js";
+export { getStageInstanceProcedure } from "./getStageInstance.js";
+export { modifyStageInstanceProcedure } from "./modifyStageInstance.js";

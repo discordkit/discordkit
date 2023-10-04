@@ -5,7 +5,7 @@ import {
   deleteFollowupMessageProcedure,
   deleteFollowupMessageSafe,
   deleteFollowupMessageSchema
-} from "../deleteFollowupMessage.ts";
+} from "../deleteFollowupMessage.js";
 
 describe(`deleteFollowupMessage`, () => {
   mockRequest.delete(`/webhooks/:application/:token/messages/:message`);

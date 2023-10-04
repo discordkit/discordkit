@@ -1,5 +1,5 @@
-export { createGuildEmojiProcedure } from "./createGuildEmoji.ts";
-export { deleteGuildEmojiProcedure } from "./deleteGuildEmoji.ts";
-export { getGuildEmojiProcedure } from "./getGuildEmoji.ts";
-export { listGuildEmojisProcedure } from "./listGuildEmojis.ts";
-export { modifyGuildEmojiProcedure } from "./modifyGuildEmoji.ts";
+export { createGuildEmojiProcedure } from "./createGuildEmoji.js";
+export { deleteGuildEmojiProcedure } from "./deleteGuildEmoji.js";
+export { getGuildEmojiProcedure } from "./getGuildEmoji.js";
+export { listGuildEmojisProcedure } from "./listGuildEmojis.js";
+export { modifyGuildEmojiProcedure } from "./modifyGuildEmoji.js";

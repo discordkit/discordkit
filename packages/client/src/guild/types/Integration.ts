@@ -1,10 +1,10 @@
 import { z } from "zod";
 import { snowflake } from "@discordkit/core";
-import { userSchema } from "../../user/types/User.ts";
-import { scopesSchema } from "../../application/types/Scopes.ts";
-import { integrationApplicationSchema } from "./IntegrationApplication.ts";
-import { integrationAccountSchema } from "./IntegrationAccount.ts";
-import { integrationExpireBehaviorSchema } from "./IntegrationExpireBehavior.ts";
+import { userSchema } from "../../user/types/User.js";
+import { scopesSchema } from "../../application/types/Scopes.js";
+import { integrationApplicationSchema } from "./IntegrationApplication.js";
+import { integrationAccountSchema } from "./IntegrationAccount.js";
+import { integrationExpireBehaviorSchema } from "./IntegrationExpireBehavior.js";
 
 export const integrationSchema = z.object({
   /** integration id */

@@ -5,8 +5,8 @@ import {
   modifyGuildTemplateProcedure,
   modifyGuildTemplateSafe,
   modifyGuildTemplateSchema
-} from "../modifyGuildTemplate.ts";
-import { guildTemplateSchema } from "../types/GuildTemplate.ts";
+} from "../modifyGuildTemplate.js";
+import { guildTemplateSchema } from "../types/GuildTemplate.js";
 
 describe(`modifyGuildTemplate`, () => {
   const expected = mockRequest.patch(

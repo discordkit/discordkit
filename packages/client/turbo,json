@@ -5,11 +5,23 @@
   ],
   "pipeline": {
     "build": {
-      "dependsOn": [
-        "^build"
+      "inputs": [
+        "./src/**",
+        "!./src/**/*.spec.ts"
       ],
       "outputs": [
-        "dist/"
+        "dist/**"
+      ]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true,
+      "inputs": [
+        "./src/**",
+        "!./src/**/*.spec.ts"
+      ],
+      "outputs": [
+        "dist/**"
       ]
     }
   }

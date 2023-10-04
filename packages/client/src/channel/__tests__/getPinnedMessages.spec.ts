@@ -5,8 +5,8 @@ import {
   getPinnedMessagesQuery,
   getPinnedMessagesSafe,
   getPinnedMessagesSchema
-} from "../getPinnedMessages.ts";
-import { messageSchema } from "../types/Message.ts";
+} from "../getPinnedMessages.js";
+import { messageSchema } from "../types/Message.js";
 
 describe(`getPinnedMessages`, () => {
   mockRequest.get(`/channels/:channel/pins`, messageSchema.array().length(1));

@@ -5,8 +5,8 @@ import {
   editOriginalInteractionResponseProcedure,
   editOriginalInteractionResponseSafe,
   editOriginalInteractionResponseSchema
-} from "../editOriginalInteractionResponse.ts";
-import { interactionResponseSchema } from "../types/InteractionResponse.ts";
+} from "../editOriginalInteractionResponse.js";
+import { interactionResponseSchema } from "../types/InteractionResponse.js";
 
 describe(`editOriginalInteractionResponse`, () => {
   mockRequest.patch(

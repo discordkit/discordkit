@@ -7,8 +7,8 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { threadMemberSchema } from "../channel/types/ThreadMember.ts";
-import { channelMentionSchema } from "../channel/types/ChannelMention.ts";
+import { threadMemberSchema } from "../channel/types/ThreadMember.js";
+import { channelMentionSchema } from "../channel/types/ChannelMention.js";
 
 export const listActiveGuildThreadsSchema = z.object({
   guild: snowflake

@@ -1,19 +1,19 @@
 import { z } from "zod";
 import { snowflake } from "@discordkit/core";
-import { userSchema } from "../../user/types/User.ts";
-import { autoArchiveDurationSchema } from "./AutoArchiveDuration.ts";
-import { channelTypeSchema } from "./ChannelType.ts";
-import { overwriteSchema } from "./Overwrite.ts";
-import { threadMetadataSchema } from "./ThreadMetadata.ts";
-import { threadMemberSchema } from "./ThreadMember.ts";
+import { userSchema } from "../../user/types/User.js";
+import { autoArchiveDurationSchema } from "./AutoArchiveDuration.js";
+import { channelTypeSchema } from "./ChannelType.js";
+import { overwriteSchema } from "./Overwrite.js";
+import { threadMetadataSchema } from "./ThreadMetadata.js";
+import { threadMemberSchema } from "./ThreadMember.js";
 import {
   VideoQualityMode,
   videoQualityModeSchema
-} from "./VideoQualityMode.ts";
-import { forumTagSchema } from "./ForumTag.ts";
-import { defaultReactionSchema } from "./DefaultReaction.ts";
-import { sortOrderTypeSchema } from "./SortOrderType.ts";
-import { ForumLayoutType, forumLayoutTypeSchema } from "./ForumLayoutType.ts";
+} from "./VideoQualityMode.js";
+import { forumTagSchema } from "./ForumTag.js";
+import { defaultReactionSchema } from "./DefaultReaction.js";
+import { sortOrderTypeSchema } from "./SortOrderType.js";
+import { ForumLayoutType, forumLayoutTypeSchema } from "./ForumLayoutType.js";
 
 // https://discord.com/developers/docs/resources/channel#channel-object-channel-structure
 export const channelSchema = z.object({

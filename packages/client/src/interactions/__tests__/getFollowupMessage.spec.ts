@@ -5,8 +5,8 @@ import {
   getFollowupMessageQuery,
   getFollowupMessageSafe,
   getFollowupMessageSchema
-} from "../getFollowupMessage.ts";
-import { messageSchema } from "../../channel/types/Message.ts";
+} from "../getFollowupMessage.js";
+import { messageSchema } from "../../channel/types/Message.js";
 
 describe(`getFollowupMessage`, () => {
   mockRequest.get(

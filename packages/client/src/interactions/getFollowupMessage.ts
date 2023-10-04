@@ -7,7 +7,7 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { messageSchema, type Message } from "../channel/types/Message.ts";
+import { messageSchema, type Message } from "../channel/types/Message.js";
 
 export const getFollowupMessageSchema = z.object({
   application: snowflake,

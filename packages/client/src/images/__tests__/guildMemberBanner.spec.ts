@@ -3,7 +3,7 @@ import { z } from "zod";
 import {
   guildMemberBanner,
   guildMemberBannerSchema
-} from "../guildMemberBanner.ts";
+} from "../guildMemberBanner.js";
 
 describe(`guildMemberBanner`, () => {
   it(`produces a valid URL`, () => {

@@ -5,8 +5,8 @@ import {
   modifyGuildEmojiProcedure,
   modifyGuildEmojiSafe,
   modifyGuildEmojiSchema
-} from "../modifyGuildEmoji.ts";
-import { emojiSchema } from "../types/Emoji.ts";
+} from "../modifyGuildEmoji.js";
+import { emojiSchema } from "../types/Emoji.js";
 
 describe(`modifyGuildEmoji`, () => {
   const expected = mockRequest.patch(

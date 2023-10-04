@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { snowflake } from "@discordkit/core";
-import { auditLogChangeSchema } from "./AuditLogChange.ts";
-import { auditLogEventSchema } from "./AuditLogEvent.ts";
-import { optionalAuditEntryInfoSchema } from "./OptionalAuditEntryInfo.ts";
+import { auditLogChangeSchema } from "./AuditLogChange.js";
+import { auditLogEventSchema } from "./AuditLogEvent.js";
+import { optionalAuditEntryInfoSchema } from "./OptionalAuditEntryInfo.js";
 
 export const auditLogEntrySchema = z.object({
   /** ID of the affected entity (webhook, user, role, etc.) */

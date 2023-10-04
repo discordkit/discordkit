@@ -1,7 +1,7 @@
-export * from "./createStageInstance.ts";
-export * from "./deleteStageInstance.ts";
-export * from "./getStageInstance.ts";
-export * from "./modifyStageInstance.ts";
+export * from "./createStageInstance.js";
+export * from "./deleteStageInstance.js";
+export * from "./getStageInstance.js";
+export * from "./modifyStageInstance.js";
 
-export * from "./types/index.ts";
-export * as stageProcedures from "./procedures.ts";
+export * from "./types/index.js";
+export * as stageProcedures from "./procedures.js";

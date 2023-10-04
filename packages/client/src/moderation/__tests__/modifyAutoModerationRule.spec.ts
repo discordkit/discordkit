@@ -5,8 +5,8 @@ import {
   modifyAutoModerationRuleProcedure,
   modifyAutoModerationRuleSafe,
   modifyAutoModerationRuleSchema
-} from "../modifyAutoModerationRule.ts";
-import { moderationRuleSchema } from "../types/ModerationRule.ts";
+} from "../modifyAutoModerationRule.js";
+import { moderationRuleSchema } from "../types/ModerationRule.js";
 
 describe(`modifyAutoModerationRule`, () => {
   const expected = mockRequest.patch(

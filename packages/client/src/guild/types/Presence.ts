@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { snowflake } from "@discordkit/core";
-import { userSchema } from "../../user/types/User.ts";
-import { clientStatusSchema } from "./ClientStatus.ts";
-import { activitySchema } from "./Activity.ts";
+import { userSchema } from "../../user/types/User.js";
+import { clientStatusSchema } from "./ClientStatus.js";
+import { activitySchema } from "./Activity.js";
 
 export const presenceSchema = z.object({
   /** the user presence is being updated for */

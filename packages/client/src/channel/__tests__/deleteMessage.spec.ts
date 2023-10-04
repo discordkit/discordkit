@@ -5,7 +5,7 @@ import {
   deleteMessageProcedure,
   deleteMessageSafe,
   deleteMessageSchema
-} from "../deleteMessage.ts";
+} from "../deleteMessage.js";
 
 describe(`deleteMessage`, () => {
   mockRequest.delete(`/channels/:channel/messages/:message`);

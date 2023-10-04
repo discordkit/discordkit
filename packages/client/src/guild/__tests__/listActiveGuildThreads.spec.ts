@@ -6,7 +6,7 @@ import {
   listActiveGuildThreadsQuery,
   listActiveGuildThreadsSafe,
   listActiveGuildThreadsSchema
-} from "../listActiveGuildThreads.ts";
+} from "../listActiveGuildThreads.js";
 
 describe(`listActiveGuildThreads`, () => {
   const expected = mockRequest.get(

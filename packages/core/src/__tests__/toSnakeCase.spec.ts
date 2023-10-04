@@ -1,4 +1,4 @@
-import { toSnakeCase } from "../toSnakeCase.ts";
+import { toSnakeCase } from "../toSnakeCase.js";
 
 describe(`toSnakeCase`, () => {
   it(`converts camelCase to snake_case`, () => {

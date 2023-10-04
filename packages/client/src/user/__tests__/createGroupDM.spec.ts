@@ -6,9 +6,9 @@ import {
   createGroupDMProcedure,
   createGroupDMSafe,
   createGroupDMSchema
-} from "../createGroupDM.ts";
-import { channelSchema } from "../../channel/types/Channel.ts";
-import { ChannelType } from "../../channel/types/ChannelType.ts";
+} from "../createGroupDM.js";
+import { channelSchema } from "../../channel/types/Channel.js";
+import { ChannelType } from "../../channel/types/ChannelType.js";
 
 describe(`createGroupDM`, () => {
   const expected = mockRequest.post(

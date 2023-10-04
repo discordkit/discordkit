@@ -5,7 +5,7 @@ import {
   getGuildWidgetImageQuery,
   getGuildWidgetImageSafe,
   getGuildWidgetImageSchema
-} from "../getGuildWidgetImage.ts";
+} from "../getGuildWidgetImage.js";
 
 describe(`getGuildWidgetImage`, () => {
   mockRequest.get(`/guilds/:guild/widget.png`);

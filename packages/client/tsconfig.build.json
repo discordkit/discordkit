@@ -3,15 +3,13 @@
   "include": ["src/**/*.ts"],
   "exclude": [
     "node_modules",
-    "./src/**/__fixtures__/**/*",
-    "./src/**/__mocks__/**/*",
-    "./src/**/__test__/**/*",
-    "./src/**/*.spec.ts"
+    "./dist/**",
+    "**/__fixtures__/**/*",
+    "**/__mocks__/**/*",
+    "**/__test__/**/*",
+    "**/*.spec.ts"
   ],
   "compilerOptions": {
-    "outDir": "dist",
-    "composite": true,
-    "noEmit": false,
-    "emitDeclarationOnly": true
+    "noEmit": false
   }
 }

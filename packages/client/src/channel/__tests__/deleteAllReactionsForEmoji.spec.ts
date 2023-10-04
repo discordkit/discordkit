@@ -5,7 +5,7 @@ import {
   deleteAllReactionsForEmojiProcedure,
   deleteAllReactionsForEmojiSafe,
   deleteAllReactionsForEmojiSchema
-} from "../deleteAllReactionsForEmoji.ts";
+} from "../deleteAllReactionsForEmoji.js";
 
 describe(`deleteAllReactionsForEmoji`, () => {
   mockRequest.delete(`/channels/:channel/messages/:message/reactions/:emoji`);

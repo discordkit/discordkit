@@ -5,8 +5,8 @@ import {
   listPublicArchivedThreadsQuery,
   listPublicArchivedThreadsSafe,
   listPublicArchivedThreadsSchema
-} from "../listPublicArchivedThreads.ts";
-import { archivedThreadsSchema } from "../types/ArchivedThreads.ts";
+} from "../listPublicArchivedThreads.js";
+import { archivedThreadsSchema } from "../types/ArchivedThreads.js";
 
 describe(`listPublicArchivedThreads`, () => {
   const expected = mockRequest.get(

@@ -1,6 +1,6 @@
 import { getAsset, snowflake } from "@discordkit/core";
 import { z } from "zod";
-import { imageSizes } from "./types/ImageSizes.ts";
+import { imageSizes } from "./types/ImageSizes.js";
 
 export const guildBannerSchema = z.object({
   guild: snowflake,
@@ -12,8 +12,8 @@ export const guildBannerSchema = z.object({
       z.literal(`webp`),
       z.literal(`gif`)
     ])
-    .optional()
-    .default(`png`),
+    .default(`png`)
+    .optional(),
   params: z
     .object({
       size: imageSizes
@@ -27,4 +27,4 @@ export const guildBanner = ({
   format,
   params
 }: z.infer<typeof guildBannerSchema>): string =>
-  getAsset(`/banners/${guild}/${banner}.${format}`, params);
+  getAsset(`/banners/${guild}/${banner}.${format ?? `png`}`, params);

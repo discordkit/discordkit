@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { generateMock } from "@anatine/zod-mock";
 import { Snowflake } from "nodejs-snowflake";
-import { snowflake } from "../snowflake.ts";
+import { snowflake } from "../snowflake.js";
 
 describe(`snowflake`, () => {
   const uid = new Snowflake({ custom_epoch: 1420070400000 });

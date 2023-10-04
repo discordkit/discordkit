@@ -5,7 +5,7 @@ import {
   groupDMRemoveRecipientProcedure,
   groupDMRemoveRecipientSafe,
   groupDMRemoveRecipientSchema
-} from "../groupDMRemoveRecipient.ts";
+} from "../groupDMRemoveRecipient.js";
 
 describe(`groupDMRemoveRecipient`, () => {
   mockRequest.delete(`/channels/:channel/recipients/:user`);

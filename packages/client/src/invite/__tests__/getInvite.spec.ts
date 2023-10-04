@@ -5,8 +5,8 @@ import {
   getInviteQuery,
   getInviteSafe,
   getInviteSchema
-} from "../getInvite.ts";
-import { inviteSchema } from "../types/Invite.ts";
+} from "../getInvite.js";
+import { inviteSchema } from "../types/Invite.js";
 
 describe(`getInvite`, () => {
   mockRequest.get(`/invites/:code`, inviteSchema);

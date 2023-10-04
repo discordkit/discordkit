@@ -6,12 +6,12 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { channelSchema } from "../channel/types/Channel.ts";
-import { verificationLevelSchema } from "./types/VerificationLevel.ts";
-import { defaultMessageNotificationLevelSchema } from "./types/DefaultMessageNotificationLevel.ts";
-import { explicitContentFilterLevelSchema } from "./types/ExplicitContentFilterLevel.ts";
-import { roleSchema } from "./types/Role.ts";
-import { guildSchema, type Guild } from "./types/Guild.ts";
+import { channelSchema } from "../channel/types/Channel.js";
+import { verificationLevelSchema } from "./types/VerificationLevel.js";
+import { defaultMessageNotificationLevelSchema } from "./types/DefaultMessageNotificationLevel.js";
+import { explicitContentFilterLevelSchema } from "./types/ExplicitContentFilterLevel.js";
+import { roleSchema } from "./types/Role.js";
+import { guildSchema, type Guild } from "./types/Guild.js";
 
 export const createGuildSchema = z.object({
   body: z.object({

@@ -5,8 +5,8 @@ import {
   addGuildMemberProcedure,
   addGuildMemberSafe,
   addGuildMemberSchema
-} from "../addGuildMember.ts";
-import { memberSchema } from "../types/Member.ts";
+} from "../addGuildMember.js";
+import { memberSchema } from "../types/Member.js";
 
 describe(`addGuildMember`, () => {
   const expected = mockRequest.put(

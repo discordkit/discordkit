@@ -9,7 +9,7 @@ import {
 import {
   type ApplicationRoleConnection,
   applicationRoleConnectionSchema
-} from "../application/types/ApplicationRoleConnection.ts";
+} from "../application/types/ApplicationRoleConnection.js";
 
 export const updateUserApplicationRoleConnectionSchema = z.object({
   application: snowflake,

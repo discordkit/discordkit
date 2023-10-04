@@ -5,8 +5,8 @@ import {
   getGuildApplicationCommandsProcedure,
   getGuildApplicationCommandsQuery,
   getGuildApplicationCommandsSafe
-} from "../getGuildApplicationCommands.ts";
-import { applicationCommandSchema } from "../types/ApplicationCommand.ts";
+} from "../getGuildApplicationCommands.js";
+import { applicationCommandSchema } from "../types/ApplicationCommand.js";
 
 describe(`getGuildApplicationCommands`, () => {
   const expected = mockRequest.get(

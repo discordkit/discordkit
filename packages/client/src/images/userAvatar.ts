@@ -1,6 +1,6 @@
 import { getAsset, snowflake } from "@discordkit/core";
 import { z } from "zod";
-import { imageSizes } from "./types/ImageSizes.ts";
+import { imageSizes } from "./types/ImageSizes.js";
 
 export const userAvatarSchema = z.object({
   user: snowflake,
@@ -12,8 +12,8 @@ export const userAvatarSchema = z.object({
       z.literal(`webp`),
       z.literal(`gif`)
     ])
-    .optional()
-    .default(`png`),
+    .default(`png`)
+    .optional(),
   params: z
     .object({
       size: imageSizes
@@ -27,4 +27,4 @@ export const userAvatar = ({
   format,
   params
 }: z.infer<typeof userAvatarSchema>): string =>
-  getAsset(`/avatars/${user}/${avatar}.${format}`, params);
+  getAsset(`/avatars/${user}/${avatar}.${format ?? `png`}`, params);

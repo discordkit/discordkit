@@ -7,7 +7,7 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { messageSchema, type Message } from "./types/Message.ts";
+import { messageSchema, type Message } from "./types/Message.js";
 
 export const getPinnedMessagesSchema = z.object({
   channel: snowflake

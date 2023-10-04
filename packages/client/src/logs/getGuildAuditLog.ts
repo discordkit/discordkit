@@ -7,8 +7,8 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { type AuditLog, auditLogSchema } from "./types/AuditLog.ts";
-import { auditLogEventSchema } from "./types/AuditLogEvent.ts";
+import { type AuditLog, auditLogSchema } from "./types/AuditLog.js";
+import { auditLogEventSchema } from "./types/AuditLogEvent.js";
 
 export const getGuildAuditLogSchema = z.object({
   guild: snowflake,

@@ -5,8 +5,8 @@ import {
   getGuildWidgetSettingsQuery,
   getGuildWidgetSettingsSafe,
   getGuildWidgetSettingsSchema
-} from "../getGuildWidgetSettings.ts";
-import { guildWidgetSettingsSchema } from "../types/GuildWidgetSettings.ts";
+} from "../getGuildWidgetSettings.js";
+import { guildWidgetSettingsSchema } from "../types/GuildWidgetSettings.js";
 
 describe(`getGuildWidgetSettings`, () => {
   const expected = mockRequest.get(

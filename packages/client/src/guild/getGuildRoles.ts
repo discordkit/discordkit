@@ -7,7 +7,7 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { roleSchema, type Role } from "./types/Role.ts";
+import { roleSchema, type Role } from "./types/Role.js";
 
 export const getGuildRolesSchema = z.object({
   guild: snowflake

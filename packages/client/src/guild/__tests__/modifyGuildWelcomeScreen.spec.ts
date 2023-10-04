@@ -5,8 +5,8 @@ import {
   modifyGuildWelcomeScreenProcedure,
   modifyGuildWelcomeScreenSafe,
   modifyGuildWelcomeScreenSchema
-} from "../modifyGuildWelcomeScreen.ts";
-import { welcomeScreenSchema } from "../types/WelcomeScreen.ts";
+} from "../modifyGuildWelcomeScreen.js";
+import { welcomeScreenSchema } from "../types/WelcomeScreen.js";
 
 describe(`modifyGuildWelcomeScreen`, () => {
   const expected = mockRequest.patch(

@@ -5,8 +5,8 @@ import {
   getGuildAuditLogQuery,
   getGuildAuditLogSafe,
   getGuildAuditLogSchema
-} from "../getGuildAuditLog.ts";
-import { auditLogSchema } from "../types/AuditLog.ts";
+} from "../getGuildAuditLog.js";
+import { auditLogSchema } from "../types/AuditLog.js";
 
 describe(`getGuildAuditLog`, () => {
   mockRequest.get(`/guilds/:guild/audit-logs`, auditLogSchema);

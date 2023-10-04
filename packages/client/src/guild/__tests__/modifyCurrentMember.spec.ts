@@ -5,8 +5,8 @@ import {
   modifyCurrentMemberProcedure,
   modifyCurrentMemberSafe,
   modifyCurrentMemberSchema
-} from "../modifyCurrentMember.ts";
-import { memberSchema } from "../types/Member.ts";
+} from "../modifyCurrentMember.js";
+import { memberSchema } from "../types/Member.js";
 
 describe(`modifyCurrentMember`, () => {
   const expected = mockRequest.patch(

@@ -5,8 +5,8 @@ import {
   getUserApplicationRoleConnectionQuery,
   getUserApplicationRoleConnectionSafe,
   getUserApplicationRoleConnectionSchema
-} from "../getUserApplicationRoleConnection.ts";
-import { applicationRoleConnectionSchema } from "../../application/types/ApplicationRoleConnection.ts";
+} from "../getUserApplicationRoleConnection.js";
+import { applicationRoleConnectionSchema } from "../../application/types/ApplicationRoleConnection.js";
 
 describe(`getUserApplicationRoleConnection`, () => {
   const expected = mockRequest.get(

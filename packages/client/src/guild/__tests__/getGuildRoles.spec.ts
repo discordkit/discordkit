@@ -5,8 +5,8 @@ import {
   getGuildRolesQuery,
   getGuildRolesSafe,
   getGuildRolesSchema
-} from "../getGuildRoles.ts";
-import { roleSchema } from "../types/Role.ts";
+} from "../getGuildRoles.js";
+import { roleSchema } from "../types/Role.js";
 
 describe(`getGuildRoles`, () => {
   const expected = mockRequest.get(

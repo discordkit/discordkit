@@ -5,8 +5,8 @@ import {
   modifyStageInstanceProcedure,
   modifyStageInstanceSafe,
   modifyStageInstanceSchema
-} from "../modifyStageInstance.ts";
-import { stageSchema } from "../types/Stage.ts";
+} from "../modifyStageInstance.js";
+import { stageSchema } from "../types/Stage.js";
 
 describe(`modifyStageInstance`, () => {
   const expected = mockRequest.patch(`/stage-instances/:channel`, stageSchema);

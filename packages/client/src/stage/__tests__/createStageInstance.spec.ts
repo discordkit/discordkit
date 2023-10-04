@@ -5,8 +5,8 @@ import {
   createStageInstanceProcedure,
   createStageInstanceSafe,
   createStageInstanceSchema
-} from "../createStageInstance.ts";
-import { stageSchema } from "../types/Stage.ts";
+} from "../createStageInstance.js";
+import { stageSchema } from "../types/Stage.js";
 
 describe(`createStageInstance`, () => {
   const expected = mockRequest.post(`/stage-instances`, stageSchema);

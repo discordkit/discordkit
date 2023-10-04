@@ -5,8 +5,8 @@ import {
   getGuildScheduledEventQuery,
   getGuildScheduledEventSafe,
   getGuildScheduledEventSchema
-} from "../getGuildScheduledEvent.ts";
-import { scheduledEventSchema } from "../types/ScheduledEvent.ts";
+} from "../getGuildScheduledEvent.js";
+import { scheduledEventSchema } from "../types/ScheduledEvent.js";
 
 describe(`getGuildScheduledEvent`, () => {
   const expected = mockRequest.get(

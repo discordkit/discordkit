@@ -3,7 +3,7 @@ import { z } from "zod";
 import {
   applicationAsset,
   applicationAssetSchema
-} from "../applicationAsset.ts";
+} from "../applicationAsset.js";
 
 describe(`applicationAsset`, () => {
   it(`produces a valid URL`, () => {

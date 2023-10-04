@@ -1,7 +1,7 @@
-export { createGuildFromTemplateProcedure } from "./createGuildFromTemplate.ts";
-export { createGuildTemplateProcedure } from "./createGuildTemplate.ts";
-export { deleteGuildTemplateProcedure } from "./deleteGuildTemplate.ts";
-export { getGuildTemplateProcedure } from "./getGuildTemplate.ts";
-export { getGuildTemplatesProcedure } from "./getGuildTemplates.ts";
-export { modifyGuildTemplateProcedure } from "./modifyGuildTemplate.ts";
-export { syncGuildTemplateProcedure } from "./syncGuildTemplate.ts";
+export { createGuildFromTemplateProcedure } from "./createGuildFromTemplate.js";
+export { createGuildTemplateProcedure } from "./createGuildTemplate.js";
+export { deleteGuildTemplateProcedure } from "./deleteGuildTemplate.js";
+export { getGuildTemplateProcedure } from "./getGuildTemplate.js";
+export { getGuildTemplatesProcedure } from "./getGuildTemplates.js";
+export { modifyGuildTemplateProcedure } from "./modifyGuildTemplate.js";
+export { syncGuildTemplateProcedure } from "./syncGuildTemplate.js";
