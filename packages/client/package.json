@@ -59,7 +59,6 @@
     ],
     "tsconfig": "./tsconfig.build.json",
     "dts": true,
-    "minify": true,
     "metafile": true,
     "sourcemap": true,
     "clean": true

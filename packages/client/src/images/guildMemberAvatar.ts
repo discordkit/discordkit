@@ -30,6 +30,6 @@ export const guildMemberAvatar = ({
   params
 }: z.infer<typeof guildMemberAvatarSchema>): string =>
   getAsset(
-    `/guilds/${guild}/users/${user}/avatars/${avatar ?? `png`}.${format}`,
+    `/guilds/${guild}/users/${user}/avatars/${avatar}.${format ?? `png`}`,
     params
   );

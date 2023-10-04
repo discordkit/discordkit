@@ -8,7 +8,9 @@
     "build:examples": {
       "dependsOn": ["^build"]
     },
-    "//#lint": {},
+    "//#lint": {
+      "dependsOn": ["@discordkit/core#build"]
+    },
     "//#test": {
       "dependsOn": ["@discordkit/core#build"],
       "inputs": ["./pacakges/*/src/**"],
