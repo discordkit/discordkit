@@ -1,6 +1,6 @@
 {
   "name": "webhook-action",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Enables a GitHub Action to send a message to Discord via webhooks.",
   "license": "MIT",
   "author": "Drake Costa <drake@saeris.gg> (https://saeris.gg)",

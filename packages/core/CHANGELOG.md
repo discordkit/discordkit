@@ -1,5 +1,11 @@
 # @discordkit/core
 
+## 1.0.2
+
+### Patch Changes
+
+- [#7](https://github.com/discordkit/discordkit/pull/7) [`2f4b55b`](https://github.com/discordkit/discordkit/commit/2f4b55b2d894e2295f8e6e2eb4fee9a97bbd0f6c) Thanks [@Saeris](https://github.com/Saeris)! - Actually fix missing build artifacts 😰
+
 ## 1.0.1
 
 ### Patch Changes
