@@ -4,7 +4,7 @@
 ![Discordkit](./static/logo-dark.svg#gh-dark-mode-only)
 
 <p align="center"><a href="https://www.npmjs.com/package/@discordkit/client"><img src="https://img.shields.io/npm/v/@discordkit/client.svg?style=flat" alt="npm"></a><a href="https://github.com/discordkit/discordkit/actions/workflows/ci.yml"><img src="https://github.com/discordkit/discordkit/actions/workflows/ci.yml/badge.svg" alt="CI"></a><a href="https://codecov.io/gh/discordkit/discordkit"><img src="https://codecov.io/gh/discordkit/discordkit/branch/master/graph/badge.svg" alt="codecov"/></a></p>
-<p align="center">A REST API Client for <a href="https://discord.com/developers/docs">Discord</a></p>
+<p align="center">TypeScript SDK for <a href="https://discord.com/developers/docs">Discord's API</a></p>
 
 ---
 
@@ -15,6 +15,12 @@ npm install --save-dev @discordkit/client zod
 # or
 yarn add -D @discordkit/client zod
 ```
+
+> [!WARNING]
+>
+> 🚧 Additional documentation and examples are currently under construction! 🚧
+>
+> Discordkit only recently published it's first stable version. Priority is being given to stablizing the CI/CD infrastructure for this monorepo while use-cases are explored and examples are built.
 
 ## 🔧 Usage
 

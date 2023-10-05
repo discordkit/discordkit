@@ -27,7 +27,8 @@
     "prepublishOnly": "turbo run build build:cjs",
     "prepack": "turbo run build",
     "release": "changeset publish",
-    "test": "vitest --single-thread"
+    "test": "vitest --single-thread",
+    "version": "changeset version"
   },
   "dependencies": {
     "@anatine/zod-mock": "^3.13.2",
