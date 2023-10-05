@@ -12,7 +12,7 @@
       "dependsOn": ["^build"]
     },
     "//#lint": {
-      "dependsOn": ["@discordkit/core#build"],
+      "dependsOn": ["@discordkit/core#build", "@discordkit/client#build"],
       "inputs": [
         "./apps/*/src/**",
         "./examples/*/src/**",
