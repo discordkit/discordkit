@@ -38,4 +38,4 @@ jobs:
         run: yarn turbo run lint test build --no-daemon
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3
