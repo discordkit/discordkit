@@ -2751,7 +2751,7 @@ __metadata:
     eslint: ^8.50.0
     eslint-import-resolver-typescript: ^3.6.1
     eslint-plugin-vitest: ^0.3.2
-    happy-dom: ^12.8.0
+    happy-dom: ^12.9.0
     msw: next
     nodejs-snowflake: ^2.0.1
     prettier: ^3.0.3
@@ -3995,9 +3995,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"happy-dom@npm:^12.8.0":
-  version: 12.8.0
-  resolution: "happy-dom@npm:12.8.0"
+"happy-dom@npm:^12.9.0":
+  version: 12.9.0
+  resolution: "happy-dom@npm:12.9.0"
   dependencies:
     css.escape: ^1.5.1
     entities: ^4.5.0
@@ -4005,7 +4005,7 @@ __metadata:
     webidl-conversions: ^7.0.0
     whatwg-encoding: ^2.0.0
     whatwg-mimetype: ^3.0.0
-  checksum: 727769d7c16c2fd1189319d82dd6c00e7d403f81ce761e3cb4a94429a3f7a7a4fc44a6d44f21fa62a299b9606c59404517a0582933682a7e01e858d2239dfb27
+  checksum: be0065b44d0e1c55edf876e307bb179d5ad1ba0e8b966ecf94b369423b18f90387dd09d28a8e36c536fd44100b7d81dce997891d7e82c2cf7cec7d5827845a92
   languageName: node
   linkType: hard
 
