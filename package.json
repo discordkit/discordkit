@@ -9,22 +9,24 @@
   "packageManager": "yarn@3.6.3",
   "private": true,
   "workspaces": [
+    "apps/*",
     "examples/*",
     "packages/*"
   ],
   "type": "module",
   "scripts": {
-    "lint": "eslint \"./packages/**/*.{j,t}s?(x)\" --cache",
+    "dev": "turbo run dev",
+    "lint": "eslint \"./{apps,examples,packages,scripts}/**/*.{j,t}s?(x)\" --cache",
     "format": "yarn lint --fix",
-    "prepublishOnly": "yarn lint && yarn test",
+    "prepublishOnly": "turbo run build build:cjs",
     "prepack": "turbo run build",
-    "release": "release-it",
+    "release": "changeset publish",
     "test": "vitest --single-thread"
   },
   "dependencies": {
     "@anatine/zod-mock": "^3.13.2",
+    "@changesets/cli": "^2.26.2",
     "@faker-js/faker": "^8.1.0",
-    "@release-it/conventional-changelog": "^7.0.2",
     "@saeris/eslint-config": "^2.5.0",
     "@tanstack/react-query": "^4.35.7",
     "@testing-library/react": "^14.0.0",
@@ -44,8 +46,6 @@
     "prettier": "^3.0.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "release-it": "^16.2.1",
-    "tsup": "^7.2.0",
     "turbo": "1.10.14",
     "type-fest": "^4.3.3",
     "typescript": "5.2.2",
@@ -53,9 +53,9 @@
     "zod": "^3.22.3"
   },
   "eslintConfig": {
+    "root": true,
     "extends": [
       "@saeris/eslint-config/base",
-      "@saeris/eslint-config/next",
       "@saeris/eslint-config/typescript",
       "@saeris/eslint-config/type-aware"
     ],
@@ -118,34 +118,5 @@
     "trailingComma": "none",
     "bracketSpacing": true,
     "jsxBracketSameLine": false
-  },
-  "release-it": {
-    "git": {
-      "commitMessage": "chore: Publish v${version}"
-    },
-    "github": {
-      "releaseName": "v${version}",
-      "release": true,
-      "autoGenerate": true,
-      "web": true
-    },
-    "plugins": {
-      "@release-it/conventional-changelog": {
-        "infile": "CHANGELOG.md",
-        "preset": {
-          "name": "conventionalcommits",
-          "types": [
-            {
-              "type": "feat",
-              "section": "Features"
-            },
-            {
-              "type": "fix",
-              "section": "Bug Fixes"
-            }
-          ]
-        }
-      }
-    }
   }
 }

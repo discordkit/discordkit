@@ -1,5 +1,6 @@
 import type { Config } from "tailwindcss";
 
+// eslint-disable-next-line import/no-default-export
 export default {
   content: [
     `./src/components/**/*.{js,ts,jsx,tsx,mdx}`,

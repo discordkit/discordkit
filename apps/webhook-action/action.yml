@@ -1,0 +1,16 @@
+# action.yml
+name: "Discord Webhook"
+description: "Send a message to Discord via a webhook"
+inputs:
+  webhook:
+    description: "the id of the webhook"
+    required: true
+  token:
+    description: "the secure token of the webhook"
+    required: true
+  content:
+    description: "the message contents (up to 2000 characters)"
+    required: true
+runs:
+  using: "node20"
+  main: "dist/index.js"

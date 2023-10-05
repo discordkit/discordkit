@@ -1,10 +1,11 @@
 {
   "include": [
+    "./apps/*/src/**/*.ts",
     "./examples/*/src/**/*.ts",
     "./packages/*/src/**/*.ts",
     "./scripts/**/*.ts"
   ],
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules", "./**/dist/**/*.*"],
   "compilerOptions": {
     "noEmit": true,
     "declaration": true,

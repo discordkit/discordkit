@@ -5,6 +5,9 @@
     "build": {
       "dependsOn": ["^build"]
     },
+    "build:cjs": {
+      "dependsOn": ["^build:cjs"]
+    },
     "build:examples": {
       "dependsOn": ["^build"]
     },

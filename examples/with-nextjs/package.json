@@ -26,5 +26,10 @@
     "postcss": "latest",
     "tailwindcss": "latest",
     "typescript": "latest"
+  },
+  "eslintConfig": {
+    "extends": [
+      "@saeris/eslint-config/next"
+    ]
   }
 }

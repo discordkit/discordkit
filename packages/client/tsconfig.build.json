@@ -1,14 +1,10 @@
 {
   "extends": "../../tsconfig.json",
   "include": ["./src/**/*.ts"],
-  "exclude": [
-    "node_modules",
-    "**/__fixtures__/**/*",
-    "**/__mocks__/**/*",
-    "**/__test__/**/*",
-    "**/*.spec.ts"
-  ],
+  "exclude": ["node_modules", "./src/**/*.spec.ts"],
   "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist/esm",
     "noEmit": false
   }
 }

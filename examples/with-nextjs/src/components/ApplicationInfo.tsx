@@ -2,12 +2,11 @@
 
 import React from "react";
 import Image from "next/image";
-import { userAvatar } from "@discordkit/client";
+import { userAvatar } from "@discordkit/client/images/userAvatar";
 import { trpc } from "../app/providers";
 
-const ApplicationInfo: React.FC = () => {
+export const ApplicationInfo: React.FC = () => {
   const { data, isLoading } = trpc.getCurrentApplication.useQuery();
-  console.log({ data });
 
   if (isLoading) {
     return <div>{`Loading...`}</div>;
@@ -22,10 +21,10 @@ const ApplicationInfo: React.FC = () => {
             src={userAvatar({
               user: data.id,
               avatar: data.icon,
-              params: { size: 256 }
+              params: { size: 128 }
             })}
-            width={256}
-            height={256}
+            width={128}
+            height={128}
           />
         ) : null}
       </div>
@@ -33,5 +32,3 @@ const ApplicationInfo: React.FC = () => {
   }
   return null;
 };
-
-export default ApplicationInfo;
