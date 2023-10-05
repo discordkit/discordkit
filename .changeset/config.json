@@ -6,6 +6,7 @@
   ],
   "commit": false,
   "linked": [["@discordkit/client", "@discordkit/core"]],
+  "ignore": ["webhook-action", "with-nextjs"],
   "access": "public",
   "baseBranch": "main"
 }

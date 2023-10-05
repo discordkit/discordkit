@@ -41,7 +41,7 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Announce new release to Discord Channel
-        uses: ./apps/webhook-action/action.yml
+        uses: ./apps/webhook-action
         if: steps.changesets.outputs.published == 'true'
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK_ID }}
