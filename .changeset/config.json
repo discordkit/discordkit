@@ -2,7 +2,7 @@
   "$schema": "https://unpkg.com/@changesets/config@2.3.1/schema.json",
   "changelog": [
     "@changesets/changelog-github",
-    { "repo": "@discordkit/discordkit" }
+    { "repo": "discordkit/discordkit" }
   ],
   "commit": false,
   "fixed": [],
