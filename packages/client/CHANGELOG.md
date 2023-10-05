@@ -1,5 +1,14 @@
 # @discordkit/client
 
+## 1.0.3
+
+### Patch Changes
+
+- [#9](https://github.com/discordkit/discordkit/pull/9) [`f973cc1`](https://github.com/discordkit/discordkit/commit/f973cc1b0b072d830d3e38fd291135bcd3f5c8c2) Thanks [@Saeris](https://github.com/Saeris)! - Added a new versioning script to workaround `@changeset/cli`'s inability to correctly run `yarn npm publish`, which accidentally leaves workspace protocol dependency versions unchanged and published to npm. Shoutout to https://github.com/PrairieLearn/PrairieLearn/pull/7533 for the fix.
+
+- Updated dependencies [[`f973cc1`](https://github.com/discordkit/discordkit/commit/f973cc1b0b072d830d3e38fd291135bcd3f5c8c2)]:
+  - @discordkit/core@1.0.3
+
 ## 1.0.2
 
 ### Patch Changes
