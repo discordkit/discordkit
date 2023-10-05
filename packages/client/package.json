@@ -48,6 +48,9 @@
     },
     "./package.json": "./package.json"
   },
+  "files": [
+    "dist/**/*"
+  ],
   "sideEffects": false,
   "scripts": {
     "dev": "yarn build --watch",
