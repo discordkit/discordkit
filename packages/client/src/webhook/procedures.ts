@@ -1,0 +1,15 @@
+export { createWebhookProcedure } from "./createWebhook.js";
+export { deleteWebhookProcedure } from "./deleteWebhook.js";
+export { deleteWebhookMessageProcedure } from "./deleteWebhookMessage.js";
+export { deleteWebhookWithTokenProcedure } from "./deleteWebhookWithToken.js";
+export { editWebhookMessageProcedure } from "./editWebhookMessage.js";
+export { executeGitHubCompatibleWebhookProcedure } from "./executeGitHubCompatibleWebhook.js";
+export { executeSlackCompatibleWebhookProcedure } from "./executeSlackCompatibleWebhook.js";
+export { executeWebhookProcedure } from "./executeWebhook.js";
+export { getChannelWebhooksProcedure } from "./getChannelWebhooks.js";
+export { getGuildWebhooksProcedure } from "./getGuildWebhooks.js";
+export { getWebhookProcedure } from "./getWebhook.js";
+export { getWebhookMessageProcedure } from "./getWebhookMessage.js";
+export { getWebhookWithTokenProcedure } from "./getWebhookWithToken.js";
+export { modifyWebhookProcedure } from "./modifyWebhook.js";
+export { modifyWebhookWithTokenProcedure } from "./modifyWebhookWithToken.js";

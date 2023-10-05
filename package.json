@@ -1,105 +1,124 @@
 {
-  "name": "@saeris/discordkit",
-  "description": "A RESTapi Client for Discord",
+  "name": "discordkit",
+  "description": "A REST API Client for Discord",
   "version": "0.0.1",
   "license": "MIT",
-  "keywords": [
-    "discord",
-    "api",
-    "client",
-    "rest"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/saeris/discordkit.git"
-  },
-  "homepage": "https://github.com/saeris/discordkit#readme",
-  "bugs": {
-    "url": "https://github.com/saeris/discordkit/issues"
-  },
-  "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org"
-  },
   "engines": {
-    "node": ">=14.x"
+    "node": ">=18.x"
   },
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "exports": {
-    "./package.json": "./package.json",
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "default": "./dist/index.js"
-    }
-  },
-  "files": [
-    "dist",
-    "src"
+  "packageManager": "yarn@3.6.3",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "examples/*",
+    "packages/*"
   ],
+  "type": "module",
   "scripts": {
-    "ci": "yarn install --ignore-scripts --frozen-lockfile --silent --non-interactive",
-    "build": "tsup",
-    "build:docs": "fiddly",
-    "lint": "yarn test:lint",
-    "format": "yarn test:lint --fix",
-    "prepare": "is-ci || husky install",
-    "prepublishOnly": "yarn test",
-    "prepack": "yarn build",
-    "release": "release-it",
-    "test": "yarn test:lint && yarn test:typecheck && yarn test:unit",
-    "test:lint": "eslint \"./src/**/*.{j,t}s?(x)\"",
-    "test:typecheck": "tsc --noEmit",
-    "test:unit": "jest",
-    "test:watch": "yarn test:unit --watch",
-    "typecheck": "yarn test:typecheck",
-    "version": "yarn build:docs"
+    "dev": "turbo run dev",
+    "lint": "eslint \"./{apps,examples,packages,scripts}/**/*.{j,t}s?(x)\" --cache",
+    "format": "yarn lint --fix",
+    "prepublishOnly": "turbo run build build:cjs",
+    "prepack": "turbo run build",
+    "release": "changeset publish",
+    "test": "vitest --single-thread"
   },
-  "peerDependencies": {
-    "zod": "^3.17.3"
+  "dependencies": {
+    "@anatine/zod-mock": "^3.13.2",
+    "@changesets/cli": "^2.26.2",
+    "@faker-js/faker": "^8.1.0",
+    "@saeris/eslint-config": "^2.5.0",
+    "@tanstack/react-query": "^4.35.7",
+    "@testing-library/react": "^14.0.0",
+    "@trpc/server": "^10.38.5",
+    "@types/eslint": "^8.44.3",
+    "@types/node": "20.8.2",
+    "@types/react": "^18.2.25",
+    "@types/react-dom": "^18.2.10",
+    "@vitest/coverage-v8": "^0.34.6",
+    "eslint": "^8.50.0",
+    "eslint-import-resolver-typescript": "^3.6.1",
+    "eslint-plugin-vitest": "^0.3.2",
+    "happy-dom": "^12.8.0",
+    "msw": "next",
+    "nodejs-snowflake": "^2.0.1",
+    "prettier": "^3.0.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "turbo": "1.10.14",
+    "type-fest": "^4.3.3",
+    "typescript": "5.2.2",
+    "vitest": "^0.34.6",
+    "zod": "^3.22.4"
   },
-  "devDependencies": {
-    "@babel/preset-env": "^7.18.2",
-    "@babel/preset-typescript": "^7.17.12",
-    "@release-it/conventional-changelog": "^5.1.1",
-    "@saeris/eslint-config": "^2.2.0",
-    "@types/eslint": "^8.4.3",
-    "@types/jest": "^28.1.3",
-    "@types/node": "18.0.0",
-    "commitlint": "^17.0.3",
-    "dotenv-quokka-plugin": "^1.0.0",
-    "eslint": "^8.18.0",
-    "fiddly": "^0.12.0",
-    "husky": "^8.0.1",
-    "is-ci": "^3.0.1",
-    "jest": "^28.1.1",
-    "lint-staged": "^13.0.3",
-    "prettier": "^2.7.1",
-    "release-it": "^15.1.0",
-    "tsup": "^6.7.0",
-    "type-fest": "^2.14.0",
-    "typescript": "4.7.4",
-    "zod": "^3.17.3"
-  },
-  "quokka": {
-    "plugins": [
-      "dotenv-quokka-plugin"
+  "eslintConfig": {
+    "root": true,
+    "extends": [
+      "@saeris/eslint-config/base",
+      "@saeris/eslint-config/next",
+      "@saeris/eslint-config/typescript",
+      "@saeris/eslint-config/type-aware"
+    ],
+    "parserOptions": {
+      "project": "./tsconfig.json"
+    },
+    "settings": {
+      "import/resolver": {
+        "typescript": true,
+        "node": true
+      }
+    },
+    "overrides": [
+      {
+        "files": [
+          "./scripts/*.ts",
+          "./packages/**/src/**"
+        ],
+        "excludedFiles": "*.spec.ts",
+        "rules": {
+          "import/no-useless-path-segments": [
+            "error",
+            {
+              "noUselessIndex": false
+            }
+          ]
+        }
+      },
+      {
+        "files": [
+          "./scripts/*.ts",
+          "**/*.spec.ts"
+        ],
+        "env": {
+          "vitest/env": true
+        },
+        "plugins": [
+          "vitest"
+        ],
+        "extends": [
+          "plugin:vitest/recommended"
+        ]
+      }
+    ],
+    "ignorePatterns": [
+      "node_modules",
+      "**/.next/**/*",
+      "**/.turbo/**/*",
+      "**/dist/**/*",
+      "*.js",
+      "*.cjs",
+      "*.mjs",
+      "*.d.ts"
     ]
   },
-  "tsup": {
-    "entry": [
-      "src/index.ts"
-    ],
-    "format": [
-      "cjs",
-      "esm"
-    ],
-    "dts": true,
-    "splitting": false,
-    "sourcemap": true,
-    "clean": true
-  },
-  "packageManager": "yarn@3.1.1",
-  "sideEffects": false
+  "prettier": {
+    "printWidth": 80,
+    "tabWidth": 2,
+    "useTabs": false,
+    "semi": true,
+    "singleQuote": false,
+    "trailingComma": "none",
+    "bracketSpacing": true,
+    "jsxBracketSameLine": false
+  }
 }

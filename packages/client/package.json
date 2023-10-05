@@ -1,0 +1,66 @@
+{
+  "name": "@discordkit/client",
+  "description": "A REST API Client for Discord",
+  "version": "0.0.1",
+  "license": "MIT",
+  "author": "Drake Costa <drake@saeris.gg> (https://saeris.gg)",
+  "keywords": [
+    "discord",
+    "api",
+    "client",
+    "rest",
+    "trpc",
+    "react-query"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/discordkit/discordkit.git",
+    "directory": "packages/client"
+  },
+  "homepage": "https://github.com/discordkit/discordkit#readme",
+  "bugs": {
+    "url": "https://github.com/discordkit/discordkit/issues"
+  },
+  "type": "module",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/esm/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/esm/index.d.ts",
+      "module": "./dist/esm/index.js",
+      "import": "./dist/esm/index.js",
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      },
+      "default": "./dist/esm/index.js"
+    },
+    "./*": {
+      "types": "./dist/esm/*.d.ts",
+      "module": "./dist/esm/*.js",
+      "import": "./dist/esm/*.js",
+      "require": {
+        "types": "./dist/cjs/*.d.ts",
+        "default": "./dist/cjs/*.js"
+      },
+      "default": "./dist/esm/*.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "dev": "yarn build --watch",
+    "build": "tsc --project ./tsconfig.build.json",
+    "build:cjs": "tsc --project ./tsconfig.build.json --outdir dist/cjs --module commonjs --moduleresolution node"
+  },
+  "dependencies": {
+    "@discordkit/core": "workspace:^"
+  },
+  "peerDependencies": {
+    "zod": "^3.17.3"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2"
+  }
+}

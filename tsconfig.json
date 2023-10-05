@@ -1,43 +1,31 @@
 {
-  "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/tsconfig.json",
-  "ts-node": {
-    "transpileOnly": true
-  },
-  "include": ["./src/**/*"],
-  "exclude": ["node_modules", "**/__mocks__/**/*", "**/__test__/**/*", "**/*.spec.ts"],
+  "include": ["**/*.*"],
+  "exclude": ["node_modules", "./**/.next/**/*.*", "./**/dist/**/*.*"],
   "compilerOptions": {
-    "outDir": "dist",
     "noEmit": true,
-    "isolatedModules": true,
-    // Always include these settings
-    "declarationMap": true,
-    "sourceMap": true,
-    "importHelpers": true,
-    /* Basic Options */
-    "target": "ESNext",
-    "module": "ESNext",
-    "lib": [
-      "ESNext", // adds support for ESNext functionality
-      "DOM" // adds support for 'window' other dom methods
-    ],
-    "allowJs": true,
-    /* JSX support */
-    "jsx": "preserve",
     "declaration": true,
-    /* Strict Type-Checking Options */
+    "sourceMap": true,
+    "lib": ["ESNext", "DOM"],
+    "types": ["node", "vitest/globals"],
+    "target": "ESNext",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "baseUrl": ".",
+    "paths": {
+      "test-utils": ["./scripts/test-utils.ts"]
+    },
+    "isolatedModules": true,
+    "allowJs": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "importHelpers": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "noErrorTruncation": true,
     "strict": false,
     "strictNullChecks": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    // "strictFunctionTypes": true,
-    /* Module Resolution Options */
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
-    /* Advanced Options */
-    "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true,
-    "noErrorTruncation": true
+    "noFallthroughCasesInSwitch": true
   }
 }
