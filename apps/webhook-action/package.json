@@ -25,5 +25,6 @@
     ],
     "minify": true,
     "treeshake": true
-  }
+  },
+  "version": null
 }
