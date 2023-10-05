@@ -7,7 +7,7 @@
   "main": "./src/index.ts",
   "type": "module",
   "scripts": {
-    "build": "tsup"
+    "build:apps": "tsup"
   },
   "dependencies": {
     "@discordkit/client": "workspace:^"

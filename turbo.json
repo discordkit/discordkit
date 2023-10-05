@@ -1,12 +1,18 @@
 {
   "$schema": "https://turborepo.org/schema.json",
   "globalDependencies": ["tsconfig.json", "vitest.config.ts"],
+  "remoteCache": {
+    "signature": true
+  },
   "pipeline": {
     "build": {
       "dependsOn": ["^build"]
     },
     "build:cjs": {
       "dependsOn": ["^build:cjs"]
+    },
+    "build:apps": {
+      "dependsOn": ["^build"]
     },
     "build:examples": {
       "dependsOn": ["^build"]
