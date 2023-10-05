@@ -35,7 +35,7 @@ jobs:
         run: yarn install --immutable
 
       - name: Lint, Test, Typecheck
-        run: yarn turbo run lint test build --no-daemon
+        run: yarn ci
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
