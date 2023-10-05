@@ -5,10 +5,7 @@
     { "repo": "discordkit/discordkit" }
   ],
   "commit": false,
-  "fixed": [],
   "linked": [["@discordkit/client", "@discordkit/core"]],
   "access": "public",
-  "baseBranch": "main",
-  "updateInternalDependencies": "patch",
-  "ignore": []
+  "baseBranch": "main"
 }

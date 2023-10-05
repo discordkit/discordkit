@@ -57,7 +57,7 @@
   ],
   "sideEffects": false,
   "scripts": {
-    "dev": "yarn build --watch",
+    "dev": "yarn build --watch --declarationmap",
     "build": "tsc --project ./tsconfig.build.json",
     "build:cjs": "tsc --project ./tsconfig.build.json --outdir dist/cjs --module commonjs --moduleresolution node"
   },
