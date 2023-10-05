@@ -7,12 +7,16 @@ on:
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
+permissions: {}
+
 jobs:
   release:
+    if: github.repository == 'discordkit/discordkit'
+    permissions:
+      contents: write
+      pull-requests: write
     name: Release
     runs-on: ubuntu-latest
-    permissions:
-      actions: write
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
