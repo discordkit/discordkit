@@ -21,6 +21,10 @@
   "bugs": {
     "url": "https://github.com/discordkit/discordkit/issues"
   },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
   "type": "module",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",

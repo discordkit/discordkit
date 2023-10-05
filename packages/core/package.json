@@ -9,12 +9,16 @@
     "core",
     "itilities"
   ],
+  "homepage": "https://github.com/discordkit/discordkit#readme",
   "repository": {
     "type": "git",
     "url": "https://github.com/discordkit/discordkit.git",
     "directory": "packages/core"
   },
-  "homepage": "https://github.com/discordkit/discordkit#readme",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
   "type": "module",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
