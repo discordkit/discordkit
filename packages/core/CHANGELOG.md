@@ -1,5 +1,11 @@
 # @discordkit/core
 
+## 1.0.1
+
+### Patch Changes
+
+- [#5](https://github.com/discordkit/discordkit/pull/5) [`3be92aa`](https://github.com/discordkit/discordkit/commit/3be92aa51a2e533e05cdef5b8e1954307c3e1699) Thanks [@Saeris](https://github.com/Saeris)! - Add missing cjs build artifacts.
+
 ## 1.0.0
 
 ### Major Changes

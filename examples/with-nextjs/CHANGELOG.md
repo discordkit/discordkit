@@ -1,5 +1,12 @@
 # with-nextjs
 
+## 0.1.2
+
+### Patch Changes
+
+- Updated dependencies [[`3be92aa`](https://github.com/discordkit/discordkit/commit/3be92aa51a2e533e05cdef5b8e1954307c3e1699)]:
+  - @discordkit/client@1.0.1
+
 ## 0.1.1
 
 ### Patch Changes
