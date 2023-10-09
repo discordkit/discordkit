@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object, partial } from "valibot";
 import {
   patch,
   type Fetcher,
@@ -11,9 +11,9 @@ import {
   type GuildWidgetSettings
 } from "./types/GuildWidgetSettings.js";
 
-export const modifyGuildWidgetSchema = z.object({
+export const modifyGuildWidgetSchema = object({
   guild: snowflake,
-  body: guildWidgetSettingsSchema.partial()
+  body: partial(guildWidgetSettingsSchema)
 });
 
 /**

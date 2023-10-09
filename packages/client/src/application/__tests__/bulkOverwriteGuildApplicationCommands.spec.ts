@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
 import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
+import { array, length } from "valibot";
 import {
   bulkOverwriteGuildApplicationCommandsProcedure,
   bulkOverwriteGuildApplicationCommands,
@@ -11,7 +12,7 @@ import { applicationCommandSchema } from "../types/ApplicationCommand.js";
 describe(`bulkOverwriteGuildApplicationCommands`, () => {
   const expected = mockRequest.put(
     `/applications/:application/guilds/:guild/commands`,
-    applicationCommandSchema.array().length(1)
+    array(applicationCommandSchema, [length(1)])
   );
   const config = mockSchema(bulkOverwriteGuildApplicationCommandsSchema);
 

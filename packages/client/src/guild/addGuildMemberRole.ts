@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object } from "valibot";
 import {
   put,
   type Fetcher,
@@ -7,7 +7,7 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const addGuildMemberRoleSchema = z.object({
+export const addGuildMemberRoleSchema = object({
   guild: snowflake,
   user: snowflake,
   role: snowflake

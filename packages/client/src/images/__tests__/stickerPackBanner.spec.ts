@@ -1,5 +1,5 @@
 import { mockSchema } from "test-utils";
-import { z } from "zod";
+import { parse, string, url } from "valibot";
 import {
   stickerPackBanner,
   stickerPackBannerSchema
@@ -8,10 +8,10 @@ import {
 describe(`stickerPackBanner`, () => {
   it(`produces a valid URL`, () => {
     expect(() =>
-      z
-        .string()
-        .url()
-        .parse(stickerPackBanner(mockSchema(stickerPackBannerSchema)))
+      parse(
+        string([url()]),
+        stickerPackBanner(mockSchema(stickerPackBannerSchema))
+      )
     ).not.toThrow();
   });
 });

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { nativeEnum } from "valibot";
 
 export enum ExplicitContentFilterLevel {
   /** media content will not be scanned */
@@ -9,6 +9,6 @@ export enum ExplicitContentFilterLevel {
   ALL_MEMBERS = 2
 }
 
-export const explicitContentFilterLevelSchema = z.nativeEnum(
+export const explicitContentFilterLevelSchema = nativeEnum(
   ExplicitContentFilterLevel
 );

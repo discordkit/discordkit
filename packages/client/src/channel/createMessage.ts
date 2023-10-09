@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object } from "valibot";
 import {
   post,
   type Fetcher,
@@ -9,7 +9,7 @@ import {
 import { type Message, messageSchema } from "./types/Message.js";
 import { messageContentSchema } from "./types/MessageContent.js";
 
-export const createMessageSchema = z.object({
+export const createMessageSchema = object({
   channel: snowflake,
   body: messageContentSchema
 });

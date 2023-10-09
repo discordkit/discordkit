@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
 import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
+import { array, length } from "valibot";
 import {
   modifyGuildRolePositions,
   modifyGuildRolePositionsProcedure,
@@ -11,7 +12,7 @@ import { roleSchema } from "../types/Role.js";
 describe(`modifyGuildRolePositions`, () => {
   const expected = mockRequest.patch(
     `/guilds/:guild/roles`,
-    roleSchema.array().length(1)
+    array(roleSchema, [length(1)])
   );
   const config = mockSchema(modifyGuildRolePositionsSchema);
 

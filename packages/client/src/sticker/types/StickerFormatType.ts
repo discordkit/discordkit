@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { nativeEnum } from "valibot";
 
 export enum StickerFormatType {
   PNG = 1,
@@ -7,4 +7,4 @@ export enum StickerFormatType {
   GIF = 4
 }
 
-export const stickerFormatTypeSchema = z.nativeEnum(StickerFormatType);
+export const stickerFormatTypeSchema = nativeEnum(StickerFormatType);

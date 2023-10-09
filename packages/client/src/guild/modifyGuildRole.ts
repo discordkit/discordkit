@@ -1,4 +1,13 @@
-import { z } from "zod";
+import {
+  boolean,
+  integer,
+  minLength,
+  nullish,
+  number,
+  object,
+  partial,
+  string
+} from "valibot";
 import {
   patch,
   type Fetcher,
@@ -8,27 +17,27 @@ import {
 } from "@discordkit/core";
 import { roleSchema, type Role } from "./types/Role.js";
 
-export const modifyGuildRoleSchema = z.object({
+export const modifyGuildRoleSchema = object({
   guild: snowflake,
   role: snowflake,
-  body: z
-    .object({
+  body: partial(
+    object({
       /** name of the role */
-      name: z.string().min(1).nullish(),
+      name: nullish(string([minLength(1)])),
       /** bitwise value of the enabled/disabled permissions */
-      permissions: z.string().min(1).nullish(),
+      permissions: nullish(string([minLength(1)])),
       /** RGB color value */
-      color: z.number().int().nullish(),
+      color: nullish(number([integer()])),
       /** whether the role should be displayed separately in the sidebar */
-      hoist: z.boolean().nullish(),
+      hoist: nullish(boolean()),
       /** the role's icon image (if the guild has the `ROLE_ICONS` feature) */
-      icon: z.string().min(1).nullish(),
+      icon: nullish(string([minLength(1)])),
       /** the role's unicode emoji as a standard emoji (if the guild has the `ROLE_ICONS` feature) */
-      unicodeEmoji: z.string().min(1).nullish(),
+      unicodeEmoji: nullish(string([minLength(1)])),
       /** whether the role should be mentionable */
-      mentionable: z.boolean().nullish()
+      mentionable: nullish(boolean())
     })
-    .partial()
+  )
 });
 
 /**

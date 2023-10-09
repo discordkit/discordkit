@@ -1,4 +1,17 @@
-import { z } from "zod";
+import {
+  type Output,
+  array,
+  boolean,
+  integer,
+  maxValue,
+  minLength,
+  minValue,
+  nullable,
+  number,
+  object,
+  partial,
+  string
+} from "valibot";
 import {
   post,
   type Fetcher,
@@ -7,24 +20,24 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const beginGuildPruneSchema = z.object({
+export const beginGuildPruneSchema = object({
   guild: snowflake,
-  body: z
-    .object({
+  body: partial(
+    object({
       /** number of days to prune (1-30) */
-      days: z.number().min(1).max(30),
+      days: number([minValue(1), maxValue(30)]),
       /** whether pruned is returned, discouraged for large guilds */
-      computePruneCount: z.boolean(),
+      computePruneCount: boolean(),
       /** role(s) to include */
-      includeRoles: snowflake.array(),
+      includeRoles: array(snowflake),
       /** @deprecated reason for the prune */
-      reason: z.string().min(1)
+      reason: string([minLength(1)])
     })
-    .partial()
+  )
 });
 
-export const guildPruneResultSchema = z.object({
-  pruned: z.number().int().positive().nullable()
+export const guildPruneResultSchema = object({
+  pruned: nullable(number([integer(), minValue(0)]))
 });
 
 /**
@@ -42,7 +55,7 @@ export const guildPruneResultSchema = z.object({
  */
 export const beginGuildPrune: Fetcher<
   typeof beginGuildPruneSchema,
-  z.infer<typeof guildPruneResultSchema>
+  Output<typeof guildPruneResultSchema>
 > = async ({ guild, body }) => post(`/guilds/${guild}/prune`, body);
 
 export const beginGuildPruneSafe = toValidated(

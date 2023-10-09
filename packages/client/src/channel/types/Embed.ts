@@ -1,106 +1,121 @@
-import { z } from "zod";
+import {
+  object,
+  partial,
+  string,
+  maxLength,
+  nullish,
+  isoTimestamp,
+  number,
+  integer,
+  minValue,
+  url,
+  array,
+  boolean,
+  type Output
+} from "valibot";
 import { embedTypeSchema } from "./EmbedType.js";
 
-export const embedSchema = z
-  .object({
+export const embedSchema = partial(
+  object({
     /** title of embed */
-    title: z.string().max(256).nullish(),
+    title: nullish(string([maxLength(256)])),
     /** type of embed (always "rich" for webhook embeds) */
-    type: embedTypeSchema.nullish(),
+    type: nullish(embedTypeSchema),
     /** description of embed */
-    description: z.string().max(4096).nullish(),
+    description: nullish(string([maxLength(4096)])),
     /** url of embed */
-    url: z.string().nullish(),
+    url: nullish(string([url()])),
     /** timestamp of embed content */
-    timestamp: z.string().datetime().nullish(),
+    timestamp: nullish(string([isoTimestamp()])),
     /** color code of the embed */
-    color: z.number().int().nullish(),
+    color: nullish(number([integer()])),
     /** footer information */
-    footer: z
-      .object({
+    footer: nullish(
+      object({
         /** footer text */
-        text: z.string().max(2048),
+        text: string([maxLength(2048)]),
         /** url of footer icon (only supports http(s) and attachments) */
-        iconUrl: z.string().url().nullish(),
+        iconUrl: nullish(string([url()])),
         /**	a proxied url of footer icon */
-        proxyIconUrl: z.string().url().nullish()
+        proxyIconUrl: nullish(string([url()]))
       })
-      .nullish(),
+    ),
     /** image information */
-    image: z
-      .object({
+    image: nullish(
+      object({
         /** source url of image (only supports http(s) and attachments) */
-        url: z.string().url(),
+        url: string([url()]),
         /** a proxied url of the image */
-        proxyUrl: z.string().url().nullish(),
+        proxyUrl: nullish(string([url()])),
         /** height of image */
-        height: z.number().int().positive().nullish(),
+        height: nullish(number([integer(), minValue(0)])),
         /** width of image */
-        width: z.number().int().positive().nullish()
+        width: nullish(number([integer(), minValue(0)]))
       })
-      .nullish(),
+    ),
     /** thumbnail information */
-    thumbnail: z
-      .object({
+    thumbnail: nullish(
+      object({
         /** source url of thumbnail (only supports http(s) and attachments) */
-        url: z.string().url(),
+        url: string([url()]),
         /** a proxied url of the thumbnail */
-        proxyUrl: z.string().url().nullish(),
+        proxyUrl: nullish(string([url()])),
         /** height of thumbnail */
-        height: z.number().int().positive().nullish(),
+        height: nullish(number([integer(), minValue(0)])),
         /** width of thumbnail */
-        width: z.number().int().positive().nullish()
+        width: nullish(number([integer(), minValue(0)]))
       })
-      .nullish(),
+    ),
     /** video information */
-    video: z
-      .object({
+    video: nullish(
+      object({
         /** source url of video */
-        url: z.string().url(),
+        url: string([url()]),
         /** a proxied url of the video */
-        proxyUrl: z.string().url().nullish(),
+        proxyUrl: nullish(string([url()])),
         /** height of video */
-        height: z.number().int().positive().nullish(),
+        height: nullish(number([integer(), minValue(0)])),
         /** width of video */
-        width: z.number().int().positive().nullish()
+        width: nullish(number([integer(), minValue(0)]))
       })
-      .nullish(),
+    ),
     /** provider information */
-    provider: z
-      .object({
+    provider: nullish(
+      object({
         /** name of provider */
-        name: z.string().nullish(),
+        name: nullish(string()),
         /** url of provider */
-        url: z.string().url().nullish()
+        url: nullish(string([url()]))
       })
-      .nullish(),
+    ),
     /** author information */
-    author: z
-      .object({
+    author: nullish(
+      object({
         /** name of author */
-        name: z.string().max(256),
+        name: string([maxLength(256)]),
         /** url of author */
-        url: z.string().url().nullish(),
+        url: nullish(string([url()])),
         /** url of author icon (only supports http(s) and attachments) */
-        iconUrl: z.string().url().nullish(),
+        iconUrl: nullish(string([url()])),
         /** a proxied url of author icon */
-        proxyIconUrl: z.string().url().nullish()
+        proxyIconUrl: nullish(string([url()]))
       })
-      .nullish(),
+    ),
     /** fields information */
-    fields: z
-      .object({
-        /** name of the field */
-        name: z.string().max(256),
-        /** value of the field */
-        value: z.string().max(1024),
-        /** whether or not this field should display inline */
-        inline: z.boolean().nullish()
-      })
-      .array()
-      .max(25)
-      .nullish()
+    fields: nullish(
+      array(
+        object({
+          /** name of the field */
+          name: string([maxLength(256)]),
+          /** value of the field */
+          value: string([maxLength(1024)]),
+          /** whether or not this field should display inline */
+          inline: nullish(boolean())
+        }),
+        [maxLength(25)]
+      )
+    )
   })
-  .partial();
+);
 
-export type Embed = z.infer<typeof embedSchema>;
+export type Embed = Output<typeof embedSchema>;

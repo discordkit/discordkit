@@ -1,33 +1,44 @@
 import { snowflake } from "@discordkit/core";
-import { z } from "zod";
+import {
+  object,
+  string,
+  minLength,
+  nullish,
+  number,
+  integer,
+  url,
+  minValue,
+  boolean,
+  type Output
+} from "valibot";
 
-export const attachmentSchema = z.object({
+export const attachmentSchema = object({
   /** attachment id */
   id: snowflake,
   /** name of file attached */
-  filename: z.string().min(1),
+  filename: string([minLength(1)]),
   /** description for the file */
-  description: z.string().nullish(),
+  description: nullish(string()),
   /** the attachment's media type */
-  contentType: z.string().nullish(),
+  contentType: nullish(string()),
   /** size of file in bytes */
-  size: z.number().int(),
+  size: number([integer()]),
   /** source url of file */
-  url: z.string().url(),
+  url: string([url()]),
   /** a proxied url of file */
-  proxyUrl: z.string().url(),
+  proxyUrl: string([url()]),
   /** height of file (if image) */
-  height: z.number().int().positive().nullish(),
+  height: nullish(number([integer(), minValue(0)])),
   /** 	width of file (if image) */
-  width: z.number().int().positive().nullish(),
+  width: nullish(number([integer(), minValue(0)])),
   /** whether this attachment is ephemeral */
-  ephemeral: z.boolean().nullish(),
+  ephemeral: nullish(boolean()),
   /** the duration of the audio file (currently for voice messages) */
-  durationSecs: z.number().positive().nullish(),
+  durationSecs: nullish(number([minValue(0)])),
   /** base64 encoded bytearray representing a sampled waveform (currently for voice messages) */
-  waveform: z.string().nullish(),
+  waveform: nullish(string()),
   /** attachment flags combined as a bitfield */
-  flags: z.number().int().nullish()
+  flags: nullish(number([integer()]))
 });
 
-export type Attachment = z.infer<typeof attachmentSchema>;
+export type Attachment = Output<typeof attachmentSchema>;

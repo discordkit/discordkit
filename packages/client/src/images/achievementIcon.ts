@@ -1,20 +1,24 @@
 import { getAsset, snowflake } from "@discordkit/core";
-import { z } from "zod";
+import {
+  type Output,
+  enumType,
+  minLength,
+  object,
+  optional,
+  string
+} from "valibot";
 import { imageSizes } from "./types/ImageSizes.js";
 
-export const achievementIconSchema = z.object({
+export const achievementIconSchema = object({
   application: snowflake,
   achievement: snowflake,
-  icon: z.string().min(1),
-  format: z
-    .union([z.literal(`png`), z.literal(`jpg`), z.literal(`webp`)])
-    .default(`png`)
-    .optional(),
-  params: z
-    .object({
+  icon: string([minLength(1)]),
+  format: optional(enumType([`png`, `jpg`, `webp`]), `png`),
+  params: optional(
+    object({
       size: imageSizes
     })
-    .optional()
+  )
 });
 
 export const achievementIcon = ({
@@ -23,7 +27,7 @@ export const achievementIcon = ({
   icon,
   format,
   params
-}: z.infer<typeof achievementIconSchema>): string =>
+}: Output<typeof achievementIconSchema>): string =>
   getAsset(
     `/app-assets/${application}
 /achievements/${achievement}/icons/${icon}.${format ?? `png`}`,

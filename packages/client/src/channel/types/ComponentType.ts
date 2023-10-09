@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { nativeEnum } from "valibot";
 
 export enum ComponentType {
   /** Container for other components */
@@ -19,4 +19,4 @@ export enum ComponentType {
   ChannelSelect = 8
 }
 
-export const componentTypeSchema = z.nativeEnum(ComponentType);
+export const componentTypeSchema = nativeEnum(ComponentType);

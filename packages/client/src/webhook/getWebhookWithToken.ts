@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object, string, minLength, omit } from "valibot";
 import {
   get,
   type Fetcher,
@@ -9,9 +9,9 @@ import {
 } from "@discordkit/core";
 import { webhookSchema, type Webhook } from "./types/Webhook.js";
 
-export const getWebhookWithTokenSchema = z.object({
+export const getWebhookWithTokenSchema = object({
   webhook: snowflake,
-  token: z.string().min(1)
+  token: string([minLength(1)])
 });
 
 /**
@@ -29,14 +29,14 @@ export const getWebhookWithToken: Fetcher<
 export const getWebhookWithTokenSafe = toValidated(
   getWebhookWithToken,
   getWebhookWithTokenSchema,
-  webhookSchema.omit({ user: true })
+  omit(webhookSchema, [`user`])
 );
 
 export const getWebhookWithTokenProcedure = toProcedure(
   `query`,
   getWebhookWithToken,
   getWebhookWithTokenSchema,
-  webhookSchema.omit({ user: true })
+  omit(webhookSchema, [`user`])
 );
 
 export const getWebhookWithTokenQuery = toQuery(getWebhookWithToken);

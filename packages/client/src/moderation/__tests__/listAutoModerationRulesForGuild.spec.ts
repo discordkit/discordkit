@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
 import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
+import { array, length } from "valibot";
 import {
   listAutoModerationRulesForGuildProcedure,
   listAutoModerationRulesForGuildQuery,
@@ -11,7 +12,7 @@ import { moderationRuleSchema } from "../types/ModerationRule.js";
 describe(`listAutoModerationRulesForGuild`, () => {
   const expected = mockRequest.get(
     `/guilds/:guild/auto-moderation/rules`,
-    moderationRuleSchema.array().length(1),
+    array(moderationRuleSchema, [length(1)]),
     { seed: 1 }
   );
   const config = mockSchema(listAutoModerationRulesForGuildSchema);

@@ -1,4 +1,15 @@
-import { z } from "zod";
+import {
+  array,
+  literal,
+  maxLength,
+  merge,
+  minLength,
+  object,
+  optional,
+  partial,
+  string,
+  unknown
+} from "valibot";
 import {
   patch,
   buildURL,
@@ -14,36 +25,37 @@ import { attachmentSchema } from "../channel/types/Attachment.js";
 import { messageComponentSchema } from "../channel/types/MessageComponent.js";
 import { EmbedType } from "../channel/types/EmbedType.js";
 
-export const editFollowupMessageSchema = z.object({
+export const editFollowupMessageSchema = object({
   application: snowflake,
-  token: z.string().min(1),
+  token: string([minLength(1)]),
   message: snowflake,
-  params: z
-    .object({
-      /** id of the thread the message is in */
-      threadId: snowflake
-    })
-    .partial()
-    .optional(),
-  body: z
-    .object({
+  params: optional(
+    partial(
+      object({
+        /** id of the thread the message is in */
+        threadId: snowflake
+      })
+    )
+  ),
+  body: partial(
+    object({
       /** the message contents (up to 2000 characters) */
-      content: z.string().min(1).max(2000),
+      content: string([minLength(1), maxLength(2000)]),
       /** embedded `rich` content */
-      embeds: embedSchema
-        .extend({ type: z.literal(EmbedType.RICH) })
-        .array()
-        .max(10),
+      embeds: array(
+        merge([embedSchema, object({ type: literal(EmbedType.RICH) })]),
+        [maxLength(10)]
+      ),
       /** allowed mentions for the message */
       allowedMentions: allowedMentionSchema,
       /** the components to include with the message */
-      components: messageComponentSchema.array(),
+      components: array(messageComponentSchema),
       /** the contents of the file being sent */
-      files: z.unknown().array(),
+      files: array(unknown()),
       /** attachment objects with filename and description */
-      attachments: attachmentSchema.partial().array()
+      attachments: array(partial(attachmentSchema))
     })
-    .partial()
+  )
 });
 
 /**

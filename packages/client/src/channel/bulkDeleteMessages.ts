@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { array, maxLength, minLength, object } from "valibot";
 import {
   post,
   type Fetcher,
@@ -7,11 +7,11 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const bulkDeleteMessagesSchema = z.object({
+export const bulkDeleteMessagesSchema = object({
   channel: snowflake,
-  body: z.object({
+  body: object({
     /** an array of message ids to delete (2-100) */
-    messages: snowflake.array().min(2).max(100)
+    messages: array(snowflake, [minLength(2), maxLength(100)])
   })
 });
 

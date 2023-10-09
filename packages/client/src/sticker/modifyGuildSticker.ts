@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { maxLength, minLength, object, partial, string } from "valibot";
 import {
   patch,
   type Fetcher,
@@ -8,19 +8,19 @@ import {
 } from "@discordkit/core";
 import { stickerSchema, type Sticker } from "./types/Sticker.js";
 
-export const modifyGuildStickerSchema = z.object({
+export const modifyGuildStickerSchema = object({
   guild: snowflake,
   sticker: snowflake,
-  body: z
-    .object({
+  body: partial(
+    object({
       /** name of the sticker (2-30 characters) */
-      name: z.string().min(2).max(30),
+      name: string([minLength(2), maxLength(30)]),
       /** description of the sticker (empty or 2-100 characters) */
-      description: z.string().min(2).max(100),
+      description: string([minLength(2), maxLength(100)]),
       /** autocomplete/suggestion tags for the sticker (max 200 characters) */
-      tags: z.string().min(1).max(200)
+      tags: string([minLength(1), maxLength(200)])
     })
-    .partial()
+  )
 });
 
 /**

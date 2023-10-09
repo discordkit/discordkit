@@ -1,4 +1,19 @@
-import { z } from "zod";
+import {
+  object,
+  string,
+  minLength,
+  boolean,
+  optional,
+  partial,
+  integer,
+  literal,
+  maxLength,
+  merge,
+  number,
+  array,
+  url,
+  unknown
+} from "valibot";
 import {
   post,
   buildURL,
@@ -13,47 +28,48 @@ import { attachmentSchema } from "../channel/types/Attachment.js";
 import { EmbedType } from "../channel/types/EmbedType.js";
 import { messageComponentSchema } from "../channel/types/MessageComponent.js";
 
-export const executeWebhookSchema = z.object({
+export const executeWebhookSchema = object({
   webhook: snowflake,
-  token: z.string().min(1),
-  params: z
-    .object({
-      /** Send a message to the specified thread within a webhook's channel. The thread will automatically be unarchived. */
-      threadId: snowflake,
-      /** waits for server confirmation of message send before response, and returns the created message body (defaults to false; when false a message that is not saved does not return an error) */
-      wait: z.boolean().default(false)
-    })
-    .partial()
-    .optional(),
-  body: z
-    .object({
+  token: string([minLength(1)]),
+  params: optional(
+    partial(
+      object({
+        /** Send a message to the specified thread within a webhook's channel. The thread will automatically be unarchived. */
+        threadId: snowflake,
+        /** waits for server confirmation of message send before response, and returns the created message body (defaults to false; when false a message that is not saved does not return an error) */
+        wait: optional(boolean(), false)
+      })
+    )
+  ),
+  body: partial(
+    object({
       /** the message contents (up to 2000 characters) */
-      content: z.string().min(1).max(2000),
+      content: string([minLength(1), maxLength(2000)]),
       /** override the default username of the webhook */
-      username: z.string().min(1),
+      username: string([minLength(1)]),
       /** override the default avatar of the webhook */
-      avatarUrl: z.string().min(1),
+      avatarUrl: string([url()]),
       /** true if this is a TTS message */
-      tts: z.boolean(),
+      tts: boolean(),
       /** embedded rich content */
-      embeds: embedSchema
-        .extend({ type: z.literal(EmbedType.RICH) })
-        .array()
-        .max(10),
+      embeds: array(
+        merge([embedSchema, object({ type: literal(EmbedType.RICH) })]),
+        [maxLength(10)]
+      ),
       /** allowed mentions for the message */
       allowedMentions: allowedMentionSchema,
       /** the components to include with the message */
-      components: messageComponentSchema.array(),
+      components: array(messageComponentSchema),
       /** the contents of the file being sent */
-      files: z.unknown().array(),
+      files: array(unknown()),
       /** attachment objects with filename and description */
-      attachments: attachmentSchema.partial().array(),
+      attachments: array(partial(attachmentSchema)),
       /** message flags combined as a bitfield (only SUPPRESS_EMBEDS can be set) */
-      flags: z.number().int(),
+      flags: number([integer()]),
       /** name of thread to create (requires the webhook channel to be a forum channel) */
-      threadName: z.string().min(1)
+      threadName: string([minLength(1)])
     })
-    .partial()
+  )
 });
 
 /**

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { array, object } from "valibot";
 import {
   get,
   type Fetcher,
@@ -9,7 +9,7 @@ import {
 } from "@discordkit/core";
 import { integrationSchema, type Integration } from "./types/Integration.js";
 
-export const getGuildIntegrationsSchema = z.object({
+export const getGuildIntegrationsSchema = object({
   guild: snowflake
 });
 
@@ -32,14 +32,14 @@ export const getGuildIntegrations: Fetcher<
 export const getGuildIntegrationsSafe = toValidated(
   getGuildIntegrations,
   getGuildIntegrationsSchema,
-  integrationSchema.array()
+  array(integrationSchema)
 );
 
 export const getGuildIntegrationsProcedure = toProcedure(
   `query`,
   getGuildIntegrations,
   getGuildIntegrationsSchema,
-  integrationSchema.array()
+  array(integrationSchema)
 );
 
 export const getGuildIntegrationsQuery = toQuery(getGuildIntegrations);

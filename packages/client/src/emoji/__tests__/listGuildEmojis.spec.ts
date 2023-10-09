@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
 import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
+import { array, length } from "valibot";
 import {
   listGuildEmojisProcedure,
   listGuildEmojisQuery,
@@ -11,7 +12,7 @@ import { emojiSchema } from "../types/Emoji.js";
 describe(`listGuildEmojis`, () => {
   const expected = mockRequest.get(
     `/guilds/:guild/emojis`,
-    emojiSchema.array().length(1)
+    array(emojiSchema, [length(1)])
   );
   const config = mockSchema(listGuildEmojisSchema);
 

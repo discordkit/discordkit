@@ -1,19 +1,16 @@
 import { getAsset, snowflake } from "@discordkit/core";
-import { z } from "zod";
+import { type Output, enumType, object, optional } from "valibot";
 import { imageSizes } from "./types/ImageSizes.js";
 
-export const applicationAssetSchema = z.object({
+export const applicationAssetSchema = object({
   application: snowflake,
   asset: snowflake,
-  format: z
-    .union([z.literal(`png`), z.literal(`jpg`), z.literal(`webp`)])
-    .default(`png`)
-    .optional(),
-  params: z
-    .object({
+  format: optional(enumType([`png`, `jpg`, `webp`]), `png`),
+  params: optional(
+    object({
       size: imageSizes
     })
-    .optional()
+  )
 });
 
 export const applicationAsset = ({
@@ -21,5 +18,5 @@ export const applicationAsset = ({
   asset,
   format,
   params
-}: z.infer<typeof applicationAssetSchema>): string =>
+}: Output<typeof applicationAssetSchema>): string =>
   getAsset(`/app-assets/${application}/${asset}.${format ?? `png`}`, params);

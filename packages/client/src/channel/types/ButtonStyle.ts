@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { nativeEnum } from "valibot";
 
 export enum ButtonStyle {
   /** blurple*/
@@ -13,4 +13,4 @@ export enum ButtonStyle {
   Link = 5
 }
 
-export const buttonStyleSchema = z.nativeEnum(ButtonStyle);
+export const buttonStyleSchema = nativeEnum(ButtonStyle);

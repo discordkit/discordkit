@@ -1,15 +1,15 @@
-import { z } from "zod";
+import { union, literal, type Output } from "valibot";
 
-export const imageSizes = z.union([
-  z.literal(16),
-  z.literal(32),
-  z.literal(64),
-  z.literal(128),
-  z.literal(256),
-  z.literal(512),
-  z.literal(1024),
-  z.literal(2048),
-  z.literal(4096)
+export const imageSizes = union([
+  literal(16),
+  literal(32),
+  literal(64),
+  literal(128),
+  literal(256),
+  literal(512),
+  literal(1024),
+  literal(2048),
+  literal(4096)
 ]);
 
-export type ImageSizes = z.infer<typeof imageSizes>;
+export type ImageSizes = Output<typeof imageSizes>;

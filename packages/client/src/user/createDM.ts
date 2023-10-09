@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { literal, merge, object } from "valibot";
 import {
   post,
   type Fetcher,
@@ -9,8 +9,8 @@ import {
 import { channelSchema, type Channel } from "../channel/types/Channel.js";
 import { ChannelType } from "../channel/types/ChannelType.js";
 
-export const createDMSchema = z.object({
-  body: z.object({
+export const createDMSchema = object({
+  body: object({
     /** the recipient to open a DM channel with */
     recipientId: snowflake
   })
@@ -35,12 +35,12 @@ export const createDM: Fetcher<
 export const createDMSafe = toValidated(
   createDM,
   createDMSchema,
-  channelSchema.extend({ type: z.literal(ChannelType.DM) })
+  merge([channelSchema, object({ type: literal(ChannelType.DM) })])
 );
 
 export const createDMProcedure = toProcedure(
   `mutation`,
   createDM,
   createDMSchema,
-  channelSchema.extend({ type: z.literal(ChannelType.DM) })
+  merge([channelSchema, object({ type: literal(ChannelType.DM) })])
 );

@@ -1,10 +1,10 @@
-import { z } from "zod";
+import { object, optional, number, type Output } from "valibot";
 
-export const activityTimestampsSchema = z.object({
+export const activityTimestampsSchema = object({
   /** unix time (in milliseconds) of when the activity started */
-  start: z.number().optional(),
+  start: optional(number()),
   /** unix time (in milliseconds) of when the activity ends */
-  end: z.number().optional()
+  end: optional(number())
 });
 
-export type ActivityTimestamps = z.infer<typeof activityTimestampsSchema>;
+export type ActivityTimestamps = Output<typeof activityTimestampsSchema>;

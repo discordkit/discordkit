@@ -1,14 +1,11 @@
 import { mockSchema } from "test-utils";
-import { z } from "zod";
+import { parse, string, url } from "valibot";
 import { sticker, stickerImageSchema } from "../sticker.js";
 
 describe(`sticker`, () => {
   it(`produces a valid URL`, () => {
     expect(() =>
-      z
-        .string()
-        .url()
-        .parse(sticker(mockSchema(stickerImageSchema)))
+      parse(string([url()]), sticker(mockSchema(stickerImageSchema)))
     ).not.toThrow();
   });
 });

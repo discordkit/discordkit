@@ -1,4 +1,14 @@
-import { z } from "zod";
+import {
+  integer,
+  maxLength,
+  maxValue,
+  minLength,
+  minValue,
+  nullish,
+  number,
+  object,
+  string
+} from "valibot";
 import {
   post,
   type Fetcher,
@@ -9,16 +19,16 @@ import {
 import { channelSchema, type Channel } from "./types/Channel.js";
 import { autoArchiveDurationSchema } from "./types/AutoArchiveDuration.js";
 
-export const startThreadFromMessageSchema = z.object({
+export const startThreadFromMessageSchema = object({
   channel: snowflake,
   message: snowflake,
-  body: z.object({
+  body: object({
     /** 1-100 character channel name */
-    name: z.string().min(1).max(100),
+    name: string([minLength(1), maxLength(100)]),
     /** duration in minutes to automatically archive the thread after recent activity, can be set to: 60, 1440, 4320, 10080 */
-    autoArchiveDuration: autoArchiveDurationSchema.nullish(),
+    autoArchiveDuration: nullish(autoArchiveDurationSchema),
     /** amount of seconds a user has to wait before sending another message (0-21600) */
-    rateLimitPerUser: z.number().int().min(0).max(21600).nullish().optional()
+    rateLimitPerUser: nullish(number([integer(), minValue(0), maxValue(21600)]))
   })
 });
 

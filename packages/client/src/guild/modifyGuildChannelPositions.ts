@@ -1,4 +1,12 @@
-import { z } from "zod";
+import {
+  array,
+  boolean,
+  integer,
+  minValue,
+  nullish,
+  number,
+  object
+} from "valibot";
 import {
   patch,
   type Fetcher,
@@ -7,20 +15,20 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const modifyGuildChannelPositionsSchema = z.object({
+export const modifyGuildChannelPositionsSchema = object({
   guild: snowflake,
-  body: z
-    .object({
+  body: array(
+    object({
       /** channel id */
       id: snowflake,
       /** sorting position of the channel */
-      position: z.number().positive().nullish(),
+      position: nullish(number([integer(), minValue(0)])),
       /** syncs the permission overwrites with the new parent, if moving to a new category */
-      lockPermissions: z.boolean().nullish(),
+      lockPermissions: nullish(boolean()),
       /** the new parent ID for the channel that is moved */
-      parentId: snowflake.nullish()
+      parentId: nullish(snowflake)
     })
-    .array()
+  )
 });
 
 /**

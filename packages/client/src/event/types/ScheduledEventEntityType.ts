@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { nativeEnum } from "valibot";
 
 export enum ScheduledEventEntityType {
   STAGE_INSTANCE = 1,
@@ -6,6 +6,6 @@ export enum ScheduledEventEntityType {
   EXTERNAL = 3
 }
 
-export const scheduledEventEntityTypeSchema = z.nativeEnum(
+export const scheduledEventEntityTypeSchema = nativeEnum(
   ScheduledEventEntityType
 );

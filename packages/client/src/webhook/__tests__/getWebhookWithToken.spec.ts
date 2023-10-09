@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
 import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
+import { omit } from "valibot";
 import {
   getWebhookWithTokenProcedure,
   getWebhookWithTokenQuery,
@@ -11,7 +12,7 @@ import { webhookSchema } from "../types/Webhook.js";
 describe(`getWebhookWithToken`, () => {
   const expected = mockRequest.get(
     `/webhooks/:webhook/:token`,
-    webhookSchema.omit({ user: true })
+    omit(webhookSchema, [`user`])
   );
   const config = mockSchema(getWebhookWithTokenSchema);
 

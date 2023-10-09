@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
 import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
+import { partial } from "valibot";
 import {
   getGuildVanityURLProcedure,
   getGuildVanityURLQuery,
@@ -11,7 +12,7 @@ import { inviteSchema } from "../../invite/types/Invite.js";
 describe(`getGuildVanityURL`, () => {
   const expected = mockRequest.get(
     `/guilds/:guild/vanity-url`,
-    inviteSchema.partial()
+    partial(inviteSchema)
   );
   const config = mockSchema(getGuildVanityURLSchema);
 

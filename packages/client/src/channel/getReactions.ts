@@ -1,4 +1,14 @@
-import { z } from "zod";
+import {
+  array,
+  integer,
+  maxValue,
+  minValue,
+  nullish,
+  number,
+  object,
+  optional,
+  partial
+} from "valibot";
 import {
   get,
   type Fetcher,
@@ -9,19 +19,20 @@ import {
 } from "@discordkit/core";
 import { userSchema, type User } from "../user/types/User.js";
 
-export const getReactionsSchema = z.object({
+export const getReactionsSchema = object({
   channel: snowflake,
   message: snowflake,
   emoji: snowflake,
-  params: z
-    .object({
-      /** Get users after this user ID */
-      after: snowflake.nullish(),
-      /** Max number of users to return (1-100) Default: 25 */
-      limit: z.number().int().min(1).max(100).nullish().default(25)
-    })
-    .partial()
-    .optional()
+  params: optional(
+    partial(
+      object({
+        /** Get users after this user ID */
+        after: nullish(snowflake),
+        /** Max number of users to return (1-100) Default: 25 */
+        limit: nullish(number([integer(), minValue(1), maxValue(100)]), 25)
+      })
+    )
+  )
 });
 
 /**
@@ -42,14 +53,14 @@ export const getReactions: Fetcher<typeof getReactionsSchema, User[]> = async ({
 export const getReactionsSafe = toValidated(
   getReactions,
   getReactionsSchema,
-  userSchema.array()
+  array(userSchema)
 );
 
 export const getReactionsProcedure = toProcedure(
   `query`,
   getReactions,
   getReactionsSchema,
-  userSchema.array()
+  array(userSchema)
 );
 
 export const getReactionsQuery = toQuery(getReactions);

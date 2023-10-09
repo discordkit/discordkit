@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { boolean, nullish, object } from "valibot";
 import {
   patch,
   type Fetcher,
@@ -7,14 +7,14 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const modifyUserVoiceStateSchema = z.object({
+export const modifyUserVoiceStateSchema = object({
   guild: snowflake,
   user: snowflake,
-  body: z.object({
+  body: object({
     /** the id of the channel the user is currently in */
     channelId: snowflake,
     /** toggles the user's suppress state */
-    suppress: z.boolean().nullish()
+    suppress: nullish(boolean())
   })
 });
 

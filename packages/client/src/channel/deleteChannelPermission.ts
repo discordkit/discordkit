@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object } from "valibot";
 import {
   remove,
   type Fetcher,
@@ -7,7 +7,7 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const deleteChannelPermissionSchema = z.object({
+export const deleteChannelPermissionSchema = object({
   channel: snowflake,
   overwrite: snowflake
 });

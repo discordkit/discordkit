@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
 import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
+import { array, length } from "valibot";
 import {
   getChannelMessagesProcedure,
   getChannelMessagesQuery,
@@ -11,7 +12,7 @@ import { messageSchema } from "../types/Message.js";
 describe(`getChannelMessages`, () => {
   mockRequest.get(
     `/channels/:channel/messages`,
-    messageSchema.array().length(1)
+    array(messageSchema, [length(1)])
   );
   const config = mockSchema(getChannelMessagesSchema);
 

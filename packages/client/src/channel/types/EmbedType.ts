@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { nativeEnum } from "valibot";
 
 export enum EmbedType {
   /** generic embed rendered from embed attributes */
@@ -15,4 +15,4 @@ export enum EmbedType {
   LINK = `link`
 }
 
-export const embedTypeSchema = z.nativeEnum(EmbedType);
+export const embedTypeSchema = nativeEnum(EmbedType);

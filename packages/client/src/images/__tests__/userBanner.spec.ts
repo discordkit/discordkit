@@ -1,14 +1,11 @@
 import { mockSchema } from "test-utils";
-import { z } from "zod";
+import { parse, string, url } from "valibot";
 import { userBanner, userBannerSchema } from "../userBanner.js";
 
 describe(`userBanner`, () => {
   it(`produces a valid URL`, () => {
     expect(() =>
-      z
-        .string()
-        .url()
-        .parse(userBanner(mockSchema(userBannerSchema)))
+      parse(string([url()]), userBanner(mockSchema(userBannerSchema)))
     ).not.toThrow();
   });
 });

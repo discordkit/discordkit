@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { nativeEnum } from "valibot";
 
 export enum MessageType {
   DEFAULT = 0,
@@ -34,4 +34,4 @@ export enum MessageType {
   GUILD_APPLICATION_PREMIUM_SUBSCRIPTION = 32
 }
 
-export const messageTypeSchema = z.nativeEnum(MessageType);
+export const messageTypeSchema = nativeEnum(MessageType);

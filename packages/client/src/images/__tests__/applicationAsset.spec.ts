@@ -1,5 +1,5 @@
 import { mockSchema } from "test-utils";
-import { z } from "zod";
+import { parse, string, url } from "valibot";
 import {
   applicationAsset,
   applicationAssetSchema
@@ -8,10 +8,10 @@ import {
 describe(`applicationAsset`, () => {
   it(`produces a valid URL`, () => {
     expect(() =>
-      z
-        .string()
-        .url()
-        .parse(applicationAsset(mockSchema(applicationAssetSchema)))
+      parse(
+        string([url()]),
+        applicationAsset(mockSchema(applicationAssetSchema))
+      )
     ).not.toThrow();
   });
 });

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { nativeEnum } from "valibot";
 
 export enum ApplicationCommandPermissionType {
   ROLE = 1,
@@ -6,6 +6,6 @@ export enum ApplicationCommandPermissionType {
   CHANNEL = 3
 }
 
-export const applicationCommandPermissionType = z.nativeEnum(
+export const applicationCommandPermissionType = nativeEnum(
   ApplicationCommandPermissionType
 );

@@ -1,20 +1,20 @@
 import { getAsset, snowflake } from "@discordkit/core";
-import { z } from "zod";
+import { type Output, minLength, object, optional, string } from "valibot";
 import { imageSizes } from "./types/ImageSizes.js";
 
-export const userAvatarDecorationSchema = z.object({
+export const userAvatarDecorationSchema = object({
   user: snowflake,
-  decoration: z.string().min(1),
-  params: z
-    .object({
+  decoration: string([minLength(1)]),
+  params: optional(
+    object({
       size: imageSizes
     })
-    .optional()
+  )
 });
 
 export const userAvatarDecoration = ({
   user,
   decoration,
   params
-}: z.infer<typeof userAvatarDecorationSchema>): string =>
+}: Output<typeof userAvatarDecorationSchema>): string =>
   getAsset(`/avatar-decorations/${user}/${decoration}.png`, params);

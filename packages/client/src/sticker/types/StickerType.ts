@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { nativeEnum } from "valibot";
 
 export enum StickerType {
   /** an official sticker in a pack, part of Nitro or in a removed purchasable pack */
@@ -7,4 +7,4 @@ export enum StickerType {
   GUILD = 2
 }
 
-export const stickerTypeSchema = z.nativeEnum(StickerType);
+export const stickerTypeSchema = nativeEnum(StickerType);

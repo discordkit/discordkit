@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
 import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
+import { array } from "valibot";
 import {
   getChannelInvitesProcedure,
   getChannelInvitesQuery,
@@ -11,7 +12,7 @@ import { inviteMetadataSchema } from "../../invite/types/InviteMetadata.js";
 describe(`getChannelInvites`, () => {
   const expected = mockRequest.get(
     `/channels/:channel/invites`,
-    inviteMetadataSchema.array()
+    array(inviteMetadataSchema)
   );
   const config = mockSchema(getChannelInvitesSchema);
 

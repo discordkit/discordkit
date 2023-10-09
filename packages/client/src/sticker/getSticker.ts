@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object } from "valibot";
 import {
   get,
   type Fetcher,
@@ -9,7 +9,7 @@ import {
 } from "@discordkit/core";
 import { stickerSchema, type Sticker } from "./types/Sticker.js";
 
-export const getStickerSchema = z.object({
+export const getStickerSchema = object({
   sticker: snowflake
 });
 

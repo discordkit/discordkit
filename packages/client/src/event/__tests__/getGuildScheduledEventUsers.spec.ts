@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
 import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
+import { array, length } from "valibot";
 import {
   getGuildScheduledEventUsersProcedure,
   getGuildScheduledEventUsersQuery,
@@ -11,7 +12,7 @@ import { scheduledEventUserSchema } from "../types/ScheduledEventUser.js";
 describe(`getGuildScheduledEventUsers`, () => {
   const expected = mockRequest.get(
     `/guilds/:guild/scheduled-events/:event/users`,
-    scheduledEventUserSchema.array().length(1)
+    array(scheduledEventUserSchema, [length(1)])
   );
   const config = mockSchema(getGuildScheduledEventUsersSchema);
 

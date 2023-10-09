@@ -1,4 +1,12 @@
-import { z } from "zod";
+import {
+  array,
+  boolean,
+  maxLength,
+  minLength,
+  nullish,
+  object,
+  string
+} from "valibot";
 import {
   post,
   type Fetcher,
@@ -15,25 +23,25 @@ import { moderationTriggerTypeSchema } from "./types/ModerationTriggerType.js";
 import { triggerMetaSchema } from "./types/TriggerMeta.js";
 import { moderationActionSchema } from "./types/ModerationAction.js";
 
-export const createAutoModerationRuleSchema = z.object({
+export const createAutoModerationRuleSchema = object({
   guild: snowflake,
-  body: z.object({
+  body: object({
     /** the rule name */
-    name: z.string().min(1),
+    name: string([minLength(1)]),
     /** the event type */
     eventType: moderationEventSchema,
     /** the trigger type */
     triggerType: moderationTriggerTypeSchema,
     /** the trigger metadata */
-    triggerMetadata: triggerMetaSchema.nullish(),
+    triggerMetadata: nullish(triggerMetaSchema),
     /** the actions which will execute when the rule is triggered */
-    actions: moderationActionSchema.array(),
+    actions: array(moderationActionSchema),
     /** whether the rule is enabled (False by default) */
-    enabled: z.boolean().nullish().default(false),
+    enabled: nullish(boolean(), false),
     /** the role ids that should not be affected by the rule (Maximum of 20) */
-    exemptRoles: snowflake.array().max(20).nullish(),
+    exemptRoles: nullish(array(snowflake, [maxLength(20)])),
     /** the channel ids that should not be affected by the rule (Maximum of 50) */
-    exemptChannels: snowflake.array().max(50).nullish()
+    exemptChannels: nullish(array(snowflake, [maxLength(50)]))
   })
 });
 

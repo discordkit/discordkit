@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object } from "valibot";
 import {
   get,
   type Fetcher,
@@ -12,7 +12,7 @@ import {
   type WelcomeScreen
 } from "./types/WelcomeScreen.js";
 
-export const getGuildWelcomeScreenSchema = z.object({
+export const getGuildWelcomeScreenSchema = object({
   guild: snowflake
 });
 

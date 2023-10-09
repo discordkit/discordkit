@@ -1,6 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { z } from "zod";
 import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
+import { literal, merge, object } from "valibot";
 import {
   createDM,
   createDMProcedure,
@@ -13,7 +13,7 @@ import { ChannelType } from "../../channel/types/ChannelType.js";
 describe(`createDM`, () => {
   const expected = mockRequest.post(
     `/users/@me/channels`,
-    channelSchema.extend({ type: z.literal(ChannelType.DM) })
+    merge([channelSchema, object({ type: literal(ChannelType.DM) })])
   );
   const config = mockSchema(createDMSchema);
 

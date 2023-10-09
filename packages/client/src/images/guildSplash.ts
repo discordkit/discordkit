@@ -1,19 +1,23 @@
 import { getAsset, snowflake } from "@discordkit/core";
-import { z } from "zod";
+import {
+  type Output,
+  minLength,
+  object,
+  optional,
+  string,
+  enumType
+} from "valibot";
 import { imageSizes } from "./types/ImageSizes.js";
 
-export const guildSplashSchema = z.object({
+export const guildSplashSchema = object({
   guild: snowflake,
-  splash: z.string().min(1),
-  format: z
-    .union([z.literal(`png`), z.literal(`jpg`), z.literal(`webp`)])
-    .default(`png`)
-    .optional(),
-  params: z
-    .object({
+  splash: string([minLength(1)]),
+  format: optional(enumType([`png`, `jpg`, `webp`]), `png`),
+  params: optional(
+    object({
       size: imageSizes
     })
-    .optional()
+  )
 });
 
 export const guildSplash = ({
@@ -21,5 +25,5 @@ export const guildSplash = ({
   splash,
   format,
   params
-}: z.infer<typeof guildSplashSchema>): string =>
+}: Output<typeof guildSplashSchema>): string =>
   getAsset(`/splashes/${guild}/${splash}.${format ?? `png`}`, params);

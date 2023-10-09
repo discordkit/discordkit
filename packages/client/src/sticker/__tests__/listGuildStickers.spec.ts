@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
 import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
+import { array, length } from "valibot";
 import {
   listGuildStickersProcedure,
   listGuildStickersQuery,
@@ -11,7 +12,7 @@ import { stickerSchema } from "../types/Sticker.js";
 describe(`listGuildStickers`, () => {
   const expected = mockRequest.get(
     `/guilds/:guild/stickers`,
-    stickerSchema.array().length(1)
+    array(stickerSchema, [length(1)])
   );
   const config = mockSchema(listGuildStickersSchema);
 

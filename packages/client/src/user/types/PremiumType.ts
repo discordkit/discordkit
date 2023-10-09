@@ -1,6 +1,6 @@
 /** Premium types denote the level of premium a user has. Visit the Nitro page to learn more about the premium plans we currently offer. */
 
-import { z } from "zod";
+import { nativeEnum } from "valibot";
 
 export enum PremiumType {
   None = 0,
@@ -9,4 +9,4 @@ export enum PremiumType {
   NitroBasic = 3
 }
 
-export const premiumTypeSchema = z.nativeEnum(PremiumType);
+export const premiumTypeSchema = nativeEnum(PremiumType);

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { boolean, nullish, object, optional, partial } from "valibot";
 import {
   get,
   type Fetcher,
@@ -12,16 +12,17 @@ import {
   type ScheduledEvent
 } from "./types/ScheduledEvent.js";
 
-export const getGuildScheduledEventSchema = z.object({
+export const getGuildScheduledEventSchema = object({
   guild: snowflake,
   event: snowflake,
-  params: z
-    .object({
-      /** include number of users subscribed to this event */
-      withUserCount: z.boolean().nullish()
-    })
-    .partial()
-    .optional()
+  params: optional(
+    partial(
+      object({
+        /** include number of users subscribed to this event */
+        withUserCount: nullish(boolean())
+      })
+    )
+  )
 });
 
 /**

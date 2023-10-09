@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { maxLength, minLength, object, string, unknown } from "valibot";
 import {
   post,
   type Fetcher,
@@ -8,17 +8,17 @@ import {
 } from "@discordkit/core";
 import { stickerSchema, type Sticker } from "./types/Sticker.js";
 
-export const createGuildStickerSchema = z.object({
+export const createGuildStickerSchema = object({
   guild: snowflake,
-  body: z.object({
+  body: object({
     /** name of the sticker (2-30 characters) */
-    name: z.string().min(2).max(30),
+    name: string([minLength(2), maxLength(30)]),
     /** description of the sticker (empty or 2-100 characters) */
-    description: z.string().min(2).max(100),
+    description: string([minLength(2), maxLength(100)]),
     /** autocomplete/suggestion tags for the sticker (max 200 characters) */
-    tags: z.string().min(1).max(200),
+    tags: string([minLength(1), maxLength(200)]),
     /** the sticker file to upload, must be a PNG, APNG, or Lottie JSON file, max 500 KB */
-    file: z.unknown()
+    file: unknown()
   })
 });
 

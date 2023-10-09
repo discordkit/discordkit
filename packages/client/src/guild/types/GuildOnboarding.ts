@@ -1,19 +1,19 @@
-import { z } from "zod";
+import { object, array, boolean, type Output } from "valibot";
 import { snowflake } from "@discordkit/core";
 import { onboardingPromptSchema } from "./OnboardingPrompt.js";
 import { onboardingModeSchema } from "./OnboardingMode.js";
 
-export const guildOnboardingSchema = z.object({
+export const guildOnboardingSchema = object({
   /** ID of the guild this onboarding is part of */
   guildId: snowflake,
   /** Prompts shown during onboarding and in customize community */
-  prompts: onboardingPromptSchema.array(),
+  prompts: array(onboardingPromptSchema),
   /** Channel IDs that members get opted into automatically */
-  defaultChannelIds: snowflake.array(),
+  defaultChannelIds: array(snowflake),
   /** Whether onboarding is enabled in the guild */
-  enabled: z.boolean(),
+  enabled: boolean(),
   /** Current mode of onboarding */
   mode: onboardingModeSchema
 });
 
-export type GuildOnboarding = z.infer<typeof guildOnboardingSchema>;
+export type GuildOnboarding = Output<typeof guildOnboardingSchema>;

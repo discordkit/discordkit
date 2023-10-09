@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
 import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
+import { array, length } from "valibot";
 import {
   getGuildApplicationCommandPermissionsSchema,
   getGuildApplicationCommandPermissionsProcedure,
@@ -11,7 +12,7 @@ import { guildApplicationCommandPermissionsSchema } from "../types/GuildApplicat
 describe(`getGuildApplicationCommandPermissions`, () => {
   const expected = mockRequest.get(
     `/applications/:application/guilds/:guild/commands/permissions`,
-    guildApplicationCommandPermissionsSchema.array().length(1)
+    array(guildApplicationCommandPermissionsSchema, [length(1)])
   );
   const config = mockSchema(getGuildApplicationCommandPermissionsSchema);
 

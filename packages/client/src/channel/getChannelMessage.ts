@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object } from "valibot";
 import {
   get,
   type Fetcher,
@@ -9,7 +9,7 @@ import {
 } from "@discordkit/core";
 import { messageSchema, type Message } from "./types/Message.js";
 
-export const getChannelMessageSchema = z.object({
+export const getChannelMessageSchema = object({
   channel: snowflake,
   message: snowflake
 });

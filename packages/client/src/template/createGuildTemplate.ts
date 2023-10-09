@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { maxLength, minLength, object, optional, string } from "valibot";
 import {
   post,
   type Fetcher,
@@ -11,13 +11,13 @@ import {
   type GuildTemplate
 } from "./types/GuildTemplate.js";
 
-export const createGuildTemplateSchema = z.object({
+export const createGuildTemplateSchema = object({
   guild: snowflake,
-  body: z.object({
+  body: object({
     /** name of the template (1-100 characters) */
-    name: z.string().min(1).max(100),
+    name: string([minLength(1), maxLength(100)]),
     /** description for the template (0-120 characters) */
-    description: z.string().min(0).max(120).optional()
+    description: optional(string([minLength(0), maxLength(120)]))
   })
 });
 

@@ -1,4 +1,16 @@
-import { z } from "zod";
+import {
+  array,
+  integer,
+  maxLength,
+  minLength,
+  minValue,
+  nullish,
+  number,
+  object,
+  optional,
+  partial,
+  string
+} from "valibot";
 import {
   post,
   type Fetcher,
@@ -13,33 +25,32 @@ import { explicitContentFilterLevelSchema } from "./types/ExplicitContentFilterL
 import { roleSchema } from "./types/Role.js";
 import { guildSchema, type Guild } from "./types/Guild.js";
 
-export const createGuildSchema = z.object({
-  body: z.object({
+export const createGuildSchema = object({
+  body: object({
     /** name of the guild (2-100 characters) */
-    name: z.string().min(2).max(100),
+    name: string([minLength(2), maxLength(100)]),
     /** @deprecated voice region id */
-    region: z.string().min(1).nullish(),
+    region: nullish(string([minLength(1)])),
     /** icon hash */
-    icon: z.string().min(1).nullish(),
+    icon: nullish(string([minLength(1)])),
     /** verification level */
-    verificationLevel: verificationLevelSchema.nullish(),
+    verificationLevel: nullish(verificationLevelSchema),
     /** default message notification level */
-    defaultMessageNotifications:
-      defaultMessageNotificationLevelSchema.nullish(),
+    defaultMessageNotifications: nullish(defaultMessageNotificationLevelSchema),
     /** explicit content filter level */
-    explicitContentFilter: explicitContentFilterLevelSchema.nullish(),
+    explicitContentFilter: nullish(explicitContentFilterLevelSchema),
     /** new guild roles */
-    roles: roleSchema.array().nullish(),
+    roles: nullish(array(roleSchema)),
     /** new guild's channels */
-    channels: channelSchema.partial().array().nullish(),
+    channels: nullish(array(partial(channelSchema))),
     /** id for afk channel */
-    afkChannelId: snowflake.nullish(),
+    afkChannelId: nullish(snowflake),
     /** afk timeout in seconds */
-    afkTimeout: z.number().int().positive().nullish(),
+    afkTimeout: nullish(number([integer(), minValue(0)])),
     /** the id of the channel where guild notices such as welcome messages and boost events are posted */
-    systemChannelId: snowflake.nullish(),
+    systemChannelId: nullish(snowflake),
     /** system channel flags */
-    systemChannelFlags: z.number().int().optional()
+    systemChannelFlags: optional(number([integer(), minValue(0)]))
   })
 });
 

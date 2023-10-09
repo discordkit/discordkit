@@ -1,4 +1,11 @@
-import { z } from "zod";
+import {
+  maxLength,
+  minLength,
+  nullish,
+  object,
+  partial,
+  string
+} from "valibot";
 import {
   patch,
   type Fetcher,
@@ -11,17 +18,17 @@ import {
   type GuildTemplate
 } from "./types/GuildTemplate.js";
 
-export const modifyGuildTemplateSchema = z.object({
+export const modifyGuildTemplateSchema = object({
   guild: snowflake,
   template: snowflake,
-  body: z
-    .object({
+  body: partial(
+    object({
       /** name of the template (1-100 characters) */
-      name: z.string().min(1).max(120).nullish(),
+      name: nullish(string([minLength(1), maxLength(120)])),
       /** description for the template (0-120 characters) */
-      description: z.string().min(0).max(120).nullish()
+      description: nullish(string([minLength(0), maxLength(120)]))
     })
-    .partial()
+  )
 });
 
 /**

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { minLength, object, string, url, partial, omit } from "valibot";
 import {
   patch,
   type Fetcher,
@@ -8,17 +8,17 @@ import {
 } from "@discordkit/core";
 import { webhookSchema, type Webhook } from "./types/Webhook.js";
 
-export const modifyWebhookWithTokenSchema = z.object({
+export const modifyWebhookWithTokenSchema = object({
   webhook: snowflake,
-  token: z.string().min(1),
-  body: z
-    .object({
+  token: string([minLength(1)]),
+  body: partial(
+    object({
       /** the default name of the webhook */
-      name: z.string().min(1),
+      name: string([minLength(1)]),
       /** image for the default webhook avatar */
-      avatar: z.string().url().min(1)
+      avatar: string([url()])
     })
-    .partial()
+  )
 });
 
 /**
@@ -45,12 +45,12 @@ export const modifyWebhookWithToken: Fetcher<
 export const modifyWebhookWithTokenSafe = toValidated(
   modifyWebhookWithToken,
   modifyWebhookWithTokenSchema,
-  webhookSchema.omit({ user: true })
+  omit(webhookSchema, [`user`])
 );
 
 export const modifyWebhookWithTokenProcedure = toProcedure(
   `mutation`,
   modifyWebhookWithToken,
   modifyWebhookWithTokenSchema,
-  webhookSchema.omit({ user: true })
+  omit(webhookSchema, [`user`])
 );

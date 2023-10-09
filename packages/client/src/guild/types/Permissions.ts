@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/prefer-literal-enum-member */
 
-import { z } from "zod";
+import { nativeEnum } from "valibot";
 
 /* eslint-disable no-bitwise */
 export enum Permissions {
@@ -96,4 +96,4 @@ export enum Permissions {
   SEND_VOICE_MESSAGES = 1 << 46
 }
 
-export const permissionsSchema = z.nativeEnum(Permissions);
+export const permissionsSchema = nativeEnum(Permissions);

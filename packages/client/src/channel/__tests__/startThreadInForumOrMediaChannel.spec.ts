@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
 import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
+import { merge, object } from "valibot";
 import {
   startThreadInForumOrMediaChannel,
   startThreadInForumOrMediaChannelProcedure,
@@ -12,7 +13,7 @@ import { messageSchema } from "../types/Message.js";
 describe(`startThreadInForumOrMediaChannel`, () => {
   mockRequest.post(
     `/channels/:channel/threads`,
-    channelSchema.extend({ message: messageSchema })
+    merge([channelSchema, object({ message: messageSchema })])
   );
   const config = mockSchema(startThreadInForumOrMediaChannelSchema);
 

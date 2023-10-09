@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object, string, minLength } from "valibot";
 import {
   remove,
   type Fetcher,
@@ -7,8 +7,8 @@ import {
 } from "@discordkit/core";
 import { inviteSchema, type Invite } from "./types/Invite.js";
 
-export const deleteInviteSchema = z.object({
-  code: z.string().min(1)
+export const deleteInviteSchema = object({
+  code: string([minLength(1)])
 });
 
 /**

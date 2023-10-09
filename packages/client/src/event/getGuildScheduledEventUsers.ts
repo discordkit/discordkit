@@ -1,4 +1,14 @@
-import { z } from "zod";
+import {
+  array,
+  boolean,
+  maxValue,
+  minValue,
+  nullish,
+  number,
+  object,
+  optional,
+  partial
+} from "valibot";
 import {
   get,
   type Fetcher,
@@ -12,22 +22,23 @@ import {
   type ScheduledEventUser
 } from "./types/ScheduledEventUser.js";
 
-export const getGuildScheduledEventUsersSchema = z.object({
+export const getGuildScheduledEventUsersSchema = object({
   guild: snowflake,
   event: snowflake,
-  params: z
-    .object({
-      /** number of users to return (up to maximum 100) (default: 100) */
-      limit: z.number().min(1).max(100).nullish().default(100),
-      /** include guild member data if it exists (default: false) */
-      withMember: z.boolean().nullish().default(false),
-      /** consider only users before given user id (default: null) */
-      before: snowflake.nullish().default(null),
-      /** consider only users after given user id (default: null) */
-      after: snowflake.nullish().default(null)
-    })
-    .partial()
-    .optional()
+  params: optional(
+    partial(
+      object({
+        /** number of users to return (up to maximum 100) (default: 100) */
+        limit: nullish(number([minValue(1), maxValue(100)]), 100),
+        /** include guild member data if it exists (default: false) */
+        withMember: nullish(boolean(), false),
+        /** consider only users before given user id (default: null) */
+        before: nullish(snowflake),
+        /** consider only users after given user id (default: null) */
+        after: nullish(snowflake)
+      })
+    )
+  )
 });
 
 /**
@@ -46,14 +57,14 @@ export const getGuildScheduledEventUsers: Fetcher<
 export const getGuildScheduledEventUsersSafe = toValidated(
   getGuildScheduledEventUsers,
   getGuildScheduledEventUsersSchema,
-  scheduledEventUserSchema.array()
+  array(scheduledEventUserSchema)
 );
 
 export const getGuildScheduledEventUsersProcedure = toProcedure(
   `query`,
   getGuildScheduledEventUsers,
   getGuildScheduledEventUsersSchema,
-  scheduledEventUserSchema.array()
+  array(scheduledEventUserSchema)
 );
 
 export const getGuildScheduledEventUsersQuery = toQuery(

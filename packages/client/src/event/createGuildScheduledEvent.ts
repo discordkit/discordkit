@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { isoTimestamp, minLength, nullish, object, string } from "valibot";
 import {
   post,
   type Fetcher,
@@ -14,27 +14,27 @@ import { entityMetadataSchema } from "./types/EntityMetadata.js";
 import { scheduledEventPrivacyLevelSchema } from "./types/ScheduledEventPrivacyLevel.js";
 import { scheduledEventEntityTypeSchema } from "./types/ScheduledEventEntityType.js";
 
-export const createGuildScheduledEventSchema = z.object({
+export const createGuildScheduledEventSchema = object({
   guild: snowflake,
-  body: z.object({
+  body: object({
     /** the channel id of the scheduled event. */
-    channelId: snowflake.nullish(),
+    channelId: nullish(snowflake),
     /** entity metadata	the entity metadata of the scheduled event */
-    entityMetadata: entityMetadataSchema.nullish(),
+    entityMetadata: nullish(entityMetadataSchema),
     /** the name of the scheduled event */
-    name: z.string().min(1),
+    name: string([minLength(1)]),
     /** the privacy level of the scheduled event */
     privacyLevel: scheduledEventPrivacyLevelSchema,
     /** the time to schedule the scheduled event */
-    scheduledStartTime: z.string().datetime(),
+    scheduledStartTime: string([isoTimestamp()]),
     /** the time when the scheduled event is scheduled to end */
-    scheduledEndTime: z.string().datetime().nullish(),
+    scheduledEndTime: nullish(string([isoTimestamp()])),
     /** the description of the scheduled event */
-    description: z.string().min(1).nullish(),
+    description: nullish(string([minLength(1)])),
     /** the entity type of the scheduled event */
     entityType: scheduledEventEntityTypeSchema,
     /** the cover image of the scheduled event */
-    image: z.string().min(1).nullish()
+    image: nullish(string([minLength(1)]))
   })
 });
 

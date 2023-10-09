@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
 import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
+import { array, length } from "valibot";
 import {
   getGuildIntegrationsProcedure,
   getGuildIntegrationsQuery,
@@ -11,7 +12,7 @@ import { integrationSchema } from "../types/Integration.js";
 describe(`getGuildIntegrations`, () => {
   const expected = mockRequest.get(
     `/guilds/:guild/integrations`,
-    integrationSchema.array().length(1)
+    array(integrationSchema, [length(1)])
   );
   const config = mockSchema(getGuildIntegrationsSchema);
 

@@ -1,15 +1,23 @@
 import { snowflake } from "@discordkit/core";
-import { z } from "zod";
+import {
+  object,
+  enumType,
+  array,
+  maxLength,
+  boolean,
+  optional,
+  type Output
+} from "valibot";
 
-export const allowedMentionSchema = z.object({
+export const allowedMentionSchema = object({
   /** An array of allowed mention types to parse from the content. */
-  parse: z.enum([`role`, `users`, `everyone`]).array(),
+  parse: array(enumType([`role`, `users`, `everyone`])),
   /** Array of roleIds to mention (Max size of 100) */
-  roles: snowflake.array().max(100),
+  roles: array(snowflake, [maxLength(100)]),
   /** Array of userIds to mention (Max size of 100) */
-  users: snowflake.array().max(100),
+  users: array(snowflake, [maxLength(100)]),
   /** For replies, whether to mention the author of the message being replied to (default false) */
-  repliedUser: z.boolean().optional()
+  repliedUser: optional(boolean())
 });
 
-export type AllowedMention = z.infer<typeof allowedMentionSchema>;
+export type AllowedMention = Output<typeof allowedMentionSchema>;

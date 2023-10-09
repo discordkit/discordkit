@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { array, maxLength, object } from "valibot";
 import {
   patch,
   type Fetcher,
@@ -12,13 +12,13 @@ import {
 } from "./types/GuildApplicationCommandPermissions.js";
 import { applicationCommandPermissionsSchema } from "./types/ApplicationCommandPermissions.js";
 
-export const editApplicationCommandPermissionsSchema = z.object({
+export const editApplicationCommandPermissionsSchema = object({
   application: snowflake,
   guild: snowflake,
   command: snowflake,
-  body: z.object({
+  body: object({
     /** Permissions for the command in the guild */
-    permissions: applicationCommandPermissionsSchema.array().max(100)
+    permissions: array(applicationCommandPermissionsSchema, [maxLength(100)])
   })
 });
 

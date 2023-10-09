@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object } from "valibot";
 import {
   patch,
   type Fetcher,
@@ -8,9 +8,9 @@ import {
 } from "@discordkit/core";
 import { mfaLevelSchema, type MFALevel } from "./types/MFALevel.js";
 
-export const modifyGuildMFALevelSchema = z.object({
+export const modifyGuildMFALevelSchema = object({
   guild: snowflake,
-  body: z.object({
+  body: object({
     /** MFA level */
     level: mfaLevelSchema
   })

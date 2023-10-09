@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { nativeEnum } from "valibot";
 
 export enum DefaultMessageNotificationLevel {
   /** members will receive notifications for all messages by default */
@@ -7,6 +7,6 @@ export enum DefaultMessageNotificationLevel {
   ONLY_MENTIONS = 1
 }
 
-export const defaultMessageNotificationLevelSchema = z.nativeEnum(
+export const defaultMessageNotificationLevelSchema = nativeEnum(
   DefaultMessageNotificationLevel
 );

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object } from "valibot";
 import {
   get,
   type Fetcher,
@@ -9,7 +9,7 @@ import {
 } from "@discordkit/core";
 import { guildPreviewSchema, type GuildPreview } from "./types/GuildPreview.js";
 
-export const getGuildPreviewSchema = z.object({
+export const getGuildPreviewSchema = object({
   guild: snowflake
 });
 

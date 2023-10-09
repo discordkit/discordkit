@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { nativeEnum } from "valibot";
 
 export enum TeamMemberRole {
   /** Admins have similar access as owners, except they cannot take destructive actions on the team or team-owned apps. */
@@ -9,4 +9,4 @@ export enum TeamMemberRole {
   ReadOnly = `read_only`
 }
 
-export const teamMemberRoleSchema = z.nativeEnum(TeamMemberRole);
+export const teamMemberRoleSchema = nativeEnum(TeamMemberRole);

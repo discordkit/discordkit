@@ -1,35 +1,35 @@
 import { snowflake } from "@discordkit/core";
-import { z } from "zod";
+import { type Output, object, partial, string } from "valibot";
 
-export const optionalAuditEntryInfoSchema = z
-  .object({
+export const optionalAuditEntryInfoSchema = partial(
+  object({
     /** ID of the app whose permissions were targeted */
     applicationId: snowflake,
     /** Name of the Auto Moderation rule that was triggered */
-    autoModerationRuleName: z.string(),
+    autoModerationRuleName: string(),
     /** Trigger type of the Auto Moderation rule that was triggered */
-    autoModerationRuleTriggerType: z.string(),
+    autoModerationRuleTriggerType: string(),
     /** Channel in which the entities were targeted */
     channelId: snowflake,
     /** Number of entities that were targeted */
-    count: z.string(),
+    count: string(),
     /** Number of days after which inactive members were kicked */
-    deleteMemberDays: z.string(),
+    deleteMemberDays: string(),
     /** ID of the overwritten entity */
     id: snowflake,
     /** Number of members removed by the prune */
-    membersRemoved: z.string(),
+    membersRemoved: string(),
     /** ID of the message that was targeted */
     messageId: snowflake,
     /** Name of the role if type is "0" (not present if type is "1") */
-    roleName: z.string(),
+    roleName: string(),
     /** Type of overwritten entity - role ("0") or member ("1") */
-    type: z.string(),
+    type: string(),
     /** The type of integration which performed the action */
-    integrationType: z.string()
+    integrationType: string()
   })
-  .partial();
+);
 
-export type OptionalAuditEntryInfo = z.infer<
+export type OptionalAuditEntryInfo = Output<
   typeof optionalAuditEntryInfoSchema
 >;

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object, string, minLength, url, partial } from "valibot";
 import {
   patch,
   type Fetcher,
@@ -8,18 +8,18 @@ import {
 } from "@discordkit/core";
 import { webhookSchema, type Webhook } from "./types/Webhook.js";
 
-export const modifyWebhookSchema = z.object({
+export const modifyWebhookSchema = object({
   webhook: snowflake,
-  body: z
-    .object({
+  body: partial(
+    object({
       /** the default name of the webhook */
-      name: z.string().min(1),
+      name: string([minLength(1)]),
       /** image for the default webhook avatar */
-      avatar: z.string().url().min(1),
+      avatar: string([url()]),
       /** the new channel id this webhook should be moved to */
       channelId: snowflake
     })
-    .partial()
+  )
 });
 
 /**

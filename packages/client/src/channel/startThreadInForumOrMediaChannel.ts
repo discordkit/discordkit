@@ -1,4 +1,19 @@
-import { z } from "zod";
+import {
+  array,
+  integer,
+  maxLength,
+  maxValue,
+  merge,
+  minLength,
+  minValue,
+  nullish,
+  number,
+  object,
+  optional,
+  partial,
+  string,
+  unknown
+} from "valibot";
 import {
   post,
   type Fetcher,
@@ -14,38 +29,40 @@ import { attachmentSchema } from "./types/Attachment.js";
 import { messageComponentSchema } from "./types/MessageComponent.js";
 import { type Message, messageSchema } from "./types/Message.js";
 
-export const startThreadInForumOrMediaChannelSchema = z.object({
+export const startThreadInForumOrMediaChannelSchema = object({
   channel: snowflake,
-  body: z.object({
+  body: object({
     /** 1-100 character channel name */
-    name: z.string().min(1).max(100),
+    name: string([minLength(1), maxLength(100)]),
     /** duration in minutes to automatically archive the thread after recent activity, can be set to: 60, 1440, 4320, 10080 */
-    autoArchiveDuration: autoArchiveDurationSchema.nullish(),
+    autoArchiveDuration: nullish(autoArchiveDurationSchema),
     /** amount of seconds a user has to wait before sending another message (0-21600) */
-    rateLimitPerUser: z.number().int().min(0).max(21600).nullish(),
+    rateLimitPerUser: nullish(
+      number([integer(), minValue(0), maxValue(21600)])
+    ),
     /** contents of the first message in the forum thread */
-    message: z
-      .object({
+    message: partial(
+      object({
         /** Message contents (up to 2000 characters) */
-        content: z.string().min(1).max(2000).nullish(),
+        content: nullish(string([minLength(1), maxLength(2000)])),
         /** Embedded rich content (up to 6000 characters) */
-        embeds: embedSchema.array().nullish(),
+        embeds: nullish(array(embedSchema)),
         /** Allowed mentions for the message */
-        allowedMentions: allowedMentionSchema.nullish(),
+        allowedMentions: nullish(allowedMentionSchema),
         /** Components to include with the message */
-        components: messageComponentSchema.nullish(),
+        components: nullish(messageComponentSchema),
         /** IDs of up to 3 stickers in the server to send in the message */
-        stickerIds: z.string().array().max(3).nullish(),
+        stickerIds: nullish(array(string(), [maxLength(3)])),
         /** Contents of the file being sent. See Uploading Files */
-        files: z.unknown().optional(),
+        files: optional(unknown()),
         /** Attachment objects with filename and description. See Uploading Files */
-        attachments: attachmentSchema.partial().array().nullish(),
+        attachments: nullish(array(partial(attachmentSchema))),
         /** Message flags combined as a bitfield (only SUPPRESS_EMBEDS can be set) */
-        flags: z.number().int().nullish()
+        flags: nullish(number([integer()]))
       })
-      .partial(),
+    ),
     /** the IDs of the set of tags that have been applied to a thread in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */
-    appliedTags: snowflake.array().nullish()
+    appliedTags: nullish(array(snowflake))
   })
 });
 
@@ -81,12 +98,12 @@ export const startThreadInForumOrMediaChannel: Fetcher<
 export const startThreadInForumOrMediaChannelSafe = toValidated(
   startThreadInForumOrMediaChannel,
   startThreadInForumOrMediaChannelSchema,
-  channelSchema.extend({ message: messageSchema })
+  merge([channelSchema, object({ message: messageSchema })])
 );
 
 export const startThreadInForumOrMediaChannelProcedure = toProcedure(
   `mutation`,
   startThreadInForumOrMediaChannel,
   startThreadInForumOrMediaChannelSchema,
-  channelSchema.extend({ message: messageSchema })
+  merge([channelSchema, object({ message: messageSchema })])
 );

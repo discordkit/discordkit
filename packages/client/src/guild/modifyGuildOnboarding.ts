@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { array, boolean, object } from "valibot";
 import {
   put,
   type Fetcher,
@@ -13,15 +13,15 @@ import {
 import { onboardingPromptSchema } from "./types/OnboardingPrompt.js";
 import { onboardingModeSchema } from "./types/OnboardingMode.js";
 
-export const modifyGuildOnboardingSchema = z.object({
+export const modifyGuildOnboardingSchema = object({
   guild: snowflake,
-  body: z.object({
+  body: object({
     /** Prompts shown during onboarding and in customize community */
-    prompts: onboardingPromptSchema.array(),
+    prompts: array(onboardingPromptSchema),
     /** Channel IDs that members get opted into automatically */
-    defaultChannelIds: snowflake.array(),
+    defaultChannelIds: array(snowflake),
     /** Whether onboarding is enabled in the guild */
-    enabled: z.boolean(),
+    enabled: boolean(),
     /** Current mode of onboarding */
     mode: onboardingModeSchema
   })

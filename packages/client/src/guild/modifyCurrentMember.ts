@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { minLength, nullish, object, string } from "valibot";
 import {
   patch,
   type Fetcher,
@@ -8,11 +8,11 @@ import {
 } from "@discordkit/core";
 import { memberSchema, type Member } from "./types/Member.js";
 
-export const modifyCurrentMemberSchema = z.object({
+export const modifyCurrentMemberSchema = object({
   guild: snowflake,
-  body: z.object({
+  body: object({
     /** value to set user's nickname to (Requires `CHANGE_NICKNAME` permission) */
-    nick: z.string().min(1).nullish()
+    nick: nullish(string([minLength(1)]))
   })
 });
 

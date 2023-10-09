@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
 import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
+import { array, length } from "valibot";
 import {
   getPinnedMessagesProcedure,
   getPinnedMessagesQuery,
@@ -9,7 +10,7 @@ import {
 import { messageSchema } from "../types/Message.js";
 
 describe(`getPinnedMessages`, () => {
-  mockRequest.get(`/channels/:channel/pins`, messageSchema.array().length(1));
+  mockRequest.get(`/channels/:channel/pins`, array(messageSchema, [length(1)]));
   const config = mockSchema(getPinnedMessagesSchema);
 
   it(`can be used standalone`, async () => {

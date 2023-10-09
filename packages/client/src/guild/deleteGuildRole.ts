@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object } from "valibot";
 import {
   remove,
   type Fetcher,
@@ -7,7 +7,7 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const deleteGuildRoleSchema = z.object({
+export const deleteGuildRoleSchema = object({
   guild: snowflake,
   role: snowflake
 });

@@ -1,12 +1,12 @@
-import { z } from "zod";
+import { object, literal, union, array, type Output } from "valibot";
 import { ComponentType } from "./ComponentType.js";
 import { buttonSchema } from "./Button.js";
 import { selectMenuSchema } from "./SelectMenu.js";
 import { textInputSchema } from "./TextInput.js";
 
-export const actionRowSchema = z.object({
-  type: z.literal(ComponentType.ActionRow),
-  components: z.union([buttonSchema, selectMenuSchema, textInputSchema]).array()
+export const actionRowSchema = object({
+  type: literal(ComponentType.ActionRow),
+  components: array(union([buttonSchema, selectMenuSchema, textInputSchema]))
 });
 
-export type ActionRow = z.infer<typeof actionRowSchema>;
+export type ActionRow = Output<typeof actionRowSchema>;

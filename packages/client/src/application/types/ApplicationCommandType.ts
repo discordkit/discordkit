@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { nativeEnum } from "valibot";
 
 export enum ApplicationCommandType {
   /** Slash commands; a text-based command that shows up when a user types / */
@@ -9,6 +9,4 @@ export enum ApplicationCommandType {
   MESSAGE = 3
 }
 
-export const applicationCommandTypeSchema = z.nativeEnum(
-  ApplicationCommandType
-);
+export const applicationCommandTypeSchema = nativeEnum(ApplicationCommandType);

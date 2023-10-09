@@ -1,6 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { z } from "zod";
 import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
+import { literal, merge, object } from "valibot";
 import {
   createGroupDM,
   createGroupDMProcedure,
@@ -13,7 +13,7 @@ import { ChannelType } from "../../channel/types/ChannelType.js";
 describe(`createGroupDM`, () => {
   const expected = mockRequest.post(
     `/users/@me/channels`,
-    channelSchema.extend({ type: z.literal(ChannelType.GROUP_DM) })
+    merge([channelSchema, object({ type: literal(ChannelType.GROUP_DM) })])
   );
   const config = mockSchema(createGroupDMSchema);
 

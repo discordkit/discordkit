@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
 import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
+import { array, length } from "valibot";
 import {
   getChannelWebhooksProcedure,
   getChannelWebhooksQuery,
@@ -11,7 +12,7 @@ import { webhookSchema } from "../types/Webhook.js";
 describe(`getChannelWebhooks`, () => {
   const expected = mockRequest.get(
     `/channels/:channel/webhooks`,
-    webhookSchema.array().length(1)
+    array(webhookSchema, [length(1)])
   );
   const config = mockSchema(getChannelWebhooksSchema);
 

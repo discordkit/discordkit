@@ -1,5 +1,5 @@
 import { mockSchema } from "test-utils";
-import { z } from "zod";
+import { parse, string, url } from "valibot";
 import {
   applicationCover,
   applicationCoverSchema
@@ -8,10 +8,10 @@ import {
 describe(`applicationCover`, () => {
   it(`produces a valid URL`, () => {
     expect(() =>
-      z
-        .string()
-        .url()
-        .parse(applicationCover(mockSchema(applicationCoverSchema)))
+      parse(
+        string([url()]),
+        applicationCover(mockSchema(applicationCoverSchema))
+      )
     ).not.toThrow();
   });
 });

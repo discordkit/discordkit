@@ -1,25 +1,25 @@
-import { z } from "zod";
+import { union, literal, type Output } from "valibot";
 
-export const servicesSchema = z.union([
-  z.literal(`battlenet`),
-  z.literal(`ebay`),
-  z.literal(`epicgames`),
-  z.literal(`facebook`),
-  z.literal(`github`),
-  z.literal(`instagram`),
-  z.literal(`leagueoflegends`),
-  z.literal(`paypal`),
-  z.literal(`playstation`),
-  z.literal(`reddit`),
-  z.literal(`riotgames`),
-  z.literal(`spotify`),
-  z.literal(`skype`),
-  z.literal(`steam`),
-  z.literal(`tiktok`),
-  z.literal(`twitch`),
-  z.literal(`twitter`),
-  z.literal(`xbox`),
-  z.literal(`youtube`)
+export const servicesSchema = union([
+  literal(`battlenet`),
+  literal(`ebay`),
+  literal(`epicgames`),
+  literal(`facebook`),
+  literal(`github`),
+  literal(`instagram`),
+  literal(`leagueoflegends`),
+  literal(`paypal`),
+  literal(`playstation`),
+  literal(`reddit`),
+  literal(`riotgames`),
+  literal(`spotify`),
+  literal(`skype`),
+  literal(`steam`),
+  literal(`tiktok`),
+  literal(`twitch`),
+  literal(`twitter`),
+  literal(`xbox`),
+  literal(`youtube`)
 ]);
 
-export type Services = z.infer<typeof servicesSchema>;
+export type Services = Output<typeof servicesSchema>;

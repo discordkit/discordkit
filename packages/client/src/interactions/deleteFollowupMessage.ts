@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { minLength, object, optional, partial, string } from "valibot";
 import {
   remove,
   buildURL,
@@ -8,17 +8,18 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const deleteFollowupMessageSchema = z.object({
+export const deleteFollowupMessageSchema = object({
   application: snowflake,
-  token: z.string().min(1),
+  token: string([minLength(1)]),
   message: snowflake,
-  params: z
-    .object({
-      /** id of the thread the message is in */
-      threadId: snowflake
-    })
-    .partial()
-    .optional()
+  params: optional(
+    partial(
+      object({
+        /** id of the thread the message is in */
+        threadId: snowflake
+      })
+    )
+  )
 });
 
 /**

@@ -1,4 +1,13 @@
-import { z } from "zod";
+import {
+  integer,
+  maxValue,
+  minValue,
+  nullish,
+  number,
+  object,
+  optional,
+  partial
+} from "valibot";
 import {
   put,
   type Fetcher,
@@ -7,18 +16,23 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const createGuildBanSchema = z.object({
+export const createGuildBanSchema = object({
   guild: snowflake,
   user: snowflake,
-  body: z
-    .object({
-      /** number of days to delete messages for (0-7) */
-      deleteMessageDays: z.number().int().min(1).max(7).nullish(),
-      /** number of seconds to delete messages for, between 0 and 604800 (7 days) */
-      deleteMessageSeconds: z.number().int().min(1).max(7).nullish()
-    })
-    .partial()
-    .optional()
+  body: optional(
+    partial(
+      object({
+        /** number of days to delete messages for (0-7) */
+        deleteMessageDays: nullish(
+          number([integer(), minValue(1), maxValue(7)])
+        ),
+        /** number of seconds to delete messages for, between 0 and 604800 (7 days) */
+        deleteMessageSeconds: nullish(
+          number([integer(), minValue(1), maxValue(7)])
+        )
+      })
+    )
+  )
 });
 
 /**

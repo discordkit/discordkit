@@ -1,11 +1,11 @@
-import { z } from "zod";
+import { object, string, minLength, nullish, type Output } from "valibot";
 import { messageActivityTypeSchema } from "./MessageActivityType.js";
 
-export const messageActivitySchema = z.object({
+export const messageActivitySchema = object({
   /** type of message activity */
   type: messageActivityTypeSchema,
   /** partyId from a Rich Presence event */
-  partyId: z.string().min(1).nullish()
+  partyId: nullish(string([minLength(1)]))
 });
 
-export type MessageActivity = z.infer<typeof messageActivitySchema>;
+export type MessageActivity = Output<typeof messageActivitySchema>;

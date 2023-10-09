@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
 import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
+import { array, length } from "valibot";
 import {
   listThreadMembersProcedure,
   listThreadMembersQuery,
@@ -11,7 +12,7 @@ import { threadMemberSchema } from "../types/ThreadMember.js";
 describe(`listThreadMembers`, () => {
   const expected = mockRequest.get(
     `/channels/:channel/thread-members`,
-    threadMemberSchema.array().length(1)
+    array(threadMemberSchema, [length(1)])
   );
   const config = mockSchema(listThreadMembersSchema);
 

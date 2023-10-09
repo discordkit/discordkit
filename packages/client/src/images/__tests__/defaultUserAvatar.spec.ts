@@ -1,5 +1,5 @@
 import { mockSchema } from "test-utils";
-import { z } from "zod";
+import { parse, string, url } from "valibot";
 import {
   defaultUserAvatar,
   defaultUserAvatarSchema
@@ -8,10 +8,10 @@ import {
 describe(`defaultUserAvatar`, () => {
   it(`produces a valid URL`, () => {
     expect(() =>
-      z
-        .string()
-        .url()
-        .parse(defaultUserAvatar(mockSchema(defaultUserAvatarSchema)))
+      parse(
+        string([url()]),
+        defaultUserAvatar(mockSchema(defaultUserAvatarSchema))
+      )
     ).not.toThrow();
   });
 });

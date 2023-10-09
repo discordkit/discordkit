@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object, string, minLength, partial, optional } from "valibot";
 import {
   remove,
   buildURL,
@@ -8,17 +8,18 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const deleteWebhookMessageSchema = z.object({
+export const deleteWebhookMessageSchema = object({
   webhook: snowflake,
-  token: z.string().min(1),
+  token: string([minLength(1)]),
   message: snowflake,
-  params: z
-    .object({
-      /** id of the thread the message is in */
-      threadId: snowflake
-    })
-    .partial()
-    .optional()
+  params: optional(
+    partial(
+      object({
+        /** id of the thread the message is in */
+        threadId: snowflake
+      })
+    )
+  )
 });
 
 /**

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { maxLength, minLength, nullish, object, string } from "valibot";
 import {
   post,
   type Fetcher,
@@ -8,13 +8,13 @@ import {
 } from "@discordkit/core";
 import { guildSchema, type Guild } from "../guild/types/Guild.js";
 
-export const createGuildFromTemplateSchema = z.object({
+export const createGuildFromTemplateSchema = object({
   template: snowflake,
-  body: z.object({
+  body: object({
     /** name of the guild (2-100 characters) */
-    name: z.string().min(2).max(100),
+    name: string([minLength(2), maxLength(100)]),
     /** base64 128x128 image for the guild icon */
-    icon: z.string().nullish()
+    icon: nullish(string())
   })
 });
 

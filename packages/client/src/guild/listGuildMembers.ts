@@ -1,4 +1,13 @@
-import { z } from "zod";
+import {
+  array,
+  integer,
+  maxValue,
+  minValue,
+  number,
+  object,
+  optional,
+  partial
+} from "valibot";
 import {
   get,
   type Fetcher,
@@ -9,17 +18,18 @@ import {
 } from "@discordkit/core";
 import { memberSchema, type Member } from "./types/Member.js";
 
-export const listGuildMembersSchema = z.object({
+export const listGuildMembersSchema = object({
   guild: snowflake,
-  params: z
-    .object({
-      /** max number of members to return (1-1000) */
-      limit: z.number().int().min(1).max(1000),
-      /** the highest user id in the previous page */
-      after: snowflake
-    })
-    .partial()
-    .optional()
+  params: optional(
+    partial(
+      object({
+        /** max number of members to return (1-1000) */
+        limit: number([integer(), minValue(1), maxValue(1000)]),
+        /** the highest user id in the previous page */
+        after: snowflake
+      })
+    )
+  )
 });
 
 /**
@@ -45,14 +55,14 @@ export const listGuildMembers: Fetcher<
 export const listGuildMembersSafe = toValidated(
   listGuildMembers,
   listGuildMembersSchema,
-  memberSchema.array()
+  array(memberSchema)
 );
 
 export const listGuildMembersProcedure = toProcedure(
   `query`,
   listGuildMembers,
   listGuildMembersSchema,
-  memberSchema.array()
+  array(memberSchema)
 );
 
 export const listGuildMembersQuery = toQuery(listGuildMembers);

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { nativeEnum } from "valibot";
 
 export enum InteractionType {
   PING = 1,
@@ -8,4 +8,4 @@ export enum InteractionType {
   MODAL_SUBMIT = 5
 }
 
-export const interactionTypeSchema = z.nativeEnum(InteractionType);
+export const interactionTypeSchema = nativeEnum(InteractionType);

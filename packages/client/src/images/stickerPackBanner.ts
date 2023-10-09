@@ -1,25 +1,22 @@
 import { getAsset, snowflake } from "@discordkit/core";
-import { z } from "zod";
+import { type Output, object, optional, enumType } from "valibot";
 import { imageSizes } from "./types/ImageSizes.js";
 
-export const stickerPackBannerSchema = z.object({
+export const stickerPackBannerSchema = object({
   banner: snowflake,
-  format: z
-    .union([z.literal(`png`), z.literal(`jpg`), z.literal(`webp`)])
-    .default(`png`)
-    .optional(),
-  params: z
-    .object({
+  format: optional(enumType([`png`, `jpg`, `webp`]), `png`),
+  params: optional(
+    object({
       size: imageSizes
     })
-    .optional()
+  )
 });
 
 export const stickerPackBanner = ({
   banner,
   format,
   params
-}: z.infer<typeof stickerPackBannerSchema>): string =>
+}: Output<typeof stickerPackBannerSchema>): string =>
   getAsset(
     `/app-assets/710982414301790216/store/${banner}.${format ?? `png`}`,
     params

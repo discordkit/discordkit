@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object } from "valibot";
 import {
   get,
   type Fetcher,
@@ -12,7 +12,7 @@ import {
   applicationRoleConnectionSchema
 } from "../application/types/ApplicationRoleConnection.js";
 
-export const getUserApplicationRoleConnectionSchema = z.object({
+export const getUserApplicationRoleConnectionSchema = object({
   application: snowflake
 });
 

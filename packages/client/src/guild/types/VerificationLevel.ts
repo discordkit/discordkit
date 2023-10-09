@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { nativeEnum } from "valibot";
 
 export enum VerificationLevel {
   /** unrestricted */
@@ -13,4 +13,4 @@ export enum VerificationLevel {
   VERY_HIGH = 4
 }
 
-export const verificationLevelSchema = z.nativeEnum(VerificationLevel);
+export const verificationLevelSchema = nativeEnum(VerificationLevel);

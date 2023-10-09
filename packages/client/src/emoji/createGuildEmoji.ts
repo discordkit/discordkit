@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { array, minLength, object, string, url } from "valibot";
 import {
   post,
   type Fetcher,
@@ -8,15 +8,15 @@ import {
 } from "@discordkit/core";
 import { emojiSchema, type Emoji } from "./types/Emoji.js";
 
-export const createGuildEmojiSchema = z.object({
+export const createGuildEmojiSchema = object({
   guild: snowflake,
-  body: z.object({
+  body: object({
     /** name of the emoji */
-    name: z.string().min(1),
+    name: string([minLength(1)]),
     /** the 128x128 emoji image */
-    image: z.string().url(),
+    image: string([url()]),
     /** roles allowed to use this emoji */
-    roles: snowflake.array()
+    roles: array(snowflake)
   })
 });
 

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { array, maxLength, object } from "valibot";
 import {
   put,
   type Fetcher,
@@ -11,9 +11,9 @@ import {
   applicationCommandSchema
 } from "./types/ApplicationCommand.js";
 
-export const bulkOverwriteGlobalApplicationCommandsSchema = z.object({
+export const bulkOverwriteGlobalApplicationCommandsSchema = object({
   application: snowflake,
-  body: applicationCommandSchema.array().max(25)
+  body: array(applicationCommandSchema, [maxLength(25)])
 });
 
 /**
@@ -36,12 +36,12 @@ export const bulkOverwriteGlobalApplicationCommands: Fetcher<
 export const bulkOverwriteGlobalApplicationCommandsSafe = toValidated(
   bulkOverwriteGlobalApplicationCommands,
   bulkOverwriteGlobalApplicationCommandsSchema,
-  applicationCommandSchema.array()
+  array(applicationCommandSchema)
 );
 
 export const bulkOverwriteGlobalApplicationCommandsProcedure = toProcedure(
   `mutation`,
   bulkOverwriteGlobalApplicationCommands,
   bulkOverwriteGlobalApplicationCommandsSchema,
-  applicationCommandSchema.array()
+  array(applicationCommandSchema)
 );

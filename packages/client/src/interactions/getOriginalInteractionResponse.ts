@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { minLength, object, optional, partial, string } from "valibot";
 import {
   get,
   type Fetcher,
@@ -12,16 +12,17 @@ import {
   interactionResponseSchema
 } from "./types/InteractionResponse.js";
 
-export const getOriginalInteractionResponseSchema = z.object({
+export const getOriginalInteractionResponseSchema = object({
   application: snowflake,
-  token: z.string().min(1),
-  params: z
-    .object({
-      /** id of the thread the message is in */
-      threadId: snowflake
-    })
-    .partial()
-    .optional()
+  token: string([minLength(1)]),
+  params: optional(
+    partial(
+      object({
+        /** id of the thread the message is in */
+        threadId: snowflake
+      })
+    )
+  )
 });
 
 /**

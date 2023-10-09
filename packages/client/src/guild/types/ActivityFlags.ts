@@ -1,7 +1,7 @@
 /* eslint-disable no-bitwise */
 /* eslint-disable @typescript-eslint/prefer-literal-enum-member */
 
-import { z } from "zod";
+import { nativeEnum } from "valibot";
 
 export enum ActivityFlags {
   INSTANCE = 1 << 0,
@@ -15,4 +15,4 @@ export enum ActivityFlags {
   EMBEDDED = 1 << 8
 }
 
-export const activityFlagsSchema = z.nativeEnum(ActivityFlags);
+export const activityFlagsSchema = nativeEnum(ActivityFlags);

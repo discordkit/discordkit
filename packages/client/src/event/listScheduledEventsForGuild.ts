@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { array, boolean, nullish, object, optional, partial } from "valibot";
 import {
   get,
   type Fetcher,
@@ -12,14 +12,15 @@ import {
   type ScheduledEvent
 } from "./types/ScheduledEvent.js";
 
-export const listScheduledEventsForGuildSchema = z.object({
+export const listScheduledEventsForGuildSchema = object({
   guild: snowflake,
-  params: z
-    .object({
-      withUserCount: z.boolean().nullish()
-    })
-    .partial()
-    .optional()
+  params: optional(
+    partial(
+      object({
+        withUserCount: nullish(boolean())
+      })
+    )
+  )
 });
 
 /**
@@ -38,14 +39,14 @@ export const listScheduledEventsForGuild: Fetcher<
 export const listScheduledEventsForGuildSafe = toValidated(
   listScheduledEventsForGuild,
   listScheduledEventsForGuildSchema,
-  scheduledEventSchema.array()
+  array(scheduledEventSchema)
 );
 
 export const listScheduledEventsForGuildProcedure = toProcedure(
   `query`,
   listScheduledEventsForGuild,
   listScheduledEventsForGuildSchema,
-  scheduledEventSchema.array()
+  array(scheduledEventSchema)
 );
 
 export const listScheduledEventsForGuildQuery = toQuery(

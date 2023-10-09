@@ -1,4 +1,13 @@
-import { z } from "zod";
+import {
+  array,
+  integer,
+  maxLength,
+  number,
+  object,
+  partial,
+  string,
+  unknown
+} from "valibot";
 import {
   patch,
   type Fetcher,
@@ -12,27 +21,27 @@ import { allowedMentionSchema } from "./types/AllowedMention.js";
 import { messageComponentSchema } from "./types/MessageComponent.js";
 import { attachmentSchema } from "./types/Attachment.js";
 
-export const editMessageSchema = z.object({
+export const editMessageSchema = object({
   channel: snowflake,
   message: snowflake,
-  body: z
-    .object({
+  body: partial(
+    object({
       /** Message contents (up to 2000 characters) */
-      content: z.string().max(2000),
+      content: string([maxLength(2000)]),
       /** Up to 10 rich embeds (up to 6000 characters) */
-      embeds: embedSchema.array().max(10),
+      embeds: array(embedSchema, [maxLength(10)]),
       /** Edit the flags of a message (only SUPPRESS_EMBEDS can currently be set/unset) */
-      flags: z.number().int(),
+      flags: number([integer()]),
       /** Allowed mentions for the message */
       allowedMentions: allowedMentionSchema,
       /** Components to include with the message */
       components: messageComponentSchema,
       /** Contents of the file being sent/edited. See Uploading Files */
-      files: z.unknown().array(),
+      files: array(unknown()),
       /** Attached files to keep and possible descriptions for new files. See Uploading Files */
-      attachments: attachmentSchema.array()
+      attachments: array(attachmentSchema)
     })
-    .partial()
+  )
 });
 
 /**

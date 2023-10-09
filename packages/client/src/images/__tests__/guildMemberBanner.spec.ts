@@ -1,5 +1,5 @@
 import { mockSchema } from "test-utils";
-import { z } from "zod";
+import { parse, string, url } from "valibot";
 import {
   guildMemberBanner,
   guildMemberBannerSchema
@@ -8,10 +8,10 @@ import {
 describe(`guildMemberBanner`, () => {
   it(`produces a valid URL`, () => {
     expect(() =>
-      z
-        .string()
-        .url()
-        .parse(guildMemberBanner(mockSchema(guildMemberBannerSchema)))
+      parse(
+        string([url()]),
+        guildMemberBanner(mockSchema(guildMemberBannerSchema))
+      )
     ).not.toThrow();
   });
 });

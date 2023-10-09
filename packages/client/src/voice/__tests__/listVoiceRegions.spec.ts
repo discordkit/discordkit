@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
 import { runProcedure, runQuery, mockRequest } from "test-utils";
+import { array, length } from "valibot";
 import {
   listVoiceRegionsProcedure,
   listVoiceRegionsQuery,
@@ -10,7 +11,7 @@ import { voiceRegionSchema } from "../types/VoiceRegion.js";
 describe(`listVoiceRegions`, () => {
   const expected = mockRequest.get(
     `/voice/regions`,
-    voiceRegionSchema.array().length(1)
+    array(voiceRegionSchema, [length(1)])
   );
 
   it(`can be used standalone`, async () => {

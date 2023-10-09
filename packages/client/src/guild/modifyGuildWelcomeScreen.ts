@@ -1,4 +1,12 @@
-import { z } from "zod";
+import {
+  array,
+  boolean,
+  minLength,
+  nullish,
+  object,
+  partial,
+  string
+} from "valibot";
 import {
   patch,
   type Fetcher,
@@ -12,18 +20,18 @@ import {
 } from "./types/WelcomeScreen.js";
 import { welcomeChannelSchema } from "./types/WelcomeChannel.js";
 
-export const modifyGuildWelcomeScreenSchema = z.object({
+export const modifyGuildWelcomeScreenSchema = object({
   guild: snowflake,
-  body: z
-    .object({
+  body: partial(
+    object({
       /** whether the welcome screen is enabled */
-      enabled: z.boolean().nullish(),
+      enabled: nullish(boolean()),
       /** channels linked in the welcome screen and their display options */
-      welcomeChannels: welcomeChannelSchema.array().nullish(),
+      welcomeChannels: nullish(array(welcomeChannelSchema)),
       /** the server description to show in the welcome screen */
-      description: z.string().min(1).nullish()
+      description: nullish(string([minLength(1)]))
     })
-    .partial()
+  )
 });
 
 /**
