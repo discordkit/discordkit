@@ -2796,7 +2796,7 @@ __metadata:
     rimraf: ^5.0.5
     tsx: ^3.13.0
     turbo: 1.10.14
-    type-fest: ^4.3.3
+    type-fest: ^4.6.0
     typescript: 5.2.2
     vitest: ^0.34.6
     zod: ^3.22.4
@@ -7484,10 +7484,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"type-fest@npm:^4.3.3":
-  version: 4.3.3
-  resolution: "type-fest@npm:4.3.3"
-  checksum: 843c1bb3c2c185594a3a3d67bd92e8194dfa31ca0d88c078371efdd8d2150ea278a624cb260c91824e1f486ff06759c96bc03a134af7f0575e2d06eaa8be1c32
+"type-fest@npm:^4.6.0":
+  version: 4.6.0
+  resolution: "type-fest@npm:4.6.0"
+  checksum: e38f2b4b35e912bf60dbe7d4350653fb76b241a456e849fab85002ba08e938a26a7c44a330dd5620dd48ce57566be7c97e997064dc0d5066d5b6949b8c444430
   languageName: node
   linkType: hard
 
