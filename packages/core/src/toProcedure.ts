@@ -1,10 +1,3 @@
-import {
-  wrap,
-  type TypeSchema,
-  type Infer,
-  type InferIn,
-  type Schema
-} from "@decs/typeschema";
 import type { BaseSchema, Output } from "valibot";
 import type {
   initTRPC,
@@ -13,10 +6,9 @@ import type {
   Procedure,
   unsetMarker
 } from "@trpc/server";
+import { wrap, type Wrap } from "./wrap.js";
 import { isNonNullable } from "./isNonNullable.js";
 import type { Fetcher } from "./methods.js";
-
-type Wrap<T extends Schema> = TypeSchema<Infer<T>, InferIn<T>>;
 
 type Result<T = void> = T extends BaseSchema ? Output<T> : T;
 

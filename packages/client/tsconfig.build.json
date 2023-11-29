@@ -4,7 +4,7 @@
   "exclude": ["node_modules", "./src/**/*.spec.ts"],
   "compilerOptions": {
     "rootDir": "src",
-    "outDir": "dist/esm",
+    "outDir": "dist",
     "noEmit": false
   }
 }

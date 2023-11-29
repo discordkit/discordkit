@@ -16,9 +16,9 @@ TypeScript SDK for [Discord's API](https://discord.com/developers/docs)
 ## 📦 Installation
 
 ```bash
-npm install --save-dev @discordkit/client zod
+npm install --save-dev @discordkit/client valibot
 # or
-yarn add -D @discordkit/client zod
+yarn add -D @discordkit/client valibot
 ```
 
 > [!WARNING]
@@ -29,7 +29,7 @@ yarn add -D @discordkit/client zod
 
 ## 🔧 Usage
 
-Out of the box Discordkit supports vanilla JavaScript/Typescript, [react-query](https://tanstack.com/query/latest), and [tRPC](https://trpc.io/). For each of Discord's API endpoints, Discordkit exports a basic request handler function, a pre-wired `tRPC` procedure builder, and for `GET` requests, a `react-query` query function. Additionally, each endpoint also exports a `zod` schema object to validate the input for a request handler.
+Out of the box Discordkit supports vanilla JavaScript/Typescript, [react-query](https://tanstack.com/query/latest), and [tRPC](https://trpc.io/). For each of Discord's API endpoints, Discordkit exports a basic request handler function, a pre-wired `tRPC` procedure builder, and for `GET` requests, a `react-query` query function. Additionally, each endpoint also exports a `valibot` schema object to validate the input for a request handler.
 
 Here is an example of the available exports and their naming patterns:
 

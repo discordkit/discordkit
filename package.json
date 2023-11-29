@@ -24,7 +24,7 @@
     "build:packages": "turbo run build",
     "lint": "eslint \"./{apps,examples,packages,scripts}/**/*.{j,t}s?(x)\" --cache",
     "format": "yarn lint --fix",
-    "release": "turbo run build build:cjs && tsx ./scripts/version.ts && changeset publish",
+    "release": "turbo run build && tsx ./scripts/version.ts && changeset publish",
     "test": "vitest --single-thread",
     "version": "changeset version"
   },

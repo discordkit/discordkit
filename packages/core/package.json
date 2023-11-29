@@ -1,7 +1,7 @@
 {
   "name": "@discordkit/core",
   "description": "Core utility functions for Discordkit",
-  "version": "1.1.0-next.1",
+  "version": "1.1.0-next.2",
   "license": "MIT",
   "author": "Drake Costa <drake@saeris.gg> (https://saeris.gg)",
   "keywords": [
@@ -20,36 +20,20 @@
     "registry": "https://registry.npmjs.org"
   },
   "type": "module",
-  "main": "./dist/cjs/index.js",
-  "module": "./dist/esm/index.js",
-  "types": "./dist/esm/index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "imports": {
     "#test-utils": "../../scripts/test-utils.ts"
   },
   "exports": {
     ".": {
-      "module": "./dist/esm/index.js",
-      "import": {
-        "types": "./dist/esm/index.d.ts",
-        "default": "./dist/esm/index.js"
-      },
-      "require": {
-        "types": "./dist/cjs/index.d.ts",
-        "default": "./dist/cjs/index.js"
-      },
-      "default": "./dist/esm/index.js"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     },
     "./*": {
-      "module": "./dist/esm/*.js",
-      "import": {
-        "types": "./dist/esm/*.d.ts",
-        "default": "./dist/esm/*.js"
-      },
-      "require": {
-        "types": "./dist/cjs/*.d.ts",
-        "default": "./dist/cjs/*.js"
-      },
-      "default": "./dist/esm/*.js"
+      "types": "./dist/*.d.ts",
+      "default": "./dist/*.js"
     },
     "./package.json": "./package.json"
   },
@@ -59,16 +43,12 @@
   "sideEffects": false,
   "scripts": {
     "dev": "yarn build --watch --declarationmap",
-    "build": "tsc --project ./tsconfig.build.json",
-    "build:cjs": "tsc --project ./tsconfig.build.json --outdir dist/cjs --module commonjs --moduleresolution node"
+    "build": "tsc --project ./tsconfig.build.json"
   },
   "peerDependencies": {
     "valibot": ">= 0.21.0"
   },
   "devDependencies": {
     "typescript": "^5.3.2"
-  },
-  "dependencies": {
-    "@decs/typeschema": "^0.12.1"
   }
 }
