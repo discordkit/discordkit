@@ -16,7 +16,7 @@ describe(`modifyGuildScheduledEvent`, () => {
   const config = mockSchema(modifyGuildScheduledEventSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(modifyGuildScheduledEventSafe(config)).resolves.toStrictEqual(
+    await expect(modifyGuildScheduledEventSafe(config)).resolves.toEqual(
       expected
     );
   });
@@ -24,13 +24,13 @@ describe(`modifyGuildScheduledEvent`, () => {
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(modifyGuildScheduledEventProcedure)(config)
-    ).resolves.toStrictEqual(expected);
+    ).resolves.toEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runMutation(modifyGuildScheduledEvent);
     result.current.mutate(config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });

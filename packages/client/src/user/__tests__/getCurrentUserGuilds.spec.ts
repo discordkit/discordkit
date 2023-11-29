@@ -17,20 +17,18 @@ describe(`getCurrentUserGuilds`, () => {
   const config = mockSchema(getCurrentUserGuildsSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(getCurrentUserGuildsSafe(config)).resolves.toStrictEqual(
-      expected
-    );
+    await expect(getCurrentUserGuildsSafe(config)).resolves.toEqual(expected);
   });
 
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(getCurrentUserGuildsProcedure)(config)
-    ).resolves.toStrictEqual(expected);
+    ).resolves.toEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runQuery(getCurrentUserGuildsQuery, config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });

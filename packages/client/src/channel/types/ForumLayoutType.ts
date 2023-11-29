@@ -1,4 +1,4 @@
-import { nativeEnum } from "valibot";
+import { enum_ } from "valibot";
 
 export enum ForumLayoutType {
   /** No default has been set for forum channel */
@@ -9,4 +9,4 @@ export enum ForumLayoutType {
   GALLERY_VIEW = 2
 }
 
-export const forumLayoutTypeSchema = nativeEnum(ForumLayoutType);
+export const forumLayoutTypeSchema = enum_(ForumLayoutType);

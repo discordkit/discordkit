@@ -1,7 +1,7 @@
 /* eslint-disable no-bitwise */
 /* eslint-disable @typescript-eslint/prefer-literal-enum-member */
 
-import { nativeEnum } from "valibot";
+import { enum_ } from "valibot";
 
 export enum SystemChannelFlags {
   /** Suppress member join notifications */
@@ -18,4 +18,4 @@ export enum SystemChannelFlags {
   SUPPRESS_ROLE_SUBSCRIPTION_PURCHASE_NOTIFICATION_REPLIES = 1 << 5
 }
 
-export const systemChannelFlagsSchema = nativeEnum(SystemChannelFlags);
+export const systemChannelFlagsSchema = enum_(SystemChannelFlags);

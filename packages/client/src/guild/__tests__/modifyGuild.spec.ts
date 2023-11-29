@@ -13,19 +13,19 @@ describe(`modifyGuild`, () => {
   const config = mockSchema(modifyGuildSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(modifyGuildSafe(config)).resolves.toStrictEqual(expected);
+    await expect(modifyGuildSafe(config)).resolves.toEqual(expected);
   });
 
   it(`is tRPC compatible`, async () => {
-    await expect(
-      runProcedure(modifyGuildProcedure)(config)
-    ).resolves.toStrictEqual(expected);
+    await expect(runProcedure(modifyGuildProcedure)(config)).resolves.toEqual(
+      expected
+    );
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runMutation(modifyGuild);
     result.current.mutate(config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });

@@ -1,17 +1,17 @@
 import type React from "react";
 import { createElement } from "react";
-import type { UseMutationResult, UseQueryResult } from "@tanstack/react-query";
 import {
   QueryClient,
   QueryClientProvider,
   useMutation,
-  useQuery
+  useQuery,
+  type UseQueryResult,
+  type UseMutationResult
 } from "@tanstack/react-query";
 import { http } from "msw";
 import { type SetupServer, setupServer } from "msw/node";
-import type { GenerateMockOptions } from "@anatine/zod-mock";
-import { generateMock } from "@anatine/zod-mock";
-import type { z } from "zod";
+import { Valimock, type ValimockOptions } from "valimock";
+import type { BaseSchema, BaseSchemaAsync, Output } from "valibot";
 import type { RenderHookResult } from "@testing-library/react";
 import { renderHook } from "@testing-library/react";
 import type { unsetMarker } from "@trpc/server";
@@ -31,29 +31,28 @@ export const msw: SetupServer = setupServer();
 
 const uid = new Snowflake({ custom_epoch: 1420070400000 });
 
-export const mockSchema = <T extends z.ZodTypeAny>(
+export const mockSchema = <T extends BaseSchema | BaseSchemaAsync>(
   schema: T,
-  opts?: Parameters<typeof generateMock>[1]
-): z.infer<T> =>
-  generateMock(schema, {
+  opts?: Partial<ValimockOptions>
+): Output<T> =>
+  new Valimock({
     ...opts,
-    backupMocks: {
-      ZodAny: (ref) => {
-        // @ts-expect-error
-        if (ref === (snowflake as z.ZodEffects<z.ZodAny>)._def.schema) {
+    customMocks: {
+      special: (ref) => {
+        if (ref === snowflake) {
           return uid.getUniqueID().toString();
         }
       }
     }
-  });
+  }).mock(schema);
 
 const createMock =
   (type: keyof typeof http) =>
-  <S extends z.ZodTypeAny>(
+  <S extends BaseSchema>(
     path: string,
     responseSchema?: S,
-    opts?: GenerateMockOptions
-  ): z.infer<S> => {
+    opts?: Partial<ValimockOptions>
+  ): Output<S> => {
     const result = responseSchema ? mockSchema(responseSchema, opts) : null;
 
     beforeAll(() => {
@@ -102,11 +101,14 @@ export const runQuery = <Q extends ReturnType<typeof toQuery>>(
   never
 > =>
   runHook(() =>
-    useQuery([query.name, input], input ? query(input) : query(null))
+    useQuery({
+      queryKey: [query.name, input],
+      queryFn: input ? query(input) : query(null)
+    })
   );
 
 export const runMutation = <
-  S extends z.ZodTypeAny | null,
+  S extends BaseSchema | null,
   R,
   M extends Fetcher<S, R>
 >(
@@ -120,7 +122,7 @@ export const runMutation = <
       : Parameters<typeof mutation>[0]
   >,
   never
-> => runHook(() => useMutation(mutation));
+> => runHook(() => useMutation({ mutationFn: mutation }));
 
 export const runProcedure = <const T extends ReturnType<typeof toProcedure>>(
   procedure: T

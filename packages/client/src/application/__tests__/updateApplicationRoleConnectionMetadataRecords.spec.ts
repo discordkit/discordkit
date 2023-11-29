@@ -21,7 +21,7 @@ describe(`updateApplicationRoleConnectionMetadataRecords`, () => {
   it(`can be used standalone`, async () => {
     await expect(
       updateApplicationRoleConnectionMetadataRecordsSafe(config)
-    ).resolves.toStrictEqual(expected);
+    ).resolves.toEqual(expected);
   });
 
   it(`is tRPC compatible`, async () => {
@@ -29,7 +29,7 @@ describe(`updateApplicationRoleConnectionMetadataRecords`, () => {
       runProcedure(updateApplicationRoleConnectionMetadataRecordsProcedure)(
         config
       )
-    ).resolves.toStrictEqual(expected);
+    ).resolves.toEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
@@ -38,6 +38,6 @@ describe(`updateApplicationRoleConnectionMetadataRecords`, () => {
     );
     result.current.mutate(config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });

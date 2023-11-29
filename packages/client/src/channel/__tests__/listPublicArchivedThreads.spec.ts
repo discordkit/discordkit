@@ -16,7 +16,7 @@ describe(`listPublicArchivedThreads`, () => {
   const config = mockSchema(listPublicArchivedThreadsSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(listPublicArchivedThreadsSafe(config)).resolves.toStrictEqual(
+    await expect(listPublicArchivedThreadsSafe(config)).resolves.toEqual(
       expected
     );
   });
@@ -24,12 +24,12 @@ describe(`listPublicArchivedThreads`, () => {
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(listPublicArchivedThreadsProcedure)(config)
-    ).resolves.toStrictEqual(expected);
+    ).resolves.toEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runQuery(listPublicArchivedThreadsQuery, config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });

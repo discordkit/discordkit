@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/prefer-literal-enum-member */
 
-import { nativeEnum } from "valibot";
+import { enum_ } from "valibot";
 
 /* eslint-disable no-bitwise */
 export enum GuildMemberFlags {
@@ -14,4 +14,4 @@ export enum GuildMemberFlags {
   STARTED_ONBOARDING = 1 << 3
 }
 
-export const guildMemberFlagsSchema = nativeEnum(GuildMemberFlags);
+export const guildMemberFlagsSchema = enum_(GuildMemberFlags);

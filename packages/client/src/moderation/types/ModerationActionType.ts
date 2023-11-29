@@ -1,4 +1,4 @@
-import { nativeEnum } from "valibot";
+import { enum_ } from "valibot";
 
 export enum ModerationActionType {
   /** blocks the content of a message according to the rule */
@@ -9,4 +9,4 @@ export enum ModerationActionType {
   TIMEOUT = 3
 }
 
-export const moderationActionTypeSchema = nativeEnum(ModerationActionType);
+export const moderationActionTypeSchema = enum_(ModerationActionType);

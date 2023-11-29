@@ -5,14 +5,14 @@ import {
   optional,
   string,
   minLength,
-  enumType
+  picklist
 } from "valibot";
 import { imageSizes } from "./types/ImageSizes.js";
 
 export const guildBannerSchema = object({
   guild: snowflake,
   banner: string([minLength(1)]),
-  format: optional(enumType([`png`, `jpg`, `webp`, `gif`]), `png`),
+  format: optional(picklist([`png`, `jpg`, `webp`, `gif`]), `png`),
   params: optional(
     object({
       size: imageSizes

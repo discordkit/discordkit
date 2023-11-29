@@ -1,4 +1,4 @@
-import { nativeEnum } from "valibot";
+import { enum_ } from "valibot";
 
 export enum ExplicitContentFilterLevel {
   /** media content will not be scanned */
@@ -9,6 +9,6 @@ export enum ExplicitContentFilterLevel {
   ALL_MEMBERS = 2
 }
 
-export const explicitContentFilterLevelSchema = nativeEnum(
+export const explicitContentFilterLevelSchema = enum_(
   ExplicitContentFilterLevel
 );

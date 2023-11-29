@@ -1,7 +1,7 @@
 import { snowflake } from "@discordkit/core";
 import {
   object,
-  enumType,
+  picklist,
   array,
   maxLength,
   boolean,
@@ -11,7 +11,7 @@ import {
 
 export const allowedMentionSchema = object({
   /** An array of allowed mention types to parse from the content. */
-  parse: array(enumType([`role`, `users`, `everyone`])),
+  parse: array(picklist([`role`, `users`, `everyone`])),
   /** Array of roleIds to mention (Max size of 100) */
   roles: array(snowflake, [maxLength(100)]),
   /** Array of userIds to mention (Max size of 100) */

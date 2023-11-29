@@ -1,4 +1,4 @@
-import { nativeEnum } from "valibot";
+import { enum_ } from "valibot";
 
 export enum ApplicationCommandType {
   /** Slash commands; a text-based command that shows up when a user types / */
@@ -9,4 +9,4 @@ export enum ApplicationCommandType {
   MESSAGE = 3
 }
 
-export const applicationCommandTypeSchema = nativeEnum(ApplicationCommandType);
+export const applicationCommandTypeSchema = enum_(ApplicationCommandType);

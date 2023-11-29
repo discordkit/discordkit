@@ -1,9 +1,9 @@
 import { getAsset, snowflake } from "@discordkit/core";
-import { type Output, object, optional, enumType } from "valibot";
+import { type Output, object, optional, picklist } from "valibot";
 
 export const stickerImageSchema = object({
   sticker: snowflake,
-  format: optional(enumType([`png`, `json`, `gif`]), `png`)
+  format: optional(picklist([`png`, `json`, `gif`]), `png`)
 });
 
 export const sticker = ({

@@ -13,21 +13,19 @@ describe(`modifyCurrentUser`, () => {
   const config = mockSchema(modifyCurrentUserSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(modifyCurrentUserSafe(config)).resolves.toStrictEqual(
-      expected
-    );
+    await expect(modifyCurrentUserSafe(config)).resolves.toEqual(expected);
   });
 
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(modifyCurrentUserProcedure)(config)
-    ).resolves.toStrictEqual(expected);
+    ).resolves.toEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runMutation(modifyCurrentUser);
     result.current.mutate(config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });

@@ -1,6 +1,6 @@
-import { type Output, enumType } from "valibot";
+import { type Output, picklist } from "valibot";
 
-export const localesSchema = enumType([
+export const localesSchema = picklist([
   /** Indonesian | Bahasa Indonesia */
   `id`,
   /** Danish | Dansk */

@@ -1,4 +1,4 @@
-import { nativeEnum } from "valibot";
+import { enum_ } from "valibot";
 
 export enum GuildNSFWLevel {
   DEFAULT = 0,
@@ -7,4 +7,4 @@ export enum GuildNSFWLevel {
   AGE_RESTRICTED = 3
 }
 
-export const guildNSFWLevelSchema = nativeEnum(GuildNSFWLevel);
+export const guildNSFWLevelSchema = enum_(GuildNSFWLevel);

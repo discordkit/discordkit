@@ -1,4 +1,4 @@
-import { nativeEnum } from "valibot";
+import { enum_ } from "valibot";
 
 export enum MessageActivityType {
   JOIN = 1,
@@ -7,4 +7,4 @@ export enum MessageActivityType {
   JOIN_REQUEST = 5
 }
 
-export const messageActivityTypeSchema = nativeEnum(MessageActivityType);
+export const messageActivityTypeSchema = enum_(MessageActivityType);

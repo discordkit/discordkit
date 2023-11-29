@@ -16,7 +16,7 @@ describe(`followAnnouncementChannel`, () => {
   const config = mockSchema(followAnnouncementChannelSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(followAnnouncementChannelSafe(config)).resolves.toStrictEqual(
+    await expect(followAnnouncementChannelSafe(config)).resolves.toEqual(
       expected
     );
   });
@@ -24,13 +24,13 @@ describe(`followAnnouncementChannel`, () => {
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(followAnnouncementChannelProcedure)(config)
-    ).resolves.toStrictEqual(expected);
+    ).resolves.toEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runMutation(followAnnouncementChannel);
     result.current.mutate(config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });

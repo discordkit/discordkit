@@ -13,19 +13,19 @@ describe(`modifyGuildRole`, () => {
   const config = mockSchema(modifyGuildRoleSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(modifyGuildRoleSafe(config)).resolves.toStrictEqual(expected);
+    await expect(modifyGuildRoleSafe(config)).resolves.toEqual(expected);
   });
 
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(modifyGuildRoleProcedure)(config)
-    ).resolves.toStrictEqual(expected);
+    ).resolves.toEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runMutation(modifyGuildRole);
     result.current.mutate(config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });

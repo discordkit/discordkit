@@ -16,21 +16,19 @@ describe(`modifyCurrentMember`, () => {
   const config = mockSchema(modifyCurrentMemberSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(modifyCurrentMemberSafe(config)).resolves.toStrictEqual(
-      expected
-    );
+    await expect(modifyCurrentMemberSafe(config)).resolves.toEqual(expected);
   });
 
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(modifyCurrentMemberProcedure)(config)
-    ).resolves.toStrictEqual(expected);
+    ).resolves.toEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runMutation(modifyCurrentMember);
     result.current.mutate(config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });

@@ -6,10 +6,9 @@ import {
   deleteGuildEmojiSafe,
   deleteGuildEmojiSchema
 } from "../deleteGuildEmoji.js";
-import { emojiSchema } from "../types/Emoji.js";
 
 describe(`deleteGuildEmoji`, () => {
-  mockRequest.delete(`/guilds/:guild/emojis/:emoji`, emojiSchema);
+  mockRequest.delete(`/guilds/:guild/emojis/:emoji`);
   const config = mockSchema(deleteGuildEmojiSchema);
 
   it(`can be used standalone`, async () => {

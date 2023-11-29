@@ -1,4 +1,4 @@
-import { nativeEnum } from "valibot";
+import { enum_ } from "valibot";
 
 export enum ScheduledEventStatus {
   SCHEDULED = 1,
@@ -7,4 +7,4 @@ export enum ScheduledEventStatus {
   CANCELED = 4
 }
 
-export const scheduledEventStatusSchema = nativeEnum(ScheduledEventStatus);
+export const scheduledEventStatusSchema = enum_(ScheduledEventStatus);

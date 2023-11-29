@@ -1,4 +1,4 @@
-import { enumType, object, optional, partial } from "valibot";
+import { picklist, object, optional, partial } from "valibot";
 import {
   get,
   type Fetcher,
@@ -14,7 +14,7 @@ export const getGuildWidgetImageSchema = object({
     partial(
       object({
         /** style of the widget image returned */
-        style: enumType([
+        style: picklist([
           /** shield style widget with Discord icon and guild members online count */
           `shield`,
           /** large image with guild icon, name and online count. "POWERED BY DISCORD" as the footer of the widget */

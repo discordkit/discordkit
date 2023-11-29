@@ -1,4 +1,4 @@
-import { nativeEnum } from "valibot";
+import { enum_ } from "valibot";
 
 export enum ApplicationCommandPermissionType {
   ROLE = 1,
@@ -6,6 +6,6 @@ export enum ApplicationCommandPermissionType {
   CHANNEL = 3
 }
 
-export const applicationCommandPermissionType = nativeEnum(
+export const applicationCommandPermissionTypeSchema = enum_(
   ApplicationCommandPermissionType
 );

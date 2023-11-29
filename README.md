@@ -1,10 +1,15 @@
-<p align="center">
+<div align="center">
 
 ![Discordkit](./static/logo-light.svg#gh-light-mode-only)
 ![Discordkit](./static/logo-dark.svg#gh-dark-mode-only)
 
-<p align="center"><a href="https://www.npmjs.com/package/@discordkit/client"><img src="https://img.shields.io/npm/v/@discordkit/client.svg?style=flat" alt="npm"></a><a href="https://github.com/discordkit/discordkit/actions/workflows/ci.yml"><img src="https://github.com/discordkit/discordkit/actions/workflows/ci.yml/badge.svg" alt="CI"></a><a href="https://codecov.io/gh/discordkit/discordkit"><img src="https://codecov.io/gh/discordkit/discordkit/branch/master/graph/badge.svg" alt="codecov"/></a></p>
-<p align="center">TypeScript SDK for <a href="https://discord.com/developers/docs">Discord's API</a></p>
+[![npm version](https://img.shields.io/npm/v/@discordkit/client.svg?style=flat)](https://www.npmjs.com/package/@discordkit/client)
+[![CI status](https://github.com/discordkit/discordkit/actions/workflows/ci.yml/badge.svg)](https://github.com/discordkit/discordkit/actions/workflows/ci.yml)
+[![Codecov coverage](https://codecov.io/gh/discordkit/discordkit/branch/master/graph/badge.svg)](https://codecov.io/gh/discordkit/discordkit)
+
+TypeScript SDK for [Discord's API](https://discord.com/developers/docs)
+
+</div>
 
 ---
 

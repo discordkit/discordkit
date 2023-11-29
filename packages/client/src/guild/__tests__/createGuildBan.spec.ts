@@ -6,10 +6,9 @@ import {
   createGuildBanSafe,
   createGuildBanSchema
 } from "../createGuildBan.js";
-import { banSchema } from "../types/Ban.js";
 
 describe(`createGuildBan`, () => {
-  mockRequest.put(`/guilds/:guild/bans/:user`, banSchema);
+  mockRequest.put(`/guilds/:guild/bans/:user`);
   const config = mockSchema(createGuildBanSchema);
 
   it(`can be used standalone`, async () => {

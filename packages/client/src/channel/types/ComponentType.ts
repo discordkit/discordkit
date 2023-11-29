@@ -1,4 +1,4 @@
-import { nativeEnum } from "valibot";
+import { enum_ } from "valibot";
 
 export enum ComponentType {
   /** Container for other components */
@@ -19,4 +19,4 @@ export enum ComponentType {
   ChannelSelect = 8
 }
 
-export const componentTypeSchema = nativeEnum(ComponentType);
+export const componentTypeSchema = enum_(ComponentType);

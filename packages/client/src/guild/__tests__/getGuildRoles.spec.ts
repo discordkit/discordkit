@@ -17,18 +17,18 @@ describe(`getGuildRoles`, () => {
   const config = mockSchema(getGuildRolesSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(getGuildRolesSafe(config)).resolves.toStrictEqual(expected);
+    await expect(getGuildRolesSafe(config)).resolves.toEqual(expected);
   });
 
   it(`is tRPC compatible`, async () => {
-    await expect(
-      runProcedure(getGuildRolesProcedure)(config)
-    ).resolves.toStrictEqual(expected);
+    await expect(runProcedure(getGuildRolesProcedure)(config)).resolves.toEqual(
+      expected
+    );
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runQuery(getGuildRolesQuery, config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });

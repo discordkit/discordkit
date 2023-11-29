@@ -1,4 +1,4 @@
-import { nativeEnum } from "valibot";
+import { enum_ } from "valibot";
 
 export enum KeywordPreset {
   /** Words that may be considered forms of swearing or cursing */
@@ -9,4 +9,4 @@ export enum KeywordPreset {
   SLURS = 3
 }
 
-export const keywordPresetSchema = nativeEnum(KeywordPreset);
+export const keywordPresetSchema = enum_(KeywordPreset);

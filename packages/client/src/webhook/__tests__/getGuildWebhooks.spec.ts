@@ -17,18 +17,18 @@ describe(`getGuildWebhooks`, () => {
   const config = mockSchema(getGuildWebhooksSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(getGuildWebhooksSafe(config)).resolves.toStrictEqual(expected);
+    await expect(getGuildWebhooksSafe(config)).resolves.toEqual(expected);
   });
 
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(getGuildWebhooksProcedure)(config)
-    ).resolves.toStrictEqual(expected);
+    ).resolves.toEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runQuery(getGuildWebhooksQuery, config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });

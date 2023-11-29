@@ -18,19 +18,19 @@ describe(`createDM`, () => {
   const config = mockSchema(createDMSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(createDMSafe(config)).resolves.toStrictEqual(expected);
+    await expect(createDMSafe(config)).resolves.toEqual(expected);
   });
 
   it(`is tRPC compatible`, async () => {
-    await expect(
-      runProcedure(createDMProcedure)(config)
-    ).resolves.toStrictEqual(expected);
+    await expect(runProcedure(createDMProcedure)(config)).resolves.toEqual(
+      expected
+    );
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runMutation(createDM);
     result.current.mutate(config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });

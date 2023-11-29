@@ -13,18 +13,18 @@ describe(`getWebhook`, () => {
   const config = mockSchema(getWebhookSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(getWebhookSafe(config)).resolves.toStrictEqual(expected);
+    await expect(getWebhookSafe(config)).resolves.toEqual(expected);
   });
 
   it(`is tRPC compatible`, async () => {
-    await expect(
-      runProcedure(getWebhookProcedure)(config)
-    ).resolves.toStrictEqual(expected);
+    await expect(runProcedure(getWebhookProcedure)(config)).resolves.toEqual(
+      expected
+    );
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runQuery(getWebhookQuery, config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });

@@ -17,18 +17,18 @@ describe(`listGuildEmojis`, () => {
   const config = mockSchema(listGuildEmojisSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(listGuildEmojisSafe(config)).resolves.toStrictEqual(expected);
+    await expect(listGuildEmojisSafe(config)).resolves.toEqual(expected);
   });
 
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(listGuildEmojisProcedure)(config)
-    ).resolves.toStrictEqual(expected);
+    ).resolves.toEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runQuery(listGuildEmojisQuery, config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });

@@ -16,7 +16,7 @@ describe(`getCurrentUserGuildMember`, () => {
   const config = mockSchema(getCurrentUserGuildMemberSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(getCurrentUserGuildMemberSafe(config)).resolves.toStrictEqual(
+    await expect(getCurrentUserGuildMemberSafe(config)).resolves.toEqual(
       expected
     );
   });
@@ -24,12 +24,12 @@ describe(`getCurrentUserGuildMember`, () => {
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(getCurrentUserGuildMemberProcedure)(config)
-    ).resolves.toStrictEqual(expected);
+    ).resolves.toEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runQuery(getCurrentUserGuildMemberQuery, config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });

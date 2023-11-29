@@ -1,6 +1,38 @@
-import type { QueryFunction } from "@tanstack/react-query";
-import type { z } from "zod";
+import type { BaseSchema } from "valibot";
 import type { Fetcher } from "./methods.js";
+
+/* Lifted from @tanstack/react-query */
+interface Register {}
+type QueryKey = ReadonlyArray<unknown>;
+type QueryMeta = Register extends {
+  queryMeta: infer TQueryMeta;
+}
+  ? TQueryMeta extends Record<string, unknown>
+    ? TQueryMeta
+    : Record<string, unknown>
+  : Record<string, unknown>;
+type FetchDirection = "forward" | "backward";
+type QueryFunctionContext<
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = never
+> = [TPageParam] extends [never]
+  ? {
+      queryKey: TQueryKey;
+      signal: AbortSignal;
+      meta: QueryMeta | undefined;
+    }
+  : {
+      queryKey: TQueryKey;
+      signal: AbortSignal;
+      pageParam: TPageParam;
+      direction: FetchDirection;
+      meta: QueryMeta | undefined;
+    };
+export type QueryFunction<
+  T = unknown,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = never
+> = (context: QueryFunctionContext<TQueryKey, TPageParam>) => T | Promise<T>;
 
 /**
  * Given a {@link Fetcher | Fetcher} function, transforms it into a curried function
@@ -8,7 +40,7 @@ import type { Fetcher } from "./methods.js";
  * the need for any additional boilerplate.
  */
 export const toQuery =
-  <S extends z.ZodTypeAny | null, R, T extends Fetcher<S, R>>(
+  <S extends BaseSchema | null, R, T extends Fetcher<S, R>>(
     fn: T
   ): Parameters<T>["length"] extends 0
     ? () => QueryFunction<Awaited<ReturnType<T>>>

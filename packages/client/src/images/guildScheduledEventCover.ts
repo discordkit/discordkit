@@ -5,14 +5,14 @@ import {
   object,
   optional,
   string,
-  enumType
+  picklist
 } from "valibot";
 import { imageSizes } from "./types/ImageSizes.js";
 
 export const guildScheduledEventCoverSchema = object({
   event: snowflake,
   cover: string([minLength(1)]),
-  format: optional(enumType([`png`, `jpg`, `webp`]), `png`),
+  format: optional(picklist([`png`, `jpg`, `webp`]), `png`),
   params: optional(
     object({
       size: imageSizes

@@ -1,4 +1,4 @@
-import { nativeEnum } from "valibot";
+import { enum_ } from "valibot";
 
 export enum EmbedType {
   /** generic embed rendered from embed attributes */
@@ -15,4 +15,4 @@ export enum EmbedType {
   LINK = `link`
 }
 
-export const embedTypeSchema = nativeEnum(EmbedType);
+export const embedTypeSchema = enum_(EmbedType);

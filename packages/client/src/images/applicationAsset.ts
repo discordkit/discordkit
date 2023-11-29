@@ -1,11 +1,11 @@
 import { getAsset, snowflake } from "@discordkit/core";
-import { type Output, enumType, object, optional } from "valibot";
+import { type Output, picklist, object, optional } from "valibot";
 import { imageSizes } from "./types/ImageSizes.js";
 
 export const applicationAssetSchema = object({
   application: snowflake,
   asset: snowflake,
-  format: optional(enumType([`png`, `jpg`, `webp`]), `png`),
+  format: optional(picklist([`png`, `jpg`, `webp`]), `png`),
   params: optional(
     object({
       size: imageSizes

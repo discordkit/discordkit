@@ -31,9 +31,11 @@
   "types": "./dist/esm/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/esm/index.d.ts",
       "module": "./dist/esm/index.js",
-      "import": "./dist/esm/index.js",
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
       "require": {
         "types": "./dist/cjs/index.d.ts",
         "default": "./dist/cjs/index.js"
@@ -41,9 +43,11 @@
       "default": "./dist/esm/index.js"
     },
     "./*": {
-      "types": "./dist/esm/*.d.ts",
       "module": "./dist/esm/*.js",
-      "import": "./dist/esm/*.js",
+      "import": {
+        "types": "./dist/esm/*.d.ts",
+        "default": "./dist/esm/*.js"
+      },
       "require": {
         "types": "./dist/cjs/*.d.ts",
         "default": "./dist/cjs/*.js"
@@ -65,9 +69,9 @@
     "@discordkit/core": "workspace:^"
   },
   "peerDependencies": {
-    "valibot": "^0.19.0"
+    "valibot": ">= 0.21.0"
   },
   "devDependencies": {
-    "typescript": "^5.2.2"
+    "typescript": "^5.3.2"
   }
 }

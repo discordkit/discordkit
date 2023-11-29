@@ -4,7 +4,7 @@ import {
   object,
   string,
   minLength,
-  enumType,
+  picklist,
   optional
 } from "valibot";
 import { imageSizes } from "./types/ImageSizes.js";
@@ -12,7 +12,7 @@ import { imageSizes } from "./types/ImageSizes.js";
 export const guildDiscoverySplashSchema = object({
   guild: snowflake,
   splash: string([minLength(1)]),
-  format: optional(enumType([`png`, `jpg`, `webp`]), `png`),
+  format: optional(picklist([`png`, `jpg`, `webp`]), `png`),
   params: optional(
     object({
       size: imageSizes

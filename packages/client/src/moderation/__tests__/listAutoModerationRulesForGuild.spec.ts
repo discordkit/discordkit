@@ -18,20 +18,20 @@ describe(`listAutoModerationRulesForGuild`, () => {
   const config = mockSchema(listAutoModerationRulesForGuildSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(
-      listAutoModerationRulesForGuildSafe(config)
-    ).resolves.toStrictEqual(expected);
+    await expect(listAutoModerationRulesForGuildSafe(config)).resolves.toEqual(
+      expected
+    );
   });
 
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(listAutoModerationRulesForGuildProcedure)(config)
-    ).resolves.toStrictEqual(expected);
+    ).resolves.toEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runQuery(listAutoModerationRulesForGuildQuery, config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });

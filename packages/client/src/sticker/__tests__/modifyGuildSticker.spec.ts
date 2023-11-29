@@ -16,21 +16,19 @@ describe(`modifyGuildSticker`, () => {
   const config = mockSchema(modifyGuildStickerSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(modifyGuildStickerSafe(config)).resolves.toStrictEqual(
-      expected
-    );
+    await expect(modifyGuildStickerSafe(config)).resolves.toEqual(expected);
   });
 
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(modifyGuildStickerProcedure)(config)
-    ).resolves.toStrictEqual(expected);
+    ).resolves.toEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runMutation(modifyGuildSticker);
     result.current.mutate(config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });

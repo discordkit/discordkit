@@ -1,10 +1,8 @@
-import { nativeEnum } from "valibot";
+import { enum_ } from "valibot";
 
 export enum IntegrationExpireBehavior {
   REMOVE_ROLE = 0,
   KICK = 1
 }
 
-export const integrationExpireBehaviorSchema = nativeEnum(
-  IntegrationExpireBehavior
-);
+export const integrationExpireBehaviorSchema = enum_(IntegrationExpireBehavior);

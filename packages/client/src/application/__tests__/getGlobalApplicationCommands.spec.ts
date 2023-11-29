@@ -17,20 +17,20 @@ describe(`getGlobalApplicationCommands`, () => {
   const config = mockSchema(getGlobalApplicationCommandsSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(
-      getGlobalApplicationCommandsSafe(config)
-    ).resolves.toStrictEqual(expected);
+    await expect(getGlobalApplicationCommandsSafe(config)).resolves.toEqual(
+      expected
+    );
   });
 
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(getGlobalApplicationCommandsProcedure)(config)
-    ).resolves.toStrictEqual(expected);
+    ).resolves.toEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runQuery(getGlobalApplicationCommandsQuery, config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });

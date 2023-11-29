@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/prefer-literal-enum-member */
 /* eslint-disable no-bitwise */
-import { nativeEnum } from "valibot";
+import { enum_ } from "valibot";
 
 export enum ChannelFlags {
   /** this thread is pinned to the top of its parent `GUILD_FORUM` or `GUILD_MEDIA` channel */
@@ -12,4 +12,4 @@ export enum ChannelFlags {
   HIDE_MEDIA_DOWNLOAD_OPTIONS = 1 << 15
 }
 
-export const channelFlagsSchema = nativeEnum(ChannelFlags);
+export const channelFlagsSchema = enum_(ChannelFlags);

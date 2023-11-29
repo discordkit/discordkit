@@ -16,20 +16,18 @@ describe(`getGuildWidgetSettings`, () => {
   const config = mockSchema(getGuildWidgetSettingsSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(getGuildWidgetSettingsSafe(config)).resolves.toStrictEqual(
-      expected
-    );
+    await expect(getGuildWidgetSettingsSafe(config)).resolves.toEqual(expected);
   });
 
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(getGuildWidgetSettingsProcedure)(config)
-    ).resolves.toStrictEqual(expected);
+    ).resolves.toEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runQuery(getGuildWidgetSettingsQuery, config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });

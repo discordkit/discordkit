@@ -1,4 +1,4 @@
-import { nativeEnum } from "valibot";
+import { enum_ } from "valibot";
 
 export enum WebhookType {
   /** Incoming Webhooks can post messages to channels with a generated token */
@@ -9,4 +9,4 @@ export enum WebhookType {
   APPLICATION = 3
 }
 
-export const webhookTypeSchema = nativeEnum(WebhookType);
+export const webhookTypeSchema = enum_(WebhookType);

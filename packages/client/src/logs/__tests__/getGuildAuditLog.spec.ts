@@ -9,22 +9,26 @@ import {
 import { auditLogSchema } from "../types/AuditLog.js";
 
 describe(`getGuildAuditLog`, () => {
-  mockRequest.get(`/guilds/:guild/audit-logs`, auditLogSchema);
+  const expected = mockRequest.get(
+    `/guilds/:guild/audit-logs`,
+    auditLogSchema,
+    { seed: 1 }
+  );
   const config = mockSchema(getGuildAuditLogSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(getGuildAuditLogSafe(config)).resolves.toBeDefined();
+    await expect(getGuildAuditLogSafe(config)).resolves.toEqual(expected);
   });
 
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(getGuildAuditLogProcedure)(config)
-    ).resolves.toBeDefined();
+    ).resolves.toEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runQuery(getGuildAuditLogQuery, config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toBeDefined();
+    expect(result.current.data).toEqual(expected);
   });
 });

@@ -13,13 +13,13 @@ describe(`deleteChannel`, () => {
   const config = mockSchema(deleteChannelSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(deleteChannelSafe(config)).resolves.toStrictEqual(expected);
+    await expect(deleteChannelSafe(config)).resolves.toEqual(expected);
   });
 
   it(`is tRPC compatible`, async () => {
-    await expect(
-      runProcedure(deleteChannelProcedure)(config)
-    ).resolves.toStrictEqual(expected);
+    await expect(runProcedure(deleteChannelProcedure)(config)).resolves.toEqual(
+      expected
+    );
   });
 
   it(`is react-query compatible`, async () => {

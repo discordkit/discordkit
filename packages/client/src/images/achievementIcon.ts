@@ -1,7 +1,7 @@
 import { getAsset, snowflake } from "@discordkit/core";
 import {
   type Output,
-  enumType,
+  picklist,
   minLength,
   object,
   optional,
@@ -13,7 +13,7 @@ export const achievementIconSchema = object({
   application: snowflake,
   achievement: snowflake,
   icon: string([minLength(1)]),
-  format: optional(enumType([`png`, `jpg`, `webp`]), `png`),
+  format: optional(picklist([`png`, `jpg`, `webp`]), `png`),
   params: optional(
     object({
       size: imageSizes

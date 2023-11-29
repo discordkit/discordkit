@@ -1,7 +1,7 @@
 /* eslint-disable no-bitwise */
 /* eslint-disable @typescript-eslint/prefer-literal-enum-member */
 
-import { nativeEnum } from "valibot";
+import { enum_ } from "valibot";
 
 // https://discord.com/developers/docs/resources/application#application-object-application-flags
 
@@ -28,4 +28,4 @@ export enum ApplicationFlags {
   APPLICATION_COMMAND_BADGE = 1 << 23
 }
 
-export const applicationFlagsSchema = nativeEnum(ApplicationFlags);
+export const applicationFlagsSchema = enum_(ApplicationFlags);

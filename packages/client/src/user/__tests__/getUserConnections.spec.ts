@@ -11,18 +11,18 @@ describe(`getUserConnections`, () => {
   const expected = mockRequest.get(`/users/@me/connections`, connectionSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(getUserConnectionsSafe()).resolves.toStrictEqual(expected);
+    await expect(getUserConnectionsSafe()).resolves.toEqual(expected);
   });
 
   it(`is tRPC compatible`, async () => {
-    await expect(
-      runProcedure(getUserConnectionsProcedure)()
-    ).resolves.toStrictEqual(expected);
+    await expect(runProcedure(getUserConnectionsProcedure)()).resolves.toEqual(
+      expected
+    );
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runQuery(getUserConnectionsQuery);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });

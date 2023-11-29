@@ -1,7 +1,7 @@
 import { getAsset, snowflake } from "@discordkit/core";
 import {
   type Output,
-  enumType,
+  picklist,
   minLength,
   object,
   optional,
@@ -12,7 +12,7 @@ import { imageSizes } from "./types/ImageSizes.js";
 export const applicationIconSchema = object({
   application: snowflake,
   icon: string([minLength(1)]),
-  format: optional(enumType([`png`, `jpg`, `webp`]), `png`),
+  format: optional(picklist([`png`, `jpg`, `webp`]), `png`),
   params: optional(
     object({
       size: imageSizes

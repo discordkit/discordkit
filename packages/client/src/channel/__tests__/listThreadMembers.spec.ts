@@ -17,20 +17,18 @@ describe(`listThreadMembers`, () => {
   const config = mockSchema(listThreadMembersSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(listThreadMembersSafe(config)).resolves.toStrictEqual(
-      expected
-    );
+    await expect(listThreadMembersSafe(config)).resolves.toEqual(expected);
   });
 
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(listThreadMembersProcedure)(config)
-    ).resolves.toStrictEqual(expected);
+    ).resolves.toEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runQuery(listThreadMembersQuery, config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });

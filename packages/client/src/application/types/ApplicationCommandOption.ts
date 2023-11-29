@@ -14,7 +14,7 @@ import {
   maxValue,
   array,
   recursive,
-  intersection,
+  intersect,
   type Output,
   union
 } from "valibot";
@@ -53,7 +53,7 @@ const applicationCommandOptionBase = object({
   autocomplete: nullish(boolean())
 });
 
-export const applicationCommandOptionSchema = intersection([
+export const applicationCommandOptionSchema = intersect([
   applicationCommandOptionBase,
   union([
     object({

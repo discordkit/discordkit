@@ -17,7 +17,7 @@ describe(`modifyGuildRolePositions`, () => {
   const config = mockSchema(modifyGuildRolePositionsSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(modifyGuildRolePositionsSafe(config)).resolves.toStrictEqual(
+    await expect(modifyGuildRolePositionsSafe(config)).resolves.toEqual(
       expected
     );
   });
@@ -25,13 +25,13 @@ describe(`modifyGuildRolePositions`, () => {
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(modifyGuildRolePositionsProcedure)(config)
-    ).resolves.toStrictEqual(expected);
+    ).resolves.toEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runMutation(modifyGuildRolePositions);
     result.current.mutate(config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });

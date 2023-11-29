@@ -1,4 +1,4 @@
-import { nativeEnum } from "valibot";
+import { enum_ } from "valibot";
 
 export enum InteractionCallbackType {
   /** ACK a Ping */
@@ -17,4 +17,4 @@ export enum InteractionCallbackType {
   MODAL = 9
 }
 
-export const interactionCallbackSchema = nativeEnum(InteractionCallbackType);
+export const interactionCallbackSchema = enum_(InteractionCallbackType);

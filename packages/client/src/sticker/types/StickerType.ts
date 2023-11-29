@@ -1,4 +1,4 @@
-import { nativeEnum } from "valibot";
+import { enum_ } from "valibot";
 
 export enum StickerType {
   /** an official sticker in a pack, part of Nitro or in a removed purchasable pack */
@@ -7,4 +7,4 @@ export enum StickerType {
   GUILD = 2
 }
 
-export const stickerTypeSchema = nativeEnum(StickerType);
+export const stickerTypeSchema = enum_(StickerType);

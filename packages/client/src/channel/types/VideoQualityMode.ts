@@ -1,4 +1,4 @@
-import { nativeEnum } from "valibot";
+import { enum_ } from "valibot";
 
 export enum VideoQualityMode {
   /** Discord chooses the quality for optimal performance */
@@ -7,4 +7,4 @@ export enum VideoQualityMode {
   FULL = 2
 }
 
-export const videoQualityModeSchema = nativeEnum(VideoQualityMode);
+export const videoQualityModeSchema = enum_(VideoQualityMode);

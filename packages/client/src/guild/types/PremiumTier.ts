@@ -1,4 +1,4 @@
-import { nativeEnum } from "valibot";
+import { enum_ } from "valibot";
 
 export enum PremiumTier {
   /** guild has not unlocked any Server Boost perks */
@@ -11,4 +11,4 @@ export enum PremiumTier {
   TIER_3 = 3
 }
 
-export const premiumTierSchema = nativeEnum(PremiumTier);
+export const premiumTierSchema = enum_(PremiumTier);

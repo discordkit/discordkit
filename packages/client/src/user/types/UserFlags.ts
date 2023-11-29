@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/prefer-literal-enum-member */
 
-import { nativeEnum } from "valibot";
+import { enum_ } from "valibot";
 
 /* eslint-disable no-bitwise */
 export enum UserFlags {
@@ -36,4 +36,4 @@ export enum UserFlags {
   ACTIVE_DEVELOPER = 1 << 22
 }
 
-export const userFlagsSchema = nativeEnum(UserFlags);
+export const userFlagsSchema = enum_(UserFlags);

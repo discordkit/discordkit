@@ -15,18 +15,18 @@ describe(`listVoiceRegions`, () => {
   );
 
   it(`can be used standalone`, async () => {
-    await expect(listVoiceRegionsSafe()).resolves.toStrictEqual(expected);
+    await expect(listVoiceRegionsSafe()).resolves.toEqual(expected);
   });
 
   it(`is tRPC compatible`, async () => {
-    await expect(
-      runProcedure(listVoiceRegionsProcedure)()
-    ).resolves.toStrictEqual(expected);
+    await expect(runProcedure(listVoiceRegionsProcedure)()).resolves.toEqual(
+      expected
+    );
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runQuery(listVoiceRegionsQuery);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });

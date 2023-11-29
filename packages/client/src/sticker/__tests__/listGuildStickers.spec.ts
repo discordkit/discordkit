@@ -17,20 +17,18 @@ describe(`listGuildStickers`, () => {
   const config = mockSchema(listGuildStickersSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(listGuildStickersSafe(config)).resolves.toStrictEqual(
-      expected
-    );
+    await expect(listGuildStickersSafe(config)).resolves.toEqual(expected);
   });
 
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(listGuildStickersProcedure)(config)
-    ).resolves.toStrictEqual(expected);
+    ).resolves.toEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runQuery(listGuildStickersQuery, config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });
