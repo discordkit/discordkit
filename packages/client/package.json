@@ -69,7 +69,7 @@
     "build:cjs": "tsc --project ./tsconfig.build.json --outdir dist/cjs --module commonjs --moduleresolution node"
   },
   "dependencies": {
-    "@discordkit/core": "workspace:^"
+    "@discordkit/core": "^1.1.0-next.1"
   },
   "peerDependencies": {
     "valibot": ">= 0.21.0"
