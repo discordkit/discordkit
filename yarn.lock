@@ -7745,6 +7745,7 @@ __metadata:
   dependencies:
     "@discordkit/client": "workspace:^"
     tsup: "npm:^8.0.1"
+    valibot: "npm:^0.21.0"
   languageName: unknown
   linkType: soft
 
@@ -7945,6 +7946,7 @@ __metadata:
     react-dom: "npm:^18.2.0"
     tailwindcss: "npm:^3.3.5"
     typescript: "npm:^5.3.2"
+    valibot: "npm:^0.21.0"
   languageName: unknown
   linkType: soft
 
