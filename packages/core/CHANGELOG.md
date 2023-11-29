@@ -1,5 +1,11 @@
 # @discordkit/core
 
+## 1.1.0-next.0
+
+### Minor Changes
+
+- Replace `zod` with `valibot`
+
 ## 1.0.3
 
 ### Patch Changes
