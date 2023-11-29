@@ -8,9 +8,9 @@ import {
   type Output
 } from "valibot";
 import { initTRPC } from "@trpc/server";
+import { mockRequest } from "#test-utils";
 import { type Fetcher, get } from "../methods.js";
 import { toProcedure } from "../toProcedure.js";
-import { mockRequest } from "test-utils";
 import { discord } from "../DiscordSession.js";
 
 describe(`toProcedure`, () => {

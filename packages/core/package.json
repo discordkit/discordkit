@@ -23,6 +23,9 @@
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
   "types": "./dist/esm/index.d.ts",
+  "imports": {
+    "#test-utils": "../../scripts/test-utils.ts"
+  },
   "exports": {
     ".": {
       "module": "./dist/esm/index.js",

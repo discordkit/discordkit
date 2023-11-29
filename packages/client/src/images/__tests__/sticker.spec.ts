@@ -1,4 +1,4 @@
-import { mockSchema } from "test-utils";
+import { mockSchema } from "#test-utils";
 import { parse, string, url } from "valibot";
 import { sticker, stickerImageSchema } from "../sticker.js";
 

@@ -1,4 +1,4 @@
-import { mockSchema } from "test-utils";
+import { mockSchema } from "#test-utils";
 import { parse, string, url } from "valibot";
 import { storePageAsset, storePageAssetSchema } from "../storePageAsset.js";
 

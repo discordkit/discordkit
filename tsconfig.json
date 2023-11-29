@@ -12,7 +12,7 @@
     "moduleResolution": "NodeNext",
     "baseUrl": ".",
     "paths": {
-      "test-utils": ["./scripts/test-utils.ts"]
+      "#test-utils": ["./scripts/test-utils.ts"]
     },
     "isolatedModules": true,
     "allowJs": true,

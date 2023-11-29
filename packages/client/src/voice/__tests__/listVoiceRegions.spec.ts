@@ -1,5 +1,5 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest } from "test-utils";
+import { runProcedure, runQuery, mockRequest } from "#test-utils";
 import { array, length } from "valibot";
 import {
   listVoiceRegionsProcedure,
