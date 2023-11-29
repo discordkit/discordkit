@@ -25,8 +25,10 @@ describe(`toProcedure`, () => {
 
   it(`is tRPC compatible`, async () => {
     const tRPC = initTRPC.create();
-    const listUsers: Fetcher<null, Output<typeof userSchema>[]> = async () =>
-      get(`/listUsers`);
+    const listUsers: Fetcher<
+      null,
+      Array<Output<typeof userSchema>>
+    > = async () => get(`/listUsers`);
     const listUsersProcedure = toProcedure(
       `query`,
       listUsers,

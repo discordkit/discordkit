@@ -3,7 +3,7 @@ import type { Fetcher } from "./methods.js";
 
 /* Lifted from @tanstack/react-query */
 interface Register {}
-type QueryKey = ReadonlyArray<unknown>;
+type QueryKey = readonly unknown[];
 type QueryMeta = Register extends {
   queryMeta: infer TQueryMeta;
 }
@@ -11,7 +11,7 @@ type QueryMeta = Register extends {
     ? TQueryMeta
     : Record<string, unknown>
   : Record<string, unknown>;
-type FetchDirection = "forward" | "backward";
+type FetchDirection = "backward" | "forward";
 type QueryFunctionContext<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = never
@@ -32,7 +32,7 @@ export type QueryFunction<
   T = unknown,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = never
-> = (context: QueryFunctionContext<TQueryKey, TPageParam>) => T | Promise<T>;
+> = (context: QueryFunctionContext<TQueryKey, TPageParam>) => Promise<T> | T;
 
 /**
  * Given a {@link Fetcher | Fetcher} function, transforms it into a curried function

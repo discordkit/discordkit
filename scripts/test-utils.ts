@@ -38,7 +38,7 @@ export const mockSchema = <T extends BaseSchema | BaseSchemaAsync>(
   new Valimock({
     ...opts,
     customMocks: {
-      special: (ref) => {
+      special: (ref): string | undefined => {
         if (ref === snowflake) {
           return uid.getUniqueID().toString();
         }
