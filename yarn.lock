@@ -1287,10 +1287,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:20.8.2, @types/node@npm:^20.8.2":
-  version: 20.8.2
-  resolution: "@types/node@npm:20.8.2"
-  checksum: 3da73e25d821bfcdb7de98589027e08bb4848e55408671c4a83ec0341e124b5313a0b20e1e4b4eff1168ea17a86f622ad73fcb04b761abd77496b9a27cbd5de5
+"@types/node@npm:20.10.1, @types/node@npm:^20.10.1":
+  version: 20.10.1
+  resolution: "@types/node@npm:20.10.1"
+  dependencies:
+    undici-types: ~5.26.4
+  checksum: 9dfdcd2496ce535dba0ae496985d6e991a8a5d70a180db3a94c947a2123d99318a95dce4aa2a192f7e57c3afa3fdb44d6fd63e18efd49568950d6c239dadcc39
   languageName: node
   linkType: hard
 
@@ -2780,7 +2782,7 @@ __metadata:
     "@testing-library/react": ^14.0.0
     "@trpc/server": ^10.38.5
     "@types/eslint": ^8.44.3
-    "@types/node": 20.8.2
+    "@types/node": 20.10.1
     "@types/react": ^18.2.25
     "@types/react-dom": ^18.2.10
     "@vitest/coverage-v8": ^0.34.6
@@ -7577,6 +7579,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"undici-types@npm:~5.26.4":
+  version: 5.26.5
+  resolution: "undici-types@npm:5.26.5"
+  checksum: 3192ef6f3fd5df652f2dc1cd782b49d6ff14dc98e5dced492aa8a8c65425227da5da6aafe22523c67f035a272c599bb89cfe803c1db6311e44bed3042fc25487
+  languageName: node
+  linkType: hard
+
 "unique-filename@npm:^3.0.0":
   version: 3.0.0
   resolution: "unique-filename@npm:3.0.0"
@@ -7998,7 +8007,7 @@ __metadata:
     "@tanstack/react-query-devtools": ^4.35.7
     "@trpc/client": ^10.38.5
     "@trpc/react-query": ^10.38.5
-    "@types/node": ^20.8.2
+    "@types/node": ^20.10.1
     "@types/react": ^18.2.25
     "@types/react-dom": ^18.2.10
     autoprefixer: ^10.4.16
