@@ -45,11 +45,11 @@ export const createGuildScheduledEventSchema = object({
  *
  * Create a guild scheduled event in the guild. Returns a {@link ScheduledEvent | guild scheduled event object} on success. Fires a Guild Scheduled Event Create Gateway event.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > A guild can have a maximum of 100 events with `SCHEDULED` or `ACTIVE` status at any time.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

@@ -23,7 +23,7 @@ export const listAutoModerationRulesForGuildSchema = object({
  *
  * Get a list of all rules currently configured for the guild. Returns a list of {@link ModerationRule | auto moderation rule objects} for the given guild.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint requires the `MANAGE_GUILD` permission.
  */

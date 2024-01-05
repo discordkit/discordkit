@@ -19,7 +19,7 @@ export const deleteGuildEmojiSchema = object({
  *
  * Delete the given emoji. Requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns `204 No Content` on success. Fires a Guild Emojis Update Gateway event.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

@@ -28,7 +28,7 @@ export const getGuildApplicationCommandsSchema = object({
  *
  * **GET** `/applications/:application/guilds/:guild/commands`
  *
- * > **WARNING**
+ * > [!WARNING]
  * >
  * > The objects returned by this endpoint may be augmented with additional fields if localization is active.
  *

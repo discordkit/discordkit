@@ -38,7 +38,7 @@ export const getGuildWidgetImageSchema = object({
  *
  * Returns a PNG image widget for the guild. Requires no permissions or authentication.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > All parameters to this endpoint are optional.
  */

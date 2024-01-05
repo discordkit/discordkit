@@ -57,11 +57,11 @@ export const editMessageSchema = object({
  *
  * Refer to Uploading Files for details on attachments and `multipart/form-data` requests. Any provided files will be appended to the message. To remove or replace files you will have to supply the `attachments` field which specifies the files to retain on the message after edit.
  *
- * > **WARNING**
+ * > [!WARNING]
  * >
  * > Starting with API v10, the `attachments` array must contain all attachments that should be present after edit, including **retained and new** attachments provided in the request body.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > All parameters to this endpoint are optional and nullable.
  */

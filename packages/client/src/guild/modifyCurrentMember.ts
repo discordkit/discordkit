@@ -23,7 +23,7 @@ export const modifyCurrentMemberSchema = object({
  *
  * Modifies the current member in a guild. Returns a `200` with the updated {@link Member | member object} on success. Fires a Guild Member Update Gateway event.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

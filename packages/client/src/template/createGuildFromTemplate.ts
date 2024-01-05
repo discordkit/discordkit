@@ -25,7 +25,7 @@ export const createGuildFromTemplateSchema = object({
  *
  * Create a new guild based on a template. Returns a {@link Guild | guild object} on success. Fires a Guild Create Gateway event.
  *
- * > **WARNING**
+ * > [!WARNING]
  * >
  * > This endpoint can be used only by bots in less than 10 guilds.
  */

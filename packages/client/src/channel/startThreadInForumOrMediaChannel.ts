@@ -82,11 +82,11 @@ export const startThreadInForumOrMediaChannelSchema = object({
  * - Files must be attached using a `multipart/form-data` body as described in Uploading Files.
  * - Note that when sending a message, you must provide a value for at least one of `content`, `embeds`, `stickerIds`, `components`, or `files`.
  *
- * > **WARNING**
+ * > [!WARNING]
  * >
  * > Discord may strip certain characters from message content, like invalid unicode characters or characters which cause unexpected message formatting. If you are passing user-generated strings into message content, consider sanitizing the data to prevent unexpected behavior and using `allowed_mentions` to prevent unexpected mentions.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

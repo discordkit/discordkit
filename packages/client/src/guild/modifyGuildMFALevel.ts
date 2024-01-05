@@ -23,7 +23,7 @@ export const modifyGuildMFALevelSchema = object({
  *
  * Modify a guild's MFA level. Requires guild ownership. Returns the updated {@link MFALevel | level} on success. Fires a Guild Update Gateway event.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

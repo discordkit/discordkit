@@ -28,11 +28,11 @@ export const modifyGuildEmojiSchema = object({
  *
  * Modify the given emoji. Requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns the updated {@link Emoji | emoji object} on success. Fires a Guild Emojis Update Gateway event.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > All parameters to this endpoint are optional.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

@@ -34,11 +34,11 @@ export const modifyGuildOnboardingSchema = object({
  *
  * Modifies the onboarding configuration of the guild. Returns a `200` with the {@link GuildOnboarding | Onboarding object} for the guild. Requires the `MANAGE_GUILD` and `MANAGE_ROLES` permissions.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > Onboarding enforces constraints when enabled. These constraints are that there must be at least 7 Default Channels and at least 5 of them must allow sending messages to the @everyone role. The `mode` field modifies what is considered when enforcing these constraints.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

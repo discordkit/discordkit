@@ -41,11 +41,11 @@ export const modifyGuildWelcomeScreenSchema = object({
  *
  * Modify the guild's Welcome Screen. Requires the `MANAGE_GUILD` permission. Returns the updated {@link WelcomeScreen | Welcome Screen object}. May fire a Guild Update Gateway event.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > All parameters to this endpoint are optional and nullable
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

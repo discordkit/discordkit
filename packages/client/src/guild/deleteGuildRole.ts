@@ -19,7 +19,7 @@ export const deleteGuildRoleSchema = object({
  *
  * Delete a guild role. Requires the `MANAGE_ROLES` permission. Returns a `204 empty` response on success. Fires a Guild Role Delete Gateway event.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

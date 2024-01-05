@@ -123,7 +123,7 @@ export const modifyChannelSchema = object({
  *
  * Update a channel's settings. Returns a channel on success, and a `400 BAD REQUEST` on invalid parameters. All JSON parameters are optional.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

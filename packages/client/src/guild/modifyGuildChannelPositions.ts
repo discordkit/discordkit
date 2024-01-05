@@ -38,7 +38,7 @@ export const modifyGuildChannelPositionsSchema = object({
  *
  * Modify the positions of a set of channel objects for the guild. Requires `MANAGE_CHANNELS` permission. Returns a `204 empty` response on success. Fires multiple Channel Update Gateway events.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > Only channels to be modified are required.
  */

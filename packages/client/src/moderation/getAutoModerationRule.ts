@@ -24,7 +24,7 @@ export const getAutoModerationRuleSchema = object({
  *
  * Get a single rule. Returns an {@link ModerationRule | auto moderation rule object}.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint requires the `MANAGE_GUILD` permission.
  */

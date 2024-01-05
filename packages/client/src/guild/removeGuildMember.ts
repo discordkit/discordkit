@@ -19,7 +19,7 @@ export const removeGuildMemberSchema = object({
  *
  * Remove a member from a guild. Requires `KICK_MEMBERS` permission. Returns a `204 empty` response on success. Fires a Guild Member Remove Gateway event.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

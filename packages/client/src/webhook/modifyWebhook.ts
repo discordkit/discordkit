@@ -29,11 +29,11 @@ export const modifyWebhookSchema = object({
  *
  * Modify a webhook. Requires the `MANAGE_WEBHOOKS` permission. Returns the updated {@link Webhook | webhook object} on success. Fires a Webhooks Update Gateway event.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > All parameters to this endpoint are optional
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason `header.
  */

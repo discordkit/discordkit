@@ -39,11 +39,11 @@ export const listGuildMembersSchema = object({
  *
  * Returns a list of {@link Member | guild member objects} that are members of the guild.
  *
- * > **WARNING**
+ * > [!WARNING]
  * >
  * > This endpoint is restricted according to whether the `GUILD_MEMBERS` Privileged Intent is enabled for your application.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > All parameters to this endpoint are optional
  */

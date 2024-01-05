@@ -41,7 +41,7 @@ export const listThreadMembersSchema = object({
  *
  * **GET** `/channels/:channel/thread-members`
  *
- * > **WARNING**
+ * > [!WARNING]
  * >
  * > Starting in API v11, this endpoint will always return paginated results. Paginated results can be enabled before API v11 by setting `withMember` to `true`. Read the changelog for details.
  *
@@ -49,7 +49,7 @@ export const listThreadMembersSchema = object({
  *
  * When `withMember` is set to `true`, the results will be paginated and each thread member object will include a `member` field containing a guild member object.
  *
- * > **WARNING**
+ * > [!WARNING]
  * >
  * > This endpoint is restricted according to whether the `GUILD_MEMBERS` Privileged Intent is enabled for your application.
  */

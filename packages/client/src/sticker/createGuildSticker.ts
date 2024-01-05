@@ -31,15 +31,15 @@ export const createGuildStickerSchema = object({
  *
  * Every guilds has five free sticker slots by default, and each Boost level will grant access to more slots.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  *
- * > **WARNING**
+ * > [!WARNING]
  * >
  * > Lottie stickers can only be uploaded on guilds that have either the `VERIFIED` and/or the `PARTNERED` guild feature.
  *
- * > **WARNING**
+ * > [!WARNING]
  * >
  * > Uploaded stickers are constrained to 5 seconds in length for animated stickers, and 320 x 320 pixels.
  */

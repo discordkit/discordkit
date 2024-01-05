@@ -59,7 +59,7 @@ export const editGlobalApplicationCommandSchema = object({
  *
  * **PATCH* `/applications/:application/commands/:command`
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > All parameters for this endpoint are optional.
  *

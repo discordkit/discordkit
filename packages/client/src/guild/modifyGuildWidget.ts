@@ -23,7 +23,7 @@ export const modifyGuildWidgetSchema = object({
  *
  * Modify a guild widget settings object for the guild. All attributes may be passed in with JSON and modified. Requires the `MANAGE_GUILD` permission. Returns the updated {@link GuildWidgetSettings | guild widget settings object}.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

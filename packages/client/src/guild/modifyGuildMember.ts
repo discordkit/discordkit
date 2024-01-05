@@ -49,11 +49,11 @@ export const modifyGuildMemberSchema = object({
  *
  * Modify attributes of a guild member. Returns a `200 OK` with the {@link Member | guild member} as the body. Fires a Guild Member Update Gateway event. If the `channelId` is set to null, this will force the target user to be disconnected from voice.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > All parameters to this endpoint are optional and nullable. When moving members to channels, the API user must have permissions to both connect to the channel and have the `MOVE_MEMBERS` permission.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

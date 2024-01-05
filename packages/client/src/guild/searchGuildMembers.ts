@@ -36,7 +36,7 @@ export const searchGuildMembersSchema = object({
  *
  * Returns a list of {@link Member | guild member objects} whose username or nickname starts with a provided string.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > All parameters to this endpoint except for query are optional
  */

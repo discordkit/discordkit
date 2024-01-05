@@ -24,11 +24,11 @@ export const bulkDeleteMessagesSchema = object({
  *
  * Any message IDs given that do not exist or are invalid will count towards the minimum and maximum message count (currently 2 and 100 respectively).
  *
- * > **WARNING**
+ * > [!WARNING]
  * >
  * > This endpoint will not delete messages older than 2 weeks, and will fail with a `400 BAD REQUEST` if any message provided is older than that or if any duplicate message IDs are provided.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

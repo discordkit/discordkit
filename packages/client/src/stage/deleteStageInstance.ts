@@ -20,7 +20,7 @@ export const deleteStageInstanceSchema = object({
  *
  * Requires the user to be a moderator of the Stage channel.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

@@ -48,7 +48,7 @@ export const getChannelMessagesSchema = object({
  *
  * If the current user is missing the `READ_MESSAGE_HISTORY` permission in the channel, then no messages will be returned.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > The `before`, `after`, and `around` parameters are mutually exclusive, only one may be passed at a time.
  */

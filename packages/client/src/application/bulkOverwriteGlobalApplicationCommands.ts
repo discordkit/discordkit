@@ -23,7 +23,7 @@ export const bulkOverwriteGlobalApplicationCommandsSchema = object({
  *
  * Takes a list of application commands, overwriting the existing global command list for this application. Returns `200` and a list of {@link ApplicationCommand | application command objects}. Commands that do not already exist will count toward daily application command create limits.
  *
- * > **DANGER**
+ * > [!CAUTION]
  * >
  * > This will overwrite all types of application commands: slash commands, user commands, and message commands.
  */

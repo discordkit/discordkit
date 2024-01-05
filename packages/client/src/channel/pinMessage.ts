@@ -19,11 +19,11 @@ export const pinMessageSchema = object({
  *
  * Pin a message in a channel. Requires the `MANAGE_MESSAGES` permission. Returns a `204 empty` response on success. Fires a Channel Pins Update Gateway event.
  *
- * > **WARNING**
+ * > [!WARNING]
  * >
  * > The max pinned messages is 50.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

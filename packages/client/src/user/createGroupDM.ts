@@ -27,7 +27,7 @@ export const createGroupDMSchema = object({
  *
  * Create a new group DM channel with multiple users. Returns a {@link Channel | DM channel object}. This endpoint was intended to be used with the now-deprecated GameBridge SDK. Fires a Channel Create Gateway event.
  *
- * > **WARNING**
+ * > [!WARNING]
  * >
  * > This endpoint is limited to 10 active group DMs.
  */

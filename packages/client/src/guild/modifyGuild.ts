@@ -83,15 +83,15 @@ export const modifyGuildSchema = object({
  *
  * Modify a guild's settings. Requires the `MANAGE_GUILD` permission. Returns the updated {@link Guild | guild object} on success. Fires a Guild Update Gateway event.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > All parameters to this endpoint are optional
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  *
- * > **WARNING**
+ * > [!WARNING]
  * >
  * > Attempting to add or remove the `COMMUNITY` guild feature requires the `ADMINISTRATOR` permission.
  */

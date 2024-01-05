@@ -44,7 +44,7 @@ export const startThreadWithoutMessageSchema = object({
  *
  * Creates a new thread that is not connected to an existing message. Returns a {@link Channel | channel} on success, and a `400 BAD REQUEST` on invalid parameters. Fires a Thread Create Gateway event.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

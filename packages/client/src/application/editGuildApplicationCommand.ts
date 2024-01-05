@@ -60,7 +60,7 @@ export const editGuildApplicationCommandSchema = object({
  *
  * **PATCH* `/applications/:application/guilds/:guild/commands/:command`
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > All parameters for this endpoint are optional.
  *

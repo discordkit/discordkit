@@ -52,15 +52,15 @@ export const modifyAutoModerationRuleSchema = object({
  *
  * Modify an existing rule. Returns an {@link ModerationRule | auto moderation rule} on success. Fires an Auto Moderation Rule Update Gateway event.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > Requires `MANAGE_GUILD` permissions.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > All parameters for this endpoint are optional.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

@@ -30,11 +30,11 @@ export const modifyGuildStickerSchema = object({
  *
  * Modify the given sticker. Requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns the updated {@link Sticker | sticker object} on success. Fires a Guild Stickers Update Gateway event.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > All parameters to this endpoint are optional.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

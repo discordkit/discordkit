@@ -27,11 +27,11 @@ export const editApplicationCommandPermissionsSchema = object({
  *
  * **PUT* `/applications/:application/guilds/:guild/commands/:command/permissions`
  *
- * > **DANGER**
+ * > [!CAUTION]
  * >
  * > Apps that use this endpoint may be affected by upcoming breaking changes around permission configuration behavior starting on December 16, 2022. Read the changelog for details.
  *
- * > **WARNING**
+ * > [!WARNING]
  * >
  * > This endpoint will overwrite existing permissions for the command in that guild
  *
@@ -39,11 +39,11 @@ export const editApplicationCommandPermissionsSchema = object({
  *
  * You can add up to 100 permission overwrites for a command.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint requires authentication with a Bearer token that has permission to manage the guild and its roles. For more information, read above about application command permissions.
  *
- * > **WARNING**
+ * > [!WARNING]
  * >
  * > Deleting or renaming a command will permanently delete all permissions for the command
  */

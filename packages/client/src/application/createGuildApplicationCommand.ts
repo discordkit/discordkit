@@ -65,7 +65,7 @@ export const createGuildApplicationCommandSchema = object({
  *
  * **POST** `/applications/:application/guilds/:guild/commands`
  *
- * > **DANGER**
+ * > [!CAUTION]
  * >
  * > Creating a command with the same name as an existing command for your application will overwrite the old command.
  *

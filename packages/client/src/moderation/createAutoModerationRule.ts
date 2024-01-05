@@ -52,11 +52,11 @@ export const createAutoModerationRuleSchema = object({
  *
  * Create a new rule. Returns an {@link ModerationRule | auto moderation rule} on success. Fires an Auto Moderation Rule Create Gateway event.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint requires the `MANAGE_GUILD` permission.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

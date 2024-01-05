@@ -30,7 +30,7 @@ export const createWebhookSchema = object({
  * - It does not contain the substrings `clyde` or `discord` (case-insensitive)
  * - It follows the nickname guidelines in the Usernames and Nicknames documentation, with an exception that webhook names can be up to 80 characters
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

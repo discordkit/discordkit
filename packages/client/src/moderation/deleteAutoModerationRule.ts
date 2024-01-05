@@ -19,11 +19,11 @@ export const deleteAutoModerationRuleSchema = object({
  *
  * Delete a rule. Returns a `204` on success. Fires an Auto Moderation Rule Delete Gateway event.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint requires the `MANAGE_GUILD` permission.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

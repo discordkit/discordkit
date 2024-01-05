@@ -19,7 +19,7 @@ export const createMessageSchema = object({
  *
  * **POST** `/channels/:channel/messages`
  *
- * > **WARNING**
+ * > [!WARNING]
  * >
  * > Discord may strip certain characters from message content, like invalid unicode characters or characters which cause unexpected message formatting. If you are passing user-generated strings into message content, consider sanitizing the data to prevent unexpected behavior and using `allowedMentions` to prevent unexpected mentions.
  *

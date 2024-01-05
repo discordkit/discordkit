@@ -25,7 +25,7 @@ export const modifyCurrentUserSchema = object({
  *
  * Modify the requester's user account settings. Returns a {@link User | user object} on success. Fires a User Update Gateway event.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > All parameters to this endpoint are optional.
  */

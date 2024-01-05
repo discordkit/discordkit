@@ -34,11 +34,11 @@ export const addGuildMemberSchema = object({
  *
  * For guilds with Membership Screening enabled, this endpoint will default to adding new members as `pending` in the guild member object. Members that are `pending` will have to complete membership screening before they become full members that can talk.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > All parameters to this endpoint except for `accessToken` are optional.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > The Authorization header must be a Bot token (belonging to the same application used for authorization), and the bot must be a member of the guild with `CREATE_INSTANT_INVITE` permission.
  */

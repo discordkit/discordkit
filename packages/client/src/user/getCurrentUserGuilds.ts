@@ -58,7 +58,7 @@ export const getCurrentUserGuildsSchema = object({
  *    }
  * ```
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint returns 200 guilds by default, which is the maximum number of guilds a non-bot user can join. Therefore, pagination is **not needed** for integrations that need to get a list of the users' guilds.
  */

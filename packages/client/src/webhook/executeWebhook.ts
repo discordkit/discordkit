@@ -79,15 +79,15 @@ export const executeWebhookSchema = object({
  *
  * Refer to Uploading Files for details on attachments and `multipart/form-data` requests. Returns a message or `204 No Content` depending on the `wait` query parameter.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > Note that when sending a message, you must provide a value for at least one of `content`, `embeds`, `components`, or `file`.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > If the webhook channel is a forum channel, you must provide either `threadId` in the query string params, or `threadName` in the JSON/form params. If `threadId` is provided, the message will send in that thread. If `threadName` is provided, a thread with that name will be created in the forum channel.
  *
- * > **WARNING**
+ * > [!WARNING]
  * >
  * > Discord may strip certain characters from message content, like invalid unicode characters or characters which cause unexpected message formatting. If you are passing user-generated strings into message content, consider sanitizing the data to prevent unexpected behavior and using `allowed_mentions` to prevent unexpected mentions.
  */

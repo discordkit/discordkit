@@ -20,7 +20,7 @@ export const getGuildIntegrationsSchema = object({
  *
  * Returns a list of {@link Integration | integration objects} for the guild. Requires the `MANAGE_GUILD` permission.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint returns a maximum of 50 integrations. If a guild has more integrations, they cannot be accessed.
  */

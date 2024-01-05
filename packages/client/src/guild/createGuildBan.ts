@@ -42,7 +42,7 @@ export const createGuildBanSchema = object({
  *
  * Create a guild ban, and optionally delete previous messages sent by the banned user. Requires the `BAN_MEMBERS` permission. Returns a `204 empty` response on success. Fires a Guild Ban Add Gateway event.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

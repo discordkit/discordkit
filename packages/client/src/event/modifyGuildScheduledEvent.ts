@@ -49,15 +49,15 @@ export const modifyGuildScheduledEventSchema = object({
  *
  * Modify a guild scheduled event. Returns the modified {@link ScheduledEvent | guild scheduled event object} on success. Fires a Guild Scheduled Event Update Gateway event.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > To start or end an event, use this endpoint to modify the event's status field.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint silently discards `entity_metadata` for non-`EXTERNAL` events.
  */

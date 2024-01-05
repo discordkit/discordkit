@@ -72,7 +72,7 @@ export const bulkOverwriteGuildApplicationCommandsSchema = object({
  *
  * Takes a list of application commands, overwriting the existing command list for this application for the targeted guild. Returns `200` and a list of {@link ApplicationCommand | application command objects}.
  *
- * > **DANGER**
+ * > [!CAUTION]
  * >
  * > This will overwrite all types of application commands: slash commands, user commands, and message commands.
  */
