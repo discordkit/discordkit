@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object } from "valibot";
 import {
   get,
   type Fetcher,
@@ -9,7 +9,7 @@ import {
 } from "@discordkit/core";
 import { emojiSchema, type Emoji } from "./types/Emoji.js";
 
-export const getGuildEmojiSchema = z.object({
+export const getGuildEmojiSchema = object({
   guild: snowflake,
   emoji: snowflake
 });

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object, string, minLength, partial, optional } from "valibot";
 import {
   get,
   type Fetcher,
@@ -9,17 +9,18 @@ import {
 } from "@discordkit/core";
 import { messageSchema, type Message } from "../channel/types/Message.js";
 
-export const getWebhookMessageSchema = z.object({
+export const getWebhookMessageSchema = object({
   webhook: snowflake,
-  token: z.string().min(1),
+  token: string([minLength(1)]),
   message: snowflake,
-  params: z
-    .object({
-      /** id of the thread the message is in */
-      threadId: snowflake
-    })
-    .partial()
-    .optional()
+  params: optional(
+    partial(
+      object({
+        /** id of the thread the message is in */
+        threadId: snowflake
+      })
+    )
+  )
 });
 
 /**

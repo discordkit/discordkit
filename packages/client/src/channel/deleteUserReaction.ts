@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object } from "valibot";
 import {
   remove,
   type Fetcher,
@@ -7,7 +7,7 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const deleteUserReactionSchema = z.object({
+export const deleteUserReactionSchema = object({
   channel: snowflake,
   message: snowflake,
   emoji: snowflake,

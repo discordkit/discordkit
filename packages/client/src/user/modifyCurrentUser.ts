@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object, partial, string } from "valibot";
 import {
   patch,
   type Fetcher,
@@ -7,15 +7,15 @@ import {
 } from "@discordkit/core";
 import { userSchema, type User } from "./types/User.js";
 
-export const modifyCurrentUserSchema = z.object({
-  body: z
-    .object({
+export const modifyCurrentUserSchema = object({
+  body: partial(
+    object({
       /** user's username, if changed may cause the user's discriminator to be randomized. */
-      username: z.string(),
+      username: string(),
       /** if passed, modifies the user's avatar */
-      avatar: z.string()
+      avatar: string()
     })
-    .partial()
+  )
 });
 
 /**
@@ -25,7 +25,7 @@ export const modifyCurrentUserSchema = z.object({
  *
  * Modify the requester's user account settings. Returns a {@link User | user object} on success. Fires a User Update Gateway event.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > All parameters to this endpoint are optional.
  */

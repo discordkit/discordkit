@@ -1,30 +1,28 @@
-import type { z } from "zod";
+import type { BaseSchema, Output } from "valibot";
 import { isNonNullable } from "./isNonNullable.js";
 import { isObject } from "./isObject.js";
 import type { Fetcher } from "./methods.js";
 
-const isSchema = (val: unknown): val is z.ZodTypeAny =>
-  isNonNullable(val) && isObject(val) && `parse` in val;
+const isSchema = (val: unknown): val is BaseSchema =>
+  isNonNullable(val) && isObject(val) && `_parse` in val;
 
 type ToValidated = <
   F extends
+    | Fetcher<BaseSchema, Output<BaseSchema>>
+    | Fetcher<BaseSchema>
     | Fetcher<null, null>
-    | Fetcher<null, z.infer<z.ZodTypeAny>>
-    | Fetcher<z.ZodTypeAny, z.infer<z.ZodTypeAny>>
-    | Fetcher<z.ZodTypeAny>
+    | Fetcher<null, Output<BaseSchema>>
 >(
   ...args: F extends Fetcher<
     infer I,
-    ReturnType<F> extends Promise<void>
-      ? never
-      : z.infer<infer O & z.ZodTypeAny>
+    ReturnType<F> extends Promise<void> ? never : Output<BaseSchema & infer O>
   >
     ? [fn: F, input: I, output: O]
     : F extends Fetcher<
         null,
         ReturnType<F> extends Promise<void>
           ? never
-          : z.infer<infer O & z.ZodTypeAny>
+          : Output<BaseSchema & infer O>
       >
     ? [fn: F, input: null, output: O]
     : F extends Fetcher<infer I>
@@ -46,13 +44,13 @@ export const toValidated: ToValidated =
   // @ts-expect-error
   async (config) => {
     if (isSchema(input)) {
-      input.parse(config);
+      input._parse(config);
     }
 
     const result = await fn(config);
 
     if (isSchema(output)) {
-      output.parse(result);
+      output._parse(result);
     }
 
     return result;

@@ -8,9 +8,6 @@
     "build": {
       "dependsOn": ["^build"]
     },
-    "build:cjs": {
-      "dependsOn": ["^build:cjs"]
-    },
     "build:apps": {
       "dependsOn": ["^build"]
     },

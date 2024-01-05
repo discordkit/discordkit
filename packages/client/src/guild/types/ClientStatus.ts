@@ -1,14 +1,14 @@
 /** Active sessions are indicated with an "online", "idle", or "dnd" string per platform. If a user is offline or invisible, the corresponding field is not present. */
 
-import { z } from "zod";
+import { object, optional, string, type Output } from "valibot";
 
-export const clientStatusSchema = z.object({
+export const clientStatusSchema = object({
   /** the user's status set for an active desktop (Windows, Linux, Mac) application session */
-  desktop: z.string().optional(),
+  desktop: optional(string()),
   /** the user's status set for an active mobile (iOS, Android) application session */
-  mobile: z.string().optional(),
+  mobile: optional(string()),
   /** the user's status set for an active web (browser, bot account) application session */
-  web: z.string().optional()
+  web: optional(string())
 });
 
-export type ClientStatus = z.infer<typeof clientStatusSchema>;
+export type ClientStatus = Output<typeof clientStatusSchema>;

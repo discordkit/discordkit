@@ -1,6 +1,4 @@
-// https://discord.com/developers/docs/resources/channel#channel-object-channel-types
-
-import { z } from "zod";
+import { enum_ } from "valibot";
 
 export enum ChannelType {
   /** a text channel within a server */
@@ -31,4 +29,4 @@ export enum ChannelType {
   GUILD_MEDIA = 16
 }
 
-export const channelTypeSchema = z.nativeEnum(ChannelType);
+export const channelTypeSchema = enum_(ChannelType);

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object } from "valibot";
 import {
   get,
   type Fetcher,
@@ -12,7 +12,7 @@ import {
   type GuildTemplate
 } from "./types/GuildTemplate.js";
 
-export const getGuildTemplateSchema = z.object({
+export const getGuildTemplateSchema = object({
   template: snowflake
 });
 

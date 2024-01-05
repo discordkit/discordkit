@@ -1,32 +1,41 @@
-import { z } from "zod";
+import {
+  object,
+  string,
+  optional,
+  array,
+  number,
+  integer,
+  minValue,
+  type Output
+} from "valibot";
 import { snowflake } from "@discordkit/core";
 import { emojiSchema } from "../../emoji/types/Emoji.js";
 import { stickerSchema } from "../../sticker/types/Sticker.js";
 import { guildFeaturesSchema } from "./GuildFeatures.js";
 
-export const guildPreviewSchema = z.object({
+export const guildPreviewSchema = object({
   /** guild id */
   id: snowflake,
   /** guild name (2-100 characters) */
-  name: z.string(),
+  name: string(),
   /** icon hash */
-  icon: z.string().optional(),
+  icon: optional(string()),
   /** splash hash */
-  splash: z.string().optional(),
+  splash: optional(string()),
   /** discovery splash hash */
-  discoverySplash: z.string().optional(),
+  discoverySplash: optional(string()),
   /** custom guild emojis */
-  emojis: emojiSchema.array(),
+  emojis: array(emojiSchema),
   /** enabled guild features */
-  features: guildFeaturesSchema.array(),
+  features: array(guildFeaturesSchema),
   /** approximate number of members in this guild */
-  approximateMemberCount: z.number().int().positive(),
+  approximateMemberCount: number([integer(), minValue(0)]),
   /** approximate number of online members in this guild */
-  approximatePresenceCount: z.number().int().positive(),
+  approximatePresenceCount: number([integer(), minValue(0)]),
   /** the description for the guild */
-  description: z.string().optional(),
+  description: optional(string()),
   /** custom guild stickers */
-  stickers: stickerSchema.array()
+  stickers: array(stickerSchema)
 });
 
-export type GuildPreview = z.infer<typeof guildPreviewSchema>;
+export type GuildPreview = Output<typeof guildPreviewSchema>;

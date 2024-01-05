@@ -1,28 +1,20 @@
 import { getAsset, snowflake } from "@discordkit/core";
-import { z } from "zod";
+import { type Output, picklist, object, optional } from "valibot";
 import { imageSizes } from "./types/ImageSizes.js";
 
-export const customEmojiSchema = z.object({
+export const customEmojiSchema = object({
   emoji: snowflake,
-  format: z
-    .union([
-      z.literal(`png`),
-      z.literal(`jpg`),
-      z.literal(`webp`),
-      z.literal(`gif`)
-    ])
-    .default(`png`)
-    .optional(),
-  params: z
-    .object({
+  format: optional(picklist([`png`, `jpg`, `webp`, `gif`]), `png`),
+  params: optional(
+    object({
       size: imageSizes
     })
-    .optional()
+  )
 });
 
 export const customEmoji = ({
   emoji,
   format,
   params
-}: z.infer<typeof customEmojiSchema>): string =>
+}: Output<typeof customEmojiSchema>): string =>
   getAsset(`/emojis/${emoji}.${format ?? `png`}`, params);

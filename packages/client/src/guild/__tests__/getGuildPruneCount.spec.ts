@@ -1,5 +1,5 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
+import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
 import {
   getGuildPruneCountProcedure,
   getGuildPruneCountQuery,
@@ -16,20 +16,18 @@ describe(`getGuildPruneCount`, () => {
   const config = mockSchema(getGuildPruneCountSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(getGuildPruneCountSafe(config)).resolves.toStrictEqual(
-      expected
-    );
+    await expect(getGuildPruneCountSafe(config)).resolves.toEqual(expected);
   });
 
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(getGuildPruneCountProcedure)(config)
-    ).resolves.toStrictEqual(expected);
+    ).resolves.toEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runQuery(getGuildPruneCountQuery, config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });

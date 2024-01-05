@@ -1,8 +1,8 @@
-import { z } from "zod";
+import { object, string, type Output } from "valibot";
 import { snowflake } from "@discordkit/core";
 import { channelTypeSchema } from "./ChannelType.js";
 
-export const channelMentionSchema = z.object({
+export const channelMentionSchema = object({
   /** id of the channel */
   id: snowflake,
   /** id of the guild containing the channel */
@@ -10,7 +10,7 @@ export const channelMentionSchema = z.object({
   /** the type of channel */
   type: channelTypeSchema,
   /** the name of the channel */
-  name: z.string()
+  name: string()
 });
 
-export type ChannelMention = z.infer<typeof channelMentionSchema>;
+export type ChannelMention = Output<typeof channelMentionSchema>;

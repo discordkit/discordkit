@@ -1,11 +1,11 @@
 import { snowflake } from "@discordkit/core";
-import { z } from "zod";
+import { object, optional, string, minLength, type Output } from "valibot";
 
-export const defaultReactionSchema = z.object({
+export const defaultReactionSchema = object({
   /** the id of a guild's custom emoji */
-  emojiId: snowflake.optional(),
+  emojiId: optional(snowflake),
   /** the unicode character of the emoji */
-  emojiName: z.string().min(1).optional()
+  emojiName: optional(string([minLength(1)]))
 });
 
-export type DefaultReaction = z.infer<typeof defaultReactionSchema>;
+export type DefaultReaction = Output<typeof defaultReactionSchema>;

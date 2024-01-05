@@ -1,5 +1,5 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest } from "test-utils";
+import { runProcedure, runQuery, mockRequest } from "#test-utils";
 import {
   getCurrentApplicationProcedure,
   getCurrentApplicationQuery,
@@ -11,18 +11,18 @@ describe(`getCurrentApplication`, () => {
   const expected = mockRequest.get(`/applications/@me`, applicationSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(getCurrentApplicationSafe()).resolves.toStrictEqual(expected);
+    await expect(getCurrentApplicationSafe()).resolves.toEqual(expected);
   });
 
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(getCurrentApplicationProcedure)()
-    ).resolves.toStrictEqual(expected);
+    ).resolves.toEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runQuery(getCurrentApplicationQuery);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });

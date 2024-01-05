@@ -1,24 +1,32 @@
-import { z } from "zod";
+import {
+  object,
+  optional,
+  string,
+  nullish,
+  array,
+  boolean,
+  type Output
+} from "valibot";
 import { snowflake } from "@discordkit/core";
 import { userSchema } from "../../user/types/User.js";
 
-export const emojiSchema = z.object({
+export const emojiSchema = object({
   /** emoji id */
-  id: snowflake.optional(),
+  id: optional(snowflake),
   /** (can be null only in reaction emoji objects)	emoji name */
-  name: z.string().optional(),
+  name: optional(string()),
   /** roles allowed to use this emoji */
-  roles: snowflake.array().nullish(),
+  roles: nullish(array(snowflake)),
   /** user that created this emoji */
-  user: userSchema.nullish(),
+  user: nullish(userSchema),
   /** whether this emoji must be wrapped in colons */
-  requireColons: z.boolean().nullish(),
+  requireColons: nullish(boolean()),
   /** whether this emoji is managed */
-  managed: z.boolean().nullish(),
+  managed: nullish(boolean()),
   /** whether this emoji is animated */
-  animated: z.boolean().nullish(),
+  animated: nullish(boolean()),
   /** whether this emoji can be used, may be false due to loss of Server Boosts */
-  available: z.boolean().nullish()
+  available: nullish(boolean())
 });
 
-export type Emoji = z.infer<typeof emojiSchema>;
+export type Emoji = Output<typeof emojiSchema>;

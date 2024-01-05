@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { array, boolean, object } from "valibot";
 import {
   put,
   type Fetcher,
@@ -13,15 +13,15 @@ import {
 import { onboardingPromptSchema } from "./types/OnboardingPrompt.js";
 import { onboardingModeSchema } from "./types/OnboardingMode.js";
 
-export const modifyGuildOnboardingSchema = z.object({
+export const modifyGuildOnboardingSchema = object({
   guild: snowflake,
-  body: z.object({
+  body: object({
     /** Prompts shown during onboarding and in customize community */
-    prompts: onboardingPromptSchema.array(),
+    prompts: array(onboardingPromptSchema),
     /** Channel IDs that members get opted into automatically */
-    defaultChannelIds: snowflake.array(),
+    defaultChannelIds: array(snowflake),
     /** Whether onboarding is enabled in the guild */
-    enabled: z.boolean(),
+    enabled: boolean(),
     /** Current mode of onboarding */
     mode: onboardingModeSchema
   })
@@ -34,11 +34,11 @@ export const modifyGuildOnboardingSchema = z.object({
  *
  * Modifies the onboarding configuration of the guild. Returns a `200` with the {@link GuildOnboarding | Onboarding object} for the guild. Requires the `MANAGE_GUILD` and `MANAGE_ROLES` permissions.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > Onboarding enforces constraints when enabled. These constraints are that there must be at least 7 Default Channels and at least 5 of them must allow sending messages to the @everyone role. The `mode` field modifies what is considered when enforcing these constraints.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

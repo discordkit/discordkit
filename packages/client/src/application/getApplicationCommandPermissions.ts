@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object } from "valibot";
 import {
   get,
   type Fetcher,
@@ -12,7 +12,7 @@ import {
   type GuildApplicationCommandPermissions
 } from "./types/GuildApplicationCommandPermissions.js";
 
-export const getApplicationCommandPermissionsSchema = z.object({
+export const getApplicationCommandPermissionsSchema = object({
   application: snowflake,
   guild: snowflake,
   command: snowflake

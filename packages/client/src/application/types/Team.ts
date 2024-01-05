@@ -1,19 +1,19 @@
-import { z } from "zod";
+import { object, string, optional, array, type Output } from "valibot";
 import { teamMemberSchema } from "./TeamMember.js";
 
 // https://discord.com/developers/docs/topics/teams#data-models-team-object
 
-export const teamSchema = z.object({
+export const teamSchema = object({
   /** Hash of the image of the team's icon */
-  icon: z.string().optional(),
+  icon: optional(string()),
   /** Unique ID of the team */
-  id: z.string(),
+  id: string(),
   /** Members of the team */
-  members: teamMemberSchema.array(),
+  members: array(teamMemberSchema),
   /** Name of the team */
-  name: z.string(),
+  name: string(),
   /** User ID of the current team owner */
-  ownerUserId: z.string()
+  ownerUserId: string()
 });
 
-export type Team = z.infer<typeof teamSchema>;
+export type Team = Output<typeof teamSchema>;

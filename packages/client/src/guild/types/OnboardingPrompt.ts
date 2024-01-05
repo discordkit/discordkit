@@ -1,23 +1,23 @@
-import { z } from "zod";
+import { array, object, string, boolean, type Output } from "valibot";
 import { snowflake } from "@discordkit/core";
 import { promptOptionSchema } from "./PromptOption.js";
 import { promptTypeSchema } from "./PromptType.js";
 
-export const onboardingPromptSchema = z.object({
+export const onboardingPromptSchema = object({
   /** ID of the prompt */
   id: snowflake,
   /** Type of prompt */
   type: promptTypeSchema,
   /** Options available within the prompt */
-  options: promptOptionSchema.array(),
+  options: array(promptOptionSchema),
   /** Title of the prompt */
-  title: z.string(),
+  title: string(),
   /** Indicates whether users are limited to selecting one option for the prompt */
-  singleSelect: z.boolean(),
+  singleSelect: boolean(),
   /** Indicates whether the prompt is required before a user completes the onboarding flow */
-  required: z.boolean(),
+  required: boolean(),
   /** Indicates whether the prompt is present in the onboarding flow. If false, the prompt will only appear in the Channels & Roles tab */
-  inOnboarding: z.boolean()
+  inOnboarding: boolean()
 });
 
-export type OnboardingPrompt = z.infer<typeof onboardingPromptSchema>;
+export type OnboardingPrompt = Output<typeof onboardingPromptSchema>;

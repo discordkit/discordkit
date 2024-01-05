@@ -1,4 +1,13 @@
-import { z } from "zod";
+import {
+  integer,
+  maxValue,
+  minValue,
+  nullish,
+  number,
+  object,
+  optional,
+  partial
+} from "valibot";
 import {
   get,
   type Fetcher,
@@ -10,23 +19,24 @@ import {
 import { type AuditLog, auditLogSchema } from "./types/AuditLog.js";
 import { auditLogEventSchema } from "./types/AuditLogEvent.js";
 
-export const getGuildAuditLogSchema = z.object({
+export const getGuildAuditLogSchema = object({
   guild: snowflake,
-  params: z
-    .object({
-      /** Entries from a specific user ID */
-      userId: snowflake.nullish(),
-      /** Entries for a specific audit log event */
-      actionType: auditLogEventSchema.nullish(),
-      /** Entries that preceded a specific audit log entry ID */
-      before: snowflake.nullish(),
-      /** Entries with ID greater than a specific audit log entry ID */
-      after: snowflake.nullish(),
-      /** Maximum number of entries (between 1-100) to return, defaults to 50 */
-      limit: z.number().int().min(1).max(100).nullish().default(50)
-    })
-    .partial()
-    .optional()
+  params: optional(
+    partial(
+      object({
+        /** Entries from a specific user ID */
+        userId: nullish(snowflake),
+        /** Entries for a specific audit log event */
+        actionType: nullish(auditLogEventSchema),
+        /** Entries that preceded a specific audit log entry ID */
+        before: nullish(snowflake),
+        /** Entries with ID greater than a specific audit log entry ID */
+        after: nullish(snowflake),
+        /** Maximum number of entries (between 1-100) to return, defaults to 50 */
+        limit: nullish(number([integer(), minValue(1), maxValue(100)]), 50)
+      })
+    )
+  )
 });
 
 /**

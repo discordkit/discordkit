@@ -1,5 +1,10 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
+import {
+  runProcedure,
+  runMutation,
+  mockRequest,
+  mockSchema
+} from "#test-utils";
 import {
   modifyGuildEmoji,
   modifyGuildEmojiProcedure,
@@ -16,19 +21,19 @@ describe(`modifyGuildEmoji`, () => {
   const config = mockSchema(modifyGuildEmojiSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(modifyGuildEmojiSafe(config)).resolves.toStrictEqual(expected);
+    await expect(modifyGuildEmojiSafe(config)).resolves.toEqual(expected);
   });
 
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(modifyGuildEmojiProcedure)(config)
-    ).resolves.toStrictEqual(expected);
+    ).resolves.toEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runMutation(modifyGuildEmoji);
     result.current.mutate(config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });

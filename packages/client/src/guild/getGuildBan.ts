@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object } from "valibot";
 import {
   get,
   type Fetcher,
@@ -9,7 +9,7 @@ import {
 } from "@discordkit/core";
 import { banSchema, type Ban } from "./types/Ban.js";
 
-export const getGuildBanSchema = z.object({
+export const getGuildBanSchema = object({
   guild: snowflake,
   user: snowflake
 });

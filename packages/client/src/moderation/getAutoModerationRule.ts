@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object } from "valibot";
 import {
   get,
   type Fetcher,
@@ -12,7 +12,7 @@ import {
   type ModerationRule
 } from "./types/ModerationRule.js";
 
-export const getAutoModerationRuleSchema = z.object({
+export const getAutoModerationRuleSchema = object({
   guild: snowflake,
   rule: snowflake
 });
@@ -24,7 +24,7 @@ export const getAutoModerationRuleSchema = z.object({
  *
  * Get a single rule. Returns an {@link ModerationRule | auto moderation rule object}.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint requires the `MANAGE_GUILD` permission.
  */

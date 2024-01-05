@@ -1,5 +1,5 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
+import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
 import {
   getGuildApplicationCommandSchema,
   getGuildApplicationCommandProcedure,
@@ -16,7 +16,7 @@ describe(`getGuildApplicationCommand`, () => {
   const config = mockSchema(getGuildApplicationCommandSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(getGuildApplicationCommandSafe(config)).resolves.toStrictEqual(
+    await expect(getGuildApplicationCommandSafe(config)).resolves.toEqual(
       expected
     );
   });
@@ -24,12 +24,12 @@ describe(`getGuildApplicationCommand`, () => {
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(getGuildApplicationCommandProcedure)(config)
-    ).resolves.toStrictEqual(expected);
+    ).resolves.toEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runQuery(getGuildApplicationCommandQuery, config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });

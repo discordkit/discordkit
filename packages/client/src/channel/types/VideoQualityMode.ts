@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { enum_ } from "valibot";
 
 export enum VideoQualityMode {
   /** Discord chooses the quality for optimal performance */
@@ -7,4 +7,4 @@ export enum VideoQualityMode {
   FULL = 2
 }
 
-export const videoQualityModeSchema = z.nativeEnum(VideoQualityMode);
+export const videoQualityModeSchema = enum_(VideoQualityMode);

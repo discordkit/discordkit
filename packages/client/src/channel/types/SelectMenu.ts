@@ -1,34 +1,48 @@
-import { z } from "zod";
+import {
+  object,
+  union,
+  literal,
+  string,
+  maxLength,
+  array,
+  nullish,
+  number,
+  integer,
+  minValue,
+  maxValue,
+  boolean,
+  type Output
+} from "valibot";
 import { ComponentType } from "./ComponentType.js";
 import { selectOptionSchema } from "./SelectOption.js";
 import { selectDefaultValueSchema } from "./SelectDefaultValue.js";
 import { channelTypeSchema } from "./ChannelType.js";
 
-export const selectMenuSchema = z.object({
+export const selectMenuSchema = object({
   /** Type of select menu component (text: 3, user: 5, role: 6, mentionable: 7, channels: 8) */
-  type: z.union([
-    z.literal(ComponentType.StringSelect),
-    z.literal(ComponentType.UserSelect),
-    z.literal(ComponentType.RoleSelect),
-    z.literal(ComponentType.MentionableSelect),
-    z.literal(ComponentType.ChannelSelect)
+  type: union([
+    literal(ComponentType.StringSelect),
+    literal(ComponentType.UserSelect),
+    literal(ComponentType.RoleSelect),
+    literal(ComponentType.MentionableSelect),
+    literal(ComponentType.ChannelSelect)
   ]),
   /** ID for the select menu; max 100 characters */
-  customId: z.string().max(100),
+  customId: string([maxLength(100)]),
   /** Specified choices in a select menu (only required and available for string selects (type 3); max 25 */
-  options: selectOptionSchema.array().max(25).nullish(),
+  options: nullish(array(selectOptionSchema, [maxLength(25)])),
   /** List of channel types to include in the channel select component (type 8) */
-  channelTypes: channelTypeSchema.array().nullish(),
+  channelTypes: nullish(array(channelTypeSchema)),
   /** Placeholder text if nothing is selected; max 150 characters */
-  placeholder: z.string().max(150).nullish(),
+  placeholder: nullish(string([maxLength(150)])),
   /** List of default values for auto-populated select menu components; number of default values must be in the range defined by min_values and max_values */
-  defaultValues: selectDefaultValueSchema.array().nullish(),
+  defaultValues: nullish(array(selectDefaultValueSchema)),
   /** Minimum number of items that must be chosen (defaults to 1); min 0, max 25 */
-  minValues: z.number().int().min(0).max(25).nullish().default(1),
+  minValues: nullish(number([integer(), minValue(0), maxValue(25)]), 1),
   /** Maximum number of items that can be chosen (defaults to 1); max 25 */
-  maxValues: z.number().int().min(1).max(25).nullish().default(1),
+  maxValues: nullish(number([integer(), minValue(1), maxValue(25)]), 1),
   /** Whether select menu is disabled (defaults to false) */
-  disabled: z.boolean().nullish().default(false)
+  disabled: nullish(boolean(), false)
 });
 
-export type SelectMenu = z.infer<typeof selectMenuSchema>;
+export type SelectMenu = Output<typeof selectMenuSchema>;

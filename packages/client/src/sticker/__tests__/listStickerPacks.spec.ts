@@ -1,5 +1,5 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest } from "test-utils";
+import { runProcedure, runQuery, mockRequest } from "#test-utils";
 import {
   listStickerPacksProcedure,
   listStickerPacksQuery,
@@ -11,18 +11,18 @@ describe(`listStickerPacks`, () => {
   const expected = mockRequest.get(`/sticker-packs`, stickerPacksSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(listStickerPacksSafe()).resolves.toStrictEqual(expected);
+    await expect(listStickerPacksSafe()).resolves.toEqual(expected);
   });
 
   it(`is tRPC compatible`, async () => {
-    await expect(
-      runProcedure(listStickerPacksProcedure)()
-    ).resolves.toStrictEqual(expected);
+    await expect(runProcedure(listStickerPacksProcedure)()).resolves.toEqual(
+      expected
+    );
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runQuery(listStickerPacksQuery);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });

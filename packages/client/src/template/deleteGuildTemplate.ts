@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object } from "valibot";
 import {
   remove,
   type Fetcher,
@@ -11,7 +11,7 @@ import {
   type GuildTemplate
 } from "./types/GuildTemplate.js";
 
-export const deleteGuildTemplateSchema = z.object({
+export const deleteGuildTemplateSchema = object({
   guild: snowflake,
   template: snowflake
 });

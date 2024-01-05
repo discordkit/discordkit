@@ -1,20 +1,27 @@
-import { z } from "zod";
+import {
+  object,
+  string,
+  minLength,
+  optional,
+  nullish,
+  type Output
+} from "valibot";
 import { snowflake } from "@discordkit/core";
 import { userSchema } from "../../user/types/User.js";
 
-export const integrationApplicationSchema = z.object({
+export const integrationApplicationSchema = object({
   /** the id of the app */
   id: snowflake,
   /** the name of the app */
-  name: z.string().min(1),
+  name: string([minLength(1)]),
   /** the icon hash of the app */
-  icon: z.string().min(1).optional(),
+  icon: optional(string([minLength(1)])),
   /** the description of the app */
-  description: z.string(),
+  description: string(),
   /** the bot associated with this application */
-  bot: userSchema.nullish()
+  bot: nullish(userSchema)
 });
 
-export type IntegrationApplication = z.infer<
+export type IntegrationApplication = Output<
   typeof integrationApplicationSchema
 >;

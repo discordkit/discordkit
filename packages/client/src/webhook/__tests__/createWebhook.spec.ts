@@ -1,5 +1,10 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
+import {
+  runProcedure,
+  runMutation,
+  mockRequest,
+  mockSchema
+} from "#test-utils";
 import {
   createWebhook,
   createWebhookProcedure,
@@ -16,19 +21,19 @@ describe(`createWebhook`, () => {
   const config = mockSchema(createWebhookSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(createWebhookSafe(config)).resolves.toStrictEqual(expected);
+    await expect(createWebhookSafe(config)).resolves.toEqual(expected);
   });
 
   it(`is tRPC compatible`, async () => {
-    await expect(
-      runProcedure(createWebhookProcedure)(config)
-    ).resolves.toStrictEqual(expected);
+    await expect(runProcedure(createWebhookProcedure)(config)).resolves.toEqual(
+      expected
+    );
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runMutation(createWebhook);
     result.current.mutate(config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });

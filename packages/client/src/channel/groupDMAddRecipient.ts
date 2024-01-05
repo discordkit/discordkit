@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { minLength, object, string } from "valibot";
 import {
   put,
   type Fetcher,
@@ -7,14 +7,14 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const groupDMAddRecipientSchema = z.object({
+export const groupDMAddRecipientSchema = object({
   channel: snowflake,
   user: snowflake,
-  body: z.object({
+  body: object({
     /** access token of a user that has granted your app the gdm.join scope */
-    accessToken: z.string().min(1),
+    accessToken: string([minLength(1)]),
     /** nickname of the user being added */
-    nick: z.string().min(1)
+    nick: string([minLength(1)])
   })
 });
 

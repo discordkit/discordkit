@@ -1,11 +1,11 @@
 import { getAsset } from "@discordkit/core";
-import { z } from "zod";
+import { type Output, minLength, object, string } from "valibot";
 
-export const defaultUserAvatarSchema = z.object({
-  index: z.string().min(1)
+export const defaultUserAvatarSchema = object({
+  index: string([minLength(1)])
 });
 
 export const defaultUserAvatar = ({
   index
-}: z.infer<typeof defaultUserAvatarSchema>): string =>
+}: Output<typeof defaultUserAvatarSchema>): string =>
   getAsset(`/embed/avatars/${index}.png`);

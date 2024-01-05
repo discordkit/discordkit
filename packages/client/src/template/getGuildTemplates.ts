@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object, array } from "valibot";
 import {
   get,
   type Fetcher,
@@ -12,7 +12,7 @@ import {
   type GuildTemplate
 } from "./types/GuildTemplate.js";
 
-export const getGuildTemplatesSchema = z.object({
+export const getGuildTemplatesSchema = object({
   guild: snowflake
 });
 
@@ -31,14 +31,14 @@ export const getGuildTemplates: Fetcher<
 export const getGuildTemplatesSafe = toValidated(
   getGuildTemplates,
   getGuildTemplatesSchema,
-  guildTemplateSchema.array()
+  array(guildTemplateSchema)
 );
 
 export const getGuildTemplatesProcedure = toProcedure(
   `query`,
   getGuildTemplates,
   getGuildTemplatesSchema,
-  guildTemplateSchema.array()
+  array(guildTemplateSchema)
 );
 
 export const getGuildTemplatesQuery = toQuery(getGuildTemplates);

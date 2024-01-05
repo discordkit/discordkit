@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { boolean, minLength, object, optional, partial, string } from "valibot";
 import {
   get,
   type Fetcher,
@@ -9,19 +9,20 @@ import {
 } from "@discordkit/core";
 import { inviteSchema, type Invite } from "./types/Invite.js";
 
-export const getInviteSchema = z.object({
-  code: z.string().min(1),
-  params: z
-    .object({
-      /** whether the invite should contain approximate member counts */
-      withCounts: z.boolean(),
-      /** whether the invite should contain the expiration date */
-      withExpiration: z.boolean(),
-      /** the guild scheduled event to include with the invite */
-      guildScheduledEventId: snowflake
-    })
-    .partial()
-    .optional()
+export const getInviteSchema = object({
+  code: string([minLength(1)]),
+  params: optional(
+    partial(
+      object({
+        /** whether the invite should contain approximate member counts */
+        withCounts: boolean(),
+        /** whether the invite should contain the expiration date */
+        withExpiration: boolean(),
+        /** the guild scheduled event to include with the invite */
+        guildScheduledEventId: snowflake
+      })
+    )
+  )
 });
 
 /**

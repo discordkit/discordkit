@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object } from "valibot";
 import {
   remove,
   type Fetcher,
@@ -7,7 +7,7 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const deleteMessageSchema = z.object({
+export const deleteMessageSchema = object({
   channel: snowflake,
   message: snowflake
 });
@@ -19,7 +19,7 @@ export const deleteMessageSchema = z.object({
  *
  * Delete a message. If operating on a guild channel and trying to delete a message that was not sent by the current user, this endpoint requires the `MANAGE_MESSAGES` permission. Returns a `204 empty` response on success. Fires a Message Delete Gateway event.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

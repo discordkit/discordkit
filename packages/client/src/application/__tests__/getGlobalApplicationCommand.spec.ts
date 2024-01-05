@@ -1,5 +1,5 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
+import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
 import {
   getGlobalApplicationCommandSchema,
   getGlobalApplicationCommandProcedure,
@@ -16,20 +16,20 @@ describe(`getGlobalApplicationCommand`, () => {
   const config = mockSchema(getGlobalApplicationCommandSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(
-      getGlobalApplicationCommandSafe(config)
-    ).resolves.toStrictEqual(expected);
+    await expect(getGlobalApplicationCommandSafe(config)).resolves.toEqual(
+      expected
+    );
   });
 
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(getGlobalApplicationCommandProcedure)(config)
-    ).resolves.toStrictEqual(expected);
+    ).resolves.toEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runQuery(getGlobalApplicationCommandQuery, config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });

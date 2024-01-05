@@ -1,4 +1,13 @@
-import { z } from "zod";
+import {
+  array,
+  boolean,
+  maxLength,
+  minLength,
+  nullish,
+  object,
+  partial,
+  string
+} from "valibot";
 import {
   patch,
   type Fetcher,
@@ -14,27 +23,27 @@ import { moderationEventSchema } from "./types/ModerationEvent.js";
 import { triggerMetaSchema } from "./types/TriggerMeta.js";
 import { moderationActionSchema } from "./types/ModerationAction.js";
 
-export const modifyAutoModerationRuleSchema = z.object({
+export const modifyAutoModerationRuleSchema = object({
   guild: snowflake,
   rule: snowflake,
-  body: z
-    .object({
+  body: partial(
+    object({
       /** the rule name */
-      name: z.string().min(1),
+      name: string([minLength(1)]),
       /** the event type */
       eventType: moderationEventSchema,
       /** the trigger metadata */
-      triggerMetadata: triggerMetaSchema.nullish(),
+      triggerMetadata: nullish(triggerMetaSchema),
       /** the actions which will execute when the rule is triggered */
-      actions: moderationActionSchema.array(),
+      actions: array(moderationActionSchema),
       /** whether the rule is enabled (False by default) */
-      enabled: z.boolean(),
+      enabled: boolean(),
       /** the role ids that should not be affected by the rule (Maximum of 20) */
-      exemptRoles: snowflake.array().max(20),
+      exemptRoles: array(snowflake, [maxLength(20)]),
       /** the channel ids that should not be affected by the rule (Maximum of 50) */
-      exemptChannels: snowflake.array().max(50)
+      exemptChannels: array(snowflake, [maxLength(50)])
     })
-    .partial()
+  )
 });
 
 /**
@@ -43,15 +52,15 @@ export const modifyAutoModerationRuleSchema = z.object({
  *
  * Modify an existing rule. Returns an {@link ModerationRule | auto moderation rule} on success. Fires an Auto Moderation Rule Update Gateway event.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > Requires `MANAGE_GUILD` permissions.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > All parameters for this endpoint are optional.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

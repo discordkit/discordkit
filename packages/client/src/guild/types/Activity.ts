@@ -1,4 +1,14 @@
-import { z } from "zod";
+import {
+  object,
+  string,
+  number,
+  boolean,
+  optional,
+  isoTimestamp,
+  integer,
+  array,
+  type Output
+} from "valibot";
 import { snowflake } from "@discordkit/core";
 import { activityButtonSchema } from "./ActivityButton.js";
 import { activitySecretsSchema } from "./ActivitySecrets.js";
@@ -7,37 +17,37 @@ import { activityPartySchema } from "./ActivityParty.js";
 import { activityEmojiSchema } from "./ActivityEmoji.js";
 import { activityTimestampsSchema } from "./ActivityTimestamps.js";
 
-export const activitySchema = z.object({
+export const activitySchema = object({
   /** the activity's name */
-  name: z.string(),
+  name: string(),
   /** activity type */
-  type: z.number(),
+  type: number(),
   /** stream url, is validated when type is 1 */
-  url: z.string().optional(),
+  url: optional(string()),
   /** unix timestamp (in milliseconds) of when the activity was added to the user's session */
-  createdAt: z.string().datetime(),
+  createdAt: string([isoTimestamp()]),
   /** unix timestamps for start and/or end of the game */
-  timestamps: activityTimestampsSchema.optional(),
+  timestamps: optional(activityTimestampsSchema),
   /** application id for the game */
-  applicationId: snowflake.optional(),
+  applicationId: optional(snowflake),
   /** what the player is currently doing */
-  details: z.string().optional(),
+  details: optional(string()),
   /** the user's current party status */
-  state: z.string().optional(),
+  state: optional(string()),
   /** the emoji used for a custom status */
-  emoji: activityEmojiSchema.optional(),
+  emoji: optional(activityEmojiSchema),
   /** information for the current party of the player */
-  party: activityPartySchema.optional(),
+  party: optional(activityPartySchema),
   /** images for the presence and their hover texts */
-  assets: activityAssetsSchema.optional(),
+  assets: optional(activityAssetsSchema),
   /** secrets for Rich Presence joining and spectating */
-  secrets: activitySecretsSchema.optional(),
+  secrets: optional(activitySecretsSchema),
   /** whether or not the activity is an instanced game session */
-  instance: z.boolean().optional(),
+  instance: optional(boolean()),
   /** activity flags ORd together, describes what the payload includes */
-  flags: z.number().int().optional(),
+  flags: optional(number([integer()])),
   /** the custom buttons shown in the Rich Presence (max 2) */
-  buttons: activityButtonSchema.array().optional()
+  buttons: optional(array(activityButtonSchema))
 });
 
-export type Activity = z.infer<typeof activitySchema>;
+export type Activity = Output<typeof activitySchema>;

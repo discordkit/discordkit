@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { enum_ } from "valibot";
 
 export enum TextInputStyle {
   /** Single-line input */
@@ -7,4 +7,4 @@ export enum TextInputStyle {
   Paragraph = 2
 }
 
-export const textInputStyleSchema = z.nativeEnum(TextInputStyle);
+export const textInputStyleSchema = enum_(TextInputStyle);

@@ -1,13 +1,13 @@
-import { z } from "zod";
+import { type Output, object, array, string } from "valibot";
 import { scopesSchema } from "./Scopes.js";
 
 // https://discord.com/developers/docs/resources/application#install-params-object-install-params-structure
 
-export const installParamsSchema = z.object({
+export const installParamsSchema = object({
   /** the scopes to add the application to the server with */
-  scopes: scopesSchema.array(),
+  scopes: array(scopesSchema),
   /** the permissions to request for the bot role */
-  permissions: z.string()
+  permissions: string()
 });
 
-export type InstallParams = z.infer<typeof installParamsSchema>;
+export type InstallParams = Output<typeof installParamsSchema>;

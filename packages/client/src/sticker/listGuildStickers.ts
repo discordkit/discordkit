@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { array, object } from "valibot";
 import {
   get,
   type Fetcher,
@@ -9,7 +9,7 @@ import {
 } from "@discordkit/core";
 import { stickerSchema, type Sticker } from "./types/Sticker.js";
 
-export const listGuildStickersSchema = z.object({
+export const listGuildStickersSchema = object({
   guild: snowflake
 });
 
@@ -28,14 +28,14 @@ export const listGuildStickers: Fetcher<
 export const listGuildStickersSafe = toValidated(
   listGuildStickers,
   listGuildStickersSchema,
-  stickerSchema.array()
+  array(stickerSchema)
 );
 
 export const listGuildStickersProcedure = toProcedure(
   `query`,
   listGuildStickers,
   listGuildStickersSchema,
-  stickerSchema.array()
+  array(stickerSchema)
 );
 
 export const listGuildStickersQuery = toQuery(listGuildStickers);

@@ -1,14 +1,14 @@
-import { z } from "zod";
+import { object, array, boolean, type Output } from "valibot";
 import { channelSchema } from "./Channel.js";
 import { threadMemberSchema } from "./ThreadMember.js";
 
-export const archivedThreadsSchema = z.object({
+export const archivedThreadsSchema = object({
   /** the archived threads */
-  threads: channelSchema.array(),
+  threads: array(channelSchema),
   /** a thread member object for each returned thread the current user has joined */
-  members: threadMemberSchema.array(),
+  members: array(threadMemberSchema),
   /** whether there are potentially additional threads that could be returned on a subsequent call */
-  hasMore: z.boolean()
+  hasMore: boolean()
 });
 
-export type ArchivedThreads = z.infer<typeof archivedThreadsSchema>;
+export type ArchivedThreads = Output<typeof archivedThreadsSchema>;

@@ -1,5 +1,10 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
+import {
+  runProcedure,
+  runMutation,
+  mockRequest,
+  mockSchema
+} from "#test-utils";
 import {
   editApplicationCommandPermissions,
   editApplicationCommandPermissionsProcedure,
@@ -18,19 +23,19 @@ describe(`editApplicationCommandPermissions`, () => {
   it(`can be used standalone`, async () => {
     await expect(
       editApplicationCommandPermissionsSafe(config)
-    ).resolves.toStrictEqual(expected);
+    ).resolves.toEqual(expected);
   });
 
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(editApplicationCommandPermissionsProcedure)(config)
-    ).resolves.toStrictEqual(expected);
+    ).resolves.toEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runMutation(editApplicationCommandPermissions);
     result.current.mutate(config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });

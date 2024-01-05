@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { array, integer, minValue, nullish, number, object } from "valibot";
 import {
   patch,
   type Fetcher,
@@ -8,16 +8,16 @@ import {
 } from "@discordkit/core";
 import { roleSchema, type Role } from "./types/Role.js";
 
-export const modifyGuildRolePositionsSchema = z.object({
+export const modifyGuildRolePositionsSchema = object({
   guild: snowflake,
-  body: z
-    .object({
+  body: array(
+    object({
       /** role */
       id: snowflake,
       /** sorting position of the role */
-      position: z.number().int().positive().nullish()
+      position: nullish(number([integer(), minValue(0)]))
     })
-    .array()
+  )
 });
 
 /**
@@ -27,7 +27,7 @@ export const modifyGuildRolePositionsSchema = z.object({
  *
  * Modify the positions of a set of role objects for the guild. Requires the `MANAGE_ROLES` permission. Returns a list of all of the guild's {@link Role | role objects} on success. Fires multiple Guild Role Update Gateway events.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
@@ -39,12 +39,12 @@ export const modifyGuildRolePositions: Fetcher<
 export const modifyGuildRolePositionsSafe = toValidated(
   modifyGuildRolePositions,
   modifyGuildRolePositionsSchema,
-  roleSchema.array()
+  array(roleSchema)
 );
 
 export const modifyGuildRolePositionsProcedure = toProcedure(
   `mutation`,
   modifyGuildRolePositions,
   modifyGuildRolePositionsSchema,
-  roleSchema.array()
+  array(roleSchema)
 );

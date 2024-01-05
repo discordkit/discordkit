@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
+import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { array } from "valibot";
 import {
   getChannelInvitesProcedure,
   getChannelInvitesQuery,
@@ -11,25 +12,23 @@ import { inviteMetadataSchema } from "../../invite/types/InviteMetadata.js";
 describe(`getChannelInvites`, () => {
   const expected = mockRequest.get(
     `/channels/:channel/invites`,
-    inviteMetadataSchema.array()
+    array(inviteMetadataSchema)
   );
   const config = mockSchema(getChannelInvitesSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(getChannelInvitesSafe(config)).resolves.toStrictEqual(
-      expected
-    );
+    await expect(getChannelInvitesSafe(config)).resolves.toEqual(expected);
   });
 
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(getChannelInvitesProcedure)(config)
-    ).resolves.toStrictEqual(expected);
+    ).resolves.toEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runQuery(getChannelInvitesQuery, config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });

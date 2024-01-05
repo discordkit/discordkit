@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object, array } from "valibot";
 import {
   get,
   type Fetcher,
@@ -12,7 +12,7 @@ import {
   type InviteMetadata
 } from "../invite/types/InviteMetadata.js";
 
-export const getChannelInvitesSchema = z.object({
+export const getChannelInvitesSchema = object({
   channel: snowflake
 });
 
@@ -31,14 +31,14 @@ export const getChannelInvites: Fetcher<
 export const getChannelInvitesSafe = toValidated(
   getChannelInvites,
   getChannelInvitesSchema,
-  inviteMetadataSchema.array()
+  array(inviteMetadataSchema)
 );
 
 export const getChannelInvitesProcedure = toProcedure(
   `query`,
   getChannelInvites,
   getChannelInvitesSchema,
-  inviteMetadataSchema.array()
+  array(inviteMetadataSchema)
 );
 
 export const getChannelInvitesQuery = toQuery(getChannelInvites);

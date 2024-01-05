@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object } from "valibot";
 import {
   remove,
   type Fetcher,
@@ -7,7 +7,7 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const deleteGuildIntegrationSchema = z.object({
+export const deleteGuildIntegrationSchema = object({
   guild: snowflake,
   integration: snowflake
 });
@@ -19,7 +19,7 @@ export const deleteGuildIntegrationSchema = z.object({
  *
  * Delete the attached integration object for the guild. Deletes any associated webhooks and kicks the associated bot if there is one. Requires the `MANAGE_GUILD` permission. Returns a `204 empty` response on success. Fires Guild Integrations Update and Integration Delete Gateway events.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

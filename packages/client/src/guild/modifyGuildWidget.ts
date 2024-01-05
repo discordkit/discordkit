@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object, partial } from "valibot";
 import {
   patch,
   type Fetcher,
@@ -11,9 +11,9 @@ import {
   type GuildWidgetSettings
 } from "./types/GuildWidgetSettings.js";
 
-export const modifyGuildWidgetSchema = z.object({
+export const modifyGuildWidgetSchema = object({
   guild: snowflake,
-  body: guildWidgetSettingsSchema.partial()
+  body: partial(guildWidgetSettingsSchema)
 });
 
 /**
@@ -23,7 +23,7 @@ export const modifyGuildWidgetSchema = z.object({
  *
  * Modify a guild widget settings object for the guild. All attributes may be passed in with JSON and modified. Requires the `MANAGE_GUILD` permission. Returns the updated {@link GuildWidgetSettings | guild widget settings object}.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object, array } from "valibot";
 import {
   get,
   type Fetcher,
@@ -9,7 +9,7 @@ import {
 } from "@discordkit/core";
 import { messageSchema, type Message } from "./types/Message.js";
 
-export const getPinnedMessagesSchema = z.object({
+export const getPinnedMessagesSchema = object({
   channel: snowflake
 });
 
@@ -28,14 +28,14 @@ export const getPinnedMessages: Fetcher<
 export const getPinnedMessagesSafe = toValidated(
   getPinnedMessages,
   getPinnedMessagesSchema,
-  messageSchema.array()
+  array(messageSchema)
 );
 
 export const getPinnedMessagesProcedure = toProcedure(
   `query`,
   getPinnedMessages,
   getPinnedMessagesSchema,
-  messageSchema.array()
+  array(messageSchema)
 );
 
 export const getPinnedMessagesQuery = toQuery(getPinnedMessages);

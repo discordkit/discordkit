@@ -1,6 +1,6 @@
-import type { z } from "zod";
+import { array, maxLength, type Output } from "valibot";
 import { actionRowSchema } from "./ActionRow.js";
 
-export const messageComponentSchema = actionRowSchema.array().max(5);
+export const messageComponentSchema = array(actionRowSchema, [maxLength(5)]);
 
-export type MessageComponent = z.infer<typeof messageComponentSchema>;
+export type MessageComponent = Output<typeof messageComponentSchema>;

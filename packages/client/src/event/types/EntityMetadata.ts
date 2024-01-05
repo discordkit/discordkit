@@ -1,8 +1,15 @@
-import { z } from "zod";
+import {
+  object,
+  string,
+  minLength,
+  maxLength,
+  nullish,
+  type Output
+} from "valibot";
 
-export const entityMetadataSchema = z.object({
+export const entityMetadataSchema = object({
   /** location of the event (1-100 characters) */
-  location: z.string().min(1).max(100).nullish()
+  location: nullish(string([minLength(1), maxLength(100)]))
 });
 
-export type EntityMetadata = z.infer<typeof entityMetadataSchema>;
+export type EntityMetadata = Output<typeof entityMetadataSchema>;

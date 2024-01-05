@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { array, object } from "valibot";
 import {
   get,
   type Fetcher,
@@ -12,7 +12,7 @@ import {
   applicationRoleConnectionMetadataSchema
 } from "./types/ApplicationRoleConnectionMetadata.js";
 
-export const getApplicationRoleConnectionMetadataRecordsSchema = z.object({
+export const getApplicationRoleConnectionMetadataRecordsSchema = object({
   application: snowflake
 });
 
@@ -32,14 +32,14 @@ export const getApplicationRoleConnectionMetadataRecords: Fetcher<
 export const getApplicationRoleConnectionMetadataRecordsSafe = toValidated(
   getApplicationRoleConnectionMetadataRecords,
   getApplicationRoleConnectionMetadataRecordsSchema,
-  applicationRoleConnectionMetadataSchema.array()
+  array(applicationRoleConnectionMetadataSchema)
 );
 
 export const getApplicationRoleConnectionMetadataRecordsProcedure = toProcedure(
   `query`,
   getApplicationRoleConnectionMetadataRecords,
   getApplicationRoleConnectionMetadataRecordsSchema,
-  applicationRoleConnectionMetadataSchema.array()
+  array(applicationRoleConnectionMetadataSchema)
 );
 
 export const getApplicationRoleConnectionMetadataRecordsQuery = toQuery(

@@ -1,19 +1,24 @@
-<p align="center">
+<div align="center">
 
 ![Discordkit](./static/logo-light.svg#gh-light-mode-only)
 ![Discordkit](./static/logo-dark.svg#gh-dark-mode-only)
 
-<p align="center"><a href="https://www.npmjs.com/package/@discordkit/client"><img src="https://img.shields.io/npm/v/@discordkit/client.svg?style=flat" alt="npm"></a><a href="https://github.com/discordkit/discordkit/actions/workflows/ci.yml"><img src="https://github.com/discordkit/discordkit/actions/workflows/ci.yml/badge.svg" alt="CI"></a><a href="https://codecov.io/gh/discordkit/discordkit"><img src="https://codecov.io/gh/discordkit/discordkit/branch/master/graph/badge.svg" alt="codecov"/></a></p>
-<p align="center">TypeScript SDK for <a href="https://discord.com/developers/docs">Discord's API</a></p>
+[![npm version](https://img.shields.io/npm/v/@discordkit/client.svg?style=flat)](https://www.npmjs.com/package/@discordkit/client)
+[![CI status](https://github.com/discordkit/discordkit/actions/workflows/ci.yml/badge.svg)](https://github.com/discordkit/discordkit/actions/workflows/ci.yml)
+[![Codecov coverage](https://codecov.io/gh/discordkit/discordkit/branch/master/graph/badge.svg)](https://codecov.io/gh/discordkit/discordkit)
+
+TypeScript SDK for [Discord's API](https://discord.com/developers/docs)
+
+</div>
 
 ---
 
 ## 📦 Installation
 
 ```bash
-npm install --save-dev @discordkit/client zod
+npm install --save-dev @discordkit/client valibot
 # or
-yarn add -D @discordkit/client zod
+yarn add -D @discordkit/client valibot
 ```
 
 > [!WARNING]
@@ -24,7 +29,7 @@ yarn add -D @discordkit/client zod
 
 ## 🔧 Usage
 
-Out of the box Discordkit supports vanilla JavaScript/Typescript, [react-query](https://tanstack.com/query/latest), and [tRPC](https://trpc.io/). For each of Discord's API endpoints, Discordkit exports a basic request handler function, a pre-wired `tRPC` procedure builder, and for `GET` requests, a `react-query` query function. Additionally, each endpoint also exports a `zod` schema object to validate the input for a request handler.
+Out of the box Discordkit supports vanilla JavaScript/Typescript, [react-query](https://tanstack.com/query/latest), and [tRPC](https://trpc.io/). For each of Discord's API endpoints, Discordkit exports a basic request handler function, a pre-wired `tRPC` procedure builder, and for `GET` requests, a `react-query` query function. Additionally, each endpoint also exports a `valibot` schema object to validate the input for a request handler.
 
 Here is an example of the available exports and their naming patterns:
 

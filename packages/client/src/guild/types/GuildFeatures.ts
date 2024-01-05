@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { enum_ } from "valibot";
 
 export enum GuildFeatures {
   /** guild has access to set an animated guild banner image */
@@ -57,4 +57,4 @@ export enum GuildFeatures {
   WELCOME_SCREEN_ENABLED = `WELCOME_SCREEN_ENABLED`
 }
 
-export const guildFeaturesSchema = z.nativeEnum(GuildFeatures);
+export const guildFeaturesSchema = enum_(GuildFeatures);

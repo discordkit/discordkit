@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object } from "valibot";
 import {
   remove,
   type Fetcher,
@@ -7,7 +7,7 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const deleteChannelPermissionSchema = z.object({
+export const deleteChannelPermissionSchema = object({
   channel: snowflake,
   overwrite: snowflake
 });
@@ -19,7 +19,7 @@ export const deleteChannelPermissionSchema = z.object({
  *
  * Delete a channel permission overwrite for a user or role in a channel. Only usable for guild channels. Requires the `MANAGE_ROLES` permission. Returns a `204 empty` response on success. Fires a Channel Update Gateway event. For more information about permissions, see permissions
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
