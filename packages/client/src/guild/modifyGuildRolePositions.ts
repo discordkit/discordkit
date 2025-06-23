@@ -1,4 +1,12 @@
-import { array, integer, minValue, nullish, number, object } from "valibot";
+import {
+  array,
+  integer,
+  minValue,
+  nullish,
+  number,
+  object,
+  pipe
+} from "valibot";
 import {
   patch,
   type Fetcher,
@@ -15,7 +23,7 @@ export const modifyGuildRolePositionsSchema = object({
       /** role */
       id: snowflake,
       /** sorting position of the role */
-      position: nullish(number([integer(), minValue(0)]))
+      position: nullish(pipe(number(), integer(), minValue(0)))
     })
   )
 });

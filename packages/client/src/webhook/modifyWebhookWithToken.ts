@@ -1,4 +1,4 @@
-import { minLength, object, string, url, partial, omit } from "valibot";
+import { minLength, object, string, url, partial, omit, pipe } from "valibot";
 import {
   patch,
   type Fetcher,
@@ -10,13 +10,13 @@ import { webhookSchema, type Webhook } from "./types/Webhook.js";
 
 export const modifyWebhookWithTokenSchema = object({
   webhook: snowflake,
-  token: string([minLength(1)]),
+  token: pipe(string(), minLength(1)),
   body: partial(
     object({
       /** the default name of the webhook */
-      name: string([minLength(1)]),
+      name: pipe(string(), minLength(1)),
       /** image for the default webhook avatar */
-      avatar: string([url()])
+      avatar: pipe(string(), url())
     })
   )
 });
@@ -38,7 +38,7 @@ export const modifyWebhookWithTokenSchema = object({
  */
 export const modifyWebhookWithToken: Fetcher<
   typeof modifyWebhookWithTokenSchema,
-  Omit<Webhook, "user">
+  Omit<Webhook, `user`>
 > = async ({ webhook, token, body }) =>
   patch(`/webhooks/${webhook}/${token}`, body);
 

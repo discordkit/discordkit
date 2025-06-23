@@ -1,6 +1,6 @@
 /** Active sessions are indicated with an "online", "idle", or "dnd" string per platform. If a user is offline or invisible, the corresponding field is not present. */
 
-import { object, optional, string, type Output } from "valibot";
+import { object, optional, string, type InferOutput } from "valibot";
 
 export const clientStatusSchema = object({
   /** the user's status set for an active desktop (Windows, Linux, Mac) application session */
@@ -11,4 +11,4 @@ export const clientStatusSchema = object({
   web: optional(string())
 });
 
-export type ClientStatus = Output<typeof clientStatusSchema>;
+export type ClientStatus = InferOutput<typeof clientStatusSchema>;

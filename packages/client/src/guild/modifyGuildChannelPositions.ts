@@ -5,7 +5,8 @@ import {
   minValue,
   nullish,
   number,
-  object
+  object,
+  pipe
 } from "valibot";
 import {
   patch,
@@ -22,7 +23,7 @@ export const modifyGuildChannelPositionsSchema = object({
       /** channel id */
       id: snowflake,
       /** sorting position of the channel */
-      position: nullish(number([integer(), minValue(0)])),
+      position: nullish(pipe(number(), integer(), minValue(0))),
       /** syncs the permission overwrites with the new parent, if moving to a new category */
       lockPermissions: nullish(boolean()),
       /** the new parent ID for the channel that is moved */

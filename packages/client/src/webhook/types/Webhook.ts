@@ -1,11 +1,12 @@
 import {
-  type Output,
+  type InferOutput,
   nullish,
   object,
   optional,
   url,
   string,
-  partial
+  partial,
+  pipe
 } from "valibot";
 import { snowflake } from "@discordkit/core";
 import { channelSchema } from "../../channel/types/Channel.js";
@@ -37,7 +38,7 @@ export const webhookSchema = object({
   /** the channel that this webhook is following (returned for Channel Follower Webhooks) */
   sourceChannel: nullish(partial(channelSchema)),
   /** the url used for executing the webhook (returned by the webhooks OAuth2 flow) */
-  url: nullish(string([url()]))
+  url: nullish(pipe(string(), url()))
 });
 
-export type Webhook = Output<typeof webhookSchema>;
+export type Webhook = InferOutput<typeof webhookSchema>;

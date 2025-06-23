@@ -1,4 +1,4 @@
-import { object, string, minLength, omit } from "valibot";
+import { pipe, object, string, minLength, omit } from "valibot";
 import {
   get,
   type Fetcher,
@@ -11,7 +11,7 @@ import { webhookSchema, type Webhook } from "./types/Webhook.js";
 
 export const getWebhookWithTokenSchema = object({
   webhook: snowflake,
-  token: string([minLength(1)])
+  token: pipe(string(), minLength(1))
 });
 
 /**
@@ -23,7 +23,7 @@ export const getWebhookWithTokenSchema = object({
  */
 export const getWebhookWithToken: Fetcher<
   typeof getWebhookWithTokenSchema,
-  Omit<Webhook, "user">
+  Omit<Webhook, `user`>
 > = async ({ webhook, token }) => get(`/webhooks/${webhook}/${token}`);
 
 export const getWebhookWithTokenSafe = toValidated(

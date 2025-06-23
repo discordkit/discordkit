@@ -3,12 +3,12 @@ import {
   string,
   minLength,
   partial,
-  optional,
+  exactOptional,
   maxLength,
   array,
-  merge,
   literal,
-  unknown
+  unknown,
+  pipe
 } from "valibot";
 import {
   patch,
@@ -27,9 +27,9 @@ import { EmbedType } from "../channel/types/EmbedType.js";
 
 export const editWebhookMessageSchema = object({
   webhook: snowflake,
-  token: string([minLength(1)]),
+  token: pipe(string(), minLength(1)),
   message: snowflake,
-  params: optional(
+  params: exactOptional(
     partial(
       object({
         /** id of the thread the message is in */
@@ -40,11 +40,16 @@ export const editWebhookMessageSchema = object({
   body: partial(
     object({
       /** the message contents (up to 2000 characters) */
-      content: string([minLength(1), maxLength(2000)]),
+      content: pipe(string(), minLength(1), maxLength(2000)),
       /** embedded `rich` content */
-      embeds: array(
-        merge([embedSchema, object({ type: literal(EmbedType.RICH) })]),
-        [maxLength(10)]
+      embeds: pipe(
+        array(
+          object({
+            ...embedSchema.entries,
+            type: literal(EmbedType.RICH)
+          })
+        ),
+        maxLength(10)
       ),
       /** allowed mentions for the message */
       allowedMentions: allowedMentionSchema,

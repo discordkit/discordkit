@@ -7,6 +7,7 @@ import {
   nullish,
   number,
   object,
+  pipe,
   string
 } from "valibot";
 import {
@@ -24,11 +25,13 @@ export const startThreadFromMessageSchema = object({
   message: snowflake,
   body: object({
     /** 1-100 character channel name */
-    name: string([minLength(1), maxLength(100)]),
+    name: pipe(string(), minLength(1), maxLength(100)),
     /** duration in minutes to automatically archive the thread after recent activity, can be set to: 60, 1440, 4320, 10080 */
     autoArchiveDuration: nullish(autoArchiveDurationSchema),
     /** amount of seconds a user has to wait before sending another message (0-21600) */
-    rateLimitPerUser: nullish(number([integer(), minValue(0), maxValue(21600)]))
+    rateLimitPerUser: nullish(
+      pipe(number(), integer(), minValue(0), maxValue(21600))
+    )
   })
 });
 

@@ -1,5 +1,5 @@
 import { snowflake } from "@discordkit/core";
-import { object, tuple, number, optional, type Output } from "valibot";
+import { object, tuple, number, optional, type InferOutput } from "valibot";
 
 export const activityPartySchema = object({
   /** the id of the party */
@@ -15,4 +15,4 @@ export const activityPartySchema = object({
   )
 });
 
-export type ActivityParty = Output<typeof activityPartySchema>;
+export type ActivityParty = InferOutput<typeof activityPartySchema>;

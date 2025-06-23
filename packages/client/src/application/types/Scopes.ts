@@ -1,6 +1,6 @@
 // https://discord.com/developers/docs/topics/oauth2#shared-resources-oauth2-scopes
 
-import { union, literal, type Output } from "valibot";
+import { union, literal, type InferOutput } from "valibot";
 
 export const scopesSchema = union([
   /** allows your app to fetch data from a user's "Now Playing/Recently Played" list - requires Discord approval */
@@ -61,4 +61,4 @@ export const scopesSchema = union([
   literal(`webhook.incoming`)
 ]);
 
-export type Scopes = Output<typeof scopesSchema>;
+export type Scopes = InferOutput<typeof scopesSchema>;

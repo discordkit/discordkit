@@ -1,6 +1,6 @@
 import { waitFor } from "@testing-library/react";
 import { runProcedure, runQuery, mockRequest } from "#test-utils";
-import { array, length } from "valibot";
+import { array, length, pipe } from "valibot";
 import {
   listVoiceRegionsProcedure,
   listVoiceRegionsQuery,
@@ -11,7 +11,7 @@ import { voiceRegionSchema } from "../types/VoiceRegion.js";
 describe(`listVoiceRegions`, () => {
   const expected = mockRequest.get(
     `/voice/regions`,
-    array(voiceRegionSchema, [length(1)])
+    pipe(array(voiceRegionSchema), length(1))
   );
 
   it(`can be used standalone`, async () => {
@@ -19,9 +19,9 @@ describe(`listVoiceRegions`, () => {
   });
 
   it(`is tRPC compatible`, async () => {
-    await expect(runProcedure(listVoiceRegionsProcedure)()).resolves.toEqual(
-      expected
-    );
+    await expect(
+      runProcedure(listVoiceRegionsProcedure)(null)
+    ).resolves.toEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {

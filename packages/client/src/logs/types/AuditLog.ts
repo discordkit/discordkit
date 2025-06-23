@@ -1,4 +1,4 @@
-import { object, partial, array, type Output } from "valibot";
+import { object, partial, array, type InferOutput } from "valibot";
 import { channelSchema } from "../../channel/types/Channel.js";
 import { scheduledEventSchema } from "../../event/types/ScheduledEvent.js";
 import { integrationSchema } from "../../guild/types/Integration.js";
@@ -27,4 +27,4 @@ export const auditLogSchema = object({
   webhooks: array(webhookSchema)
 });
 
-export type AuditLog = Output<typeof auditLogSchema>;
+export type AuditLog = InferOutput<typeof auditLogSchema>;

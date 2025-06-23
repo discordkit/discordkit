@@ -5,7 +5,7 @@ import {
   partial,
   string,
   array,
-  type Output
+  type InferOutput
 } from "valibot";
 import { emojiSchema } from "../../emoji/types/Emoji.js";
 import { reactionCountDetailsSchema } from "./ReactionCountDetails.js";
@@ -25,4 +25,4 @@ export const reactionSchema = object({
   burstColors: array(string())
 });
 
-export type Reaction = Output<typeof reactionSchema>;
+export type Reaction = InferOutput<typeof reactionSchema>;

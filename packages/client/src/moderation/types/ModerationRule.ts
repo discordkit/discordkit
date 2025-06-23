@@ -1,11 +1,12 @@
 import {
-  type Output,
+  type InferOutput,
   object,
   string,
-  minLength,
   array,
   boolean,
-  maxLength
+  maxLength,
+  pipe,
+  nonEmpty
 } from "valibot";
 import { snowflake } from "@discordkit/core";
 import { moderationActionSchema } from "./ModerationAction.js";
@@ -19,7 +20,7 @@ export const moderationRuleSchema = object({
   /** the guild which this rule belongs to */
   guildId: snowflake,
   /** the rule name */
-  name: string([minLength(1)]),
+  name: pipe(string(), nonEmpty()),
   /** the user which first created this rule */
   creatorId: snowflake,
   /** the rule event type */
@@ -33,9 +34,9 @@ export const moderationRuleSchema = object({
   /** whether the rule is enabled */
   enabled: boolean(),
   /** the role ids that should not be affected by the rule (Maximum of 20) */
-  exemptRoles: array(snowflake, [maxLength(20)]),
+  exemptRoles: pipe(array(snowflake), maxLength(20)),
   /** the channel ids that should not be affected by the rule (Maximum of 50) */
-  exemptChannels: array(snowflake, [maxLength(50)])
+  exemptChannels: pipe(array(snowflake), maxLength(50))
 });
 
-export type ModerationRule = Output<typeof moderationRuleSchema>;
+export type ModerationRule = InferOutput<typeof moderationRuleSchema>;

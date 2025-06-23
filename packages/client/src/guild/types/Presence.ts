@@ -1,4 +1,4 @@
-import { object, union, literal, array, type Output } from "valibot";
+import { object, union, literal, array, type InferOutput } from "valibot";
 import { snowflake } from "@discordkit/core";
 import { userSchema } from "../../user/types/User.js";
 import { clientStatusSchema } from "./ClientStatus.js";
@@ -22,4 +22,4 @@ export const presenceSchema = object({
   clientStatus: clientStatusSchema
 });
 
-export type Presence = Output<typeof presenceSchema>;
+export type Presence = InferOutput<typeof presenceSchema>;

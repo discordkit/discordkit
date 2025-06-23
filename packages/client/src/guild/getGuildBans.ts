@@ -2,12 +2,13 @@ import {
   object,
   array,
   partial,
-  optional,
+  exactOptional,
   number,
   integer,
   nullish,
   minValue,
-  maxValue
+  maxValue,
+  pipe
 } from "valibot";
 import {
   get,
@@ -21,11 +22,11 @@ import { banSchema, type Ban } from "./types/Ban.js";
 
 export const getGuildBansSchema = object({
   guild: snowflake,
-  params: optional(
+  params: exactOptional(
     partial(
       object({
         /** of users to return (up to maximum 1000) */
-        limit: nullish(number([integer(), minValue(1), maxValue(1000)])),
+        limit: nullish(pipe(number(), integer(), minValue(1), maxValue(1000))),
         /** consider only users before given user id */
         before: nullish(snowflake),
         /** consider only users after given user id */

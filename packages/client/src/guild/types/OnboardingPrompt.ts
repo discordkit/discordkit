@@ -1,4 +1,4 @@
-import { array, object, string, boolean, type Output } from "valibot";
+import { array, object, string, boolean, type InferOutput } from "valibot";
 import { snowflake } from "@discordkit/core";
 import { promptOptionSchema } from "./PromptOption.js";
 import { promptTypeSchema } from "./PromptType.js";
@@ -20,4 +20,4 @@ export const onboardingPromptSchema = object({
   inOnboarding: boolean()
 });
 
-export type OnboardingPrompt = Output<typeof onboardingPromptSchema>;
+export type OnboardingPrompt = InferOutput<typeof onboardingPromptSchema>;

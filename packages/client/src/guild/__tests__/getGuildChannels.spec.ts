@@ -1,6 +1,6 @@
 import { waitFor } from "@testing-library/react";
 import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
-import { array, length } from "valibot";
+import { array, length, pipe } from "valibot";
 import {
   getGuildChannelsProcedure,
   getGuildChannelsQuery,
@@ -12,7 +12,7 @@ import { channelSchema } from "../../channel/types/Channel.js";
 describe(`getGuildChannels`, () => {
   const expected = mockRequest.get(
     `/guilds/:guild/channels`,
-    array(channelSchema, [length(1)])
+    pipe(array(channelSchema), length(1))
   );
   const config = mockSchema(getGuildChannelsSchema);
 

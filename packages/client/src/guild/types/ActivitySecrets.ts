@@ -1,4 +1,4 @@
-import { type Output, object, optional, string } from "valibot";
+import { type InferOutput, object, optional, string } from "valibot";
 
 export const activitySecretsSchema = object({
   /** the secret for joining a party */
@@ -9,4 +9,4 @@ export const activitySecretsSchema = object({
   match: optional(string())
 });
 
-export type ActivitySecrets = Output<typeof activitySecretsSchema>;
+export type ActivitySecrets = InferOutput<typeof activitySecretsSchema>;

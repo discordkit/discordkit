@@ -1,4 +1,4 @@
-import { type Output, array, object } from "valibot";
+import { type InferOutput, array, object } from "valibot";
 import {
   get,
   type Fetcher,
@@ -30,7 +30,7 @@ export const activeGuildThreadsSchema = object({
  */
 export const listActiveGuildThreads: Fetcher<
   typeof listActiveGuildThreadsSchema,
-  Output<typeof activeGuildThreadsSchema>
+  InferOutput<typeof activeGuildThreadsSchema>
 > = async ({ guild }) => get(`/guilds/${guild}/threads/active`);
 
 export const listActiveGuildThreadsSafe = toValidated(

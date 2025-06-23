@@ -1,5 +1,5 @@
 import { snowflake } from "@discordkit/core";
-import { object, null_, type Output } from "valibot";
+import { object, null_, type InferOutput } from "valibot";
 
 export const roleTagSchema = object({
   /** the id of the bot this role belongs to */
@@ -10,4 +10,4 @@ export const roleTagSchema = object({
   premiumSubscriber: null_()
 });
 
-export type RoleTag = Output<typeof roleTagSchema>;
+export type RoleTag = InferOutput<typeof roleTagSchema>;

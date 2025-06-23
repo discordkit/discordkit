@@ -2,7 +2,6 @@
 
 import { enum_ } from "valibot";
 
-/* eslint-disable no-bitwise */
 export enum GuildMemberFlags {
   /** Member has left and rejoined the guild */
   DID_REJOIN = 1 << 0,

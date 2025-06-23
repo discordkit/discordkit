@@ -7,7 +7,7 @@ describe(`snowflake`, () => {
   const uid = new Snowflake({ custom_epoch: 1420070400000 });
   const mockSchema = new Valimock({
     customMocks: {
-      special: (ref) => {
+      custom: (ref) => {
         if (ref === snowflake) {
           return uid.getUniqueID().toString();
         }

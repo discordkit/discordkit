@@ -5,8 +5,9 @@ import {
   minValue,
   number,
   object,
-  optional,
-  partial
+  exactOptional,
+  partial,
+  pipe
 } from "valibot";
 import {
   post,
@@ -20,13 +21,13 @@ import { inviteTargetSchema } from "../invite/types/InviteTarget.js";
 
 export const createChannelInviteSchema = object({
   channel: snowflake,
-  body: optional(
+  body: exactOptional(
     partial(
       object({
         /** duration of invite in seconds before expiry, or 0 for never. between 0 and 604800 (7 days) (default: 86400 (24 hours)) */
-        maxAge: number([integer(), minValue(0), maxValue(604800)]),
+        maxAge: pipe(number(), integer(), minValue(0), maxValue(604800)),
         /** max number of uses or 0 for unlimited. between 0 and 100 (default: 0) */
-        maxUses: number([integer(), minValue(0), maxValue(100)]),
+        maxUses: pipe(number(), integer(), minValue(0), maxValue(100)),
         /** whether this invite only grants temporary membership (default: false) */
         temporary: boolean(),
         /** if true, don't try to reuse a similar invite (useful for creating many unique one time use invites) (default: false) */
@@ -38,8 +39,7 @@ export const createChannelInviteSchema = object({
         /** the id of the embedded application to open for this invite, required if target_type is 2, the application must have the EMBEDDED flag	 */
         targetApplicationId: snowflake
       })
-    ),
-    {}
+    )
   )
 });
 

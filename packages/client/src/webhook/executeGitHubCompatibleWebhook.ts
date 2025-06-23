@@ -1,4 +1,12 @@
-import { object, string, minLength, boolean, partial, optional } from "valibot";
+import {
+  object,
+  string,
+  minLength,
+  boolean,
+  partial,
+  exactOptional,
+  pipe
+} from "valibot";
 import {
   post,
   buildURL,
@@ -10,14 +18,14 @@ import {
 
 export const executeGitHubCompatibleWebhookSchema = object({
   webhook: snowflake,
-  token: string([minLength(1)]),
-  params: optional(
+  token: pipe(string(), minLength(1)),
+  params: exactOptional(
     partial(
       object({
         /** id of the thread to send the message in */
         threadId: snowflake,
         /** waits for server confirmation of message send before response (defaults to `true`; when `false` a message that is not saved does not return an error) */
-        wait: optional(boolean(), true)
+        wait: exactOptional(boolean())
       })
     )
   )

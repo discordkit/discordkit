@@ -1,4 +1,4 @@
-import { object, string, type Output } from "valibot";
+import { object, string, type InferOutput } from "valibot";
 
 /** When received over the gateway, the buttons field is an array of strings, which are the button labels. Bots cannot access a user's activity button URLs. When sending, the buttons field must be an array of the below object: */
 export const activityButtonSchema = object({
@@ -8,4 +8,4 @@ export const activityButtonSchema = object({
   url: string()
 });
 
-export type ActivityButton = Output<typeof activityButtonSchema>;
+export type ActivityButton = InferOutput<typeof activityButtonSchema>;

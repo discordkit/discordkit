@@ -4,12 +4,13 @@ import {
   integer,
   literal,
   maxLength,
-  merge,
   minLength,
+  nonEmpty,
   number,
   object,
-  optional,
+  exactOptional,
   partial,
+  pipe,
   string,
   unknown
 } from "valibot";
@@ -29,12 +30,12 @@ import { messageComponentSchema } from "../channel/types/MessageComponent.js";
 
 export const createFollowupMessageSchema = object({
   application: snowflake,
-  token: string([minLength(1)]),
-  params: optional(
+  token: pipe(string(), nonEmpty()),
+  params: exactOptional(
     partial(
       object({
         /** waits for server confirmation of message send before response, and returns the created message body (defaults to false; when false a message that is not saved does not return an error) */
-        wait: optional(boolean(), false),
+        wait: exactOptional(boolean()),
         /** Send a message to the specified thread within a webhook's channel. The thread will automatically be unarchived. */
         threadId: snowflake
       })
@@ -43,17 +44,22 @@ export const createFollowupMessageSchema = object({
   body: partial(
     object({
       /** the message contents (up to 2000 characters) */
-      content: string([minLength(1), maxLength(2000)]),
+      content: pipe(string(), minLength(1), maxLength(2000)),
       /** override the default username of the webhook */
-      username: string([minLength(1)]),
+      username: pipe(string(), nonEmpty()),
       /** override the default avatar of the webhook */
-      avatarUrl: string([minLength(1)]),
+      avatarUrl: pipe(string(), nonEmpty()),
       /** true if this is a TTS message */
       tts: boolean(),
       /** embedded rich content */
-      embeds: array(
-        merge([embedSchema, object({ type: literal(EmbedType.RICH) })]),
-        [maxLength(10)]
+      embeds: pipe(
+        array(
+          object({
+            ...embedSchema.entries,
+            type: literal(EmbedType.RICH)
+          })
+        ),
+        maxLength(10)
       ),
       /** allowed mentions for the message */
       allowedMentions: allowedMentionSchema,
@@ -64,9 +70,9 @@ export const createFollowupMessageSchema = object({
       /** attachment objects with filename and description */
       attachments: array(partial(attachmentSchema)),
       /** message flags combined as a bitfield (only SUPPRESS_EMBEDS can be set) */
-      flags: number([integer()]),
+      flags: pipe(number(), integer()),
       /** name of thread to create (requires the webhook channel to be a forum channel) */
-      threadName: string([minLength(1)])
+      threadName: pipe(string(), nonEmpty())
     })
   )
 });

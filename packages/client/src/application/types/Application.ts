@@ -9,7 +9,8 @@ import {
   number,
   integer,
   minValue,
-  type Output
+  type InferOutput,
+  pipe
 } from "valibot";
 import { snowflake } from "@discordkit/core";
 import { userSchema } from "../../user/types/User.js";
@@ -51,17 +52,17 @@ export const applicationSchema = object({
   /** the application's default rich presence invite cover image hash */
   coverImage: nullish(string()),
   /** the application's public flags */
-  flags: nullish(number([integer()])),
+  flags: nullish(pipe(number(), integer())),
   /** an approximate count of the app's guild membership */
-  approximateGuildCount: nullish(number([integer(), minValue(0)])),
+  approximateGuildCount: nullish(pipe(number(), integer(), minValue(0))),
   /** up to 5 tags describing the content and functionality of the application */
   tags: nullish(array(string())),
   /** settings for the application's default in-app authorization link, if enabled */
-  installParams: nullish(number([integer()])),
+  installParams: nullish(pipe(number(), integer())),
   /** the application's default custom authorization link, if enabled */
   customInstallUrl: nullish(string()),
   /** the application's role connection verification entry point, which when configured will render the app as a verification method in the guild role verification configuration */
   roleConnectionsVerificationUrl: nullish(string())
 });
 
-export type Application = Output<typeof applicationSchema>;
+export type Application = InferOutput<typeof applicationSchema>;

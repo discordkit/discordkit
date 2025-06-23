@@ -4,7 +4,8 @@ import {
   minLength,
   nullish,
   object,
-  string
+  string,
+  pipe
 } from "valibot";
 import {
   post,
@@ -21,7 +22,7 @@ export const createStageInstanceSchema = object({
     /** The id of the Stage channel */
     channelId: snowflake,
     /** The topic of the Stage instance (1-120 characters) */
-    topic: string([minLength(1), maxLength(120)]),
+    topic: pipe(string(), minLength(1), maxLength(120)),
     /** The privacy level of the Stage instance (default GUILD_ONLY) */
     privacyLevel: nullish(stagePrivacyLevelSchema),
     /** Notify @everyone that a Stage instance has started */

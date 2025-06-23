@@ -1,4 +1,4 @@
-import { object, string, optional, type Output } from "valibot";
+import { object, string, optional, type InferOutput } from "valibot";
 import { userSchema } from "../../user/types/User.js";
 
 export const banSchema = object({
@@ -8,4 +8,4 @@ export const banSchema = object({
   user: userSchema
 });
 
-export type Ban = Output<typeof banSchema>;
+export type Ban = InferOutput<typeof banSchema>;

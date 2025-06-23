@@ -5,7 +5,7 @@ import {
   mockRequest,
   mockSchema
 } from "#test-utils";
-import { array, length } from "valibot";
+import { array, length, pipe } from "valibot";
 import {
   modifyGuildRolePositions,
   modifyGuildRolePositionsProcedure,
@@ -17,7 +17,7 @@ import { roleSchema } from "../types/Role.js";
 describe(`modifyGuildRolePositions`, () => {
   const expected = mockRequest.patch(
     `/guilds/:guild/roles`,
-    array(roleSchema, [length(1)])
+    pipe(array(roleSchema), length(1))
   );
   const config = mockSchema(modifyGuildRolePositionsSchema);
 

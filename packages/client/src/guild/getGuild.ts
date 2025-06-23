@@ -1,4 +1,4 @@
-import { boolean, object, optional, partial } from "valibot";
+import { boolean, object, exactOptional, partial } from "valibot";
 import {
   get,
   type Fetcher,
@@ -11,11 +11,11 @@ import { guildSchema, type Guild } from "./types/Guild.js";
 
 export const getGuildSchema = object({
   id: snowflake,
-  params: optional(
+  params: exactOptional(
     partial(
       object({
         /** when true, will return approximate member and presence counts for the guild */
-        withCounts: optional(boolean(), false)
+        withCounts: exactOptional(boolean())
       })
     )
   )

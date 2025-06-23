@@ -1,4 +1,4 @@
-import { union, literal, type Output } from "valibot";
+import { union, literal, type InferOutput } from "valibot";
 
 export const servicesSchema = union([
   literal(`battlenet`),
@@ -22,4 +22,4 @@ export const servicesSchema = union([
   literal(`youtube`)
 ]);
 
-export type Services = Output<typeof servicesSchema>;
+export type Services = InferOutput<typeof servicesSchema>;

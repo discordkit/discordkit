@@ -1,11 +1,12 @@
 import {
   boolean,
   integer,
-  minLength,
+  nonEmpty,
   number,
   object,
   optional,
   partial,
+  pipe,
   string
 } from "valibot";
 import {
@@ -22,17 +23,17 @@ export const createGuildRoleSchema = object({
   body: partial(
     object({
       /** name of the role */
-      name: string([minLength(1)]),
+      name: pipe(string(), nonEmpty()),
       /** bitwise value of the enabled/disabled permissions */
-      permissions: number([integer()]),
+      permissions: pipe(number(), integer()),
       /** RGB color value */
-      color: number([integer()]),
+      color: pipe(number(), integer()),
       /** whether the role should be displayed separately in the sidebar */
       hoist: boolean(),
       /** the role's icon image (if the guild has the `ROLE_ICONS` feature) */
-      icon: optional(string([minLength(1)])),
+      icon: optional(pipe(string(), nonEmpty())),
       /** the role's unicode emoji as a standard emoji (if the guild has the `ROLE_ICONS` feature) */
-      unicodeEmoji: optional(string([minLength(1)])),
+      unicodeEmoji: optional(pipe(string(), nonEmpty())),
       /** whether the role should be mentionable */
       mentionable: boolean()
     })

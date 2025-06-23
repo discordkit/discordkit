@@ -1,6 +1,6 @@
 import { waitFor } from "@testing-library/react";
 import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
-import { array, length } from "valibot";
+import { array, length, pipe } from "valibot";
 import {
   getApplicationRoleConnectionMetadataRecordsProcedure,
   getApplicationRoleConnectionMetadataRecordsQuery,
@@ -12,7 +12,7 @@ import { applicationRoleConnectionMetadataSchema } from "../types/ApplicationRol
 describe(`getApplicationRoleConnectionMetadataRecords`, () => {
   const expected = mockRequest.get(
     `/applications/:application/role-connections/metadata`,
-    array(applicationRoleConnectionMetadataSchema, [length(1)])
+    pipe(array(applicationRoleConnectionMetadataSchema), length(1))
   );
   const config = mockSchema(getApplicationRoleConnectionMetadataRecordsSchema);
 

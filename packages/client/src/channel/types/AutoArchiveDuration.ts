@@ -1,4 +1,4 @@
-import { union, literal, type Output } from "valibot";
+import { union, literal, type InferOutput } from "valibot";
 
 export const autoArchiveDurationSchema = union([
   literal(60),
@@ -7,4 +7,4 @@ export const autoArchiveDurationSchema = union([
   literal(10080)
 ]);
 
-export type AutoArchiveDuration = Output<typeof autoArchiveDurationSchema>;
+export type AutoArchiveDuration = InferOutput<typeof autoArchiveDurationSchema>;

@@ -1,14 +1,15 @@
 import {
-  type Output,
+  type InferOutput,
   array,
   boolean,
   integer,
   maxLength,
-  minLength,
+  nonEmpty,
   nullish,
   number,
   object,
   partial,
+  pipe,
   string
 } from "valibot";
 import { allowedMentionSchema } from "../../channel/types/AllowedMention.js";
@@ -20,19 +21,19 @@ export const interactionCallbackDataSchema = object({
   /** is the response TTS */
   tts: nullish(boolean()),
   /** message content */
-  content: nullish(string([minLength(1)])),
+  content: nullish(pipe(string(), nonEmpty())),
   /** supports up to 10 embeds */
-  embeds: nullish(array(embedSchema, [maxLength(10)])),
+  embeds: nullish(pipe(array(embedSchema), maxLength(10))),
   /** allowed mentions object */
   allowedMentions: nullish(allowedMentionSchema),
   /** message flags combined as a bitfield (only SUPPRESS_EMBEDS and EPHEMERAL can be set) */
-  flags: nullish(number([integer()])),
+  flags: nullish(pipe(number(), integer())),
   /** message components */
   components: nullish(messageComponentSchema),
   /** attachment objects with filename and description */
   attachments: nullish(array(partial(attachmentSchema)))
 });
 
-export type InteractionCallbackData = Output<
+export type InteractionCallbackData = InferOutput<
   typeof interactionCallbackDataSchema
 >;

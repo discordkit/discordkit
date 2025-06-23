@@ -1,5 +1,5 @@
 import { mockSchema } from "#test-utils";
-import { parse, string, url } from "valibot";
+import { parse, pipe, string, url } from "valibot";
 import {
   guildMemberBanner,
   guildMemberBannerSchema
@@ -9,7 +9,7 @@ describe(`guildMemberBanner`, () => {
   it(`produces a valid URL`, () => {
     expect(() =>
       parse(
-        string([url()]),
+        pipe(string(), url()),
         guildMemberBanner(mockSchema(guildMemberBannerSchema))
       )
     ).not.toThrow();

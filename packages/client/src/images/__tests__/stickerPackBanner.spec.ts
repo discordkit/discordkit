@@ -1,5 +1,5 @@
 import { mockSchema } from "#test-utils";
-import { parse, string, url } from "valibot";
+import { parse, pipe, string, url } from "valibot";
 import {
   stickerPackBanner,
   stickerPackBannerSchema
@@ -9,7 +9,7 @@ describe(`stickerPackBanner`, () => {
   it(`produces a valid URL`, () => {
     expect(() =>
       parse(
-        string([url()]),
+        pipe(string(), url()),
         stickerPackBanner(mockSchema(stickerPackBannerSchema))
       )
     ).not.toThrow();

@@ -1,4 +1,12 @@
-import { object, string, minLength, maxLength, url, nullish } from "valibot";
+import {
+  object,
+  string,
+  minLength,
+  maxLength,
+  url,
+  nullish,
+  pipe
+} from "valibot";
 import {
   post,
   type Fetcher,
@@ -12,9 +20,9 @@ export const createWebhookSchema = object({
   channel: snowflake,
   body: object({
     /** name of the webhook (1-80 characters) */
-    name: string([minLength(1), maxLength(80)]),
+    name: pipe(string(), minLength(1), maxLength(80)),
     /** image for the default webhook avatar */
-    avatar: nullish(string([url()]))
+    avatar: nullish(pipe(string(), url()))
   })
 });
 

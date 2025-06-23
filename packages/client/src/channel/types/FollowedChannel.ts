@@ -1,5 +1,5 @@
 import { snowflake } from "@discordkit/core";
-import { object, type Output } from "valibot";
+import { object, type InferOutput } from "valibot";
 
 export const followedChannelSchema = object({
   /** source channel id */
@@ -8,4 +8,4 @@ export const followedChannelSchema = object({
   webhookId: snowflake
 });
 
-export type FollowedChannel = Output<typeof followedChannelSchema>;
+export type FollowedChannel = InferOutput<typeof followedChannelSchema>;

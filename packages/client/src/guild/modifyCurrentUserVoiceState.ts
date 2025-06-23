@@ -4,6 +4,7 @@ import {
   nullish,
   object,
   partial,
+  pipe,
   string
 } from "valibot";
 import {
@@ -23,7 +24,7 @@ export const modifyCurrentUserVoiceStateSchema = object({
       /** toggles the user's suppress state */
       suppress: nullish(boolean()),
       /** sets the user's request to speak */
-      requestToSpeakTimestamp: nullish(string([isoTimestamp()]))
+      requestToSpeakTimestamp: nullish(pipe(string(), isoTimestamp()))
     })
   )
 });

@@ -1,4 +1,4 @@
-import { object, literal, union, array, type Output } from "valibot";
+import { object, literal, union, array, type InferOutput } from "valibot";
 import { ComponentType } from "./ComponentType.js";
 import { buttonSchema } from "./Button.js";
 import { selectMenuSchema } from "./SelectMenu.js";
@@ -9,4 +9,4 @@ export const actionRowSchema = object({
   components: array(union([buttonSchema, selectMenuSchema, textInputSchema]))
 });
 
-export type ActionRow = Output<typeof actionRowSchema>;
+export type ActionRow = InferOutput<typeof actionRowSchema>;

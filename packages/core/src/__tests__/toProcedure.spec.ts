@@ -1,11 +1,12 @@
 import {
+  pipe,
   array,
   object,
   string,
   uuid,
   minLength,
   maxLength,
-  type Output
+  type InferOutput
 } from "valibot";
 import { initTRPC } from "@trpc/server";
 import { mockRequest } from "#test-utils";
@@ -18,8 +19,8 @@ describe(`toProcedure`, () => {
     discord.setToken(`Bot secret`);
   });
   const userSchema = object({
-    id: string([uuid()]),
-    username: string([minLength(2), maxLength(16)])
+    id: pipe(string(), uuid()),
+    username: pipe(string(), minLength(2), maxLength(16))
   });
   const expected = mockRequest.get(`/listUsers`, array(userSchema));
 
@@ -27,7 +28,7 @@ describe(`toProcedure`, () => {
     const tRPC = initTRPC.create();
     const listUsers: Fetcher<
       null,
-      Array<Output<typeof userSchema>>
+      Array<InferOutput<typeof userSchema>>
     > = async () => get(`/listUsers`);
     const listUsersProcedure = toProcedure(
       `query`,
@@ -43,6 +44,6 @@ describe(`toProcedure`, () => {
         })
         .createCaller({})
         .listUsers()
-    ).resolves.toEqual(expected);
+    ).resolves.toStrictEqual(expected);
   });
 });

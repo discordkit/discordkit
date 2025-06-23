@@ -5,8 +5,9 @@ import {
   nullish,
   number,
   object,
-  optional,
+  exactOptional,
   partial,
+  pipe,
   string
 } from "valibot";
 import {
@@ -24,13 +25,13 @@ import {
 
 export const listJoinedPrivateArchivedThreadsSchema = object({
   channel: snowflake,
-  params: optional(
+  params: exactOptional(
     partial(
       object({
         /** returns threads before this timestamp */
-        before: nullish(string([isoTimestamp()])),
+        before: nullish(pipe(string(), isoTimestamp())),
         /** optional maximum number of threads to return */
-        limit: nullish(number([integer(), minValue(0)]))
+        limit: nullish(pipe(number(), integer(), minValue(0)))
       })
     )
   )

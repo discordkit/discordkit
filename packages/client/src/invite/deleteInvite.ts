@@ -1,4 +1,4 @@
-import { object, string, minLength } from "valibot";
+import { object, string, pipe, nonEmpty } from "valibot";
 import {
   remove,
   type Fetcher,
@@ -8,7 +8,7 @@ import {
 import { inviteSchema, type Invite } from "./types/Invite.js";
 
 export const deleteInviteSchema = object({
-  code: string([minLength(1)])
+  code: pipe(string(), nonEmpty())
 });
 
 /**

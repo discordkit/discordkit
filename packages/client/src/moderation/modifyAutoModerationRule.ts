@@ -2,10 +2,11 @@ import {
   array,
   boolean,
   maxLength,
-  minLength,
+  nonEmpty,
   nullish,
   object,
   partial,
+  pipe,
   string
 } from "valibot";
 import {
@@ -29,7 +30,7 @@ export const modifyAutoModerationRuleSchema = object({
   body: partial(
     object({
       /** the rule name */
-      name: string([minLength(1)]),
+      name: pipe(string(), nonEmpty()),
       /** the event type */
       eventType: moderationEventSchema,
       /** the trigger metadata */
@@ -39,9 +40,9 @@ export const modifyAutoModerationRuleSchema = object({
       /** whether the rule is enabled (False by default) */
       enabled: boolean(),
       /** the role ids that should not be affected by the rule (Maximum of 20) */
-      exemptRoles: array(snowflake, [maxLength(20)]),
+      exemptRoles: pipe(array(snowflake), maxLength(20)),
       /** the channel ids that should not be affected by the rule (Maximum of 50) */
-      exemptChannels: array(snowflake, [maxLength(50)])
+      exemptChannels: pipe(array(snowflake), maxLength(50))
     })
   )
 });

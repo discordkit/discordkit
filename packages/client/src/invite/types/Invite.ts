@@ -5,7 +5,7 @@ import {
   nullish,
   optional,
   number,
-  type Output
+  type InferOutput
 } from "valibot";
 import { applicationSchema } from "../../application/types/Application.js";
 import { channelSchema } from "../../channel/types/Channel.js";
@@ -42,4 +42,4 @@ export const inviteSchema = object({
   guildScheduledEvent: nullish(scheduledEventSchema)
 });
 
-export type Invite = Output<typeof inviteSchema>;
+export type Invite = InferOutput<typeof inviteSchema>;

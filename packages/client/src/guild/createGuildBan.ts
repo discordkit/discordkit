@@ -5,8 +5,9 @@ import {
   nullish,
   number,
   object,
-  optional,
-  partial
+  exactOptional,
+  partial,
+  pipe
 } from "valibot";
 import {
   put,
@@ -19,16 +20,16 @@ import {
 export const createGuildBanSchema = object({
   guild: snowflake,
   user: snowflake,
-  body: optional(
+  body: exactOptional(
     partial(
       object({
         /** number of days to delete messages for (0-7) */
         deleteMessageDays: nullish(
-          number([integer(), minValue(1), maxValue(7)])
+          pipe(number(), integer(), minValue(1), maxValue(7))
         ),
         /** number of seconds to delete messages for, between 0 and 604800 (7 days) */
         deleteMessageSeconds: nullish(
-          number([integer(), minValue(1), maxValue(7)])
+          pipe(number(), integer(), minValue(1), maxValue(7))
         )
       })
     )

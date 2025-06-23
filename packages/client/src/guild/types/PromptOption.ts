@@ -1,10 +1,13 @@
 import {
-  type Output,
+  type InferOutput,
   array,
-  minLength,
+  nonEmpty,
   object,
-  optional,
-  string
+  nullable,
+  string,
+  pipe,
+  exactOptional,
+  boolean
 } from "valibot";
 import { snowflake } from "@discordkit/core";
 import { emojiSchema } from "../../emoji/types/Emoji.js";
@@ -17,11 +20,17 @@ export const promptOptionSchema = object({
   /** IDs for roles assigned to a member when the option is selected */
   roleIds: array(snowflake),
   /** Emoji of the option */
-  emoji: emojiSchema,
+  emoji: exactOptional(emojiSchema),
+  /** Emoji ID of the option */
+  emojiId: exactOptional(snowflake),
+  /** Emoji name of the optio */
+  emojiName: exactOptional(pipe(string(), nonEmpty())),
+  /** Whether the emoji is animated */
+  emojiAnimated: exactOptional(boolean()),
   /** Title of the option */
-  title: string([minLength(1)]),
+  title: pipe(string(), nonEmpty()),
   /** Description of the option */
-  description: optional(string())
+  description: nullable(string())
 });
 
-export type PromptOption = Output<typeof promptOptionSchema>;
+export type PromptOption = InferOutput<typeof promptOptionSchema>;

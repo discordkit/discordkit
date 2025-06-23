@@ -1,10 +1,11 @@
 import {
   array,
   boolean,
-  minLength,
+  nonEmpty,
   nullish,
   object,
   partial,
+  pipe,
   string
 } from "valibot";
 import {
@@ -29,7 +30,7 @@ export const modifyGuildWelcomeScreenSchema = object({
       /** channels linked in the welcome screen and their display options */
       welcomeChannels: nullish(array(welcomeChannelSchema)),
       /** the server description to show in the welcome screen */
-      description: nullish(string([minLength(1)]))
+      description: nullish(pipe(string(), nonEmpty()))
     })
   )
 });

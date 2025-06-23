@@ -5,6 +5,7 @@ import {
   number,
   object,
   partial,
+  pipe,
   string,
   unknown
 } from "valibot";
@@ -27,11 +28,11 @@ export const editMessageSchema = object({
   body: partial(
     object({
       /** Message contents (up to 2000 characters) */
-      content: string([maxLength(2000)]),
+      content: pipe(string(), maxLength(2000)),
       /** Up to 10 rich embeds (up to 6000 characters) */
-      embeds: array(embedSchema, [maxLength(10)]),
+      embeds: pipe(array(embedSchema), maxLength(10)),
       /** Edit the flags of a message (only SUPPRESS_EMBEDS can currently be set/unset) */
-      flags: number([integer()]),
+      flags: pipe(number(), integer()),
       /** Allowed mentions for the message */
       allowedMentions: allowedMentionSchema,
       /** Components to include with the message */

@@ -1,4 +1,4 @@
-import { object, string, minLength, url, partial } from "valibot";
+import { pipe, object, string, minLength, url, partial } from "valibot";
 import {
   patch,
   type Fetcher,
@@ -13,9 +13,9 @@ export const modifyWebhookSchema = object({
   body: partial(
     object({
       /** the default name of the webhook */
-      name: string([minLength(1)]),
+      name: pipe(string(), minLength(1)),
       /** image for the default webhook avatar */
-      avatar: string([url()]),
+      avatar: pipe(string(), url()),
       /** the new channel id this webhook should be moved to */
       channelId: snowflake
     })

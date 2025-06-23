@@ -1,5 +1,5 @@
 import { snowflake } from "@discordkit/core";
-import { type Output, object, partial, string } from "valibot";
+import { type InferOutput, object, partial, string } from "valibot";
 
 export const optionalAuditEntryInfoSchema = partial(
   object({
@@ -30,6 +30,6 @@ export const optionalAuditEntryInfoSchema = partial(
   })
 );
 
-export type OptionalAuditEntryInfo = Output<
+export type OptionalAuditEntryInfo = InferOutput<
   typeof optionalAuditEntryInfoSchema
 >;

@@ -5,7 +5,7 @@ import {
   nullish,
   array,
   boolean,
-  type Output
+  type InferOutput
 } from "valibot";
 import { snowflake } from "@discordkit/core";
 import { userSchema } from "../../user/types/User.js";
@@ -29,4 +29,4 @@ export const emojiSchema = object({
   available: nullish(boolean())
 });
 
-export type Emoji = Output<typeof emojiSchema>;
+export type Emoji = InferOutput<typeof emojiSchema>;

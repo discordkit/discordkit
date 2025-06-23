@@ -1,16 +1,17 @@
 import {
-  type Output,
+  type InferOutput,
   array,
   boolean,
   integer,
   maxValue,
-  minLength,
+  nonEmpty,
   minValue,
   nullable,
   number,
   object,
   partial,
-  string
+  string,
+  pipe
 } from "valibot";
 import {
   post,
@@ -25,19 +26,19 @@ export const beginGuildPruneSchema = object({
   body: partial(
     object({
       /** number of days to prune (1-30) */
-      days: number([minValue(1), maxValue(30)]),
+      days: pipe(number(), minValue(1), maxValue(30)),
       /** whether pruned is returned, discouraged for large guilds */
       computePruneCount: boolean(),
       /** role(s) to include */
       includeRoles: array(snowflake),
       /** @deprecated reason for the prune */
-      reason: string([minLength(1)])
+      reason: pipe(string(), nonEmpty())
     })
   )
 });
 
 export const guildPruneResultSchema = object({
-  pruned: nullable(number([integer(), minValue(0)]))
+  pruned: nullable(pipe(number(), integer(), minValue(0)))
 });
 
 /**
@@ -55,7 +56,7 @@ export const guildPruneResultSchema = object({
  */
 export const beginGuildPrune: Fetcher<
   typeof beginGuildPruneSchema,
-  Output<typeof guildPruneResultSchema>
+  InferOutput<typeof guildPruneResultSchema>
 > = async ({ guild, body }) => post(`/guilds/${guild}/prune`, body);
 
 export const beginGuildPruneSafe = toValidated(

@@ -1,4 +1,4 @@
-import { object, boolean, type Output } from "valibot";
+import { object, boolean, type InferOutput } from "valibot";
 import { snowflake } from "@discordkit/core";
 import { applicationCommandPermissionTypeSchema } from "./ApplicationCommandPermissionType.js";
 
@@ -11,6 +11,6 @@ export const applicationCommandPermissionsSchema = object({
   permission: boolean()
 });
 
-export type ApplicationCommandPermissions = Output<
+export type ApplicationCommandPermissions = InferOutput<
   typeof applicationCommandPermissionsSchema
 >;

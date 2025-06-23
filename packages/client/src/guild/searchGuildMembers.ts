@@ -2,12 +2,13 @@ import {
   array,
   integer,
   maxValue,
-  minLength,
+  nonEmpty,
   minValue,
   number,
   object,
   optional,
-  string
+  string,
+  pipe
 } from "valibot";
 import {
   get,
@@ -23,9 +24,9 @@ export const searchGuildMembersSchema = object({
   guild: snowflake,
   params: object({
     /** Query string to match username(s) and nickname(s) against. */
-    query: string([minLength(1)]),
+    query: pipe(string(), nonEmpty()),
     /** max number of members to return (1-1000) */
-    limit: optional(number([integer(), minValue(1), maxValue(1000)]))
+    limit: optional(pipe(number(), integer(), minValue(1), maxValue(1000)))
   })
 });
 

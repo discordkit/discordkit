@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/prefer-literal-enum-member */
-/* eslint-disable no-bitwise */
+
 import { enum_ } from "valibot";
 
 export enum ChannelFlags {

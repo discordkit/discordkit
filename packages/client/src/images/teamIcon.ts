@@ -1,19 +1,20 @@
 import { getAsset, snowflake } from "@discordkit/core";
 import {
-  type Output,
-  minLength,
+  type InferOutput,
   object,
-  optional,
+  exactOptional,
   string,
-  picklist
+  picklist,
+  pipe,
+  nonEmpty
 } from "valibot";
 import { imageSizes } from "./types/ImageSizes.js";
 
 export const teamIconSchema = object({
   team: snowflake,
-  icon: string([minLength(1)]),
-  format: optional(picklist([`png`, `jpg`, `webp`]), `png`),
-  params: optional(
+  icon: pipe(string(), nonEmpty()),
+  format: exactOptional(picklist([`png`, `jpg`, `webp`])),
+  params: exactOptional(
     object({
       size: imageSizes
     })
@@ -25,5 +26,5 @@ export const teamIcon = ({
   icon,
   format,
   params
-}: Output<typeof teamIconSchema>): string =>
+}: InferOutput<typeof teamIconSchema>): string =>
   getAsset(`/team-icons/${team}/${icon}.${format ?? `png`}`, params);

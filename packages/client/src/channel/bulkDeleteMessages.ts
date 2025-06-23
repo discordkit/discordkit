@@ -1,4 +1,4 @@
-import { array, maxLength, minLength, object } from "valibot";
+import { array, maxLength, minLength, object, pipe } from "valibot";
 import {
   post,
   type Fetcher,
@@ -11,7 +11,7 @@ export const bulkDeleteMessagesSchema = object({
   channel: snowflake,
   body: object({
     /** an array of message ids to delete (2-100) */
-    messages: array(snowflake, [minLength(2), maxLength(100)])
+    messages: pipe(array(snowflake), minLength(2), maxLength(100))
   })
 });
 

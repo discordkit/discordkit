@@ -1,4 +1,4 @@
-import { minLength, object, string } from "valibot";
+import { nonEmpty, object, pipe, string } from "valibot";
 import {
   post,
   type Fetcher,
@@ -10,7 +10,7 @@ import { interactionResponseSchema } from "./types/InteractionResponse.js";
 
 export const createInteractionResponseSchema = object({
   interaction: snowflake,
-  token: string([minLength(1)]),
+  token: pipe(string(), nonEmpty()),
   body: interactionResponseSchema
 });
 

@@ -1,4 +1,4 @@
-import { array, boolean, nullish, object, optional, partial } from "valibot";
+import { array, boolean, nullish, object, exactOptional, partial } from "valibot";
 import {
   get,
   type Fetcher,
@@ -14,7 +14,7 @@ import {
 
 export const listScheduledEventsForGuildSchema = object({
   guild: snowflake,
-  params: optional(
+  params: exactOptional(
     partial(
       object({
         withUserCount: nullish(boolean())

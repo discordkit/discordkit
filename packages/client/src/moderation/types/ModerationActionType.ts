@@ -5,7 +5,7 @@ export enum ModerationActionType {
   BLOCK_MESSAGE = 1,
   /** logs user content to a specified channel */
   SEND_ALERT_MESSAGE = 2,
-  /**timeout user for a specified duration */
+  /** timeout user for a specified duration */
   TIMEOUT = 3
 }
 

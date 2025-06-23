@@ -1,6 +1,6 @@
 // https://discord.com/developers/docs/resources/voice#voice-region-object-voice-region-structure
 
-import { object, string, boolean, type Output } from "valibot";
+import { object, string, boolean, type InferOutput } from "valibot";
 
 export const voiceRegionSchema = object({
   /** unique ID for the region */
@@ -15,4 +15,4 @@ export const voiceRegionSchema = object({
   custom: boolean()
 });
 
-export type VoiceRegion = Output<typeof voiceRegionSchema>;
+export type VoiceRegion = InferOutput<typeof voiceRegionSchema>;

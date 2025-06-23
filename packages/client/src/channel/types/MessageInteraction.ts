@@ -4,7 +4,8 @@ import {
   minLength,
   partial,
   nullish,
-  type Output
+  type InferOutput,
+  pipe
 } from "valibot";
 import { snowflake } from "@discordkit/core";
 import { interactionTypeSchema } from "../../interactions/types/InteractionType.js";
@@ -17,11 +18,11 @@ export const messageInteractionSchema = object({
   /** the type of interaction */
   type: interactionTypeSchema,
   /** the name of the application command */
-  name: string([minLength(1)]),
+  name: pipe(string(), minLength(1)),
   /** the user who invoked the interaction */
   user: userSchema,
   /** the member who invoked the interaction in the guild */
   member: nullish(partial(memberSchema))
 });
 
-export type MessageInteraction = Output<typeof messageInteractionSchema>;
+export type MessageInteraction = InferOutput<typeof messageInteractionSchema>;

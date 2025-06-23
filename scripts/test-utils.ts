@@ -11,10 +11,14 @@ import {
 import { http } from "msw";
 import { type SetupServer, setupServer } from "msw/node";
 import { Valimock, type ValimockOptions } from "valimock";
-import type { BaseSchema, BaseSchemaAsync, Output } from "valibot";
+import type { GenericSchema, GenericSchemaAsync, InferOutput } from "valibot";
 import type { RenderHookResult } from "@testing-library/react";
 import { renderHook } from "@testing-library/react";
-import type { unsetMarker } from "@trpc/server";
+import type {
+  AnyProcedure,
+  inferProcedureInput,
+  inferProcedureOutput
+} from "@trpc/server/unstable-core-do-not-import";
 import { initTRPC } from "@trpc/server";
 import { Snowflake } from "nodejs-snowflake";
 import {
@@ -25,34 +29,32 @@ import {
   snowflake
 } from "@discordkit/core";
 
-type UnsetMarker = typeof unsetMarker;
+type Schema = GenericSchema | GenericSchemaAsync;
 
 export const msw: SetupServer = setupServer();
 
 const uid = new Snowflake({ custom_epoch: 1420070400000 });
 
-export const mockSchema = <T extends BaseSchema | BaseSchemaAsync>(
+export const mockSchema = <T extends Schema>(
   schema: T,
   opts?: Partial<ValimockOptions>
-): Output<T> =>
+): InferOutput<T> =>
   new Valimock({
     ...opts,
     customMocks: {
-      special: (ref): string | undefined => {
-        if (ref === snowflake) {
-          return uid.getUniqueID().toString();
-        }
+      custom: (s): string | undefined => {
+        if (s === snowflake) return uid.getUniqueID().toString();
       }
     }
   }).mock(schema);
 
 const createMock =
   (type: keyof typeof http) =>
-  <S extends BaseSchema>(
+  <S extends GenericSchema>(
     path: string,
     responseSchema?: S,
     opts?: Partial<ValimockOptions>
-  ): Output<S> => {
+  ): InferOutput<S> => {
     const result = responseSchema ? mockSchema(responseSchema, opts) : null;
 
     beforeAll(() => {
@@ -82,24 +84,27 @@ export const mockRequest = {
 
 const createWrapper =
   (): React.FC<{ children: React.ReactNode }> =>
-  // eslint-disable-next-line react/display-name
   ({ children }) =>
     createElement(QueryClientProvider, { client: new QueryClient() }, children);
 
 const runHook: typeof renderHook = (fn, options) =>
-  renderHook(fn, { wrapper: createWrapper(), ...options });
+  renderHook(fn, {
+    wrapper: createWrapper(),
+    ...options
+  });
 
 export const runQuery = <Q extends ReturnType<typeof toQuery>>(
   /** The Query function to Test */
   query: Q,
   /** The input variables of the Query function, if it accepts input */
-  input?: Parameters<typeof query>["length"] extends 0
+  input?: Parameters<typeof query>[`length`] extends 0
     ? never
     : Parameters<typeof query>[0]
 ): RenderHookResult<
   UseQueryResult<Awaited<ReturnType<ReturnType<Q>>>>,
   never
 > =>
+  // @ts-expect-error
   runHook(() =>
     useQuery({
       queryKey: [query.name, input],
@@ -108,7 +113,7 @@ export const runQuery = <Q extends ReturnType<typeof toQuery>>(
   );
 
 export const runMutation = <
-  S extends BaseSchema | null,
+  S extends Schema | null,
   R,
   M extends Fetcher<S, R>
 >(
@@ -117,25 +122,26 @@ export const runMutation = <
   UseMutationResult<
     R,
     unknown,
-    Parameters<typeof mutation>["length"] extends 0
+    Parameters<typeof mutation>[`length`] extends 0
       ? never
       : Parameters<typeof mutation>[0]
   >,
   never
+  // @ts-expect-error
 > => runHook(() => useMutation({ mutationFn: mutation }));
+
+type DecorateProcedure<TProcedure extends AnyProcedure> = (
+  input: inferProcedureInput<TProcedure>
+) => Promise<inferProcedureOutput<TProcedure>>;
 
 export const runProcedure = <const T extends ReturnType<typeof toProcedure>>(
   procedure: T
-): ReturnType<T>["_def"]["_input_in"] extends UnsetMarker
-  ? () => Promise<ReturnType<T>["_def"]["_output_out"]>
-  : (
-      input: ReturnType<T>["_def"]["_input_in"]
-    ) => Promise<ReturnType<T>["_def"]["_output_out"]> => {
+): DecorateProcedure<ReturnType<T>> => {
   const tRPC = initTRPC.create();
-  // @ts-expect-error
+  const instance = procedure(tRPC.procedure);
   return tRPC
     .router({
-      [procedure.name]: procedure(tRPC.procedure)
+      [procedure.name]: instance
     })
     .createCaller({})[procedure.name];
 };

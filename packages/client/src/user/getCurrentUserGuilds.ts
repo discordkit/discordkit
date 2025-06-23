@@ -4,10 +4,12 @@ import {
   integer,
   maxLength,
   maxValue,
+  minValue,
   number,
   object,
-  optional,
-  partial
+  exactOptional,
+  partial,
+  pipe
 } from "valibot";
 import {
   get,
@@ -20,7 +22,7 @@ import {
 import { guildSchema, type Guild } from "../guild/types/Guild.js";
 
 export const getCurrentUserGuildsSchema = object({
-  params: optional(
+  params: exactOptional(
     partial(
       object({
         /** get guilds before this guild ID */
@@ -28,9 +30,11 @@ export const getCurrentUserGuildsSchema = object({
         /** get guilds after this guild ID */
         after: snowflake,
         /** max number of guilds to return (1-200) */
-        limit: optional(number([integer(), maxValue(200)]), 200),
+        limit: exactOptional(
+          pipe(number(), integer(), minValue(1), maxValue(200))
+        ),
         /** include approximate member and presence counts in response */
-        withCounts: optional(boolean(), false)
+        withCounts: exactOptional(boolean())
       })
     )
   )
@@ -70,14 +74,14 @@ export const getCurrentUserGuilds: Fetcher<
 export const getCurrentUserGuildsSafe = toValidated(
   getCurrentUserGuilds,
   getCurrentUserGuildsSchema,
-  array(partial(guildSchema), [maxLength(200)])
+  pipe(array(partial(guildSchema)), maxLength(200))
 );
 
 export const getCurrentUserGuildsProcedure = toProcedure(
   `query`,
   getCurrentUserGuilds,
   getCurrentUserGuildsSchema,
-  array(partial(guildSchema), [maxLength(200)])
+  pipe(array(partial(guildSchema)), maxLength(200))
 );
 
 export const getCurrentUserGuildsQuery = toQuery(getCurrentUserGuilds);

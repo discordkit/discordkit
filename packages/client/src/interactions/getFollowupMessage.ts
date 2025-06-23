@@ -1,4 +1,11 @@
-import { minLength, object, optional, partial, string } from "valibot";
+import {
+  nonEmpty,
+  object,
+  exactOptional,
+  partial,
+  pipe,
+  string
+} from "valibot";
 import {
   get,
   type Fetcher,
@@ -11,9 +18,9 @@ import { messageSchema, type Message } from "../channel/types/Message.js";
 
 export const getFollowupMessageSchema = object({
   application: snowflake,
-  token: string([minLength(1)]),
+  token: pipe(string(), nonEmpty()),
   message: snowflake,
-  params: optional(
+  params: exactOptional(
     partial(
       object({
         /** id of the thread the message is in */

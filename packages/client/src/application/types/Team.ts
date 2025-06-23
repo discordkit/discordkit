@@ -1,4 +1,4 @@
-import { object, string, optional, array, type Output } from "valibot";
+import { object, string, optional, array, type InferOutput } from "valibot";
 import { teamMemberSchema } from "./TeamMember.js";
 
 // https://discord.com/developers/docs/topics/teams#data-models-team-object
@@ -16,4 +16,4 @@ export const teamSchema = object({
   ownerUserId: string()
 });
 
-export type Team = Output<typeof teamSchema>;
+export type Team = InferOutput<typeof teamSchema>;

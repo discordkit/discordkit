@@ -1,4 +1,4 @@
-import { maxLength, minLength, object, partial, string } from "valibot";
+import { maxLength, minLength, object, partial, pipe, string } from "valibot";
 import {
   patch,
   type Fetcher,
@@ -14,11 +14,11 @@ export const modifyGuildStickerSchema = object({
   body: partial(
     object({
       /** name of the sticker (2-30 characters) */
-      name: string([minLength(2), maxLength(30)]),
+      name: pipe(string(), minLength(2), maxLength(30)),
       /** description of the sticker (empty or 2-100 characters) */
-      description: string([minLength(2), maxLength(100)]),
+      description: pipe(string(), minLength(2), maxLength(100)),
       /** autocomplete/suggestion tags for the sticker (max 200 characters) */
-      tags: string([minLength(1), maxLength(200)])
+      tags: pipe(string(), minLength(1), maxLength(200))
     })
   )
 });

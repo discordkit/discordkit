@@ -1,6 +1,6 @@
 import { waitFor } from "@testing-library/react";
 import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
-import { array, length } from "valibot";
+import { array, length, pipe } from "valibot";
 import {
   getPinnedMessagesProcedure,
   getPinnedMessagesQuery,
@@ -12,7 +12,7 @@ import { messageSchema } from "../types/Message.js";
 describe(`getPinnedMessages`, () => {
   const expected = mockRequest.get(
     `/channels/:channel/pins`,
-    array(messageSchema, [length(1)])
+    pipe(array(messageSchema), length(1))
   );
   const config = mockSchema(getPinnedMessagesSchema);
 

@@ -13,7 +13,8 @@ import {
   integer,
   minValue,
   unknown,
-  type Output
+  type InferOutput,
+  pipe
 } from "valibot";
 import { snowflake } from "@discordkit/core";
 import { stickerSchema } from "../../sticker/types/Sticker.js";
@@ -41,9 +42,9 @@ export const messageSchema = object({
   /** contents of the message */
   content: string(),
   /** when this message was sent */
-  timestamp: string([isoTimestamp()]),
+  timestamp: pipe(string(), isoTimestamp()),
   /** when this message was edited (or null if never) */
-  editedTimestamp: optional(string([isoTimestamp()])),
+  editedTimestamp: optional(pipe(string(), isoTimestamp())),
   /** whether this was a TTS message */
   tts: boolean(),
   /** whether this message mentions everyone */
@@ -51,7 +52,7 @@ export const messageSchema = object({
   /** users specifically mentioned in the message */
   mentions: array(userSchema),
   /** roles specifically mentioned in this message */
-  mentionRoles: array(string([minLength(1)])),
+  mentionRoles: array(pipe(string(), minLength(1))),
   /** channels specifically mentioned in this message */
   mentionChannels: nullish(array(channelMentionSchema)),
   /** any attached files */
@@ -77,7 +78,7 @@ export const messageSchema = object({
   /** data showing the source of a crosspost, channel follow add, pin, or reply message */
   messageReference: nullish(messageReferenceSchema),
   /** message flags combined as a bitfield */
-  flags: nullish(number([integer(), minValue(0)])),
+  flags: nullish(pipe(number(), integer(), minValue(0))),
   /** sent if the message is a response to an Interaction */
   interaction: nullish(messageInteractionSchema),
   /** the thread that was started from this message, includes thread member object */
@@ -89,7 +90,7 @@ export const messageSchema = object({
   /** @deprecated the stickers sent with the message */
   stickers: nullish(array(stickerSchema)),
   /** A generally increasing integer (there may be gaps or duplicates) that represents the approximate position of the message in a thread, it can be used to estimate the relative position of the message in a thread in company with totalMessageSent on parent thread */
-  position: number([integer()]),
+  position: pipe(number(), integer()),
   /** data of the role subscription purchase or renewal that prompted this `ROLE_SUBSCRIPTION_PURCHASE` message */
   roleSubscriptionData: nullish(roleSubscriptionDataSchema),
   /** data for users, members, channels, and roles in the message's auto-populated select menus */
@@ -98,4 +99,4 @@ export const messageSchema = object({
   referencedMessage: optional(unknown()) // This could have infinite recursion, so we skip parsing this value
 });
 
-export type Message = Output<typeof messageSchema>;
+export type Message = InferOutput<typeof messageSchema>;

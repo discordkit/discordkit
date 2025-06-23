@@ -1,4 +1,4 @@
-import { minLength, object, string } from "valibot";
+import { minLength, object, pipe, string } from "valibot";
 import {
   put,
   type Fetcher,
@@ -12,9 +12,9 @@ export const groupDMAddRecipientSchema = object({
   user: snowflake,
   body: object({
     /** access token of a user that has granted your app the gdm.join scope */
-    accessToken: string([minLength(1)]),
+    accessToken: pipe(string(), minLength(1)),
     /** nickname of the user being added */
-    nick: string([minLength(1)])
+    nick: pipe(string(), minLength(1))
   })
 });
 

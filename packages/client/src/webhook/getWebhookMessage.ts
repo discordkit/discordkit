@@ -1,4 +1,11 @@
-import { object, string, minLength, partial, optional } from "valibot";
+import {
+  pipe,
+  object,
+  string,
+  minLength,
+  partial,
+  exactOptional
+} from "valibot";
 import {
   get,
   type Fetcher,
@@ -11,9 +18,9 @@ import { messageSchema, type Message } from "../channel/types/Message.js";
 
 export const getWebhookMessageSchema = object({
   webhook: snowflake,
-  token: string([minLength(1)]),
+  token: pipe(string(), minLength(1)),
   message: snowflake,
-  params: optional(
+  params: exactOptional(
     partial(
       object({
         /** id of the thread the message is in */

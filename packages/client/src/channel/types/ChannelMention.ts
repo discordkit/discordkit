@@ -1,4 +1,4 @@
-import { object, string, type Output } from "valibot";
+import { object, string, type InferOutput } from "valibot";
 import { snowflake } from "@discordkit/core";
 import { channelTypeSchema } from "./ChannelType.js";
 
@@ -13,4 +13,4 @@ export const channelMentionSchema = object({
   name: string()
 });
 
-export type ChannelMention = Output<typeof channelMentionSchema>;
+export type ChannelMention = InferOutput<typeof channelMentionSchema>;

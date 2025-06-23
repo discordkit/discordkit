@@ -1,4 +1,4 @@
-import { union, literal, type Output } from "valibot";
+import { union, literal, type InferOutput } from "valibot";
 
 export const imageSizes = union([
   literal(16),
@@ -12,4 +12,4 @@ export const imageSizes = union([
   literal(4096)
 ]);
 
-export type ImageSizes = Output<typeof imageSizes>;
+export type ImageSizes = InferOutput<typeof imageSizes>;

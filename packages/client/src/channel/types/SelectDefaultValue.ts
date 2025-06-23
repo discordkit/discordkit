@@ -1,5 +1,5 @@
 import { snowflake } from "@discordkit/core";
-import { object, union, literal, type Output } from "valibot";
+import { object, union, literal, type InferOutput } from "valibot";
 
 export const selectDefaultValueSchema = object({
   /** ID of a user, role, or channel */
@@ -8,4 +8,4 @@ export const selectDefaultValueSchema = object({
   type: union([literal(`user`), literal(`role`), literal(`channel`)])
 });
 
-export type SelectDefaultValue = Output<typeof selectDefaultValueSchema>;
+export type SelectDefaultValue = InferOutput<typeof selectDefaultValueSchema>;

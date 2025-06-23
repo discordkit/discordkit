@@ -6,6 +6,7 @@ import {
   nullish,
   object,
   partial,
+  pipe,
   record,
   string
 } from "valibot";
@@ -30,16 +31,16 @@ export const editGuildApplicationCommandSchema = object({
   body: partial(
     object({
       /** Name of command, 1-32 characters */
-      name: nullish(string([minLength(1), maxLength(32)])),
+      name: nullish(pipe(string(), minLength(1), maxLength(32))),
       /** Localization dictionary for the name field. Values follow the same restrictions as name */
       nameLocalizations: nullish(
-        record(localesSchema, string([minLength(1), maxLength(32)]))
+        record(localesSchema, pipe(string(), minLength(1), maxLength(32)))
       ),
       /** 1-100 character description */
-      description: nullish(string([minLength(1), maxLength(100)])),
+      description: nullish(pipe(string(), minLength(1), maxLength(100))),
       /** Localization dictionary for the description field. Values follow the same restrictions as description */
       descriptionLocalizations: nullish(
-        record(localesSchema, string([minLength(1), maxLength(100)]))
+        record(localesSchema, pipe(string(), minLength(1), maxLength(100)))
       ),
       /** the parameters for the command */
       options: nullish(array(applicationCommandOptionSchema)),

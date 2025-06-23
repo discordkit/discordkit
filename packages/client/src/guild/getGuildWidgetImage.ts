@@ -1,4 +1,4 @@
-import { picklist, object, optional, partial } from "valibot";
+import { picklist, object, exactOptional, partial } from "valibot";
 import {
   get,
   type Fetcher,
@@ -10,7 +10,7 @@ import {
 
 export const getGuildWidgetImageSchema = object({
   guild: snowflake,
-  params: optional(
+  params: exactOptional(
     partial(
       object({
         /** style of the widget image returned */

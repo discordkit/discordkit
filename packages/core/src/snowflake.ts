@@ -1,15 +1,17 @@
-import { special, coerce, date, is } from "valibot";
+import { custom, pipe, transform, union, string, number, is } from "valibot";
 import { isNonNullable } from "./isNonNullable.js";
 
-export const snowflake = special<string>(
+export const snowflake = custom<string>(
   (val) =>
     isNonNullable(val) &&
     (typeof val === `bigint` ||
       typeof val === `number` ||
       typeof val === `string`)
       ? is(
-          coerce(date(), (input: number) => new Date(input)),
-          // eslint-disable-next-line no-bitwise
+          pipe(
+            union([string(), number()]),
+            transform((input) => new Date(input))
+          ),
           Number((BigInt(val) >> 22n) + 1420070400000n)
         )
       : false,

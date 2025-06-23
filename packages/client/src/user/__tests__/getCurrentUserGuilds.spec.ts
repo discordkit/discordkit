@@ -1,6 +1,6 @@
 import { waitFor } from "@testing-library/react";
 import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
-import { array, length, maxLength, partial } from "valibot";
+import { array, length, partial, pipe } from "valibot";
 import {
   getCurrentUserGuildsProcedure,
   getCurrentUserGuildsQuery,
@@ -9,10 +9,10 @@ import {
 } from "../getCurrentUserGuilds.js";
 import { guildSchema } from "../../guild/types/Guild.js";
 
-describe(`getCurrentUserGuilds`, () => {
+describe(`getCurrentUserGuilds`, { repeats: 5 }, () => {
   const expected = mockRequest.get(
     `/users/@me/guilds`,
-    array(partial(guildSchema), [maxLength(200), length(1)])
+    pipe(array(partial(guildSchema)), length(1))
   );
   const config = mockSchema(getCurrentUserGuildsSchema);
 

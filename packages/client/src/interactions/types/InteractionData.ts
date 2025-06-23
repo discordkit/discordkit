@@ -3,8 +3,9 @@ import {
   nullish,
   array,
   string,
-  minLength,
-  type Output
+  type InferOutput,
+  pipe,
+  nonEmpty
 } from "valibot";
 import { snowflake } from "@discordkit/core";
 import { applicationCommandTypeSchema } from "../../application/types/ApplicationCommandType.js";
@@ -15,7 +16,7 @@ export const interactionDataSchema = object({
   /** the ID of the invoked command */
   id: snowflake,
   /** the name of the invoked command */
-  name: string([minLength(1)]),
+  name: pipe(string(), nonEmpty()),
   /** the type of the invoked command */
   type: applicationCommandTypeSchema,
   /** converted users + roles + channels + attachments */
@@ -28,4 +29,4 @@ export const interactionDataSchema = object({
   targetId: nullish(snowflake)
 });
 
-export type InteractionDataSchema = Output<typeof interactionDataSchema>;
+export type InteractionDataSchema = InferOutput<typeof interactionDataSchema>;

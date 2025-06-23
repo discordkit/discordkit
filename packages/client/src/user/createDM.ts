@@ -1,4 +1,4 @@
-import { literal, merge, object } from "valibot";
+import { literal, object } from "valibot";
 import {
   post,
   type Fetcher,
@@ -35,12 +35,18 @@ export const createDM: Fetcher<
 export const createDMSafe = toValidated(
   createDM,
   createDMSchema,
-  merge([channelSchema, object({ type: literal(ChannelType.DM) })])
+  object({
+    ...channelSchema.entries,
+    type: literal(ChannelType.DM)
+  })
 );
 
 export const createDMProcedure = toProcedure(
   `mutation`,
   createDM,
   createDMSchema,
-  merge([channelSchema, object({ type: literal(ChannelType.DM) })])
+  object({
+    ...channelSchema.entries,
+    type: literal(ChannelType.DM)
+  })
 );

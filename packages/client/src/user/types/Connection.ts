@@ -1,4 +1,11 @@
-import { type Output, object, string, boolean, nullish, array } from "valibot";
+import {
+  type InferOutput,
+  object,
+  string,
+  boolean,
+  nullish,
+  array
+} from "valibot";
 import { integrationSchema } from "../../guild/types/Integration.js";
 import { connectionVisibiltySchema } from "./ConnectionVisibilty.js";
 import { servicesSchema } from "./Services.js";
@@ -26,4 +33,4 @@ export const connectionSchema = object({
   visibility: connectionVisibiltySchema
 });
 
-export type Connection = Output<typeof connectionSchema>;
+export type Connection = InferOutput<typeof connectionSchema>;

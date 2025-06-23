@@ -7,7 +7,8 @@ import {
   pick,
   url,
   boolean,
-  type Output
+  type InferOutput,
+  pipe
 } from "valibot";
 import { emojiSchema } from "../../emoji/types/Emoji.js";
 import { buttonStyleSchema } from "./ButtonStyle.js";
@@ -19,15 +20,15 @@ export const buttonSchema = object({
   /** A button style */
   style: buttonStyleSchema,
   /** Text that appears on the button; max 80 characters */
-  label: nullish(string([maxLength(80)])),
+  label: nullish(pipe(string(), maxLength(80))),
   /** name, id, and animated */
   emoji: nullish(pick(emojiSchema, [`id`, `name`, `animated`])),
   /** Developer-defined identifier for the button; max 100 characters */
-  customId: nullish(string([maxLength(100)])),
+  customId: nullish(pipe(string(), maxLength(100))),
   /** URL for link-style buttons */
-  url: nullish(string([url()])),
+  url: nullish(pipe(string(), url())),
   /** Whether the button is disabled (defaults to false) */
   disabled: nullish(boolean(), false)
 });
 
-export type Button = Output<typeof buttonSchema>;
+export type Button = InferOutput<typeof buttonSchema>;

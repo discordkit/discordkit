@@ -3,13 +3,15 @@ import {
   integer,
   maxLength,
   minLength,
+  nonEmpty,
   minValue,
   nullish,
   number,
   object,
   optional,
   partial,
-  string
+  string,
+  pipe
 } from "valibot";
 import {
   post,
@@ -28,11 +30,11 @@ import { guildSchema, type Guild } from "./types/Guild.js";
 export const createGuildSchema = object({
   body: object({
     /** name of the guild (2-100 characters) */
-    name: string([minLength(2), maxLength(100)]),
+    name: pipe(string(), minLength(2), maxLength(100)),
     /** @deprecated voice region id */
-    region: nullish(string([minLength(1)])),
+    region: nullish(pipe(string(), nonEmpty())),
     /** icon hash */
-    icon: nullish(string([minLength(1)])),
+    icon: nullish(pipe(string(), nonEmpty())),
     /** verification level */
     verificationLevel: nullish(verificationLevelSchema),
     /** default message notification level */
@@ -46,11 +48,11 @@ export const createGuildSchema = object({
     /** id for afk channel */
     afkChannelId: nullish(snowflake),
     /** afk timeout in seconds */
-    afkTimeout: nullish(number([integer(), minValue(0)])),
+    afkTimeout: nullish(pipe(number(), integer(), minValue(0))),
     /** the id of the channel where guild notices such as welcome messages and boost events are posted */
     systemChannelId: nullish(snowflake),
     /** system channel flags */
-    systemChannelFlags: optional(number([integer(), minValue(0)]))
+    systemChannelFlags: optional(pipe(number(), integer(), minValue(0)))
   })
 });
 

@@ -1,15 +1,16 @@
 import {
-  minLength,
   object,
   string,
   boolean,
   nullish,
-  type Output,
+  type InferOutput,
   minValue,
   integer,
   number,
   array,
-  isoTimestamp
+  isoTimestamp,
+  pipe,
+  nonEmpty
 } from "valibot";
 import { snowflake } from "@discordkit/core";
 import { userSchema } from "../../user/types/User.js";
@@ -22,7 +23,7 @@ export const integrationSchema = object({
   /** integration id */
   id: snowflake,
   /** integration name */
-  name: string([minLength(1)]),
+  name: pipe(string(), nonEmpty()),
   /** integration type (twitch, youtube, or discord) */
   type: string(),
   /** is this integration enabled */
@@ -36,15 +37,15 @@ export const integrationSchema = object({
   /** the behavior of expiring subscribers */
   expireBehavior: nullish(integrationExpireBehaviorSchema),
   /** the grace period (in days) before expiring subscribers */
-  expireGracePeriod: nullish(number([integer(), minValue(0)])),
+  expireGracePeriod: nullish(pipe(number(), integer(), minValue(0))),
   /** user for this integration */
   user: nullish(userSchema),
   /** integration account information */
   account: integrationAccountSchema,
   /** when this integration was last synced */
-  syncedAt: nullish(string([isoTimestamp()])),
+  syncedAt: nullish(pipe(string(), isoTimestamp())),
   /** how many subscribers this integration has */
-  subscriberCount: nullish(number([integer(), minValue(0)])),
+  subscriberCount: nullish(pipe(number(), integer(), minValue(0))),
   /** has this integration been revoked */
   revoked: nullish(boolean()),
   /** The bot/OAuth2 application for discord integrations */
@@ -53,4 +54,4 @@ export const integrationSchema = object({
   scopes: nullish(array(scopesSchema))
 });
 
-export type Integration = Output<typeof integrationSchema>;
+export type Integration = InferOutput<typeof integrationSchema>;

@@ -1,4 +1,12 @@
-import { boolean, minLength, object, optional, partial, string } from "valibot";
+import {
+  boolean,
+  nonEmpty,
+  object,
+  exactOptional,
+  partial,
+  pipe,
+  string
+} from "valibot";
 import {
   get,
   type Fetcher,
@@ -10,8 +18,8 @@ import {
 import { inviteSchema, type Invite } from "./types/Invite.js";
 
 export const getInviteSchema = object({
-  code: string([minLength(1)]),
-  params: optional(
+  code: pipe(string(), nonEmpty()),
+  params: exactOptional(
     partial(
       object({
         /** whether the invite should contain approximate member counts */

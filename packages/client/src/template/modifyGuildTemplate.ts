@@ -4,7 +4,8 @@ import {
   nullish,
   object,
   partial,
-  string
+  string,
+  pipe
 } from "valibot";
 import {
   patch,
@@ -24,9 +25,9 @@ export const modifyGuildTemplateSchema = object({
   body: partial(
     object({
       /** name of the template (1-100 characters) */
-      name: nullish(string([minLength(1), maxLength(120)])),
+      name: nullish(pipe(string(), minLength(1), maxLength(100))),
       /** description for the template (0-120 characters) */
-      description: nullish(string([minLength(0), maxLength(120)]))
+      description: nullish(pipe(string(), minLength(1), maxLength(120)))
     })
   )
 });

@@ -1,14 +1,16 @@
 import {
-  type Output,
+  type InferOutput,
   object,
   partial,
   optional,
+  exactOptional,
   number,
   integer,
   minValue,
   maxValue,
   string,
-  minLength
+  nonEmpty,
+  pipe
 } from "valibot";
 import {
   get,
@@ -21,20 +23,20 @@ import {
 
 export const getGuildPruneCountSchema = object({
   guild: snowflake,
-  params: optional(
+  params: exactOptional(
     partial(
       object({
         /** number of days to count prune for (1-30) */
-        days: optional(number([integer(), minValue(1), maxValue(30)]), 7),
+        days: optional(pipe(number(), integer(), minValue(1), maxValue(30)), 7),
         /** string; comma-delimited array of snowflakes */
-        includeRoles: string([minLength(1)])
+        includeRoles: pipe(string(), nonEmpty())
       })
     )
   )
 });
 
 export const guildPruneCountSchema = object({
-  pruned: number([integer(), minValue(0)])
+  pruned: pipe(number(), integer(), minValue(0))
 });
 
 /**
@@ -48,7 +50,7 @@ export const guildPruneCountSchema = object({
  */
 export const getGuildPruneCount: Fetcher<
   typeof getGuildPruneCountSchema,
-  Output<typeof guildPruneCountSchema>
+  InferOutput<typeof guildPruneCountSchema>
 > = async ({ guild, params }) => get(`/guilds/${guild}/prune`, params);
 
 export const getGuildPruneCountSafe = toValidated(

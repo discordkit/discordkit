@@ -1,6 +1,9 @@
-import { array, maxLength, type Output } from "valibot";
+import { array, maxLength, pipe, type InferOutput } from "valibot";
 import { actionRowSchema } from "./ActionRow.js";
 
-export const messageComponentSchema = array(actionRowSchema, [maxLength(5)]);
+export const messageComponentSchema = pipe(
+  array(actionRowSchema),
+  maxLength(5)
+);
 
-export type MessageComponent = Output<typeof messageComponentSchema>;
+export type MessageComponent = InferOutput<typeof messageComponentSchema>;

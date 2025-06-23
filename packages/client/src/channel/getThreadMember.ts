@@ -1,4 +1,4 @@
-import { boolean, nullish, object, optional, partial } from "valibot";
+import { boolean, nullish, object, exactOptional, partial } from "valibot";
 import {
   get,
   type Fetcher,
@@ -12,7 +12,7 @@ import { threadMemberSchema, type ThreadMember } from "./types/ThreadMember.js";
 export const getThreadMemberSchema = object({
   channel: snowflake,
   user: snowflake,
-  params: optional(
+  params: exactOptional(
     partial(
       object({
         /** Whether to include a guild member object for the thread member */

@@ -7,8 +7,9 @@ import {
   nullish,
   number,
   object,
-  optional,
-  partial
+  exactOptional,
+  partial,
+  pipe
 } from "valibot";
 import {
   get,
@@ -22,7 +23,7 @@ import { threadMemberSchema, type ThreadMember } from "./types/ThreadMember.js";
 
 export const listThreadMembersSchema = object({
   channel: snowflake,
-  params: optional(
+  params: exactOptional(
     partial(
       object({
         /** Whether to include a guild member object for each thread member */
@@ -30,7 +31,7 @@ export const listThreadMembersSchema = object({
         /** Get thread members after this user ID */
         after: nullish(snowflake),
         /** Max number of thread members to return (1-100). Defaults to 100. */
-        limit: nullish(number([integer(), minValue(1), maxValue(100)]), 100)
+        limit: nullish(pipe(number(), integer(), minValue(1), maxValue(100)))
       })
     )
   )

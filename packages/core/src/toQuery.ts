@@ -1,4 +1,4 @@
-import type { BaseSchema } from "valibot";
+import type { GenericSchema } from "valibot";
 import type { Fetcher } from "./methods.js";
 
 /* Lifted from @tanstack/react-query */
@@ -11,7 +11,7 @@ type QueryMeta = Register extends {
     ? TQueryMeta
     : Record<string, unknown>
   : Record<string, unknown>;
-type FetchDirection = "backward" | "forward";
+type FetchDirection = `backward` | `forward`;
 type QueryFunctionContext<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = never
@@ -40,9 +40,9 @@ export type QueryFunction<
  * the need for any additional boilerplate.
  */
 export const toQuery =
-  <S extends BaseSchema | null, R, T extends Fetcher<S, R>>(
+  <S extends GenericSchema | null, R, T extends Fetcher<S, R>>(
     fn: T
-  ): Parameters<T>["length"] extends 0
+  ): Parameters<T>[`length`] extends 0
     ? () => QueryFunction<Awaited<ReturnType<T>>>
     : (config: Parameters<T>[0]) => QueryFunction<Awaited<ReturnType<T>>> =>
   // @ts-expect-error

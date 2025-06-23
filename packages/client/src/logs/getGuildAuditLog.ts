@@ -5,8 +5,9 @@ import {
   nullish,
   number,
   object,
-  optional,
-  partial
+  exactOptional,
+  partial,
+  pipe
 } from "valibot";
 import {
   get,
@@ -21,7 +22,7 @@ import { auditLogEventSchema } from "./types/AuditLogEvent.js";
 
 export const getGuildAuditLogSchema = object({
   guild: snowflake,
-  params: optional(
+  params: exactOptional(
     partial(
       object({
         /** Entries from a specific user ID */
@@ -33,7 +34,7 @@ export const getGuildAuditLogSchema = object({
         /** Entries with ID greater than a specific audit log entry ID */
         after: nullish(snowflake),
         /** Maximum number of entries (between 1-100) to return, defaults to 50 */
-        limit: nullish(number([integer(), minValue(1), maxValue(100)]), 50)
+        limit: nullish(pipe(number(), integer(), minValue(1), maxValue(100)))
       })
     )
   )

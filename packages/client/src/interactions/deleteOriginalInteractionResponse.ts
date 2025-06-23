@@ -1,4 +1,11 @@
-import { minLength, object, optional, partial, string } from "valibot";
+import {
+  nonEmpty,
+  object,
+  exactOptional,
+  partial,
+  pipe,
+  string
+} from "valibot";
 import {
   remove,
   buildURL,
@@ -10,8 +17,8 @@ import {
 
 export const deleteOriginalInteractionResponseSchema = object({
   application: snowflake,
-  token: string([minLength(1)]),
-  params: optional(
+  token: pipe(string(), nonEmpty()),
+  params: exactOptional(
     partial(
       object({
         /** id of the thread the message is in */

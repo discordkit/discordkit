@@ -1,4 +1,4 @@
-import { isoTimestamp, minLength, nullish, object, string } from "valibot";
+import { isoTimestamp, nonEmpty, nullish, object, pipe, string } from "valibot";
 import {
   post,
   type Fetcher,
@@ -22,19 +22,19 @@ export const createGuildScheduledEventSchema = object({
     /** entity metadata	the entity metadata of the scheduled event */
     entityMetadata: nullish(entityMetadataSchema),
     /** the name of the scheduled event */
-    name: string([minLength(1)]),
+    name: pipe(string(), nonEmpty()),
     /** the privacy level of the scheduled event */
     privacyLevel: scheduledEventPrivacyLevelSchema,
     /** the time to schedule the scheduled event */
-    scheduledStartTime: string([isoTimestamp()]),
+    scheduledStartTime: pipe(string(), isoTimestamp()),
     /** the time when the scheduled event is scheduled to end */
-    scheduledEndTime: nullish(string([isoTimestamp()])),
+    scheduledEndTime: nullish(pipe(string(), isoTimestamp())),
     /** the description of the scheduled event */
-    description: nullish(string([minLength(1)])),
+    description: nullish(pipe(string(), nonEmpty())),
     /** the entity type of the scheduled event */
     entityType: scheduledEventEntityTypeSchema,
     /** the cover image of the scheduled event */
-    image: nullish(string([minLength(1)]))
+    image: nullish(pipe(string(), nonEmpty()))
   })
 });
 

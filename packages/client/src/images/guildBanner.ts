@@ -1,19 +1,20 @@
 import { getAsset, snowflake } from "@discordkit/core";
 import {
-  type Output,
+  type InferOutput,
   object,
-  optional,
+  exactOptional,
   string,
-  minLength,
-  picklist
+  picklist,
+  pipe,
+  nonEmpty
 } from "valibot";
 import { imageSizes } from "./types/ImageSizes.js";
 
 export const guildBannerSchema = object({
   guild: snowflake,
-  banner: string([minLength(1)]),
-  format: optional(picklist([`png`, `jpg`, `webp`, `gif`]), `png`),
-  params: optional(
+  banner: pipe(string(), nonEmpty()),
+  format: exactOptional(picklist([`png`, `jpg`, `webp`, `gif`])),
+  params: exactOptional(
     object({
       size: imageSizes
     })
@@ -25,5 +26,5 @@ export const guildBanner = ({
   banner,
   format,
   params
-}: Output<typeof guildBannerSchema>): string =>
+}: InferOutput<typeof guildBannerSchema>): string =>
   getAsset(`/banners/${guild}/${banner}.${format ?? `png`}`, params);

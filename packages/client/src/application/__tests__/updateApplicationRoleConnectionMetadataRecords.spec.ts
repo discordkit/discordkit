@@ -5,7 +5,7 @@ import {
   mockRequest,
   mockSchema
 } from "#test-utils";
-import { array, length } from "valibot";
+import { array, length, pipe } from "valibot";
 import {
   updateApplicationRoleConnectionMetadataRecordsProcedure,
   updateApplicationRoleConnectionMetadataRecords,
@@ -17,7 +17,7 @@ import { applicationRoleConnectionMetadataSchema } from "../types/ApplicationRol
 describe(`updateApplicationRoleConnectionMetadataRecords`, () => {
   const expected = mockRequest.put(
     `/applications/:application/role-connections/metadata`,
-    array(applicationRoleConnectionMetadataSchema, [length(1)])
+    pipe(array(applicationRoleConnectionMetadataSchema), length(1))
   );
   const config = mockSchema(
     updateApplicationRoleConnectionMetadataRecordsSchema

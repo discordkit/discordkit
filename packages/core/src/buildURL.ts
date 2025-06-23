@@ -1,9 +1,9 @@
 import { endpoint } from "./DiscordSession.js";
 import { addParams, type RequestParams } from "./addParams.js";
 
-export const buildURL = <P extends RequestParams>(
+export const buildURL = (
   resource: string,
-  params?: P,
+  params?: RequestParams,
   base?: string
 ): URL =>
   addParams(

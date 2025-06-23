@@ -1,4 +1,4 @@
-import { object, unknown, nullish, string, type Output } from "valibot";
+import { object, unknown, nullish, string, type InferOutput } from "valibot";
 
 export const auditLogChangeSchema = object({
   /** New value of the key */
@@ -9,4 +9,4 @@ export const auditLogChangeSchema = object({
   key: string()
 });
 
-export type AuditLogChange = Output<typeof auditLogChangeSchema>;
+export type AuditLogChange = InferOutput<typeof auditLogChangeSchema>;

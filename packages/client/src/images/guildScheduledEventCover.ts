@@ -1,19 +1,20 @@
 import { getAsset, snowflake } from "@discordkit/core";
 import {
-  type Output,
-  minLength,
+  type InferOutput,
   object,
-  optional,
+  exactOptional,
   string,
-  picklist
+  picklist,
+  pipe,
+  nonEmpty
 } from "valibot";
 import { imageSizes } from "./types/ImageSizes.js";
 
 export const guildScheduledEventCoverSchema = object({
   event: snowflake,
-  cover: string([minLength(1)]),
-  format: optional(picklist([`png`, `jpg`, `webp`]), `png`),
-  params: optional(
+  cover: pipe(string(), nonEmpty()),
+  format: exactOptional(picklist([`png`, `jpg`, `webp`])),
+  params: exactOptional(
     object({
       size: imageSizes
     })
@@ -25,5 +26,5 @@ export const guildScheduledEventCover = ({
   cover,
   format,
   params
-}: Output<typeof guildScheduledEventCoverSchema>): string =>
+}: InferOutput<typeof guildScheduledEventCoverSchema>): string =>
   getAsset(`/guild-events/${event}/${cover}.${format ?? `png`}`, params);

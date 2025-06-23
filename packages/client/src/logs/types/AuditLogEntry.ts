@@ -5,7 +5,8 @@ import {
   array,
   minLength,
   maxLength,
-  type Output
+  type InferOutput,
+  pipe
 } from "valibot";
 import { snowflake } from "@discordkit/core";
 import { auditLogChangeSchema } from "./AuditLogChange.js";
@@ -26,7 +27,7 @@ export const auditLogEntrySchema = object({
   /** Additional info for certain event types */
   options: nullish(optionalAuditEntryInfoSchema),
   /** Reason for the change (1-512 characters) */
-  reason: nullish(string([minLength(1), maxLength(512)]))
+  reason: nullish(pipe(string(), minLength(1), maxLength(512)))
 });
 
-export type AuditLogEntry = Output<typeof auditLogEntrySchema>;
+export type AuditLogEntry = InferOutput<typeof auditLogEntrySchema>;

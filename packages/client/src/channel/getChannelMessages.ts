@@ -7,7 +7,8 @@ import {
   number,
   nullish,
   partial,
-  optional
+  exactOptional,
+  pipe
 } from "valibot";
 import {
   get,
@@ -21,7 +22,7 @@ import { messageSchema, type Message } from "./types/Message.js";
 
 export const getChannelMessagesSchema = object({
   channel: snowflake,
-  params: optional(
+  params: exactOptional(
     partial(
       object({
         /** Get messages around this message ID */
@@ -31,7 +32,10 @@ export const getChannelMessagesSchema = object({
         /** Get messages after this message ID */
         after: nullish(snowflake),
         /** Max number of messages to return (1-100) Default: 50 */
-        limit: nullish(number([integer(), minValue(1), maxValue(100)]), 50)
+        limit: nullish(
+          pipe(number(), integer(), minValue(1), maxValue(100)),
+          50
+        )
       })
     )
   )

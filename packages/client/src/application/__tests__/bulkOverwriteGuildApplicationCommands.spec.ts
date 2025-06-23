@@ -5,7 +5,7 @@ import {
   mockRequest,
   mockSchema
 } from "#test-utils";
-import { array, length } from "valibot";
+import { array, length, pipe } from "valibot";
 import {
   bulkOverwriteGuildApplicationCommandsProcedure,
   bulkOverwriteGuildApplicationCommands,
@@ -17,7 +17,7 @@ import { applicationCommandSchema } from "../types/ApplicationCommand.js";
 describe(`bulkOverwriteGuildApplicationCommands`, () => {
   const expected = mockRequest.put(
     `/applications/:application/guilds/:guild/commands`,
-    array(applicationCommandSchema, [length(1)])
+    pipe(array(applicationCommandSchema), length(1))
   );
   const config = mockSchema(bulkOverwriteGuildApplicationCommandsSchema);
 

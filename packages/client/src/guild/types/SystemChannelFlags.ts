@@ -1,4 +1,3 @@
-/* eslint-disable no-bitwise */
 /* eslint-disable @typescript-eslint/prefer-literal-enum-member */
 
 import { enum_ } from "valibot";

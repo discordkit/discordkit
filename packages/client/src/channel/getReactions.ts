@@ -6,8 +6,9 @@ import {
   nullish,
   number,
   object,
-  optional,
-  partial
+  exactOptional,
+  partial,
+  pipe
 } from "valibot";
 import {
   get,
@@ -23,13 +24,16 @@ export const getReactionsSchema = object({
   channel: snowflake,
   message: snowflake,
   emoji: snowflake,
-  params: optional(
+  params: exactOptional(
     partial(
       object({
         /** Get users after this user ID */
         after: nullish(snowflake),
         /** Max number of users to return (1-100) Default: 25 */
-        limit: nullish(number([integer(), minValue(1), maxValue(100)]), 25)
+        limit: nullish(
+          pipe(number(), integer(), minValue(1), maxValue(100)),
+          25
+        )
       })
     )
   )

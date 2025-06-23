@@ -1,4 +1,4 @@
-import { object, array, boolean, type Output } from "valibot";
+import { object, array, boolean, type InferOutput } from "valibot";
 import { channelSchema } from "./Channel.js";
 import { threadMemberSchema } from "./ThreadMember.js";
 
@@ -11,4 +11,4 @@ export const archivedThreadsSchema = object({
   hasMore: boolean()
 });
 
-export type ArchivedThreads = Output<typeof archivedThreadsSchema>;
+export type ArchivedThreads = InferOutput<typeof archivedThreadsSchema>;

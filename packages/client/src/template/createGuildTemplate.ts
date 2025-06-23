@@ -1,4 +1,4 @@
-import { maxLength, minLength, object, optional, string } from "valibot";
+import { maxLength, minLength, object, optional, string, pipe } from "valibot";
 import {
   post,
   type Fetcher,
@@ -15,9 +15,9 @@ export const createGuildTemplateSchema = object({
   guild: snowflake,
   body: object({
     /** name of the template (1-100 characters) */
-    name: string([minLength(1), maxLength(100)]),
+    name: pipe(string(), minLength(1), maxLength(100)),
     /** description for the template (0-120 characters) */
-    description: optional(string([minLength(0), maxLength(120)]))
+    description: optional(pipe(string(), minLength(0), maxLength(120)))
   })
 });
 

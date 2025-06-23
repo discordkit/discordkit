@@ -4,6 +4,7 @@ import {
   nullish,
   object,
   partial,
+  pipe,
   record,
   regex,
   string
@@ -30,8 +31,8 @@ export const updateUserApplicationRoleConnectionSchema = object({
       platformUsername: nullish(string()),
       /** object mapping application role connection metadata keys to their string-ified value (max 100 characters) for the user on the platform a bot has connected */
       metadata: record(
-        string([minLength(1), maxLength(50), regex(/[a-z0-9_]/)]),
-        nullish(string([maxLength(100)]))
+        pipe(string(), minLength(1), maxLength(50), regex(/[a-z0-9_]/)),
+        nullish(pipe(string(), maxLength(100)))
       )
     })
   )

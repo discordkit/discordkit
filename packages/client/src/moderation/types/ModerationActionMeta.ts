@@ -1,6 +1,6 @@
 import { snowflake } from "@discordkit/core";
 import {
-  type Output,
+  type InferOutput,
   union,
   optional,
   object,
@@ -10,7 +10,8 @@ import {
   maxValue,
   string,
   nullish,
-  maxLength
+  maxLength,
+  pipe
 } from "valibot";
 
 export const moderationActionMetaSchema = union([
@@ -20,12 +21,14 @@ export const moderationActionMetaSchema = union([
   }),
   object({
     /** timeout duration in seconds */
-    durationSeconds: number([integer(), minValue(0), maxValue(2419200)])
+    durationSeconds: pipe(number(), integer(), minValue(0), maxValue(2419200))
   }),
   object({
     /** additional explanation that will be shown to members whenever their message is blocked */
-    customMessage: nullish(string([maxLength(150)]))
+    customMessage: nullish(pipe(string(), maxLength(150)))
   })
 ]);
 
-export type ModerationActionMeta = Output<typeof moderationActionMetaSchema>;
+export type ModerationActionMeta = InferOutput<
+  typeof moderationActionMetaSchema
+>;

@@ -1,4 +1,4 @@
-import { array, boolean, nullish, object, optional } from "valibot";
+import { array, boolean, nullish, object, exactOptional } from "valibot";
 import {
   get,
   type Fetcher,
@@ -14,10 +14,10 @@ import {
 
 export const getGlobalApplicationCommandsSchema = object({
   application: snowflake,
-  params: optional(
+  params: exactOptional(
     object({
       /** Whether to include full localization dictionaries (nameLocalizations and descriptionLocalizations) in the returned objects, instead of the nameLocalized and descriptionLocalized fields. Default false. */
-      withLocalizations: nullish(boolean(), false)
+      withLocalizations: nullish(boolean())
     })
   )
 });

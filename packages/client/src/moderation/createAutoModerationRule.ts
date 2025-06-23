@@ -2,9 +2,10 @@ import {
   array,
   boolean,
   maxLength,
-  minLength,
+  nonEmpty,
   nullish,
   object,
+  pipe,
   string
 } from "valibot";
 import {
@@ -27,7 +28,7 @@ export const createAutoModerationRuleSchema = object({
   guild: snowflake,
   body: object({
     /** the rule name */
-    name: string([minLength(1)]),
+    name: pipe(string(), nonEmpty()),
     /** the event type */
     eventType: moderationEventSchema,
     /** the trigger type */
@@ -39,9 +40,9 @@ export const createAutoModerationRuleSchema = object({
     /** whether the rule is enabled (False by default) */
     enabled: nullish(boolean(), false),
     /** the role ids that should not be affected by the rule (Maximum of 20) */
-    exemptRoles: nullish(array(snowflake, [maxLength(20)])),
+    exemptRoles: nullish(pipe(array(snowflake), maxLength(20))),
     /** the channel ids that should not be affected by the rule (Maximum of 50) */
-    exemptChannels: nullish(array(snowflake, [maxLength(50)]))
+    exemptChannels: nullish(pipe(array(snowflake), maxLength(50)))
   })
 });
 

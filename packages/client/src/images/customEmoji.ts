@@ -1,11 +1,11 @@
 import { getAsset, snowflake } from "@discordkit/core";
-import { type Output, picklist, object, optional } from "valibot";
+import { type InferOutput, picklist, object, exactOptional } from "valibot";
 import { imageSizes } from "./types/ImageSizes.js";
 
 export const customEmojiSchema = object({
   emoji: snowflake,
-  format: optional(picklist([`png`, `jpg`, `webp`, `gif`]), `png`),
-  params: optional(
+  format: exactOptional(picklist([`png`, `jpg`, `webp`, `gif`])),
+  params: exactOptional(
     object({
       size: imageSizes
     })
@@ -16,5 +16,5 @@ export const customEmoji = ({
   emoji,
   format,
   params
-}: Output<typeof customEmojiSchema>): string =>
+}: InferOutput<typeof customEmojiSchema>): string =>
   getAsset(`/emojis/${emoji}.${format ?? `png`}`, params);

@@ -1,4 +1,4 @@
-import { minLength, nullish, object, string } from "valibot";
+import { nonEmpty, nullish, object, pipe, string } from "valibot";
 import {
   patch,
   type Fetcher,
@@ -12,7 +12,7 @@ export const modifyCurrentMemberSchema = object({
   guild: snowflake,
   body: object({
     /** value to set user's nickname to (Requires `CHANGE_NICKNAME` permission) */
-    nick: nullish(string([minLength(1)]))
+    nick: nullish(pipe(string(), nonEmpty()))
   })
 });
 

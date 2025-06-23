@@ -1,6 +1,6 @@
 import { waitFor } from "@testing-library/react";
 import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
-import { array, length } from "valibot";
+import { array, length, pipe } from "valibot";
 import {
   getGuildBansProcedure,
   getGuildBansQuery,
@@ -12,7 +12,7 @@ import { banSchema } from "../types/Ban.js";
 describe(`getGuildBans`, () => {
   const expected = mockRequest.get(
     `/guilds/:guild/bans`,
-    array(banSchema, [length(1)])
+    pipe(array(banSchema), length(1))
   );
   const config = mockSchema(getGuildBansSchema);
 

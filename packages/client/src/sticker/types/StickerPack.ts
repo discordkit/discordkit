@@ -1,4 +1,4 @@
-import { object, array, string, nullish, type Output } from "valibot";
+import { object, array, string, nullish, type InferOutput } from "valibot";
 import { snowflake } from "@discordkit/core";
 import { stickerSchema } from "./Sticker.js";
 
@@ -19,4 +19,4 @@ export const stickerPackSchema = object({
   bannerAssetId: nullish(snowflake)
 });
 
-export type StickerPack = Output<typeof stickerPackSchema>;
+export type StickerPack = InferOutput<typeof stickerPackSchema>;

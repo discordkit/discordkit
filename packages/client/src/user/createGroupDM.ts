@@ -2,9 +2,9 @@ import { post, type Fetcher, toProcedure, toValidated } from "@discordkit/core";
 import {
   array,
   literal,
-  merge,
   minLength,
   object,
+  pipe,
   record,
   string
 } from "valibot";
@@ -16,7 +16,7 @@ export const createGroupDMSchema = object({
     /** access tokens of users that have granted your app the `gdm.join` scope */
     accessTokens: array(string()),
     /** a dictionary of user ids to their respective nicknames */
-    nicks: record(string([minLength(1)]), string())
+    nicks: record(pipe(string(), minLength(1)), string())
   })
 });
 
@@ -39,12 +39,18 @@ export const createGroupDM: Fetcher<
 export const createGroupDMSafe = toValidated(
   createGroupDM,
   createGroupDMSchema,
-  merge([channelSchema, object({ type: literal(ChannelType.GROUP_DM) })])
+  object({
+    ...channelSchema.entries,
+    type: literal(ChannelType.GROUP_DM)
+  })
 );
 
 export const createGroupDMProcedure = toProcedure(
   `mutation`,
   createGroupDM,
   createGroupDMSchema,
-  merge([channelSchema, object({ type: literal(ChannelType.GROUP_DM) })])
+  object({
+    ...channelSchema.entries,
+    type: literal(ChannelType.GROUP_DM)
+  })
 );

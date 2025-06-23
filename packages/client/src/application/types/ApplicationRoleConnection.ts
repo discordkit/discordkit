@@ -1,4 +1,5 @@
 import {
+  pipe,
   object,
   string,
   optional,
@@ -6,7 +7,7 @@ import {
   minLength,
   maxLength,
   regex,
-  type Output
+  type InferOutput
 } from "valibot";
 
 export const applicationRoleConnectionSchema = object({
@@ -16,11 +17,11 @@ export const applicationRoleConnectionSchema = object({
   platformUsername: optional(string()),
   /** object mapping application role connection metadata keys to their string-ified value (max 100 characters) for the user on the platform a bot has connected */
   metadata: record(
-    string([minLength(1), maxLength(50), regex(/[a-z0-9_]/)]),
-    string([maxLength(100)])
+    pipe(string(), minLength(1), maxLength(50), regex(/[a-z0-9_]/)),
+    pipe(string(), maxLength(100))
   )
 });
 
-export type ApplicationRoleConnection = Output<
+export type ApplicationRoleConnection = InferOutput<
   typeof applicationRoleConnectionSchema
 >;

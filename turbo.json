@@ -4,7 +4,7 @@
   "remoteCache": {
     "signature": true
   },
-  "pipeline": {
+  "tasks": {
     "build": {
       "dependsOn": ["^build"]
     },
@@ -14,7 +14,7 @@
     "build:examples": {
       "dependsOn": ["^build"]
     },
-    "//#lint": {
+    "lint": {
       "dependsOn": ["@discordkit/core#build", "@discordkit/client#build"],
       "inputs": [
         "./apps/*/src/**",
@@ -25,7 +25,7 @@
     "//#test": {
       "dependsOn": ["@discordkit/core#build"],
       "inputs": ["./pacakges/*/src/**"],
-      "outputs": [".coverage/**"]
+      "outputs": ["coverage/**"]
     },
     "dev": {}
   }

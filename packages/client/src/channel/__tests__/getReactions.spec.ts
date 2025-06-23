@@ -1,6 +1,6 @@
 import { waitFor } from "@testing-library/react";
 import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
-import { array, length } from "valibot";
+import { array, length, pipe } from "valibot";
 import {
   getReactionsProcedure,
   getReactionsQuery,
@@ -12,7 +12,7 @@ import { userSchema } from "../../user/types/User.js";
 describe(`getReactions`, () => {
   const expected = mockRequest.get(
     `/channels/:channel/messages/:message/reactions/:emoji`,
-    array(userSchema, [length(1)]),
+    pipe(array(userSchema), length(1)),
     { seed: 1 }
   );
   const config = mockSchema(getReactionsSchema);

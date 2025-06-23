@@ -5,7 +5,7 @@ import {
   mockRequest,
   mockSchema
 } from "#test-utils";
-import { literal, merge, object } from "valibot";
+import { literal, object } from "valibot";
 import {
   createDM,
   createDMProcedure,
@@ -18,7 +18,10 @@ import { ChannelType } from "../../channel/types/ChannelType.js";
 describe(`createDM`, () => {
   const expected = mockRequest.post(
     `/users/@me/channels`,
-    merge([channelSchema, object({ type: literal(ChannelType.DM) })])
+    object({
+      ...channelSchema.entries,
+      type: literal(ChannelType.DM)
+    })
   );
   const config = mockSchema(createDMSchema);
 

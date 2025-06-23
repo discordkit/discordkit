@@ -1,4 +1,4 @@
-import { type Output, object, optional } from "valibot";
+import { type InferOutput, object, optional } from "valibot";
 import { moderationActionMetaSchema } from "./ModerationActionMeta.js";
 import { moderationActionTypeSchema } from "./ModerationActionType.js";
 
@@ -9,4 +9,4 @@ export const moderationActionSchema = object({
   metadata: optional(moderationActionMetaSchema)
 });
 
-export type ModerationAction = Output<typeof moderationActionSchema>;
+export type ModerationAction = InferOutput<typeof moderationActionSchema>;

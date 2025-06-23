@@ -8,14 +8,15 @@
   "main": "./src/index.ts",
   "type": "module",
   "scripts": {
-    "build:apps": "tsup"
+    "build:apps": "tsup",
+    "lint": "eslint --cache"
   },
   "dependencies": {
     "@discordkit/client": "workspace:^",
-    "valibot": "^0.24.1"
+    "valibot": "^1.1.0"
   },
   "devDependencies": {
-    "tsup": "^8.0.1"
+    "tsup": "^8.5.0"
   },
   "tsup": {
     "entry": [

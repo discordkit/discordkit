@@ -1,4 +1,4 @@
-import { type Output, object, nullish } from "valibot";
+import { type InferOutput, object, nullish } from "valibot";
 import { snowflake } from "@discordkit/core";
 import { memberSchema } from "../../guild/types/Member.js";
 import { userSchema } from "../../user/types/User.js";
@@ -12,4 +12,4 @@ export const scheduledEventUserSchema = object({
   member: nullish(memberSchema)
 });
 
-export type ScheduledEventUser = Output<typeof scheduledEventUserSchema>;
+export type ScheduledEventUser = InferOutput<typeof scheduledEventUserSchema>;

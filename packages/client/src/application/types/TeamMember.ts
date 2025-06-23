@@ -1,4 +1,4 @@
-import { object, string, partial, type Output } from "valibot";
+import { object, string, partial, type InferOutput } from "valibot";
 import { userSchema } from "../../user/types/User.js";
 import { membershipStateSchema } from "./MembershipState.js";
 import { teamMemberRoleSchema } from "./TeamMemberRole.js";
@@ -16,4 +16,4 @@ export const teamMemberSchema = object({
   role: teamMemberRoleSchema
 });
 
-export type TeamMember = Output<typeof teamMemberSchema>;
+export type TeamMember = InferOutput<typeof teamMemberSchema>;

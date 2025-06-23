@@ -1,4 +1,4 @@
-import { object, array, type Output } from "valibot";
+import { object, array, type InferOutput } from "valibot";
 import {
   get,
   type Fetcher,
@@ -21,7 +21,7 @@ export const stickerPacksSchema = object({
  */
 export const listStickerPacks: Fetcher<
   null,
-  Output<typeof stickerPacksSchema>
+  InferOutput<typeof stickerPacksSchema>
 > = async () => get(`/sticker-packs`);
 
 export const listStickerPacksSafe = toValidated(

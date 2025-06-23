@@ -1,4 +1,4 @@
-import { type Output, object, array, string } from "valibot";
+import { type InferOutput, object, array, string } from "valibot";
 import { scopesSchema } from "./Scopes.js";
 
 // https://discord.com/developers/docs/resources/application#install-params-object-install-params-structure
@@ -10,4 +10,4 @@ export const installParamsSchema = object({
   permissions: string()
 });
 
-export type InstallParams = Output<typeof installParamsSchema>;
+export type InstallParams = InferOutput<typeof installParamsSchema>;

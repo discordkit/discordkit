@@ -1,4 +1,4 @@
-import { object, optional, number, type Output } from "valibot";
+import { object, optional, number, type InferOutput } from "valibot";
 
 export const activityTimestampsSchema = object({
   /** unix time (in milliseconds) of when the activity started */
@@ -7,4 +7,4 @@ export const activityTimestampsSchema = object({
   end: optional(number())
 });
 
-export type ActivityTimestamps = Output<typeof activityTimestampsSchema>;
+export type ActivityTimestamps = InferOutput<typeof activityTimestampsSchema>;

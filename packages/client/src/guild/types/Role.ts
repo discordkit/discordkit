@@ -1,12 +1,13 @@
 import {
   object,
   string,
-  minLength,
+  nonEmpty,
   number,
   boolean,
   optional,
   array,
-  type Output
+  type InferOutput,
+  pipe
 } from "valibot";
 import { snowflake } from "@discordkit/core";
 import { roleTagSchema } from "./RoleTag.js";
@@ -15,19 +16,19 @@ export const roleSchema = object({
   /** role id */
   id: snowflake,
   /** role name */
-  name: string([minLength(1)]),
+  name: pipe(string(), nonEmpty()),
   /** integer representation of hexadecimal color code */
   color: number(),
   /** if this role is pinned in the user listing */
   hoist: boolean(),
   /** role icon hash */
-  icon: optional(string([minLength(1)])),
+  icon: optional(pipe(string(), nonEmpty())),
   /** role unicode emoji */
-  unicodeEmoji: optional(string([minLength(1)])),
+  unicodeEmoji: optional(pipe(string(), nonEmpty())),
   /** position of this role */
   position: number(),
   /** permission bit set */
-  permissions: string([minLength(1)]),
+  permissions: pipe(string(), nonEmpty()),
   /** whether this role is managed by an integration */
   managed: boolean(),
   /** whether this role is mentionable */
@@ -36,4 +37,4 @@ export const roleSchema = object({
   tags: optional(array(roleTagSchema))
 });
 
-export type Role = Output<typeof roleSchema>;
+export type Role = InferOutput<typeof roleSchema>;

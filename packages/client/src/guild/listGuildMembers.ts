@@ -5,8 +5,9 @@ import {
   minValue,
   number,
   object,
-  optional,
-  partial
+  exactOptional,
+  partial,
+  pipe
 } from "valibot";
 import {
   get,
@@ -20,11 +21,11 @@ import { memberSchema, type Member } from "./types/Member.js";
 
 export const listGuildMembersSchema = object({
   guild: snowflake,
-  params: optional(
+  params: exactOptional(
     partial(
       object({
         /** max number of members to return (1-1000) */
-        limit: number([integer(), minValue(1), maxValue(1000)]),
+        limit: pipe(number(), integer(), minValue(1), maxValue(1000)),
         /** the highest user id in the previous page */
         after: snowflake
       })

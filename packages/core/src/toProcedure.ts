@@ -1,41 +1,53 @@
-import type { BaseSchema, Output } from "valibot";
 import type {
-  initTRPC,
-  AnyRootConfig,
-  inferParser,
-  Procedure,
-  unsetMarker
-} from "@trpc/server";
-import { wrap, type Wrap } from "./wrap.js";
+  GenericSchema,
+  GenericSchemaAsync,
+  InferInput,
+  InferOutput
+} from "valibot";
+import type {
+  AnyProcedureBuilder,
+  MutationProcedure,
+  ProcedureType,
+  QueryProcedure,
+  SubscriptionProcedure
+} from "@trpc/server/unstable-core-do-not-import";
 import { isNonNullable } from "./isNonNullable.js";
 import type { Fetcher } from "./methods.js";
 
-type Result<T = void> = T extends BaseSchema ? Output<T> : T;
+type Result<T = void> = T extends GenericSchema | GenericSchemaAsync
+  ? InferOutput<T>
+  : T;
 
-type ProcedureBuilder = ReturnType<(typeof initTRPC)["create"]>["procedure"];
+type Schema = GenericSchema | GenericSchemaAsync;
 
-type UnsetMarker = typeof unsetMarker;
+type ProvedureDef<
+  I extends Schema | null = null,
+  O extends Schema | null = null
+> = I extends Schema
+  ? O extends Schema
+    ? {
+        input: InferInput<I>;
+        output: InferOutput<O>;
+        meta: unknown;
+      }
+    : { input: InferInput<I>; output: undefined; meta: unknown }
+  : O extends Schema
+    ? { input: undefined; output: InferOutput<O>; meta: unknown }
+    : {
+        input: undefined;
+        output: undefined;
+        meta: unknown;
+      };
 
 type BaseProcedure<
-  T extends "mutation" | "query" | "subscription",
-  I extends BaseSchema | null = null,
-  O extends BaseSchema | null = null
-> = Procedure<
-  T,
-  {
-    _config: AnyRootConfig;
-    _ctx_out: object;
-    _input_in: I extends BaseSchema ? inferParser<Wrap<I>>["in"] : UnsetMarker;
-    _input_out: I extends BaseSchema
-      ? inferParser<Wrap<I>>["out"]
-      : UnsetMarker;
-    _output_in: O extends BaseSchema ? inferParser<Wrap<O>>["in"] : UnsetMarker;
-    _output_out: O extends BaseSchema
-      ? inferParser<Wrap<O>>["out"]
-      : UnsetMarker;
-    _meta: object;
-  }
->;
+  T extends ProcedureType,
+  I extends Schema | null = null,
+  O extends Schema | null = null
+> = T extends `query`
+  ? QueryProcedure<ProvedureDef<I, O>>
+  : T extends `mutation`
+    ? MutationProcedure<ProvedureDef<I, O>>
+    : SubscriptionProcedure<ProvedureDef<I, O>>;
 
 /**
  * Given a {@link Fetcher | Fetcher} function and it's associated input and
@@ -45,30 +57,33 @@ type BaseProcedure<
  */
 export const toProcedure =
   <
-    T extends "mutation" | "query" | "subscription",
-    I extends BaseSchema | null = null,
-    O extends BaseSchema | null = null
+    T extends ProcedureType,
+    I extends GenericSchema | GenericSchemaAsync | null = null,
+    O extends GenericSchema | GenericSchemaAsync | null = null
   >(
     type: T,
-    fn: Fetcher<I extends BaseSchema ? I : null, Result<O>>,
+    fn: Fetcher<
+      I extends GenericSchema | GenericSchemaAsync ? I : null,
+      Result<O>
+    >,
     input?: I,
     output?: O
   ) =>
-  (procedure: ProcedureBuilder): BaseProcedure<T, I, O> => {
+  (procedure: AnyProcedureBuilder): BaseProcedure<T, I, O> => {
     if (isNonNullable(input) && isNonNullable(output)) {
       // @ts-expect-error
       return procedure
-        .input(wrap(input))
-        .output(wrap(output))
+        .input(input)
+        .output(output)
         [type](async (opts) => fn(opts.input));
     }
     if (isNonNullable(input) && !isNonNullable(output)) {
       // @ts-expect-error
-      return procedure.input(wrap(input))[type](async (opts) => fn(opts.input));
+      return procedure.input(input)[type](async (opts) => fn(opts.input));
     }
     if (!isNonNullable(input) && isNonNullable(output)) {
       // @ts-expect-error
-      return procedure.output(wrap(output))[type](async () => fn());
+      return procedure.output(output)[type](async () => fn());
     }
     // @ts-expect-error
     return procedure[type](async () => fn());

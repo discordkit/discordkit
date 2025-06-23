@@ -1,4 +1,5 @@
 import {
+  pipe,
   array,
   boolean,
   maxLength,
@@ -29,39 +30,41 @@ import {
 export const bulkOverwriteGuildApplicationCommandsSchema = object({
   application: snowflake,
   guild: snowflake,
-  body: array(
-    object({
-      /** ID of the command, if known */
-      id: nullish(snowflake),
-      /** Name of command, 1-32 characters */
-      name: string([minLength(1), maxLength(32)]),
-      /** Localization dictionary for the `name` field. Values follow the same restrictions as `name` */
-      nameLocalizations: nullish(
-        record(localesSchema, string([minLength(1), maxLength(32)]))
-      ),
-      /** 1-100 character description */
-      description: string([minLength(1), maxLength(100)]),
-      /** Localization dictionary for the `description` field. Values follow the same restrictions as `description` */
-      descriptionLocalizations: nullish(
-        record(localesSchema, string([minLength(1), maxLength(100)]))
-      ),
-      /** Parameters for the command */
-      options: nullish(array(applicationCommandOptionSchema)),
-      /** Set of permissions represented as a bit set */
-      defaultMemberPermissions: nullish(string()),
-      /** Indicates whether the command is available in DMs with the app, only for globally-scoped commands. By default, commands are visible. */
-      dmPermission: nullish(boolean()),
-      /** Replaced by `defaultMemberPermissions` and will be deprecated in the future. Indicates whether the command is enabled by default when the app is added to a guild. Defaults to `true` */
-      defaultPermission: nullish(boolean(), true),
-      /** Type of command, defaults `1` if not set */
-      type: nullish(
-        applicationCommandTypeSchema,
-        ApplicationCommandType.CHAT_INPUT
-      ),
-      /** Indicates whether the command is age-restricted */
-      nsfw: nullish(boolean())
-    }),
-    [maxLength(25)]
+  body: pipe(
+    array(
+      object({
+        /** ID of the command, if known */
+        id: nullish(snowflake),
+        /** Name of command, 1-32 characters */
+        name: pipe(string(), minLength(1), maxLength(32)),
+        /** Localization dictionary for the `name` field. Values follow the same restrictions as `name` */
+        nameLocalizations: nullish(
+          record(localesSchema, pipe(string(), minLength(1), maxLength(32)))
+        ),
+        /** 1-100 character description */
+        description: pipe(string(), minLength(1), maxLength(100)),
+        /** Localization dictionary for the `description` field. Values follow the same restrictions as `description` */
+        descriptionLocalizations: nullish(
+          record(localesSchema, pipe(string(), minLength(1), maxLength(100)))
+        ),
+        /** Parameters for the command */
+        options: nullish(array(applicationCommandOptionSchema)),
+        /** Set of permissions represented as a bit set */
+        defaultMemberPermissions: nullish(string()),
+        /** Indicates whether the command is available in DMs with the app, only for globally-scoped commands. By default, commands are visible. */
+        dmPermission: nullish(boolean()),
+        /** Replaced by `defaultMemberPermissions` and will be deprecated in the future. Indicates whether the command is enabled by default when the app is added to a guild. Defaults to `true` */
+        defaultPermission: nullish(boolean(), true),
+        /** Type of command, defaults `1` if not set */
+        type: nullish(
+          applicationCommandTypeSchema,
+          ApplicationCommandType.CHAT_INPUT
+        ),
+        /** Indicates whether the command is age-restricted */
+        nsfw: nullish(boolean())
+      })
+    ),
+    maxLength(25)
   )
 });
 

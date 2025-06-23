@@ -1,4 +1,4 @@
-import { object, string, minLength } from "valibot";
+import { object, string, minLength, pipe } from "valibot";
 import {
   remove,
   type Fetcher,
@@ -9,7 +9,7 @@ import {
 
 export const deleteWebhookWithTokenSchema = object({
   webhook: snowflake,
-  token: string([minLength(1)])
+  token: pipe(string(), minLength(1))
 });
 
 /**

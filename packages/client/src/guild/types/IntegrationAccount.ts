@@ -1,4 +1,4 @@
-import { type Output, object, string } from "valibot";
+import { type InferOutput, object, string } from "valibot";
 
 export const integrationAccountSchema = object({
   /** id of the account */
@@ -7,4 +7,4 @@ export const integrationAccountSchema = object({
   name: string()
 });
 
-export type IntegrationAccount = Output<typeof integrationAccountSchema>;
+export type IntegrationAccount = InferOutput<typeof integrationAccountSchema>;

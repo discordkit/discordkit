@@ -1,4 +1,4 @@
-import { maxLength, minLength, object, partial, string } from "valibot";
+import { maxLength, minLength, object, partial, string, pipe } from "valibot";
 import {
   patch,
   type Fetcher,
@@ -14,7 +14,7 @@ export const modifyStageInstanceSchema = object({
   body: partial(
     object({
       /** The topic of the Stage instance (1-120 characters) */
-      topic: string([minLength(1), maxLength(120)]),
+      topic: pipe(string(), minLength(1), maxLength(120)),
       /** The privacy level of the Stage instance */
       privacyLevel: stagePrivacyLevelSchema
     })

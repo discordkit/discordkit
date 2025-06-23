@@ -1,6 +1,5 @@
 {
-  "include": ["**/*.*"],
-  "exclude": ["node_modules", "./**/.next/**/*.*", "./**/dist/**/*.*"],
+  "exclude": ["node_modules", "./**/.next/**/*.*", "./**/dist"],
   "compilerOptions": {
     "noEmit": true,
     "declaration": true,

@@ -1,6 +1,6 @@
 import { waitFor } from "@testing-library/react";
 import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
-import { array, length } from "valibot";
+import { array, length, pipe } from "valibot";
 import {
   getGuildRolesProcedure,
   getGuildRolesQuery,
@@ -12,7 +12,7 @@ import { roleSchema } from "../types/Role.js";
 describe(`getGuildRoles`, () => {
   const expected = mockRequest.get(
     `/guilds/:guild/roles`,
-    array(roleSchema, [length(1)])
+    pipe(array(roleSchema), length(1))
   );
   const config = mockSchema(getGuildRolesSchema);
 

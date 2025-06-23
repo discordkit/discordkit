@@ -1,6 +1,6 @@
 import { waitFor } from "@testing-library/react";
 import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
-import { array, length } from "valibot";
+import { array, length, pipe } from "valibot";
 import {
   getGuildWebhooksProcedure,
   getGuildWebhooksQuery,
@@ -12,7 +12,7 @@ import { webhookSchema } from "../types/Webhook.js";
 describe(`getGuildWebhooks`, () => {
   const expected = mockRequest.get(
     `/guilds/:guild/webhooks`,
-    array(webhookSchema, [length(1)])
+    pipe(array(webhookSchema), length(1))
   );
   const config = mockSchema(getGuildWebhooksSchema);
 

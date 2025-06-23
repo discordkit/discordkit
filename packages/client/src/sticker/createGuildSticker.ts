@@ -1,4 +1,4 @@
-import { maxLength, minLength, object, string, unknown } from "valibot";
+import { maxLength, minLength, object, pipe, string, unknown } from "valibot";
 import {
   post,
   type Fetcher,
@@ -12,11 +12,11 @@ export const createGuildStickerSchema = object({
   guild: snowflake,
   body: object({
     /** name of the sticker (2-30 characters) */
-    name: string([minLength(2), maxLength(30)]),
+    name: pipe(string(), minLength(2), maxLength(30)),
     /** description of the sticker (empty or 2-100 characters) */
-    description: string([minLength(2), maxLength(100)]),
+    description: pipe(string(), minLength(2), maxLength(100)),
     /** autocomplete/suggestion tags for the sticker (max 200 characters) */
-    tags: string([minLength(1), maxLength(200)]),
+    tags: pipe(string(), minLength(1), maxLength(200)),
     /** the sticker file to upload, must be a PNG, APNG, or Lottie JSON file, max 500 KB */
     file: unknown()
   })

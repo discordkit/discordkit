@@ -1,4 +1,4 @@
-import { isoTimestamp, minLength, nullish, object, string } from "valibot";
+import { isoTimestamp, nonEmpty, nullish, object, pipe, string } from "valibot";
 import {
   patch,
   type Fetcher,
@@ -24,21 +24,21 @@ export const modifyGuildScheduledEventSchema = object({
     /** entity metadata	the entity metadata of the scheduled event */
     entityMetadata: nullish(entityMetadataSchema),
     /** the name of the scheduled event */
-    name: nullish(string([minLength(1)])),
+    name: nullish(pipe(string(), nonEmpty())),
     /** the privacy level of the scheduled event */
     privacyLevel: nullish(scheduledEventPrivacyLevelSchema),
     /** the time to schedule the scheduled event */
-    scheduledStartTime: nullish(string([isoTimestamp()])),
+    scheduledStartTime: nullish(pipe(string(), isoTimestamp())),
     /** the time when the scheduled event is scheduled to end */
-    scheduledEndTime: nullish(string([isoTimestamp()])),
+    scheduledEndTime: nullish(pipe(string(), isoTimestamp())),
     /** the description of the scheduled event */
-    description: nullish(string([minLength(1)])),
+    description: nullish(pipe(string(), nonEmpty())),
     /** the entity type of the scheduled event */
     entityType: nullish(scheduledEventEntityTypeSchema),
     /** the status of the scheduled event */
     status: nullish(scheduledEventStatusSchema),
     /** the cover image of the scheduled event */
-    image: nullish(string([minLength(1)]))
+    image: nullish(pipe(string(), nonEmpty()))
   })
 });
 

@@ -1,4 +1,4 @@
-import { object, string, boolean, optional, type Output } from "valibot";
+import { object, string, boolean, optional, type InferOutput } from "valibot";
 import { snowflake } from "@discordkit/core";
 import { stagePrivacyLevelSchema } from "./StagePrivacyLevel.js";
 
@@ -19,4 +19,4 @@ export const stageSchema = object({
   guildScheduledEventId: optional(snowflake)
 });
 
-export type Stage = Output<typeof stageSchema>;
+export type Stage = InferOutput<typeof stageSchema>;

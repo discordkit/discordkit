@@ -7,18 +7,21 @@ import {
   integer,
   minValue,
   boolean,
-  type Output
+  type InferOutput,
+  pipe
 } from "valibot";
 
 export const roleSubscriptionDataSchema = object({
   /** the id of the sku and listing that the user is subscribed to */
   roleSubscriptionListingId: snowflake,
   /** the name of the tier that the user is subscribed to */
-  tierName: string([minLength(1)]),
+  tierName: pipe(string(), minLength(1)),
   /** the cumulative number of months that the user has been subscribed for */
-  totalMonthsSubscribed: number([integer(), minValue(0)]),
+  totalMonthsSubscribed: pipe(number(), integer(), minValue(0)),
   /** whether this notification is for a renewal rather than a new purchase */
   isRenewal: boolean()
 });
 
-export type RoleSubscriptionData = Output<typeof roleSubscriptionDataSchema>;
+export type RoleSubscriptionData = InferOutput<
+  typeof roleSubscriptionDataSchema
+>;

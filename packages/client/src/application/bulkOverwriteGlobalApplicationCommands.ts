@@ -1,4 +1,4 @@
-import { array, maxLength, object } from "valibot";
+import { pipe, array, maxLength, object } from "valibot";
 import {
   put,
   type Fetcher,
@@ -13,7 +13,7 @@ import {
 
 export const bulkOverwriteGlobalApplicationCommandsSchema = object({
   application: snowflake,
-  body: array(applicationCommandSchema, [maxLength(25)])
+  body: pipe(array(applicationCommandSchema), maxLength(25))
 });
 
 /**

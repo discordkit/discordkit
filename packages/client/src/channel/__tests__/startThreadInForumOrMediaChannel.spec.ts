@@ -5,7 +5,7 @@ import {
   mockRequest,
   mockSchema
 } from "#test-utils";
-import { merge, object } from "valibot";
+import { object } from "valibot";
 import {
   startThreadInForumOrMediaChannel,
   startThreadInForumOrMediaChannelProcedure,
@@ -18,7 +18,10 @@ import { messageSchema } from "../types/Message.js";
 describe(`startThreadInForumOrMediaChannel`, () => {
   const expected = mockRequest.post(
     `/channels/:channel/threads`,
-    merge([channelSchema, object({ message: messageSchema })])
+    object({
+      ...channelSchema.entries,
+      message: messageSchema
+    })
   );
   const config = mockSchema(startThreadInForumOrMediaChannelSchema);
 

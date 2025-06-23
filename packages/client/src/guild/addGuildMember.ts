@@ -1,4 +1,12 @@
-import { array, boolean, minLength, object, optional, string } from "valibot";
+import {
+  array,
+  boolean,
+  nonEmpty,
+  object,
+  optional,
+  pipe,
+  string
+} from "valibot";
 import {
   put,
   type Fetcher,
@@ -13,9 +21,9 @@ export const addGuildMemberSchema = object({
   user: snowflake,
   body: object({
     /** an oauth2 access token granted with the `guilds.join` to the bot's application for the user you want to add to the guild */
-    accessToken: string([minLength(1)]),
+    accessToken: pipe(string(), nonEmpty()),
     /** value to set user's nickname to	(Requires `MANAGE_NICKNAMES` permission) */
-    nick: optional(string([minLength(1)])),
+    nick: optional(pipe(string(), nonEmpty())),
     /** array of role ids the member is assigned (Requires `MANAGE_ROLES` permission) */
     roles: optional(array(snowflake)),
     /** whether the user is muted in voice channels (Requires `MUTE_MEMBERS` permission) */

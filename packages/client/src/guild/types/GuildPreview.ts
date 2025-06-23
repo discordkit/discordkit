@@ -6,7 +6,8 @@ import {
   number,
   integer,
   minValue,
-  type Output
+  type InferOutput,
+  pipe
 } from "valibot";
 import { snowflake } from "@discordkit/core";
 import { emojiSchema } from "../../emoji/types/Emoji.js";
@@ -29,13 +30,13 @@ export const guildPreviewSchema = object({
   /** enabled guild features */
   features: array(guildFeaturesSchema),
   /** approximate number of members in this guild */
-  approximateMemberCount: number([integer(), minValue(0)]),
+  approximateMemberCount: pipe(number(), integer(), minValue(0)),
   /** approximate number of online members in this guild */
-  approximatePresenceCount: number([integer(), minValue(0)]),
+  approximatePresenceCount: pipe(number(), integer(), minValue(0)),
   /** the description for the guild */
   description: optional(string()),
   /** custom guild stickers */
   stickers: array(stickerSchema)
 });
 
-export type GuildPreview = Output<typeof guildPreviewSchema>;
+export type GuildPreview = InferOutput<typeof guildPreviewSchema>;

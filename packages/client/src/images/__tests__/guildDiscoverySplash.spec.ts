@@ -1,5 +1,5 @@
 import { mockSchema } from "#test-utils";
-import { parse, string, url } from "valibot";
+import { parse, pipe, string, url } from "valibot";
 import {
   guildDiscoverySplash,
   guildDiscoverySplashSchema
@@ -9,7 +9,7 @@ describe(`guildDiscoverySplash`, () => {
   it(`produces a valid URL`, () => {
     expect(() =>
       parse(
-        string([url()]),
+        pipe(string(), url()),
         guildDiscoverySplash(mockSchema(guildDiscoverySplashSchema))
       )
     ).not.toThrow();

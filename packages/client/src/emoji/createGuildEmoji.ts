@@ -1,4 +1,4 @@
-import { array, minLength, object, string, url } from "valibot";
+import { array, minLength, object, pipe, string, url } from "valibot";
 import {
   post,
   type Fetcher,
@@ -12,9 +12,9 @@ export const createGuildEmojiSchema = object({
   guild: snowflake,
   body: object({
     /** name of the emoji */
-    name: string([minLength(1)]),
+    name: pipe(string(), minLength(1)),
     /** the 128x128 emoji image */
-    image: string([url()]),
+    image: pipe(string(), url()),
     /** roles allowed to use this emoji */
     roles: array(snowflake)
   })

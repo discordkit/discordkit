@@ -7,7 +7,8 @@ import {
   isoTimestamp,
   integer,
   array,
-  type Output
+  type InferOutput,
+  pipe
 } from "valibot";
 import { snowflake } from "@discordkit/core";
 import { activityButtonSchema } from "./ActivityButton.js";
@@ -25,7 +26,7 @@ export const activitySchema = object({
   /** stream url, is validated when type is 1 */
   url: optional(string()),
   /** unix timestamp (in milliseconds) of when the activity was added to the user's session */
-  createdAt: string([isoTimestamp()]),
+  createdAt: pipe(string(), isoTimestamp()),
   /** unix timestamps for start and/or end of the game */
   timestamps: optional(activityTimestampsSchema),
   /** application id for the game */
@@ -45,9 +46,9 @@ export const activitySchema = object({
   /** whether or not the activity is an instanced game session */
   instance: optional(boolean()),
   /** activity flags ORd together, describes what the payload includes */
-  flags: optional(number([integer()])),
+  flags: optional(pipe(number(), integer())),
   /** the custom buttons shown in the Rich Presence (max 2) */
   buttons: optional(array(activityButtonSchema))
 });
 
-export type Activity = Output<typeof activitySchema>;
+export type Activity = InferOutput<typeof activitySchema>;

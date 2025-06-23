@@ -2,7 +2,6 @@
 
 import { enum_ } from "valibot";
 
-/* eslint-disable no-bitwise */
 export enum UserFlags {
   /** Discord Employee */
   STAFF = 1 << 0,

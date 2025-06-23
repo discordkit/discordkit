@@ -1,4 +1,4 @@
-import { array, minLength, object, partial, string } from "valibot";
+import { array, minLength, object, partial, pipe, string } from "valibot";
 import {
   patch,
   type Fetcher,
@@ -14,7 +14,7 @@ export const modifyGuildEmojiSchema = object({
   body: partial(
     object({
       /** name of the emoji */
-      name: string([minLength(1)]),
+      name: pipe(string(), minLength(1)),
       /** roles allowed to use this emoji */
       roles: array(snowflake)
     })

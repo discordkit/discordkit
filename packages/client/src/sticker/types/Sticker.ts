@@ -7,7 +7,8 @@ import {
   boolean,
   number,
   integer,
-  type Output
+  type InferOutput,
+  pipe
 } from "valibot";
 import { snowflake } from "@discordkit/core";
 import { userSchema } from "../../user/types/User.js";
@@ -24,7 +25,7 @@ export const stickerSchema = object({
   /** description of the sticker */
   description: optional(string()),
   /** autocomplete/suggestion tags for the sticker (max 200 characters) */
-  tags: string([maxLength(200)]),
+  tags: pipe(string(), maxLength(200)),
   /** @deprecated previously the sticker asset hash, now an empty string */
   asset: nullish(string()),
   /** type of sticker */
@@ -38,7 +39,7 @@ export const stickerSchema = object({
   /** the user that uploaded the guild sticker */
   user: nullish(userSchema),
   /** the standard sticker's sort order within its pack */
-  sortValue: nullish(number([integer()]))
+  sortValue: nullish(pipe(number(), integer()))
 });
 
-export type Sticker = Output<typeof stickerSchema>;
+export type Sticker = InferOutput<typeof stickerSchema>;

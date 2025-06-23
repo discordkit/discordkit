@@ -1,6 +1,6 @@
 import { waitFor } from "@testing-library/react";
 import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
-import { array, length } from "valibot";
+import { array, length, pipe } from "valibot";
 import {
   searchGuildMembersProcedure,
   searchGuildMembersQuery,
@@ -12,7 +12,7 @@ import { memberSchema } from "../types/Member.js";
 describe(`searchGuildMembers`, () => {
   const expected = mockRequest.get(
     `/guilds/:guild/members/search`,
-    array(memberSchema, [length(1)])
+    pipe(array(memberSchema), length(1))
   );
   const config = mockSchema(searchGuildMembersSchema);
 

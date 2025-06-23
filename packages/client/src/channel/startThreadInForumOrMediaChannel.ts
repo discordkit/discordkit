@@ -3,7 +3,6 @@ import {
   integer,
   maxLength,
   maxValue,
-  merge,
   minLength,
   minValue,
   nullish,
@@ -11,6 +10,7 @@ import {
   object,
   optional,
   partial,
+  pipe,
   string,
   unknown
 } from "valibot";
@@ -33,18 +33,18 @@ export const startThreadInForumOrMediaChannelSchema = object({
   channel: snowflake,
   body: object({
     /** 1-100 character channel name */
-    name: string([minLength(1), maxLength(100)]),
+    name: pipe(string(), minLength(1), maxLength(100)),
     /** duration in minutes to automatically archive the thread after recent activity, can be set to: 60, 1440, 4320, 10080 */
     autoArchiveDuration: nullish(autoArchiveDurationSchema),
     /** amount of seconds a user has to wait before sending another message (0-21600) */
     rateLimitPerUser: nullish(
-      number([integer(), minValue(0), maxValue(21600)])
+      pipe(number(), integer(), minValue(0), maxValue(21600))
     ),
     /** contents of the first message in the forum thread */
     message: partial(
       object({
         /** Message contents (up to 2000 characters) */
-        content: nullish(string([minLength(1), maxLength(2000)])),
+        content: nullish(pipe(string(), minLength(1), maxLength(2000))),
         /** Embedded rich content (up to 6000 characters) */
         embeds: nullish(array(embedSchema)),
         /** Allowed mentions for the message */
@@ -52,13 +52,13 @@ export const startThreadInForumOrMediaChannelSchema = object({
         /** Components to include with the message */
         components: nullish(messageComponentSchema),
         /** IDs of up to 3 stickers in the server to send in the message */
-        stickerIds: nullish(array(string(), [maxLength(3)])),
+        stickerIds: nullish(pipe(array(string()), maxLength(3))),
         /** Contents of the file being sent. See Uploading Files */
         files: optional(unknown()),
         /** Attachment objects with filename and description. See Uploading Files */
         attachments: nullish(array(partial(attachmentSchema))),
         /** Message flags combined as a bitfield (only SUPPRESS_EMBEDS can be set) */
-        flags: nullish(number([integer()]))
+        flags: nullish(pipe(number(), integer()))
       })
     ),
     /** the IDs of the set of tags that have been applied to a thread in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */
@@ -98,12 +98,18 @@ export const startThreadInForumOrMediaChannel: Fetcher<
 export const startThreadInForumOrMediaChannelSafe = toValidated(
   startThreadInForumOrMediaChannel,
   startThreadInForumOrMediaChannelSchema,
-  merge([channelSchema, object({ message: messageSchema })])
+  object({
+    ...channelSchema.entries,
+    message: messageSchema
+  })
 );
 
 export const startThreadInForumOrMediaChannelProcedure = toProcedure(
   `mutation`,
   startThreadInForumOrMediaChannel,
   startThreadInForumOrMediaChannelSchema,
-  merge([channelSchema, object({ message: messageSchema })])
+  object({
+    ...channelSchema.entries,
+    message: messageSchema
+  })
 );

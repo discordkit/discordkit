@@ -3,11 +3,12 @@ import {
   boolean,
   integer,
   isoTimestamp,
-  minLength,
+  nonEmpty,
   nullish,
   number,
   object,
   partial,
+  pipe,
   string
 } from "valibot";
 import {
@@ -25,7 +26,7 @@ export const modifyGuildMemberSchema = object({
   body: partial(
     object({
       /** value to set user's nickname to	(Requires `MANAGE_NICKNAMES` permission) */
-      nick: nullish(string([minLength(1)])),
+      nick: nullish(pipe(string(), nonEmpty())),
       /** array of role ids the member is assigned (Requires `MANAGE_ROLES` permission) */
       roles: nullish(array(snowflake)),
       /** whether the user is muted in voice channels (Requires `MUTE_MEMBERS` permission) */
@@ -35,9 +36,9 @@ export const modifyGuildMemberSchema = object({
       /** id of channel to move user to (if they are connected to voice) (Requires `MOVE_MEMBERS` permission) */
       channelId: nullish(snowflake),
       /** when the user's timeout will expire and the user will be able to communicate in the guild again (up to 28 days in the future), set to null to remove timeout. Will throw a 403 error if the user has the `ADMINISTRATOR` permission or is the owner of the guild (Requires `MODERATE_MEMBERS` permission) */
-      communicationDisabledUntil: nullish(string([isoTimestamp()])),
+      communicationDisabledUntil: nullish(pipe(string(), isoTimestamp())),
       /** guild member flags */
-      flags: nullish(number([integer()]))
+      flags: nullish(pipe(number(), integer()))
     })
   )
 });

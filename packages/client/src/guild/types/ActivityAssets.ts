@@ -1,4 +1,4 @@
-import { object, optional, string, type Output } from "valibot";
+import { object, optional, string, type InferOutput } from "valibot";
 
 export const activityAssetsSchema = object({
   /** see Activity Asset Image */
@@ -11,4 +11,4 @@ export const activityAssetsSchema = object({
   smallText: optional(string())
 });
 
-export type ActivityAssets = Output<typeof activityAssetsSchema>;
+export type ActivityAssets = InferOutput<typeof activityAssetsSchema>;

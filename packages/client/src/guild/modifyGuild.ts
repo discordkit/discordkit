@@ -2,12 +2,13 @@ import {
   array,
   boolean,
   integer,
-  minLength,
   minValue,
+  nonEmpty,
   number,
   object,
   optional,
   partial,
+  pipe,
   string
 } from "valibot";
 import {
@@ -29,9 +30,9 @@ export const modifyGuildSchema = object({
   body: partial(
     object({
       /** guild name */
-      name: string([minLength(1)]),
+      name: pipe(string(), nonEmpty()),
       /** @deprecated guild voice region id */
-      region: optional(string([minLength(1)])),
+      region: optional(pipe(string(), nonEmpty())),
       /** verification level */
       verificationLevel: optional(verificationLevelSchema),
       /** default message notification level */
@@ -43,21 +44,21 @@ export const modifyGuildSchema = object({
       /** id for afk channel */
       afkChannelId: optional(snowflake),
       /** afk timeout in seconds */
-      afkTimeout: number([integer(), minValue(0)]),
+      afkTimeout: pipe(number(), integer(), minValue(0)),
       /** base64 1024x1024 png/jpeg/gif image for the guild icon (can be animated gif when the server has the ANIMATED_ICON feature) */
-      icon: optional(string([minLength(1)])),
+      icon: optional(pipe(string(), nonEmpty())),
       /** user id to transfer guild ownership to (must be owner) */
       ownerId: snowflake,
       /** base64 16:9 png/jpeg image for the guild splash (when the server has the INVITE_SPLASH feature) */
-      splash: optional(string([minLength(1)])),
+      splash: optional(pipe(string(), nonEmpty())),
       /** base64 16:9 png/jpeg image for the guild discovery splash (when the server has the DISCOVERABLE feature) */
-      discoverySplash: optional(string([minLength(1)])),
+      discoverySplash: optional(pipe(string(), nonEmpty())),
       /** base64 16:9 png/jpeg image for the guild banner (when the server has the BANNER feature; can be animated gif when the server has the ANIMATED_BANNER feature) */
-      banner: optional(string([minLength(1)])),
+      banner: optional(pipe(string(), nonEmpty())),
       /** the id of the channel where guild notices such as welcome messages and boost events are posted */
       systemChannelId: optional(snowflake),
       /** system channel flags */
-      systemChannelFlags: number([integer()]),
+      systemChannelFlags: pipe(number(), integer()),
       /** the id of the channel where Community guilds display rules and/or guidelines */
       rulesChannelId: optional(snowflake),
       /** the id of the channel where admins and moderators of Community guilds receive notices from Discord */
@@ -67,7 +68,7 @@ export const modifyGuildSchema = object({
       /** enabled guild features */
       features: array(guildFeaturesSchema),
       /** the description for the guild */
-      description: optional(string([minLength(1)])),
+      description: optional(pipe(string(), nonEmpty())),
       /** whether the guild's boost progress bar should be enabled */
       premiumProgressBarEnabled: boolean(),
       /** the id of the channel where admins and moderators of Community guilds receive safety alerts from Discord */

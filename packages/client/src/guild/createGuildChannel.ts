@@ -6,10 +6,12 @@ import {
   maxValue,
   minLength,
   minValue,
+  nonEmpty,
   nullish,
   number,
   object,
   partial,
+  pipe,
   string
 } from "valibot";
 import {
@@ -33,21 +35,21 @@ export const createGuildChannelSchema = object({
   guild: snowflake,
   body: object({
     /** channel name (1-100 characters) */
-    name: string([minLength(1)]),
+    name: pipe(string(), nonEmpty()),
     /** the type of channel */
     type: nullish(channelTypeSchema),
     /** channel topic (0-1024 characters) */
-    topic: nullish(string([minLength(0), maxLength(1024)])),
+    topic: nullish(pipe(string(), minLength(0), maxLength(1024))),
     /** the bitrate (in bits) of the voice or stage channel; min 8000 */
-    bitrate: nullish(number([minValue(8000)])),
+    bitrate: nullish(pipe(number(), minValue(8000))),
     /** the user limit of the voice channel */
-    userLimit: nullish(number([integer(), minValue(0)])),
+    userLimit: nullish(pipe(number(), integer(), minValue(0))),
     /** amount of seconds a user has to wait before sending another message (0-21600); bots, as well as users with the permission manage_messages or manage_channel, are unaffected */
     rateLimitPerYser: nullish(
-      number([integer(), minValue(0), maxValue(21600)])
+      pipe(number(), integer(), minValue(0), maxValue(21600))
     ),
     /** sorting position of the channel */
-    position: nullish(number([integer(), minValue(0)])),
+    position: nullish(pipe(number(), integer(), minValue(0))),
     /** the channel's permission overwrites */
     permissionOverwrites: nullish(array(partial(overwriteSchema))),
     /** id of the parent category for a channel */
@@ -55,7 +57,7 @@ export const createGuildChannelSchema = object({
     /** whether the channel is nsfw */
     nsfw: nullish(boolean()),
     /** channel voice region id of the voice or stage channel, automatic when set to null */
-    rtcRegion: nullish(string([minLength(1)])),
+    rtcRegion: nullish(pipe(string(), nonEmpty())),
     /** the camera video quality mode of the voice channel */
     videoQualityMode: nullish(videoQualityModeSchema),
     /** the default duration that the clients use (not the API) for newly created threads in the channel, in minutes, to automatically archive the thread after recent activity */
@@ -70,7 +72,7 @@ export const createGuildChannelSchema = object({
     defaultForumLayout: nullish(forumLayoutTypeSchema),
     /** the initial `rateLimitPerUser` to set on newly created threads in a channel. this field is copied to the thread at creation time and does not live update. */
     defaultThreadRateLimitPerUser: nullish(
-      number([integer(), minValue(0), maxValue(21600)])
+      pipe(number(), integer(), minValue(0), maxValue(21600))
     )
   })
 });

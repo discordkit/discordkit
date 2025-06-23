@@ -6,8 +6,9 @@ import {
   nullish,
   number,
   object,
-  optional,
-  partial
+  exactOptional,
+  partial,
+  pipe
 } from "valibot";
 import {
   get,
@@ -25,13 +26,13 @@ import {
 export const getGuildScheduledEventUsersSchema = object({
   guild: snowflake,
   event: snowflake,
-  params: optional(
+  params: exactOptional(
     partial(
       object({
         /** number of users to return (up to maximum 100) (default: 100) */
-        limit: nullish(number([minValue(1), maxValue(100)]), 100),
+        limit: nullish(pipe(number(), minValue(1), maxValue(100)), 100),
         /** include guild member data if it exists (default: false) */
-        withMember: nullish(boolean(), false),
+        withMember: nullish(boolean()),
         /** consider only users before given user id (default: null) */
         before: nullish(snowflake),
         /** consider only users after given user id (default: null) */

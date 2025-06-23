@@ -7,7 +7,6 @@ void (async (): Promise<void> => {
     ).trim();
 
   try {
-    // eslint-disable-next-line no-console
     console.info(`Running discord webhook action...`);
     await executeWebhookSafe({
       webhook: getInput(`webhook`),
@@ -18,7 +17,6 @@ void (async (): Promise<void> => {
     });
   } catch (error) {
     if (error instanceof Error) {
-      // eslint-disable-next-line no-console
       console.error(error.message);
     }
     process.exit(1);

@@ -1,6 +1,6 @@
 import { waitFor } from "@testing-library/react";
 import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
-import { array, length } from "valibot";
+import { array, length, pipe } from "valibot";
 import {
   getGlobalApplicationCommandsSchema,
   getGlobalApplicationCommandsProcedure,
@@ -12,7 +12,7 @@ import { applicationCommandSchema } from "../types/ApplicationCommand.js";
 describe(`getGlobalApplicationCommands`, () => {
   const expected = mockRequest.get(
     `/applications/:application/commands`,
-    array(applicationCommandSchema, [length(1)])
+    pipe(array(applicationCommandSchema), length(1))
   );
   const config = mockSchema(getGlobalApplicationCommandsSchema);
 

@@ -1,5 +1,5 @@
 import { snowflake } from "@discordkit/core";
-import { object, nullish, boolean, partial, type Output } from "valibot";
+import { object, nullish, boolean, partial, type InferOutput } from "valibot";
 
 export const messageReferenceSchema = partial(
   object({
@@ -14,4 +14,4 @@ export const messageReferenceSchema = partial(
   })
 );
 
-export type MessageReference = Output<typeof messageReferenceSchema>;
+export type MessageReference = InferOutput<typeof messageReferenceSchema>;

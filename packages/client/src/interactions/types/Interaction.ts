@@ -6,7 +6,8 @@ import {
   literal,
   number,
   integer,
-  type Output
+  type InferOutput,
+  pipe
 } from "valibot";
 import { snowflake } from "@discordkit/core";
 import { memberSchema } from "../../guild/types/Member.js";
@@ -43,11 +44,11 @@ export const interactionSchema = object({
   /** For components, the message they were attached to */
   message: nullish(messageSchema),
   /** Bitwise set of permissions the app or bot has within the channel the interaction was sent from */
-  appPermissions: nullish(number([integer()])),
+  appPermissions: nullish(pipe(number(), integer())),
   /** Selected language of the invoking user */
   locale: nullish(localesSchema),
   /** Guild's preferred locale, if invoked in a guild */
   guildLocale: nullish(localesSchema)
 });
 
-export type Interaction = Output<typeof interactionSchema>;
+export type Interaction = InferOutput<typeof interactionSchema>;

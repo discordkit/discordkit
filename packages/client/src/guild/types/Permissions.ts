@@ -2,7 +2,6 @@
 
 import { enum_ } from "valibot";
 
-/* eslint-disable no-bitwise */
 export enum Permissions {
   /** Allows creation of instant invites */
   CREATE_INSTANT_INVITE = 1 << 0,
@@ -69,30 +68,43 @@ export enum Permissions {
   /** Allows members to use application commands, including slash commands and context menu commands. */
   USE_APPLICATION_COMMANDS = 1 << 31,
   /** Allows for requesting to speak in stage channels. (This permission is under active development and may be changed or removed.) */
+  // @ts-expect-error
   REQUEST_TO_SPEAK = 1 << 32,
   /** Allows for creating, editing, and deleting scheduled events */
+  // @ts-expect-error
   MANAGE_EVENTS = 1 << 33,
   /** Allows for deleting and archiving threads, and viewing all private threads */
+  // @ts-expect-error
   MANAGE_THREADS = 1 << 34,
   /** Allows for creating public and announcement threads */
+  // @ts-expect-error
   CREATE_PUBLIC_THREADS = 1 << 35,
   /** Allows for creating private threads */
+  // @ts-expect-error
   CREATE_PRIVATE_THREADS = 1 << 36,
   /** Allows the usage of custom stickers from other servers */
+  // @ts-expect-error
   USE_EXTERNAL_STICKERS = 1 << 37,
   /** Allows for sending messages in threads */
+  // @ts-expect-error
   SEND_MESSAGES_IN_THREADS = 1 << 38,
   /** Allows for using Activities (applications with the `EMBEDDED` flag) in a voice channel */
+  // @ts-expect-error
   USE_EMBEDDED_ACTIVITIES = 1 << 39,
   /** Allows for timing out users to prevent them from sending or reacting to messages in chat and threads, and from speaking in voice and stage channels */
+  // @ts-expect-error
   MODERATE_MEMBERS = 1 << 40,
   /** Allows for viewing role subscription insights */
+  // @ts-expect-error
   VIEW_CREATOR_MONETIZATION_ANALYTICS = 1 << 41,
   /** Allows for using soundboard in a voice channel */
+  // @ts-expect-error
   USE_SOUNDBOARD = 1 << 42,
   /** Allows the usage of custom soundboard sounds from other servers */
+  // @ts-expect-error
   USE_EXTERNAL_SOUNDS = 1 << 45,
   /** Allows sending voice messages */
+  // @ts-expect-error
   SEND_VOICE_MESSAGES = 1 << 46
 }
 
