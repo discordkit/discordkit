@@ -1,68 +1,68 @@
-import { z } from "zod";
+import { type InferOutput, picklist } from "valibot";
 
-export const localesSchema = z.union([
+export const localesSchema = picklist([
   /** Indonesian | Bahasa Indonesia */
-  z.literal(`id`),
+  `id`,
   /** Danish | Dansk */
-  z.literal(`da`),
+  `da`,
   /** German | Deutsch */
-  z.literal(`de`),
+  `de`,
   /** English, UK | English, UK */
-  z.literal(`en-GB`),
+  `en-GB`,
   /** English, US | English, US */
-  z.literal(`en-US`),
+  `en-US`,
   /** Spanish | Español */
-  z.literal(`es-ES`),
+  `es-ES`,
   /** French | Français */
-  z.literal(`fr`),
+  `fr`,
   /** Croatian | Hrvatski */
-  z.literal(`hr`),
+  `hr`,
   /** Italian | Italiano */
-  z.literal(`it`),
+  `it`,
   /** Lithuanian | Lietuviškai */
-  z.literal(`lt`),
+  `lt`,
   /** Hungarian | Magyar */
-  z.literal(`hu`),
+  `hu`,
   /** Dutch | Nederlands */
-  z.literal(`nl`),
+  `nl`,
   /** Norwegian | Norsk */
-  z.literal(`no`),
+  `no`,
   /** Polish | Polski */
-  z.literal(`pl`),
+  `pl`,
   /** Portuguese, Brazilian | Português do Brasil */
-  z.literal(`pt-BR`),
+  `pt-BR`,
   /** Romanian, Romania | Română */
-  z.literal(`ro`),
+  `ro`,
   /** Finnish | Suomi */
-  z.literal(`fi`),
+  `fi`,
   /** Swedish | Svenska */
-  z.literal(`sv-SE`),
+  `sv-SE`,
   /** Vietnamese | Tiếng Việt */
-  z.literal(`vi`),
+  `vi`,
   /** Turkish | Türkçe */
-  z.literal(`tr`),
+  `tr`,
   /** Czech | Čeština */
-  z.literal(`cs`),
+  `cs`,
   /** Greek | Ελληνικά */
-  z.literal(`el`),
+  `el`,
   /** Bulgarian | български */
-  z.literal(`bg`),
+  `bg`,
   /** Russian | Pусский */
-  z.literal(`ru`),
+  `ru`,
   /** Ukrainian | Українська */
-  z.literal(`uk`),
+  `uk`,
   /** Hindi | हिन्दी */
-  z.literal(`hi`),
+  `hi`,
   /** Thai | ไทย */
-  z.literal(`th`),
+  `th`,
   /** Chinese, China | 中文 */
-  z.literal(`zh-CN`),
+  `zh-CN`,
   /** Japanese | 日本語 */
-  z.literal(`ja`),
+  `ja`,
   /** Chinese, Taiwan | 繁體中文 */
-  z.literal(`zh-TW`),
+  `zh-TW`,
   /** Korean | 한국어 */
-  z.literal(`ko`)
+  `ko`
 ]);
 
-export type Locales = z.infer<typeof localesSchema>;
+export type Locales = InferOutput<typeof localesSchema>;

@@ -1,12 +1,12 @@
-import { z } from "zod";
+import { type InferOutput, object, optional, string } from "valibot";
 
-export const activitySecretsSchema = z.object({
+export const activitySecretsSchema = object({
   /** the secret for joining a party */
-  join: z.string().optional(),
+  join: optional(string()),
   /** the secret for spectating a game */
-  spectate: z.string().optional(),
+  spectate: optional(string()),
   /** the secret for a specific instanced match */
-  match: z.string().optional()
+  match: optional(string())
 });
 
-export type ActivitySecrets = z.infer<typeof activitySecretsSchema>;
+export type ActivitySecrets = InferOutput<typeof activitySecretsSchema>;

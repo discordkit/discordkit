@@ -1,5 +1,11 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
+import {
+  runProcedure,
+  runMutation,
+  mockRequest,
+  mockSchema
+} from "#test-utils";
+import { object } from "valibot";
 import {
   startThreadInForumOrMediaChannel,
   startThreadInForumOrMediaChannelProcedure,
@@ -10,28 +16,31 @@ import { channelSchema } from "../types/Channel.js";
 import { messageSchema } from "../types/Message.js";
 
 describe(`startThreadInForumOrMediaChannel`, () => {
-  mockRequest.post(
+  const expected = mockRequest.post(
     `/channels/:channel/threads`,
-    channelSchema.extend({ message: messageSchema })
+    object({
+      ...channelSchema.entries,
+      message: messageSchema
+    })
   );
   const config = mockSchema(startThreadInForumOrMediaChannelSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(
-      startThreadInForumOrMediaChannelSafe(config)
-    ).resolves.toBeDefined();
+    await expect(startThreadInForumOrMediaChannelSafe(config)).resolves.toEqual(
+      expected
+    );
   });
 
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(startThreadInForumOrMediaChannelProcedure)(config)
-    ).resolves.toBeDefined();
+    ).resolves.toEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runMutation(startThreadInForumOrMediaChannel);
     result.current.mutate(config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toBeDefined();
+    expect(result.current.data).toEqual(expected);
   });
 });

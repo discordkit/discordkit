@@ -1,4 +1,12 @@
-import { z } from "zod";
+import {
+  object,
+  string,
+  minLength,
+  boolean,
+  partial,
+  exactOptional,
+  pipe
+} from "valibot";
 import {
   post,
   buildURL,
@@ -8,18 +16,19 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const executeGitHubCompatibleWebhookSchema = z.object({
+export const executeGitHubCompatibleWebhookSchema = object({
   webhook: snowflake,
-  token: z.string().min(1),
-  params: z
-    .object({
-      /** id of the thread to send the message in */
-      threadId: snowflake,
-      /** waits for server confirmation of message send before response (defaults to `true`; when `false` a message that is not saved does not return an error) */
-      wait: z.boolean().default(true)
-    })
-    .partial()
-    .optional()
+  token: pipe(string(), minLength(1)),
+  params: exactOptional(
+    partial(
+      object({
+        /** id of the thread to send the message in */
+        threadId: snowflake,
+        /** waits for server confirmation of message send before response (defaults to `true`; when `false` a message that is not saved does not return an error) */
+        wait: exactOptional(boolean())
+      })
+    )
+  )
 });
 
 /**

@@ -1,17 +1,17 @@
 import { snowflake } from "@discordkit/core";
-import { z } from "zod";
+import { object, nullish, boolean, partial, type InferOutput } from "valibot";
 
-export const messageReferenceSchema = z
-  .object({
+export const messageReferenceSchema = partial(
+  object({
     /** id of the originating message */
-    messageId: snowflake.nullish(),
+    messageId: nullish(snowflake),
     /** id of the originating message's channel */
-    channelId: snowflake.nullish(),
+    channelId: nullish(snowflake),
     /** id of the originating message's guild */
-    guildId: snowflake.nullish(),
+    guildId: nullish(snowflake),
     /** when sending, whether to error if the referenced message doesn't exist instead of sending as a normal (non-reply) message, default true */
-    failIfNotExists: z.boolean().nullish().default(true)
+    failIfNotExists: nullish(boolean(), true)
   })
-  .partial();
+);
 
-export type MessageReference = z.infer<typeof messageReferenceSchema>;
+export type MessageReference = InferOutput<typeof messageReferenceSchema>;

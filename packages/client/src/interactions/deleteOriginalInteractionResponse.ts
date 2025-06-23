@@ -1,4 +1,11 @@
-import { z } from "zod";
+import {
+  nonEmpty,
+  object,
+  exactOptional,
+  partial,
+  pipe,
+  string
+} from "valibot";
 import {
   remove,
   buildURL,
@@ -8,16 +15,17 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const deleteOriginalInteractionResponseSchema = z.object({
+export const deleteOriginalInteractionResponseSchema = object({
   application: snowflake,
-  token: z.string().min(1),
-  params: z
-    .object({
-      /** id of the thread the message is in */
-      threadId: snowflake
-    })
-    .partial()
-    .optional()
+  token: pipe(string(), nonEmpty()),
+  params: exactOptional(
+    partial(
+      object({
+        /** id of the thread the message is in */
+        threadId: snowflake
+      })
+    )
+  )
 });
 
 /**

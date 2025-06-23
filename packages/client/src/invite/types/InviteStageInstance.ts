@@ -1,15 +1,27 @@
-import { z } from "zod";
+import {
+  object,
+  partial,
+  array,
+  number,
+  integer,
+  minValue,
+  string,
+  minLength,
+  maxLength,
+  type InferOutput,
+  pipe
+} from "valibot";
 import { memberSchema } from "../../guild/types/Member.js";
 
-export const inviteStageInstanceSchema = z.object({
+export const inviteStageInstanceSchema = object({
   /** the members speaking in the Stage */
-  members: memberSchema.partial().array(),
+  members: array(partial(memberSchema)),
   /** the number of users in the Stage */
-  participantCount: z.number().int().positive(),
+  participantCount: pipe(number(), integer(), minValue(0)),
   /** the number of users speaking in the Stage */
-  speakerCount: z.number().int().positive(),
+  speakerCount: pipe(number(), integer(), minValue(0)),
   /** the topic of the Stage instance (1-120 characters) */
-  topic: z.string().min(1).max(120)
+  topic: pipe(string(), minLength(1), maxLength(120))
 });
 
-export type InviteStageInstance = z.infer<typeof inviteStageInstanceSchema>;
+export type InviteStageInstance = InferOutput<typeof inviteStageInstanceSchema>;

@@ -1,7 +1,6 @@
-/* eslint-disable no-bitwise */
 /* eslint-disable @typescript-eslint/prefer-literal-enum-member */
 
-import { z } from "zod";
+import { enum_ } from "valibot";
 
 export enum MessageFlag {
   /** this message has been published to subscribed channels (via Channel Following) */
@@ -28,4 +27,4 @@ export enum MessageFlag {
   IS_VOICE_MESSAGE = 1 << 13
 }
 
-export const messageFlagSchema = z.nativeEnum(MessageFlag);
+export const messageFlagSchema = enum_(MessageFlag);

@@ -1,31 +1,38 @@
-import { z } from "zod";
+import {
+  array,
+  boolean,
+  integer,
+  nonEmpty,
+  nullish,
+  number,
+  object,
+  pipe,
+  lazy,
+  string,
+  union,
+  type InferOutput
+} from "valibot";
 import { applicationCommandOptionTypeSchema } from "../../application/types/ApplicationCommandOptionType.js";
 
-const base = z.object({
+const base = object({
   /** Name of the parameter */
-  name: z.string().min(1),
+  name: pipe(string(), nonEmpty()),
   /** Value of application command option type */
   type: applicationCommandOptionTypeSchema,
   /** Value of the option resulting from user input */
-  value: z
-    .union([z.string(), z.number().int(), z.number(), z.boolean()])
-    .nullish(),
+  value: nullish(
+    union([string(), pipe(number(), integer()), number(), boolean()])
+  ),
   /** true if this option is the currently focused option for autocomplete */
-  focused: z.boolean().nullish()
+  focused: nullish(boolean())
 });
 
-type Base = z.infer<typeof base> & {
-  options: Base[] | null;
-};
+export const applicationCommandInteractionDataOptionSchema = object({
+  ...base.entries,
+  /** Present if this option is a group or subcommand */
+  options: lazy(() => nullish(array(base)))
+});
 
-export const applicationCommandInteractionDataOptionSchema: z.ZodType<Base> =
-  base.extend({
-    /** Present if this option is a group or subcommand */
-    options: z.lazy<z.ZodType<Base[] | null>>(
-      () => base.array().nullish() as z.ZodType<Base[] | null>
-    )
-  });
-
-export type ApplicationCommandInteractionDataOption = z.infer<
+export type ApplicationCommandInteractionDataOption = InferOutput<
   typeof applicationCommandInteractionDataOptionSchema
 >;

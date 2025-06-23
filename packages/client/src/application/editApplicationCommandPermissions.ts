@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { array, maxLength, object, pipe } from "valibot";
 import {
   patch,
   type Fetcher,
@@ -12,13 +12,16 @@ import {
 } from "./types/GuildApplicationCommandPermissions.js";
 import { applicationCommandPermissionsSchema } from "./types/ApplicationCommandPermissions.js";
 
-export const editApplicationCommandPermissionsSchema = z.object({
+export const editApplicationCommandPermissionsSchema = object({
   application: snowflake,
   guild: snowflake,
   command: snowflake,
-  body: z.object({
+  body: object({
     /** Permissions for the command in the guild */
-    permissions: applicationCommandPermissionsSchema.array().max(100)
+    permissions: pipe(
+      array(applicationCommandPermissionsSchema),
+      maxLength(100)
+    )
   })
 });
 
@@ -27,11 +30,11 @@ export const editApplicationCommandPermissionsSchema = z.object({
  *
  * **PUT* `/applications/:application/guilds/:guild/commands/:command/permissions`
  *
- * > **DANGER**
+ * > [!CAUTION]
  * >
  * > Apps that use this endpoint may be affected by upcoming breaking changes around permission configuration behavior starting on December 16, 2022. Read the changelog for details.
  *
- * > **WARNING**
+ * > [!WARNING]
  * >
  * > This endpoint will overwrite existing permissions for the command in that guild
  *
@@ -39,11 +42,11 @@ export const editApplicationCommandPermissionsSchema = z.object({
  *
  * You can add up to 100 permission overwrites for a command.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint requires authentication with a Bearer token that has permission to manage the guild and its roles. For more information, read above about application command permissions.
  *
- * > **WARNING**
+ * > [!WARNING]
  * >
  * > Deleting or renaming a command will permanently delete all permissions for the command
  */

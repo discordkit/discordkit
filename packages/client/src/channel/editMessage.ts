@@ -1,4 +1,14 @@
-import { z } from "zod";
+import {
+  array,
+  integer,
+  maxLength,
+  number,
+  object,
+  partial,
+  pipe,
+  string,
+  unknown
+} from "valibot";
 import {
   patch,
   type Fetcher,
@@ -12,27 +22,27 @@ import { allowedMentionSchema } from "./types/AllowedMention.js";
 import { messageComponentSchema } from "./types/MessageComponent.js";
 import { attachmentSchema } from "./types/Attachment.js";
 
-export const editMessageSchema = z.object({
+export const editMessageSchema = object({
   channel: snowflake,
   message: snowflake,
-  body: z
-    .object({
+  body: partial(
+    object({
       /** Message contents (up to 2000 characters) */
-      content: z.string().max(2000),
+      content: pipe(string(), maxLength(2000)),
       /** Up to 10 rich embeds (up to 6000 characters) */
-      embeds: embedSchema.array().max(10),
+      embeds: pipe(array(embedSchema), maxLength(10)),
       /** Edit the flags of a message (only SUPPRESS_EMBEDS can currently be set/unset) */
-      flags: z.number().int(),
+      flags: pipe(number(), integer()),
       /** Allowed mentions for the message */
       allowedMentions: allowedMentionSchema,
       /** Components to include with the message */
       components: messageComponentSchema,
       /** Contents of the file being sent/edited. See Uploading Files */
-      files: z.unknown().array(),
+      files: array(unknown()),
       /** Attached files to keep and possible descriptions for new files. See Uploading Files */
-      attachments: attachmentSchema.array()
+      attachments: array(attachmentSchema)
     })
-    .partial()
+  )
 });
 
 /**
@@ -48,11 +58,11 @@ export const editMessageSchema = z.object({
  *
  * Refer to Uploading Files for details on attachments and `multipart/form-data` requests. Any provided files will be appended to the message. To remove or replace files you will have to supply the `attachments` field which specifies the files to retain on the message after edit.
  *
- * > **WARNING**
+ * > [!WARNING]
  * >
  * > Starting with API v10, the `attachments` array must contain all attachments that should be present after edit, including **retained and new** attachments provided in the request body.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > All parameters to this endpoint are optional and nullable.
  */

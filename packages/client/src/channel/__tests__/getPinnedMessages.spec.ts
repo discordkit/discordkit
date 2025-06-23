@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
+import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { array, length, pipe } from "valibot";
 import {
   getPinnedMessagesProcedure,
   getPinnedMessagesQuery,
@@ -9,22 +10,25 @@ import {
 import { messageSchema } from "../types/Message.js";
 
 describe(`getPinnedMessages`, () => {
-  mockRequest.get(`/channels/:channel/pins`, messageSchema.array().length(1));
+  const expected = mockRequest.get(
+    `/channels/:channel/pins`,
+    pipe(array(messageSchema), length(1))
+  );
   const config = mockSchema(getPinnedMessagesSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(getPinnedMessagesSafe(config)).resolves.toBeDefined();
+    await expect(getPinnedMessagesSafe(config)).resolves.toEqual(expected);
   });
 
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(getPinnedMessagesProcedure)(config)
-    ).resolves.toBeDefined();
+    ).resolves.toEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runQuery(getPinnedMessagesQuery, config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toBeDefined();
+    expect(result.current.data).toEqual(expected);
   });
 });

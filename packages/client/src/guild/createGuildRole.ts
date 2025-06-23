@@ -1,4 +1,14 @@
-import { z } from "zod";
+import {
+  boolean,
+  integer,
+  nonEmpty,
+  number,
+  object,
+  optional,
+  partial,
+  pipe,
+  string
+} from "valibot";
 import {
   post,
   type Fetcher,
@@ -8,26 +18,26 @@ import {
 } from "@discordkit/core";
 import { roleSchema, type Role } from "./types/Role.js";
 
-export const createGuildRoleSchema = z.object({
+export const createGuildRoleSchema = object({
   guild: snowflake,
-  body: z
-    .object({
+  body: partial(
+    object({
       /** name of the role */
-      name: z.string().min(1),
+      name: pipe(string(), nonEmpty()),
       /** bitwise value of the enabled/disabled permissions */
-      permissions: z.string().min(1),
+      permissions: pipe(number(), integer()),
       /** RGB color value */
-      color: z.number().int(),
+      color: pipe(number(), integer()),
       /** whether the role should be displayed separately in the sidebar */
-      hoist: z.boolean(),
+      hoist: boolean(),
       /** the role's icon image (if the guild has the `ROLE_ICONS` feature) */
-      icon: z.string().min(1).optional(),
+      icon: optional(pipe(string(), nonEmpty())),
       /** the role's unicode emoji as a standard emoji (if the guild has the `ROLE_ICONS` feature) */
-      unicodeEmoji: z.string().min(1).optional(),
+      unicodeEmoji: optional(pipe(string(), nonEmpty())),
       /** whether the role should be mentionable */
-      mentionable: z.boolean()
+      mentionable: boolean()
     })
-    .partial()
+  )
 });
 
 /**
@@ -37,7 +47,7 @@ export const createGuildRoleSchema = z.object({
  *
  * Create a new role for the guild. Requires the `MANAGE_ROLES` permission. Returns the new role object on success. Fires a Guild Role Create Gateway event. All JSON params are optional.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

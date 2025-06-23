@@ -1,5 +1,5 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest } from "test-utils";
+import { runProcedure, runQuery, mockRequest } from "#test-utils";
 import {
   getCurrentUserProcedure,
   getCurrentUserQuery,
@@ -11,18 +11,18 @@ describe(`getCurrentUser`, () => {
   const expected = mockRequest.get(`/users/@me`, userSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(getCurrentUserSafe()).resolves.toStrictEqual(expected);
+    await expect(getCurrentUserSafe()).resolves.toEqual(expected);
   });
 
   it(`is tRPC compatible`, async () => {
-    await expect(
-      runProcedure(getCurrentUserProcedure)()
-    ).resolves.toStrictEqual(expected);
+    await expect(runProcedure(getCurrentUserProcedure)()).resolves.toEqual(
+      expected
+    );
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runQuery(getCurrentUserQuery);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });

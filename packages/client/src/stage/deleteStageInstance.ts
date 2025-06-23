@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object } from "valibot";
 import {
   remove,
   type Fetcher,
@@ -7,7 +7,7 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const deleteStageInstanceSchema = z.object({
+export const deleteStageInstanceSchema = object({
   channel: snowflake
 });
 
@@ -20,7 +20,7 @@ export const deleteStageInstanceSchema = z.object({
  *
  * Requires the user to be a moderator of the Stage channel.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

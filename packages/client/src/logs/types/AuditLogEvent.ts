@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { enum_ } from "valibot";
 
 export enum AuditLogEvent {
   /** Server settings were updated */
@@ -115,4 +115,4 @@ export enum AuditLogEvent {
   CREATOR_MONETIZATION_TERMS_ACCEPTED = 151
 }
 
-export const auditLogEventSchema = z.nativeEnum(AuditLogEvent);
+export const auditLogEventSchema = enum_(AuditLogEvent);

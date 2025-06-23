@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object, array, type InferOutput } from "valibot";
 import {
   get,
   type Fetcher,
@@ -8,8 +8,8 @@ import {
 } from "@discordkit/core";
 import { stickerPackSchema } from "./types/StickerPack.js";
 
-export const stickerPacksSchema = z.object({
-  stickerPacks: stickerPackSchema.array()
+export const stickerPacksSchema = object({
+  stickerPacks: array(stickerPackSchema)
 });
 
 /**
@@ -21,7 +21,7 @@ export const stickerPacksSchema = z.object({
  */
 export const listStickerPacks: Fetcher<
   null,
-  z.infer<typeof stickerPacksSchema>
+  InferOutput<typeof stickerPacksSchema>
 > = async () => get(`/sticker-packs`);
 
 export const listStickerPacksSafe = toValidated(

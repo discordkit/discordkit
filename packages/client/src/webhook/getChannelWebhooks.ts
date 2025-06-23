@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { array, object } from "valibot";
 import {
   get,
   type Fetcher,
@@ -9,7 +9,7 @@ import {
 } from "@discordkit/core";
 import { webhookSchema, type Webhook } from "./types/Webhook.js";
 
-export const getChannelWebhooksSchema = z.object({
+export const getChannelWebhooksSchema = object({
   channel: snowflake
 });
 
@@ -28,14 +28,14 @@ export const getChannelWebhooks: Fetcher<
 export const getChannelWebhooksSafe = toValidated(
   getChannelWebhooks,
   getChannelWebhooksSchema,
-  webhookSchema.array()
+  array(webhookSchema)
 );
 
 export const getChannelWebhooksProcedure = toProcedure(
   `query`,
   getChannelWebhooks,
   getChannelWebhooksSchema,
-  webhookSchema.array()
+  array(webhookSchema)
 );
 
 export const getChannelWebhooksQuery = toQuery(getChannelWebhooks);

@@ -1,14 +1,14 @@
-import { mockSchema } from "test-utils";
-import { z } from "zod";
+import { mockSchema } from "#test-utils";
+import { parse, pipe, string, url } from "valibot";
 import { achievementIcon, achievementIconSchema } from "../achievementIcon.js";
 
 describe(`achievementIcon`, () => {
   it(`produces a valid URL`, () => {
     expect(() =>
-      z
-        .string()
-        .url()
-        .parse(achievementIcon(mockSchema(achievementIconSchema)))
+      parse(
+        pipe(string(), url()),
+        achievementIcon(mockSchema(achievementIconSchema))
+      )
     ).not.toThrow();
   });
 });

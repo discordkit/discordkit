@@ -1,20 +1,28 @@
-import { z } from "zod";
+import {
+  object,
+  number,
+  boolean,
+  partial,
+  string,
+  array,
+  type InferOutput
+} from "valibot";
 import { emojiSchema } from "../../emoji/types/Emoji.js";
 import { reactionCountDetailsSchema } from "./ReactionCountDetails.js";
 
-export const reactionSchema = z.object({
+export const reactionSchema = object({
   /** times this emoji has been used to react */
-  count: z.number(),
+  count: number(),
   /** Reaction count details object */
   countDetails: reactionCountDetailsSchema,
   /** whether the current user reacted using this emoji */
-  me: z.boolean(),
+  me: boolean(),
   /** Whether the current user super-reacted using this emoji */
-  meBurst: z.boolean(),
+  meBurst: boolean(),
   /** emoji information */
-  emoji: emojiSchema.partial(),
+  emoji: partial(emojiSchema),
   /** HEX colors used for super reaction */
-  burstColors: z.string().array()
+  burstColors: array(string())
 });
 
-export type Reaction = z.infer<typeof reactionSchema>;
+export type Reaction = InferOutput<typeof reactionSchema>;

@@ -1,15 +1,19 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
+import {
+  runProcedure,
+  runMutation,
+  mockRequest,
+  mockSchema
+} from "#test-utils";
 import {
   createGuildBan,
   createGuildBanProcedure,
   createGuildBanSafe,
   createGuildBanSchema
 } from "../createGuildBan.js";
-import { banSchema } from "../types/Ban.js";
 
 describe(`createGuildBan`, () => {
-  mockRequest.put(`/guilds/:guild/bans/:user`, banSchema);
+  mockRequest.put(`/guilds/:guild/bans/:user`);
   const config = mockSchema(createGuildBanSchema);
 
   it(`can be used standalone`, async () => {

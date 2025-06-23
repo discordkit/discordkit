@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object, string, pipe, nonEmpty } from "valibot";
 import {
   remove,
   type Fetcher,
@@ -7,8 +7,8 @@ import {
 } from "@discordkit/core";
 import { inviteSchema, type Invite } from "./types/Invite.js";
 
-export const deleteInviteSchema = z.object({
-  code: z.string().min(1)
+export const deleteInviteSchema = object({
+  code: pipe(string(), nonEmpty())
 });
 
 /**
@@ -17,7 +17,7 @@ export const deleteInviteSchema = z.object({
  *
  * Delete an invite. Requires the `MANAGE_CHANNELS` permission on the channel this invite belongs to, or `MANAGE_GUILD` to remove any invite across the guild. Returns an {@link Invite | invite object} on success. Fires an Invite Delete Gateway event.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

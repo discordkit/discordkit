@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object } from "valibot";
 import {
   remove,
   type Fetcher,
@@ -7,7 +7,7 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const removeGuildMemberSchema = z.object({
+export const removeGuildMemberSchema = object({
   guild: snowflake,
   user: snowflake
 });
@@ -19,7 +19,7 @@ export const removeGuildMemberSchema = z.object({
  *
  * Remove a member from a guild. Requires `KICK_MEMBERS` permission. Returns a `204 empty` response on success. Fires a Guild Member Remove Gateway event.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

@@ -1,4 +1,18 @@
-import { z } from "zod";
+import {
+  type InferOutput,
+  array,
+  boolean,
+  integer,
+  maxValue,
+  nonEmpty,
+  minValue,
+  nullable,
+  number,
+  object,
+  partial,
+  string,
+  pipe
+} from "valibot";
 import {
   post,
   type Fetcher,
@@ -7,24 +21,24 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const beginGuildPruneSchema = z.object({
+export const beginGuildPruneSchema = object({
   guild: snowflake,
-  body: z
-    .object({
+  body: partial(
+    object({
       /** number of days to prune (1-30) */
-      days: z.number().min(1).max(30),
+      days: pipe(number(), minValue(1), maxValue(30)),
       /** whether pruned is returned, discouraged for large guilds */
-      computePruneCount: z.boolean(),
+      computePruneCount: boolean(),
       /** role(s) to include */
-      includeRoles: snowflake.array(),
+      includeRoles: array(snowflake),
       /** @deprecated reason for the prune */
-      reason: z.string().min(1)
+      reason: pipe(string(), nonEmpty())
     })
-    .partial()
+  )
 });
 
-export const guildPruneResultSchema = z.object({
-  pruned: z.number().int().positive().nullable()
+export const guildPruneResultSchema = object({
+  pruned: nullable(pipe(number(), integer(), minValue(0)))
 });
 
 /**
@@ -36,13 +50,13 @@ export const guildPruneResultSchema = z.object({
  *
  * By default, prune will not remove users with roles. You can optionally include specific roles in your prune by providing the `includeRoles` parameter. Any inactive user that has a subset of the provided role(s) will be included in the prune and users with additional roles will not.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const beginGuildPrune: Fetcher<
   typeof beginGuildPruneSchema,
-  z.infer<typeof guildPruneResultSchema>
+  InferOutput<typeof guildPruneResultSchema>
 > = async ({ guild, body }) => post(`/guilds/${guild}/prune`, body);
 
 export const beginGuildPruneSafe = toValidated(

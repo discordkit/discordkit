@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object } from "valibot";
 import {
   post,
   type Fetcher,
@@ -7,7 +7,7 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const triggerTypingIndicatorSchema = z.object({
+export const triggerTypingIndicatorSchema = object({
   channel: snowflake
 });
 

@@ -1,4 +1,12 @@
-import { z } from "zod";
+import {
+  object,
+  string,
+  minLength,
+  maxLength,
+  url,
+  nullish,
+  pipe
+} from "valibot";
 import {
   post,
   type Fetcher,
@@ -8,13 +16,13 @@ import {
 } from "@discordkit/core";
 import { webhookSchema, type Webhook } from "./types/Webhook.js";
 
-export const createWebhookSchema = z.object({
+export const createWebhookSchema = object({
   channel: snowflake,
-  body: z.object({
+  body: object({
     /** name of the webhook (1-80 characters) */
-    name: z.string().min(1).max(80),
+    name: pipe(string(), minLength(1), maxLength(80)),
     /** image for the default webhook avatar */
-    avatar: z.string().url().nullish()
+    avatar: nullish(pipe(string(), url()))
   })
 });
 
@@ -30,7 +38,7 @@ export const createWebhookSchema = z.object({
  * - It does not contain the substrings `clyde` or `discord` (case-insensitive)
  * - It follows the nickname guidelines in the Usernames and Nicknames documentation, with an exception that webhook names can be up to 80 characters
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

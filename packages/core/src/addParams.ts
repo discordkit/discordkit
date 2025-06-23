@@ -8,10 +8,7 @@ export type RequestParams = Partial<
   >
 >;
 
-export const addParams = <P extends RequestParams>(
-  url: URL,
-  params: P
-): URL => {
+export const addParams = (url: URL, params: RequestParams): URL => {
   for (const [key, value] of Object.entries(params)) {
     if (isNonNullable(value)) {
       url.searchParams.set(toSnakeCase(key), value.toString());

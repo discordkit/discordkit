@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object } from "valibot";
 import {
   get,
   type Fetcher,
@@ -12,7 +12,7 @@ import {
   type VoiceRegion
 } from "../voice/types/VoiceRegion.js";
 
-export const getGuildVoiceRegionsSchema = z.object({
+export const getGuildVoiceRegionsSchema = object({
   guild: snowflake
 });
 

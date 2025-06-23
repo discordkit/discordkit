@@ -1,14 +1,22 @@
-import { z } from "zod";
 import { post, type Fetcher, toProcedure, toValidated } from "@discordkit/core";
+import {
+  array,
+  literal,
+  minLength,
+  object,
+  pipe,
+  record,
+  string
+} from "valibot";
 import { channelSchema, type Channel } from "../channel/types/Channel.js";
 import { ChannelType } from "../channel/types/ChannelType.js";
 
-export const createGroupDMSchema = z.object({
-  body: z.object({
+export const createGroupDMSchema = object({
+  body: object({
     /** access tokens of users that have granted your app the `gdm.join` scope */
-    accessTokens: z.string().array(),
+    accessTokens: array(string()),
     /** a dictionary of user ids to their respective nicknames */
-    nicks: z.record(z.string().min(1), z.string())
+    nicks: record(pipe(string(), minLength(1)), string())
   })
 });
 
@@ -19,7 +27,7 @@ export const createGroupDMSchema = z.object({
  *
  * Create a new group DM channel with multiple users. Returns a {@link Channel | DM channel object}. This endpoint was intended to be used with the now-deprecated GameBridge SDK. Fires a Channel Create Gateway event.
  *
- * > **WARNING**
+ * > [!WARNING]
  * >
  * > This endpoint is limited to 10 active group DMs.
  */
@@ -31,12 +39,18 @@ export const createGroupDM: Fetcher<
 export const createGroupDMSafe = toValidated(
   createGroupDM,
   createGroupDMSchema,
-  channelSchema.extend({ type: z.literal(ChannelType.GROUP_DM) })
+  object({
+    ...channelSchema.entries,
+    type: literal(ChannelType.GROUP_DM)
+  })
 );
 
 export const createGroupDMProcedure = toProcedure(
   `mutation`,
   createGroupDM,
   createGroupDMSchema,
-  channelSchema.extend({ type: z.literal(ChannelType.GROUP_DM) })
+  object({
+    ...channelSchema.entries,
+    type: literal(ChannelType.GROUP_DM)
+  })
 );

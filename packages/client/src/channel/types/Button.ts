@@ -1,23 +1,34 @@
-import { z } from "zod";
+import {
+  object,
+  literal,
+  string,
+  maxLength,
+  nullish,
+  pick,
+  url,
+  boolean,
+  type InferOutput,
+  pipe
+} from "valibot";
 import { emojiSchema } from "../../emoji/types/Emoji.js";
 import { buttonStyleSchema } from "./ButtonStyle.js";
 import { ComponentType } from "./ComponentType.js";
 
-export const buttonSchema = z.object({
+export const buttonSchema = object({
   /** 2 for a button */
-  type: z.literal(ComponentType.Button),
+  type: literal(ComponentType.Button),
   /** A button style */
   style: buttonStyleSchema,
   /** Text that appears on the button; max 80 characters */
-  label: z.string().max(80).nullish(),
+  label: nullish(pipe(string(), maxLength(80))),
   /** name, id, and animated */
-  emoji: emojiSchema.pick({ id: true, name: true, animated: true }).nullish(),
+  emoji: nullish(pick(emojiSchema, [`id`, `name`, `animated`])),
   /** Developer-defined identifier for the button; max 100 characters */
-  customId: z.string().max(100).nullish(),
+  customId: nullish(pipe(string(), maxLength(100))),
   /** URL for link-style buttons */
-  url: z.string().url().nullish(),
+  url: nullish(pipe(string(), url())),
   /** Whether the button is disabled (defaults to false) */
-  disabled: z.boolean().nullish().default(false)
+  disabled: nullish(boolean(), false)
 });
 
-export type Button = z.infer<typeof buttonSchema>;
+export type Button = InferOutput<typeof buttonSchema>;

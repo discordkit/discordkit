@@ -1,24 +1,32 @@
-import { z } from "zod";
+import {
+  object,
+  nullish,
+  array,
+  string,
+  type InferOutput,
+  pipe,
+  nonEmpty
+} from "valibot";
 import { snowflake } from "@discordkit/core";
 import { applicationCommandTypeSchema } from "../../application/types/ApplicationCommandType.js";
 import { resolvedDataSchema } from "./ResolvedData.js";
 import { applicationCommandInteractionDataOptionSchema } from "./ApplicationCommandInteractionDataOption.js";
 
-export const interactionDataSchema = z.object({
+export const interactionDataSchema = object({
   /** the ID of the invoked command */
   id: snowflake,
   /** the name of the invoked command */
-  name: z.string().min(1),
+  name: pipe(string(), nonEmpty()),
   /** the type of the invoked command */
   type: applicationCommandTypeSchema,
   /** converted users + roles + channels + attachments */
-  resolved: resolvedDataSchema.nullish(),
+  resolved: nullish(resolvedDataSchema),
   /** the params + values from the user */
-  options: applicationCommandInteractionDataOptionSchema.array().nullish(),
+  options: nullish(array(applicationCommandInteractionDataOptionSchema)),
   /** the id of the guild the command is registered to */
-  guildId: snowflake.nullish(),
+  guildId: nullish(snowflake),
   /** id of the user or message targeted by a user or message command */
-  targetId: snowflake.nullish()
+  targetId: nullish(snowflake)
 });
 
-export type InteractionDataSchema = z.infer<typeof interactionDataSchema>;
+export type InteractionDataSchema = InferOutput<typeof interactionDataSchema>;

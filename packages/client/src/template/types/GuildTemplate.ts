@@ -1,32 +1,44 @@
-import { z } from "zod";
+import {
+  object,
+  string,
+  partial,
+  number,
+  integer,
+  isoTimestamp,
+  boolean,
+  type InferOutput,
+  pipe,
+  nonEmpty,
+  nullable
+} from "valibot";
 import { snowflake } from "@discordkit/core";
 import { guildSchema } from "../../guild/types/Guild.js";
 import { userSchema } from "../../user/types/User.js";
 
-export const guildTemplateSchema = z.object({
+export const guildTemplateSchema = object({
   /** the template code (unique ID) */
-  code: z.string(),
+  code: pipe(string(), nonEmpty()),
   /** template name */
-  name: z.string(),
+  name: pipe(string(), nonEmpty()),
   /** the description for the template */
-  description: z.string().optional(),
+  description: nullable(string()),
   /** number of times this template has been used */
-  usageCount: z.number().int(),
+  usageCount: pipe(number(), integer()),
   /** the ID of the user who created the template
     creator	user object	the user who created the template */
   creatorId: snowflake,
   /** the user who created the template */
   creator: userSchema,
   /** when this template was created */
-  createdAt: z.string().datetime(),
+  createdAt: pipe(string(), isoTimestamp()),
   /** when this template was last synced to the source guild */
-  updatedAt: z.string().datetime(),
+  updatedAt: pipe(string(), isoTimestamp()),
   /** the ID of the guild this template is based on */
   sourceGuildId: snowflake,
   /** the guild snapshot this template contains */
-  serializedSourceGuild: guildSchema.partial(),
+  serializedSourceGuild: partial(guildSchema),
   /** whether the template has unsynced changes */
-  isDirty: z.boolean().optional()
+  isDirty: nullable(boolean())
 });
 
-export type GuildTemplate = z.infer<typeof guildTemplateSchema>;
+export type GuildTemplate = InferOutput<typeof guildTemplateSchema>;

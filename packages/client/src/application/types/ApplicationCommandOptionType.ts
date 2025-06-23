@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { enum_ } from "valibot";
 
 export enum ApplicationCommandOptionType {
   SUB_COMMAND = 1,
@@ -19,6 +19,6 @@ export enum ApplicationCommandOptionType {
   ATTACHMENT = 11
 }
 
-export const applicationCommandOptionTypeSchema = z.nativeEnum(
+export const applicationCommandOptionTypeSchema = enum_(
   ApplicationCommandOptionType
 );

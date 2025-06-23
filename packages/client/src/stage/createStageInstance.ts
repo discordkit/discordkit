@@ -1,4 +1,12 @@
-import { z } from "zod";
+import {
+  boolean,
+  maxLength,
+  minLength,
+  nullish,
+  object,
+  string,
+  pipe
+} from "valibot";
 import {
   post,
   type Fetcher,
@@ -9,16 +17,16 @@ import {
 import { type Stage, stageSchema } from "./types/Stage.js";
 import { stagePrivacyLevelSchema } from "./types/StagePrivacyLevel.js";
 
-export const createStageInstanceSchema = z.object({
-  body: z.object({
+export const createStageInstanceSchema = object({
+  body: object({
     /** The id of the Stage channel */
     channelId: snowflake,
     /** The topic of the Stage instance (1-120 characters) */
-    topic: z.string().min(1).max(120),
+    topic: pipe(string(), minLength(1), maxLength(120)),
     /** The privacy level of the Stage instance (default GUILD_ONLY) */
-    privacyLevel: stagePrivacyLevelSchema.nullish(),
+    privacyLevel: nullish(stagePrivacyLevelSchema),
     /** Notify @everyone that a Stage instance has started */
-    sendStartNotification: z.boolean().nullish()
+    sendStartNotification: nullish(boolean())
   })
 });
 
@@ -31,7 +39,7 @@ export const createStageInstanceSchema = z.object({
  *
  * Requires the user to be a moderator of the Stage channel.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

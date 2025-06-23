@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object, array } from "valibot";
 import {
   get,
   type Fetcher,
@@ -9,7 +9,7 @@ import {
 } from "@discordkit/core";
 import { channelSchema, type Channel } from "../channel/types/Channel.js";
 
-export const getGuildChannelsSchema = z.object({
+export const getGuildChannelsSchema = object({
   guild: snowflake
 });
 
@@ -28,14 +28,14 @@ export const getGuildChannels: Fetcher<
 export const getGuildChannelsSafe = toValidated(
   getGuildChannels,
   getGuildChannelsSchema,
-  channelSchema.array()
+  array(channelSchema)
 );
 
 export const getGuildChannelsProcedure = toProcedure(
   `query`,
   getGuildChannels,
   getGuildChannelsSchema,
-  channelSchema.array()
+  array(channelSchema)
 );
 
 export const getGuildChannelsQuery = toQuery(getGuildChannels);

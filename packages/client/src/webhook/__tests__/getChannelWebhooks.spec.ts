@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
+import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { array, length, pipe } from "valibot";
 import {
   getChannelWebhooksProcedure,
   getChannelWebhooksQuery,
@@ -11,25 +12,23 @@ import { webhookSchema } from "../types/Webhook.js";
 describe(`getChannelWebhooks`, () => {
   const expected = mockRequest.get(
     `/channels/:channel/webhooks`,
-    webhookSchema.array().length(1)
+    pipe(array(webhookSchema), length(1))
   );
   const config = mockSchema(getChannelWebhooksSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(getChannelWebhooksSafe(config)).resolves.toStrictEqual(
-      expected
-    );
+    await expect(getChannelWebhooksSafe(config)).resolves.toEqual(expected);
   });
 
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(getChannelWebhooksProcedure)(config)
-    ).resolves.toStrictEqual(expected);
+    ).resolves.toEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runQuery(getChannelWebhooksQuery, config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });

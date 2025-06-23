@@ -1,12 +1,12 @@
-import { z } from "zod";
+import { object, nullish, type InferOutput } from "valibot";
 import { interactionCallbackSchema } from "./InteractionCallbackType.js";
 import { interactionCallbackDataSchema } from "./InteractionCallbackData.js";
 
-export const interactionResponseSchema = z.object({
+export const interactionResponseSchema = object({
   /** the type of response */
   type: interactionCallbackSchema,
   /** an optional response message */
-  data: interactionCallbackDataSchema.nullish()
+  data: nullish(interactionCallbackDataSchema)
 });
 
-export type InteractionResponse = z.infer<typeof interactionResponseSchema>;
+export type InteractionResponse = InferOutput<typeof interactionResponseSchema>;

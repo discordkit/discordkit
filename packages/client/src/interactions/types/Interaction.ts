@@ -1,4 +1,14 @@
-import { z } from "zod";
+import {
+  object,
+  nullish,
+  partial,
+  string,
+  literal,
+  number,
+  integer,
+  type InferOutput,
+  pipe
+} from "valibot";
 import { snowflake } from "@discordkit/core";
 import { memberSchema } from "../../guild/types/Member.js";
 import { localesSchema } from "../../application/types/Locales.js";
@@ -8,7 +18,7 @@ import { userSchema } from "../../user/types/User.js";
 import { interactionTypeSchema } from "./InteractionType.js";
 import { interactionDataSchema } from "./InteractionData.js";
 
-export const interactionSchema = z.object({
+export const interactionSchema = object({
   /** ID of the interaction */
   id: snowflake,
   /** ID of the application this interaction is for */
@@ -16,29 +26,29 @@ export const interactionSchema = z.object({
   /** Type of interaction */
   type: interactionTypeSchema,
   /** Interaction data payload */
-  data: interactionDataSchema.nullish(),
+  data: nullish(interactionDataSchema),
   /** Guild that the interaction was sent from */
-  guildId: snowflake.nullish(),
+  guildId: nullish(snowflake),
   /** Channel that the interaction was sent from */
-  channel: channelSchema.partial().nullish(),
+  channel: nullish(partial(channelSchema)),
   /** Channel that the interaction was sent from */
-  channelId: snowflake.nullish(),
+  channelId: nullish(snowflake),
   /** Guild member data for the invoking user, including permissions */
-  member: memberSchema.nullish(),
+  member: nullish(memberSchema),
   /** User object for the invoking user, if invoked in a DM */
-  user: userSchema.nullish(),
+  user: nullish(userSchema),
   /** Continuation token for responding to the interaction */
-  token: z.string(),
+  token: string(),
   /** Read-only property, always 1 */
-  version: z.literal(1),
+  version: literal(1),
   /** For components, the message they were attached to */
-  message: messageSchema.nullish(),
+  message: nullish(messageSchema),
   /** Bitwise set of permissions the app or bot has within the channel the interaction was sent from */
-  appPermissions: z.string().nullish(),
+  appPermissions: nullish(pipe(number(), integer())),
   /** Selected language of the invoking user */
-  locale: localesSchema.nullish(),
+  locale: nullish(localesSchema),
   /** Guild's preferred locale, if invoked in a guild */
-  guildLocale: localesSchema.nullish()
+  guildLocale: nullish(localesSchema)
 });
 
-export type Interaction = z.infer<typeof interactionSchema>;
+export type Interaction = InferOutput<typeof interactionSchema>;

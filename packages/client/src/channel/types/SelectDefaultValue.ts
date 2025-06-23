@@ -1,11 +1,11 @@
 import { snowflake } from "@discordkit/core";
-import { z } from "zod";
+import { object, union, literal, type InferOutput } from "valibot";
 
-export const selectDefaultValueSchema = z.object({
+export const selectDefaultValueSchema = object({
   /** ID of a user, role, or channel */
   id: snowflake,
   /** Type of value that id represents. Either "user", "role", or "channel" */
-  type: z.union([z.literal(`user`), z.literal(`role`), z.literal(`channel`)])
+  type: union([literal(`user`), literal(`role`), literal(`channel`)])
 });
 
-export type SelectDefaultValue = z.infer<typeof selectDefaultValueSchema>;
+export type SelectDefaultValue = InferOutput<typeof selectDefaultValueSchema>;

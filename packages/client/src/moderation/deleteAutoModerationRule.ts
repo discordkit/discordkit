@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object } from "valibot";
 import {
   remove,
   type Fetcher,
@@ -7,7 +7,7 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const deleteAutoModerationRuleSchema = z.object({
+export const deleteAutoModerationRuleSchema = object({
   guild: snowflake,
   rule: snowflake
 });
@@ -19,11 +19,11 @@ export const deleteAutoModerationRuleSchema = z.object({
  *
  * Delete a rule. Returns a `204` on success. Fires an Auto Moderation Rule Delete Gateway event.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint requires the `MANAGE_GUILD` permission.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

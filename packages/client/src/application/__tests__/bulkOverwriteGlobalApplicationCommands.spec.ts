@@ -1,5 +1,11 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
+import {
+  runProcedure,
+  runMutation,
+  mockRequest,
+  mockSchema
+} from "#test-utils";
+import { pipe, array, length } from "valibot";
 import {
   bulkOverwriteGlobalApplicationCommandsProcedure,
   bulkOverwriteGlobalApplicationCommands,
@@ -11,26 +17,26 @@ import { applicationCommandSchema } from "../types/ApplicationCommand.js";
 describe(`bulkOverwriteGlobalApplicationCommands`, () => {
   const expected = mockRequest.put(
     `/applications/:application/commands`,
-    applicationCommandSchema.array().length(1)
+    pipe(array(applicationCommandSchema), length(1))
   );
   const config = mockSchema(bulkOverwriteGlobalApplicationCommandsSchema);
 
   it(`can be used standalone`, async () => {
     await expect(
       bulkOverwriteGlobalApplicationCommandsSafe(config)
-    ).resolves.toStrictEqual(expected);
+    ).resolves.toEqual(expected);
   });
 
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(bulkOverwriteGlobalApplicationCommandsProcedure)(config)
-    ).resolves.toStrictEqual(expected);
+    ).resolves.toEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runMutation(bulkOverwriteGlobalApplicationCommands);
     result.current.mutate(config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });

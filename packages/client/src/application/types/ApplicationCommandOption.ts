@@ -1,4 +1,25 @@
-import { z } from "zod";
+import {
+  object,
+  string,
+  minLength,
+  maxLength,
+  record,
+  nullish,
+  boolean,
+  nullable,
+  number,
+  literal,
+  integer,
+  minValue,
+  maxValue,
+  array,
+  lazy,
+  intersect,
+  type InferOutput,
+  union,
+  variant,
+  pipe
+} from "valibot";
 import { channelTypeSchema } from "../../channel/types/ChannelType.js";
 import {
   ApplicationCommandOptionType,
@@ -7,65 +28,74 @@ import {
 import { localesSchema } from "./Locales.js";
 import { applicationCommandOptionChoiceSchema } from "./ApplicationCommandOptionChoice.js";
 
-const applicationCommandOptionBase = z.object({
-  /** Type of option */
-  type: applicationCommandOptionTypeSchema,
-  /** 1-32 character name */
-  name: z.string().min(1).max(32),
-  /** Localization dictionary for the name field. Values follow the same restrictions as name */
-  nameLocalizations: z
-    .record(localesSchema, z.string().min(1).max(32))
-    .nullish(),
-  /** 1-100 character description */
-  description: z.string().min(1).max(100),
-  /** Localization dictionary for the description field. Values follow the same restrictions as description */
-  descriptionLocalizations: z
-    .record(localesSchema, z.string().min(1).max(100))
-    .nullish(),
-  /** If the parameter is required or optional--default false */
-  required: z.boolean().nullish().default(false),
-  /** Choices for STRING, INTEGER, and NUMBER types for the user to pick from, max 25 */
-  choices: applicationCommandOptionChoiceSchema.array().max(25).nullish(),
-  /** If the option is a channel type, the channels shown will be restricted to these types */
-  channelTypes: channelTypeSchema.array().nullish(),
-  /** If autocomplete interactions are enabled for this STRING, INTEGER, or NUMBER type option */
-  autocomplete: z.boolean().nullish()
-});
-
-const applicationCommandOptionRecursive = applicationCommandOptionBase.extend({
-  /** If the option is a subcommand or subcommand group type, these nested options will be the parameters */
-  options: z.lazy(() => applicationCommandOptionBase.array().nullish())
-});
-
-export const applicationCommandOptionSchema = z.intersection(
-  applicationCommandOptionRecursive,
-  z.discriminatedUnion(`type`, [
-    z.object({
-      type: z.literal(ApplicationCommandOptionType.STRING),
-      /** For option type STRING, the minimum allowed length (minimum of 0, maximum of 6000) */
-      minLength: z.number().int().min(0).max(6000).nullable(),
-      /** For option type STRING, the maximum allowed length (minimum of 1, maximum of 6000) */
-      maxLength: z.number().int().min(0).max(6000).nullable()
+export const applicationCommandOptionSchema = intersect([
+  object({
+    /** 1-32 character name */
+    name: pipe(string(), minLength(1), maxLength(32)),
+    /** Localization dictionary for the name field. Values follow the same restrictions as name */
+    nameLocalizations: nullish(
+      record(localesSchema, pipe(string(), minLength(1), maxLength(32)))
+    ),
+    /** 1-100 character description */
+    description: pipe(string(), minLength(1), maxLength(100)),
+    /** Localization dictionary for the description field. Values follow the same restrictions as description */
+    descriptionLocalizations: nullish(
+      record(localesSchema, pipe(string(), minLength(1), maxLength(100)))
+    ),
+    /** If the parameter is required or optional--default false */
+    required: nullish(boolean(), false),
+    /** Choices for STRING, INTEGER, and NUMBER types for the user to pick from, max 25 */
+    choices: nullish(
+      pipe(array(applicationCommandOptionChoiceSchema), maxLength(25))
+    ),
+    /** If the option is a channel type, the channels shown will be restricted to these types */
+    channelTypes: nullish(array(channelTypeSchema)),
+    /** If autocomplete interactions are enabled for this STRING, INTEGER, or NUMBER type option */
+    autocomplete: nullish(boolean())
+  }),
+  union([
+    object({
+      /** Type of option */
+      type: applicationCommandOptionTypeSchema
     }),
-    z.object({
-      type: z.literal(ApplicationCommandOptionType.INTEGER),
-      /** If the option is an INTEGER or NUMBER type, the minimum value permitted */
-      minValue: z.number().int().nullable(),
-      /** If the option is an INTEGER or NUMBER type, the maximum value permitted */
-      maxValue: z.number().int().nullable()
-    }),
-    z.object({
-      type: z.literal(ApplicationCommandOptionType.NUMBER),
-      /** If the option is an INTEGER or NUMBER type, the minimum value permitted */
-      minValue: z.number().nullable(),
-      /** If the option is an INTEGER or NUMBER type, the maximum value permitted */
-      maxValue: z.number().nullable()
-    })
+    variant(`type`, [
+      object({
+        type: union([
+          literal(ApplicationCommandOptionType.SUB_COMMAND),
+          literal(ApplicationCommandOptionType.SUB_COMMAND_GROUP)
+        ]),
+        /** If the option is a subcommand or subcommand group type, these nested options will be the parameters */
+        options: lazy(() => nullish(array(applicationCommandOptionSchema)))
+      }),
+      object({
+        type: literal(ApplicationCommandOptionType.STRING),
+        /** For option type STRING, the minimum allowed length (minimum of 0, maximum of 6000) */
+        minLength: nullable(
+          pipe(number(), integer(), minValue(0), maxValue(6000))
+        ),
+        /** For option type STRING, the maximum allowed length (minimum of 1, maximum of 6000) */
+        maxLength: nullable(
+          pipe(number(), integer(), minValue(0), maxValue(6000))
+        )
+      }),
+      object({
+        type: literal(ApplicationCommandOptionType.INTEGER),
+        /** If the option is an INTEGER or NUMBER type, the minimum value permitted */
+        minValue: nullable(pipe(number(), integer())),
+        /** If the option is an INTEGER or NUMBER type, the maximum value permitted */
+        maxValue: nullable(pipe(number(), integer()))
+      }),
+      object({
+        type: literal(ApplicationCommandOptionType.NUMBER),
+        /** If the option is an INTEGER or NUMBER type, the minimum value permitted */
+        minValue: nullable(number()),
+        /** If the option is an INTEGER or NUMBER type, the maximum value permitted */
+        maxValue: nullable(number())
+      })
+    ])
   ])
-);
+]);
 
-export type ApplicationCommandOption = z.infer<
+export type ApplicationCommandOption = InferOutput<
   typeof applicationCommandOptionSchema
-> & {
-  options: ApplicationCommandOption[] | null;
-};
+>;

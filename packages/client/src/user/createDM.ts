@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { literal, object } from "valibot";
 import {
   post,
   type Fetcher,
@@ -9,8 +9,8 @@ import {
 import { channelSchema, type Channel } from "../channel/types/Channel.js";
 import { ChannelType } from "../channel/types/ChannelType.js";
 
-export const createDMSchema = z.object({
-  body: z.object({
+export const createDMSchema = object({
+  body: object({
     /** the recipient to open a DM channel with */
     recipientId: snowflake
   })
@@ -23,7 +23,7 @@ export const createDMSchema = z.object({
  *
  * Create a new DM channel with a user. Returns a {@link Channel | DM channel object} (if one already exists, it will be returned instead).
  *
- * > **WARNING**
+ * > [!WARNING]
  * >
  * > You should not use this endpoint to DM everyone in a server about something. DMs should generally be initiated by a user action. If you open a significant amount of DMs too quickly, your bot may be rate limited or blocked from opening new ones.
  */
@@ -35,12 +35,18 @@ export const createDM: Fetcher<
 export const createDMSafe = toValidated(
   createDM,
   createDMSchema,
-  channelSchema.extend({ type: z.literal(ChannelType.DM) })
+  object({
+    ...channelSchema.entries,
+    type: literal(ChannelType.DM)
+  })
 );
 
 export const createDMProcedure = toProcedure(
   `mutation`,
   createDM,
   createDMSchema,
-  channelSchema.extend({ type: z.literal(ChannelType.DM) })
+  object({
+    ...channelSchema.entries,
+    type: literal(ChannelType.DM)
+  })
 );

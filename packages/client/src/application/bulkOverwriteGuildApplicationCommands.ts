@@ -1,4 +1,14 @@
-import { z } from "zod";
+import {
+  pipe,
+  array,
+  boolean,
+  maxLength,
+  minLength,
+  nullish,
+  object,
+  record,
+  string
+} from "valibot";
 import {
   put,
   type Fetcher,
@@ -17,42 +27,45 @@ import {
   applicationCommandTypeSchema
 } from "./types/ApplicationCommandType.js";
 
-export const bulkOverwriteGuildApplicationCommandsSchema = z.object({
+export const bulkOverwriteGuildApplicationCommandsSchema = object({
   application: snowflake,
   guild: snowflake,
-  body: z
-    .object({
-      /** ID of the command, if known */
-      id: snowflake.nullish(),
-      /** Name of command, 1-32 characters */
-      name: z.string().min(1).max(32),
-      /** Localization dictionary for the `name` field. Values follow the same restrictions as `name` */
-      nameLocalizations: z
-        .record(localesSchema, z.string().min(1).max(32))
-        .nullish(),
-      /** 1-100 character description */
-      description: z.string().min(1).max(100),
-      /** Localization dictionary for the `description` field. Values follow the same restrictions as `description` */
-      descriptionLocalizations: z
-        .record(localesSchema, z.string().min(1).max(100))
-        .nullish(),
-      /** Parameters for the command */
-      options: applicationCommandOptionSchema.array().nullish(),
-      /** Set of permissions represented as a bit set */
-      defaultMemberPermissions: z.string().nullish(),
-      /** Indicates whether the command is available in DMs with the app, only for globally-scoped commands. By default, commands are visible. */
-      dmPermission: z.boolean().nullish(),
-      /** Replaced by `defaultMemberPermissions` and will be deprecated in the future. Indicates whether the command is enabled by default when the app is added to a guild. Defaults to `true` */
-      defaultPermission: z.boolean().default(true).nullish(),
-      /** Type of command, defaults `1` if not set */
-      type: applicationCommandTypeSchema
-        .default(ApplicationCommandType.CHAT_INPUT)
-        .nullish(),
-      /** Indicates whether the command is age-restricted */
-      nsfw: z.boolean().nullish()
-    })
-    .array()
-    .max(25)
+  body: pipe(
+    array(
+      object({
+        /** ID of the command, if known */
+        id: nullish(snowflake),
+        /** Name of command, 1-32 characters */
+        name: pipe(string(), minLength(1), maxLength(32)),
+        /** Localization dictionary for the `name` field. Values follow the same restrictions as `name` */
+        nameLocalizations: nullish(
+          record(localesSchema, pipe(string(), minLength(1), maxLength(32)))
+        ),
+        /** 1-100 character description */
+        description: pipe(string(), minLength(1), maxLength(100)),
+        /** Localization dictionary for the `description` field. Values follow the same restrictions as `description` */
+        descriptionLocalizations: nullish(
+          record(localesSchema, pipe(string(), minLength(1), maxLength(100)))
+        ),
+        /** Parameters for the command */
+        options: nullish(array(applicationCommandOptionSchema)),
+        /** Set of permissions represented as a bit set */
+        defaultMemberPermissions: nullish(string()),
+        /** Indicates whether the command is available in DMs with the app, only for globally-scoped commands. By default, commands are visible. */
+        dmPermission: nullish(boolean()),
+        /** Replaced by `defaultMemberPermissions` and will be deprecated in the future. Indicates whether the command is enabled by default when the app is added to a guild. Defaults to `true` */
+        defaultPermission: nullish(boolean(), true),
+        /** Type of command, defaults `1` if not set */
+        type: nullish(
+          applicationCommandTypeSchema,
+          ApplicationCommandType.CHAT_INPUT
+        ),
+        /** Indicates whether the command is age-restricted */
+        nsfw: nullish(boolean())
+      })
+    ),
+    maxLength(25)
+  )
 });
 
 /**
@@ -62,7 +75,7 @@ export const bulkOverwriteGuildApplicationCommandsSchema = z.object({
  *
  * Takes a list of application commands, overwriting the existing command list for this application for the targeted guild. Returns `200` and a list of {@link ApplicationCommand | application command objects}.
  *
- * > **DANGER**
+ * > [!CAUTION]
  * >
  * > This will overwrite all types of application commands: slash commands, user commands, and message commands.
  */
@@ -75,12 +88,12 @@ export const bulkOverwriteGuildApplicationCommands: Fetcher<
 export const bulkOverwriteGuildApplicationCommandsSafe = toValidated(
   bulkOverwriteGuildApplicationCommands,
   bulkOverwriteGuildApplicationCommandsSchema,
-  applicationCommandSchema.array()
+  array(applicationCommandSchema)
 );
 
 export const bulkOverwriteGuildApplicationCommandsProcedure = toProcedure(
   `mutation`,
   bulkOverwriteGuildApplicationCommands,
   bulkOverwriteGuildApplicationCommandsSchema,
-  applicationCommandSchema.array()
+  array(applicationCommandSchema)
 );

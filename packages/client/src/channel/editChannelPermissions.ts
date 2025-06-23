@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { literal, nullish, object, string, union } from "valibot";
 import {
   put,
   type Fetcher,
@@ -7,16 +7,16 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const editChannelPermissionsSchema = z.object({
+export const editChannelPermissionsSchema = object({
   channel: snowflake,
   overwrite: snowflake,
-  body: z.object({
+  body: object({
     /** the bitwise value of all allowed permissions (default "0") */
-    allow: z.string().nullish().default(`0`),
+    allow: nullish(string(), `0`),
     /** the bitwise value of all disallowed permissions (default "0") */
-    deny: z.string().nullish().default(`0`),
+    deny: nullish(string(), `0`),
     /** 0 for a role or 1 for a member */
-    type: z.union([z.literal(0), z.literal(1)])
+    type: union([literal(0), literal(1)])
   })
 });
 
@@ -27,7 +27,7 @@ export const editChannelPermissionsSchema = z.object({
  *
  * Edit the channel permission overwrites for a user or role in a channel. Only usable for guild channels. Requires the `MANAGE_ROLES` permission. Only permissions your bot has in the guild or parent channel (if applicable) can be allowed/denied (unless your bot has a `MANAGE_ROLES` overwrite in the channel). Returns a `204 empty` response on success. Fires a Channel Update Gateway event. For more information about permissions, see permissions.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

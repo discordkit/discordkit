@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { array, minLength, object, partial, pipe, string } from "valibot";
 import {
   patch,
   type Fetcher,
@@ -8,17 +8,17 @@ import {
 } from "@discordkit/core";
 import { emojiSchema, type Emoji } from "./types/Emoji.js";
 
-export const modifyGuildEmojiSchema = z.object({
+export const modifyGuildEmojiSchema = object({
   guild: snowflake,
   emoji: snowflake,
-  body: z
-    .object({
+  body: partial(
+    object({
       /** name of the emoji */
-      name: z.string().min(1),
+      name: pipe(string(), minLength(1)),
       /** roles allowed to use this emoji */
-      roles: snowflake.array()
+      roles: array(snowflake)
     })
-    .partial()
+  )
 });
 
 /**
@@ -28,11 +28,11 @@ export const modifyGuildEmojiSchema = z.object({
  *
  * Modify the given emoji. Requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns the updated {@link Emoji | emoji object} on success. Fires a Guild Emojis Update Gateway event.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > All parameters to this endpoint are optional.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { array, boolean, nullish, object, exactOptional } from "valibot";
 import {
   get,
   type Fetcher,
@@ -12,14 +12,14 @@ import {
   applicationCommandSchema
 } from "./types/ApplicationCommand.js";
 
-export const getGlobalApplicationCommandsSchema = z.object({
+export const getGlobalApplicationCommandsSchema = object({
   application: snowflake,
-  params: z
-    .object({
+  params: exactOptional(
+    object({
       /** Whether to include full localization dictionaries (nameLocalizations and descriptionLocalizations) in the returned objects, instead of the nameLocalized and descriptionLocalized fields. Default false. */
-      withLocalizations: z.boolean().default(false).nullish()
+      withLocalizations: nullish(boolean())
     })
-    .optional()
+  )
 });
 
 /**
@@ -27,7 +27,7 @@ export const getGlobalApplicationCommandsSchema = z.object({
  *
  * **GET** `/applications/:application/commands`
  *
- * > **WARNING**
+ * > [!WARNING]
  * >
  * > The objects returned by this endpoint may be augmented with additional fields if localization is active.
  *
@@ -42,14 +42,14 @@ export const getGlobalApplicationCommands: Fetcher<
 export const getGlobalApplicationCommandsSafe = toValidated(
   getGlobalApplicationCommands,
   getGlobalApplicationCommandsSchema,
-  applicationCommandSchema.array()
+  array(applicationCommandSchema)
 );
 
 export const getGlobalApplicationCommandsProcedure = toProcedure(
   `query`,
   getGlobalApplicationCommands,
   getGlobalApplicationCommandsSchema,
-  applicationCommandSchema.array()
+  array(applicationCommandSchema)
 );
 
 export const getGlobalApplicationCommandsQuery = toQuery(

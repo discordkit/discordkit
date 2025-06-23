@@ -1,35 +1,44 @@
-import { z } from "zod";
+import {
+  type InferOutput,
+  nullish,
+  object,
+  optional,
+  url,
+  string,
+  partial,
+  pipe
+} from "valibot";
 import { snowflake } from "@discordkit/core";
 import { channelSchema } from "../../channel/types/Channel.js";
 import { guildSchema } from "../../guild/types/Guild.js";
 import { userSchema } from "../../user/types/User.js";
 import { webhookTypeSchema } from "./WebhookType.js";
 
-export const webhookSchema = z.object({
+export const webhookSchema = object({
   /** the id of the webhook */
   id: snowflake,
   /** the type of the webhook */
   type: webhookTypeSchema,
   /** the guild id this webhook is for, if any */
-  guildId: snowflake.nullish(),
+  guildId: nullish(snowflake),
   /** the channel id this webhook is for, if any */
-  channelId: snowflake.optional(),
+  channelId: optional(snowflake),
   /** user object	the user this webhook was created by (not returned when getting a webhook with its token) */
-  user: userSchema.nullish(),
+  user: nullish(userSchema),
   /** the default name of the webhook */
-  name: z.string().optional(),
+  name: optional(string()),
   /** the default user avatar hash of the webhook */
-  avatar: z.string().optional(),
+  avatar: optional(string()),
   /** the secure token of the webhook (returned for Incoming Webhooks) */
-  token: z.string().nullish(),
+  token: nullish(string()),
   /** the bot/OAuth2 application that created this webhook */
-  applicationId: snowflake.optional(),
+  applicationId: optional(snowflake),
   /** the guild of the channel that this webhook is following (returned for Channel Follower Webhooks) */
-  sourceGuild: guildSchema.partial().nullish(),
+  sourceGuild: nullish(partial(guildSchema)),
   /** the channel that this webhook is following (returned for Channel Follower Webhooks) */
-  sourceChannel: channelSchema.partial().nullish(),
+  sourceChannel: nullish(partial(channelSchema)),
   /** the url used for executing the webhook (returned by the webhooks OAuth2 flow) */
-  url: z.string().nullish()
+  url: nullish(pipe(string(), url()))
 });
 
-export type Webhook = z.infer<typeof webhookSchema>;
+export type Webhook = InferOutput<typeof webhookSchema>;

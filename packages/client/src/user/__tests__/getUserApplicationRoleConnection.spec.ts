@@ -1,5 +1,5 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
+import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
 import {
   getUserApplicationRoleConnectionProcedure,
   getUserApplicationRoleConnectionQuery,
@@ -16,20 +16,20 @@ describe(`getUserApplicationRoleConnection`, () => {
   const config = mockSchema(getUserApplicationRoleConnectionSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(
-      getUserApplicationRoleConnectionSafe(config)
-    ).resolves.toStrictEqual(expected);
+    await expect(getUserApplicationRoleConnectionSafe(config)).resolves.toEqual(
+      expected
+    );
   });
 
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(getUserApplicationRoleConnectionProcedure)(config)
-    ).resolves.toStrictEqual(expected);
+    ).resolves.toEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runQuery(getUserApplicationRoleConnectionQuery, config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });

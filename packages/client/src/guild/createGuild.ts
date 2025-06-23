@@ -1,4 +1,18 @@
-import { z } from "zod";
+import {
+  array,
+  integer,
+  maxLength,
+  minLength,
+  nonEmpty,
+  minValue,
+  nullish,
+  number,
+  object,
+  optional,
+  partial,
+  string,
+  pipe
+} from "valibot";
 import {
   post,
   type Fetcher,
@@ -13,33 +27,32 @@ import { explicitContentFilterLevelSchema } from "./types/ExplicitContentFilterL
 import { roleSchema } from "./types/Role.js";
 import { guildSchema, type Guild } from "./types/Guild.js";
 
-export const createGuildSchema = z.object({
-  body: z.object({
+export const createGuildSchema = object({
+  body: object({
     /** name of the guild (2-100 characters) */
-    name: z.string().min(2).max(100),
+    name: pipe(string(), minLength(2), maxLength(100)),
     /** @deprecated voice region id */
-    region: z.string().min(1).nullish(),
+    region: nullish(pipe(string(), nonEmpty())),
     /** icon hash */
-    icon: z.string().min(1).nullish(),
+    icon: nullish(pipe(string(), nonEmpty())),
     /** verification level */
-    verificationLevel: verificationLevelSchema.nullish(),
+    verificationLevel: nullish(verificationLevelSchema),
     /** default message notification level */
-    defaultMessageNotifications:
-      defaultMessageNotificationLevelSchema.nullish(),
+    defaultMessageNotifications: nullish(defaultMessageNotificationLevelSchema),
     /** explicit content filter level */
-    explicitContentFilter: explicitContentFilterLevelSchema.nullish(),
+    explicitContentFilter: nullish(explicitContentFilterLevelSchema),
     /** new guild roles */
-    roles: roleSchema.array().nullish(),
+    roles: nullish(array(roleSchema)),
     /** new guild's channels */
-    channels: channelSchema.partial().array().nullish(),
+    channels: nullish(array(partial(channelSchema))),
     /** id for afk channel */
-    afkChannelId: snowflake.nullish(),
+    afkChannelId: nullish(snowflake),
     /** afk timeout in seconds */
-    afkTimeout: z.number().int().positive().nullish(),
+    afkTimeout: nullish(pipe(number(), integer(), minValue(0))),
     /** the id of the channel where guild notices such as welcome messages and boost events are posted */
-    systemChannelId: snowflake.nullish(),
+    systemChannelId: nullish(snowflake),
     /** system channel flags */
-    systemChannelFlags: z.number().int().optional()
+    systemChannelFlags: optional(pipe(number(), integer(), minValue(0)))
   })
 });
 
@@ -50,7 +63,7 @@ export const createGuildSchema = z.object({
  *
  * Create a new guild. Returns a {@link Guild | guild object} on success. Fires a Guild Create Gateway event.
  *
- * > **WARNING**
+ * > [!WARNING]
  * >
  * > This endpoint can be used only by bots in less than 10 guilds.
  */

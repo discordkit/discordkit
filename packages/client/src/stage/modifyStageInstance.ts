@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { maxLength, minLength, object, partial, string, pipe } from "valibot";
 import {
   patch,
   type Fetcher,
@@ -9,16 +9,16 @@ import {
 import { type Stage, stageSchema } from "./types/Stage.js";
 import { stagePrivacyLevelSchema } from "./types/StagePrivacyLevel.js";
 
-export const modifyStageInstanceSchema = z.object({
+export const modifyStageInstanceSchema = object({
   channel: snowflake,
-  body: z
-    .object({
+  body: partial(
+    object({
       /** The topic of the Stage instance (1-120 characters) */
-      topic: z.string().min(1).max(120),
+      topic: pipe(string(), minLength(1), maxLength(120)),
       /** The privacy level of the Stage instance */
       privacyLevel: stagePrivacyLevelSchema
     })
-    .partial()
+  )
 });
 
 /**
@@ -30,7 +30,7 @@ export const modifyStageInstanceSchema = z.object({
  *
  * Requires the user to be a moderator of the Stage channel.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

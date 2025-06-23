@@ -1,19 +1,24 @@
 import { getAsset, snowflake } from "@discordkit/core";
-import { z } from "zod";
+import {
+  type InferOutput,
+  object,
+  exactOptional,
+  string,
+  picklist,
+  pipe,
+  nonEmpty
+} from "valibot";
 import { imageSizes } from "./types/ImageSizes.js";
 
-export const roleIconSchema = z.object({
+export const roleIconSchema = object({
   role: snowflake,
-  icon: z.string().min(1),
-  format: z
-    .union([z.literal(`png`), z.literal(`jpg`), z.literal(`webp`)])
-    .default(`png`)
-    .optional(),
-  params: z
-    .object({
+  icon: pipe(string(), nonEmpty()),
+  format: exactOptional(picklist([`png`, `jpg`, `webp`])),
+  params: exactOptional(
+    object({
       size: imageSizes
     })
-    .optional()
+  )
 });
 
 export const roleIcon = ({
@@ -21,5 +26,5 @@ export const roleIcon = ({
   icon,
   format,
   params
-}: z.infer<typeof roleIconSchema>): string =>
+}: InferOutput<typeof roleIconSchema>): string =>
   getAsset(`/role-icons/${role}/${icon}.${format ?? `png`}`, params);

@@ -1,4 +1,14 @@
-import { z } from "zod";
+import {
+  array,
+  integer,
+  maxValue,
+  minValue,
+  number,
+  object,
+  exactOptional,
+  partial,
+  pipe
+} from "valibot";
 import {
   get,
   type Fetcher,
@@ -9,17 +19,18 @@ import {
 } from "@discordkit/core";
 import { memberSchema, type Member } from "./types/Member.js";
 
-export const listGuildMembersSchema = z.object({
+export const listGuildMembersSchema = object({
   guild: snowflake,
-  params: z
-    .object({
-      /** max number of members to return (1-1000) */
-      limit: z.number().int().min(1).max(1000),
-      /** the highest user id in the previous page */
-      after: snowflake
-    })
-    .partial()
-    .optional()
+  params: exactOptional(
+    partial(
+      object({
+        /** max number of members to return (1-1000) */
+        limit: pipe(number(), integer(), minValue(1), maxValue(1000)),
+        /** the highest user id in the previous page */
+        after: snowflake
+      })
+    )
+  )
 });
 
 /**
@@ -29,11 +40,11 @@ export const listGuildMembersSchema = z.object({
  *
  * Returns a list of {@link Member | guild member objects} that are members of the guild.
  *
- * > **WARNING**
+ * > [!WARNING]
  * >
  * > This endpoint is restricted according to whether the `GUILD_MEMBERS` Privileged Intent is enabled for your application.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > All parameters to this endpoint are optional
  */
@@ -45,14 +56,14 @@ export const listGuildMembers: Fetcher<
 export const listGuildMembersSafe = toValidated(
   listGuildMembers,
   listGuildMembersSchema,
-  memberSchema.array()
+  array(memberSchema)
 );
 
 export const listGuildMembersProcedure = toProcedure(
   `query`,
   listGuildMembers,
   listGuildMembersSchema,
-  memberSchema.array()
+  array(memberSchema)
 );
 
 export const listGuildMembersQuery = toQuery(listGuildMembers);

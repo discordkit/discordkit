@@ -1,14 +1,14 @@
-import { mockSchema } from "test-utils";
-import { z } from "zod";
+import { mockSchema } from "#test-utils";
+import { parse, pipe, string, url } from "valibot";
 import { applicationIcon, applicationIconSchema } from "../applicationIcon.js";
 
 describe(`applicationIcon`, () => {
   it(`produces a valid URL`, () => {
     expect(() =>
-      z
-        .string()
-        .url()
-        .parse(applicationIcon(mockSchema(applicationIconSchema)))
+      parse(
+        pipe(string(), url()),
+        applicationIcon(mockSchema(applicationIconSchema))
+      )
     ).not.toThrow();
   });
 });

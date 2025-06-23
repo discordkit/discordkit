@@ -1,24 +1,24 @@
 import { getAsset, snowflake } from "@discordkit/core";
-import { z } from "zod";
+import {
+  type InferOutput,
+  object,
+  exactOptional,
+  string,
+  picklist,
+  pipe,
+  nonEmpty
+} from "valibot";
 import { imageSizes } from "./types/ImageSizes.js";
 
-export const userAvatarSchema = z.object({
+export const userAvatarSchema = object({
   user: snowflake,
-  avatar: z.string().min(1),
-  format: z
-    .union([
-      z.literal(`png`),
-      z.literal(`jpg`),
-      z.literal(`webp`),
-      z.literal(`gif`)
-    ])
-    .default(`png`)
-    .optional(),
-  params: z
-    .object({
+  avatar: pipe(string(), nonEmpty()),
+  format: exactOptional(picklist([`png`, `jpg`, `webp`, `gif`])),
+  params: exactOptional(
+    object({
       size: imageSizes
     })
-    .optional()
+  )
 });
 
 export const userAvatar = ({
@@ -26,5 +26,5 @@ export const userAvatar = ({
   avatar,
   format,
   params
-}: z.infer<typeof userAvatarSchema>): string =>
+}: InferOutput<typeof userAvatarSchema>): string =>
   getAsset(`/avatars/${user}/${avatar}.${format ?? `png`}`, params);

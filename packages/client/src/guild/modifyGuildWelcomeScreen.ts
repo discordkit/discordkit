@@ -1,4 +1,13 @@
-import { z } from "zod";
+import {
+  array,
+  boolean,
+  nonEmpty,
+  nullish,
+  object,
+  partial,
+  pipe,
+  string
+} from "valibot";
 import {
   patch,
   type Fetcher,
@@ -12,18 +21,18 @@ import {
 } from "./types/WelcomeScreen.js";
 import { welcomeChannelSchema } from "./types/WelcomeChannel.js";
 
-export const modifyGuildWelcomeScreenSchema = z.object({
+export const modifyGuildWelcomeScreenSchema = object({
   guild: snowflake,
-  body: z
-    .object({
+  body: partial(
+    object({
       /** whether the welcome screen is enabled */
-      enabled: z.boolean().nullish(),
+      enabled: nullish(boolean()),
       /** channels linked in the welcome screen and their display options */
-      welcomeChannels: welcomeChannelSchema.array().nullish(),
+      welcomeChannels: nullish(array(welcomeChannelSchema)),
       /** the server description to show in the welcome screen */
-      description: z.string().min(1).nullish()
+      description: nullish(pipe(string(), nonEmpty()))
     })
-    .partial()
+  )
 });
 
 /**
@@ -33,11 +42,11 @@ export const modifyGuildWelcomeScreenSchema = z.object({
  *
  * Modify the guild's Welcome Screen. Requires the `MANAGE_GUILD` permission. Returns the updated {@link WelcomeScreen | Welcome Screen object}. May fire a Guild Update Gateway event.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > All parameters to this endpoint are optional and nullable
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

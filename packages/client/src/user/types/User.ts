@@ -1,44 +1,60 @@
-import { z } from "zod";
+import {
+  minLength,
+  object,
+  length,
+  union,
+  literal,
+  optional,
+  boolean,
+  integer,
+  string,
+  nullish,
+  number,
+  email,
+  type InferOutput,
+  pipe,
+  nullable
+} from "valibot";
 import { snowflake } from "@discordkit/core";
 import { localesSchema } from "../../application/types/Locales.js";
 import { premiumTypeSchema } from "./PremiumType.js";
 
 // https://discord.com/developers/docs/resources/user#user-object-user-structure
-export const userSchema = z.object({
+export const userSchema = object({
   /** the user's id (scope: `identify`) */
   id: snowflake,
   /** the user's username, not unique across the platform (scope: `identify`) */
-  username: z.string().min(1),
+  username: pipe(string(), minLength(1)),
   /** the user's 4-digit discord-tag (scope: `identify`) */
-  discriminator: z.string().length(4).or(z.literal(`0`)),
+  discriminator: union([pipe(string(), length(4)), literal(`0`)]),
   /** the user's display name, if it is set. For bots, this is the application name (scope: `identify`) */
-  globalName: z.string().optional(),
+  globalName: nullable(string()),
   /** the user's avatar hash (scope: `identify`) */
-  avatar: z.string().min(1).optional(),
+  avatar: nullable(pipe(string(), minLength(1))),
   /** whether the user belongs to an OAuth2 application (scope: `identify`) */
-  bot: z.boolean().nullish(),
+  bot: optional(boolean()),
   /** whether the user is an Official Discord System user (part of the urgent message system) (scope: `identify`) */
-  system: z.boolean().nullish(),
+  system: optional(boolean()),
   /** whether the user has two factor enabled on their account (scope: `identify`) */
-  mfaEnabled: z.boolean().nullish(),
+  mfaEnabled: optional(boolean()),
   /** the user's banner hash (scope: `identify`) */
-  banner: z.string().min(1).nullish(),
+  banner: nullish(pipe(string(), minLength(1))),
   /** the user's banner color encoded as an integer representation of hexadecimal color code (scope: `identify`) */
-  accentColor: z.number().int().nullish(),
+  accentColor: nullish(pipe(number(), integer())),
   /** the user's chosen language option (scope: `identify`) */
-  locale: localesSchema.nullish(),
+  locale: optional(localesSchema),
   /** whether the email on this account has been verified (scope: `email`) */
-  verified: z.boolean().nullish(),
+  verified: optional(boolean()),
   /** the user's email (scope: `email`) */
-  email: z.string().email().nullish(),
+  email: nullish(pipe(string(), email())),
   /** the flags on a user's account (scope: `identify`) */
-  flags: z.number().int().nullish(),
+  flags: optional(pipe(number(), integer())),
   /** the type of Nitro subscription on a user's account (scope: `identify`) */
-  premiumType: premiumTypeSchema.nullish(),
+  premiumType: optional(premiumTypeSchema),
   /** the public flags on a user's account (scope: `identify`) */
-  publicFlags: z.number().int().nullish(),
+  publicFlags: optional(pipe(number(), integer())),
   /** the user's avatar decoration hash	(scope: `identify`) */
-  avatarDecoration: z.string().nullish()
+  avatarDecoration: nullish(string())
 });
 
-export type User = z.infer<typeof userSchema>;
+export type User = InferOutput<typeof userSchema>;

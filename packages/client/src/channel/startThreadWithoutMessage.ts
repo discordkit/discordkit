@@ -1,4 +1,16 @@
-import { z } from "zod";
+import {
+  boolean,
+  integer,
+  maxLength,
+  maxValue,
+  minLength,
+  minValue,
+  nullish,
+  number,
+  object,
+  pipe,
+  string
+} from "valibot";
 import {
   toProcedure,
   post,
@@ -10,19 +22,21 @@ import { type Channel, channelSchema } from "./types/Channel.js";
 import { autoArchiveDurationSchema } from "./types/AutoArchiveDuration.js";
 import { channelTypeSchema } from "./types/ChannelType.js";
 
-export const startThreadWithoutMessageSchema = z.object({
+export const startThreadWithoutMessageSchema = object({
   channel: snowflake,
-  body: z.object({
+  body: object({
     /** 1-100 character channel name */
-    name: z.string().min(1).max(100),
+    name: pipe(string(), minLength(1), maxLength(100)),
     /** duration in minutes to automatically archive the thread after recent activity, can be set to: 60, 1440, 4320, 10080 */
-    autoArchiveDuration: autoArchiveDurationSchema.nullish(),
+    autoArchiveDuration: nullish(autoArchiveDurationSchema),
     /** the type of thread to create */
-    type: channelTypeSchema.nullish(),
+    type: nullish(channelTypeSchema),
     /** whether non-moderators can add other non-moderators to a thread; only available when creating a private thread */
-    invitable: z.boolean().nullish(),
+    invitable: nullish(boolean()),
     /** amount of seconds a user has to wait before sending another message (0-21600) */
-    rateLimitPerUser: z.number().int().min(0).max(21600).nullish()
+    rateLimitPerUser: nullish(
+      pipe(number(), integer(), minValue(0), maxValue(21600))
+    )
   })
 });
 
@@ -33,7 +47,7 @@ export const startThreadWithoutMessageSchema = z.object({
  *
  * Creates a new thread that is not connected to an existing message. Returns a {@link Channel | channel} on success, and a `400 BAD REQUEST` on invalid parameters. Fires a Thread Create Gateway event.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

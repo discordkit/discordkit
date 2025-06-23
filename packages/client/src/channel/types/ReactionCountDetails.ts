@@ -1,10 +1,19 @@
-import { z } from "zod";
+import {
+  type InferOutput,
+  integer,
+  minValue,
+  number,
+  object,
+  pipe
+} from "valibot";
 
-export const reactionCountDetailsSchema = z.object({
+export const reactionCountDetailsSchema = object({
   /** Count of super reactions */
-  burst: z.number().int().positive(),
+  burst: pipe(number(), integer(), minValue(0)),
   /** Count of normal reactions */
-  normal: z.number().int().positive()
+  normal: pipe(number(), integer(), minValue(0))
 });
 
-export type ReactionCountDetails = z.infer<typeof reactionCountDetailsSchema>;
+export type ReactionCountDetails = InferOutput<
+  typeof reactionCountDetailsSchema
+>;

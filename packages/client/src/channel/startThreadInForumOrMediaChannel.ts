@@ -1,4 +1,19 @@
-import { z } from "zod";
+import {
+  array,
+  integer,
+  maxLength,
+  maxValue,
+  minLength,
+  minValue,
+  nullish,
+  number,
+  object,
+  optional,
+  partial,
+  pipe,
+  string,
+  unknown
+} from "valibot";
 import {
   post,
   type Fetcher,
@@ -14,38 +29,40 @@ import { attachmentSchema } from "./types/Attachment.js";
 import { messageComponentSchema } from "./types/MessageComponent.js";
 import { type Message, messageSchema } from "./types/Message.js";
 
-export const startThreadInForumOrMediaChannelSchema = z.object({
+export const startThreadInForumOrMediaChannelSchema = object({
   channel: snowflake,
-  body: z.object({
+  body: object({
     /** 1-100 character channel name */
-    name: z.string().min(1).max(100),
+    name: pipe(string(), minLength(1), maxLength(100)),
     /** duration in minutes to automatically archive the thread after recent activity, can be set to: 60, 1440, 4320, 10080 */
-    autoArchiveDuration: autoArchiveDurationSchema.nullish(),
+    autoArchiveDuration: nullish(autoArchiveDurationSchema),
     /** amount of seconds a user has to wait before sending another message (0-21600) */
-    rateLimitPerUser: z.number().int().min(0).max(21600).nullish(),
+    rateLimitPerUser: nullish(
+      pipe(number(), integer(), minValue(0), maxValue(21600))
+    ),
     /** contents of the first message in the forum thread */
-    message: z
-      .object({
+    message: partial(
+      object({
         /** Message contents (up to 2000 characters) */
-        content: z.string().min(1).max(2000).nullish(),
+        content: nullish(pipe(string(), minLength(1), maxLength(2000))),
         /** Embedded rich content (up to 6000 characters) */
-        embeds: embedSchema.array().nullish(),
+        embeds: nullish(array(embedSchema)),
         /** Allowed mentions for the message */
-        allowedMentions: allowedMentionSchema.nullish(),
+        allowedMentions: nullish(allowedMentionSchema),
         /** Components to include with the message */
-        components: messageComponentSchema.nullish(),
+        components: nullish(messageComponentSchema),
         /** IDs of up to 3 stickers in the server to send in the message */
-        stickerIds: z.string().array().max(3).nullish(),
+        stickerIds: nullish(pipe(array(string()), maxLength(3))),
         /** Contents of the file being sent. See Uploading Files */
-        files: z.unknown().optional(),
+        files: optional(unknown()),
         /** Attachment objects with filename and description. See Uploading Files */
-        attachments: attachmentSchema.partial().array().nullish(),
+        attachments: nullish(array(partial(attachmentSchema))),
         /** Message flags combined as a bitfield (only SUPPRESS_EMBEDS can be set) */
-        flags: z.number().int().nullish()
+        flags: nullish(pipe(number(), integer()))
       })
-      .partial(),
+    ),
     /** the IDs of the set of tags that have been applied to a thread in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */
-    appliedTags: snowflake.array().nullish()
+    appliedTags: nullish(array(snowflake))
   })
 });
 
@@ -65,11 +82,11 @@ export const startThreadInForumOrMediaChannelSchema = z.object({
  * - Files must be attached using a `multipart/form-data` body as described in Uploading Files.
  * - Note that when sending a message, you must provide a value for at least one of `content`, `embeds`, `stickerIds`, `components`, or `files`.
  *
- * > **WARNING**
+ * > [!WARNING]
  * >
  * > Discord may strip certain characters from message content, like invalid unicode characters or characters which cause unexpected message formatting. If you are passing user-generated strings into message content, consider sanitizing the data to prevent unexpected behavior and using `allowed_mentions` to prevent unexpected mentions.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
@@ -81,12 +98,18 @@ export const startThreadInForumOrMediaChannel: Fetcher<
 export const startThreadInForumOrMediaChannelSafe = toValidated(
   startThreadInForumOrMediaChannel,
   startThreadInForumOrMediaChannelSchema,
-  channelSchema.extend({ message: messageSchema })
+  object({
+    ...channelSchema.entries,
+    message: messageSchema
+  })
 );
 
 export const startThreadInForumOrMediaChannelProcedure = toProcedure(
   `mutation`,
   startThreadInForumOrMediaChannel,
   startThreadInForumOrMediaChannelSchema,
-  channelSchema.extend({ message: messageSchema })
+  object({
+    ...channelSchema.entries,
+    message: messageSchema
+  })
 );

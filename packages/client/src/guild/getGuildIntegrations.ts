@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { array, object } from "valibot";
 import {
   get,
   type Fetcher,
@@ -9,7 +9,7 @@ import {
 } from "@discordkit/core";
 import { integrationSchema, type Integration } from "./types/Integration.js";
 
-export const getGuildIntegrationsSchema = z.object({
+export const getGuildIntegrationsSchema = object({
   guild: snowflake
 });
 
@@ -20,7 +20,7 @@ export const getGuildIntegrationsSchema = z.object({
  *
  * Returns a list of {@link Integration | integration objects} for the guild. Requires the `MANAGE_GUILD` permission.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint returns a maximum of 50 integrations. If a guild has more integrations, they cannot be accessed.
  */
@@ -32,14 +32,14 @@ export const getGuildIntegrations: Fetcher<
 export const getGuildIntegrationsSafe = toValidated(
   getGuildIntegrations,
   getGuildIntegrationsSchema,
-  integrationSchema.array()
+  array(integrationSchema)
 );
 
 export const getGuildIntegrationsProcedure = toProcedure(
   `query`,
   getGuildIntegrations,
   getGuildIntegrationsSchema,
-  integrationSchema.array()
+  array(integrationSchema)
 );
 
 export const getGuildIntegrationsQuery = toQuery(getGuildIntegrations);

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object } from "valibot";
 import {
   post,
   type Fetcher,
@@ -9,7 +9,7 @@ import {
 import { type Message, messageSchema } from "./types/Message.js";
 import { messageContentSchema } from "./types/MessageContent.js";
 
-export const createMessageSchema = z.object({
+export const createMessageSchema = object({
   channel: snowflake,
   body: messageContentSchema
 });
@@ -19,7 +19,7 @@ export const createMessageSchema = z.object({
  *
  * **POST** `/channels/:channel/messages`
  *
- * > **WARNING**
+ * > [!WARNING]
  * >
  * > Discord may strip certain characters from message content, like invalid unicode characters or characters which cause unexpected message formatting. If you are passing user-generated strings into message content, consider sanitizing the data to prevent unexpected behavior and using `allowedMentions` to prevent unexpected mentions.
  *

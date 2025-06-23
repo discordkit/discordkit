@@ -1,20 +1,36 @@
-import { z } from "zod";
+import {
+  type InferOutput,
+  array,
+  nonEmpty,
+  object,
+  nullable,
+  string,
+  pipe,
+  exactOptional,
+  boolean
+} from "valibot";
 import { snowflake } from "@discordkit/core";
 import { emojiSchema } from "../../emoji/types/Emoji.js";
 
-export const promptOptionSchema = z.object({
+export const promptOptionSchema = object({
   /** ID of the prompt option */
   id: snowflake,
   /** IDs for channels a member is added to when the option is selected */
-  channelIds: snowflake.array(),
+  channelIds: array(snowflake),
   /** IDs for roles assigned to a member when the option is selected */
-  roleIds: snowflake.array(),
+  roleIds: array(snowflake),
   /** Emoji of the option */
-  emoji: emojiSchema,
+  emoji: exactOptional(emojiSchema),
+  /** Emoji ID of the option */
+  emojiId: exactOptional(snowflake),
+  /** Emoji name of the optio */
+  emojiName: exactOptional(pipe(string(), nonEmpty())),
+  /** Whether the emoji is animated */
+  emojiAnimated: exactOptional(boolean()),
   /** Title of the option */
-  title: z.string().min(1),
+  title: pipe(string(), nonEmpty()),
   /** Description of the option */
-  description: z.string().optional()
+  description: nullable(string())
 });
 
-export type PromptOption = z.infer<typeof promptOptionSchema>;
+export type PromptOption = InferOutput<typeof promptOptionSchema>;

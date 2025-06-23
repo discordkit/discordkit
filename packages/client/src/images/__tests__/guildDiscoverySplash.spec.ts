@@ -1,5 +1,5 @@
-import { mockSchema } from "test-utils";
-import { z } from "zod";
+import { mockSchema } from "#test-utils";
+import { parse, pipe, string, url } from "valibot";
 import {
   guildDiscoverySplash,
   guildDiscoverySplashSchema
@@ -8,10 +8,10 @@ import {
 describe(`guildDiscoverySplash`, () => {
   it(`produces a valid URL`, () => {
     expect(() =>
-      z
-        .string()
-        .url()
-        .parse(guildDiscoverySplash(mockSchema(guildDiscoverySplashSchema)))
+      parse(
+        pipe(string(), url()),
+        guildDiscoverySplash(mockSchema(guildDiscoverySplashSchema))
+      )
     ).not.toThrow();
   });
 });

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { pipe, array, maxLength, object } from "valibot";
 import {
   put,
   type Fetcher,
@@ -11,9 +11,9 @@ import {
   applicationCommandSchema
 } from "./types/ApplicationCommand.js";
 
-export const bulkOverwriteGlobalApplicationCommandsSchema = z.object({
+export const bulkOverwriteGlobalApplicationCommandsSchema = object({
   application: snowflake,
-  body: applicationCommandSchema.array().max(25)
+  body: pipe(array(applicationCommandSchema), maxLength(25))
 });
 
 /**
@@ -23,7 +23,7 @@ export const bulkOverwriteGlobalApplicationCommandsSchema = z.object({
  *
  * Takes a list of application commands, overwriting the existing global command list for this application. Returns `200` and a list of {@link ApplicationCommand | application command objects}. Commands that do not already exist will count toward daily application command create limits.
  *
- * > **DANGER**
+ * > [!CAUTION]
  * >
  * > This will overwrite all types of application commands: slash commands, user commands, and message commands.
  */
@@ -36,12 +36,12 @@ export const bulkOverwriteGlobalApplicationCommands: Fetcher<
 export const bulkOverwriteGlobalApplicationCommandsSafe = toValidated(
   bulkOverwriteGlobalApplicationCommands,
   bulkOverwriteGlobalApplicationCommandsSchema,
-  applicationCommandSchema.array()
+  array(applicationCommandSchema)
 );
 
 export const bulkOverwriteGlobalApplicationCommandsProcedure = toProcedure(
   `mutation`,
   bulkOverwriteGlobalApplicationCommands,
   bulkOverwriteGlobalApplicationCommandsSchema,
-  applicationCommandSchema.array()
+  array(applicationCommandSchema)
 );

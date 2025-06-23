@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { nonEmpty, nullish, object, pipe, string } from "valibot";
 import {
   patch,
   type Fetcher,
@@ -8,11 +8,11 @@ import {
 } from "@discordkit/core";
 import { memberSchema, type Member } from "./types/Member.js";
 
-export const modifyCurrentMemberSchema = z.object({
+export const modifyCurrentMemberSchema = object({
   guild: snowflake,
-  body: z.object({
+  body: object({
     /** value to set user's nickname to (Requires `CHANGE_NICKNAME` permission) */
-    nick: z.string().min(1).nullish()
+    nick: nullish(pipe(string(), nonEmpty()))
   })
 });
 
@@ -23,7 +23,7 @@ export const modifyCurrentMemberSchema = z.object({
  *
  * Modifies the current member in a guild. Returns a `200` with the updated {@link Member | member object} on success. Fires a Guild Member Update Gateway event.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

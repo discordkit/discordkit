@@ -1,4 +1,15 @@
-import { z } from "zod";
+import {
+  object,
+  string,
+  minLength,
+  partial,
+  exactOptional,
+  maxLength,
+  array,
+  literal,
+  unknown,
+  pipe
+} from "valibot";
 import {
   patch,
   buildURL,
@@ -14,36 +25,42 @@ import { attachmentSchema } from "../channel/types/Attachment.js";
 import { messageComponentSchema } from "../channel/types/MessageComponent.js";
 import { EmbedType } from "../channel/types/EmbedType.js";
 
-export const editWebhookMessageSchema = z.object({
+export const editWebhookMessageSchema = object({
   webhook: snowflake,
-  token: z.string().min(1),
+  token: pipe(string(), minLength(1)),
   message: snowflake,
-  params: z
-    .object({
-      /** id of the thread the message is in */
-      threadId: snowflake
-    })
-    .partial()
-    .optional(),
-  body: z
-    .object({
+  params: exactOptional(
+    partial(
+      object({
+        /** id of the thread the message is in */
+        threadId: snowflake
+      })
+    )
+  ),
+  body: partial(
+    object({
       /** the message contents (up to 2000 characters) */
-      content: z.string().min(1).max(2000),
+      content: pipe(string(), minLength(1), maxLength(2000)),
       /** embedded `rich` content */
-      embeds: embedSchema
-        .extend({ type: z.literal(EmbedType.RICH) })
-        .array()
-        .max(10),
+      embeds: pipe(
+        array(
+          object({
+            ...embedSchema.entries,
+            type: literal(EmbedType.RICH)
+          })
+        ),
+        maxLength(10)
+      ),
       /** allowed mentions for the message */
       allowedMentions: allowedMentionSchema,
       /** the components to include with the message */
-      components: messageComponentSchema.array(),
+      components: array(messageComponentSchema),
       /** the contents of the file being sent */
-      files: z.unknown().array(),
+      files: array(unknown()),
       /** attachment objects with filename and description */
-      attachments: attachmentSchema.partial().array()
+      attachments: array(partial(attachmentSchema))
     })
-    .partial()
+  )
 });
 
 /**
@@ -57,11 +74,11 @@ export const editWebhookMessageSchema = z.object({
  *
  * Refer to Uploading Files for details on attachments and `multipart/form-data` requests. Any provided files will be **appended** to the message. To remove or replace files you will have to supply the `attachments` field which specifies the files to retain on the message after edit.
  *
- * > **WARNING**
+ * > [!WARNING]
  * >
  * > Starting with API v10, the `attachments` array must contain all attachments that should be present after edit, including **retained and new** attachments provided in the request body.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > All parameters to this endpoint are optional and nullable.
  */

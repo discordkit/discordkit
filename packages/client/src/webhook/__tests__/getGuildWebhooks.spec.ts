@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
+import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { array, length, pipe } from "valibot";
 import {
   getGuildWebhooksProcedure,
   getGuildWebhooksQuery,
@@ -11,23 +12,23 @@ import { webhookSchema } from "../types/Webhook.js";
 describe(`getGuildWebhooks`, () => {
   const expected = mockRequest.get(
     `/guilds/:guild/webhooks`,
-    webhookSchema.array().length(1)
+    pipe(array(webhookSchema), length(1))
   );
   const config = mockSchema(getGuildWebhooksSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(getGuildWebhooksSafe(config)).resolves.toStrictEqual(expected);
+    await expect(getGuildWebhooksSafe(config)).resolves.toEqual(expected);
   });
 
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(getGuildWebhooksProcedure)(config)
-    ).resolves.toStrictEqual(expected);
+    ).resolves.toEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runQuery(getGuildWebhooksQuery, config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });

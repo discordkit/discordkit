@@ -1,10 +1,10 @@
-import { z } from "zod";
+import { type InferOutput, object, string } from "valibot";
 
-export const integrationAccountSchema = z.object({
+export const integrationAccountSchema = object({
   /** id of the account */
-  id: z.string(),
+  id: string(),
   /** name of the account */
-  name: z.string()
+  name: string()
 });
 
-export type IntegrationAccount = z.infer<typeof integrationAccountSchema>;
+export type IntegrationAccount = InferOutput<typeof integrationAccountSchema>;

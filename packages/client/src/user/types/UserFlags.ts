@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/prefer-literal-enum-member */
 
-import { z } from "zod";
+import { enum_ } from "valibot";
 
-/* eslint-disable no-bitwise */
 export enum UserFlags {
   /** Discord Employee */
   STAFF = 1 << 0,
@@ -36,4 +35,4 @@ export enum UserFlags {
   ACTIVE_DEVELOPER = 1 << 22
 }
 
-export const userFlagsSchema = z.nativeEnum(UserFlags);
+export const userFlagsSchema = enum_(UserFlags);

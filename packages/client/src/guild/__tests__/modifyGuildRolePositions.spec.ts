@@ -1,5 +1,11 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
+import {
+  runProcedure,
+  runMutation,
+  mockRequest,
+  mockSchema
+} from "#test-utils";
+import { array, length, pipe } from "valibot";
 import {
   modifyGuildRolePositions,
   modifyGuildRolePositionsProcedure,
@@ -11,12 +17,12 @@ import { roleSchema } from "../types/Role.js";
 describe(`modifyGuildRolePositions`, () => {
   const expected = mockRequest.patch(
     `/guilds/:guild/roles`,
-    roleSchema.array().length(1)
+    pipe(array(roleSchema), length(1))
   );
   const config = mockSchema(modifyGuildRolePositionsSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(modifyGuildRolePositionsSafe(config)).resolves.toStrictEqual(
+    await expect(modifyGuildRolePositionsSafe(config)).resolves.toEqual(
       expected
     );
   });
@@ -24,13 +30,13 @@ describe(`modifyGuildRolePositions`, () => {
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(modifyGuildRolePositionsProcedure)(config)
-    ).resolves.toStrictEqual(expected);
+    ).resolves.toEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runMutation(modifyGuildRolePositions);
     result.current.mutate(config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });

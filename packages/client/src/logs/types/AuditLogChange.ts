@@ -1,12 +1,12 @@
-import { z } from "zod";
+import { object, unknown, nullish, string, type InferOutput } from "valibot";
 
-export const auditLogChangeSchema = z.object({
+export const auditLogChangeSchema = object({
   /** New value of the key */
-  newValue: z.unknown().nullish(),
+  newValue: nullish(unknown()),
   /** Old value of the key */
-  oldValue: z.unknown().nullish(),
+  oldValue: nullish(unknown()),
   /** Name of the changed entity, with a few exceptions */
-  key: z.string()
+  key: string()
 });
 
-export type AuditLogChange = z.infer<typeof auditLogChangeSchema>;
+export type AuditLogChange = InferOutput<typeof auditLogChangeSchema>;

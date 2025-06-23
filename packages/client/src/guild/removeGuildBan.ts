@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object } from "valibot";
 import {
   remove,
   type Fetcher,
@@ -7,7 +7,7 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const removeGuildBanSchema = z.object({
+export const removeGuildBanSchema = object({
   guild: snowflake,
   user: snowflake
 });
@@ -19,7 +19,7 @@ export const removeGuildBanSchema = z.object({
  *
  * Remove the ban for a user. Requires the BAN_MEMBERS permissions. Returns a `204 empty` response on success. Fires a Guild Ban Remove Gateway event.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

@@ -1,4 +1,15 @@
-import { z } from "zod";
+import {
+  object,
+  array,
+  integer,
+  minValue,
+  maxValue,
+  number,
+  nullish,
+  partial,
+  exactOptional,
+  pipe
+} from "valibot";
 import {
   get,
   type Fetcher,
@@ -9,21 +20,25 @@ import {
 } from "@discordkit/core";
 import { messageSchema, type Message } from "./types/Message.js";
 
-export const getChannelMessagesSchema = z.object({
+export const getChannelMessagesSchema = object({
   channel: snowflake,
-  params: z
-    .object({
-      /** Get messages around this message ID */
-      around: snowflake.nullish(),
-      /** Get messages before this message ID */
-      before: snowflake.nullish(),
-      /** Get messages after this message ID */
-      after: snowflake.nullish(),
-      /** Max number of messages to return (1-100) Default: 50 */
-      limit: z.number().min(1).max(100).nullish().default(50)
-    })
-    .partial()
-    .optional()
+  params: exactOptional(
+    partial(
+      object({
+        /** Get messages around this message ID */
+        around: nullish(snowflake),
+        /** Get messages before this message ID */
+        before: nullish(snowflake),
+        /** Get messages after this message ID */
+        after: nullish(snowflake),
+        /** Max number of messages to return (1-100) Default: 50 */
+        limit: nullish(
+          pipe(number(), integer(), minValue(1), maxValue(100)),
+          50
+        )
+      })
+    )
+  )
 });
 
 /**
@@ -37,7 +52,7 @@ export const getChannelMessagesSchema = z.object({
  *
  * If the current user is missing the `READ_MESSAGE_HISTORY` permission in the channel, then no messages will be returned.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > The `before`, `after`, and `around` parameters are mutually exclusive, only one may be passed at a time.
  */
@@ -49,14 +64,14 @@ export const getChannelMessages: Fetcher<
 export const getChannelMessagesSafe = toValidated(
   getChannelMessages,
   getChannelMessagesSchema,
-  messageSchema.array()
+  array(messageSchema)
 );
 
 export const getChannelMessagesProcedure = toProcedure(
   `query`,
   getChannelMessages,
   getChannelMessagesSchema,
-  messageSchema.array()
+  array(messageSchema)
 );
 
 export const getChannelMessagesQuery = toQuery(getChannelMessages);

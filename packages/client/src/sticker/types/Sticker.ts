@@ -1,34 +1,45 @@
-import { z } from "zod";
+import {
+  object,
+  nullish,
+  string,
+  optional,
+  maxLength,
+  boolean,
+  number,
+  integer,
+  type InferOutput,
+  pipe
+} from "valibot";
 import { snowflake } from "@discordkit/core";
 import { userSchema } from "../../user/types/User.js";
 import { stickerFormatTypeSchema } from "./StickerFormatType.js";
 import { stickerTypeSchema } from "./StickerType.js";
 
-export const stickerSchema = z.object({
+export const stickerSchema = object({
   /** id of the sticker */
   id: snowflake,
   /** for standard stickers, id of the pack the sticker is from */
-  packId: snowflake.nullish(),
+  packId: nullish(snowflake),
   /** name of the sticker */
-  name: z.string(),
+  name: string(),
   /** description of the sticker */
-  description: z.string().optional(),
+  description: optional(string()),
   /** autocomplete/suggestion tags for the sticker (max 200 characters) */
-  tags: z.string().max(200),
+  tags: pipe(string(), maxLength(200)),
   /** @deprecated previously the sticker asset hash, now an empty string */
-  asset: z.string().nullish(),
+  asset: nullish(string()),
   /** type of sticker */
   type: stickerTypeSchema,
   /** type of sticker format */
   formatType: stickerFormatTypeSchema,
   /** whether this guild sticker can be used, may be false due to loss of Server Boosts */
-  available: z.boolean().nullish(),
+  available: nullish(boolean()),
   /** id of the guild that owns this sticker */
-  guildId: snowflake.nullish(),
+  guildId: nullish(snowflake),
   /** the user that uploaded the guild sticker */
-  user: userSchema.nullish(),
+  user: nullish(userSchema),
   /** the standard sticker's sort order within its pack */
-  sortValue: z.number().int().nullish()
+  sortValue: nullish(pipe(number(), integer()))
 });
 
-export type Sticker = z.infer<typeof stickerSchema>;
+export type Sticker = InferOutput<typeof stickerSchema>;

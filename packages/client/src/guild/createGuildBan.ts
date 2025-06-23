@@ -1,4 +1,14 @@
-import { z } from "zod";
+import {
+  integer,
+  maxValue,
+  minValue,
+  nullish,
+  number,
+  object,
+  exactOptional,
+  partial,
+  pipe
+} from "valibot";
 import {
   put,
   type Fetcher,
@@ -7,18 +17,23 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const createGuildBanSchema = z.object({
+export const createGuildBanSchema = object({
   guild: snowflake,
   user: snowflake,
-  body: z
-    .object({
-      /** number of days to delete messages for (0-7) */
-      deleteMessageDays: z.number().int().min(1).max(7).nullish(),
-      /** number of seconds to delete messages for, between 0 and 604800 (7 days) */
-      deleteMessageSeconds: z.number().int().min(1).max(7).nullish()
-    })
-    .partial()
-    .optional()
+  body: exactOptional(
+    partial(
+      object({
+        /** number of days to delete messages for (0-7) */
+        deleteMessageDays: nullish(
+          pipe(number(), integer(), minValue(1), maxValue(7))
+        ),
+        /** number of seconds to delete messages for, between 0 and 604800 (7 days) */
+        deleteMessageSeconds: nullish(
+          pipe(number(), integer(), minValue(1), maxValue(7))
+        )
+      })
+    )
+  )
 });
 
 /**
@@ -28,7 +43,7 @@ export const createGuildBanSchema = z.object({
  *
  * Create a guild ban, and optionally delete previous messages sent by the banned user. Requires the `BAN_MEMBERS` permission. Returns a `204 empty` response on success. Fires a Guild Ban Add Gateway event.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

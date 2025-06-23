@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
+import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { array, length, pipe } from "valibot";
 import {
   getChannelMessagesProcedure,
   getChannelMessagesQuery,
@@ -9,25 +10,25 @@ import {
 import { messageSchema } from "../types/Message.js";
 
 describe(`getChannelMessages`, () => {
-  mockRequest.get(
+  const expected = mockRequest.get(
     `/channels/:channel/messages`,
-    messageSchema.array().length(1)
+    pipe(array(messageSchema), length(1))
   );
   const config = mockSchema(getChannelMessagesSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(getChannelMessagesSafe(config)).resolves.toBeDefined();
+    await expect(getChannelMessagesSafe(config)).resolves.toEqual(expected);
   });
 
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(getChannelMessagesProcedure)(config)
-    ).resolves.toBeDefined();
+    ).resolves.toEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runQuery(getChannelMessagesQuery, config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toBeDefined();
+    expect(result.current.data).toEqual(expected);
   });
 });

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { boolean, nullish, object, exactOptional, partial } from "valibot";
 import {
   get,
   type Fetcher,
@@ -9,16 +9,17 @@ import {
 } from "@discordkit/core";
 import { threadMemberSchema, type ThreadMember } from "./types/ThreadMember.js";
 
-export const getThreadMemberSchema = z.object({
+export const getThreadMemberSchema = object({
   channel: snowflake,
   user: snowflake,
-  params: z
-    .object({
-      /** Whether to include a guild member object for the thread member */
-      withMember: z.boolean().nullish()
-    })
-    .partial()
-    .optional()
+  params: exactOptional(
+    partial(
+      object({
+        /** Whether to include a guild member object for the thread member */
+        withMember: nullish(boolean())
+      })
+    )
+  )
 });
 
 /**

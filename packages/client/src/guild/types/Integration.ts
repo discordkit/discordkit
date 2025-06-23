@@ -1,4 +1,17 @@
-import { z } from "zod";
+import {
+  object,
+  string,
+  boolean,
+  nullish,
+  type InferOutput,
+  minValue,
+  integer,
+  number,
+  array,
+  isoTimestamp,
+  pipe,
+  nonEmpty
+} from "valibot";
 import { snowflake } from "@discordkit/core";
 import { userSchema } from "../../user/types/User.js";
 import { scopesSchema } from "../../application/types/Scopes.js";
@@ -6,39 +19,39 @@ import { integrationApplicationSchema } from "./IntegrationApplication.js";
 import { integrationAccountSchema } from "./IntegrationAccount.js";
 import { integrationExpireBehaviorSchema } from "./IntegrationExpireBehavior.js";
 
-export const integrationSchema = z.object({
+export const integrationSchema = object({
   /** integration id */
   id: snowflake,
   /** integration name */
-  name: z.string().min(1),
+  name: pipe(string(), nonEmpty()),
   /** integration type (twitch, youtube, or discord) */
-  type: z.string(),
+  type: string(),
   /** is this integration enabled */
-  enabled: z.boolean(),
+  enabled: boolean(),
   /** is this integration syncing */
-  syncing: z.boolean().nullish(),
+  syncing: nullish(boolean()),
   /** id that this integration uses for "subscribers" */
-  roleId: snowflake.nullish(),
+  roleId: nullish(snowflake),
   /** whether emoticons should be synced for this integration (twitch only currently) */
-  enableEmoticons: z.boolean().nullish(),
+  enableEmoticons: nullish(boolean()),
   /** the behavior of expiring subscribers */
-  expireBehavior: integrationExpireBehaviorSchema.nullish(),
+  expireBehavior: nullish(integrationExpireBehaviorSchema),
   /** the grace period (in days) before expiring subscribers */
-  expireGracePeriod: z.number().int().positive().nullish(),
+  expireGracePeriod: nullish(pipe(number(), integer(), minValue(0))),
   /** user for this integration */
-  user: userSchema.nullish(),
+  user: nullish(userSchema),
   /** integration account information */
   account: integrationAccountSchema,
   /** when this integration was last synced */
-  syncedAt: z.string().datetime().nullish(),
+  syncedAt: nullish(pipe(string(), isoTimestamp())),
   /** how many subscribers this integration has */
-  subscriberCount: z.number().int().positive().nullish(),
+  subscriberCount: nullish(pipe(number(), integer(), minValue(0))),
   /** has this integration been revoked */
-  revoked: z.boolean().nullish(),
+  revoked: nullish(boolean()),
   /** The bot/OAuth2 application for discord integrations */
-  application: integrationApplicationSchema.nullish(),
+  application: nullish(integrationApplicationSchema),
   /** the scopes the application has been authorized for */
-  scopes: scopesSchema.array().nullish()
+  scopes: nullish(array(scopesSchema))
 });
 
-export type Integration = z.infer<typeof integrationSchema>;
+export type Integration = InferOutput<typeof integrationSchema>;

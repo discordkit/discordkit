@@ -1,17 +1,27 @@
-import { z } from "zod";
+import {
+  object,
+  number,
+  integer,
+  minValue,
+  boolean,
+  string,
+  type InferOutput,
+  pipe
+} from "valibot";
 import { inviteSchema } from "./Invite.js";
 
-export const inviteMetadataSchema = inviteSchema.extend({
+export const inviteMetadataSchema = object({
+  ...inviteSchema.entries,
   /** number of times this invite has been used */
-  uses: z.number().int().positive(),
+  uses: pipe(number(), integer(), minValue(0)),
   /** max number of times this invite can be used */
-  maxUses: z.number().int().positive(),
+  maxUses: pipe(number(), integer(), minValue(0)),
   /** duration (in seconds) after which the invite expires */
-  maxAge: z.number().int().positive(),
+  maxAge: pipe(number(), integer(), minValue(0)),
   /** whether this invite only grants temporary membership */
-  temporary: z.boolean(),
+  temporary: boolean(),
   /** when this invite was created */
-  createdAt: z.string()
+  createdAt: string()
 });
 
-export type InviteMetadata = z.infer<typeof inviteMetadataSchema>;
+export type InviteMetadata = InferOutput<typeof inviteMetadataSchema>;

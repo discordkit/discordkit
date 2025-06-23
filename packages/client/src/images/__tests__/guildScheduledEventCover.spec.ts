@@ -1,5 +1,5 @@
-import { mockSchema } from "test-utils";
-import { z } from "zod";
+import { mockSchema } from "#test-utils";
+import { parse, pipe, string, url } from "valibot";
 import {
   guildScheduledEventCover,
   guildScheduledEventCoverSchema
@@ -8,12 +8,10 @@ import {
 describe(`guildScheduledEventCover`, () => {
   it(`produces a valid URL`, () => {
     expect(() =>
-      z
-        .string()
-        .url()
-        .parse(
-          guildScheduledEventCover(mockSchema(guildScheduledEventCoverSchema))
-        )
+      parse(
+        pipe(string(), url()),
+        guildScheduledEventCover(mockSchema(guildScheduledEventCoverSchema))
+      )
     ).not.toThrow();
   });
 });

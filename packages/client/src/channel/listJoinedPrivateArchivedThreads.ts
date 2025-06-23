@@ -1,4 +1,15 @@
-import { z } from "zod";
+import {
+  integer,
+  isoTimestamp,
+  minValue,
+  nullish,
+  number,
+  object,
+  exactOptional,
+  partial,
+  pipe,
+  string
+} from "valibot";
 import {
   get,
   type Fetcher,
@@ -12,17 +23,18 @@ import {
   type ArchivedThreads
 } from "./types/ArchivedThreads.js";
 
-export const listJoinedPrivateArchivedThreadsSchema = z.object({
+export const listJoinedPrivateArchivedThreadsSchema = object({
   channel: snowflake,
-  params: z
-    .object({
-      /** returns threads before this timestamp */
-      before: z.string().datetime().nullish(),
-      /** optional maximum number of threads to return */
-      limit: z.number().int().positive().nullish()
-    })
-    .partial()
-    .optional()
+  params: exactOptional(
+    partial(
+      object({
+        /** returns threads before this timestamp */
+        before: nullish(pipe(string(), isoTimestamp())),
+        /** optional maximum number of threads to return */
+        limit: nullish(pipe(number(), integer(), minValue(0)))
+      })
+    )
+  )
 });
 
 /**

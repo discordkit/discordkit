@@ -1,4 +1,12 @@
-import { z } from "zod";
+import {
+  boolean,
+  isoTimestamp,
+  nullish,
+  object,
+  partial,
+  pipe,
+  string
+} from "valibot";
 import {
   patch,
   type Fetcher,
@@ -7,18 +15,18 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const modifyCurrentUserVoiceStateSchema = z.object({
+export const modifyCurrentUserVoiceStateSchema = object({
   guild: snowflake,
-  body: z
-    .object({
+  body: partial(
+    object({
       /** the id of the channel the user is currently in */
-      channelId: snowflake.nullish(),
+      channelId: nullish(snowflake),
       /** toggles the user's suppress state */
-      suppress: z.boolean().nullish(),
+      suppress: nullish(boolean()),
       /** sets the user's request to speak */
-      requestToSpeakTimestamp: z.string().datetime().nullish()
+      requestToSpeakTimestamp: nullish(pipe(string(), isoTimestamp()))
     })
-    .partial()
+  )
 });
 
 /**

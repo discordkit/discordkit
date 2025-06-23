@@ -1,16 +1,13 @@
 import { getAsset, snowflake } from "@discordkit/core";
-import { z } from "zod";
+import { type InferOutput, object, exactOptional, picklist } from "valibot";
 
-export const stickerImageSchema = z.object({
+export const stickerImageSchema = object({
   sticker: snowflake,
-  format: z
-    .union([z.literal(`png`), z.literal(`json`), z.literal(`gif`)])
-    .default(`png`)
-    .optional()
+  format: exactOptional(picklist([`png`, `json`, `gif`]))
 });
 
 export const sticker = ({
   sticker: id,
   format
-}: z.infer<typeof stickerImageSchema>): string =>
+}: InferOutput<typeof stickerImageSchema>): string =>
   getAsset(`/stickers/${id}.${format ?? `png`}`);

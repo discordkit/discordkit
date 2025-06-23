@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { maxLength, minLength, nullish, object, pipe, string } from "valibot";
 import {
   post,
   type Fetcher,
@@ -8,13 +8,13 @@ import {
 } from "@discordkit/core";
 import { guildSchema, type Guild } from "../guild/types/Guild.js";
 
-export const createGuildFromTemplateSchema = z.object({
+export const createGuildFromTemplateSchema = object({
   template: snowflake,
-  body: z.object({
+  body: object({
     /** name of the guild (2-100 characters) */
-    name: z.string().min(2).max(100),
+    name: pipe(string(), minLength(2), maxLength(100)),
     /** base64 128x128 image for the guild icon */
-    icon: z.string().nullish()
+    icon: nullish(string())
   })
 });
 
@@ -25,7 +25,7 @@ export const createGuildFromTemplateSchema = z.object({
  *
  * Create a new guild based on a template. Returns a {@link Guild | guild object} on success. Fires a Guild Create Gateway event.
  *
- * > **WARNING**
+ * > [!WARNING]
  * >
  * > This endpoint can be used only by bots in less than 10 guilds.
  */

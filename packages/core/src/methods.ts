@@ -1,15 +1,17 @@
-import type { z } from "zod";
+import type { GenericSchema, GenericSchemaAsync, InferOutput } from "valibot";
 import type { RequestParams } from "./addParams.js";
 import { buildURL } from "./buildURL.js";
 import type { RequestBody } from "./request.js";
 import { request } from "./request.js";
 
 export type Fetcher<
-  S extends z.ZodTypeAny | null = null,
+  /** A schema to validate the input arguments of a fetch call */
+  S extends GenericSchema | GenericSchemaAsync | null = null,
+  /** The return value expected from the fetch call */
   R = void
 > = S extends null
   ? () => Promise<R>
-  : (config: z.infer<NonNullable<S>>) => Promise<R>;
+  : (config: InferOutput<NonNullable<S>>) => Promise<R>;
 
 export const get = async <T>(url: string, params?: RequestParams): Promise<T> =>
   request(buildURL(url, params));

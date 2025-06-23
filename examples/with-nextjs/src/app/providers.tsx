@@ -8,9 +8,14 @@ import type { AppRouter } from "./api/[trpc]/trpc";
 
 export const trpc = createTRPCReact<AppRouter>();
 
-const url = process.env.NEXT_PUBLIC_VERCEL_URL
-  ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
-  : `http://localhost:3000/api/`;
+const getUrl = (): string => {
+  const base = ((): string => {
+    if (typeof window !== `undefined`) return ``;
+    if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+    return `http://localhost:3000`;
+  })();
+  return `${base}/api/trpc`;
+};
 
 export const TrpcProvider: React.FC<{ readonly children: React.ReactNode }> = ({
   children
@@ -31,7 +36,7 @@ export const TrpcProvider: React.FC<{ readonly children: React.ReactNode }> = ({
             enabled: () => true
           }),
           httpBatchLink({
-            url,
+            url: getUrl(),
             fetch: async (input, init?) => {
               const fetch = getFetch();
               return fetch(input, {
@@ -44,6 +49,7 @@ export const TrpcProvider: React.FC<{ readonly children: React.ReactNode }> = ({
       }),
     []
   );
+
   return (
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>

@@ -1,5 +1,5 @@
-import { mockSchema } from "test-utils";
-import { z } from "zod";
+import { mockSchema } from "#test-utils";
+import { parse, pipe, string, url } from "valibot";
 import {
   guildMemberAvatar,
   guildMemberAvatarSchema
@@ -8,10 +8,10 @@ import {
 describe(`guildMemberAvatar`, () => {
   it(`produces a valid URL`, () => {
     expect(() =>
-      z
-        .string()
-        .url()
-        .parse(guildMemberAvatar(mockSchema(guildMemberAvatarSchema)))
+      parse(
+        pipe(string(), url()),
+        guildMemberAvatar(mockSchema(guildMemberAvatarSchema))
+      )
     ).not.toThrow();
   });
 });

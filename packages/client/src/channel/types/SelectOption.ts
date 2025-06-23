@@ -1,17 +1,26 @@
-import { z } from "zod";
+import {
+  object,
+  string,
+  maxLength,
+  nullish,
+  pick,
+  boolean,
+  type InferOutput,
+  pipe
+} from "valibot";
 import { emojiSchema } from "../../emoji/types/Emoji.js";
 
-export const selectOptionSchema = z.object({
+export const selectOptionSchema = object({
   /** User-facing name of the option; max 100 characters */
-  label: z.string().max(100),
+  label: pipe(string(), maxLength(100)),
   /** Dev-defined value of the option; max 100 characters */
-  value: z.string().max(100),
+  value: pipe(string(), maxLength(100)),
   /** Additional description of the option; max 100 characters */
-  description: z.string().max(100).nullish(),
+  description: nullish(pipe(string(), maxLength(100))),
   /** id, name, and animated */
-  emoji: emojiSchema.pick({ id: true, name: true, animated: true }).nullish(),
+  emoji: nullish(pick(emojiSchema, [`id`, `name`, `animated`])),
   /** Will show this option as selected by default */
-  default: z.boolean().nullish()
+  default: nullish(boolean())
 });
 
-export type SelectOption = z.infer<typeof selectOptionSchema>;
+export type SelectOption = InferOutput<typeof selectOptionSchema>;

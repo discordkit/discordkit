@@ -1,14 +1,11 @@
-import { mockSchema } from "test-utils";
-import { z } from "zod";
+import { mockSchema } from "#test-utils";
+import { parse, pipe, string, url } from "valibot";
 import { customEmoji, customEmojiSchema } from "../customEmoji.js";
 
 describe(`customEmoji`, () => {
   it(`produces a valid URL`, () => {
     expect(() =>
-      z
-        .string()
-        .url()
-        .parse(customEmoji(mockSchema(customEmojiSchema)))
+      parse(pipe(string(), url()), customEmoji(mockSchema(customEmojiSchema)))
     ).not.toThrow();
   });
 });

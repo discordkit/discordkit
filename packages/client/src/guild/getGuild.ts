@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { boolean, object, exactOptional, partial } from "valibot";
 import {
   get,
   type Fetcher,
@@ -9,15 +9,16 @@ import {
 } from "@discordkit/core";
 import { guildSchema, type Guild } from "./types/Guild.js";
 
-export const getGuildSchema = z.object({
+export const getGuildSchema = object({
   id: snowflake,
-  params: z
-    .object({
-      /** when true, will return approximate member and presence counts for the guild */
-      withCounts: z.boolean().default(false)
-    })
-    .partial()
-    .optional()
+  params: exactOptional(
+    partial(
+      object({
+        /** when true, will return approximate member and presence counts for the guild */
+        withCounts: exactOptional(boolean())
+      })
+    )
+  )
 });
 
 /**

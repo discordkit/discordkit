@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object } from "valibot";
 import {
   put,
   type Fetcher,
@@ -7,7 +7,7 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const addGuildMemberRoleSchema = z.object({
+export const addGuildMemberRoleSchema = object({
   guild: snowflake,
   user: snowflake,
   role: snowflake
@@ -20,7 +20,7 @@ export const addGuildMemberRoleSchema = z.object({
  *
  * Adds a role to a guild member. Requires the `MANAGE_ROLES` permission. Returns a `204 empty` response on success. Fires a Guild Member Update Gateway event
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

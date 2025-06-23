@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { maxLength, minLength, object, partial, pipe, string } from "valibot";
 import {
   patch,
   type Fetcher,
@@ -8,19 +8,19 @@ import {
 } from "@discordkit/core";
 import { stickerSchema, type Sticker } from "./types/Sticker.js";
 
-export const modifyGuildStickerSchema = z.object({
+export const modifyGuildStickerSchema = object({
   guild: snowflake,
   sticker: snowflake,
-  body: z
-    .object({
+  body: partial(
+    object({
       /** name of the sticker (2-30 characters) */
-      name: z.string().min(2).max(30),
+      name: pipe(string(), minLength(2), maxLength(30)),
       /** description of the sticker (empty or 2-100 characters) */
-      description: z.string().min(2).max(100),
+      description: pipe(string(), minLength(2), maxLength(100)),
       /** autocomplete/suggestion tags for the sticker (max 200 characters) */
-      tags: z.string().min(1).max(200)
+      tags: pipe(string(), minLength(1), maxLength(200))
     })
-    .partial()
+  )
 });
 
 /**
@@ -30,11 +30,11 @@ export const modifyGuildStickerSchema = z.object({
  *
  * Modify the given sticker. Requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns the updated {@link Sticker | sticker object} on success. Fires a Guild Stickers Update Gateway event.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > All parameters to this endpoint are optional.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

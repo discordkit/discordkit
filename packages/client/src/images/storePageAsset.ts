@@ -1,19 +1,16 @@
 import { getAsset, snowflake } from "@discordkit/core";
-import { z } from "zod";
+import { type InferOutput, object, exactOptional, picklist } from "valibot";
 import { imageSizes } from "./types/ImageSizes.js";
 
-export const storePageAssetSchema = z.object({
+export const storePageAssetSchema = object({
   application: snowflake,
   asset: snowflake,
-  format: z
-    .union([z.literal(`png`), z.literal(`jpg`), z.literal(`webp`)])
-    .default(`png`)
-    .optional(),
-  params: z
-    .object({
+  format: exactOptional(picklist([`png`, `jpg`, `webp`])),
+  params: exactOptional(
+    object({
       size: imageSizes
     })
-    .optional()
+  )
 });
 
 export const storePageAsset = ({
@@ -21,7 +18,7 @@ export const storePageAsset = ({
   asset,
   format,
   params
-}: z.infer<typeof storePageAssetSchema>): string =>
+}: InferOutput<typeof storePageAssetSchema>): string =>
   getAsset(
     `/app-assets/${application}/store/${asset}.${format ?? `png`}`,
     params

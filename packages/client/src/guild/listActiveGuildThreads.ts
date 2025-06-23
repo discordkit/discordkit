@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { type InferOutput, array, object } from "valibot";
 import {
   get,
   type Fetcher,
@@ -10,15 +10,15 @@ import {
 import { threadMemberSchema } from "../channel/types/ThreadMember.js";
 import { channelMentionSchema } from "../channel/types/ChannelMention.js";
 
-export const listActiveGuildThreadsSchema = z.object({
+export const listActiveGuildThreadsSchema = object({
   guild: snowflake
 });
 
-export const activeGuildThreadsSchema = z.object({
+export const activeGuildThreadsSchema = object({
   /** the active threads */
-  threads: channelMentionSchema.array(),
+  threads: array(channelMentionSchema),
   /** a thread member object for each returned thread the current user has joined */
-  members: threadMemberSchema.array()
+  members: array(threadMemberSchema)
 });
 
 /**
@@ -30,7 +30,7 @@ export const activeGuildThreadsSchema = z.object({
  */
 export const listActiveGuildThreads: Fetcher<
   typeof listActiveGuildThreadsSchema,
-  z.infer<typeof activeGuildThreadsSchema>
+  InferOutput<typeof activeGuildThreadsSchema>
 > = async ({ guild }) => get(`/guilds/${guild}/threads/active`);
 
 export const listActiveGuildThreadsSafe = toValidated(

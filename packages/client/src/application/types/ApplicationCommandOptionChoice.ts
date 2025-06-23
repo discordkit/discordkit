@@ -1,17 +1,33 @@
-import { z } from "zod";
+import {
+  object,
+  string,
+  minLength,
+  maxLength,
+  record,
+  nullish,
+  union,
+  number,
+  integer,
+  type InferOutput,
+  pipe
+} from "valibot";
 import { localesSchema } from "./Locales.js";
 
-export const applicationCommandOptionChoiceSchema = z.object({
+export const applicationCommandOptionChoiceSchema = object({
   /** 1-100 character choice name */
-  name: z.string().min(1).max(100),
+  name: pipe(string(), minLength(1), maxLength(100)),
   /** Localization dictionary for the name field. Values follow the same restrictions as name */
-  nameLocalizations: z
-    .record(localesSchema, z.string().min(1).max(100))
-    .nullish(),
+  nameLocalizations: nullish(
+    record(localesSchema, pipe(string(), minLength(1), maxLength(100)))
+  ),
   /** Value for the choice, up to 100 characters if string */
-  value: z.union([z.string().min(1).max(100), z.number().int(), z.number()])
+  value: union([
+    pipe(string(), minLength(1), maxLength(100)),
+    pipe(number(), integer()),
+    number()
+  ])
 });
 
-export type ApplicationCommandOptionChoice = z.infer<
+export type ApplicationCommandOptionChoice = InferOutput<
   typeof applicationCommandOptionChoiceSchema
 >;

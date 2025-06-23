@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object } from "valibot";
 import {
   remove,
   type Fetcher,
@@ -7,7 +7,7 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const deleteGuildRoleSchema = z.object({
+export const deleteGuildRoleSchema = object({
   guild: snowflake,
   role: snowflake
 });
@@ -19,7 +19,7 @@ export const deleteGuildRoleSchema = z.object({
  *
  * Delete a guild role. Requires the `MANAGE_ROLES` permission. Returns a `204 empty` response on success. Fires a Guild Role Delete Gateway event.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

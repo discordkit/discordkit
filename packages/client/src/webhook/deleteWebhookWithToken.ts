@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object, string, minLength, pipe } from "valibot";
 import {
   remove,
   type Fetcher,
@@ -7,9 +7,9 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const deleteWebhookWithTokenSchema = z.object({
+export const deleteWebhookWithTokenSchema = object({
   webhook: snowflake,
-  token: z.string().min(1)
+  token: pipe(string(), minLength(1))
 });
 
 /**

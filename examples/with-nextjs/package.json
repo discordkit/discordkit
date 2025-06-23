@@ -6,25 +6,26 @@
     "dev": "next dev",
     "build:examples": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint --cache"
   },
   "dependencies": {
     "@discordkit/client": "workspace:^",
-    "@tanstack/react-query": "^4.35.7",
-    "@tanstack/react-query-devtools": "^4.35.7",
-    "@trpc/client": "^10.38.5",
-    "@trpc/react-query": "^10.38.5",
-    "next": "^13.5.4",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "@tanstack/react-query": "^5.81.2",
+    "@tanstack/react-query-devtools": "^5.81.2",
+    "@trpc/client": "^11.4.2",
+    "@trpc/react-query": "^11.4.2",
+    "next": "^15.3.4",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "valibot": "^1.1.0"
   },
   "devDependencies": {
-    "@types/node": "^20.8.2",
-    "@types/react": "^18.2.25",
-    "@types/react-dom": "^18.2.10",
-    "autoprefixer": "^10.4.16",
-    "postcss": "^8.4.31",
-    "tailwindcss": "^3.3.3",
-    "typescript": "^5.2.2"
+    "@types/node": "^24.0.3",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.10",
+    "typescript": "^5.8.3"
   }
 }

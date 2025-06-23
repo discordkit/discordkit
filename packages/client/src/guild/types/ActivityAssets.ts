@@ -1,14 +1,14 @@
-import { z } from "zod";
+import { object, optional, string, type InferOutput } from "valibot";
 
-export const activityAssetsSchema = z.object({
+export const activityAssetsSchema = object({
   /** see Activity Asset Image */
-  largeImage: z.string().optional(),
+  largeImage: optional(string()),
   /** text displayed when hovering over the large image of the activity */
-  largeText: z.string().optional(),
+  largeText: optional(string()),
   /** see Activity Asset Image */
-  smallImage: z.string().optional(),
+  smallImage: optional(string()),
   /** text displayed when hovering over the small image of the activity */
-  smallText: z.string().optional()
+  smallText: optional(string())
 });
 
-export type ActivityAssets = z.infer<typeof activityAssetsSchema>;
+export type ActivityAssets = InferOutput<typeof activityAssetsSchema>;

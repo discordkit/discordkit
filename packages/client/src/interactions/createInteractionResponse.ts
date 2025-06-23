@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { nonEmpty, object, pipe, string } from "valibot";
 import {
   post,
   type Fetcher,
@@ -8,9 +8,9 @@ import {
 } from "@discordkit/core";
 import { interactionResponseSchema } from "./types/InteractionResponse.js";
 
-export const createInteractionResponseSchema = z.object({
+export const createInteractionResponseSchema = object({
   interaction: snowflake,
-  token: z.string().min(1),
+  token: pipe(string(), nonEmpty()),
   body: interactionResponseSchema
 });
 

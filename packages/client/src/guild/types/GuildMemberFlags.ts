@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/prefer-literal-enum-member */
 
-import { z } from "zod";
+import { enum_ } from "valibot";
 
-/* eslint-disable no-bitwise */
 export enum GuildMemberFlags {
   /** Member has left and rejoined the guild */
   DID_REJOIN = 1 << 0,
@@ -14,4 +13,4 @@ export enum GuildMemberFlags {
   STARTED_ONBOARDING = 1 << 3
 }
 
-export const guildMemberFlagsSchema = z.nativeEnum(GuildMemberFlags);
+export const guildMemberFlagsSchema = enum_(GuildMemberFlags);

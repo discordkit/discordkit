@@ -1,8 +1,8 @@
-import { z } from "zod";
+import { object, string, boolean, optional, type InferOutput } from "valibot";
 import { snowflake } from "@discordkit/core";
 import { stagePrivacyLevelSchema } from "./StagePrivacyLevel.js";
 
-export const stageSchema = z.object({
+export const stageSchema = object({
   /** The id of this Stage instance */
   id: snowflake,
   /** The guild id of the associated Stage channel */
@@ -10,13 +10,13 @@ export const stageSchema = z.object({
   /** The id of the associated Stage channel */
   channelId: snowflake,
   /** The topic of the Stage instance (1-120 characters) */
-  topic: z.string(),
+  topic: string(),
   /** The privacy level of the Stage instance */
   privacyLevel: stagePrivacyLevelSchema,
   /** @deprecated Whether or not Stage Discovery is disabled */
-  discoverableDisabled: z.boolean(),
+  discoverableDisabled: boolean(),
   /** The id of the scheduled event for this Stage instance */
-  guildScheduledEventId: snowflake.optional()
+  guildScheduledEventId: optional(snowflake)
 });
 
-export type Stage = z.infer<typeof stageSchema>;
+export type Stage = InferOutput<typeof stageSchema>;

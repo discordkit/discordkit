@@ -1,6 +1,11 @@
 import { waitFor } from "@testing-library/react";
-import { z } from "zod";
-import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
+import {
+  runProcedure,
+  runMutation,
+  mockRequest,
+  mockSchema
+} from "#test-utils";
+import { literal, object } from "valibot";
 import {
   createDM,
   createDMProcedure,
@@ -13,24 +18,27 @@ import { ChannelType } from "../../channel/types/ChannelType.js";
 describe(`createDM`, () => {
   const expected = mockRequest.post(
     `/users/@me/channels`,
-    channelSchema.extend({ type: z.literal(ChannelType.DM) })
+    object({
+      ...channelSchema.entries,
+      type: literal(ChannelType.DM)
+    })
   );
   const config = mockSchema(createDMSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(createDMSafe(config)).resolves.toStrictEqual(expected);
+    await expect(createDMSafe(config)).resolves.toEqual(expected);
   });
 
   it(`is tRPC compatible`, async () => {
-    await expect(
-      runProcedure(createDMProcedure)(config)
-    ).resolves.toStrictEqual(expected);
+    await expect(runProcedure(createDMProcedure)(config)).resolves.toEqual(
+      expected
+    );
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runMutation(createDM);
     result.current.mutate(config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });

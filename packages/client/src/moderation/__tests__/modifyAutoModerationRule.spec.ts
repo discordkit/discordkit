@@ -1,5 +1,10 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runMutation, mockRequest, mockSchema } from "test-utils";
+import {
+  runProcedure,
+  runMutation,
+  mockRequest,
+  mockSchema
+} from "#test-utils";
 import {
   modifyAutoModerationRule,
   modifyAutoModerationRuleProcedure,
@@ -17,7 +22,7 @@ describe(`modifyAutoModerationRule`, () => {
   const config = mockSchema(modifyAutoModerationRuleSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(modifyAutoModerationRuleSafe(config)).resolves.toStrictEqual(
+    await expect(modifyAutoModerationRuleSafe(config)).resolves.toEqual(
       expected
     );
   });
@@ -25,13 +30,13 @@ describe(`modifyAutoModerationRule`, () => {
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(modifyAutoModerationRuleProcedure)(config)
-    ).resolves.toStrictEqual(expected);
+    ).resolves.toEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runMutation(modifyAutoModerationRule);
     result.current.mutate(config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });

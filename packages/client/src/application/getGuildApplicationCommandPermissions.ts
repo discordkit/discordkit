@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { array, object } from "valibot";
 import {
   get,
   type Fetcher,
@@ -12,7 +12,7 @@ import {
   type GuildApplicationCommandPermissions
 } from "./types/GuildApplicationCommandPermissions.js";
 
-export const getGuildApplicationCommandPermissionsSchema = z.object({
+export const getGuildApplicationCommandPermissionsSchema = object({
   application: snowflake,
   guild: snowflake
 });
@@ -33,14 +33,14 @@ export const getGuildApplicationCommandPermissions: Fetcher<
 export const getGuildApplicationCommandPermissionsSafe = toValidated(
   getGuildApplicationCommandPermissions,
   getGuildApplicationCommandPermissionsSchema,
-  guildApplicationCommandPermissionsSchema.array()
+  array(guildApplicationCommandPermissionsSchema)
 );
 
 export const getGuildApplicationCommandPermissionsProcedure = toProcedure(
   `query`,
   getGuildApplicationCommandPermissions,
   getGuildApplicationCommandPermissionsSchema,
-  guildApplicationCommandPermissionsSchema.array()
+  array(guildApplicationCommandPermissionsSchema)
 );
 
 export const getGuildApplicationCommandPermissionsQuery = toQuery(

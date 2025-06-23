@@ -1,4 +1,16 @@
-import { z } from "zod";
+import {
+  array,
+  boolean,
+  integer,
+  isoTimestamp,
+  nonEmpty,
+  nullish,
+  number,
+  object,
+  partial,
+  pipe,
+  string
+} from "valibot";
 import {
   patch,
   type Fetcher,
@@ -8,27 +20,27 @@ import {
 } from "@discordkit/core";
 import { memberSchema, type Member } from "./types/Member.js";
 
-export const modifyGuildMemberSchema = z.object({
+export const modifyGuildMemberSchema = object({
   guild: snowflake,
   user: snowflake,
-  body: z
-    .object({
+  body: partial(
+    object({
       /** value to set user's nickname to	(Requires `MANAGE_NICKNAMES` permission) */
-      nick: z.string().min(1).nullish(),
+      nick: nullish(pipe(string(), nonEmpty())),
       /** array of role ids the member is assigned (Requires `MANAGE_ROLES` permission) */
-      roles: snowflake.array().nullish(),
+      roles: nullish(array(snowflake)),
       /** whether the user is muted in voice channels (Requires `MUTE_MEMBERS` permission) */
-      mute: z.boolean().nullish(),
+      mute: nullish(boolean()),
       /** whether the user is deafened in voice channels (Requires `DEAFEN_MEMBERS` permission) */
-      deaf: z.boolean().nullish(),
+      deaf: nullish(boolean()),
       /** id of channel to move user to (if they are connected to voice) (Requires `MOVE_MEMBERS` permission) */
-      channelId: snowflake.nullish(),
+      channelId: nullish(snowflake),
       /** when the user's timeout will expire and the user will be able to communicate in the guild again (up to 28 days in the future), set to null to remove timeout. Will throw a 403 error if the user has the `ADMINISTRATOR` permission or is the owner of the guild (Requires `MODERATE_MEMBERS` permission) */
-      communicationDisabledUntil: z.string().datetime().nullish(),
+      communicationDisabledUntil: nullish(pipe(string(), isoTimestamp())),
       /** guild member flags */
-      flags: z.number().int().nullish()
+      flags: nullish(pipe(number(), integer()))
     })
-    .partial()
+  )
 });
 
 /**
@@ -38,11 +50,11 @@ export const modifyGuildMemberSchema = z.object({
  *
  * Modify attributes of a guild member. Returns a `200 OK` with the {@link Member | guild member} as the body. Fires a Guild Member Update Gateway event. If the `channelId` is set to null, this will force the target user to be disconnected from voice.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > All parameters to this endpoint are optional and nullable. When moving members to channels, the API user must have permissions to both connect to the channel and have the `MOVE_MEMBERS` permission.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */

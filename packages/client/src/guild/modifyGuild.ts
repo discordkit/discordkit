@@ -1,4 +1,16 @@
-import { z } from "zod";
+import {
+  array,
+  boolean,
+  integer,
+  minValue,
+  nonEmpty,
+  number,
+  object,
+  optional,
+  partial,
+  pipe,
+  string
+} from "valibot";
 import {
   patch,
   type Fetcher,
@@ -13,55 +25,56 @@ import { defaultMessageNotificationLevelSchema } from "./types/DefaultMessageNot
 import { explicitContentFilterLevelSchema } from "./types/ExplicitContentFilterLevel.js";
 import { guildFeaturesSchema } from "./types/GuildFeatures.js";
 
-export const modifyGuildSchema = z.object({
+export const modifyGuildSchema = object({
   guild: snowflake,
-  body: z
-    .object({
+  body: partial(
+    object({
       /** guild name */
-      name: z.string().min(1),
+      name: pipe(string(), nonEmpty()),
       /** @deprecated guild voice region id */
-      region: z.string().min(1).optional(),
+      region: optional(pipe(string(), nonEmpty())),
       /** verification level */
-      verificationLevel: verificationLevelSchema.optional(),
+      verificationLevel: optional(verificationLevelSchema),
       /** default message notification level */
-      defaultMessageNotifications:
-        defaultMessageNotificationLevelSchema.optional(),
+      defaultMessageNotifications: optional(
+        defaultMessageNotificationLevelSchema
+      ),
       /** explicit content filter level */
-      explicitContentFilter: explicitContentFilterLevelSchema.optional(),
+      explicitContentFilter: optional(explicitContentFilterLevelSchema),
       /** id for afk channel */
-      afkChannelId: snowflake.optional(),
+      afkChannelId: optional(snowflake),
       /** afk timeout in seconds */
-      afkTimeout: z.number().int().positive(),
+      afkTimeout: pipe(number(), integer(), minValue(0)),
       /** base64 1024x1024 png/jpeg/gif image for the guild icon (can be animated gif when the server has the ANIMATED_ICON feature) */
-      icon: z.string().min(1).optional(),
+      icon: optional(pipe(string(), nonEmpty())),
       /** user id to transfer guild ownership to (must be owner) */
       ownerId: snowflake,
       /** base64 16:9 png/jpeg image for the guild splash (when the server has the INVITE_SPLASH feature) */
-      splash: z.string().min(1).optional(),
+      splash: optional(pipe(string(), nonEmpty())),
       /** base64 16:9 png/jpeg image for the guild discovery splash (when the server has the DISCOVERABLE feature) */
-      discoverySplash: z.string().min(1).optional(),
+      discoverySplash: optional(pipe(string(), nonEmpty())),
       /** base64 16:9 png/jpeg image for the guild banner (when the server has the BANNER feature; can be animated gif when the server has the ANIMATED_BANNER feature) */
-      banner: z.string().min(1).optional(),
+      banner: optional(pipe(string(), nonEmpty())),
       /** the id of the channel where guild notices such as welcome messages and boost events are posted */
-      systemChannelId: snowflake.optional(),
+      systemChannelId: optional(snowflake),
       /** system channel flags */
-      systemChannelFlags: z.number().int(),
+      systemChannelFlags: pipe(number(), integer()),
       /** the id of the channel where Community guilds display rules and/or guidelines */
-      rulesChannelId: snowflake.optional(),
+      rulesChannelId: optional(snowflake),
       /** the id of the channel where admins and moderators of Community guilds receive notices from Discord */
-      publicUpdatesChannelId: snowflake.optional(),
+      publicUpdatesChannelId: optional(snowflake),
       /** the preferred locale of a Community guild used in server discovery and notices from Discord; defaults to "en-US" */
-      preferredLocale: localesSchema.optional(),
+      preferredLocale: optional(localesSchema),
       /** enabled guild features */
-      features: guildFeaturesSchema.array(),
+      features: array(guildFeaturesSchema),
       /** the description for the guild */
-      description: z.string().min(1).optional(),
+      description: optional(pipe(string(), nonEmpty())),
       /** whether the guild's boost progress bar should be enabled */
-      premiumProgressBarEnabled: z.boolean(),
+      premiumProgressBarEnabled: boolean(),
       /** the id of the channel where admins and moderators of Community guilds receive safety alerts from Discord */
-      safetyAlertsChannelId: snowflake.optional()
+      safetyAlertsChannelId: optional(snowflake)
     })
-    .partial()
+  )
 });
 
 /**
@@ -71,15 +84,15 @@ export const modifyGuildSchema = z.object({
  *
  * Modify a guild's settings. Requires the `MANAGE_GUILD` permission. Returns the updated {@link Guild | guild object} on success. Fires a Guild Update Gateway event.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > All parameters to this endpoint are optional
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  *
- * > **WARNING**
+ * > [!WARNING]
  * >
  * > Attempting to add or remove the `COMMUNITY` guild feature requires the `ADMINISTRATOR` permission.
  */

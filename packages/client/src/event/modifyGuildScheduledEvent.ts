@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { isoTimestamp, nonEmpty, nullish, object, pipe, string } from "valibot";
 import {
   patch,
   type Fetcher,
@@ -15,30 +15,30 @@ import { scheduledEventPrivacyLevelSchema } from "./types/ScheduledEventPrivacyL
 import { scheduledEventEntityTypeSchema } from "./types/ScheduledEventEntityType.js";
 import { scheduledEventStatusSchema } from "./types/ScheduledEventStatus.js";
 
-export const modifyGuildScheduledEventSchema = z.object({
+export const modifyGuildScheduledEventSchema = object({
   guild: snowflake,
   event: snowflake,
-  body: z.object({
+  body: object({
     /** the channel id of the scheduled event. */
-    channelId: snowflake.nullish(),
+    channelId: nullish(snowflake),
     /** entity metadata	the entity metadata of the scheduled event */
-    entityMetadata: entityMetadataSchema.nullish(),
+    entityMetadata: nullish(entityMetadataSchema),
     /** the name of the scheduled event */
-    name: z.string().min(1).nullish(),
+    name: nullish(pipe(string(), nonEmpty())),
     /** the privacy level of the scheduled event */
-    privacyLevel: scheduledEventPrivacyLevelSchema.nullish(),
+    privacyLevel: nullish(scheduledEventPrivacyLevelSchema),
     /** the time to schedule the scheduled event */
-    scheduledStartTime: z.string().datetime().nullish(),
+    scheduledStartTime: nullish(pipe(string(), isoTimestamp())),
     /** the time when the scheduled event is scheduled to end */
-    scheduledEndTime: z.string().datetime().nullish(),
+    scheduledEndTime: nullish(pipe(string(), isoTimestamp())),
     /** the description of the scheduled event */
-    description: z.string().min(1).nullish(),
+    description: nullish(pipe(string(), nonEmpty())),
     /** the entity type of the scheduled event */
-    entityType: scheduledEventEntityTypeSchema.nullish(),
+    entityType: nullish(scheduledEventEntityTypeSchema),
     /** the status of the scheduled event */
-    status: scheduledEventStatusSchema.nullish(),
+    status: nullish(scheduledEventStatusSchema),
     /** the cover image of the scheduled event */
-    image: z.string().min(1).nullish()
+    image: nullish(pipe(string(), nonEmpty()))
   })
 });
 
@@ -49,15 +49,15 @@ export const modifyGuildScheduledEventSchema = z.object({
  *
  * Modify a guild scheduled event. Returns the modified {@link ScheduledEvent | guild scheduled event object} on success. Fires a Guild Scheduled Event Update Gateway event.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > To start or end an event, use this endpoint to modify the event's status field.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  *
- * > **NOTE**
+ * > [!NOTE]
  * >
  * > This endpoint silently discards `entity_metadata` for non-`EXTERNAL` events.
  */

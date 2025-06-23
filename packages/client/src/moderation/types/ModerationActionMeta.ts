@@ -1,19 +1,34 @@
 import { snowflake } from "@discordkit/core";
-import { z } from "zod";
+import {
+  type InferOutput,
+  union,
+  optional,
+  object,
+  number,
+  integer,
+  minValue,
+  maxValue,
+  string,
+  nullish,
+  maxLength,
+  pipe
+} from "valibot";
 
-export const moderationActionMetaSchema = z.union([
-  z.object({
+export const moderationActionMetaSchema = union([
+  object({
     /** channel to which user content should be logged */
-    channelId: snowflake.optional()
+    channelId: optional(snowflake)
   }),
-  z.object({
+  object({
     /** timeout duration in seconds */
-    durationSeconds: z.number().int().positive().max(2419200)
+    durationSeconds: pipe(number(), integer(), minValue(0), maxValue(2419200))
   }),
-  z.object({
+  object({
     /** additional explanation that will be shown to members whenever their message is blocked */
-    customMessage: z.string().max(150).nullish()
+    customMessage: nullish(pipe(string(), maxLength(150)))
   })
 ]);
 
-export type ModerationActionMeta = z.infer<typeof moderationActionMetaSchema>;
+export type ModerationActionMeta = InferOutput<
+  typeof moderationActionMetaSchema
+>;

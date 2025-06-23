@@ -1,11 +1,11 @@
-import { z } from "zod";
+import { object, string, optional, type InferOutput } from "valibot";
 import { userSchema } from "../../user/types/User.js";
 
-export const banSchema = z.object({
+export const banSchema = object({
   /** the reason for the ban */
-  reason: z.string().optional(),
+  reason: optional(string()),
   /** the banned user */
   user: userSchema
 });
 
-export type Ban = z.infer<typeof banSchema>;
+export type Ban = InferOutput<typeof banSchema>;

@@ -1,13 +1,13 @@
 import { snowflake } from "@discordkit/core";
-import { z } from "zod";
+import { object, string, optional, boolean, type InferOutput } from "valibot";
 
-export const activityEmojiSchema = z.object({
+export const activityEmojiSchema = object({
   /** the name of the emoji */
-  name: z.string(),
+  name: string(),
   /** the id of the emoji */
-  id: snowflake.optional(),
+  id: optional(snowflake),
   /** whether this emoji is animated */
-  animated: z.boolean().optional()
+  animated: optional(boolean())
 });
 
-export type ActivityEmoji = z.infer<typeof activityEmojiSchema>;
+export type ActivityEmoji = InferOutput<typeof activityEmojiSchema>;

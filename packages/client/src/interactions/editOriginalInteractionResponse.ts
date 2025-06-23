@@ -1,4 +1,16 @@
-import { z } from "zod";
+import {
+  array,
+  literal,
+  maxLength,
+  minLength,
+  nonEmpty,
+  object,
+  exactOptional,
+  partial,
+  pipe,
+  string,
+  unknown
+} from "valibot";
 import {
   patch,
   buildURL,
@@ -17,35 +29,41 @@ import {
   interactionResponseSchema
 } from "./types/InteractionResponse.js";
 
-export const editOriginalInteractionResponseSchema = z.object({
+export const editOriginalInteractionResponseSchema = object({
   application: snowflake,
-  token: z.string().min(1),
-  params: z
-    .object({
-      /** id of the thread the message is in */
-      threadId: snowflake
-    })
-    .partial()
-    .optional(),
-  body: z
-    .object({
+  token: pipe(string(), nonEmpty()),
+  params: exactOptional(
+    partial(
+      object({
+        /** id of the thread the message is in */
+        threadId: snowflake
+      })
+    )
+  ),
+  body: partial(
+    object({
       /** the message contents (up to 2000 characters) */
-      content: z.string().min(1).max(2000),
+      content: pipe(string(), minLength(1), maxLength(2000)),
       /** embedded `rich` content */
-      embeds: embedSchema
-        .extend({ type: z.literal(EmbedType.RICH) })
-        .array()
-        .max(10),
+      embeds: pipe(
+        array(
+          object({
+            ...embedSchema.entries,
+            type: literal(EmbedType.RICH)
+          })
+        ),
+        maxLength(10)
+      ),
       /** allowed mentions for the message */
       allowedMentions: allowedMentionSchema,
       /** the components to include with the message */
-      components: messageComponentSchema.array(),
+      components: array(messageComponentSchema),
       /** the contents of the file being sent */
-      files: z.unknown().array(),
+      files: array(unknown()),
       /** attachment objects with filename and description */
-      attachments: attachmentSchema.partial().array()
+      attachments: array(partial(attachmentSchema))
     })
-    .partial()
+  )
 });
 
 /**

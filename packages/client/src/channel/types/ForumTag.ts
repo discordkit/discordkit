@@ -1,17 +1,26 @@
 import { snowflake } from "@discordkit/core";
-import { z } from "zod";
+import {
+  type InferOutput,
+  boolean,
+  maxLength,
+  minLength,
+  object,
+  optional,
+  pipe,
+  string
+} from "valibot";
 
-export const forumTagSchema = z.object({
+export const forumTagSchema = object({
   /** the id of the tag */
   id: snowflake,
   /** the name of the tag (0-20 characters) */
-  name: z.string().min(0).max(20),
+  name: pipe(string(), minLength(0), maxLength(20)),
   /** whether this tag can only be added to or removed from threads by a member with the `MANAGE_THREADS` permission */
-  moderated: z.boolean(),
+  moderated: boolean(),
   /** the id of a guild's custom emoji */
-  emojiId: snowflake.optional(),
+  emojiId: optional(snowflake),
   /** the unicode character of the emoji */
-  emojiName: z.string().min(1).optional()
+  emojiName: optional(pipe(string(), minLength(1)))
 });
 
-export type ForumTag = z.infer<typeof forumTagSchema>;
+export type ForumTag = InferOutput<typeof forumTagSchema>;

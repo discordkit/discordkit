@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "test-utils";
+import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { array, length, pipe } from "valibot";
 import {
   listGuildEmojisProcedure,
   listGuildEmojisQuery,
@@ -11,23 +12,23 @@ import { emojiSchema } from "../types/Emoji.js";
 describe(`listGuildEmojis`, () => {
   const expected = mockRequest.get(
     `/guilds/:guild/emojis`,
-    emojiSchema.array().length(1)
+    pipe(array(emojiSchema), length(1))
   );
   const config = mockSchema(listGuildEmojisSchema);
 
   it(`can be used standalone`, async () => {
-    await expect(listGuildEmojisSafe(config)).resolves.toStrictEqual(expected);
+    await expect(listGuildEmojisSafe(config)).resolves.toEqual(expected);
   });
 
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(listGuildEmojisProcedure)(config)
-    ).resolves.toStrictEqual(expected);
+    ).resolves.toEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
     const { result } = runQuery(listGuildEmojisQuery, config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toStrictEqual(expected);
+    expect(result.current.data).toEqual(expected);
   });
 });
