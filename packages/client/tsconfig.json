@@ -3,6 +3,7 @@
   "include": ["./src/**/*.ts"],
   "exclude": ["node_modules", "./src/**/*.mock.ts", "./src/**/*.spec.ts", "./dist"],
   "compilerOptions": {
+    "composite": true,
     "rootDir": "src",
     "outDir": "dist",
     "noEmit": false
