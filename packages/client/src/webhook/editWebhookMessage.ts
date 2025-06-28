@@ -26,6 +26,7 @@ import { allowedMentionSchema } from "../messages/types/AllowedMention.js";
 import { attachmentSchema } from "../messages/types/Attachment.js";
 import { messageComponentSchema } from "../messages/types/MessageComponent.js";
 import { EmbedType } from "../messages/types/EmbedType.js";
+import { pollSchema } from "../poll/types/Poll.js";
 
 export const editWebhookMessageSchema = object({
   webhook: snowflake,
@@ -64,9 +65,9 @@ export const editWebhookMessageSchema = object({
       /** JSON encoded body of non-file params (multipart/form-data only) */
       payloadJson: string(),
       /** attachment objects with filename and description */
-      attachments: array(partial(attachmentSchema))
+      attachments: array(partial(attachmentSchema)),
       /** A poll! */
-      // TODO poll: pollSchema
+      poll: pollSchema
     })
   )
 });

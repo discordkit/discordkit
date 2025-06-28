@@ -28,6 +28,7 @@ import { attachmentSchema } from "../messages/types/Attachment.js";
 import { EmbedType } from "../messages/types/EmbedType.js";
 import { messageComponentSchema } from "../messages/types/MessageComponent.js";
 import { messageFlag } from "../messages/types/MessageFlag.js";
+import { pollSchema } from "../poll/types/Poll.js";
 
 export const executeWebhookSchema = object({
   webhook: snowflake,
@@ -79,9 +80,9 @@ export const executeWebhookSchema = object({
       /** name of thread to create (requires the webhook channel to be a forum channel) */
       threadName: pipe(string(), nonEmpty()),
       /** array of tag ids to apply to the thread (requires the webhook channel to be a forum or media channel) */
-      appliedTags: array(snowflake)
+      appliedTags: array(snowflake),
       /** A poll! */
-      // TODO poll: pollSchema
+      poll: pollSchema
     })
   )
 });

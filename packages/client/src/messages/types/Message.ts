@@ -32,6 +32,7 @@ import { messageInteractionSchema } from "./MessageInteraction.js";
 import { messageComponentSchema } from "./MessageComponent.js";
 import { roleSubscriptionDataSchema } from "../../channel/types/RoleSubscriptionData.js";
 import { messageFlag } from "./MessageFlag.js";
+import { pollSchema } from "../../poll/types/Poll.js";
 
 export const messageSchema = object({
   /** id of the message */
@@ -101,9 +102,9 @@ export const messageSchema = object({
   /** data of the role subscription purchase or renewal that prompted this `ROLE_SUBSCRIPTION_PURCHASE` message */
   roleSubscriptionData: exactOptional(roleSubscriptionDataSchema),
   /** data for users, members, channels, and roles in the message's auto-populated select menus */
-  resolved: exactOptional(unknown()) // intentionally unknown because it would cause a cyclical dependency
+  resolved: exactOptional(unknown()), // intentionally unknown because it would cause a cyclical dependency
   /** A poll! */
-  // TODO poll: exactOptional(pollSchema),
+  poll: exactOptional(pollSchema)
   /** the call associated with the message */
   // TODO call: exactOptional(messageCallSchema)
 });
