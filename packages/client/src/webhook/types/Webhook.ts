@@ -11,7 +11,7 @@ import {
   nonEmpty
 } from "valibot";
 import { snowflake } from "@discordkit/core";
-import { channelSchema } from "../../channel/types/Channel.js";
+import { partialChannelSchema } from "../../channel/types/Channel.js";
 import { guildSchema } from "../../guild/types/Guild.js";
 import { userSchema } from "../../user/types/User.js";
 import { webhookTypeSchema } from "./WebhookType.js";
@@ -38,7 +38,7 @@ export const webhookSchema = object({
   /** the guild of the channel that this webhook is following (returned for Channel Follower Webhooks) */
   sourceGuild: exactOptional(partial(guildSchema)),
   /** the channel that this webhook is following (returned for Channel Follower Webhooks) */
-  sourceChannel: exactOptional(channelSchema),
+  sourceChannel: exactOptional(partialChannelSchema),
   /** the url used for executing the webhook (returned by the webhooks OAuth2 flow) */
   url: exactOptional(pipe(string(), url()))
 });

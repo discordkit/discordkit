@@ -27,13 +27,15 @@ import { EmbedType } from "../messages/types/EmbedType.js";
 
 export const editWebhookMessageSchema = object({
   webhook: snowflake,
-  token: pipe(string(), minLength(1)),
+  token: pipe(string(), nonEmpty()),
   message: snowflake,
   params: exactOptional(
     partial(
       object({
         /** id of the thread the message is in */
-        threadId: snowflake
+        threadId: snowflake,
+        /** whether to respect the `components` field of the request. When enabled, allows application-owned webhooks to use all components and non-owned webhooks to use non-interactive components. (defaults to `false`) */
+        withComponents: boolean()
       })
     )
   ),
@@ -57,8 +59,12 @@ export const editWebhookMessageSchema = object({
       components: array(messageComponentSchema),
       /** the contents of the file being sent */
       files: array(unknown()),
+      /** JSON encoded body of non-file params (multipart/form-data only) */
+      payloadJson: string(),
       /** attachment objects with filename and description */
       attachments: array(partial(attachmentSchema))
+      /** A poll! */
+      // TODO poll: pollSchema
     })
   )
 });
@@ -72,7 +78,7 @@ export const editWebhookMessageSchema = object({
  *
  * When the `content` field is edited, the `mentions` array in the message object will be reconstructed from scratch based on the new content. The `allowedMentions` field of the edit request controls how this happens. If there is no explicit `allowedMentions` in the edit request, the content will be parsed with default allowances, that is, without regard to whether or not an `allowedMentions` was present in the request that originally created the message.
  *
- * Refer to Uploading Files for details on attachments and `multipart/form-data` requests. Any provided files will be **appended** to the message. To remove or replace files you will have to supply the `attachments` field which specifies the files to retain on the message after edit.
+ * Refer to [Uploading Files](https://discord.com/developers/docs/reference#uploading-files) for details on attachments and `multipart/form-data` requests. Any provided files will be **appended** to the message. To remove or replace files you will have to supply the `attachments` field which specifies the files to retain on the message after edit.
  *
  * > [!WARNING]
  * >

@@ -1,11 +1,4 @@
-import {
-  pipe,
-  object,
-  string,
-  minLength,
-  partial,
-  exactOptional
-} from "valibot";
+import { pipe, object, string, partial, exactOptional } from "valibot";
 import {
   get,
   type Fetcher,
@@ -18,7 +11,7 @@ import { messageSchema, type Message } from "../messages/types/Message.js";
 
 export const getWebhookMessageSchema = object({
   webhook: snowflake,
-  token: pipe(string(), minLength(1)),
+  token: pipe(string(), nonEmpty()),
   message: snowflake,
   params: exactOptional(
     partial(

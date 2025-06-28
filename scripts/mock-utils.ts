@@ -18,7 +18,7 @@ import type {
 import { Snowflake } from "nodejs-snowflake";
 import { faker } from "@faker-js/faker";
 
-interface DiscordSession {
+interface ClientSession {
   endpoint: string;
   get ready(): boolean;
   setToken: (token: string) => void;
@@ -75,9 +75,7 @@ type GenericTransformationActon =
   | TransformAction<unknown, unknown>
   | TransformActionAsync<unknown, unknown>;
 
-type GenericTransformation =
-  | TransformAction<unknown, unknown>[`operation`]
-  | TransformActionAsync<unknown, unknown>[`operation`];
+type GenericTransformationOperation = GenericTransformationActon[`operation`];
 
 type GenericSchemaWithPipe<TSchema extends Schema> =
   TSchema extends GenericSchema
@@ -105,22 +103,24 @@ type CustomMock = <TSchema extends Schema>(
 ) => unknown;
 
 type CreateMockReturn<
-  C extends Schema | null,
-  R extends Schema | null
-> = C extends Schema
-  ? R extends Schema
-    ? { config: InferOutput<C>; expected: InferOutput<R> }
-    : { config: InferOutput<C>; expected: null }
-  : R extends Schema
-    ? { config: null; expected: InferOutput<R> }
+  TConfig extends Schema | null,
+  TResult extends Schema | null
+> = TConfig extends Schema
+  ? TResult extends Schema
+    ? { config: InferOutput<TConfig>; expected: InferOutput<TResult> }
+    : { config: InferOutput<TConfig>; expected: null }
+  : TResult extends Schema
+    ? { config: null; expected: InferOutput<TResult> }
     : { config: null; expected: null };
 
 export class MockUtils {
+  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   #customMocks: CustomMock = () => {};
-  #discord: DiscordSession;
+  #session: ClientSession;
   #msw: SetupServer = setupServer();
   static uid = new Snowflake({ custom_epoch: 1420070400000 });
 
+  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   get uid(): Snowflake {
     return MockUtils.uid;
   }
@@ -128,12 +128,12 @@ export class MockUtils {
   static #getTransforms([_, ...pipe]:
     | GenericPipe
     | GenericPipeAsync
-    | []): GenericTransformation[] {
+    | []): GenericTransformationOperation[] {
     return (
       pipe as Array<
         GenericPipeItem | GenericPipeItemAsync | GenericTransformationActon
       >
-    ).reduce<GenericTransformation[]>((arr, item) => {
+    ).reduce<GenericTransformationOperation[]>((arr, item) => {
       if (isOfKind(`transformation`, item) && isOfType(`transform`, item)) {
         arr.push(item.operation);
       }
@@ -174,21 +174,23 @@ export class MockUtils {
     `pipe` in val && Array.isArray(val.pipe);
 
   static titlesMatch = (
-    a: SchemaMaybeWithPipe<SchemaMaybeWithTitle>,
-    b: SchemaMaybeWithPipe<SchemaMaybeWithTitle>
-  ): a is typeof b =>
-    this.hasPipe(a) && this.hasPipe(b) && getTitle(a) === getTitle(b);
+    schemaA: SchemaMaybeWithPipe<SchemaMaybeWithTitle>,
+    schemaB: SchemaMaybeWithPipe<SchemaMaybeWithTitle>
+  ): schemaA is typeof schemaB =>
+    this.hasPipe(schemaA) &&
+    this.hasPipe(schemaB) &&
+    getTitle(schemaA) === getTitle(schemaB);
 
   constructor(
-    discord: DiscordSession,
+    discord: ClientSession,
     options?: {
       token?: string;
       customMocks?: CustomMock;
       debug?: boolean;
     }
   ) {
-    this.#discord = discord;
-    this.#discord.setToken(options?.token ?? `Bot super-secret-token`);
+    this.#session = discord;
+    this.#session.setToken(options?.token ?? `Bot super-secret-token`);
     if (options?.customMocks) {
       this.#customMocks = options.customMocks;
     }
@@ -214,10 +216,10 @@ export class MockUtils {
     });
   };
 
-  schema = <T extends Schema>(
-    schema: T,
+  schema = <TSchema extends Schema>(
+    schema: TSchema,
     opts?: Partial<ValimockOptions>
-  ): InferOutput<T> =>
+  ): InferOutput<TSchema> =>
     new Valimock({
       ...opts,
       customMocks: {
@@ -225,6 +227,7 @@ export class MockUtils {
       }
     }).mock(schema);
 
+  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   #serialize = (val: unknown): string => {
     try {
       return JSON.stringify(val);
@@ -238,12 +241,12 @@ export class MockUtils {
   };
 
   #createMock(type: keyof typeof http) {
-    return <C extends Schema, R extends Schema>(
+    return <TConfig extends Schema, TResult extends Schema>(
       path: string,
-      configSchema?: C | null,
-      resultSchema?: R | null,
+      configSchema?: TConfig | null,
+      resultSchema?: TResult | null,
       opts?: Partial<ValimockOptions>
-    ): CreateMockReturn<C, R> => {
+    ): CreateMockReturn<TConfig, TResult> => {
       const config = configSchema ? this.schema(configSchema, opts) : null;
       const expected = resultSchema ? this.schema(resultSchema, opts) : null;
       const result = this.#serialize(expected);
@@ -251,7 +254,7 @@ export class MockUtils {
       try {
         this.#msw.use(
           http[type](
-            new URL(path.replace(/^\//, ``), this.#discord.endpoint).href,
+            new URL(path.replace(/^\//, ``), this.#session.endpoint).href,
             () => {
               try {
                 const response = new Response(result, {
@@ -270,10 +273,11 @@ export class MockUtils {
         throw new Error(`Failed to mock request!`, err);
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
       return {
         config,
         expected
-      } as CreateMockReturn<C, R>;
+      } as CreateMockReturn<TConfig, TResult>;
     };
   }
 
@@ -290,4 +294,9 @@ export class MockUtils {
     post: this.#createMock(`post`),
     put: this.#createMock(`put`)
   };
+
+  [Symbol.dispose](): void {
+    this.#msw.resetHandlers();
+    this.#msw.close();
+  }
 }

@@ -16,7 +16,9 @@ import {
   exactOptional,
   literal,
   picklist,
-  variant
+  variant,
+  partial,
+  required
 } from "valibot";
 import { snowflake, asDigits, asInteger } from "@discordkit/core";
 import { userSchema } from "../../user/types/User.js";
@@ -182,6 +184,15 @@ export const channelSchema = variant(`type`, [
   threadChannelSchema,
   directMessageChannelSchema,
   groupDirectMessageChannelSchema
+]);
+
+export const partialChannelSchema = variant(`type`, [
+  required(partial(guildTextChannelSchema), [`type`]),
+  required(partial(guildVoiceChannelSchema), [`type`]),
+  required(partial(guildForumChannelSchema), [`type`]),
+  required(partial(threadChannelSchema), [`type`]),
+  required(partial(directMessageChannelSchema), [`type`]),
+  required(partial(groupDirectMessageChannelSchema), [`type`])
 ]);
 
 export type Channel = InferOutput<typeof channelSchema>;
