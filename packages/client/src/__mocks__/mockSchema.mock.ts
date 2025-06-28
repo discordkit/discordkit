@@ -23,6 +23,7 @@ import { messageFlag, MessageFlag } from "../messages/types/MessageFlag.js";
 import { permissionFlag, Permissions } from "../permissions/Permissions.js";
 import { roleFlag, RoleFlags } from "../permissions/RoleFlags.js";
 import { userFlag, UserFlags } from "../user/types/UserFlags.js";
+import { skuFlag, SKUFlags } from "../sku/types/SKUFlags.js";
 
 export const mockUtils = new MockUtils(discord, {
   customMocks: (schema): unknown => {
@@ -70,6 +71,9 @@ export const mockUtils = new MockUtils(discord, {
     }
     if (MockUtils.titlesMatch(schema, userFlag)) {
       return MockUtils.applyTransforms(schema, MockUtils.flags(UserFlags));
+    }
+    if (MockUtils.titlesMatch(schema, skuFlag)) {
+      return MockUtils.applyTransforms(schema, MockUtils.flags(SKUFlags));
     }
   }
 });
