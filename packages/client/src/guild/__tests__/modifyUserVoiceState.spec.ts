@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   modifyUserVoiceState,
   modifyUserVoiceStateProcedure,
@@ -12,9 +8,11 @@ import {
   modifyUserVoiceStateSchema
 } from "../modifyUserVoiceState.js";
 
-describe(`modifyUserVoiceState`, () => {
-  mockRequest.patch(`/guilds/:guild/voice-states/:user`);
-  const config = mockSchema(modifyUserVoiceStateSchema);
+describe(`modifyUserVoiceState`, { repeats: 5 }, () => {
+  const { config } = mockUtils.request.patch(
+    `/guilds/:guild/voice-states/:user`,
+    modifyUserVoiceStateSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(modifyUserVoiceStateSafe(config)).resolves.not.toThrow();

@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   createGuildBan,
   createGuildBanProcedure,
@@ -12,9 +8,11 @@ import {
   createGuildBanSchema
 } from "../createGuildBan.js";
 
-describe(`createGuildBan`, () => {
-  mockRequest.put(`/guilds/:guild/bans/:user`);
-  const config = mockSchema(createGuildBanSchema);
+describe(`createGuildBan`, { repeats: 5 }, () => {
+  const { config } = mockUtils.request.put(
+    `/guilds/:guild/bans/:user`,
+    createGuildBanSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(createGuildBanSafe(config)).resolves.not.toThrow();

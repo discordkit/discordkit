@@ -1,6 +1,7 @@
 import { post, type Fetcher, toProcedure, toValidated } from "@discordkit/core";
 import {
   array,
+  intersect,
   literal,
   minLength,
   object,
@@ -39,18 +40,22 @@ export const createGroupDM: Fetcher<
 export const createGroupDMSafe = toValidated(
   createGroupDM,
   createGroupDMSchema,
-  object({
-    ...channelSchema.entries,
-    type: literal(ChannelType.GROUP_DM)
-  })
+  intersect([
+    channelSchema,
+    object({
+      type: literal(ChannelType.GROUP_DM)
+    })
+  ])
 );
 
 export const createGroupDMProcedure = toProcedure(
   `mutation`,
   createGroupDM,
   createGroupDMSchema,
-  object({
-    ...channelSchema.entries,
-    type: literal(ChannelType.GROUP_DM)
-  })
+  intersect([
+    channelSchema,
+    object({
+      type: literal(ChannelType.GROUP_DM)
+    })
+  ])
 );

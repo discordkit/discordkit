@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   modifyGuildMFALevel,
   modifyGuildMFALevelProcedure,
@@ -13,9 +9,12 @@ import {
 } from "../modifyGuildMFALevel.js";
 import { mfaLevelSchema } from "../types/MFALevel.js";
 
-describe(`modifyGuildMFALevel`, () => {
-  const expected = mockRequest.patch(`/guilds/:guild/mfa`, mfaLevelSchema);
-  const config = mockSchema(modifyGuildMFALevelSchema);
+describe(`modifyGuildMFALevel`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.patch(
+    `/guilds/:guild/mfa`,
+    modifyGuildMFALevelSchema,
+    mfaLevelSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(modifyGuildMFALevelSafe(config)).resolves.toEqual(expected);

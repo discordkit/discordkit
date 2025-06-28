@@ -4,9 +4,9 @@ import {
   union,
   literal,
   string,
-  minLength,
   type InferOutput,
-  pipe
+  pipe,
+  nonEmpty
 } from "valibot";
 
 export const overwriteSchema = object({
@@ -15,9 +15,9 @@ export const overwriteSchema = object({
   /** either 0 (role) or 1 (member) */
   type: union([literal(0), literal(1)]),
   /** permission bit set */
-  allow: pipe(string(), minLength(1)),
+  allow: pipe(string(), nonEmpty()),
   /** permission bit set */
-  deny: pipe(string(), minLength(1))
+  deny: pipe(string(), nonEmpty())
 });
 
 export type Overwrite = InferOutput<typeof overwriteSchema>;

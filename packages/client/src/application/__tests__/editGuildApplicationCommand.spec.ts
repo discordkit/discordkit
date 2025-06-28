@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   editGuildApplicationCommand,
   editGuildApplicationCommandProcedure,
@@ -13,12 +9,12 @@ import {
 } from "../editGuildApplicationCommand.js";
 import { applicationCommandSchema } from "../types/ApplicationCommand.js";
 
-describe(`editGuildApplicationCommand`, () => {
-  const expected = mockRequest.patch(
+describe(`editGuildApplicationCommand`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.patch(
     `/applications/:application/guilds/:guild/commands/:command`,
+    editGuildApplicationCommandSchema,
     applicationCommandSchema
   );
-  const config = mockSchema(editGuildApplicationCommandSchema);
 
   it(`can be used standalone`, async () => {
     await expect(editGuildApplicationCommandSafe(config)).resolves.toEqual(

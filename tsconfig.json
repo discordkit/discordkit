@@ -1,5 +1,6 @@
 {
-  "exclude": ["node_modules", "./**/.next/**/*.*", "./**/dist"],
+  "include": ["./**/*.{j,t}s?(x)", "./**/*.spec.ts"],
+  "exclude": ["node_modules", "./scripts", "./**/.next/**/*.*", "./**/dist", "./*.mjs"],
   "compilerOptions": {
     "noEmit": true,
     "declaration": true,
@@ -11,6 +12,7 @@
     "moduleResolution": "NodeNext",
     "baseUrl": ".",
     "paths": {
+      "#mock-utils": ["./scripts/mock-utils.ts"],
       "#test-utils": ["./scripts/test-utils.ts"]
     },
     "isolatedModules": true,

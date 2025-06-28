@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   updateUserApplicationRoleConnection,
   updateUserApplicationRoleConnectionProcedure,
@@ -13,12 +9,12 @@ import {
 } from "../updateUserApplicationRoleConnection.js";
 import { applicationRoleConnectionSchema } from "../../application/types/ApplicationRoleConnection.js";
 
-describe(`updateUserApplicationRoleConnection`, () => {
-  const expected = mockRequest.put(
+describe(`updateUserApplicationRoleConnection`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.put(
     `/users/@me/applications/:application/role-connection`,
+    updateUserApplicationRoleConnectionSchema,
     applicationRoleConnectionSchema
   );
-  const config = mockSchema(updateUserApplicationRoleConnectionSchema);
 
   it(`can be used standalone`, async () => {
     await expect(

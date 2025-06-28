@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   createAutoModerationRule,
   createAutoModerationRuleProcedure,
@@ -13,13 +9,13 @@ import {
 } from "../createAutoModerationRule.js";
 import { moderationRuleSchema } from "../types/ModerationRule.js";
 
-describe(`createAutoModerationRule`, () => {
-  const expected = mockRequest.post(
+describe(`createAutoModerationRule`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.post(
     `/guilds/:guild/auto-moderation/rules`,
+    createAutoModerationRuleSchema,
     moderationRuleSchema,
     { seed: 1 }
   );
-  const config = mockSchema(createAutoModerationRuleSchema);
 
   it(`can be used standalone`, async () => {
     await expect(createAutoModerationRuleSafe(config)).resolves.toEqual(

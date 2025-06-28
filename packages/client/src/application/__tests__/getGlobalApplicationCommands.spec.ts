@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import { array, length, pipe } from "valibot";
 import {
   getGlobalApplicationCommandsSchema,
@@ -9,12 +10,12 @@ import {
 } from "../getGlobalApplicationCommands.js";
 import { applicationCommandSchema } from "../types/ApplicationCommand.js";
 
-describe(`getGlobalApplicationCommands`, () => {
-  const expected = mockRequest.get(
+describe(`getGlobalApplicationCommands`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.get(
     `/applications/:application/commands`,
+    getGlobalApplicationCommandsSchema,
     pipe(array(applicationCommandSchema), length(1))
   );
-  const config = mockSchema(getGlobalApplicationCommandsSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getGlobalApplicationCommandsSafe(config)).resolves.toEqual(

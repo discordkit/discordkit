@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   createGlobalApplicationCommandProcedure,
   createGlobalApplicationCommand,
@@ -13,12 +9,12 @@ import {
 } from "../createGlobalApplicationCommand.js";
 import { applicationCommandSchema } from "../types/ApplicationCommand.js";
 
-describe(`createGlobalApplicationCommand`, () => {
-  const expected = mockRequest.post(
+describe(`createGlobalApplicationCommand`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.post(
     `/applications/:application/commands`,
+    createGlobalApplicationCommandSchema,
     applicationCommandSchema
   );
-  const config = mockSchema(createGlobalApplicationCommandSchema);
 
   it(`can be used standalone`, async () => {
     await expect(createGlobalApplicationCommandSafe(config)).resolves.toEqual(

@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import { array, length, pipe } from "valibot";
 import {
   listVoiceRegionsProcedure,
@@ -8,9 +9,10 @@ import {
 } from "../listVoiceRegions.js";
 import { voiceRegionSchema } from "../types/VoiceRegion.js";
 
-describe(`listVoiceRegions`, () => {
-  const expected = mockRequest.get(
+describe(`listVoiceRegions`, { repeats: 5 }, () => {
+  const { expected } = mockUtils.request.get(
     `/voice/regions`,
+    null,
     pipe(array(voiceRegionSchema), length(1))
   );
 

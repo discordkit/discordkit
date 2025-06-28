@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   modifyGuildWelcomeScreen,
   modifyGuildWelcomeScreenProcedure,
@@ -13,12 +9,12 @@ import {
 } from "../modifyGuildWelcomeScreen.js";
 import { welcomeScreenSchema } from "../types/WelcomeScreen.js";
 
-describe(`modifyGuildWelcomeScreen`, () => {
-  const expected = mockRequest.patch(
+describe(`modifyGuildWelcomeScreen`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.patch(
     `/guilds/:guild/welcome-screen`,
+    modifyGuildWelcomeScreenSchema,
     welcomeScreenSchema
   );
-  const config = mockSchema(modifyGuildWelcomeScreenSchema);
 
   it(`can be used standalone`, async () => {
     await expect(modifyGuildWelcomeScreenSafe(config)).resolves.toEqual(

@@ -22,11 +22,11 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { embedSchema } from "../channel/types/Embed.js";
-import { allowedMentionSchema } from "../channel/types/AllowedMention.js";
-import { attachmentSchema } from "../channel/types/Attachment.js";
-import { EmbedType } from "../channel/types/EmbedType.js";
-import { messageComponentSchema } from "../channel/types/MessageComponent.js";
+import { embedSchema } from "../messages/types/Embed.js";
+import { allowedMentionSchema } from "../messages/types/AllowedMention.js";
+import { attachmentSchema } from "../messages/types/Attachment.js";
+import { EmbedType } from "../messages/types/EmbedType.js";
+import { messageComponentSchema } from "../messages/types/MessageComponent.js";
 
 export const executeWebhookSchema = object({
   webhook: snowflake,

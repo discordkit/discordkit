@@ -2,8 +2,9 @@ import {
   type GenericSchema,
   type GenericSchemaAsync,
   type InferOutput,
-  parseAsync,
-  isOfKind
+  isOfKind,
+  safeParseAsync,
+  summarize
 } from "valibot";
 import type { Fetcher } from "./methods.js";
 
@@ -40,14 +41,24 @@ export const toValidated = <
     async apply(target, _, [config]): Promise<ReturnType<F>> {
       // Validate the fetcher args before fetching
       if (input && isOfKind(`schema`, input)) {
-        await parseAsync(input, config);
+        const { issues } = await safeParseAsync(input, config);
+        if (issues) {
+          throw new Error(
+            `Failed to parse input schema: ${input.reference.name}\n\n${summarize(issues)}`
+          );
+        }
       }
 
       const result = await target(config);
 
       // Validate the result of the fetch call before returning
       if (output && isOfKind(`schema`, output)) {
-        await parseAsync(output, result);
+        const { issues } = await safeParseAsync(output, result);
+        if (issues) {
+          throw new Error(
+            `Failed to parse input schema: ${output.reference.name}\n\n${summarize(issues)}`
+          );
+        }
       }
 
       return result as ReturnType<F>;

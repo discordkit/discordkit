@@ -1,4 +1,4 @@
-import { mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
 import { parse, pipe, string, url } from "valibot";
 import {
   defaultUserAvatar,
@@ -10,7 +10,7 @@ describe(`defaultUserAvatar`, () => {
     expect(() =>
       parse(
         pipe(string(), url()),
-        defaultUserAvatar(mockSchema(defaultUserAvatarSchema))
+        defaultUserAvatar(mockUtils.schema(defaultUserAvatarSchema))
       )
     ).not.toThrow();
   });

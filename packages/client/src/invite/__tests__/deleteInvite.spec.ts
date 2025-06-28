@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   deleteInvite,
   deleteInviteProcedure,
@@ -13,9 +9,12 @@ import {
 } from "../deleteInvite.js";
 import { inviteSchema } from "../types/Invite.js";
 
-describe(`deleteInvite`, () => {
-  const expected = mockRequest.delete(`/invites/:code`, inviteSchema);
-  const config = mockSchema(deleteInviteSchema);
+describe(`deleteInvite`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.delete(
+    `/invites/:code`,
+    deleteInviteSchema,
+    inviteSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(deleteInviteSafe(config)).resolves.toEqual(expected);

@@ -12,10 +12,10 @@ import {
   pipe,
   string
 } from "valibot";
-import { allowedMentionSchema } from "../../channel/types/AllowedMention.js";
-import { embedSchema } from "../../channel/types/Embed.js";
-import { messageComponentSchema } from "../../channel/types/MessageComponent.js";
-import { attachmentSchema } from "../../channel/types/Attachment.js";
+import { allowedMentionSchema } from "../../messages/types/AllowedMention.js";
+import { embedSchema } from "../../messages/types/Embed.js";
+import { messageComponentSchema } from "../../messages/types/MessageComponent.js";
+import { attachmentSchema } from "../../messages/types/Attachment.js";
 
 export const interactionCallbackDataSchema = object({
   /** is the response TTS */

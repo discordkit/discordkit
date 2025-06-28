@@ -389,6 +389,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@discordkit/core@workspace:packages/core"
   dependencies:
+    type-fest: "npm:^4.41.0"
     typescript: "npm:^5.8.3"
   peerDependencies:
     valibot: ">= 1.0.0"
@@ -3546,6 +3547,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dotenv@npm:^16.5.0":
+  version: 16.5.0
+  resolution: "dotenv@npm:16.5.0"
+  checksum: 10/e68a16834f1a41cc2dfb01563bc150668ad675e6cd09191211467b5c0806b6ecd6ec438e021aa8e01cd0e72d2b70ef4302bec7cc0fe15b6955f85230b62dc8a9
+  languageName: node
+  linkType: hard
+
 "dotenv@npm:^8.1.0":
   version: 8.6.0
   resolution: "dotenv@npm:8.6.0"
@@ -4440,6 +4448,17 @@ __metadata:
   checksum: 10/d0000d6b790059b35f4ed19acc8847a66452e0bc68b28766c929ffd523e5ec2083811fc8a545e4a1d4945ce70e887b3a610c145c681073b506143ae3076342ed
   languageName: node
   linkType: hard
+
+"feedback-scraper@workspace:apps/feedback-scraper":
+  version: 0.0.0-use.local
+  resolution: "feedback-scraper@workspace:apps/feedback-scraper"
+  dependencies:
+    "@discordkit/client": "workspace:^"
+    dotenv: "npm:^16.5.0"
+    tsup: "npm:^8.5.0"
+    valibot: "npm:^1.1.0"
+  languageName: unknown
+  linkType: soft
 
 "file-entry-cache@npm:^8.0.0":
   version: 8.0.0

@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   deleteOriginalInteractionResponse,
   deleteOriginalInteractionResponseProcedure,
@@ -12,9 +8,11 @@ import {
   deleteOriginalInteractionResponseSchema
 } from "../deleteOriginalInteractionResponse.js";
 
-describe(`deleteOriginalInteractionResponse`, () => {
-  mockRequest.delete(`/webhooks/:webhook/:token/messages/:message`);
-  const config = mockSchema(deleteOriginalInteractionResponseSchema);
+describe(`deleteOriginalInteractionResponse`, { repeats: 5 }, () => {
+  const { config } = mockUtils.request.delete(
+    `/webhooks/:webhook/:token/messages/:message`,
+    deleteOriginalInteractionResponseSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(

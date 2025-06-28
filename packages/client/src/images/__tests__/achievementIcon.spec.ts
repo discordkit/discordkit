@@ -1,4 +1,4 @@
-import { mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
 import { parse, pipe, string, url } from "valibot";
 import { achievementIcon, achievementIconSchema } from "../achievementIcon.js";
 
@@ -7,7 +7,7 @@ describe(`achievementIcon`, () => {
     expect(() =>
       parse(
         pipe(string(), url()),
-        achievementIcon(mockSchema(achievementIconSchema))
+        achievementIcon(mockUtils.schema(achievementIconSchema))
       )
     ).not.toThrow();
   });

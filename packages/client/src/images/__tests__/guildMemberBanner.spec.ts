@@ -1,4 +1,4 @@
-import { mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
 import { parse, pipe, string, url } from "valibot";
 import {
   guildMemberBanner,
@@ -10,7 +10,7 @@ describe(`guildMemberBanner`, () => {
     expect(() =>
       parse(
         pipe(string(), url()),
-        guildMemberBanner(mockSchema(guildMemberBannerSchema))
+        guildMemberBanner(mockUtils.schema(guildMemberBannerSchema))
       )
     ).not.toThrow();
   });

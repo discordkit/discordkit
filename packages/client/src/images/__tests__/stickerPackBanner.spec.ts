@@ -1,4 +1,4 @@
-import { mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
 import { parse, pipe, string, url } from "valibot";
 import {
   stickerPackBanner,
@@ -10,7 +10,7 @@ describe(`stickerPackBanner`, () => {
     expect(() =>
       parse(
         pipe(string(), url()),
-        stickerPackBanner(mockSchema(stickerPackBannerSchema))
+        stickerPackBanner(mockUtils.schema(stickerPackBannerSchema))
       )
     ).not.toThrow();
   });

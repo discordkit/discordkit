@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   addGuildMember,
   addGuildMemberProcedure,
@@ -13,12 +9,12 @@ import {
 } from "../addGuildMember.js";
 import { memberSchema } from "../types/Member.js";
 
-describe(`addGuildMember`, () => {
-  const expected = mockRequest.put(
+describe(`addGuildMember`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.put(
     `/guilds/:guild/members/:user`,
+    addGuildMemberSchema,
     memberSchema
   );
-  const config = mockSchema(addGuildMemberSchema);
 
   it(`can be used standalone`, async () => {
     await expect(addGuildMemberSafe(config)).resolves.toEqual(expected);

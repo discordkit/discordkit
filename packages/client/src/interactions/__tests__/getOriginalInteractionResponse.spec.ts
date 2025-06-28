@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import {
   getOriginalInteractionResponseProcedure,
   getOriginalInteractionResponseQuery,
@@ -8,12 +9,12 @@ import {
 } from "../getOriginalInteractionResponse.js";
 import { interactionResponseSchema } from "../types/InteractionResponse.js";
 
-describe(`getOriginalInteractionResponse`, () => {
-  mockRequest.get(
+describe(`getOriginalInteractionResponse`, { repeats: 5 }, () => {
+  const { config } = mockUtils.request.get(
     `/webhooks/:application/:token/messages/@original`,
+    getOriginalInteractionResponseSchema,
     interactionResponseSchema
   );
-  const config = mockSchema(getOriginalInteractionResponseSchema);
 
   it(`can be used standalone`, async () => {
     await expect(

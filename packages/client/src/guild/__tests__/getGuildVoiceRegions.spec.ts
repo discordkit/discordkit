@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import {
   getGuildVoiceRegionsProcedure,
   getGuildVoiceRegionsQuery,
@@ -8,9 +9,12 @@ import {
 } from "../getGuildVoiceRegions.js";
 import { voiceRegionSchema } from "../../voice/types/VoiceRegion.js";
 
-describe(`getGuildVoiceRegions`, () => {
-  const expected = mockRequest.get(`/guilds/:guild/regions`, voiceRegionSchema);
-  const config = mockSchema(getGuildVoiceRegionsSchema);
+describe(`getGuildVoiceRegions`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.get(
+    `/guilds/:guild/regions`,
+    getGuildVoiceRegionsSchema,
+    voiceRegionSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(getGuildVoiceRegionsSafe(config)).resolves.toEqual(expected);

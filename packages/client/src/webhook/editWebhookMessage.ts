@@ -18,12 +18,12 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { messageSchema, type Message } from "../channel/types/Message.js";
-import { embedSchema } from "../channel/types/Embed.js";
-import { allowedMentionSchema } from "../channel/types/AllowedMention.js";
-import { attachmentSchema } from "../channel/types/Attachment.js";
-import { messageComponentSchema } from "../channel/types/MessageComponent.js";
-import { EmbedType } from "../channel/types/EmbedType.js";
+import { messageSchema, type Message } from "../messages/types/Message.js";
+import { embedSchema } from "../messages/types/Embed.js";
+import { allowedMentionSchema } from "../messages/types/AllowedMention.js";
+import { attachmentSchema } from "../messages/types/Attachment.js";
+import { messageComponentSchema } from "../messages/types/MessageComponent.js";
+import { EmbedType } from "../messages/types/EmbedType.js";
 
 export const editWebhookMessageSchema = object({
   webhook: snowflake,

@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import { array, length, pipe } from "valibot";
 import {
   getGuildInvitesProcedure,
@@ -9,12 +10,12 @@ import {
 } from "../getGuildInvites.js";
 import { inviteMetadataSchema } from "../../invite/types/InviteMetadata.js";
 
-describe(`getGuildInvites`, () => {
-  const expected = mockRequest.get(
+describe(`getGuildInvites`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.get(
     `/guilds/:guild/invites`,
+    getGuildInvitesSchema,
     pipe(array(inviteMetadataSchema), length(1))
   );
-  const config = mockSchema(getGuildInvitesSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getGuildInvitesSafe(config)).resolves.toEqual(expected);

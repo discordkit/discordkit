@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import { array, length, pipe } from "valibot";
 import {
   modifyGuildRolePositions,
@@ -12,14 +8,14 @@ import {
   modifyGuildRolePositionsSafe,
   modifyGuildRolePositionsSchema
 } from "../modifyGuildRolePositions.js";
-import { roleSchema } from "../types/Role.js";
+import { roleSchema } from "../../permissions/Role.js";
 
-describe(`modifyGuildRolePositions`, () => {
-  const expected = mockRequest.patch(
+describe(`modifyGuildRolePositions`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.patch(
     `/guilds/:guild/roles`,
+    modifyGuildRolePositionsSchema,
     pipe(array(roleSchema), length(1))
   );
-  const config = mockSchema(modifyGuildRolePositionsSchema);
 
   it(`can be used standalone`, async () => {
     await expect(modifyGuildRolePositionsSafe(config)).resolves.toEqual(

@@ -1,24 +1,20 @@
-import { safeParse, parse, object, any } from "valibot";
-import { Valimock } from "valimock";
-import { Snowflake } from "nodejs-snowflake";
+import { safeParse, parse, object, any, getTitle } from "valibot";
+import { MockUtils } from "#mock-utils";
 import { snowflake } from "../snowflake.js";
+import { discord } from "../DiscordSession.js";
+
+const mockUtils = new MockUtils(discord, {
+  customMocks: (schema): unknown => {
+    if (getTitle(schema) === getTitle(snowflake))
+      return MockUtils.uid.getUniqueID().toString();
+  }
+});
 
 describe(`snowflake`, () => {
-  const uid = new Snowflake({ custom_epoch: 1420070400000 });
-  const mockSchema = new Valimock({
-    customMocks: {
-      custom: (ref) => {
-        if (ref === snowflake) {
-          return uid.getUniqueID().toString();
-        }
-      }
-    }
-  }).mock;
-
   it(`correctly parses Discord Snowflake IDs`, () => {
-    expect(safeParse(snowflake, uid.getUniqueID().toString()).success).toBe(
-      true
-    );
+    expect(
+      safeParse(snowflake, mockUtils.uid.getUniqueID().toString()).success
+    ).toBe(true);
     expect(safeParse(snowflake, null).success).toBe(false);
     expect(() => parse(snowflake, undefined)).toThrow();
   });
@@ -28,7 +24,7 @@ describe(`snowflake`, () => {
       userId: snowflake,
       invalid: any()
     });
-    const actual = mockSchema(sampleSchema);
+    const actual = mockUtils.schema(sampleSchema);
     expect(() => parse(sampleSchema, actual)).not.toThrow();
     expect(parse(sampleSchema, actual).invalid).toBeUndefined();
   });

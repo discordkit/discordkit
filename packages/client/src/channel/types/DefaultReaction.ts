@@ -1,18 +1,18 @@
 import { snowflake } from "@discordkit/core";
 import {
   object,
-  optional,
+  nullable,
   string,
-  minLength,
+  nonEmpty,
   type InferOutput,
   pipe
 } from "valibot";
 
 export const defaultReactionSchema = object({
   /** the id of a guild's custom emoji */
-  emojiId: optional(snowflake),
+  emojiId: nullable(snowflake),
   /** the unicode character of the emoji */
-  emojiName: optional(pipe(string(), minLength(1)))
+  emojiName: nullable(pipe(string(), nonEmpty()))
 });
 
 export type DefaultReaction = InferOutput<typeof defaultReactionSchema>;

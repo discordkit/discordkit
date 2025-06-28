@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   deleteAutoModerationRule,
   deleteAutoModerationRuleProcedure,
@@ -12,9 +8,11 @@ import {
   deleteAutoModerationRuleSchema
 } from "../deleteAutoModerationRule.js";
 
-describe(`deleteAutoModerationRule`, () => {
-  mockRequest.delete(`/guilds/:guild/auto-moderation/rules/:rule`);
-  const config = mockSchema(deleteAutoModerationRuleSchema);
+describe(`deleteAutoModerationRule`, { repeats: 5 }, () => {
+  const { config } = mockUtils.request.delete(
+    `/guilds/:guild/auto-moderation/rules/:rule`,
+    deleteAutoModerationRuleSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(deleteAutoModerationRuleSafe(config)).resolves.not.toThrow();

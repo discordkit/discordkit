@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/prefer-literal-enum-member */
-
 import { enum_ } from "valibot";
+import { bitfield } from "@discordkit/core";
 
 export enum ChannelFlags {
   /** this thread is pinned to the top of its parent `GUILD_FORUM` or `GUILD_MEDIA` channel */
@@ -13,3 +13,8 @@ export enum ChannelFlags {
 }
 
 export const channelFlagsSchema = enum_(ChannelFlags);
+export const channelFlag = bitfield(
+  `channelFlag`,
+  ChannelFlags,
+  `Invalid Channel Flag`
+);

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/prefer-literal-enum-member */
-
 import { enum_ } from "valibot";
+import { bitfield } from "@discordkit/core";
 
 export enum GuildMemberFlags {
   /** Member has left and rejoined the guild */
@@ -14,3 +14,8 @@ export enum GuildMemberFlags {
 }
 
 export const guildMemberFlagsSchema = enum_(GuildMemberFlags);
+export const guildMemberFlag = bitfield(
+  `guildMemberFlag`,
+  GuildMemberFlags,
+  `Invalid Guild Member Flag`
+);

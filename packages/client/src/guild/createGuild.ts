@@ -9,7 +9,6 @@ import {
   number,
   object,
   optional,
-  partial,
   string,
   pipe
 } from "valibot";
@@ -24,7 +23,7 @@ import { channelSchema } from "../channel/types/Channel.js";
 import { verificationLevelSchema } from "./types/VerificationLevel.js";
 import { defaultMessageNotificationLevelSchema } from "./types/DefaultMessageNotificationLevel.js";
 import { explicitContentFilterLevelSchema } from "./types/ExplicitContentFilterLevel.js";
-import { roleSchema } from "./types/Role.js";
+import { roleSchema } from "../permissions/Role.js";
 import { guildSchema, type Guild } from "./types/Guild.js";
 
 export const createGuildSchema = object({
@@ -44,7 +43,7 @@ export const createGuildSchema = object({
     /** new guild roles */
     roles: nullish(array(roleSchema)),
     /** new guild's channels */
-    channels: nullish(array(partial(channelSchema))),
+    channels: nullish(array(channelSchema)),
     /** id for afk channel */
     afkChannelId: nullish(snowflake),
     /** afk timeout in seconds */

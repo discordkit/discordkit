@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   editApplicationCommandPermissions,
   editApplicationCommandPermissionsProcedure,
@@ -13,12 +9,12 @@ import {
 } from "../editApplicationCommandPermissions.js";
 import { guildApplicationCommandPermissionsSchema } from "../types/GuildApplicationCommandPermissions.js";
 
-describe(`editApplicationCommandPermissions`, () => {
-  const expected = mockRequest.patch(
+describe(`editApplicationCommandPermissions`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.patch(
     `/applications/:application/guilds/:guild/commands/:command/permissions`,
+    editApplicationCommandPermissionsSchema,
     guildApplicationCommandPermissionsSchema
   );
-  const config = mockSchema(editApplicationCommandPermissionsSchema);
 
   it(`can be used standalone`, async () => {
     await expect(

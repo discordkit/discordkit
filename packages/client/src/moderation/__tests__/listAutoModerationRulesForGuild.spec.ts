@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import { array, length, pipe } from "valibot";
 import {
   listAutoModerationRulesForGuildProcedure,
@@ -9,13 +10,13 @@ import {
 } from "../listAutoModerationRulesForGuild.js";
 import { moderationRuleSchema } from "../types/ModerationRule.js";
 
-describe(`listAutoModerationRulesForGuild`, () => {
-  const expected = mockRequest.get(
+describe(`listAutoModerationRulesForGuild`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.get(
     `/guilds/:guild/auto-moderation/rules`,
+    listAutoModerationRulesForGuildSchema,
     pipe(array(moderationRuleSchema), length(1)),
     { seed: 1 }
   );
-  const config = mockSchema(listAutoModerationRulesForGuildSchema);
 
   it(`can be used standalone`, async () => {
     await expect(listAutoModerationRulesForGuildSafe(config)).resolves.toEqual(

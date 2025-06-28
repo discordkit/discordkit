@@ -1,14 +1,14 @@
+import type { InferOutput } from "valibot";
 import {
   array,
+  exactOptional,
   integer,
   maxLength,
   maxValue,
   minLength,
   minValue,
-  nullish,
   number,
   object,
-  optional,
   partial,
   pipe,
   string,
@@ -19,15 +19,17 @@ import {
   type Fetcher,
   toProcedure,
   toValidated,
-  snowflake
+  snowflake,
+  asInteger
 } from "@discordkit/core";
-import { type Channel, channelSchema } from "./types/Channel.js";
+import { threadChannelSchema } from "./types/Channel.js";
 import { autoArchiveDurationSchema } from "./types/AutoArchiveDuration.js";
-import { embedSchema } from "./types/Embed.js";
-import { allowedMentionSchema } from "./types/AllowedMention.js";
-import { attachmentSchema } from "./types/Attachment.js";
-import { messageComponentSchema } from "./types/MessageComponent.js";
-import { type Message, messageSchema } from "./types/Message.js";
+import { embedSchema } from "../messages/types/Embed.js";
+import { allowedMentionSchema } from "../messages/types/AllowedMention.js";
+import { attachmentSchema } from "../messages/types/Attachment.js";
+import { messageComponentSchema } from "../messages/types/MessageComponent.js";
+import { messageSchema } from "../messages/types/Message.js";
+import { messageFlag } from "../messages/index.js";
 
 export const startThreadInForumOrMediaChannelSchema = object({
   channel: snowflake,
@@ -35,36 +37,47 @@ export const startThreadInForumOrMediaChannelSchema = object({
     /** 1-100 character channel name */
     name: pipe(string(), minLength(1), maxLength(100)),
     /** duration in minutes to automatically archive the thread after recent activity, can be set to: 60, 1440, 4320, 10080 */
-    autoArchiveDuration: nullish(autoArchiveDurationSchema),
+    autoArchiveDuration: exactOptional(autoArchiveDurationSchema),
     /** amount of seconds a user has to wait before sending another message (0-21600) */
-    rateLimitPerUser: nullish(
+    rateLimitPerUser: exactOptional(
       pipe(number(), integer(), minValue(0), maxValue(21600))
     ),
     /** contents of the first message in the forum thread */
     message: partial(
       object({
         /** Message contents (up to 2000 characters) */
-        content: nullish(pipe(string(), minLength(1), maxLength(2000))),
+        content: pipe(string(), minLength(1), maxLength(2000)),
         /** Embedded rich content (up to 6000 characters) */
-        embeds: nullish(array(embedSchema)),
+        embeds: array(embedSchema),
         /** Allowed mentions for the message */
-        allowedMentions: nullish(allowedMentionSchema),
+        allowedMentions: allowedMentionSchema,
         /** Components to include with the message */
-        components: nullish(messageComponentSchema),
+        components: messageComponentSchema,
         /** IDs of up to 3 stickers in the server to send in the message */
-        stickerIds: nullish(pipe(array(string()), maxLength(3))),
-        /** Contents of the file being sent. See Uploading Files */
-        files: optional(unknown()),
+        stickerIds: pipe(array(string()), maxLength(3)),
         /** Attachment objects with filename and description. See Uploading Files */
-        attachments: nullish(array(partial(attachmentSchema))),
-        /** Message flags combined as a bitfield (only SUPPRESS_EMBEDS can be set) */
-        flags: nullish(pipe(number(), integer()))
+        attachments: array(partial(attachmentSchema)),
+        /** Message flags combined as a bitfield (only `SUPPRESS_EMBEDS` and `SUPPRESS_NOTIFICATIONS` can be set) */
+        flags: asInteger(messageFlag)
       })
     ),
     /** the IDs of the set of tags that have been applied to a thread in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */
-    appliedTags: nullish(array(snowflake))
+    appliedTags: exactOptional(array(snowflake)),
+    /** 	Contents of the file being sent. See Uploading Files */
+    files: exactOptional(unknown()),
+    /** JSON-encoded body of non-file params, only for `multipart/form-data` requests. See Uploading Files */
+    payloadJson: exactOptional(unknown())
   })
 });
+
+export const threadInForumOrMediaChannelResponseSchema = object({
+  ...threadChannelSchema.entries,
+  message: messageSchema
+});
+
+export type ThreadInForumOrMediaChannelResponse = InferOutput<
+  typeof threadInForumOrMediaChannelResponseSchema
+>;
 
 /**
  * ### [Start Thread in Forum or Media Channel](https://discord.com/developers/docs/resources/channel#start-thread-in-forum-or-media-channel)
@@ -92,24 +105,18 @@ export const startThreadInForumOrMediaChannelSchema = object({
  */
 export const startThreadInForumOrMediaChannel: Fetcher<
   typeof startThreadInForumOrMediaChannelSchema,
-  Channel & { message: Message }
+  ThreadInForumOrMediaChannelResponse
 > = async ({ channel, body }) => post(`/channels/${channel}/threads`, body);
 
 export const startThreadInForumOrMediaChannelSafe = toValidated(
   startThreadInForumOrMediaChannel,
   startThreadInForumOrMediaChannelSchema,
-  object({
-    ...channelSchema.entries,
-    message: messageSchema
-  })
+  threadInForumOrMediaChannelResponseSchema
 );
 
 export const startThreadInForumOrMediaChannelProcedure = toProcedure(
   `mutation`,
   startThreadInForumOrMediaChannel,
   startThreadInForumOrMediaChannelSchema,
-  object({
-    ...channelSchema.entries,
-    message: messageSchema
-  })
+  threadInForumOrMediaChannelResponseSchema
 );

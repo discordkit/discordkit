@@ -1,25 +1,25 @@
-import { union, literal, type InferOutput } from "valibot";
+import { picklist, type InferOutput } from "valibot";
 
-export const servicesSchema = union([
-  literal(`battlenet`),
-  literal(`ebay`),
-  literal(`epicgames`),
-  literal(`facebook`),
-  literal(`github`),
-  literal(`instagram`),
-  literal(`leagueoflegends`),
-  literal(`paypal`),
-  literal(`playstation`),
-  literal(`reddit`),
-  literal(`riotgames`),
-  literal(`spotify`),
-  literal(`skype`),
-  literal(`steam`),
-  literal(`tiktok`),
-  literal(`twitch`),
-  literal(`twitter`),
-  literal(`xbox`),
-  literal(`youtube`)
+export const servicesSchema = picklist([
+  `battlenet`,
+  `ebay`,
+  `epicgames`,
+  `facebook`,
+  `github`,
+  `instagram`,
+  `leagueoflegends`,
+  `paypal`,
+  `playstation`,
+  `reddit`,
+  `riotgames`,
+  `spotify`,
+  `skype`,
+  `steam`,
+  `tiktok`,
+  `twitch`,
+  `twitter`,
+  `xbox`,
+  `youtube`
 ]);
 
 export type Services = InferOutput<typeof servicesSchema>;

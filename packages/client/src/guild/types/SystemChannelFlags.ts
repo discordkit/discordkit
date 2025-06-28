@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/prefer-literal-enum-member */
-
 import { enum_ } from "valibot";
+import { bitfield } from "@discordkit/core";
 
 export enum SystemChannelFlags {
   /** Suppress member join notifications */
@@ -18,3 +18,8 @@ export enum SystemChannelFlags {
 }
 
 export const systemChannelFlagsSchema = enum_(SystemChannelFlags);
+export const systemChannelFlag = bitfield(
+  `systemChannelFlag`,
+  SystemChannelFlags,
+  `Invalid System Channel Flag`
+);

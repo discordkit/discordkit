@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import {
   getUserProcedure,
   getUserQuery,
@@ -8,9 +9,12 @@ import {
 } from "../getUser.js";
 import { userSchema } from "../types/User.js";
 
-describe(`getUser`, () => {
-  const expected = mockRequest.get(`/users/:user`, userSchema);
-  const config = mockSchema(getUserSchema);
+describe(`getUser`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.get(
+    `/users/:user`,
+    getUserSchema,
+    userSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(getUserSafe(config)).resolves.toEqual(expected);

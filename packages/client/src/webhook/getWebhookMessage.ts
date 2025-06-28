@@ -14,7 +14,7 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { messageSchema, type Message } from "../channel/types/Message.js";
+import { messageSchema, type Message } from "../messages/types/Message.js";
 
 export const getWebhookMessageSchema = object({
   webhook: snowflake,

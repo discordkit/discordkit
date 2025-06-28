@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import { array, length, pipe } from "valibot";
 import {
   listGuildEmojisProcedure,
@@ -9,12 +10,12 @@ import {
 } from "../listGuildEmojis.js";
 import { emojiSchema } from "../types/Emoji.js";
 
-describe(`listGuildEmojis`, () => {
-  const expected = mockRequest.get(
+describe(`listGuildEmojis`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.get(
     `/guilds/:guild/emojis`,
+    listGuildEmojisSchema,
     pipe(array(emojiSchema), length(1))
   );
-  const config = mockSchema(listGuildEmojisSchema);
 
   it(`can be used standalone`, async () => {
     await expect(listGuildEmojisSafe(config)).resolves.toEqual(expected);

@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import {
   getInviteProcedure,
   getInviteQuery,
@@ -8,9 +9,12 @@ import {
 } from "../getInvite.js";
 import { inviteSchema } from "../types/Invite.js";
 
-describe(`getInvite`, () => {
-  const expected = mockRequest.get(`/invites/:code`, inviteSchema);
-  const config = mockSchema(getInviteSchema);
+describe(`getInvite`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.get(
+    `/invites/:code`,
+    getInviteSchema,
+    inviteSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(getInviteSafe(config)).resolves.toEqual(expected);
