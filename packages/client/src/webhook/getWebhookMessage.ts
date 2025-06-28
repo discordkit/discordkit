@@ -1,4 +1,11 @@
-import { pipe, object, string, partial, exactOptional } from "valibot";
+import {
+  pipe,
+  object,
+  string,
+  partial,
+  exactOptional,
+  nonEmpty
+} from "valibot";
 import {
   get,
   type Fetcher,

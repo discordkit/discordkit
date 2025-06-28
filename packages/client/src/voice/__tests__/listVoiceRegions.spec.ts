@@ -21,9 +21,9 @@ describe(`listVoiceRegions`, { repeats: 5 }, () => {
   });
 
   it(`is tRPC compatible`, async () => {
-    await expect(
-      runProcedure(listVoiceRegionsProcedure)(null)
-    ).resolves.toEqual(expected);
+    await expect(runProcedure(listVoiceRegionsProcedure)()).resolves.toEqual(
+      expected
+    );
   });
 
   it(`is react-query compatible`, async () => {
