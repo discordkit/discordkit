@@ -51,7 +51,7 @@ export const modifyGuildStickerSafe = toValidated(
 );
 
 export const modifyGuildStickerProcedure = toProcedure(
-  `query`,
+  `mutation`,
   modifyGuildSticker,
   modifyGuildStickerSchema,
   stickerSchema

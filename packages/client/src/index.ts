@@ -16,6 +16,7 @@ export * from "./moderation/index.js";
 export * from "./permissions/index.js";
 export * from "./poll/index.js";
 export * from "./sku/index.js";
+export * from "./soundboard/index.js";
 export * from "./stage/index.js";
 export * from "./sticker/index.js";
 export * from "./template/index.js";

@@ -10,6 +10,7 @@ export * from "./logs/procedures.js";
 export * from "./moderation/procedures.js";
 export * from "./poll/procedures.js";
 export * from "./sku/procedures.js";
+export * from "./soundboard/procedures.js";
 export * from "./stage/procedures.js";
 export * from "./sticker/procedures.js";
 export * from "./template/procedures.js";
