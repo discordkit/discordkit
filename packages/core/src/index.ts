@@ -3,6 +3,7 @@ export * from "./asDigits.js";
 export * from "./asInteger.js";
 export * from "./buildURL.js";
 export * from "./bitfield.js";
+export * from "./datauri.js";
 export * from "./getAsset.js";
 export * from "./methods.js";
 export * from "./toProcedure.js";
