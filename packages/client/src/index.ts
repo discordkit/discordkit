@@ -9,6 +9,7 @@ export * from "./guild/index.js";
 export * from "./images/index.js";
 export * from "./interactions/index.js";
 export * from "./invite/index.js";
+export * from "./lobby/index.js";
 export * from "./logs/index.js";
 export * from "./messages/index.js";
 export * from "./moderation/index.js";

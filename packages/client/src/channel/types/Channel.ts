@@ -62,14 +62,18 @@ export const commonChannelSchema = object({
   flags: exactOptional(asInteger(channelFlag))
 });
 
+export const guildOrganizationChannelSchema = object({
+  ...commonChannelSchema.entries,
+  type: picklist([ChannelType.GUILD_CATEGORY, ChannelType.GUILD_DIRECTORY]),
+  /** the id of the guild (may be missing for some channel objects received over gateway guild dispatches) */
+  guildId: exactOptional(snowflake),
+  /** sorting position of the channel */
+  position: exactOptional(pipe(number(), minValue(0)))
+});
+
 export const guildTextChannelSchema = object({
   ...commonChannelSchema.entries,
-  type: picklist([
-    ChannelType.GUILD_ANNOUNCEMENT,
-    ChannelType.GUILD_CATEGORY,
-    ChannelType.GUILD_DIRECTORY,
-    ChannelType.GUILD_TEXT
-  ]),
+  type: picklist([ChannelType.GUILD_ANNOUNCEMENT, ChannelType.GUILD_TEXT]),
   /** the id of the guild (may be missing for some channel objects received over gateway guild dispatches) */
   guildId: exactOptional(snowflake),
   /** for guild channels: id of the parent category for a channel (each parent category can contain up to 50 channels), for threads: id of the text channel this thread was created */
@@ -178,6 +182,7 @@ export const groupDirectMessageChannelSchema = object({
 
 // https://discord.com/developers/docs/resources/channel#channel-object-channel-structure
 export const channelSchema = variant(`type`, [
+  guildOrganizationChannelSchema,
   guildTextChannelSchema,
   guildVoiceChannelSchema,
   guildForumChannelSchema,
@@ -187,6 +192,7 @@ export const channelSchema = variant(`type`, [
 ]);
 
 export const partialChannelSchema = variant(`type`, [
+  required(partial(guildOrganizationChannelSchema), [`type`]),
   required(partial(guildTextChannelSchema), [`type`]),
   required(partial(guildVoiceChannelSchema), [`type`]),
   required(partial(guildForumChannelSchema), [`type`]),

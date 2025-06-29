@@ -5,6 +5,7 @@ export * from "./event/procedures.js";
 export * from "./guild/procedures.js";
 export * from "./interactions/procedures.js";
 export * from "./invite/procedures.js";
+export * from "./lobby/procedures.js";
 export * from "./logs/procedures.js";
 export * from "./moderation/procedures.js";
 export * from "./poll/procedures.js";
