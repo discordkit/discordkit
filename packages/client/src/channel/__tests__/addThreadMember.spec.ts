@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   addThreadMember,
   addThreadMemberProcedure,
@@ -12,9 +8,11 @@ import {
   addThreadMemberSchema
 } from "../addThreadMember.js";
 
-describe(`addThreadMember`, () => {
-  mockRequest.put(`/channels/:channel/thread-members/:user`);
-  const config = mockSchema(addThreadMemberSchema);
+describe(`addThreadMember`, { repeats: 5 }, () => {
+  const { config } = mockUtils.request.put(
+    `/channels/:channel/thread-members/:user`,
+    addThreadMemberSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(addThreadMemberSafe(config)).resolves.not.toThrow();

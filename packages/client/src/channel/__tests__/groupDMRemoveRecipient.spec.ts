@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   groupDMRemoveRecipient,
   groupDMRemoveRecipientProcedure,
@@ -12,9 +8,11 @@ import {
   groupDMRemoveRecipientSchema
 } from "../groupDMRemoveRecipient.js";
 
-describe(`groupDMRemoveRecipient`, () => {
-  mockRequest.delete(`/channels/:channel/recipients/:user`);
-  const config = mockSchema(groupDMRemoveRecipientSchema);
+describe(`groupDMRemoveRecipient`, { repeats: 5 }, () => {
+  const { config } = mockUtils.request.delete(
+    `/channels/:channel/recipients/:user`,
+    groupDMRemoveRecipientSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(groupDMRemoveRecipientSafe(config)).resolves.not.toThrow();

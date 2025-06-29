@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import {
   getStageInstanceProcedure,
   getStageInstanceQuery,
@@ -8,9 +9,12 @@ import {
 } from "../getStageInstance.js";
 import { stageSchema } from "../types/Stage.js";
 
-describe(`getStageInstance`, () => {
-  const expected = mockRequest.get(`/stage-instances/:channel`, stageSchema);
-  const config = mockSchema(getStageInstanceSchema);
+describe(`getStageInstance`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.get(
+    `/stage-instances/:channel`,
+    getStageInstanceSchema,
+    stageSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(getStageInstanceSafe(config)).resolves.toEqual(expected);

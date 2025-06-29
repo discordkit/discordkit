@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import { array, length, pipe } from "valibot";
 import {
   getGuildRolesProcedure,
@@ -7,14 +8,14 @@ import {
   getGuildRolesSafe,
   getGuildRolesSchema
 } from "../getGuildRoles.js";
-import { roleSchema } from "../types/Role.js";
+import { roleSchema } from "../../permissions/Role.js";
 
-describe(`getGuildRoles`, () => {
-  const expected = mockRequest.get(
+describe(`getGuildRoles`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.get(
     `/guilds/:guild/roles`,
+    getGuildRolesSchema,
     pipe(array(roleSchema), length(1))
   );
-  const config = mockSchema(getGuildRolesSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getGuildRolesSafe(config)).resolves.toEqual(expected);

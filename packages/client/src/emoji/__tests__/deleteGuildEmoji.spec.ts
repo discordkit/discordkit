@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   deleteGuildEmoji,
   deleteGuildEmojiProcedure,
@@ -12,9 +8,11 @@ import {
   deleteGuildEmojiSchema
 } from "../deleteGuildEmoji.js";
 
-describe(`deleteGuildEmoji`, () => {
-  mockRequest.delete(`/guilds/:guild/emojis/:emoji`);
-  const config = mockSchema(deleteGuildEmojiSchema);
+describe(`deleteGuildEmoji`, { repeats: 5 }, () => {
+  const { config } = mockUtils.request.delete(
+    `/guilds/:guild/emojis/:emoji`,
+    deleteGuildEmojiSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(deleteGuildEmojiSafe(config)).resolves.not.toThrow();

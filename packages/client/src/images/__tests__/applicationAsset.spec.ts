@@ -1,4 +1,4 @@
-import { mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
 import { parse, pipe, string, url } from "valibot";
 import {
   applicationAsset,
@@ -10,7 +10,7 @@ describe(`applicationAsset`, () => {
     expect(() =>
       parse(
         pipe(string(), url()),
-        applicationAsset(mockSchema(applicationAssetSchema))
+        applicationAsset(mockUtils.schema(applicationAssetSchema))
       )
     ).not.toThrow();
   });

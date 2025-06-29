@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   modifyChannel,
   modifyChannelProcedure,
@@ -13,9 +9,12 @@ import {
 } from "../modifyChannel.js";
 import { channelSchema } from "../types/Channel.js";
 
-describe(`modifyChannel`, () => {
-  const expected = mockRequest.patch(`/channels/:channel`, channelSchema);
-  const config = mockSchema(modifyChannelSchema);
+describe(`modifyChannel`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.patch(
+    `/channels/:channel`,
+    modifyChannelSchema,
+    channelSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(modifyChannelSafe(config)).resolves.toEqual(expected);

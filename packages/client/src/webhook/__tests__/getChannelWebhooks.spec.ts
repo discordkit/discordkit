@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import { array, length, pipe } from "valibot";
 import {
   getChannelWebhooksProcedure,
@@ -9,12 +10,12 @@ import {
 } from "../getChannelWebhooks.js";
 import { webhookSchema } from "../types/Webhook.js";
 
-describe(`getChannelWebhooks`, () => {
-  const expected = mockRequest.get(
+describe(`getChannelWebhooks`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.get(
     `/channels/:channel/webhooks`,
+    getChannelWebhooksSchema,
     pipe(array(webhookSchema), length(1))
   );
-  const config = mockSchema(getChannelWebhooksSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getChannelWebhooksSafe(config)).resolves.toEqual(expected);

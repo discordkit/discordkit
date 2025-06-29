@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   createGuildChannel,
   createGuildChannelProcedure,
@@ -13,9 +9,12 @@ import {
 } from "../createGuildChannel.js";
 import { channelSchema } from "../../channel/types/Channel.js";
 
-describe(`createGuildChannel`, () => {
-  const expected = mockRequest.post(`/guilds/:guild/channels`, channelSchema);
-  const config = mockSchema(createGuildChannelSchema);
+describe(`createGuildChannel`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.post(
+    `/guilds/:guild/channels`,
+    createGuildChannelSchema,
+    channelSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(createGuildChannelSafe(config)).resolves.toEqual(expected);

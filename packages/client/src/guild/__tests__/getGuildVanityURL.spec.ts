@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import { partial } from "valibot";
 import {
   getGuildVanityURLProcedure,
@@ -9,12 +10,12 @@ import {
 } from "../getGuildVanityURL.js";
 import { inviteSchema } from "../../invite/types/Invite.js";
 
-describe(`getGuildVanityURL`, () => {
-  const expected = mockRequest.get(
+describe(`getGuildVanityURL`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.get(
     `/guilds/:guild/vanity-url`,
+    getGuildVanityURLSchema,
     partial(inviteSchema)
   );
-  const config = mockSchema(getGuildVanityURLSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getGuildVanityURLSafe(config)).resolves.toEqual(expected);

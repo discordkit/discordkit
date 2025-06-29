@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import {
   getThreadMemberProcedure,
   getThreadMemberQuery,
@@ -8,12 +9,12 @@ import {
 } from "../getThreadMember.js";
 import { threadMemberSchema } from "../types/ThreadMember.js";
 
-describe(`getThreadMember`, () => {
-  const expected = mockRequest.get(
+describe(`getThreadMember`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.get(
     `/channels/:channel/thread-members/:user`,
+    getThreadMemberSchema,
     threadMemberSchema
   );
-  const config = mockSchema(getThreadMemberSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getThreadMemberSafe(config)).resolves.toEqual(expected);

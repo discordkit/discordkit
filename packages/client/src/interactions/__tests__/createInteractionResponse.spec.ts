@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   createInteractionResponse,
   createInteractionResponseProcedure,
@@ -12,9 +8,11 @@ import {
   createInteractionResponseSchema
 } from "../createInteractionResponse.js";
 
-describe(`createInteractionResponse`, () => {
-  mockRequest.post(`/interactions/:interaction/:token/callback`);
-  const config = mockSchema(createInteractionResponseSchema);
+describe(`createInteractionResponse`, { repeats: 5 }, () => {
+  const { config } = mockUtils.request.post(
+    `/interactions/:interaction/:token/callback`,
+    createInteractionResponseSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(createInteractionResponseSafe(config)).resolves.not.toThrow();

@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   deleteChannel,
   deleteChannelProcedure,
@@ -13,9 +9,12 @@ import {
 } from "../deleteChannel.js";
 import { channelSchema } from "../types/Channel.js";
 
-describe(`deleteChannel`, () => {
-  const expected = mockRequest.delete(`/channels/:channel`, channelSchema);
-  const config = mockSchema(deleteChannelSchema);
+describe(`deleteChannel`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.delete(
+    `/channels/:channel`,
+    deleteChannelSchema,
+    channelSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(deleteChannelSafe(config)).resolves.toEqual(expected);

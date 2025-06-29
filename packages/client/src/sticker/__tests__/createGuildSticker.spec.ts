@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   createGuildSticker,
   createGuildStickerProcedure,
@@ -13,9 +9,12 @@ import {
 } from "../createGuildSticker.js";
 import { stickerSchema } from "../types/Sticker.js";
 
-describe(`createGuildSticker`, () => {
-  const expected = mockRequest.post(`/guilds/:guild/stickers`, stickerSchema);
-  const config = mockSchema(createGuildStickerSchema);
+describe(`createGuildSticker`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.post(
+    `/guilds/:guild/stickers`,
+    createGuildStickerSchema,
+    stickerSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(createGuildStickerSafe(config)).resolves.toEqual(expected);

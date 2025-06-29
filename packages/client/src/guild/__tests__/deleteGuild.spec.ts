@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   deleteGuild,
   deleteGuildProcedure,
@@ -12,9 +8,11 @@ import {
   deleteGuildSchema
 } from "../deleteGuild.js";
 
-describe(`deleteGuild`, () => {
-  mockRequest.delete(`/guilds/:guild`);
-  const config = mockSchema(deleteGuildSchema);
+describe(`deleteGuild`, { repeats: 5 }, () => {
+  const { config } = mockUtils.request.delete(
+    `/guilds/:guild`,
+    deleteGuildSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(deleteGuildSafe(config)).resolves.not.toThrow();

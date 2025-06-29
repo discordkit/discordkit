@@ -30,6 +30,8 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "imports": {
+    "#mocks": "./src/__mocks__/mockSchema.mock.ts",
+    "#mock-utils": "../../scripts/mock-utils.ts",
     "#test-utils": "../../scripts/test-utils.ts"
   },
   "exports": {

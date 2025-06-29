@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   beginGuildPrune,
   beginGuildPruneProcedure,
@@ -13,12 +9,12 @@ import {
   guildPruneResultSchema
 } from "../beginGuildPrune.js";
 
-describe(`beginGuildPrune`, () => {
-  const expected = mockRequest.post(
+describe(`beginGuildPrune`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.post(
     `/guilds/:guild/prune`,
+    beginGuildPruneSchema,
     guildPruneResultSchema
   );
-  const config = mockSchema(beginGuildPruneSchema);
 
   it(`can be used standalone`, async () => {
     await expect(beginGuildPruneSafe(config)).resolves.toEqual(expected);

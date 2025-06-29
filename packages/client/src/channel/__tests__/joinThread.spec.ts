@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   joinThread,
   joinThreadProcedure,
@@ -12,9 +8,11 @@ import {
   joinThreadSchema
 } from "../joinThread.js";
 
-describe(`joinThread`, () => {
-  mockRequest.put(`/channels/:channel/thread-members/@me`);
-  const config = mockSchema(joinThreadSchema);
+describe(`joinThread`, { repeats: 5 }, () => {
+  const { config } = mockUtils.request.put(
+    `/channels/:channel/thread-members/@me`,
+    joinThreadSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(joinThreadSafe(config)).resolves.not.toThrow();

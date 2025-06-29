@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   createGuildScheduledEvent,
   createGuildScheduledEventProcedure,
@@ -13,12 +9,12 @@ import {
 } from "../createGuildScheduledEvent.js";
 import { scheduledEventSchema } from "../types/ScheduledEvent.js";
 
-describe(`createGuildScheduledEvent`, () => {
-  const expected = mockRequest.post(
+describe(`createGuildScheduledEvent`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.post(
     `/guilds/:guild/scheduled-events`,
+    createGuildScheduledEventSchema,
     scheduledEventSchema
   );
-  const config = mockSchema(createGuildScheduledEventSchema);
 
   it(`can be used standalone`, async () => {
     await expect(createGuildScheduledEventSafe(config)).resolves.toEqual(

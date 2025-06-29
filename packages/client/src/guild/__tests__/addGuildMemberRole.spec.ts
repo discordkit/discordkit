@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   addGuildMemberRole,
   addGuildMemberRoleProcedure,
@@ -12,9 +8,11 @@ import {
   addGuildMemberRoleSchema
 } from "../addGuildMemberRole.js";
 
-describe(`addGuildMemberRole`, () => {
-  mockRequest.put(`/guilds/:guild/members/:user/roles/:role`);
-  const config = mockSchema(addGuildMemberRoleSchema);
+describe(`addGuildMemberRole`, { repeats: 5 }, () => {
+  const { config } = mockUtils.request.put(
+    `/guilds/:guild/members/:user/roles/:role`,
+    addGuildMemberRoleSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(addGuildMemberRoleSafe(config)).resolves.not.toThrow();

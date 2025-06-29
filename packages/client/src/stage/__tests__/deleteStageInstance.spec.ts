@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   deleteStageInstance,
   deleteStageInstanceProcedure,
@@ -12,9 +8,11 @@ import {
   deleteStageInstanceSchema
 } from "../deleteStageInstance.js";
 
-describe(`deleteStageInstance`, () => {
-  mockRequest.delete(`/stage-instances/:channel`);
-  const config = mockSchema(deleteStageInstanceSchema);
+describe(`deleteStageInstance`, { repeats: 5 }, () => {
+  const { config } = mockUtils.request.delete(
+    `/stage-instances/:channel`,
+    deleteStageInstanceSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(deleteStageInstanceSafe(config)).resolves.not.toThrow();

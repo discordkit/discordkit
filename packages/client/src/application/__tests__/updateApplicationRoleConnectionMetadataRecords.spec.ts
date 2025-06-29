@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import { array, length, pipe } from "valibot";
 import {
   updateApplicationRoleConnectionMetadataRecordsProcedure,
@@ -14,35 +10,37 @@ import {
 } from "../updateApplicationRoleConnectionMetadataRecords.js";
 import { applicationRoleConnectionMetadataSchema } from "../types/ApplicationRoleConnectionMetadata.js";
 
-describe(`updateApplicationRoleConnectionMetadataRecords`, () => {
-  const expected = mockRequest.put(
-    `/applications/:application/role-connections/metadata`,
-    pipe(array(applicationRoleConnectionMetadataSchema), length(1))
-  );
-  const config = mockSchema(
-    updateApplicationRoleConnectionMetadataRecordsSchema
-  );
-
-  it(`can be used standalone`, async () => {
-    await expect(
-      updateApplicationRoleConnectionMetadataRecordsSafe(config)
-    ).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
-    await expect(
-      runProcedure(updateApplicationRoleConnectionMetadataRecordsProcedure)(
-        config
-      )
-    ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(
-      updateApplicationRoleConnectionMetadataRecords
+describe(
+  `updateApplicationRoleConnectionMetadataRecords`,
+  { repeats: 5 },
+  () => {
+    const { config, expected } = mockUtils.request.put(
+      `/applications/:application/role-connections/metadata`,
+      updateApplicationRoleConnectionMetadataRecordsSchema,
+      pipe(array(applicationRoleConnectionMetadataSchema), length(1))
     );
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
-  });
-});
+
+    it(`can be used standalone`, async () => {
+      await expect(
+        updateApplicationRoleConnectionMetadataRecordsSafe(config)
+      ).resolves.toEqual(expected);
+    });
+
+    it(`is tRPC compatible`, async () => {
+      await expect(
+        runProcedure(updateApplicationRoleConnectionMetadataRecordsProcedure)(
+          config
+        )
+      ).resolves.toEqual(expected);
+    });
+
+    it(`is react-query compatible`, async () => {
+      const { result } = runMutation(
+        updateApplicationRoleConnectionMetadataRecords
+      );
+      result.current.mutate(config);
+      await waitFor(() => expect(result.current.isSuccess).toBe(true));
+      expect(result.current.data).toEqual(expected);
+    });
+  }
+);

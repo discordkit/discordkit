@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import {
   getGuildBanProcedure,
   getGuildBanQuery,
@@ -8,9 +9,12 @@ import {
 } from "../getGuildBan.js";
 import { banSchema } from "../types/Ban.js";
 
-describe(`getGuildBan`, () => {
-  const expected = mockRequest.get(`/guilds/:guild/bans/:user`, banSchema);
-  const config = mockSchema(getGuildBanSchema);
+describe(`getGuildBan`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.get(
+    `/guilds/:guild/bans/:user`,
+    getGuildBanSchema,
+    banSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(getGuildBanSafe(config)).resolves.toEqual(expected);

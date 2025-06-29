@@ -1,29 +1,20 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
-import { object } from "valibot";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   startThreadInForumOrMediaChannel,
   startThreadInForumOrMediaChannelProcedure,
   startThreadInForumOrMediaChannelSafe,
-  startThreadInForumOrMediaChannelSchema
+  startThreadInForumOrMediaChannelSchema,
+  threadInForumOrMediaChannelResponseSchema
 } from "../startThreadInForumOrMediaChannel.js";
-import { channelSchema } from "../types/Channel.js";
-import { messageSchema } from "../types/Message.js";
 
-describe(`startThreadInForumOrMediaChannel`, () => {
-  const expected = mockRequest.post(
+describe(`startThreadInForumOrMediaChannel`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.post(
     `/channels/:channel/threads`,
-    object({
-      ...channelSchema.entries,
-      message: messageSchema
-    })
+    startThreadInForumOrMediaChannelSchema,
+    threadInForumOrMediaChannelResponseSchema
   );
-  const config = mockSchema(startThreadInForumOrMediaChannelSchema);
 
   it(`can be used standalone`, async () => {
     await expect(startThreadInForumOrMediaChannelSafe(config)).resolves.toEqual(

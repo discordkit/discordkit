@@ -1,19 +1,20 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import {
   getFollowupMessageProcedure,
   getFollowupMessageQuery,
   getFollowupMessageSafe,
   getFollowupMessageSchema
 } from "../getFollowupMessage.js";
-import { messageSchema } from "../../channel/types/Message.js";
+import { messageSchema } from "../../messages/types/Message.js";
 
-describe(`getFollowupMessage`, () => {
-  mockRequest.get(
+describe(`getFollowupMessage`, { repeats: 5 }, () => {
+  const { config } = mockUtils.request.get(
     `/webhooks/:application/:token/messages/:message`,
+    getFollowupMessageSchema,
     messageSchema
   );
-  const config = mockSchema(getFollowupMessageSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getFollowupMessageSafe(config)).resolves.not.toThrow();

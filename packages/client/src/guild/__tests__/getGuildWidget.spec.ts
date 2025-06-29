@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import {
   getGuildWidgetProcedure,
   getGuildWidgetQuery,
@@ -8,12 +9,12 @@ import {
 } from "../getGuildWidget.js";
 import { guildWidgetSchema } from "../types/GuildWidget.js";
 
-describe(`getGuildWidget`, () => {
-  const expected = mockRequest.get(
+describe(`getGuildWidget`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.get(
     `/guilds/:guild/widget.json`,
+    getGuildWidgetSchema,
     guildWidgetSchema
   );
-  const config = mockSchema(getGuildWidgetSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getGuildWidgetSafe(config)).resolves.toEqual(expected);

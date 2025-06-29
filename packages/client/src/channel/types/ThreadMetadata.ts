@@ -3,6 +3,7 @@ import {
   boolean,
   string,
   isoTimestamp,
+  exactOptional,
   nullish,
   type InferOutput,
   pipe
@@ -19,7 +20,7 @@ export const threadMetadataSchema = object({
   /** whether the thread is locked; when a thread is locked, only users with MANAGE_THREADS can unarchive it */
   locked: boolean(),
   /** whether non-moderators can add other non-moderators to a thread; only available on private threads */
-  invitable: nullish(boolean()),
+  invitable: exactOptional(boolean()),
   /** timestamp when the thread was created; only populated for threads created after 2022-01-09 */
   createTimestamp: nullish(pipe(string(), isoTimestamp()))
 });

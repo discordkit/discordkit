@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import {
   getChannelProcedure,
   getChannelQuery,
@@ -8,9 +9,12 @@ import {
 } from "../getChannel.js";
 import { channelSchema } from "../types/Channel.js";
 
-describe(`getChannel`, () => {
-  const expected = mockRequest.get(`/channels/:channel`, channelSchema);
-  const config = mockSchema(getChannelSchema);
+describe(`getChannel`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.get(
+    `/channels/:channel`,
+    getChannelSchema,
+    channelSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(getChannelSafe(config)).resolves.toEqual(expected);

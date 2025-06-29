@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   editOriginalInteractionResponse,
   editOriginalInteractionResponseProcedure,
@@ -13,12 +9,12 @@ import {
 } from "../editOriginalInteractionResponse.js";
 import { interactionResponseSchema } from "../types/InteractionResponse.js";
 
-describe(`editOriginalInteractionResponse`, () => {
-  mockRequest.patch(
+describe(`editOriginalInteractionResponse`, { repeats: 5 }, () => {
+  const { config } = mockUtils.request.patch(
     `/webhooks/:application/:token/messages/@original`,
+    editOriginalInteractionResponseSchema,
     interactionResponseSchema
   );
-  const config = mockSchema(editOriginalInteractionResponseSchema);
 
   it(`can be used standalone`, async () => {
     await expect(

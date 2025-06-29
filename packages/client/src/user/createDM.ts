@@ -1,4 +1,4 @@
-import { literal, object } from "valibot";
+import { intersect, literal, object } from "valibot";
 import {
   post,
   type Fetcher,
@@ -35,18 +35,22 @@ export const createDM: Fetcher<
 export const createDMSafe = toValidated(
   createDM,
   createDMSchema,
-  object({
-    ...channelSchema.entries,
-    type: literal(ChannelType.DM)
-  })
+  intersect([
+    channelSchema,
+    object({
+      type: literal(ChannelType.DM)
+    })
+  ])
 );
 
 export const createDMProcedure = toProcedure(
   `mutation`,
   createDM,
   createDMSchema,
-  object({
-    ...channelSchema.entries,
-    type: literal(ChannelType.DM)
-  })
+  intersect([
+    channelSchema,
+    object({
+      type: literal(ChannelType.DM)
+    })
+  ])
 );

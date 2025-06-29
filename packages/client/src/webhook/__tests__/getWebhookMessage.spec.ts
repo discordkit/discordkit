@@ -1,19 +1,20 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import {
   getWebhookMessageProcedure,
   getWebhookMessageQuery,
   getWebhookMessageSafe,
   getWebhookMessageSchema
 } from "../getWebhookMessage.js";
-import { messageSchema } from "../../channel/types/Message.js";
+import { messageSchema } from "../../messages/types/Message.js";
 
-describe(`getWebhookMessage`, () => {
-  const expected = mockRequest.get(
+describe(`getWebhookMessage`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.get(
     `/webhooks/:webhook/:token/messages/:message`,
+    getWebhookMessageSchema,
     messageSchema
   );
-  const config = mockSchema(getWebhookMessageSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getWebhookMessageSafe(config)).resolves.toEqual(expected);

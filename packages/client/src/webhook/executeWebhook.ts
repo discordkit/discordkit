@@ -5,14 +5,13 @@ import {
   boolean,
   exactOptional,
   partial,
-  integer,
   literal,
   maxLength,
-  number,
   array,
   url,
   unknown,
-  pipe
+  pipe,
+  nonEmpty
 } from "valibot";
 import {
   post,
@@ -20,13 +19,16 @@ import {
   type Fetcher,
   toProcedure,
   toValidated,
-  snowflake
+  snowflake,
+  asInteger
 } from "@discordkit/core";
-import { embedSchema } from "../channel/types/Embed.js";
-import { allowedMentionSchema } from "../channel/types/AllowedMention.js";
-import { attachmentSchema } from "../channel/types/Attachment.js";
-import { EmbedType } from "../channel/types/EmbedType.js";
-import { messageComponentSchema } from "../channel/types/MessageComponent.js";
+import { embedSchema } from "../messages/types/Embed.js";
+import { allowedMentionSchema } from "../messages/types/AllowedMention.js";
+import { attachmentSchema } from "../messages/types/Attachment.js";
+import { EmbedType } from "../messages/types/EmbedType.js";
+import { messageComponentSchema } from "../messages/types/MessageComponent.js";
+import { messageFlag } from "../messages/types/MessageFlag.js";
+import { pollSchema } from "../poll/types/Poll.js";
 
 export const executeWebhookSchema = object({
   webhook: snowflake,
@@ -34,10 +36,12 @@ export const executeWebhookSchema = object({
   params: exactOptional(
     partial(
       object({
+        /** waits for server confirmation of message send before response, and returns the created message body (defaults to `false`; when `false` a message that is not saved does not return an error) */
+        wait: exactOptional(boolean()),
         /** Send a message to the specified thread within a webhook's channel. The thread will automatically be unarchived. */
         threadId: snowflake,
-        /** waits for server confirmation of message send before response, and returns the created message body (defaults to false; when false a message that is not saved does not return an error) */
-        wait: exactOptional(boolean())
+        /** whether to respect the `components` field of the request. When enabled, allows application-owned webhooks to use all components and non-owned webhooks to use non-interactive components. (defaults to `false`) */
+        withComponents: boolean()
       })
     )
   ),
@@ -67,12 +71,18 @@ export const executeWebhookSchema = object({
       components: array(messageComponentSchema),
       /** the contents of the file being sent */
       files: array(unknown()),
+      /** JSON encoded body of non-file params */
+      payloadJson: string(),
       /** attachment objects with filename and description */
       attachments: array(partial(attachmentSchema)),
       /** message flags combined as a bitfield (only SUPPRESS_EMBEDS can be set) */
-      flags: pipe(number(), integer()),
+      flags: asInteger(messageFlag),
       /** name of thread to create (requires the webhook channel to be a forum channel) */
-      threadName: pipe(string(), minLength(1))
+      threadName: pipe(string(), nonEmpty()),
+      /** array of tag ids to apply to the thread (requires the webhook channel to be a forum or media channel) */
+      appliedTags: array(snowflake),
+      /** A poll! */
+      poll: pollSchema
     })
   )
 });

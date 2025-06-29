@@ -10,4 +10,6 @@ export const sticker = ({
   sticker: id,
   format
 }: InferOutput<typeof stickerImageSchema>): string =>
-  getAsset(`/stickers/${id}.${format ?? `png`}`);
+  format === `gif`
+    ? `https://media.discordapp.net/stickers/${id}.gif`
+    : getAsset(`/stickers/${id}.${format ?? `png`}`);

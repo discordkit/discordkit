@@ -1,21 +1,20 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   createGuildRole,
   createGuildRoleProcedure,
   createGuildRoleSafe,
   createGuildRoleSchema
 } from "../createGuildRole.js";
-import { roleSchema } from "../types/Role.js";
+import { roleSchema } from "../../permissions/Role.js";
 
-describe(`createGuildRole`, () => {
-  const expected = mockRequest.post(`/guilds/:guild/roles`, roleSchema);
-  const config = mockSchema(createGuildRoleSchema);
+describe(`createGuildRole`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.post(
+    `/guilds/:guild/roles`,
+    createGuildRoleSchema,
+    roleSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(createGuildRoleSafe(config)).resolves.toEqual(expected);

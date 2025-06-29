@@ -24,7 +24,7 @@ export const guildWidgetSchema = object({
   /** instant invite for the guilds specified widget invite channel */
   instantInvite: optional(pipe(string(), minLength(1))),
   /** voice and stage channels which are accessible by @everyone */
-  channels: array(partial(channelSchema)),
+  channels: array(channelSchema),
   /** special widget user objects that includes users presence (Limit 100) */
   members: pipe(array(partial(userSchema)), maxLength(100)),
   /** number of online members in this guild */

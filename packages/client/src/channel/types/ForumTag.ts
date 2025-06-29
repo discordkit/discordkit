@@ -5,7 +5,8 @@ import {
   maxLength,
   minLength,
   object,
-  optional,
+  nullable,
+  nonEmpty,
   pipe,
   string
 } from "valibot";
@@ -18,9 +19,9 @@ export const forumTagSchema = object({
   /** whether this tag can only be added to or removed from threads by a member with the `MANAGE_THREADS` permission */
   moderated: boolean(),
   /** the id of a guild's custom emoji */
-  emojiId: optional(snowflake),
+  emojiId: nullable(snowflake),
   /** the unicode character of the emoji */
-  emojiName: optional(pipe(string(), minLength(1)))
+  emojiName: nullable(pipe(string(), nonEmpty()))
 });
 
 export type ForumTag = InferOutput<typeof forumTagSchema>;

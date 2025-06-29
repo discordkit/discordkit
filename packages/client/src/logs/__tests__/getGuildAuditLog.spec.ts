@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import {
   getGuildAuditLogProcedure,
   getGuildAuditLogQuery,
@@ -8,13 +9,15 @@ import {
 } from "../getGuildAuditLog.js";
 import { auditLogSchema } from "../types/AuditLog.js";
 
-describe(`getGuildAuditLog`, () => {
-  const expected = mockRequest.get(
+describe(`getGuildAuditLog`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.get(
     `/guilds/:guild/audit-logs`,
+    getGuildAuditLogSchema,
     auditLogSchema,
-    { seed: 1 }
+    {
+      seed: 1
+    }
   );
-  const config = mockSchema(getGuildAuditLogSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getGuildAuditLogSafe(config)).resolves.toEqual(expected);

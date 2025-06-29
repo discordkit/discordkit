@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   leaveThread,
   leaveThreadProcedure,
@@ -12,9 +8,11 @@ import {
   leaveThreadSchema
 } from "../leaveThread.js";
 
-describe(`leaveThread`, () => {
-  mockRequest.delete(`/channels/:channel/thread-members/@me`);
-  const config = mockSchema(leaveThreadSchema);
+describe(`leaveThread`, { repeats: 5 }, () => {
+  const { config } = mockUtils.request.delete(
+    `/channels/:channel/thread-members/@me`,
+    leaveThreadSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(leaveThreadSafe(config)).resolves.not.toThrow();

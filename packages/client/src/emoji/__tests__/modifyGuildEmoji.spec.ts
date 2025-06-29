@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   modifyGuildEmoji,
   modifyGuildEmojiProcedure,
@@ -13,12 +9,12 @@ import {
 } from "../modifyGuildEmoji.js";
 import { emojiSchema } from "../types/Emoji.js";
 
-describe(`modifyGuildEmoji`, () => {
-  const expected = mockRequest.patch(
+describe(`modifyGuildEmoji`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.patch(
     `/guilds/:guild/emojis/:emoji`,
+    modifyGuildEmojiSchema,
     emojiSchema
   );
-  const config = mockSchema(modifyGuildEmojiSchema);
 
   it(`can be used standalone`, async () => {
     await expect(modifyGuildEmojiSafe(config)).resolves.toEqual(expected);

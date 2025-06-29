@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   editChannelPermissions,
   editChannelPermissionsProcedure,
@@ -12,9 +8,11 @@ import {
   editChannelPermissionsSchema
 } from "../editChannelPermissions.js";
 
-describe(`editChannelPermissions`, () => {
-  mockRequest.put(`/channels/:channel/permissions/:overwrite`);
-  const config = mockSchema(editChannelPermissionsSchema);
+describe(`editChannelPermissions`, { repeats: 5 }, () => {
+  const { config } = mockUtils.request.put(
+    `/channels/:channel/permissions/:overwrite`,
+    editChannelPermissionsSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(editChannelPermissionsSafe(config)).resolves.not.toThrow();

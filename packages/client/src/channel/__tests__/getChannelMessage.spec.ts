@@ -1,19 +1,20 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import {
   getChannelMessageProcedure,
   getChannelMessageQuery,
   getChannelMessageSafe,
   getChannelMessageSchema
 } from "../getChannelMessage.js";
-import { messageSchema } from "../types/Message.js";
+import { messageSchema } from "../../messages/types/Message.js";
 
-describe(`getChannelMessage`, () => {
-  const expected = mockRequest.get(
+describe(`getChannelMessage`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.get(
     `/channels/:channel/messages/:message`,
+    getChannelMessageSchema,
     messageSchema
   );
-  const config = mockSchema(getChannelMessageSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getChannelMessageSafe(config)).resolves.toEqual(expected);

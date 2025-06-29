@@ -2,9 +2,9 @@ import {
   pipe,
   object,
   string,
-  minLength,
   partial,
-  exactOptional
+  exactOptional,
+  nonEmpty
 } from "valibot";
 import {
   get,
@@ -14,11 +14,11 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { messageSchema, type Message } from "../channel/types/Message.js";
+import { messageSchema, type Message } from "../messages/types/Message.js";
 
 export const getWebhookMessageSchema = object({
   webhook: snowflake,
-  token: pipe(string(), minLength(1)),
+  token: pipe(string(), nonEmpty()),
   message: snowflake,
   params: exactOptional(
     partial(

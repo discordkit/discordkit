@@ -8,7 +8,7 @@ export class DiscordSession {
     return Boolean(this.#authToken);
   }
 
-  constructor(authToken?: string | null) {
+  constructor(authToken?: `${`Bot` | `Bearer`} ${string}` | null) {
     if (authToken) {
       this.setToken(authToken);
     }
@@ -18,9 +18,9 @@ export class DiscordSession {
    * Clears the current session details, then attempts to set
    * new session values
    */
-  setToken = (token: string): void => {
+  setToken = (token: `${`Bot` | `Bearer`} ${string}`): this => {
     this.#authToken = null;
-    if (!token) {
+    if (token.length === 0) {
       throw new Error(`Must provide a non-empty string to set Auth Token`);
     }
     if (!token.startsWith(`Bot `) && !token.startsWith(`Bearer `)) {
@@ -29,10 +29,12 @@ export class DiscordSession {
       );
     }
     this.#authToken = token;
+    return this;
   };
 
-  clearSession = (): void => {
+  clearSession = (): this => {
     this.#authToken = null;
+    return this;
   };
 
   getSession = (): string => {

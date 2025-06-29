@@ -1,24 +1,20 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   editWebhookMessage,
   editWebhookMessageProcedure,
   editWebhookMessageSafe,
   editWebhookMessageSchema
 } from "../editWebhookMessage.js";
-import { messageSchema } from "../../channel/types/Message.js";
+import { messageSchema } from "../../messages/types/Message.js";
 
-describe(`editWebhookMessage`, () => {
-  const expected = mockRequest.patch(
+describe(`editWebhookMessage`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.patch(
     `/webhooks/:webhook/:token/messages/:message`,
+    editWebhookMessageSchema,
     messageSchema
   );
-  const config = mockSchema(editWebhookMessageSchema);
 
   it(`can be used standalone`, async () => {
     await expect(editWebhookMessageSafe(config)).resolves.toEqual(expected);

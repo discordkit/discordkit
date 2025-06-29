@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import { omit } from "valibot";
 import {
   getWebhookWithTokenProcedure,
@@ -9,12 +10,12 @@ import {
 } from "../getWebhookWithToken.js";
 import { webhookSchema } from "../types/Webhook.js";
 
-describe(`getWebhookWithToken`, () => {
-  const expected = mockRequest.get(
+describe(`getWebhookWithToken`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.get(
     `/webhooks/:webhook/:token`,
+    getWebhookWithTokenSchema,
     omit(webhookSchema, [`user`])
   );
-  const config = mockSchema(getWebhookWithTokenSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getWebhookWithTokenSafe(config)).resolves.toEqual(expected);

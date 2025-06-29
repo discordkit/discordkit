@@ -1,4 +1,4 @@
-import { pipe, object, string, minLength, omit } from "valibot";
+import { pipe, object, string, omit, nonEmpty } from "valibot";
 import {
   get,
   type Fetcher,
@@ -11,7 +11,7 @@ import { webhookSchema, type Webhook } from "./types/Webhook.js";
 
 export const getWebhookWithTokenSchema = object({
   webhook: snowflake,
-  token: pipe(string(), minLength(1))
+  token: pipe(string(), nonEmpty())
 });
 
 /**

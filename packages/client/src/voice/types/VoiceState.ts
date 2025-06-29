@@ -1,10 +1,10 @@
 import {
   object,
-  nullish,
-  optional,
   string,
-  minLength,
   boolean,
+  nullable,
+  exactOptional,
+  nonEmpty,
   isoTimestamp,
   pipe,
   type InferOutput
@@ -16,15 +16,15 @@ import { memberSchema } from "../../guild/types/Member.js";
 /** Used to represent a user's voice connection status. */
 export const voiceStateSchema = object({
   /** the guild id this voice state is for */
-  guildId: nullish(snowflake),
+  guildId: exactOptional(snowflake),
   /** the channel id this user is connected to */
-  channelId: optional(snowflake),
+  channelId: nullable(snowflake),
   /** the user id this voice state is for */
   userId: snowflake,
   /** guild member object	the guild member this voice state is for */
-  member: nullish(memberSchema),
+  member: exactOptional(memberSchema),
   /** the session id for this voice state */
-  sessionId: pipe(string(), minLength(1)),
+  sessionId: pipe(string(), nonEmpty()),
   /** whether this user is deafened by the server */
   deaf: boolean(),
   /** whether this user is muted by the server */
@@ -34,13 +34,13 @@ export const voiceStateSchema = object({
   /** whether this user is locally muted */
   selfMute: boolean(),
   /** whether this user is streaming using "Go Live" */
-  selfStream: nullish(boolean()),
+  selfStream: exactOptional(boolean()),
   /** whether this user's camera is enabled */
   selfVideo: boolean(),
   /** whether this user is muted by the current user */
   suppress: boolean(),
   /** the time at which the user requested to speak */
-  requestToSpeakTimestamp: optional(pipe(string(), isoTimestamp()))
+  requestToSpeakTimestamp: nullable(pipe(string(), isoTimestamp()))
 });
 
 export type VoiceState = InferOutput<typeof voiceStateSchema>;

@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import { array, length, pipe } from "valibot";
 import {
   getChannelMessagesProcedure,
@@ -7,14 +8,14 @@ import {
   getChannelMessagesSafe,
   getChannelMessagesSchema
 } from "../getChannelMessages.js";
-import { messageSchema } from "../types/Message.js";
+import { messageSchema } from "../../messages/types/Message.js";
 
-describe(`getChannelMessages`, () => {
-  const expected = mockRequest.get(
+describe(`getChannelMessages`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.get(
     `/channels/:channel/messages`,
+    getChannelMessagesSchema,
     pipe(array(messageSchema), length(1))
   );
-  const config = mockSchema(getChannelMessagesSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getChannelMessagesSafe(config)).resolves.toEqual(expected);

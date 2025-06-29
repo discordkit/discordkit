@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import { array, length, pipe } from "valibot";
 import {
   getGuildScheduledEventUsersProcedure,
@@ -9,12 +10,12 @@ import {
 } from "../getGuildScheduledEventUsers.js";
 import { scheduledEventUserSchema } from "../types/ScheduledEventUser.js";
 
-describe(`getGuildScheduledEventUsers`, () => {
-  const expected = mockRequest.get(
+describe(`getGuildScheduledEventUsers`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.get(
     `/guilds/:guild/scheduled-events/:event/users`,
+    getGuildScheduledEventUsersSchema,
     pipe(array(scheduledEventUserSchema), length(1))
   );
-  const config = mockSchema(getGuildScheduledEventUsersSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getGuildScheduledEventUsersSafe(config)).resolves.toEqual(

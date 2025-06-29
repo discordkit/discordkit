@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   deleteFollowupMessage,
   deleteFollowupMessageProcedure,
@@ -12,9 +8,11 @@ import {
   deleteFollowupMessageSchema
 } from "../deleteFollowupMessage.js";
 
-describe(`deleteFollowupMessage`, () => {
-  mockRequest.delete(`/webhooks/:application/:token/messages/:message`);
-  const config = mockSchema(deleteFollowupMessageSchema);
+describe(`deleteFollowupMessage`, { repeats: 5 }, () => {
+  const { config } = mockUtils.request.delete(
+    `/webhooks/:application/:token/messages/:message`,
+    deleteFollowupMessageSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(deleteFollowupMessageSafe(config)).resolves.not.toThrow();

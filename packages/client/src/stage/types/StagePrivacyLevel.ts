@@ -1,10 +1,10 @@
 import { enum_ } from "valibot";
 
-export enum StagePrivacyLevel {
+export const StagePrivacyLevel = {
   /** @deprecated The Stage instance is visible publicly. */
-  PUBLIC = 1,
+  PUBLIC: 1,
   /** The Stage instance is visible to only guild members. */
-  GUILD_ONLY = 2
-}
+  GUILD_ONLY: 2
+} as const;
 
 export const stagePrivacyLevelSchema = enum_(StagePrivacyLevel);

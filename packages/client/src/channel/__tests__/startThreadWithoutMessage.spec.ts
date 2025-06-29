@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   startThreadWithoutMessage,
   startThreadWithoutMessageProcedure,
@@ -13,12 +9,12 @@ import {
 } from "../startThreadWithoutMessage.js";
 import { channelSchema } from "../types/Channel.js";
 
-describe(`startThreadWithoutMessage`, () => {
-  const expected = mockRequest.post(
+describe(`startThreadWithoutMessage`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.post(
     `/channels/:channel/threads`,
+    startThreadWithoutMessageSchema,
     channelSchema
   );
-  const config = mockSchema(startThreadWithoutMessageSchema);
 
   it(`can be used standalone`, async () => {
     await expect(startThreadWithoutMessageSafe(config)).resolves.toEqual(

@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import {
   getUserApplicationRoleConnectionProcedure,
   getUserApplicationRoleConnectionQuery,
@@ -8,12 +9,12 @@ import {
 } from "../getUserApplicationRoleConnection.js";
 import { applicationRoleConnectionSchema } from "../../application/types/ApplicationRoleConnection.js";
 
-describe(`getUserApplicationRoleConnection`, () => {
-  const expected = mockRequest.get(
+describe(`getUserApplicationRoleConnection`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.get(
     `/users/@me/applications/:application/role-connection`,
+    getUserApplicationRoleConnectionSchema,
     applicationRoleConnectionSchema
   );
-  const config = mockSchema(getUserApplicationRoleConnectionSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getUserApplicationRoleConnectionSafe(config)).resolves.toEqual(

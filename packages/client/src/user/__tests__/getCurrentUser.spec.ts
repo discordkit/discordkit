@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import {
   getCurrentUserProcedure,
   getCurrentUserQuery,
@@ -7,8 +8,8 @@ import {
 } from "../getCurrentUser.js";
 import { userSchema } from "../types/User.js";
 
-describe(`getCurrentUser`, () => {
-  const expected = mockRequest.get(`/users/@me`, userSchema);
+describe(`getCurrentUser`, { repeats: 5 }, () => {
+  const { expected } = mockUtils.request.get(`/users/@me`, null, userSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getCurrentUserSafe()).resolves.toEqual(expected);

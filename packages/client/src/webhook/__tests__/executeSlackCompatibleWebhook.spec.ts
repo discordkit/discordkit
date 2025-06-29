@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   executeSlackCompatibleWebhook,
   executeSlackCompatibleWebhookProcedure,
@@ -12,9 +8,11 @@ import {
   executeSlackCompatibleWebhookSchema
 } from "../executeSlackCompatibleWebhook.js";
 
-describe(`executeSlackCompatibleWebhook`, () => {
-  mockRequest.post(`/webhooks/:webhook/:token/slack`);
-  const config = mockSchema(executeSlackCompatibleWebhookSchema);
+describe(`executeSlackCompatibleWebhook`, { repeats: 5 }, () => {
+  const { config } = mockUtils.request.post(
+    `/webhooks/:webhook/:token/slack`,
+    executeSlackCompatibleWebhookSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(

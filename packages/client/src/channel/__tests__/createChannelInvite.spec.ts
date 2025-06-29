@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   createChannelInvite,
   createChannelInviteProcedure,
@@ -13,9 +9,12 @@ import {
 } from "../createChannelInvite.js";
 import { inviteSchema } from "../../invite/types/Invite.js";
 
-describe(`createChannelInvite`, () => {
-  const expected = mockRequest.post(`/channels/:channel/invites`, inviteSchema);
-  const config = mockSchema(createChannelInviteSchema);
+describe(`createChannelInvite`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.post(
+    `/channels/:channel/invites`,
+    createChannelInviteSchema,
+    inviteSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(createChannelInviteSafe(config)).resolves.toEqual(expected);

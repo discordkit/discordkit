@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import {
   getGuildOnboardingProcedure,
   getGuildOnboardingQuery,
@@ -8,12 +9,12 @@ import {
 } from "../getGuildOnboarding.js";
 import { guildOnboardingSchema } from "../types/GuildOnboarding.js";
 
-describe(`getGuildOnboarding`, () => {
-  const expected = mockRequest.get(
+describe(`getGuildOnboarding`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.get(
     `/guilds/:guild/onboarding`,
+    getGuildOnboardingSchema,
     guildOnboardingSchema
   );
-  const config = mockSchema(getGuildOnboardingSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getGuildOnboardingSafe(config)).resolves.toEqual(expected);

@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   removeThreadMember,
   removeThreadMemberProcedure,
@@ -12,9 +8,11 @@ import {
   removeThreadMemberSchema
 } from "../removeThreadMember.js";
 
-describe(`removeThreadMember`, () => {
-  mockRequest.delete(`/channels/:channel/thread-members/:user`);
-  const config = mockSchema(removeThreadMemberSchema);
+describe(`removeThreadMember`, { repeats: 5 }, () => {
+  const { config } = mockUtils.request.delete(
+    `/channels/:channel/thread-members/:user`,
+    removeThreadMemberSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(removeThreadMemberSafe(config)).resolves.not.toThrow();

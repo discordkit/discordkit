@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   followAnnouncementChannel,
   followAnnouncementChannelProcedure,
@@ -13,12 +9,12 @@ import {
 } from "../followAnnouncementChannel.js";
 import { followedChannelSchema } from "../types/FollowedChannel.js";
 
-describe(`followAnnouncementChannel`, () => {
-  const expected = mockRequest.post(
+describe(`followAnnouncementChannel`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.post(
     `/channels/:channel/followers`,
+    followAnnouncementChannelSchema,
     followedChannelSchema
   );
-  const config = mockSchema(followAnnouncementChannelSchema);
 
   it(`can be used standalone`, async () => {
     await expect(followAnnouncementChannelSafe(config)).resolves.toEqual(

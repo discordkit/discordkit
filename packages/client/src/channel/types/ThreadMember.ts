@@ -1,6 +1,6 @@
 import {
   object,
-  nullish,
+  exactOptional,
   string,
   number,
   integer,
@@ -13,15 +13,15 @@ import { memberSchema } from "../../guild/types/Member.js";
 
 export const threadMemberSchema = object({
   /** the id of the thread */
-  id: nullish(snowflake),
+  id: exactOptional(snowflake),
   /** the id of the user */
-  userId: nullish(snowflake),
+  userId: exactOptional(snowflake),
   /** the time the current user last joined the thread */
   joinTimestamp: pipe(string(), isoTimestamp()),
   /** any user-thread settings, currently only used for notifications */
   flags: pipe(number(), integer()),
   /** Additional information about the user */
-  member: nullish(memberSchema)
+  member: exactOptional(memberSchema)
 });
 
 export type ThreadMember = InferOutput<typeof threadMemberSchema>;

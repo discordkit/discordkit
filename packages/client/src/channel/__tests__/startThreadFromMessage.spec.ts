@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   startThreadFromMessage,
   startThreadFromMessageProcedure,
@@ -13,12 +9,12 @@ import {
 } from "../startThreadFromMessage.js";
 import { channelSchema } from "../types/Channel.js";
 
-describe(`startThreadFromMessage`, () => {
-  const expected = mockRequest.post(
+describe(`startThreadFromMessage`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.post(
     `/channels/:channel/messages/:message/threads`,
+    startThreadFromMessageSchema,
     channelSchema
   );
-  const config = mockSchema(startThreadFromMessageSchema);
 
   it(`can be used standalone`, async () => {
     await expect(startThreadFromMessageSafe(config)).resolves.toEqual(expected);

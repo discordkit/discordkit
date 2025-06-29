@@ -6,13 +6,13 @@ export default defineConfig({
     globals: true,
     watch: false,
     environment: `happy-dom`,
-    setupFiles: `./scripts/setup.ts`,
     coverage: {
       provider: `v8`
     }
   },
   resolve: {
     alias: {
+      "mock-utils": `./scripts/mock-utils.ts`,
       "test-utils": `./scripts/test-utils.ts`
     }
   }

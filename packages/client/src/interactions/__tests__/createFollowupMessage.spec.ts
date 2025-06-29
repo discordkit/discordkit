@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   createFollowupMessage,
   createFollowupMessageProcedure,
@@ -12,9 +8,11 @@ import {
   createFollowupMessageSchema
 } from "../createFollowupMessage.js";
 
-describe(`createFollowupMessage`, () => {
-  mockRequest.post(`/webhooks/:application/:token`);
-  const config = mockSchema(createFollowupMessageSchema);
+describe(`createFollowupMessage`, { repeats: 5 }, () => {
+  const { config } = mockUtils.request.post(
+    `/webhooks/:application/:token`,
+    createFollowupMessageSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(createFollowupMessageSafe(config)).resolves.not.toThrow();

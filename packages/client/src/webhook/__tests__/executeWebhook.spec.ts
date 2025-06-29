@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   executeWebhook,
   executeWebhookProcedure,
@@ -12,9 +8,11 @@ import {
   executeWebhookSchema
 } from "../executeWebhook.js";
 
-describe(`executeWebhook`, () => {
-  mockRequest.post(`/webhooks/:webhook/:token`);
-  const config = mockSchema(executeWebhookSchema);
+describe(`executeWebhook`, { repeats: 5 }, () => {
+  const { config } = mockUtils.request.post(
+    `/webhooks/:webhook/:token`,
+    executeWebhookSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(executeWebhookSafe(config)).resolves.not.toThrow();

@@ -1,4 +1,4 @@
-import { mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
 import { parse, pipe, string, url } from "valibot";
 import {
   guildDiscoverySplash,
@@ -10,7 +10,7 @@ describe(`guildDiscoverySplash`, () => {
     expect(() =>
       parse(
         pipe(string(), url()),
-        guildDiscoverySplash(mockSchema(guildDiscoverySplashSchema))
+        guildDiscoverySplash(mockUtils.schema(guildDiscoverySplashSchema))
       )
     ).not.toThrow();
   });

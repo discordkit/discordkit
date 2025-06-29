@@ -1,4 +1,14 @@
-import { minLength, object, string, url, partial, omit, pipe } from "valibot";
+import {
+  object,
+  string,
+  url,
+  partial,
+  omit,
+  pipe,
+  nullable,
+  nonEmpty,
+  exactOptional
+} from "valibot";
 import {
   patch,
   type Fetcher,
@@ -10,14 +20,16 @@ import { webhookSchema, type Webhook } from "./types/Webhook.js";
 
 export const modifyWebhookWithTokenSchema = object({
   webhook: snowflake,
-  token: pipe(string(), minLength(1)),
-  body: partial(
-    object({
-      /** the default name of the webhook */
-      name: pipe(string(), minLength(1)),
-      /** image for the default webhook avatar */
-      avatar: pipe(string(), url())
-    })
+  token: pipe(string(), nonEmpty()),
+  body: exactOptional(
+    partial(
+      object({
+        /** the default name of the webhook */
+        name: pipe(string(), nonEmpty()),
+        /** image for the default webhook avatar */
+        avatar: nullable(pipe(string(), url()))
+      })
+    )
   )
 });
 

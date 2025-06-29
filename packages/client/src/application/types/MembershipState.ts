@@ -2,9 +2,9 @@
 
 import { enum_ } from "valibot";
 
-export enum MembershipState {
-  INVITED = 1,
-  ACCEPTED = 2
-}
+export const MembershipState = {
+  INVITED: 1,
+  ACCEPTED: 2
+} as const;
 
 export const membershipStateSchema = enum_(MembershipState);

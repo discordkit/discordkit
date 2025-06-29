@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   deleteChannelPermission,
   deleteChannelPermissionProcedure,
@@ -12,9 +8,11 @@ import {
   deleteChannelPermissionSchema
 } from "../deleteChannelPermission.js";
 
-describe(`deleteChannelPermission`, () => {
-  mockRequest.delete(`/channels/:channel/permissions/:overwrite`);
-  const config = mockSchema(deleteChannelPermissionSchema);
+describe(`deleteChannelPermission`, { repeats: 5 }, () => {
+  const { config } = mockUtils.request.delete(
+    `/channels/:channel/permissions/:overwrite`,
+    deleteChannelPermissionSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(deleteChannelPermissionSafe(config)).resolves.not.toThrow();

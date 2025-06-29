@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   modifyStageInstance,
   modifyStageInstanceProcedure,
@@ -13,9 +9,12 @@ import {
 } from "../modifyStageInstance.js";
 import { stageSchema } from "../types/Stage.js";
 
-describe(`modifyStageInstance`, () => {
-  const expected = mockRequest.patch(`/stage-instances/:channel`, stageSchema);
-  const config = mockSchema(modifyStageInstanceSchema);
+describe(`modifyStageInstance`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.patch(
+    `/stage-instances/:channel`,
+    modifyStageInstanceSchema,
+    stageSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(modifyStageInstanceSafe(config)).resolves.toEqual(expected);

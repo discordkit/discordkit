@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import {
   getGuildWelcomeScreenProcedure,
   getGuildWelcomeScreenQuery,
@@ -8,12 +9,12 @@ import {
 } from "../getGuildWelcomeScreen.js";
 import { welcomeScreenSchema } from "../types/WelcomeScreen.js";
 
-describe(`getGuildWelcomeScreen`, () => {
-  const expected = mockRequest.get(
+describe(`getGuildWelcomeScreen`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.get(
     `/guilds/:guild/welcome-screen`,
+    getGuildWelcomeScreenSchema,
     welcomeScreenSchema
   );
-  const config = mockSchema(getGuildWelcomeScreenSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getGuildWelcomeScreenSafe(config)).resolves.toEqual(expected);

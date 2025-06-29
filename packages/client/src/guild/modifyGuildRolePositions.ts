@@ -14,7 +14,7 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { roleSchema, type Role } from "./types/Role.js";
+import { roleSchema, type Role } from "../permissions/Role.js";
 
 export const modifyGuildRolePositionsSchema = object({
   guild: snowflake,
