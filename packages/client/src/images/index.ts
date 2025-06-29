@@ -2,6 +2,7 @@ export * from "./achievementIcon.js";
 export * from "./applicationAsset.js";
 export * from "./applicationCover.js";
 export * from "./applicationIcon.js";
+export * from "./avatarDecoration.js";
 export * from "./customEmoji.js";
 export * from "./defaultUserAvatar.js";
 export * from "./guildBanner.js";
