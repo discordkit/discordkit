@@ -13,6 +13,7 @@ export * from "./sku/procedures.js";
 export * from "./soundboard/procedures.js";
 export * from "./stage/procedures.js";
 export * from "./sticker/procedures.js";
+export * from "./subscription/procedures.js";
 export * from "./template/procedures.js";
 export * from "./user/procedures.js";
 export * from "./voice/procedures.js";

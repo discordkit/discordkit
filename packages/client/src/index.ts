@@ -19,6 +19,7 @@ export * from "./sku/index.js";
 export * from "./soundboard/index.js";
 export * from "./stage/index.js";
 export * from "./sticker/index.js";
+export * from "./subscription/index.js";
 export * from "./template/index.js";
 export * from "./user/index.js";
 export * from "./voice/index.js";
