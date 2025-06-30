@@ -1,8 +1,6 @@
 import {
   array,
-  integer,
   maxLength,
-  number,
   object,
   partial,
   pipe,
@@ -14,13 +12,15 @@ import {
   type Fetcher,
   toProcedure,
   toValidated,
-  snowflake
+  snowflake,
+  asInteger
 } from "@discordkit/core";
 import { type Message, messageSchema } from "./types/Message.js";
 import { embedSchema } from "./types/Embed.js";
 import { allowedMentionSchema } from "./types/AllowedMention.js";
 import { messageComponentSchema } from "./types/MessageComponent.js";
 import { attachmentSchema } from "./types/Attachment.js";
+import { messageFlag } from "./types/MessageFlag.js";
 
 export const editMessageSchema = object({
   channel: snowflake,
@@ -32,7 +32,7 @@ export const editMessageSchema = object({
       /** Up to 10 rich embeds (up to 6000 characters) */
       embeds: pipe(array(embedSchema), maxLength(10)),
       /** Edit the flags of a message (only SUPPRESS_EMBEDS can currently be set/unset) */
-      flags: pipe(number(), integer()),
+      flags: pipe(asInteger(messageFlag)),
       /** Allowed mentions for the message */
       allowedMentions: allowedMentionSchema,
       /** Components to include with the message */

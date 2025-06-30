@@ -24,7 +24,11 @@ export enum MessageFlag {
   /** this message will not trigger push and desktop notifications */
   SUPPRESS_NOTIFICATIONS = 1 << 12,
   /** this message is a voice message */
-  IS_VOICE_MESSAGE = 1 << 13
+  IS_VOICE_MESSAGE = 1 << 13,
+  /** this message has a snapshot (via Message Forwarding) */
+  HAS_SNAPSHOT = 1 << 14,
+  /** allows you to create fully component-driven messages */
+  IS_COMPONENTS_V2 = 1 << 15
 }
 
 export const messageFlagSchema = enum_(MessageFlag);

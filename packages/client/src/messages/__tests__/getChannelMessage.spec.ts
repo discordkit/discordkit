@@ -7,7 +7,7 @@ import {
   getChannelMessageSafe,
   getChannelMessageSchema
 } from "../getChannelMessage.js";
-import { messageSchema } from "../../messages/types/Message.js";
+import { messageSchema } from "../types/Message.js";
 
 describe(`getChannelMessage`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.get(

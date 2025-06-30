@@ -1,8 +1,8 @@
 import {
   object,
   string,
-  minLength,
-  nullish,
+  nonEmpty,
+  exactOptional,
   type InferOutput,
   pipe
 } from "valibot";
@@ -12,7 +12,7 @@ export const messageActivitySchema = object({
   /** type of message activity */
   type: messageActivityTypeSchema,
   /** partyId from a Rich Presence event */
-  partyId: nullish(pipe(string(), minLength(1)))
+  partyId: exactOptional(pipe(string(), nonEmpty()))
 });
 
 export type MessageActivity = InferOutput<typeof messageActivitySchema>;

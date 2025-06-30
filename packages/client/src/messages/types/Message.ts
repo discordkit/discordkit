@@ -30,9 +30,12 @@ import { attachmentSchema } from "./Attachment.js";
 import { messageTypeSchema } from "./MessageType.js";
 import { messageInteractionSchema } from "../../interactions/types/MessageInteraction.js";
 import { messageComponentSchema } from "./MessageComponent.js";
-import { roleSubscriptionDataSchema } from "../../channel/types/RoleSubscriptionData.js";
+import { roleSubscriptionDataSchema } from "./RoleSubscriptionData.js";
 import { messageFlag } from "./MessageFlag.js";
 import { pollSchema } from "../../poll/types/Poll.js";
+import { messageSnapshotSchema } from "./MessageSnapshot.js";
+import { applicationCommandInteractionMetadataSchea } from "./ApplicationCommandInteractionMetadata.js";
+import { messageCallSchema } from "./MessageCall.js";
 
 export const messageSchema = object({
   /** id of the message */
@@ -82,11 +85,13 @@ export const messageSchema = object({
   /** data showing the source of a crosspost, channel follow add, pin, or reply message */
   messageReference: exactOptional(messageReferenceSchema),
   /** the message associated with the message_reference. This is a minimal subset of fields in a message (e.g. author is excluded.) */
-  // TODO messageSnapshots: exactOptional(array(messageSnapshotSchema)),
+  messageSnapshots: exactOptional(array(messageSnapshotSchema)),
   /** the message associated with the message_reference */
   referencedMessage: nullish(lazy(() => messageSchema)),
   /** Sent if the message is sent as a result of an interaction */
-  // TODO: interactionMetadata: exactOptional(messageInteractionMetadataSchema),
+  interactionMetadata: exactOptional(
+    applicationCommandInteractionMetadataSchea
+  ),
   /** **Deprecated in favor of `interaction_metadata`**; sent if the message is a response to an interaction */
   interaction: exactOptional(messageInteractionSchema),
   /** the thread that was started from this message, includes thread member object */
@@ -104,9 +109,9 @@ export const messageSchema = object({
   /** data for users, members, channels, and roles in the message's auto-populated select menus */
   resolved: exactOptional(unknown()), // intentionally unknown because it would cause a cyclical dependency
   /** A poll! */
-  poll: exactOptional(pollSchema)
+  poll: exactOptional(pollSchema),
   /** the call associated with the message */
-  // TODO call: exactOptional(messageCallSchema)
+  call: exactOptional(messageCallSchema)
 });
 
 export type Message = InferOutput<typeof messageSchema>;

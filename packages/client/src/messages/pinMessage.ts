@@ -15,7 +15,7 @@ export const pinMessageSchema = object({
 /**
  * ## [Pin Message](https://discord.com/developers/docs/resources/channel#pin-message)
  *
- * **PUT** `/channels/:channel/pins/:message`
+ * **PUT** `/channels/:channel/messages/pins/:message`
  *
  * Pin a message in a channel. Requires the `MANAGE_MESSAGES` permission. Returns a `204 empty` response on success. Fires a Channel Pins Update Gateway event.
  *
@@ -30,7 +30,7 @@ export const pinMessageSchema = object({
 export const pinMessage: Fetcher<typeof pinMessageSchema> = async ({
   channel,
   message
-}) => put(`/channels/${channel}/pins/${message}`);
+}) => put(`/channels/${channel}/messages/pins/${message}`);
 
 export const pinMessageSafe = toValidated(pinMessage, pinMessageSchema);
 

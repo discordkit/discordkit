@@ -12,7 +12,9 @@ export enum EmbedType {
   /** article embed */
   ARTICLE = `article`,
   /** link embed */
-  LINK = `link`
+  LINK = `link`,
+  /** poll result embed */
+  POLL_RESULT = `poll_result`
 }
 
 export const embedTypeSchema = enum_(EmbedType);

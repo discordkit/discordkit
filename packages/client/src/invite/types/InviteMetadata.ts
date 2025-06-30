@@ -7,7 +7,8 @@ import {
   boolean,
   string,
   type InferOutput,
-  pipe
+  pipe,
+  isoTimestamp
 } from "valibot";
 import { inviteSchema } from "./Invite.js";
 
@@ -23,7 +24,7 @@ export const inviteMetadataSchema = intersect([
     /** whether this invite only grants temporary membership */
     temporary: boolean(),
     /** when this invite was created */
-    createdAt: string()
+    createdAt: pipe(string(), isoTimestamp())
   })
 ]);
 

@@ -6,8 +6,6 @@ export * from "./editChannelPermissions.js";
 export * from "./followAnnouncementChannel.js";
 export * from "./getChannel.js";
 export * from "./getChannelInvites.js";
-export * from "./getChannelMessage.js";
-export * from "./getChannelMessages.js";
 export * from "./getThreadMember.js";
 export * from "./groupDMAddRecipient.js";
 export * from "./groupDMRemoveRecipient.js";

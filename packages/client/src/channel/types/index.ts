@@ -8,7 +8,6 @@ export * from "./FollowedChannel.js";
 export * from "./ForumLayoutType.js";
 export * from "./ForumTag.js";
 export * from "./Overwrite.js";
-export * from "./RoleSubscriptionData.js";
 export * from "./SortOrderType.js";
 export * from "./ThreadMetadata.js";
 export * from "./ThreadMember.js";

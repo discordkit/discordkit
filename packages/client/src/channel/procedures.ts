@@ -6,8 +6,6 @@ export { editChannelPermissionsProcedure } from "./editChannelPermissions.js";
 export { followAnnouncementChannelProcedure } from "./followAnnouncementChannel.js";
 export { getChannelProcedure } from "./getChannel.js";
 export { getChannelInvitesProcedure } from "./getChannelInvites.js";
-export { getChannelMessageProcedure } from "./getChannelMessage.js";
-export { getChannelMessagesProcedure } from "./getChannelMessages.js";
 export { getThreadMemberProcedure } from "./getThreadMember.js";
 export { groupDMAddRecipientProcedure } from "./groupDMAddRecipient.js";
 export { groupDMRemoveRecipientProcedure } from "./groupDMRemoveRecipient.js";

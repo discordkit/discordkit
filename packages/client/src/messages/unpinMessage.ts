@@ -15,7 +15,7 @@ export const unpinMessageSchema = object({
 /**
  * ### [Unpin Message](https://discord.com/developers/docs/resources/channel#unpin-message)
  *
- * **DELETE** `/channels/:channel/pins/:message`
+ * **DELETE** `/channels/:channel/messages/pins/:message`
  *
  * Unpin a message in a channel. Requires the `MANAGE_MESSAGES` permission. Returns a `204 empty` response on success. Fires a Channel Pins Update Gateway event.
  *
@@ -26,7 +26,7 @@ export const unpinMessageSchema = object({
 export const unpinMessage: Fetcher<typeof unpinMessageSchema> = async ({
   channel,
   message
-}) => remove(`/channels/${channel}/pins/${message}`);
+}) => remove(`/channels/${channel}/messages/pins/${message}`);
 
 export const unpinMessageSafe = toValidated(unpinMessage, unpinMessageSchema);
 

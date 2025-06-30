@@ -10,7 +10,7 @@ import {
 
 describe(`pinMessage`, { repeats: 5 }, () => {
   const { config } = mockUtils.request.put(
-    `/channels/:channel/pins/:message`,
+    `/channels/:channel/messages/pins/:message`,
     pinMessageSchema
   );
 

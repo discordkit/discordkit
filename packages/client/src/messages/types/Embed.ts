@@ -3,7 +3,7 @@ import {
   partial,
   string,
   maxLength,
-  nullish,
+  exactOptional,
   isoTimestamp,
   number,
   integer,
@@ -12,111 +12,103 @@ import {
   array,
   boolean,
   type InferOutput,
-  pipe
+  pipe,
+  maxValue,
+  nonEmpty
 } from "valibot";
 import { embedTypeSchema } from "./EmbedType.js";
 
 export const embedSchema = partial(
   object({
     /** title of embed */
-    title: nullish(pipe(string(), maxLength(256))),
+    title: pipe(string(), maxLength(256)),
     /** type of embed (always "rich" for webhook embeds) */
-    type: nullish(embedTypeSchema),
+    type: embedTypeSchema,
     /** description of embed */
-    description: nullish(pipe(string(), maxLength(4096))),
+    description: pipe(string(), maxLength(4096)),
     /** url of embed */
-    url: nullish(pipe(string(), url())),
+    url: pipe(string(), url()),
     /** timestamp of embed content */
-    timestamp: nullish(pipe(string(), isoTimestamp())),
+    timestamp: pipe(string(), isoTimestamp()),
     /** color code of the embed */
-    color: nullish(pipe(number(), integer())),
+    color: pipe(number(), integer(), minValue(0x000000), maxValue(0xffffff)),
     /** footer information */
-    footer: nullish(
-      object({
-        /** footer text */
-        text: pipe(string(), maxLength(2048)),
-        /** url of footer icon (only supports http(s) and attachments) */
-        iconUrl: nullish(pipe(string(), url())),
-        /**	a proxied url of footer icon */
-        proxyIconUrl: nullish(pipe(string(), url()))
-      })
-    ),
+    footer: object({
+      /** footer text */
+      text: pipe(string(), nonEmpty(), maxLength(2048)),
+      /** url of footer icon (only supports http(s) and attachments) */
+      iconUrl: exactOptional(pipe(string(), url())),
+      /**	a proxied url of footer icon */
+      proxyIconUrl: exactOptional(pipe(string(), url()))
+    }),
     /** image information */
-    image: nullish(
-      object({
-        /** source url of image (only supports http(s) and attachments) */
-        url: pipe(string(), url()),
-        /** a proxied url of the image */
-        proxyUrl: nullish(pipe(string(), url())),
-        /** height of image */
-        height: nullish(pipe(number(), integer(), minValue(0))),
-        /** width of image */
-        width: nullish(pipe(number(), integer(), minValue(0)))
-      })
-    ),
+    image: object({
+      /** source url of image (only supports http(s) and attachments) */
+      url: pipe(string(), url()),
+      /** a proxied url of the image */
+      proxyUrl: exactOptional(pipe(string(), url())),
+      /** height of image */
+      height: exactOptional(pipe(number(), integer(), minValue(0))),
+      /** width of image */
+      width: exactOptional(pipe(number(), integer(), minValue(0)))
+    }),
     /** thumbnail information */
-    thumbnail: nullish(
-      object({
-        /** source url of thumbnail (only supports http(s) and attachments) */
-        url: pipe(string(), url()),
-        /** a proxied url of the thumbnail */
-        proxyUrl: nullish(pipe(string(), url())),
-        /** height of thumbnail */
-        height: nullish(pipe(number(), integer(), minValue(0))),
-        /** width of thumbnail */
-        width: nullish(pipe(number(), integer(), minValue(0)))
-      })
-    ),
+    thumbnail: object({
+      /** source url of thumbnail (only supports http(s) and attachments) */
+      url: pipe(string(), url()),
+      /** a proxied url of the thumbnail */
+      proxyUrl: exactOptional(pipe(string(), url())),
+      /** height of thumbnail */
+      height: exactOptional(pipe(number(), integer(), minValue(0))),
+      /** width of thumbnail */
+      width: exactOptional(pipe(number(), integer(), minValue(0)))
+    }),
     /** video information */
-    video: nullish(
+    video: partial(
       object({
         /** source url of video */
         url: pipe(string(), url()),
         /** a proxied url of the video */
-        proxyUrl: nullish(pipe(string(), url())),
+        proxyUrl: pipe(string(), url()),
         /** height of video */
-        height: nullish(pipe(number(), integer(), minValue(0))),
+        height: pipe(number(), integer(), minValue(0)),
         /** width of video */
-        width: nullish(pipe(number(), integer(), minValue(0)))
+        width: pipe(number(), integer(), minValue(0))
       })
     ),
     /** provider information */
-    provider: nullish(
+    provider: partial(
       object({
         /** name of provider */
-        name: nullish(string()),
+        name: pipe(string(), nonEmpty()),
         /** url of provider */
-        url: nullish(pipe(string(), url()))
+        url: pipe(string(), url())
       })
     ),
     /** author information */
-    author: nullish(
-      object({
-        /** name of author */
-        name: pipe(string(), maxLength(256)),
-        /** url of author */
-        url: nullish(pipe(string(), url())),
-        /** url of author icon (only supports http(s) and attachments) */
-        iconUrl: nullish(pipe(string(), url())),
-        /** a proxied url of author icon */
-        proxyIconUrl: nullish(pipe(string(), url()))
-      })
-    ),
+    author: object({
+      /** name of author */
+      name: pipe(string(), nonEmpty(), maxLength(256)),
+      /** url of author */
+      url: exactOptional(pipe(string(), url())),
+      /** url of author icon (only supports http(s) and attachments) */
+      iconUrl: exactOptional(pipe(string(), url())),
+      /** a proxied url of author icon */
+      proxyIconUrl: exactOptional(pipe(string(), url()))
+    }),
     /** fields information */
-    fields: nullish(
-      pipe(
-        array(
-          object({
-            /** name of the field */
-            name: pipe(string(), maxLength(256)),
-            /** value of the field */
-            value: pipe(string(), maxLength(1024)),
-            /** whether or not this field should display inline */
-            inline: nullish(boolean())
-          })
-        ),
-        maxLength(25)
-      )
+    fields: pipe(
+      array(
+        object({
+          /** name of the field */
+          name: pipe(string(), nonEmpty(), maxLength(256)),
+          /** value of the field */
+          value: pipe(string(), nonEmpty(), maxLength(1024)),
+          /** whether or not this field should display inline */
+          inline: exactOptional(boolean())
+        })
+      ),
+      maxLength(25)
     )
   })
 );

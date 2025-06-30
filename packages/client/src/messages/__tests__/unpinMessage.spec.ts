@@ -10,7 +10,7 @@ import {
 
 describe(`unpinMessage`, { repeats: 5 }, () => {
   const { config } = mockUtils.request.delete(
-    `/channels/:channel/pins/:message`,
+    `/channels/:channel/messages/pins/:message`,
     unpinMessageSchema
   );
 

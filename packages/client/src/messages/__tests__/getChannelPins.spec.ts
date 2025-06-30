@@ -3,32 +3,32 @@ import { mockUtils } from "#mocks";
 import { runProcedure, runQuery } from "#test-utils";
 import { array, length, pipe } from "valibot";
 import {
-  getChannelMessagesProcedure,
-  getChannelMessagesQuery,
-  getChannelMessagesSafe,
-  getChannelMessagesSchema
-} from "../getChannelMessages.js";
-import { messageSchema } from "../../messages/types/Message.js";
+  getChannelPinsProcedure,
+  getChannelPinsQuery,
+  getChannelPinsSafe,
+  getChannelPinsSchema
+} from "../getChannelPins.js";
+import { messagePinSchema } from "../types/MessagePin.js";
 
-describe(`getChannelMessages`, { repeats: 5 }, () => {
+describe(`getChannelPins`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.get(
-    `/channels/:channel/messages`,
-    getChannelMessagesSchema,
-    pipe(array(messageSchema), length(1))
+    `/channels/:channel/messages/pins`,
+    getChannelPinsSchema,
+    pipe(array(messagePinSchema), length(1))
   );
 
   it(`can be used standalone`, async () => {
-    await expect(getChannelMessagesSafe(config)).resolves.toEqual(expected);
+    await expect(getChannelPinsSafe(config)).resolves.toEqual(expected);
   });
 
   it(`is tRPC compatible`, async () => {
     await expect(
-      runProcedure(getChannelMessagesProcedure)(config)
+      runProcedure(getChannelPinsProcedure)(config)
     ).resolves.toEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
-    const { result } = runQuery(getChannelMessagesQuery, config);
+    const { result } = runQuery(getChannelPinsQuery, config);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toEqual(expected);
   });
