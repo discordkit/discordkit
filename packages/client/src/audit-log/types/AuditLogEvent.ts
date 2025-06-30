@@ -97,6 +97,12 @@ export enum AuditLogEvent {
   THREAD_DELETE = 112,
   /** Permissions were updated for a command */
   APPLICATION_COMMAND_PERMISSION_UPDATE = 121,
+  /** Soundboard sound was created */
+  SOUNDBOARD_SOUND_CREATE = 130,
+  /** Soundboard sound was updated */
+  SOUNDBOARD_SOUND_UPDATE = 131,
+  /** Soundboard sound was deleted */
+  SOUNDBOARD_SOUND_DELETE = 132,
   /** Auto Moderation rule was created */
   AUTO_MODERATION_RULE_CREATE = 140,
   /** Auto Moderation rule was updated */
@@ -112,7 +118,21 @@ export enum AuditLogEvent {
   /** Creator monetization request was created */
   CREATOR_MONETIZATION_REQUEST_CREATED = 150,
   /** Creator monetization terms were accepted */
-  CREATOR_MONETIZATION_TERMS_ACCEPTED = 151
+  CREATOR_MONETIZATION_TERMS_ACCEPTED = 151,
+  /** Guild Onboarding Question was created */
+  ONBOARDING_PROMPT_CREATE = 163,
+  /** Guild Onboarding Question was updated */
+  ONBOARDING_PROMPT_UPDATE = 164,
+  /** Guild Onboarding Question was deleted */
+  ONBOARDING_PROMPT_DELETE = 165,
+  /** Guild Onboarding was created */
+  ONBOARDING_CREATE = 166,
+  /** Guild Onboarding was updated */
+  ONBOARDING_UPDATE = 167,
+  /** Guild Server Guide was created */
+  HOME_SETTINGS_CREATE = 190,
+  /** Guild Server Guide was updated */
+  HOME_SETTINGS_UPDATE = 191
 }
 
 export const auditLogEventSchema = enum_(AuditLogEvent);

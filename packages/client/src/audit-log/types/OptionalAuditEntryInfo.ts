@@ -1,32 +1,40 @@
 import { snowflake } from "@discordkit/core";
-import { type InferOutput, object, partial, string } from "valibot";
+import {
+  type InferOutput,
+  nonEmpty,
+  object,
+  partial,
+  picklist,
+  pipe,
+  string
+} from "valibot";
 
 export const optionalAuditEntryInfoSchema = partial(
   object({
     /** ID of the app whose permissions were targeted */
     applicationId: snowflake,
     /** Name of the Auto Moderation rule that was triggered */
-    autoModerationRuleName: string(),
+    autoModerationRuleName: pipe(string(), nonEmpty()),
     /** Trigger type of the Auto Moderation rule that was triggered */
-    autoModerationRuleTriggerType: string(),
+    autoModerationRuleTriggerType: pipe(string(), nonEmpty()),
     /** Channel in which the entities were targeted */
     channelId: snowflake,
     /** Number of entities that were targeted */
-    count: string(),
+    count: pipe(string(), nonEmpty()),
     /** Number of days after which inactive members were kicked */
-    deleteMemberDays: string(),
+    deleteMemberDays: pipe(string(), nonEmpty()),
     /** ID of the overwritten entity */
     id: snowflake,
     /** Number of members removed by the prune */
-    membersRemoved: string(),
+    membersRemoved: pipe(string(), nonEmpty()),
     /** ID of the message that was targeted */
     messageId: snowflake,
     /** Name of the role if type is "0" (not present if type is "1") */
-    roleName: string(),
+    roleName: picklist([`0`, `1`]),
     /** Type of overwritten entity - role ("0") or member ("1") */
-    type: string(),
+    type: picklist([`0`, `1`]),
     /** The type of integration which performed the action */
-    integrationType: string()
+    integrationType: pipe(string(), nonEmpty())
   })
 );
 

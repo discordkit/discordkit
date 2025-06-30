@@ -1,12 +1,13 @@
 import {
   object,
   string,
-  nullish,
   array,
-  minLength,
   maxLength,
   type InferOutput,
-  pipe
+  pipe,
+  nullable,
+  exactOptional,
+  nonEmpty
 } from "valibot";
 import { snowflake } from "@discordkit/core";
 import { auditLogChangeSchema } from "./AuditLogChange.js";
@@ -15,19 +16,19 @@ import { optionalAuditEntryInfoSchema } from "./OptionalAuditEntryInfo.js";
 
 export const auditLogEntrySchema = object({
   /** ID of the affected entity (webhook, user, role, etc.) */
-  targetId: nullish(string()),
+  targetId: nullable(pipe(string(), nonEmpty())),
   /** Changes made to the targetId */
-  changes: nullish(array(auditLogChangeSchema)),
+  changes: exactOptional(array(auditLogChangeSchema)),
   /** User or app that made the changes */
-  userId: nullish(snowflake),
+  userId: nullable(snowflake),
   /** ID of the entry */
   id: snowflake,
   /** Type of action that occurred */
   actionType: auditLogEventSchema,
   /** Additional info for certain event types */
-  options: nullish(optionalAuditEntryInfoSchema),
+  options: exactOptional(optionalAuditEntryInfoSchema),
   /** Reason for the change (1-512 characters) */
-  reason: nullish(pipe(string(), minLength(1), maxLength(512)))
+  reason: exactOptional(pipe(string(), nonEmpty(), maxLength(512)))
 });
 
 export type AuditLogEntry = InferOutput<typeof auditLogEntrySchema>;

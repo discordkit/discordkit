@@ -2,7 +2,6 @@ import {
   integer,
   maxValue,
   minValue,
-  nullish,
   number,
   object,
   exactOptional,
@@ -26,15 +25,15 @@ export const getGuildAuditLogSchema = object({
     partial(
       object({
         /** Entries from a specific user ID */
-        userId: nullish(snowflake),
+        userId: snowflake,
         /** Entries for a specific audit log event */
-        actionType: nullish(auditLogEventSchema),
+        actionType: auditLogEventSchema,
         /** Entries that preceded a specific audit log entry ID */
-        before: nullish(snowflake),
+        before: snowflake,
         /** Entries with ID greater than a specific audit log entry ID */
-        after: nullish(snowflake),
+        after: snowflake,
         /** Maximum number of entries (between 1-100) to return, defaults to 50 */
-        limit: nullish(pipe(number(), integer(), minValue(1), maxValue(100)))
+        limit: pipe(number(), integer(), minValue(1), maxValue(100))
       })
     )
   )
