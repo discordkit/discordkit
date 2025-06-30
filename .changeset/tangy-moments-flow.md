@@ -17,7 +17,7 @@ The best way to validate bitfields involves coercing the serialized values to `B
 
 This also involved added a means by which to mock this new datatype, which is powered by `enum` representations of the possible flags and their semantic meanings. Because of how delicate this ended up being, the entire set of mocking utilities needed to be overhauled and new tests were added to `@discordkit/core` to catch edge cases.
 
-### add new `datauri` schema
+### new `datauri` datatype
 
 Many of Discord's fields expect Data URI strings for images. A new `datauri` schema has been added to provide an extra layer of validation for these strings to guard against sending invalid data.
 
