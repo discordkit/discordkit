@@ -3,7 +3,7 @@ import {
   boolean,
   maxLength,
   nonEmpty,
-  nullish,
+  exactOptional,
   object,
   partial,
   pipe,
@@ -34,7 +34,7 @@ export const modifyAutoModerationRuleSchema = object({
       /** the event type */
       eventType: moderationEventSchema,
       /** the trigger metadata */
-      triggerMetadata: nullish(triggerMetaSchema),
+      triggerMetadata: exactOptional(triggerMetaSchema),
       /** the actions which will execute when the rule is triggered */
       actions: array(moderationActionSchema),
       /** whether the rule is enabled (False by default) */

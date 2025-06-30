@@ -1,6 +1,7 @@
 export * from "./application/procedures.js";
 export * from "./application-role-connection/procedures.js";
 export * from "./audit-log/procedures.js";
+export * from "./auto-moderation/procedures.js";
 export * from "./channel/procedures.js";
 export * from "./emoji/procedures.js";
 export * from "./event/procedures.js";
@@ -8,7 +9,6 @@ export * from "./guild/procedures.js";
 export * from "./interactions/procedures.js";
 export * from "./invite/procedures.js";
 export * from "./lobby/procedures.js";
-export * from "./moderation/procedures.js";
 export * from "./poll/procedures.js";
 export * from "./sku/procedures.js";
 export * from "./soundboard/procedures.js";

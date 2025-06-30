@@ -6,7 +6,9 @@ export enum ModerationActionType {
   /** logs user content to a specified channel */
   SEND_ALERT_MESSAGE = 2,
   /** timeout user for a specified duration */
-  TIMEOUT = 3
+  TIMEOUT = 3,
+  /** prevents a member from using text, voice, or other interactions */
+  BLOCK_MEMBER_INTERACTION = 4
 }
 
 export const moderationActionTypeSchema = enum_(ModerationActionType);

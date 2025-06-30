@@ -3,7 +3,7 @@ import {
   boolean,
   maxLength,
   nonEmpty,
-  nullish,
+  exactOptional,
   object,
   pipe,
   string
@@ -34,15 +34,15 @@ export const createAutoModerationRuleSchema = object({
     /** the trigger type */
     triggerType: moderationTriggerTypeSchema,
     /** the trigger metadata */
-    triggerMetadata: nullish(triggerMetaSchema),
+    triggerMetadata: exactOptional(triggerMetaSchema),
     /** the actions which will execute when the rule is triggered */
     actions: array(moderationActionSchema),
     /** whether the rule is enabled (False by default) */
-    enabled: nullish(boolean(), false),
+    enabled: exactOptional(boolean(), false),
     /** the role ids that should not be affected by the rule (Maximum of 20) */
-    exemptRoles: nullish(pipe(array(snowflake), maxLength(20))),
+    exemptRoles: exactOptional(pipe(array(snowflake), maxLength(20))),
     /** the channel ids that should not be affected by the rule (Maximum of 50) */
-    exemptChannels: nullish(pipe(array(snowflake), maxLength(50)))
+    exemptChannels: exactOptional(pipe(array(snowflake), maxLength(50)))
   })
 });
 

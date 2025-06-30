@@ -2,7 +2,7 @@ import { snowflake } from "@discordkit/core";
 import {
   type InferOutput,
   union,
-  optional,
+  exactOptional,
   object,
   number,
   integer,
@@ -17,7 +17,7 @@ import {
 export const moderationActionMetaSchema = union([
   object({
     /** channel to which user content should be logged */
-    channelId: optional(snowflake)
+    channelId: exactOptional(snowflake)
   }),
   object({
     /** timeout duration in seconds */
