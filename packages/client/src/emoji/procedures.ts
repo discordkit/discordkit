@@ -1,5 +1,10 @@
+export { createApplicationEmojiProcedure } from "./createApplicationEmoji.js";
 export { createGuildEmojiProcedure } from "./createGuildEmoji.js";
+export { deleteApplicationEmojiProcedure } from "./deleteApplicationEmoji.js";
 export { deleteGuildEmojiProcedure } from "./deleteGuildEmoji.js";
+export { getApplicationEmojiProcedure } from "./getApplicationEmoji.js";
 export { getGuildEmojiProcedure } from "./getGuildEmoji.js";
+export { listApplicationEmojisProcedure } from "./listApplicationEmojis.js";
 export { listGuildEmojisProcedure } from "./listGuildEmojis.js";
+export { modifyApplicationEmojiProcedure } from "./modifyApplicationEmoji.js";
 export { modifyGuildEmojiProcedure } from "./modifyGuildEmoji.js";

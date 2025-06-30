@@ -1,10 +1,11 @@
-import { array, minLength, object, pipe, string, url } from "valibot";
+import { array, nonEmpty, object, pipe, string } from "valibot";
 import {
   post,
   type Fetcher,
   toProcedure,
   toValidated,
-  snowflake
+  snowflake,
+  datauri
 } from "@discordkit/core";
 import { emojiSchema, type Emoji } from "./types/Emoji.js";
 
@@ -12,9 +13,9 @@ export const createGuildEmojiSchema = object({
   guild: snowflake,
   body: object({
     /** name of the emoji */
-    name: pipe(string(), minLength(1)),
+    name: pipe(string(), nonEmpty()),
     /** the 128x128 emoji image */
-    image: pipe(string(), url()),
+    image: datauri,
     /** roles allowed to use this emoji */
     roles: array(snowflake)
   })

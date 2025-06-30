@@ -1,32 +1,34 @@
 import {
   object,
-  optional,
   string,
-  nullish,
   array,
   boolean,
-  type InferOutput
+  type InferOutput,
+  exactOptional,
+  nonEmpty,
+  nullable,
+  pipe
 } from "valibot";
 import { snowflake } from "@discordkit/core";
 import { userSchema } from "../../user/types/User.js";
 
 export const emojiSchema = object({
   /** emoji id */
-  id: optional(snowflake),
+  id: nullable(snowflake),
   /** (can be null only in reaction emoji objects)	emoji name */
-  name: optional(string()),
+  name: nullable(pipe(string(), nonEmpty())),
   /** roles allowed to use this emoji */
-  roles: nullish(array(snowflake)),
+  roles: exactOptional(array(snowflake)),
   /** user that created this emoji */
-  user: nullish(userSchema),
+  user: exactOptional(userSchema),
   /** whether this emoji must be wrapped in colons */
-  requireColons: nullish(boolean()),
+  requireColons: exactOptional(boolean()),
   /** whether this emoji is managed */
-  managed: nullish(boolean()),
+  managed: exactOptional(boolean()),
   /** whether this emoji is animated */
-  animated: nullish(boolean()),
+  animated: exactOptional(boolean()),
   /** whether this emoji can be used, may be false due to loss of Server Boosts */
-  available: nullish(boolean())
+  available: exactOptional(boolean())
 });
 
 export type Emoji = InferOutput<typeof emojiSchema>;
