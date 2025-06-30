@@ -1,7 +1,10 @@
 export { discord } from "@discordkit/core";
 
 export * from "./application/index.js";
+export * from "./application-commands/index.js";
+export * from "./application-role-connection/index.js";
 export * from "./channel/index.js";
+export * from "./components/index.js";
 export * from "./emoji/index.js";
 export * from "./entitlements/index.js";
 export * from "./event/index.js";
@@ -20,6 +23,7 @@ export * from "./soundboard/index.js";
 export * from "./stage/index.js";
 export * from "./sticker/index.js";
 export * from "./subscription/index.js";
+export * from "./teams/index.js";
 export * from "./template/index.js";
 export * from "./user/index.js";
 export * from "./voice/index.js";

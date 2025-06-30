@@ -7,7 +7,7 @@ import {
   createGuildApplicationCommandSchema,
   createGuildApplicationCommandSafe
 } from "../createGuildApplicationCommand.js";
-import { applicationCommandSchema } from "../types/ApplicationCommand.js";
+import { applicationCommandSchema } from "../../application-commands/types/ApplicationCommand.js";
 
 describe(`createGuildApplicationCommand`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.post(

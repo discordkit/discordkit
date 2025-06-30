@@ -7,7 +7,7 @@ import {
   createGlobalApplicationCommandSchema,
   createGlobalApplicationCommandSafe
 } from "../createGlobalApplicationCommand.js";
-import { applicationCommandSchema } from "../types/ApplicationCommand.js";
+import { applicationCommandSchema } from "../../application-commands/types/ApplicationCommand.js";
 
 describe(`createGlobalApplicationCommand`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.post(

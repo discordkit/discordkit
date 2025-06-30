@@ -1,14 +1,10 @@
 import {
   array,
   boolean,
-  integer,
   literal,
   maxLength,
-  minLength,
   nonEmpty,
-  number,
   object,
-  exactOptional,
   partial,
   pipe,
   string,
@@ -16,39 +12,26 @@ import {
 } from "valibot";
 import {
   post,
-  buildURL,
   type Fetcher,
   toProcedure,
   toValidated,
-  snowflake
+  snowflake,
+  asInteger
 } from "@discordkit/core";
 import { embedSchema } from "../messages/types/Embed.js";
 import { allowedMentionSchema } from "../messages/types/AllowedMention.js";
 import { attachmentSchema } from "../messages/types/Attachment.js";
 import { EmbedType } from "../messages/types/EmbedType.js";
 import { messageComponentSchema } from "../messages/types/MessageComponent.js";
+import { messageFlag } from "../messages/types/MessageFlag.js";
 
 export const createFollowupMessageSchema = object({
   application: snowflake,
   token: pipe(string(), nonEmpty()),
-  params: exactOptional(
-    partial(
-      object({
-        /** waits for server confirmation of message send before response, and returns the created message body (defaults to false; when false a message that is not saved does not return an error) */
-        wait: exactOptional(boolean()),
-        /** Send a message to the specified thread within a webhook's channel. The thread will automatically be unarchived. */
-        threadId: snowflake
-      })
-    )
-  ),
   body: partial(
     object({
       /** the message contents (up to 2000 characters) */
-      content: pipe(string(), minLength(1), maxLength(2000)),
-      /** override the default username of the webhook */
-      username: pipe(string(), nonEmpty()),
-      /** override the default avatar of the webhook */
-      avatarUrl: pipe(string(), nonEmpty()),
+      content: pipe(string(), nonEmpty(), maxLength(2000)),
       /** true if this is a TTS message */
       tts: boolean(),
       /** embedded rich content */
@@ -69,8 +52,8 @@ export const createFollowupMessageSchema = object({
       files: array(unknown()),
       /** attachment objects with filename and description */
       attachments: array(partial(attachmentSchema)),
-      /** message flags combined as a bitfield (only SUPPRESS_EMBEDS can be set) */
-      flags: pipe(number(), integer()),
+      /** message flags combined as a bitfield */
+      flags: asInteger(messageFlag),
       /** name of thread to create (requires the webhook channel to be a forum channel) */
       threadName: pipe(string(), nonEmpty())
     })
@@ -82,14 +65,18 @@ export const createFollowupMessageSchema = object({
  *
  * **POST** `/webhooks/:application/:token`
  *
- * Create a followup message for an Interaction. Functions the same as Execute Webhook, but `wait` is always true. The `threadId`, `avatarUrl`, and `username` parameters are not supported when using this endpoint for interaction followups.
+ * > [!NOTE]
+ * >
+ * > Apps are limited to 5 followup messages per interaction if it was initiated from a user-installed app and isn't installed in the server (meaning the authorizing integration owners object only contains `USER_INSTALL`)
  *
- * `flags` can be set to `64` to mark the message as ephemeral, except when it is the first followup message to a deferred Interactions Response. In that case, the `flags` field will be ignored, and the ephemerality of the message will be determined by the `flags` value in your original ACK.
+ * Create a followup message for an Interaction. Functions the same as Execute Webhook, but wait is always true. The `threadId`, `avatarUrl`, and `username` parameters are not supported when using this endpoint for interaction followups. You can use the `EPHEMERAL` message flag `1 << 6` (64) to send a message that only the user can see. You can also use the `IS_COMPONENTS_V2` message flag `1 << 15` (32768) to send a component-based message.
+ *
+ * When using this endpoint directly after responding to an interaction with `DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE`, this endpoint will function as Edit Original Interaction Response for backwards compatibility. In this case, no new message will be created, and the loading message will be edited instead. The ephemeral flag will be ignored, and the value you provided in the initial defer response will be preserved, as an existing message's ephemeral state cannot be changed. This behavior is deprecated, and you should use the Edit Original Interaction Response endpoint in this case instead.
  */
 export const createFollowupMessage: Fetcher<
   typeof createFollowupMessageSchema
-> = async ({ application, token, params, body }) =>
-  post(buildURL(`/webhooks/${application}/${token}`, params).href, body);
+> = async ({ application, token, body }) =>
+  post(`/webhooks/${application}/${token}`, body);
 
 export const createFollowupMessageSafe = toValidated(
   createFollowupMessage,

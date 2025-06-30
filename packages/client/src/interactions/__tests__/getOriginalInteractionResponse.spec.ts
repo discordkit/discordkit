@@ -7,25 +7,25 @@ import {
   getOriginalInteractionResponseSafe,
   getOriginalInteractionResponseSchema
 } from "../getOriginalInteractionResponse.js";
-import { interactionResponseSchema } from "../types/InteractionResponse.js";
+import { interactionCallbackResponseSchema } from "../types/InteractionCallbackResponse.js";
 
 describe(`getOriginalInteractionResponse`, { repeats: 5 }, () => {
-  const { config } = mockUtils.request.get(
+  const { config, expected } = mockUtils.request.get(
     `/webhooks/:application/:token/messages/@original`,
     getOriginalInteractionResponseSchema,
-    interactionResponseSchema
+    interactionCallbackResponseSchema
   );
 
   it(`can be used standalone`, async () => {
     await expect(
       getOriginalInteractionResponseSafe(config)
-    ).resolves.not.toThrow();
+    ).resolves.toStrictEqual(expected);
   });
 
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(getOriginalInteractionResponseProcedure)(config)
-    ).resolves.toBeDefined();
+    ).resolves.toStrictEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {

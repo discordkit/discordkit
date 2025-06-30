@@ -1,4 +1,13 @@
-import { nonEmpty, object, pipe, string } from "valibot";
+import {
+  boolean,
+  exactOptional,
+  nonEmpty,
+  object,
+  partial,
+  pipe,
+  string,
+  undefinedable
+} from "valibot";
 import {
   post,
   type Fetcher,
@@ -6,12 +15,21 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { interactionResponseSchema } from "./types/InteractionResponse.js";
+import type { InteractionCallbackResponse } from "./types/InteractionCallbackResponse.js";
+import { interactionCallbackResponseSchema } from "./types/InteractionCallbackResponse.js";
 
 export const createInteractionResponseSchema = object({
   interaction: snowflake,
   token: pipe(string(), nonEmpty()),
-  body: interactionResponseSchema
+  body: interactionCallbackResponseSchema,
+  params: exactOptional(
+    partial(
+      object({
+        /** Whether to include an interaction callback object as the response */
+        withResponse: boolean()
+      })
+    )
+  )
 });
 
 /**
@@ -19,22 +37,25 @@ export const createInteractionResponseSchema = object({
  *
  * **POST** `/interactions/:interaction/:token/callback`
  *
- * Create a response to an Interaction from the gateway. Body is an interaction response. Returns `204 No Content`.
+ * Create a response to an Interaction. Body is an interaction response. Returns `204` unless `withResponse` is set to `true` which returns `200` with the body as interaction callback response.
  *
  * This endpoint also supports file attachments similar to the webhook endpoints. Refer to Uploading Files for details on uploading files and `multipart/form-data` requests.
  */
 export const createInteractionResponse: Fetcher<
-  typeof createInteractionResponseSchema
+  typeof createInteractionResponseSchema,
+  InteractionCallbackResponse | undefined
 > = async ({ interaction, token, body }) =>
   post(`/interactions/${interaction}/${token}/callback`, body);
 
 export const createInteractionResponseSafe = toValidated(
   createInteractionResponse,
-  createInteractionResponseSchema
+  createInteractionResponseSchema,
+  undefinedable(interactionCallbackResponseSchema)
 );
 
 export const createInteractionResponseProcedure = toProcedure(
   `mutation`,
   createInteractionResponse,
-  createInteractionResponseSchema
+  createInteractionResponseSchema,
+  undefinedable(interactionCallbackResponseSchema)
 );

@@ -28,7 +28,7 @@ import { embedSchema } from "./Embed.js";
 import { messageReferenceSchema } from "./MessageReference.js";
 import { attachmentSchema } from "./Attachment.js";
 import { messageTypeSchema } from "./MessageType.js";
-import { messageInteractionSchema } from "./MessageInteraction.js";
+import { messageInteractionSchema } from "../../interactions/types/MessageInteraction.js";
 import { messageComponentSchema } from "./MessageComponent.js";
 import { roleSubscriptionDataSchema } from "../../channel/types/RoleSubscriptionData.js";
 import { messageFlag } from "./MessageFlag.js";

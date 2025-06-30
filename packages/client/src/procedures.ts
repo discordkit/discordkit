@@ -1,4 +1,5 @@
 export * from "./application/procedures.js";
+export * from "./application-role-connection/procedures.js";
 export * from "./channel/procedures.js";
 export * from "./emoji/procedures.js";
 export * from "./event/procedures.js";

@@ -7,7 +7,7 @@ import {
   editGuildApplicationCommandSafe,
   editGuildApplicationCommandSchema
 } from "../editGuildApplicationCommand.js";
-import { applicationCommandSchema } from "../types/ApplicationCommand.js";
+import { applicationCommandSchema } from "../../application-commands/types/ApplicationCommand.js";
 
 describe(`editGuildApplicationCommand`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.patch(

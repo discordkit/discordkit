@@ -22,7 +22,7 @@ import { channelSchema } from "../../channel/types/Channel.js";
 import { type Message, messageSchema } from "../../messages/types/Message.js";
 import { type User, userSchema } from "../../user/types/User.js";
 import { interactionTypeSchema } from "./InteractionType.js";
-import { applicationCommandDataSchema } from "../../application/types/ApplicationCommandData.js";
+import { applicationCommandDataSchema } from "./ApplicationCommandData.js";
 import { guildSchema } from "../../guild/types/index.js";
 import { permissionFlag } from "../../permissions/Permissions.js";
 import { entitlementSchema } from "../../entitlements/types/Entitlement.js";

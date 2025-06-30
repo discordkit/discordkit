@@ -7,7 +7,7 @@ import {
   getGuildApplicationCommandQuery,
   getGuildApplicationCommandSafe
 } from "../getGuildApplicationCommand.js";
-import { applicationCommandSchema } from "../types/ApplicationCommand.js";
+import { applicationCommandSchema } from "../../application-commands/types/ApplicationCommand.js";
 
 describe(`getGuildApplicationCommand`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.get(

@@ -25,9 +25,9 @@ import { attachmentSchema } from "../messages/types/Attachment.js";
 import { messageComponentSchema } from "../messages/types/MessageComponent.js";
 import { EmbedType } from "../messages/types/EmbedType.js";
 import {
-  type InteractionResponse,
-  interactionResponseSchema
-} from "./types/InteractionResponse.js";
+  type InteractionCallbackResponse,
+  interactionCallbackResponseSchema
+} from "./types/InteractionCallbackResponse.js";
 
 export const editOriginalInteractionResponseSchema = object({
   application: snowflake,
@@ -71,11 +71,11 @@ export const editOriginalInteractionResponseSchema = object({
  *
  * **PATCH** `/webhooks/:application/:token/messages/@original`
  *
- * Edits the initial {@link InteractionReponse Interaction response}.. Functions the same as Edit Webhook Message.
+ * Edits the initial {@link InteractionCallbackReponse Interaction response}.. Functions the same as Edit Webhook Message.
  */
 export const editOriginalInteractionResponse: Fetcher<
   typeof editOriginalInteractionResponseSchema,
-  InteractionResponse
+  InteractionCallbackResponse
 > = async ({ application, token, params, body }) =>
   patch(
     buildURL(`/webhooks/${application}/${token}/messages/@original`, params)
@@ -86,12 +86,12 @@ export const editOriginalInteractionResponse: Fetcher<
 export const editOriginalInteractionResponseSafe = toValidated(
   editOriginalInteractionResponse,
   editOriginalInteractionResponseSchema,
-  interactionResponseSchema
+  interactionCallbackResponseSchema
 );
 
 export const editOriginalInteractionResponseProcedure = toProcedure(
   `mutation`,
   editOriginalInteractionResponse,
   editOriginalInteractionResponseSchema,
-  interactionResponseSchema
+  interactionCallbackResponseSchema
 );

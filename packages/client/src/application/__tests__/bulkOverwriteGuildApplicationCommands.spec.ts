@@ -8,7 +8,7 @@ import {
   bulkOverwriteGuildApplicationCommandsSchema,
   bulkOverwriteGuildApplicationCommandsSafe
 } from "../bulkOverwriteGuildApplicationCommands.js";
-import { applicationCommandSchema } from "../types/ApplicationCommand.js";
+import { applicationCommandSchema } from "../../application-commands/types/ApplicationCommand.js";
 
 describe(`bulkOverwriteGuildApplicationCommands`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.put(

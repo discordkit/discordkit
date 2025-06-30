@@ -10,7 +10,7 @@ import {
 import {
   type ApplicationCommand,
   applicationCommandSchema
-} from "./types/ApplicationCommand.js";
+} from "../application-commands/types/ApplicationCommand.js";
 
 export const getGlobalApplicationCommandsSchema = object({
   application: snowflake,

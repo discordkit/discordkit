@@ -97,8 +97,8 @@ type SchemaMaybeWithPipe<TSchema extends Schema> = Optional<
   `pipe`
 >;
 
-type CustomMock = <TSchema extends Schema>(
-  schema: SchemaMaybeWithPipe<TSchema>,
+type CustomMock = (
+  schema: SchemaMaybeWithPipe<SchemaMaybeWithTitle>,
   options?: ValimockOptions
 ) => unknown;
 
@@ -113,9 +113,16 @@ type CreateMockReturn<
     ? { config: null; expected: InferOutput<TResult> }
     : { config: null; expected: null };
 
+interface Flags {
+  [key: string]: number | bigint | string;
+}
+
 export class MockUtils {
-  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
-  #customMocks: CustomMock = () => {};
+  #customMocks = new Map<
+    SchemaMaybeWithPipe<SchemaMaybeWithTitle>,
+    CustomMock
+  >();
+
   #session: ClientSession;
   #msw: SetupServer = setupServer();
   static uid = new Snowflake({ custom_epoch: 1420070400000 });
@@ -152,9 +159,7 @@ export class MockUtils {
         )
       : val;
 
-  static flags = (flags: {
-    [key: string]: number | bigint | string;
-  }): bigint => {
+  static flags = (flags: Flags): bigint => {
     const values = Object.values(flags).filter((flag) => !isNaN(Number(flag)));
     return [
       ...new Set(
@@ -181,18 +186,25 @@ export class MockUtils {
     this.hasPipe(schemaB) &&
     getTitle(schemaA) === getTitle(schemaB);
 
+  static flagMatcher =
+    (flags: Flags) =>
+    (reference: SchemaMaybeWithPipe<SchemaMaybeWithTitle>): bigint =>
+      MockUtils.applyTransforms(reference, MockUtils.flags(flags));
+
   constructor(
     discord: ClientSession,
     options?: {
       token?: string;
-      customMocks?: CustomMock;
+      customMocks?: Array<
+        [matcher: SchemaMaybeWithPipe<SchemaMaybeWithTitle>, mockFn: CustomMock]
+      >;
       debug?: boolean;
     }
   ) {
     this.#session = discord;
     this.#session.setToken(options?.token ?? `Bot super-secret-token`);
     if (options?.customMocks) {
-      this.#customMocks = options.customMocks;
+      this.#customMocks = new Map(options.customMocks);
     }
     if (options?.debug) {
       this.#enableDebugging();
@@ -216,6 +228,11 @@ export class MockUtils {
     });
   };
 
+  setMock = (schema: Schema, mockFn: CustomMock): this => {
+    this.#customMocks.set(schema, mockFn);
+    return this;
+  };
+
   schema = <TSchema extends Schema>(
     schema: TSchema,
     opts?: Partial<ValimockOptions>
@@ -223,12 +240,23 @@ export class MockUtils {
     new Valimock({
       ...opts,
       customMocks: {
-        custom: this.#customMocks
+        custom: (reference): unknown => {
+          // Iterate through the provided matchers and return the
+          // first valid match
+          for (const [target, mockfn] of this.#customMocks) {
+            if (MockUtils.titlesMatch(reference, target)) {
+              return mockfn(reference);
+            }
+          }
+          throw new Error(
+            `Unhandled custom schema: ${getTitle(reference) ?? reference.expects}`
+          );
+        }
       }
     }).mock(schema);
 
   // eslint-disable-next-line @typescript-eslint/class-methods-use-this
-  #serialize = (val: unknown): string => {
+  #serialize = (val: unknown): string | undefined => {
     try {
       return JSON.stringify(val);
     } catch (err) {
@@ -249,7 +277,7 @@ export class MockUtils {
     ): CreateMockReturn<TConfig, TResult> => {
       const config = configSchema ? this.schema(configSchema, opts) : null;
       const expected = resultSchema ? this.schema(resultSchema, opts) : null;
-      const result = this.#serialize(expected);
+      const result = this.#serialize(expected); //?
 
       try {
         this.#msw.use(
@@ -257,7 +285,8 @@ export class MockUtils {
             new URL(path.replace(/^\//, ``), this.#session.endpoint).href,
             () => {
               try {
-                const response = new Response(result, {
+                const response = new Response(result ?? null, {
+                  status: typeof result === `undefined` ? 204 : undefined,
                   headers: {
                     "Content-Type": `application/json`
                   }

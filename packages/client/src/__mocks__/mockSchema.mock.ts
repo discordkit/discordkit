@@ -1,6 +1,7 @@
 import { afterAll } from "vitest";
 import { MockUtils } from "#mock-utils";
-import { discord, snowflake } from "@discordkit/core";
+import { datauri, discord, snowflake } from "@discordkit/core";
+import { faker } from "@faker-js/faker";
 import {
   applicationFlag,
   ApplicationFlags
@@ -30,62 +31,22 @@ import {
 } from "../lobby/types/LobbyMemberFlags.js";
 
 export const mockUtils = new MockUtils(discord, {
-  customMocks: (schema): unknown => {
-    if (MockUtils.titlesMatch(schema, snowflake)) {
-      return MockUtils.uid.getUniqueID().toString();
-    }
-    if (MockUtils.titlesMatch(schema, applicationFlag)) {
-      return MockUtils.applyTransforms(
-        schema,
-        MockUtils.flags(ApplicationFlags)
-      );
-    }
-    if (MockUtils.titlesMatch(schema, channelFlag)) {
-      return MockUtils.applyTransforms(schema, MockUtils.flags(ChannelFlags));
-    }
-    if (MockUtils.titlesMatch(schema, activityFlag)) {
-      return MockUtils.applyTransforms(schema, MockUtils.flags(ActivityFlags));
-    }
-    if (MockUtils.titlesMatch(schema, guildMemberFlag)) {
-      return MockUtils.applyTransforms(
-        schema,
-        MockUtils.flags(GuildMemberFlags)
-      );
-    }
-    if (MockUtils.titlesMatch(schema, systemChannelFlag)) {
-      return MockUtils.applyTransforms(
-        schema,
-        MockUtils.flags(SystemChannelFlags)
-      );
-    }
-    if (MockUtils.titlesMatch(schema, attachmentFlag)) {
-      return MockUtils.applyTransforms(
-        schema,
-        MockUtils.flags(AttachmentFlags)
-      );
-    }
-    if (MockUtils.titlesMatch(schema, messageFlag)) {
-      return MockUtils.applyTransforms(schema, MockUtils.flags(MessageFlag));
-    }
-    if (MockUtils.titlesMatch(schema, permissionFlag)) {
-      return MockUtils.applyTransforms(schema, MockUtils.flags(Permissions));
-    }
-    if (MockUtils.titlesMatch(schema, roleFlag)) {
-      return MockUtils.applyTransforms(schema, MockUtils.flags(RoleFlags));
-    }
-    if (MockUtils.titlesMatch(schema, userFlag)) {
-      return MockUtils.applyTransforms(schema, MockUtils.flags(UserFlags));
-    }
-    if (MockUtils.titlesMatch(schema, skuFlag)) {
-      return MockUtils.applyTransforms(schema, MockUtils.flags(SKUFlags));
-    }
-    if (MockUtils.titlesMatch(schema, lobbyMemberFlag)) {
-      return MockUtils.applyTransforms(
-        schema,
-        MockUtils.flags(LobbyMemberFlags)
-      );
-    }
-  }
+  customMocks: [
+    [snowflake, (): string => MockUtils.uid.getUniqueID().toString()],
+    [datauri, (): string => faker.image.dataUri()],
+    [applicationFlag, MockUtils.flagMatcher(ApplicationFlags)],
+    [channelFlag, MockUtils.flagMatcher(ChannelFlags)],
+    [activityFlag, MockUtils.flagMatcher(ActivityFlags)],
+    [guildMemberFlag, MockUtils.flagMatcher(GuildMemberFlags)],
+    [systemChannelFlag, MockUtils.flagMatcher(SystemChannelFlags)],
+    [attachmentFlag, MockUtils.flagMatcher(AttachmentFlags)],
+    [messageFlag, MockUtils.flagMatcher(MessageFlag)],
+    [permissionFlag, MockUtils.flagMatcher(Permissions)],
+    [roleFlag, MockUtils.flagMatcher(RoleFlags)],
+    [userFlag, MockUtils.flagMatcher(UserFlags)],
+    [skuFlag, MockUtils.flagMatcher(SKUFlags)],
+    [lobbyMemberFlag, MockUtils.flagMatcher(LobbyMemberFlags)]
+  ]
 });
 
 afterAll(() => {

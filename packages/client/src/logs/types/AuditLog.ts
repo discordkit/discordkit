@@ -5,7 +5,7 @@ import { integrationSchema } from "../../guild/types/Integration.js";
 import { moderationRuleSchema } from "../../moderation/types/ModerationRule.js";
 import { userSchema } from "../../user/types/User.js";
 import { webhookSchema } from "../../webhook/types/Webhook.js";
-import { applicationCommandSchema } from "../../application/types/ApplicationCommand.js";
+import { applicationCommandSchema } from "../../application-commands/types/ApplicationCommand.js";
 import { auditLogEntrySchema } from "./AuditLogEntry.js";
 
 export const auditLogSchema = object({

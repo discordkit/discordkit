@@ -20,8 +20,8 @@ import {
 import {
   applicationCommandSchema,
   type ApplicationCommand
-} from "./types/ApplicationCommand.js";
-import { applicationCommandOptionSchema } from "./types/ApplicationCommandOption.js";
+} from "../application-commands/types/ApplicationCommand.js";
+import { applicationCommandOptionSchema } from "../application-commands/types/ApplicationCommandOption.js";
 import { localesSchema } from "./types/Locales.js";
 
 export const editGlobalApplicationCommandSchema = object({

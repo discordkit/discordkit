@@ -9,7 +9,6 @@ export * from "./MessageActivity.js";
 export * from "./MessageActivityType.js";
 export * from "./MessageComponent.js";
 export * from "./MessageFlag.js";
-export * from "./MessageInteraction.js";
 export * from "./MessageReference.js";
 export * from "./MessageType.js";
 export * from "./Reaction.js";

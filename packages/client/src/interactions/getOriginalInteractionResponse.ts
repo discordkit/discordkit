@@ -15,9 +15,9 @@ import {
   snowflake
 } from "@discordkit/core";
 import {
-  type InteractionResponse,
-  interactionResponseSchema
-} from "./types/InteractionResponse.js";
+  type InteractionCallbackResponse,
+  interactionCallbackResponseSchema
+} from "./types/InteractionCallbackResponse.js";
 
 export const getOriginalInteractionResponseSchema = object({
   application: snowflake,
@@ -37,25 +37,25 @@ export const getOriginalInteractionResponseSchema = object({
  *
  * **GET** `/webhooks/:application/:token/messages/@original`
  *
- * Returns the initial {@link InteractionReponse Interaction response}. Functions the same as Get Webhook Message.
+ * Returns the initial {@link InteractionCallbackResponse Interaction response}. Functions the same as Get Webhook Message.
  */
 export const getOriginalInteractionResponse: Fetcher<
   typeof getOriginalInteractionResponseSchema,
-  InteractionResponse
+  InteractionCallbackResponse
 > = async ({ application, token, params }) =>
   get(`/webhooks/${application}/${token}/messages/@original`, params);
 
 export const getOriginalInteractionResponseSafe = toValidated(
   getOriginalInteractionResponse,
   getOriginalInteractionResponseSchema,
-  interactionResponseSchema
+  interactionCallbackResponseSchema
 );
 
 export const getOriginalInteractionResponseProcedure = toProcedure(
   `query`,
   getOriginalInteractionResponse,
   getOriginalInteractionResponseSchema,
-  interactionResponseSchema
+  interactionCallbackResponseSchema
 );
 
 export const getOriginalInteractionResponseQuery = toQuery(

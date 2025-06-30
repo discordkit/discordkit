@@ -19,7 +19,7 @@ import {
 } from "valibot";
 import { asInteger, snowflake } from "@discordkit/core";
 import { userSchema } from "../../user/types/User.js";
-import { teamSchema } from "./Team.js";
+import { teamSchema } from "../../teams/types/Team.js";
 import { guildSchema } from "../../guild/types/Guild.js";
 import { applicationFlag } from "./ApplicationFlags.js";
 import { applicationEventWebhookStatusSchema } from "./ApplicationEventWebhookStatus.js";

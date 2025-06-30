@@ -8,7 +8,7 @@ import {
   getGlobalApplicationCommandsQuery,
   getGlobalApplicationCommandsSafe
 } from "../getGlobalApplicationCommands.js";
-import { applicationCommandSchema } from "../types/ApplicationCommand.js";
+import { applicationCommandSchema } from "../../application-commands/types/ApplicationCommand.js";
 
 describe(`getGlobalApplicationCommands`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.get(

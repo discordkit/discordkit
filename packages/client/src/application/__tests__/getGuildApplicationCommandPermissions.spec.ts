@@ -8,7 +8,7 @@ import {
   getGuildApplicationCommandPermissionsQuery,
   getGuildApplicationCommandPermissionsSafe
 } from "../getGuildApplicationCommandPermissions.js";
-import { guildApplicationCommandPermissionsSchema } from "../types/GuildApplicationCommandPermissions.js";
+import { guildApplicationCommandPermissionsSchema } from "../../application-commands/types/GuildApplicationCommandPermissions.js";
 
 describe(`getGuildApplicationCommandPermissions`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.get(

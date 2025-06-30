@@ -7,25 +7,25 @@ import {
   editOriginalInteractionResponseSafe,
   editOriginalInteractionResponseSchema
 } from "../editOriginalInteractionResponse.js";
-import { interactionResponseSchema } from "../types/InteractionResponse.js";
+import { interactionCallbackResponseSchema } from "../types/InteractionCallbackResponse.js";
 
 describe(`editOriginalInteractionResponse`, { repeats: 5 }, () => {
-  const { config } = mockUtils.request.patch(
+  const { config, expected } = mockUtils.request.patch(
     `/webhooks/:application/:token/messages/@original`,
     editOriginalInteractionResponseSchema,
-    interactionResponseSchema
+    interactionCallbackResponseSchema
   );
 
   it(`can be used standalone`, async () => {
     await expect(
       editOriginalInteractionResponseSafe(config)
-    ).resolves.not.toThrow();
+    ).resolves.toStrictEqual(expected);
   });
 
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(editOriginalInteractionResponseProcedure)(config)
-    ).resolves.toBeDefined();
+    ).resolves.toStrictEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {
