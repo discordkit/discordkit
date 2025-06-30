@@ -2,7 +2,7 @@ import {
   object,
   string,
   boolean,
-  nullish,
+  exactOptional,
   type InferOutput,
   minValue,
   integer,
@@ -29,29 +29,29 @@ export const integrationSchema = object({
   /** is this integration enabled */
   enabled: boolean(),
   /** is this integration syncing */
-  syncing: nullish(boolean()),
+  syncing: exactOptional(boolean()),
   /** id that this integration uses for "subscribers" */
-  roleId: nullish(snowflake),
+  roleId: exactOptional(snowflake),
   /** whether emoticons should be synced for this integration (twitch only currently) */
-  enableEmoticons: nullish(boolean()),
+  enableEmoticons: exactOptional(boolean()),
   /** the behavior of expiring subscribers */
-  expireBehavior: nullish(integrationExpireBehaviorSchema),
+  expireBehavior: exactOptional(integrationExpireBehaviorSchema),
   /** the grace period (in days) before expiring subscribers */
-  expireGracePeriod: nullish(pipe(number(), integer(), minValue(0))),
+  expireGracePeriod: exactOptional(pipe(number(), integer(), minValue(0))),
   /** user for this integration */
-  user: nullish(userSchema),
+  user: exactOptional(userSchema),
   /** integration account information */
   account: integrationAccountSchema,
   /** when this integration was last synced */
-  syncedAt: nullish(pipe(string(), isoTimestamp())),
+  syncedAt: exactOptional(pipe(string(), isoTimestamp())),
   /** how many subscribers this integration has */
-  subscriberCount: nullish(pipe(number(), integer(), minValue(0))),
+  subscriberCount: exactOptional(pipe(number(), integer(), minValue(0))),
   /** has this integration been revoked */
-  revoked: nullish(boolean()),
+  revoked: exactOptional(boolean()),
   /** The bot/OAuth2 application for discord integrations */
-  application: nullish(integrationApplicationSchema),
+  application: exactOptional(integrationApplicationSchema),
   /** the scopes the application has been authorized for */
-  scopes: nullish(array(scopesSchema))
+  scopes: exactOptional(array(scopesSchema))
 });
 
 export type Integration = InferOutput<typeof integrationSchema>;

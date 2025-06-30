@@ -1,4 +1,4 @@
-import { maxLength, minLength, object, optional, string, pipe } from "valibot";
+import { maxLength, minLength, object, nullish, string, pipe } from "valibot";
 import {
   post,
   type Fetcher,
@@ -17,7 +17,7 @@ export const createGuildTemplateSchema = object({
     /** name of the template (1-100 characters) */
     name: pipe(string(), minLength(1), maxLength(100)),
     /** description for the template (0-120 characters) */
-    description: optional(pipe(string(), minLength(0), maxLength(120)))
+    description: nullish(pipe(string(), minLength(0), maxLength(120)))
   })
 });
 

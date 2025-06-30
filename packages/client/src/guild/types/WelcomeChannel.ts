@@ -4,7 +4,7 @@ import {
   object,
   string,
   nonEmpty,
-  optional,
+  nullable,
   pipe
 } from "valibot";
 
@@ -14,9 +14,9 @@ export const welcomeChannelSchema = object({
   /** the description shown for the channel */
   description: pipe(string(), nonEmpty()),
   /** the emoji id, if the emoji is custom */
-  emojiId: optional(snowflake),
+  emojiId: nullable(snowflake),
   /** the emoji name if custom, the unicode character if standard, or null if no emoji is set */
-  emojiName: optional(pipe(string(), nonEmpty()))
+  emojiName: nullable(pipe(string(), nonEmpty()))
 });
 
 export type WelcomeChannel = InferOutput<typeof welcomeChannelSchema>;

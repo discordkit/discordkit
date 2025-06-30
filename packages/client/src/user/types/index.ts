@@ -1,3 +1,4 @@
+export * from "./AvatarDecorationData.js";
 export * from "./Connection.js";
 export * from "./ConnectionVisibilty.js";
 export * from "./PremiumType.js";

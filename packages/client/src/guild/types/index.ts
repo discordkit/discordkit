@@ -18,6 +18,7 @@ export * from "./GuildOnboarding.js";
 export * from "./GuildPreview.js";
 export * from "./GuildWidget.js";
 export * from "./GuildWidgetSettings.js";
+export * from "./IncidentsData.js";
 export * from "./Integration.js";
 export * from "./IntegrationAccount.js";
 export * from "./IntegrationApplication.js";

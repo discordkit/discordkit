@@ -30,6 +30,7 @@ import { defaultMessageNotificationLevelSchema } from "./DefaultMessageNotificat
 import { guildFeaturesSchema } from "./GuildFeatures.js";
 import { systemChannelFlag } from "./SystemChannelFlags.js";
 import { permissionFlag } from "../../permissions/Permissions.js";
+import { incidentsDataSchema } from "./IncidentsData.js";
 
 export const guildSchema = object({
   /** guild id */
@@ -121,8 +122,9 @@ export const guildSchema = object({
   /** whether the guild has the boost progress bar enabled */
   premiumProgressBarEnabled: boolean(),
   /** the id of the channel where admins and moderators of Community guilds receive safety alerts from Discord */
-  safetyAlertsChannelId: nullable(snowflake)
-  // TODO: incidentsData
+  safetyAlertsChannelId: nullable(snowflake),
+  /** the incidents data for this guild */
+  incidentsData: exactOptional(incidentsDataSchema)
 });
 
 export type Guild = InferOutput<typeof guildSchema>;

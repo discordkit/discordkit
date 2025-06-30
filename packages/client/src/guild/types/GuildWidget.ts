@@ -3,7 +3,7 @@ import {
   string,
   minLength,
   maxLength,
-  optional,
+  nullable,
   partial,
   array,
   number,
@@ -13,7 +13,7 @@ import {
   pipe
 } from "valibot";
 import { snowflake } from "@discordkit/core";
-import { channelSchema } from "../../channel/types/Channel.js";
+import { guildVoiceChannelSchema } from "../../channel/types/Channel.js";
 import { userSchema } from "../../user/types/User.js";
 
 export const guildWidgetSchema = object({
@@ -22,9 +22,9 @@ export const guildWidgetSchema = object({
   /** guild name (2-100 characters) */
   name: pipe(string(), minLength(2), maxLength(100)),
   /** instant invite for the guilds specified widget invite channel */
-  instantInvite: optional(pipe(string(), minLength(1))),
+  instantInvite: nullable(pipe(string(), minLength(1))),
   /** voice and stage channels which are accessible by @everyone */
-  channels: array(channelSchema),
+  channels: array(guildVoiceChannelSchema),
   /** special widget user objects that includes users presence (Limit 100) */
   members: pipe(array(partial(userSchema)), maxLength(100)),
   /** number of online members in this guild */
