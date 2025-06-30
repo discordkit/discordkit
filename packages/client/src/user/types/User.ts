@@ -4,7 +4,7 @@ import {
   length,
   union,
   literal,
-  optional,
+  exactOptional,
   boolean,
   integer,
   string,
@@ -15,9 +15,10 @@ import {
   pipe,
   nullable
 } from "valibot";
-import { snowflake } from "@discordkit/core";
+import { asInteger, snowflake } from "@discordkit/core";
 import { localesSchema } from "../../application/types/Locales.js";
 import { premiumTypeSchema } from "./PremiumType.js";
+import { userFlag } from "./UserFlags.js";
 
 // https://discord.com/developers/docs/resources/user#user-object-user-structure
 export const userSchema = object({
@@ -32,27 +33,27 @@ export const userSchema = object({
   /** the user's avatar hash (scope: `identify`) */
   avatar: nullable(pipe(string(), minLength(1))),
   /** whether the user belongs to an OAuth2 application (scope: `identify`) */
-  bot: optional(boolean()),
+  bot: exactOptional(boolean()),
   /** whether the user is an Official Discord System user (part of the urgent message system) (scope: `identify`) */
-  system: optional(boolean()),
+  system: exactOptional(boolean()),
   /** whether the user has two factor enabled on their account (scope: `identify`) */
-  mfaEnabled: optional(boolean()),
+  mfaEnabled: exactOptional(boolean()),
   /** the user's banner hash (scope: `identify`) */
   banner: nullish(pipe(string(), minLength(1))),
   /** the user's banner color encoded as an integer representation of hexadecimal color code (scope: `identify`) */
   accentColor: nullish(pipe(number(), integer())),
   /** the user's chosen language option (scope: `identify`) */
-  locale: optional(localesSchema),
+  locale: exactOptional(localesSchema),
   /** whether the email on this account has been verified (scope: `email`) */
-  verified: optional(boolean()),
+  verified: exactOptional(boolean()),
   /** the user's email (scope: `email`) */
   email: nullish(pipe(string(), email())),
   /** the flags on a user's account (scope: `identify`) */
-  flags: optional(pipe(number(), integer())),
+  flags: exactOptional(asInteger(userFlag)),
   /** the type of Nitro subscription on a user's account (scope: `identify`) */
-  premiumType: optional(premiumTypeSchema),
+  premiumType: exactOptional(premiumTypeSchema),
   /** the public flags on a user's account (scope: `identify`) */
-  publicFlags: optional(pipe(number(), integer())),
+  publicFlags: exactOptional(asInteger(userFlag)),
   /** the user's avatar decoration hash	(scope: `identify`) */
   avatarDecoration: nullish(string())
 });

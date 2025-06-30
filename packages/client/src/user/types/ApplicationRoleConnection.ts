@@ -2,7 +2,7 @@ import {
   pipe,
   object,
   string,
-  optional,
+  nullable,
   record,
   minLength,
   maxLength,
@@ -12,9 +12,9 @@ import {
 
 export const applicationRoleConnectionSchema = object({
   /** the vanity name of the platform a bot has connected (max 50 characters) */
-  platformName: optional(string()),
+  platformName: nullable(string()),
   /** the username on the platform a bot has connected (max 100 characters) */
-  platformUsername: optional(string()),
+  platformUsername: nullable(string()),
   /** object mapping application role connection metadata keys to their string-ified value (max 100 characters) for the user on the platform a bot has connected */
   metadata: record(
     pipe(string(), minLength(1), maxLength(50), regex(/[a-z0-9_]/)),

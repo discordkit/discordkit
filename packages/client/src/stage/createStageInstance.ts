@@ -2,7 +2,7 @@ import {
   boolean,
   maxLength,
   minLength,
-  nullish,
+  exactOptional,
   object,
   string,
   pipe
@@ -24,9 +24,9 @@ export const createStageInstanceSchema = object({
     /** The topic of the Stage instance (1-120 characters) */
     topic: pipe(string(), minLength(1), maxLength(120)),
     /** The privacy level of the Stage instance (default GUILD_ONLY) */
-    privacyLevel: nullish(stagePrivacyLevelSchema),
+    privacyLevel: exactOptional(stagePrivacyLevelSchema),
     /** Notify @everyone that a Stage instance has started */
-    sendStartNotification: nullish(boolean())
+    sendStartNotification: exactOptional(boolean())
   })
 });
 

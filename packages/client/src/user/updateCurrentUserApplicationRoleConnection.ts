@@ -19,9 +19,9 @@ import {
 import {
   type ApplicationRoleConnection,
   applicationRoleConnectionSchema
-} from "../application/types/ApplicationRoleConnection.js";
+} from "./types/ApplicationRoleConnection.js";
 
-export const updateUserApplicationRoleConnectionSchema = object({
+export const updateCurrentUserApplicationRoleConnectionSchema = object({
   application: snowflake,
   body: partial(
     object({
@@ -39,27 +39,27 @@ export const updateUserApplicationRoleConnectionSchema = object({
 });
 
 /**
- * ### [Update User Application Role Connection](https://discord.com/developers/docs/resources/user#update-user-application-role-connection)
+ * ### [Update Current User Application Role Connection](https://discord.com/developers/docs/resources/user#update-current-user-application-role-connection)
  *
  * **PUT** `/users/@me/applications/:application/role-connection`
  *
  * Updates and returns the {@link ApplicationRoleConnection | application role connection} for the user. Requires an OAuth2 access token with `role_connections.write` scope for the application specified in the path.
  */
-export const updateUserApplicationRoleConnection: Fetcher<
-  typeof updateUserApplicationRoleConnectionSchema,
+export const updateCurrentUserApplicationRoleConnection: Fetcher<
+  typeof updateCurrentUserApplicationRoleConnectionSchema,
   ApplicationRoleConnection
 > = async ({ application, body }) =>
   put(`/users/@me/applications/${application}/role-connection`, body);
 
-export const updateUserApplicationRoleConnectionSafe = toValidated(
-  updateUserApplicationRoleConnection,
-  updateUserApplicationRoleConnectionSchema,
+export const updateCurrentUserApplicationRoleConnectionSafe = toValidated(
+  updateCurrentUserApplicationRoleConnection,
+  updateCurrentUserApplicationRoleConnectionSchema,
   applicationRoleConnectionSchema
 );
 
-export const updateUserApplicationRoleConnectionProcedure = toProcedure(
+export const updateCurrentUserApplicationRoleConnectionProcedure = toProcedure(
   `mutation`,
-  updateUserApplicationRoleConnection,
-  updateUserApplicationRoleConnectionSchema,
+  updateCurrentUserApplicationRoleConnection,
+  updateCurrentUserApplicationRoleConnectionSchema,
   applicationRoleConnectionSchema
 );

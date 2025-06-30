@@ -50,6 +50,7 @@ export const interactionSchema = object({
   /** Guild member data for the invoking user, including permissions */
   member: exactOptional(memberSchema),
   /** User object for the invoking user, if invoked in a DM */
+  // @ts-expect-error
   user: exactOptional(lazy<GenericSchema<User>>(() => userSchema)),
   /** Continuation token for responding to the interaction */
   token: pipe(string(), nonEmpty()),
