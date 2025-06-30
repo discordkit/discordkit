@@ -2,7 +2,7 @@ import { object, partial, array, type InferOutput } from "valibot";
 import { channelSchema } from "../../channel/types/Channel.js";
 import { scheduledEventSchema } from "../../event/types/ScheduledEvent.js";
 import { integrationSchema } from "../../guild/types/Integration.js";
-import { moderationRuleSchema } from "../../moderation/types/ModerationRule.js";
+import { moderationRuleSchema } from "../../auto-moderation/types/ModerationRule.js";
 import { userSchema } from "../../user/types/User.js";
 import { webhookSchema } from "../../webhook/types/Webhook.js";
 import { applicationCommandSchema } from "../../application-commands/types/ApplicationCommand.js";
