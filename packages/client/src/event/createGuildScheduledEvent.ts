@@ -1,10 +1,18 @@
-import { isoTimestamp, nonEmpty, nullish, object, pipe, string } from "valibot";
+import {
+  exactOptional,
+  isoTimestamp,
+  nonEmpty,
+  object,
+  pipe,
+  string
+} from "valibot";
 import {
   post,
   type Fetcher,
   toProcedure,
   toValidated,
-  snowflake
+  snowflake,
+  datauri
 } from "@discordkit/core";
 import {
   type ScheduledEvent,
@@ -13,14 +21,15 @@ import {
 import { entityMetadataSchema } from "./types/EntityMetadata.js";
 import { scheduledEventPrivacyLevelSchema } from "./types/ScheduledEventPrivacyLevel.js";
 import { scheduledEventEntityTypeSchema } from "./types/ScheduledEventEntityType.js";
+import { scheduledEventRecurrenceRuleSchema } from "./types/ScheduledEventRecurrenceRule.js";
 
 export const createGuildScheduledEventSchema = object({
   guild: snowflake,
   body: object({
     /** the channel id of the scheduled event. */
-    channelId: nullish(snowflake),
+    channelId: exactOptional(snowflake),
     /** entity metadata	the entity metadata of the scheduled event */
-    entityMetadata: nullish(entityMetadataSchema),
+    entityMetadata: exactOptional(entityMetadataSchema),
     /** the name of the scheduled event */
     name: pipe(string(), nonEmpty()),
     /** the privacy level of the scheduled event */
@@ -28,13 +37,15 @@ export const createGuildScheduledEventSchema = object({
     /** the time to schedule the scheduled event */
     scheduledStartTime: pipe(string(), isoTimestamp()),
     /** the time when the scheduled event is scheduled to end */
-    scheduledEndTime: nullish(pipe(string(), isoTimestamp())),
+    scheduledEndTime: exactOptional(pipe(string(), isoTimestamp())),
     /** the description of the scheduled event */
-    description: nullish(pipe(string(), nonEmpty())),
+    description: exactOptional(pipe(string(), nonEmpty())),
     /** the entity type of the scheduled event */
     entityType: scheduledEventEntityTypeSchema,
     /** the cover image of the scheduled event */
-    image: nullish(pipe(string(), nonEmpty()))
+    image: exactOptional(datauri),
+    /** the definition for how often this event should recur */
+    recurrenceRule: exactOptional(scheduledEventRecurrenceRuleSchema)
   })
 });
 

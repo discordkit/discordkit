@@ -1,4 +1,4 @@
-import { array, boolean, nullish, object, exactOptional, partial } from "valibot";
+import { array, boolean, object, exactOptional, partial } from "valibot";
 import {
   get,
   type Fetcher,
@@ -17,7 +17,7 @@ export const listScheduledEventsForGuildSchema = object({
   params: exactOptional(
     partial(
       object({
-        withUserCount: nullish(boolean())
+        withUserCount: boolean()
       })
     )
   )

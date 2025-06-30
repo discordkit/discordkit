@@ -13,7 +13,9 @@ import {
   exactOptional,
   variant,
   literal,
-  null_
+  null_,
+  nonEmpty,
+  maxLength
 } from "valibot";
 import { snowflake } from "@discordkit/core";
 import { userSchema } from "../../user/types/User.js";
@@ -21,6 +23,7 @@ import { ScheduledEventEntityType } from "./ScheduledEventEntityType.js";
 import { scheduledEventPrivacyLevelSchema } from "./ScheduledEventPrivacyLevel.js";
 import { scheduledEventStatusSchema } from "./ScheduledEventStatus.js";
 import { entityMetadataSchema } from "./EntityMetadata.js";
+import { scheduledEventRecurrenceRuleSchema } from "./ScheduledEventRecurrenceRule.js";
 
 export const scheduledEventSchema = intersect([
   object({
@@ -31,9 +34,9 @@ export const scheduledEventSchema = intersect([
     /** the id of the user that created the scheduled event */
     creatorId: nullish(snowflake),
     /** the name of the scheduled event (1-100 characters) */
-    name: string(),
+    name: pipe(string(), nonEmpty(), maxLength(100)),
     /** the description of the scheduled event (1-1000 characters) */
-    description: nullish(string()),
+    description: nullish(pipe(string(), nonEmpty(), maxLength(1000))),
     /** the time the scheduled event will start */
     scheduledStartTime: pipe(string(), isoTimestamp()),
     /** the time the scheduled event will end, required if entity_type is EXTERNAL */
@@ -49,8 +52,9 @@ export const scheduledEventSchema = intersect([
     /** the number of users subscribed to the scheduled event */
     userCount: exactOptional(pipe(number(), integer(), minValue(0))),
     /** the cover image hash of the scheduled event */
-    image: nullish(string())
-    // TODO: recurrenceRule
+    image: nullish(pipe(string(), nonEmpty())),
+    /** the definition for how often this event should recur */
+    recurrenceRule: nullable(scheduledEventRecurrenceRuleSchema)
   }),
   variant(`entityType`, [
     object({
