@@ -2,7 +2,6 @@ import {
   integer,
   isoTimestamp,
   minValue,
-  nullish,
   number,
   object,
   exactOptional,
@@ -29,9 +28,9 @@ export const listJoinedPrivateArchivedThreadsSchema = object({
     partial(
       object({
         /** returns threads before this timestamp */
-        before: nullish(pipe(string(), isoTimestamp())),
+        before: pipe(string(), isoTimestamp()),
         /** optional maximum number of threads to return */
-        limit: nullish(pipe(number(), integer(), minValue(0)))
+        limit: pipe(number(), integer(), minValue(0))
       })
     )
   )

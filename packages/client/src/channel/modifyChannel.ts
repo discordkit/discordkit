@@ -19,7 +19,13 @@ import {
   union
 } from "valibot";
 import type { Fetcher } from "@discordkit/core";
-import { toProcedure, patch, toValidated, snowflake } from "@discordkit/core";
+import {
+  toProcedure,
+  patch,
+  toValidated,
+  snowflake,
+  asInteger
+} from "@discordkit/core";
 import { type Channel, channelSchema } from "./types/Channel.js";
 import { autoArchiveDurationSchema } from "./types/AutoArchiveDuration.js";
 import { ChannelType } from "./types/ChannelType.js";
@@ -29,6 +35,7 @@ import { forumTagSchema } from "./types/ForumTag.js";
 import { defaultReactionSchema } from "./types/DefaultReaction.js";
 import { sortOrderTypeSchema } from "./types/SortOrderType.js";
 import { forumLayoutTypeSchema } from "./types/ForumLayoutType.js";
+import { channelFlag } from "./types/ChannelFlags.js";
 
 const groupDMOptions = partial(
   object({
@@ -68,7 +75,7 @@ const guildChannelOptions = partial(
     /** the default duration that the clients use (not the API) for newly created threads in the channel, in minutes, to automatically archive the thread after recent activity */
     defaultAutoArchiveDuration: nullable(autoArchiveDurationSchema),
     /** channel flags combined as a bitfield. Currently only `REQUIRE_TAG` (1 << 4) is supported by `GUILD_FORUM` and `GUILD_MEDIA` channels. `HIDE_MEDIA_DOWNLOAD_OPTIONS` (1 << 15) is supported only by `GUILD_MEDIA` channels */
-    flags: pipe(number(), integer()),
+    flags: asInteger(channelFlag),
     /** the set of tags that can be used in a GUILD_FORUM or a GUILD_MEDIA channel; limited to 20 */
     availableTags: pipe(array(forumTagSchema), maxLength(20)),
     /** reaction object	the emoji to show in the add reaction button on a thread in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */
@@ -97,7 +104,7 @@ const threadOptions = partial(
     /** amount of seconds a user has to wait before sending another message (0-21600); bots, as well as users with the permission `manage_messages`, `manage_thread`, or `manage_channel`, are unaffected */
     rateLimitPerUser: nullable(pipe(number(), minValue(0), maxValue(21600))),
     /** channel flags combined as a bitfield; PINNED can only be set for threads in forum channels */
-    flags: exactOptional(pipe(number(), integer())),
+    flags: exactOptional(asInteger(channelFlag)),
     /** the IDs of the set of tags that have been applied to a thread in a `GUILD_FORUM` or a `GUILD_MEDIA` channel; limited to 5 */
     appliedTags: exactOptional(pipe(array(snowflake), maxLength(5)))
   })
