@@ -17,6 +17,10 @@ The best way to validate bitfields involves coercing the serialized values to `B
 
 This also involved added a means by which to mock this new datatype, which is powered by `enum` representations of the possible flags and their semantic meanings. Because of how delicate this ended up being, the entire set of mocking utilities needed to be overhauled and new tests were added to `@discordkit/core` to catch edge cases.
 
+### add new `datauri` schema
+
+Many of Discord's fields expect Data URI strings for images. A new `datauri` schema has been added to provide an extra layer of validation for these strings to guard against sending invalid data.
+
 ### updates to numerous schemas
 
 The addition of `bitfield` schemas came as a result of syncing Discordkit's schemas with the latest Discord API specification. As such, expect that the type signatures of nearly every schema will be affected by these changes.
@@ -26,6 +30,8 @@ The addition of `bitfield` schemas came as a result of syncing Discordkit's sche
 Discordkit's file and folder structure is designed to align closely with the organization of the official API docs. While most endpoints are grouped by their URL structure, there are some exceptions such as with Messages which have their own section separate from Channels (the URL path many of them belong to) and so for ease of maintenance these files have been relocated to reflect that.
 
 Moving forward, additional things such as shared types may be moved into folders according to their location within the official documentation. This will apply to things such as Application Commands, Interactions, Message Components and Permissions / Roles.
+
+---
 
 ## FEATURES
 
@@ -92,14 +98,6 @@ Added two new utility functions: `snowflakeToDate()` and `dateToSnowflake()`, wh
 
 Added a new image URL utility to fetch Avatar Decorations
 
-## FIX: properly handle Sticker gif urls
-
-Stickers have an exception for retrieving them in a gif file format, which uses a different base url than the standard Discord CDN
-
-### add new `datauri` schema
-
-Many of Discord's fields expect Data URI strings for images. A new `datauri` schema has been added to provide an extra layer of validation for these strings to guard against sending invalid data.
-
 ### added `hasMimeType()` and `toBlob` schema actions
 
 These Valibot schema actions aid with validating `datauri` strings to better ensure that fields are receiving well-formatted data from end-users.
@@ -155,3 +153,11 @@ Updates all of the data types and endpoints for Stickers, Stages, and Users to r
 Adds a new endpoint for Stickers:
 
 - `getStickerPacks`
+
+---
+
+## FIXES
+
+### properly handle Sticker gif urls
+
+Stickers have an exception for retrieving them in a gif file format, which uses a different base url than the standard Discord CDN
