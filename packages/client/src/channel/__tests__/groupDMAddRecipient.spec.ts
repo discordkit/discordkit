@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   groupDMAddRecipient,
   groupDMAddRecipientProcedure,
@@ -12,9 +8,11 @@ import {
   groupDMAddRecipientSchema
 } from "../groupDMAddRecipient.js";
 
-describe(`groupDMAddRecipient`, () => {
-  mockRequest.put(`/channels/:channel/recipients/:user`);
-  const config = mockSchema(groupDMAddRecipientSchema);
+describe(`groupDMAddRecipient`, { repeats: 5 }, () => {
+  const { config } = mockUtils.request.put(
+    `/channels/:channel/recipients/:user`,
+    groupDMAddRecipientSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(groupDMAddRecipientSafe(config)).resolves.not.toThrow();

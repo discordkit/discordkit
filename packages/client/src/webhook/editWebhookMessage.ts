@@ -8,7 +8,9 @@ import {
   array,
   literal,
   unknown,
-  pipe
+  pipe,
+  boolean,
+  nonEmpty
 } from "valibot";
 import {
   patch,
@@ -18,22 +20,25 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { messageSchema, type Message } from "../channel/types/Message.js";
-import { embedSchema } from "../channel/types/Embed.js";
-import { allowedMentionSchema } from "../channel/types/AllowedMention.js";
-import { attachmentSchema } from "../channel/types/Attachment.js";
-import { messageComponentSchema } from "../channel/types/MessageComponent.js";
-import { EmbedType } from "../channel/types/EmbedType.js";
+import { messageSchema, type Message } from "../messages/types/Message.js";
+import { embedSchema } from "../messages/types/Embed.js";
+import { allowedMentionSchema } from "../messages/types/AllowedMention.js";
+import { attachmentSchema } from "../messages/types/Attachment.js";
+import { messageComponentSchema } from "../messages/types/MessageComponent.js";
+import { EmbedType } from "../messages/types/EmbedType.js";
+import { pollSchema } from "../poll/types/Poll.js";
 
 export const editWebhookMessageSchema = object({
   webhook: snowflake,
-  token: pipe(string(), minLength(1)),
+  token: pipe(string(), nonEmpty()),
   message: snowflake,
   params: exactOptional(
     partial(
       object({
         /** id of the thread the message is in */
-        threadId: snowflake
+        threadId: snowflake,
+        /** whether to respect the `components` field of the request. When enabled, allows application-owned webhooks to use all components and non-owned webhooks to use non-interactive components. (defaults to `false`) */
+        withComponents: boolean()
       })
     )
   ),
@@ -57,8 +62,12 @@ export const editWebhookMessageSchema = object({
       components: array(messageComponentSchema),
       /** the contents of the file being sent */
       files: array(unknown()),
+      /** JSON encoded body of non-file params (multipart/form-data only) */
+      payloadJson: string(),
       /** attachment objects with filename and description */
-      attachments: array(partial(attachmentSchema))
+      attachments: array(partial(attachmentSchema)),
+      /** A poll! */
+      poll: pollSchema
     })
   )
 });
@@ -72,7 +81,7 @@ export const editWebhookMessageSchema = object({
  *
  * When the `content` field is edited, the `mentions` array in the message object will be reconstructed from scratch based on the new content. The `allowedMentions` field of the edit request controls how this happens. If there is no explicit `allowedMentions` in the edit request, the content will be parsed with default allowances, that is, without regard to whether or not an `allowedMentions` was present in the request that originally created the message.
  *
- * Refer to Uploading Files for details on attachments and `multipart/form-data` requests. Any provided files will be **appended** to the message. To remove or replace files you will have to supply the `attachments` field which specifies the files to retain on the message after edit.
+ * Refer to [Uploading Files](https://discord.com/developers/docs/reference#uploading-files) for details on attachments and `multipart/form-data` requests. Any provided files will be **appended** to the message. To remove or replace files you will have to supply the `attachments` field which specifies the files to retain on the message after edit.
  *
  * > [!WARNING]
  * >

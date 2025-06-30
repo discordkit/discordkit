@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   modifyGuildScheduledEvent,
   modifyGuildScheduledEventProcedure,
@@ -13,12 +9,12 @@ import {
 } from "../modifyGuildScheduledEvent.js";
 import { scheduledEventSchema } from "../types/ScheduledEvent.js";
 
-describe(`modifyGuildScheduledEvent`, () => {
-  const expected = mockRequest.patch(
+describe(`modifyGuildScheduledEvent`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.patch(
     `/guilds/:guild/scheduled-events/:event`,
+    modifyGuildScheduledEventSchema,
     scheduledEventSchema
   );
-  const config = mockSchema(modifyGuildScheduledEventSchema);
 
   it(`can be used standalone`, async () => {
     await expect(modifyGuildScheduledEventSafe(config)).resolves.toEqual(

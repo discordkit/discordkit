@@ -1,14 +1,6 @@
-import {
-  nonEmpty,
-  object,
-  exactOptional,
-  partial,
-  pipe,
-  string
-} from "valibot";
+import { nonEmpty, object, pipe, string } from "valibot";
 import {
   remove,
-  buildURL,
   type Fetcher,
   toProcedure,
   toValidated,
@@ -18,15 +10,7 @@ import {
 export const deleteFollowupMessageSchema = object({
   application: snowflake,
   token: pipe(string(), nonEmpty()),
-  message: snowflake,
-  params: exactOptional(
-    partial(
-      object({
-        /** id of the thread the message is in */
-        threadId: snowflake
-      })
-    )
-  )
+  message: snowflake
 });
 
 /**
@@ -38,11 +22,8 @@ export const deleteFollowupMessageSchema = object({
  */
 export const deleteFollowupMessage: Fetcher<
   typeof deleteFollowupMessageSchema
-> = async ({ application, token, message, params }) =>
-  remove(
-    buildURL(`/webhooks/${application}/${token}/messages/${message}`, params)
-      .href
-  );
+> = async ({ application, token, message }) =>
+  remove(`/webhooks/${application}/${token}/messages/${message}`);
 
 export const deleteFollowupMessageSafe = toValidated(
   deleteFollowupMessage,

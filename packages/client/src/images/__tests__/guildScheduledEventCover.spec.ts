@@ -1,4 +1,4 @@
-import { mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
 import { parse, pipe, string, url } from "valibot";
 import {
   guildScheduledEventCover,
@@ -10,7 +10,9 @@ describe(`guildScheduledEventCover`, () => {
     expect(() =>
       parse(
         pipe(string(), url()),
-        guildScheduledEventCover(mockSchema(guildScheduledEventCoverSchema))
+        guildScheduledEventCover(
+          mockUtils.schema(guildScheduledEventCoverSchema)
+        )
       )
     ).not.toThrow();
   });

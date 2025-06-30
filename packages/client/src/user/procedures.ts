@@ -1,11 +1,11 @@
 export { createDMProcedure } from "./createDM.js";
 export { createGroupDMProcedure } from "./createGroupDM.js";
 export { getCurrentUserProcedure } from "./getCurrentUser.js";
+export { getCurrentUserApplicationRoleConnectionProcedure } from "./getCurrentUserApplicationRoleConnection.js";
 export { getCurrentUserGuildMemberProcedure } from "./getCurrentUserGuildMember.js";
 export { getCurrentUserGuildsProcedure } from "./getCurrentUserGuilds.js";
 export { getUserProcedure } from "./getUser.js";
-export { getUserApplicationRoleConnectionProcedure } from "./getUserApplicationRoleConnection.js";
 export { getUserConnectionsProcedure } from "./getUserConnections.js";
 export { leaveGuildProcedure } from "./leaveGuild.js";
 export { modifyCurrentUserProcedure } from "./modifyCurrentUser.js";
-export { updateUserApplicationRoleConnectionProcedure } from "./updateUserApplicationRoleConnection.js";
+export { updateCurrentUserApplicationRoleConnectionProcedure } from "./updateCurrentUserApplicationRoleConnection.js";

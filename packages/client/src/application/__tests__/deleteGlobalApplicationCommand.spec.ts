@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   deleteGlobalApplicationCommand,
   deleteGlobalApplicationCommandProcedure,
@@ -12,9 +8,11 @@ import {
   deleteGlobalApplicationCommandSchema
 } from "../deleteGlobalApplicationCommand.js";
 
-describe(`deleteGlobalApplicationCommand`, () => {
-  mockRequest.delete(`/applications/:application/commands/:command`);
-  const config = mockSchema(deleteGlobalApplicationCommandSchema);
+describe(`deleteGlobalApplicationCommand`, { repeats: 5 }, () => {
+  const { config } = mockUtils.request.delete(
+    `/applications/:application/commands/:command`,
+    deleteGlobalApplicationCommandSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(

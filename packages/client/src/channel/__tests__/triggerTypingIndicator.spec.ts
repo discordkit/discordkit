@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   triggerTypingIndicator,
   triggerTypingIndicatorProcedure,
@@ -12,9 +8,11 @@ import {
   triggerTypingIndicatorSchema
 } from "../triggerTypingIndicator.js";
 
-describe(`triggerTypingIndicator`, () => {
-  mockRequest.post(`/channels/:channel/typing`);
-  const config = mockSchema(triggerTypingIndicatorSchema);
+describe(`triggerTypingIndicator`, { repeats: 5 }, () => {
+  const { config } = mockUtils.request.post(
+    `/channels/:channel/typing`,
+    triggerTypingIndicatorSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(triggerTypingIndicatorSafe(config)).resolves.not.toThrow();

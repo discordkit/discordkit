@@ -1,7 +1,7 @@
 import {
   object,
   string,
-  optional,
+  exactOptional,
   array,
   number,
   integer,
@@ -20,11 +20,11 @@ export const guildPreviewSchema = object({
   /** guild name (2-100 characters) */
   name: string(),
   /** icon hash */
-  icon: optional(string()),
+  icon: exactOptional(string()),
   /** splash hash */
-  splash: optional(string()),
+  splash: exactOptional(string()),
   /** discovery splash hash */
-  discoverySplash: optional(string()),
+  discoverySplash: exactOptional(string()),
   /** custom guild emojis */
   emojis: array(emojiSchema),
   /** enabled guild features */
@@ -34,7 +34,7 @@ export const guildPreviewSchema = object({
   /** approximate number of online members in this guild */
   approximatePresenceCount: pipe(number(), integer(), minValue(0)),
   /** the description for the guild */
-  description: optional(string()),
+  description: exactOptional(string()),
   /** custom guild stickers */
   stickers: array(stickerSchema)
 });

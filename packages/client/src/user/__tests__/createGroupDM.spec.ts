@@ -1,29 +1,20 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
-import { literal, object } from "valibot";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   createGroupDM,
   createGroupDMProcedure,
   createGroupDMSafe,
   createGroupDMSchema
 } from "../createGroupDM.js";
-import { channelSchema } from "../../channel/types/Channel.js";
-import { ChannelType } from "../../channel/types/ChannelType.js";
+import { groupDirectMessageChannelSchema } from "../../channel/types/Channel.js";
 
-describe(`createGroupDM`, () => {
-  const expected = mockRequest.post(
+describe(`createGroupDM`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.post(
     `/users/@me/channels`,
-    object({
-      ...channelSchema.entries,
-      type: literal(ChannelType.GROUP_DM)
-    })
+    createGroupDMSchema,
+    groupDirectMessageChannelSchema
   );
-  const config = mockSchema(createGroupDMSchema);
 
   it(`can be used standalone`, async () => {
     await expect(createGroupDMSafe(config)).resolves.toEqual(expected);

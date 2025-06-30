@@ -1,0 +1,20 @@
+import { snowflake } from "@discordkit/core";
+import { object, boolean, partial, type InferOutput } from "valibot";
+import { messageReferenceTypeSchema } from "./MessageRefrenceType.js";
+
+export const messageReferenceSchema = partial(
+  object({
+    /** type of reference. */
+    type: messageReferenceTypeSchema,
+    /** id of the originating message */
+    messageId: snowflake,
+    /** id of the originating message's channel */
+    channelId: snowflake,
+    /** id of the originating message's guild */
+    guildId: snowflake,
+    /** when sending, whether to error if the referenced message doesn't exist instead of sending as a normal (non-reply) message, default true */
+    failIfNotExists: boolean()
+  })
+);
+
+export type MessageReference = InferOutput<typeof messageReferenceSchema>;

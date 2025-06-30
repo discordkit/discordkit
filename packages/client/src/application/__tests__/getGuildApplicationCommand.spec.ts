@@ -1,19 +1,20 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import {
   getGuildApplicationCommandSchema,
   getGuildApplicationCommandProcedure,
   getGuildApplicationCommandQuery,
   getGuildApplicationCommandSafe
 } from "../getGuildApplicationCommand.js";
-import { applicationCommandSchema } from "../types/ApplicationCommand.js";
+import { applicationCommandSchema } from "../../application-commands/types/ApplicationCommand.js";
 
-describe(`getGuildApplicationCommand`, () => {
-  const expected = mockRequest.get(
+describe(`getGuildApplicationCommand`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.get(
     `/applications/:application/guilds/:guild/commands/:command`,
+    getGuildApplicationCommandSchema,
     applicationCommandSchema
   );
-  const config = mockSchema(getGuildApplicationCommandSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getGuildApplicationCommandSafe(config)).resolves.toEqual(

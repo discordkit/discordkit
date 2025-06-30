@@ -1,6 +1,8 @@
 import {
   boolean,
   integer,
+  maxValue,
+  minValue,
   nonEmpty,
   nullish,
   number,
@@ -14,9 +16,13 @@ import {
   type Fetcher,
   toProcedure,
   toValidated,
-  snowflake
+  snowflake,
+  asDigits,
+  datauri
 } from "@discordkit/core";
-import { roleSchema, type Role } from "./types/Role.js";
+import { roleSchema, type Role } from "../permissions/Role.js";
+import { roleColorsSchema } from "../permissions/RoleColors.js";
+import { permissionFlag } from "../permissions/Permissions.js";
 
 export const modifyGuildRoleSchema = object({
   guild: snowflake,
@@ -26,13 +32,15 @@ export const modifyGuildRoleSchema = object({
       /** name of the role */
       name: nullish(pipe(string(), nonEmpty())),
       /** bitwise value of the enabled/disabled permissions */
-      permissions: nullish(pipe(string(), nonEmpty())),
+      permissions: nullish(asDigits(permissionFlag)),
       /** RGB color value */
-      color: nullish(pipe(number(), integer())),
+      color: pipe(number(), integer(), minValue(0x000000), maxValue(0xffffff)),
+      /** the role's colors */
+      colors: roleColorsSchema,
       /** whether the role should be displayed separately in the sidebar */
       hoist: nullish(boolean()),
       /** the role's icon image (if the guild has the `ROLE_ICONS` feature) */
-      icon: nullish(pipe(string(), nonEmpty())),
+      icon: nullish(datauri),
       /** the role's unicode emoji as a standard emoji (if the guild has the `ROLE_ICONS` feature) */
       unicodeEmoji: nullish(pipe(string(), nonEmpty())),
       /** whether the role should be mentionable */

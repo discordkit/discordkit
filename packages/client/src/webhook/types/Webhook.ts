@@ -2,14 +2,16 @@ import {
   type InferOutput,
   nullish,
   object,
-  optional,
   url,
   string,
   partial,
-  pipe
+  pipe,
+  nullable,
+  exactOptional,
+  nonEmpty
 } from "valibot";
 import { snowflake } from "@discordkit/core";
-import { channelSchema } from "../../channel/types/Channel.js";
+import { partialChannelSchema } from "../../channel/types/Channel.js";
 import { guildSchema } from "../../guild/types/Guild.js";
 import { userSchema } from "../../user/types/User.js";
 import { webhookTypeSchema } from "./WebhookType.js";
@@ -22,23 +24,23 @@ export const webhookSchema = object({
   /** the guild id this webhook is for, if any */
   guildId: nullish(snowflake),
   /** the channel id this webhook is for, if any */
-  channelId: optional(snowflake),
+  channelId: nullable(snowflake),
   /** user object	the user this webhook was created by (not returned when getting a webhook with its token) */
-  user: nullish(userSchema),
+  user: exactOptional(userSchema),
   /** the default name of the webhook */
-  name: optional(string()),
+  name: nullable(pipe(string(), nonEmpty())),
   /** the default user avatar hash of the webhook */
-  avatar: optional(string()),
+  avatar: nullable(pipe(string(), nonEmpty())),
   /** the secure token of the webhook (returned for Incoming Webhooks) */
-  token: nullish(string()),
+  token: exactOptional(pipe(string(), nonEmpty())),
   /** the bot/OAuth2 application that created this webhook */
-  applicationId: optional(snowflake),
+  applicationId: nullable(snowflake),
   /** the guild of the channel that this webhook is following (returned for Channel Follower Webhooks) */
-  sourceGuild: nullish(partial(guildSchema)),
+  sourceGuild: exactOptional(partial(guildSchema)),
   /** the channel that this webhook is following (returned for Channel Follower Webhooks) */
-  sourceChannel: nullish(partial(channelSchema)),
+  sourceChannel: exactOptional(partialChannelSchema),
   /** the url used for executing the webhook (returned by the webhooks OAuth2 flow) */
-  url: nullish(pipe(string(), url()))
+  url: exactOptional(pipe(string(), url()))
 });
 
 export type Webhook = InferOutput<typeof webhookSchema>;

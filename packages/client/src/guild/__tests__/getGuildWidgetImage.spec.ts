@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import {
   getGuildWidgetImageProcedure,
   getGuildWidgetImageQuery,
@@ -7,9 +8,11 @@ import {
   getGuildWidgetImageSchema
 } from "../getGuildWidgetImage.js";
 
-describe(`getGuildWidgetImage`, () => {
-  mockRequest.get(`/guilds/:guild/widget.png`);
-  const config = mockSchema(getGuildWidgetImageSchema);
+describe(`getGuildWidgetImage`, { repeats: 5 }, () => {
+  const { config } = mockUtils.request.get(
+    `/guilds/:guild/widget.png`,
+    getGuildWidgetImageSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(getGuildWidgetImageSafe(config)).resolves.not.toThrow();

@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   modifyGuildChannelPositions,
   modifyGuildChannelPositionsProcedure,
@@ -12,9 +8,11 @@ import {
   modifyGuildChannelPositionsSchema
 } from "../modifyGuildChannelPositions.js";
 
-describe(`modifyGuildChannelPositions`, () => {
-  mockRequest.patch(`/guilds/:guild/channels`);
-  const config = mockSchema(modifyGuildChannelPositionsSchema);
+describe(`modifyGuildChannelPositions`, { repeats: 5 }, () => {
+  const { config } = mockUtils.request.patch(
+    `/guilds/:guild/channels`,
+    modifyGuildChannelPositionsSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(

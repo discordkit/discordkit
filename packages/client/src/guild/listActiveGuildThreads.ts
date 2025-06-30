@@ -8,7 +8,7 @@ import {
   snowflake
 } from "@discordkit/core";
 import { threadMemberSchema } from "../channel/types/ThreadMember.js";
-import { channelMentionSchema } from "../channel/types/ChannelMention.js";
+import { threadChannelSchema } from "../channel/types/Channel.js";
 
 export const listActiveGuildThreadsSchema = object({
   guild: snowflake
@@ -16,7 +16,7 @@ export const listActiveGuildThreadsSchema = object({
 
 export const activeGuildThreadsSchema = object({
   /** the active threads */
-  threads: array(channelMentionSchema),
+  threads: array(threadChannelSchema),
   /** a thread member object for each returned thread the current user has joined */
   members: array(threadMemberSchema)
 });

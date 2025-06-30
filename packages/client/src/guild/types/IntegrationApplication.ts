@@ -2,8 +2,8 @@ import {
   object,
   string,
   nonEmpty,
-  optional,
-  nullish,
+  nullable,
+  exactOptional,
   pipe,
   type InferOutput
 } from "valibot";
@@ -16,11 +16,11 @@ export const integrationApplicationSchema = object({
   /** the name of the app */
   name: pipe(string(), nonEmpty()),
   /** the icon hash of the app */
-  icon: optional(pipe(string(), nonEmpty())),
+  icon: nullable(pipe(string(), nonEmpty())),
   /** the description of the app */
   description: string(),
   /** the bot associated with this application */
-  bot: nullish(userSchema)
+  bot: exactOptional(userSchema)
 });
 
 export type IntegrationApplication = InferOutput<

@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import {
   listPrivateArchivedThreadsProcedure,
   listPrivateArchivedThreadsQuery,
@@ -8,12 +9,12 @@ import {
 } from "../listPrivateArchivedThreads.js";
 import { archivedThreadsSchema } from "../types/ArchivedThreads.js";
 
-describe(`listPrivateArchivedThreads`, () => {
-  const expected = mockRequest.get(
+describe(`listPrivateArchivedThreads`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.get(
     `/channels/:channel/threads/archived/private`,
+    listPrivateArchivedThreadsSchema,
     archivedThreadsSchema
   );
-  const config = mockSchema(listPrivateArchivedThreadsSchema);
 
   it(`can be used standalone`, async () => {
     await expect(listPrivateArchivedThreadsSafe(config)).resolves.toEqual(

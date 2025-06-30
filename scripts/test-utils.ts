@@ -8,10 +8,7 @@ import {
   type UseQueryResult,
   type UseMutationResult
 } from "@tanstack/react-query";
-import { http } from "msw";
-import { type SetupServer, setupServer } from "msw/node";
-import { Valimock, type ValimockOptions } from "valimock";
-import type { GenericSchema, GenericSchemaAsync, InferOutput } from "valibot";
+import type { GenericSchema, GenericSchemaAsync } from "valibot";
 import type { RenderHookResult } from "@testing-library/react";
 import { renderHook } from "@testing-library/react";
 import type {
@@ -20,67 +17,9 @@ import type {
   inferProcedureOutput
 } from "@trpc/server/unstable-core-do-not-import";
 import { initTRPC } from "@trpc/server";
-import { Snowflake } from "nodejs-snowflake";
-import {
-  endpoint,
-  type toQuery,
-  type Fetcher,
-  type toProcedure,
-  snowflake
-} from "@discordkit/core";
+import type { toQuery, Fetcher, toProcedure } from "@discordkit/core";
 
 type Schema = GenericSchema | GenericSchemaAsync;
-
-export const msw: SetupServer = setupServer();
-
-const uid = new Snowflake({ custom_epoch: 1420070400000 });
-
-export const mockSchema = <T extends Schema>(
-  schema: T,
-  opts?: Partial<ValimockOptions>
-): InferOutput<T> =>
-  new Valimock({
-    ...opts,
-    customMocks: {
-      custom: (s): string | undefined => {
-        if (s === snowflake) return uid.getUniqueID().toString();
-      }
-    }
-  }).mock(schema);
-
-const createMock =
-  (type: keyof typeof http) =>
-  <S extends GenericSchema>(
-    path: string,
-    responseSchema?: S,
-    opts?: Partial<ValimockOptions>
-  ): InferOutput<S> => {
-    const result = responseSchema ? mockSchema(responseSchema, opts) : null;
-
-    beforeAll(() => {
-      msw.use(
-        http[type](
-          new URL(path.replace(/^\//, ``), endpoint).href,
-          () =>
-            new Response(JSON.stringify(result), {
-              headers: {
-                "Content-Type": `application/json`
-              }
-            })
-        )
-      );
-    });
-
-    return result;
-  };
-
-export const mockRequest = {
-  delete: createMock(`delete`),
-  get: createMock(`get`),
-  patch: createMock(`patch`),
-  post: createMock(`post`),
-  put: createMock(`put`)
-};
 
 const createWrapper =
   (): React.FC<{ children: React.ReactNode }> =>

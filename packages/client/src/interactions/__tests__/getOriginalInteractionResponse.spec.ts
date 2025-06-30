@@ -1,30 +1,31 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import {
   getOriginalInteractionResponseProcedure,
   getOriginalInteractionResponseQuery,
   getOriginalInteractionResponseSafe,
   getOriginalInteractionResponseSchema
 } from "../getOriginalInteractionResponse.js";
-import { interactionResponseSchema } from "../types/InteractionResponse.js";
+import { interactionCallbackResponseSchema } from "../types/InteractionCallbackResponse.js";
 
-describe(`getOriginalInteractionResponse`, () => {
-  mockRequest.get(
+describe(`getOriginalInteractionResponse`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.get(
     `/webhooks/:application/:token/messages/@original`,
-    interactionResponseSchema
+    getOriginalInteractionResponseSchema,
+    interactionCallbackResponseSchema
   );
-  const config = mockSchema(getOriginalInteractionResponseSchema);
 
   it(`can be used standalone`, async () => {
     await expect(
       getOriginalInteractionResponseSafe(config)
-    ).resolves.not.toThrow();
+    ).resolves.toStrictEqual(expected);
   });
 
   it(`is tRPC compatible`, async () => {
     await expect(
       runProcedure(getOriginalInteractionResponseProcedure)(config)
-    ).resolves.toBeDefined();
+    ).resolves.toStrictEqual(expected);
   });
 
   it(`is react-query compatible`, async () => {

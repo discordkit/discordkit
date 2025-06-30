@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   modifyGuildTemplate,
   modifyGuildTemplateProcedure,
@@ -13,12 +9,12 @@ import {
 } from "../modifyGuildTemplate.js";
 import { guildTemplateSchema } from "../types/GuildTemplate.js";
 
-describe(`modifyGuildTemplate`, () => {
-  const expected = mockRequest.patch(
+describe(`modifyGuildTemplate`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.patch(
     `/guilds/:guild/templates/:template`,
+    modifyGuildTemplateSchema,
     guildTemplateSchema
   );
-  const config = mockSchema(modifyGuildTemplateSchema);
 
   it(`can be used standalone`, async () => {
     await expect(modifyGuildTemplateSafe(config)).resolves.toEqual(expected);

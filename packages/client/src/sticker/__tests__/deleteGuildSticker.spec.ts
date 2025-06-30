@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   deleteGuildSticker,
   deleteGuildStickerProcedure,
@@ -12,9 +8,11 @@ import {
   deleteGuildStickerSchema
 } from "../deleteGuildSticker.js";
 
-describe(`deleteGuildSticker`, () => {
-  mockRequest.delete(`/guilds/:guild/stickers/:sticker`);
-  const config = mockSchema(deleteGuildStickerSchema);
+describe(`deleteGuildSticker`, { repeats: 5 }, () => {
+  const { config } = mockUtils.request.delete(
+    `/guilds/:guild/stickers/:sticker`,
+    deleteGuildStickerSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(deleteGuildStickerSafe(config)).resolves.not.toThrow();

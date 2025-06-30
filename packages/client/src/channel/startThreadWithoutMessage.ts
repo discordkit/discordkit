@@ -1,5 +1,6 @@
 import {
   boolean,
+  exactOptional,
   integer,
   maxLength,
   maxValue,
@@ -28,11 +29,11 @@ export const startThreadWithoutMessageSchema = object({
     /** 1-100 character channel name */
     name: pipe(string(), minLength(1), maxLength(100)),
     /** duration in minutes to automatically archive the thread after recent activity, can be set to: 60, 1440, 4320, 10080 */
-    autoArchiveDuration: nullish(autoArchiveDurationSchema),
+    autoArchiveDuration: exactOptional(autoArchiveDurationSchema),
     /** the type of thread to create */
-    type: nullish(channelTypeSchema),
+    type: exactOptional(channelTypeSchema),
     /** whether non-moderators can add other non-moderators to a thread; only available when creating a private thread */
-    invitable: nullish(boolean()),
+    invitable: exactOptional(boolean()),
     /** amount of seconds a user has to wait before sending another message (0-21600) */
     rateLimitPerUser: nullish(
       pipe(number(), integer(), minValue(0), maxValue(21600))

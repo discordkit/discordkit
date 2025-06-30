@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   deleteGuildScheduledEvent,
   deleteGuildScheduledEventProcedure,
@@ -12,9 +8,11 @@ import {
   deleteGuildScheduledEventSchema
 } from "../deleteGuildScheduledEvent.js";
 
-describe(`deleteGuildScheduledEvent`, () => {
-  mockRequest.delete(`/guilds/:guild/scheduled-events/:event`);
-  const config = mockSchema(deleteGuildScheduledEventSchema);
+describe(`deleteGuildScheduledEvent`, { repeats: 5 }, () => {
+  const { config } = mockUtils.request.delete(
+    `/guilds/:guild/scheduled-events/:event`,
+    deleteGuildScheduledEventSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(deleteGuildScheduledEventSafe(config)).resolves.not.toThrow();

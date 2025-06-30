@@ -1,4 +1,12 @@
-import { object, array, string, nullish, type InferOutput } from "valibot";
+import {
+  object,
+  array,
+  string,
+  pipe,
+  nonEmpty,
+  exactOptional,
+  type InferOutput
+} from "valibot";
 import { snowflake } from "@discordkit/core";
 import { stickerSchema } from "./Sticker.js";
 
@@ -8,15 +16,15 @@ export const stickerPackSchema = object({
   /** the stickers in the pack */
   stickers: array(stickerSchema),
   /** name of the sticker pack */
-  name: string(),
+  name: pipe(string(), nonEmpty()),
   /** id of the pack's SKU */
   skuId: snowflake,
   /** id of a sticker in the pack which is shown as the pack's icon */
-  coverStickerId: nullish(snowflake),
+  coverStickerId: exactOptional(snowflake),
   /** description of the sticker pack */
-  description: string(),
+  description: pipe(string(), nonEmpty()),
   /** id of the sticker pack's banner image */
-  bannerAssetId: nullish(snowflake)
+  bannerAssetId: exactOptional(snowflake)
 });
 
 export type StickerPack = InferOutput<typeof stickerPackSchema>;

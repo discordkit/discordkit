@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/prefer-literal-enum-member */
-
 import { enum_ } from "valibot";
+import { bitfield } from "@discordkit/core";
 
 export enum UserFlags {
   /** Discord Employee */
@@ -36,3 +36,4 @@ export enum UserFlags {
 }
 
 export const userFlagsSchema = enum_(UserFlags);
+export const userFlag = bitfield(`userFlag`, UserFlags, `Invalid User Flag`);

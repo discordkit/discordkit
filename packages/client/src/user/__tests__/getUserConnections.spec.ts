@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import {
   getUserConnectionsProcedure,
   getUserConnectionsQuery,
@@ -7,8 +8,12 @@ import {
 } from "../getUserConnections.js";
 import { connectionSchema } from "../types/Connection.js";
 
-describe(`getUserConnections`, () => {
-  const expected = mockRequest.get(`/users/@me/connections`, connectionSchema);
+describe(`getUserConnections`, { repeats: 5 }, () => {
+  const { expected } = mockUtils.request.get(
+    `/users/@me/connections`,
+    null,
+    connectionSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(getUserConnectionsSafe()).resolves.toEqual(expected);

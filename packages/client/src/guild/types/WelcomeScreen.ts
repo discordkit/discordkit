@@ -2,7 +2,7 @@ import {
   type InferOutput,
   object,
   string,
-  optional,
+  nullable,
   array,
   maxLength,
   pipe
@@ -11,7 +11,7 @@ import { welcomeChannelSchema } from "./WelcomeChannel.js";
 
 export const welcomeScreenSchema = object({
   /** the server description shown in the welcome screen */
-  description: optional(string()),
+  description: nullable(string()),
   /** the channels shown in the welcome screen, up to 5 */
   welcomeChannels: pipe(array(welcomeChannelSchema), maxLength(5))
 });

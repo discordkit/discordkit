@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   leaveGuild,
   leaveGuildProcedure,
@@ -12,9 +8,11 @@ import {
   leaveGuildSchema
 } from "../leaveGuild.js";
 
-describe(`leaveGuild`, () => {
-  mockRequest.delete(`/users/@me/guilds/:guild`);
-  const config = mockSchema(leaveGuildSchema);
+describe(`leaveGuild`, { repeats: 5 }, () => {
+  const { config } = mockUtils.request.delete(
+    `/users/@me/guilds/:guild`,
+    leaveGuildSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(leaveGuildSafe(config)).resolves.not.toThrow();

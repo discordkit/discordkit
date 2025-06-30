@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   deleteWebhook,
   deleteWebhookProcedure,
@@ -12,9 +8,11 @@ import {
   deleteWebhookSchema
 } from "../deleteWebhook.js";
 
-describe(`deleteWebhook`, () => {
-  mockRequest.delete(`/webhooks/:webhook`);
-  const config = mockSchema(deleteWebhookSchema);
+describe(`deleteWebhook`, { repeats: 5 }, () => {
+  const { config } = mockUtils.request.delete(
+    `/webhooks/:webhook`,
+    deleteWebhookSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(deleteWebhookSafe(config)).resolves.not.toThrow();

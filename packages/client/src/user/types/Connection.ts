@@ -1,9 +1,11 @@
 import {
   type InferOutput,
   object,
+  pipe,
   string,
+  nonEmpty,
   boolean,
-  nullish,
+  exactOptional,
   array
 } from "valibot";
 import { integrationSchema } from "../../guild/types/Integration.js";
@@ -12,15 +14,15 @@ import { servicesSchema } from "./Services.js";
 
 export const connectionSchema = object({
   /** id of the connection account */
-  id: string(),
+  id: pipe(string(), nonEmpty()),
   /** the username of the connection account */
-  name: string(),
+  name: pipe(string(), nonEmpty()),
   /** the service of the connection (twitch, youtube) */
   type: servicesSchema,
   /** whether the connection is revoked */
-  revoked: nullish(boolean()),
+  revoked: exactOptional(boolean()),
   /** an array of partial server integrations */
-  integrations: nullish(array(integrationSchema)),
+  integrations: exactOptional(array(integrationSchema)),
   /** whether the connection is verified */
   verified: boolean(),
   /** whether friend sync is enabled for this connection */

@@ -5,7 +5,6 @@ import {
   minLength,
   nonEmpty,
   object,
-  exactOptional,
   partial,
   pipe,
   string,
@@ -13,31 +12,22 @@ import {
 } from "valibot";
 import {
   patch,
-  buildURL,
   type Fetcher,
   toProcedure,
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { messageSchema, type Message } from "../channel/types/Message.js";
-import { embedSchema } from "../channel/types/Embed.js";
-import { allowedMentionSchema } from "../channel/types/AllowedMention.js";
-import { attachmentSchema } from "../channel/types/Attachment.js";
-import { messageComponentSchema } from "../channel/types/MessageComponent.js";
-import { EmbedType } from "../channel/types/EmbedType.js";
+import { messageSchema, type Message } from "../messages/types/Message.js";
+import { embedSchema } from "../messages/types/Embed.js";
+import { allowedMentionSchema } from "../messages/types/AllowedMention.js";
+import { attachmentSchema } from "../messages/types/Attachment.js";
+import { messageComponentSchema } from "../messages/types/MessageComponent.js";
+import { EmbedType } from "../messages/types/EmbedType.js";
 
 export const editFollowupMessageSchema = object({
   application: snowflake,
   token: pipe(string(), nonEmpty()),
   message: snowflake,
-  params: exactOptional(
-    partial(
-      object({
-        /** id of the thread the message is in */
-        threadId: snowflake
-      })
-    )
-  ),
   body: partial(
     object({
       /** the message contents (up to 2000 characters) */
@@ -74,12 +64,8 @@ export const editFollowupMessageSchema = object({
 export const editFollowupMessage: Fetcher<
   typeof editFollowupMessageSchema,
   Message
-> = async ({ application, token, message, params, body }) =>
-  patch(
-    buildURL(`/webhooks/${application}/${token}/messages/${message}`, params)
-      .href,
-    body
-  );
+> = async ({ application, token, message, body }) =>
+  patch(`/webhooks/${application}/${token}/messages/${message}`, body);
 
 export const editFollowupMessageSafe = toValidated(
   editFollowupMessage,

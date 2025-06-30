@@ -1,11 +1,9 @@
 import {
   array,
   boolean,
-  integer,
   isoTimestamp,
   nonEmpty,
   nullish,
-  number,
   object,
   partial,
   pipe,
@@ -16,9 +14,11 @@ import {
   type Fetcher,
   toProcedure,
   toValidated,
-  snowflake
+  snowflake,
+  asInteger
 } from "@discordkit/core";
 import { memberSchema, type Member } from "./types/Member.js";
+import { guildMemberFlag } from "./types/GuildMemberFlags.js";
 
 export const modifyGuildMemberSchema = object({
   guild: snowflake,
@@ -38,7 +38,7 @@ export const modifyGuildMemberSchema = object({
       /** when the user's timeout will expire and the user will be able to communicate in the guild again (up to 28 days in the future), set to null to remove timeout. Will throw a 403 error if the user has the `ADMINISTRATOR` permission or is the owner of the guild (Requires `MODERATE_MEMBERS` permission) */
       communicationDisabledUntil: nullish(pipe(string(), isoTimestamp())),
       /** guild member flags */
-      flags: nullish(pipe(number(), integer()))
+      flags: nullish(asInteger(guildMemberFlag))
     })
   )
 });

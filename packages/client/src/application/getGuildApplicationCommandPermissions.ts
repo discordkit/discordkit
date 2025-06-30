@@ -10,7 +10,7 @@ import {
 import {
   guildApplicationCommandPermissionsSchema,
   type GuildApplicationCommandPermissions
-} from "./types/GuildApplicationCommandPermissions.js";
+} from "../application-commands/types/GuildApplicationCommandPermissions.js";
 
 export const getGuildApplicationCommandPermissionsSchema = object({
   application: snowflake,

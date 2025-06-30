@@ -1,11 +1,11 @@
 import { enum_ } from "valibot";
 
-export enum InteractionType {
-  PING = 1,
-  APPLICATION_COMMAND = 2,
-  MESSAGE_COMPONENT = 3,
-  APPLICATION_COMMAND_AUTOCOMPLETE = 4,
-  MODAL_SUBMIT = 5
-}
+export const InteractionType = {
+  PING: 1,
+  APPLICATION_COMMAND: 2,
+  MESSAGE_COMPONENT: 3,
+  APPLICATION_COMMAND_AUTOCOMPLETE: 4,
+  MODAL_SUBMIT: 5
+} as const;
 
 export const interactionTypeSchema = enum_(InteractionType);

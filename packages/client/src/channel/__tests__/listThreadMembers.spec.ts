@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import { array, length, pipe } from "valibot";
 import {
   listThreadMembersProcedure,
@@ -9,12 +10,12 @@ import {
 } from "../listThreadMembers.js";
 import { threadMemberSchema } from "../types/ThreadMember.js";
 
-describe(`listThreadMembers`, () => {
-  const expected = mockRequest.get(
+describe(`listThreadMembers`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.get(
     `/channels/:channel/thread-members`,
+    listThreadMembersSchema,
     pipe(array(threadMemberSchema), length(1))
   );
-  const config = mockSchema(listThreadMembersSchema);
 
   it(`can be used standalone`, async () => {
     await expect(listThreadMembersSafe(config)).resolves.toEqual(expected);

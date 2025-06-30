@@ -4,7 +4,6 @@ import {
   integer,
   maxValue,
   minValue,
-  nullish,
   number,
   object,
   exactOptional,
@@ -27,11 +26,11 @@ export const listThreadMembersSchema = object({
     partial(
       object({
         /** Whether to include a guild member object for each thread member */
-        withMember: nullish(boolean()),
+        withMember: boolean(),
         /** Get thread members after this user ID */
-        after: nullish(snowflake),
+        after: snowflake,
         /** Max number of thread members to return (1-100). Defaults to 100. */
-        limit: nullish(pipe(number(), integer(), minValue(1), maxValue(100)))
+        limit: pipe(number(), integer(), minValue(1), maxValue(100))
       })
     )
   )

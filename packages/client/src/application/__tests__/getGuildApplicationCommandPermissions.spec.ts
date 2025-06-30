@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import { array, length, pipe } from "valibot";
 import {
   getGuildApplicationCommandPermissionsSchema,
@@ -7,14 +8,14 @@ import {
   getGuildApplicationCommandPermissionsQuery,
   getGuildApplicationCommandPermissionsSafe
 } from "../getGuildApplicationCommandPermissions.js";
-import { guildApplicationCommandPermissionsSchema } from "../types/GuildApplicationCommandPermissions.js";
+import { guildApplicationCommandPermissionsSchema } from "../../application-commands/types/GuildApplicationCommandPermissions.js";
 
-describe(`getGuildApplicationCommandPermissions`, () => {
-  const expected = mockRequest.get(
+describe(`getGuildApplicationCommandPermissions`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.get(
     `/applications/:application/guilds/:guild/commands/permissions`,
+    getGuildApplicationCommandPermissionsSchema,
     pipe(array(guildApplicationCommandPermissionsSchema), length(1))
   );
-  const config = mockSchema(getGuildApplicationCommandPermissionsSchema);
 
   it(`can be used standalone`, async () => {
     await expect(

@@ -2,7 +2,6 @@ import {
   integer,
   maxValue,
   minValue,
-  nullish,
   number,
   object,
   exactOptional,
@@ -24,12 +23,13 @@ export const createGuildBanSchema = object({
     partial(
       object({
         /** number of days to delete messages for (0-7) */
-        deleteMessageDays: nullish(
-          pipe(number(), integer(), minValue(1), maxValue(7))
-        ),
+        deleteMessageDays: pipe(number(), integer(), minValue(1), maxValue(7)),
         /** number of seconds to delete messages for, between 0 and 604800 (7 days) */
-        deleteMessageSeconds: nullish(
-          pipe(number(), integer(), minValue(1), maxValue(7))
+        deleteMessageSeconds: pipe(
+          number(),
+          integer(),
+          minValue(1),
+          maxValue(7)
         )
       })
     )

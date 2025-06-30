@@ -6,7 +6,7 @@ import {
   nonEmpty,
   number,
   object,
-  optional,
+  nullable,
   partial,
   pipe,
   string
@@ -16,7 +16,9 @@ import {
   type Fetcher,
   toProcedure,
   toValidated,
-  snowflake
+  snowflake,
+  datauri,
+  asInteger
 } from "@discordkit/core";
 import { localesSchema } from "../application/types/Locales.js";
 import { type Guild, guildSchema } from "./types/Guild.js";
@@ -24,6 +26,7 @@ import { verificationLevelSchema } from "./types/VerificationLevel.js";
 import { defaultMessageNotificationLevelSchema } from "./types/DefaultMessageNotificationLevel.js";
 import { explicitContentFilterLevelSchema } from "./types/ExplicitContentFilterLevel.js";
 import { guildFeaturesSchema } from "./types/GuildFeatures.js";
+import { systemChannelFlag } from "./types/SystemChannelFlags.js";
 
 export const modifyGuildSchema = object({
   guild: snowflake,
@@ -32,47 +35,47 @@ export const modifyGuildSchema = object({
       /** guild name */
       name: pipe(string(), nonEmpty()),
       /** @deprecated guild voice region id */
-      region: optional(pipe(string(), nonEmpty())),
+      region: nullable(pipe(string(), nonEmpty())),
       /** verification level */
-      verificationLevel: optional(verificationLevelSchema),
+      verificationLevel: nullable(verificationLevelSchema),
       /** default message notification level */
-      defaultMessageNotifications: optional(
+      defaultMessageNotifications: nullable(
         defaultMessageNotificationLevelSchema
       ),
       /** explicit content filter level */
-      explicitContentFilter: optional(explicitContentFilterLevelSchema),
+      explicitContentFilter: nullable(explicitContentFilterLevelSchema),
       /** id for afk channel */
-      afkChannelId: optional(snowflake),
+      afkChannelId: nullable(snowflake),
       /** afk timeout in seconds */
       afkTimeout: pipe(number(), integer(), minValue(0)),
       /** base64 1024x1024 png/jpeg/gif image for the guild icon (can be animated gif when the server has the ANIMATED_ICON feature) */
-      icon: optional(pipe(string(), nonEmpty())),
+      icon: nullable(datauri),
       /** user id to transfer guild ownership to (must be owner) */
       ownerId: snowflake,
       /** base64 16:9 png/jpeg image for the guild splash (when the server has the INVITE_SPLASH feature) */
-      splash: optional(pipe(string(), nonEmpty())),
+      splash: nullable(datauri),
       /** base64 16:9 png/jpeg image for the guild discovery splash (when the server has the DISCOVERABLE feature) */
-      discoverySplash: optional(pipe(string(), nonEmpty())),
+      discoverySplash: nullable(datauri),
       /** base64 16:9 png/jpeg image for the guild banner (when the server has the BANNER feature; can be animated gif when the server has the ANIMATED_BANNER feature) */
-      banner: optional(pipe(string(), nonEmpty())),
+      banner: nullable(datauri),
       /** the id of the channel where guild notices such as welcome messages and boost events are posted */
-      systemChannelId: optional(snowflake),
+      systemChannelId: nullable(snowflake),
       /** system channel flags */
-      systemChannelFlags: pipe(number(), integer()),
+      systemChannelFlags: asInteger(systemChannelFlag),
       /** the id of the channel where Community guilds display rules and/or guidelines */
-      rulesChannelId: optional(snowflake),
+      rulesChannelId: nullable(snowflake),
       /** the id of the channel where admins and moderators of Community guilds receive notices from Discord */
-      publicUpdatesChannelId: optional(snowflake),
+      publicUpdatesChannelId: nullable(snowflake),
       /** the preferred locale of a Community guild used in server discovery and notices from Discord; defaults to "en-US" */
-      preferredLocale: optional(localesSchema),
+      preferredLocale: nullable(localesSchema),
       /** enabled guild features */
       features: array(guildFeaturesSchema),
       /** the description for the guild */
-      description: optional(pipe(string(), nonEmpty())),
+      description: nullable(pipe(string(), nonEmpty())),
       /** whether the guild's boost progress bar should be enabled */
       premiumProgressBarEnabled: boolean(),
       /** the id of the channel where admins and moderators of Community guilds receive safety alerts from Discord */
-      safetyAlertsChannelId: optional(snowflake)
+      safetyAlertsChannelId: nullable(snowflake)
     })
   )
 });

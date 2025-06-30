@@ -1,24 +1,20 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   editFollowupMessage,
   editFollowupMessageProcedure,
   editFollowupMessageSafe,
   editFollowupMessageSchema
 } from "../editFollowupMessage.js";
-import { messageSchema } from "../../channel/types/Message.js";
+import { messageSchema } from "../../messages/types/Message.js";
 
-describe(`editFollowupMessage`, () => {
-  mockRequest.patch(
+describe(`editFollowupMessage`, { repeats: 5 }, () => {
+  const { config } = mockUtils.request.patch(
     `/webhooks/:application/:token/messages/:message`,
+    editFollowupMessageSchema,
     messageSchema
   );
-  const config = mockSchema(editFollowupMessageSchema);
 
   it(`can be used standalone`, async () => {
     await expect(editFollowupMessageSafe(config)).resolves.not.toThrow();

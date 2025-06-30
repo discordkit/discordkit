@@ -1,9 +1,10 @@
-import { object, partial, string } from "valibot";
+import { nonEmpty, nullable, object, partial, pipe, string } from "valibot";
 import {
   patch,
   type Fetcher,
   toProcedure,
-  toValidated
+  toValidated,
+  datauri
 } from "@discordkit/core";
 import { userSchema, type User } from "./types/User.js";
 
@@ -11,9 +12,11 @@ export const modifyCurrentUserSchema = object({
   body: partial(
     object({
       /** user's username, if changed may cause the user's discriminator to be randomized. */
-      username: string(),
+      username: pipe(string(), nonEmpty()),
       /** if passed, modifies the user's avatar */
-      avatar: string()
+      avatar: nullable(datauri),
+      /** if passed, modifies the user's banner */
+      banner: nullable(datauri)
     })
   )
 });

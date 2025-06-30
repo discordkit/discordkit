@@ -1,19 +1,20 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import {
   getGlobalApplicationCommandSchema,
   getGlobalApplicationCommandProcedure,
   getGlobalApplicationCommandQuery,
   getGlobalApplicationCommandSafe
 } from "../getGlobalApplicationCommand.js";
-import { applicationCommandSchema } from "../types/ApplicationCommand.js";
+import { applicationCommandSchema } from "../../application-commands/types/ApplicationCommand.js";
 
-describe(`getGlobalApplicationCommand`, () => {
-  const expected = mockRequest.get(
+describe(`getGlobalApplicationCommand`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.get(
     `/applications/:application/commands/:command`,
+    getGlobalApplicationCommandSchema,
     applicationCommandSchema
   );
-  const config = mockSchema(getGlobalApplicationCommandSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getGlobalApplicationCommandSafe(config)).resolves.toEqual(

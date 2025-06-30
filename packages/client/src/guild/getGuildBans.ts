@@ -5,7 +5,6 @@ import {
   exactOptional,
   number,
   integer,
-  nullish,
   minValue,
   maxValue,
   pipe
@@ -26,11 +25,11 @@ export const getGuildBansSchema = object({
     partial(
       object({
         /** of users to return (up to maximum 1000) */
-        limit: nullish(pipe(number(), integer(), minValue(1), maxValue(1000))),
+        limit: pipe(number(), integer(), minValue(1), maxValue(1000)),
         /** consider only users before given user id */
-        before: nullish(snowflake),
+        before: snowflake,
         /** consider only users after given user id */
-        after: nullish(snowflake)
+        after: snowflake
       })
     )
   )

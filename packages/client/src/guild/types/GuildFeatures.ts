@@ -29,6 +29,8 @@ export enum GuildFeatures {
   INVITE_SPLASH = `INVITE_SPLASH`,
   /** guild has enabled Membership Screening */
   MEMBER_VERIFICATION_GATE_ENABLED = `MEMBER_VERIFICATION_GATE_ENABLED`,
+  /** guild has increased custom soundboard sound slots */
+  MORE_SOUNDBOARD = `MORE_SOUNDBOARD`,
   /** guild has increased custom sticker slots */
   MORE_STICKERS = `MORE_STICKERS`,
   /** guild has access to create news channels */
@@ -54,7 +56,9 @@ export enum GuildFeatures {
   /** guild has access to set 384kbps bitrate in voice (previously VIP voice servers) */
   VIP_REGIONS = `VIP_REGIONS`,
   /** guild has enabled the welcome screen */
-  WELCOME_SCREEN_ENABLED = `WELCOME_SCREEN_ENABLED`
+  WELCOME_SCREEN_ENABLED = `WELCOME_SCREEN_ENABLED`,
+  /** guild is able to set gradient colors to roles */
+  ENHANCED_ROLE_COLORS = `ENHANCED_ROLE_COLORS`
 }
 
 export const guildFeaturesSchema = enum_(GuildFeatures);

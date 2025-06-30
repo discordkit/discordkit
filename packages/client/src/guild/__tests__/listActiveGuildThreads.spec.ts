@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import {
   activeGuildThreadsSchema,
   listActiveGuildThreadsProcedure,
@@ -8,12 +9,12 @@ import {
   listActiveGuildThreadsSchema
 } from "../listActiveGuildThreads.js";
 
-describe(`listActiveGuildThreads`, () => {
-  const expected = mockRequest.get(
+describe(`listActiveGuildThreads`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.get(
     `/guilds/:guild/threads/active`,
+    listActiveGuildThreadsSchema,
     activeGuildThreadsSchema
   );
-  const config = mockSchema(listActiveGuildThreadsSchema);
 
   it(`can be used standalone`, async () => {
     await expect(listActiveGuildThreadsSafe(config)).resolves.toEqual(expected);

@@ -15,7 +15,7 @@ export const getGuildSchema = object({
     partial(
       object({
         /** when true, will return approximate member and presence counts for the guild */
-        withCounts: exactOptional(boolean())
+        withCounts: boolean()
       })
     )
   )

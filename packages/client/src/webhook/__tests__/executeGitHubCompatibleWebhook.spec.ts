@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   executeGitHubCompatibleWebhook,
   executeGitHubCompatibleWebhookProcedure,
@@ -12,9 +8,11 @@ import {
   executeGitHubCompatibleWebhookSchema
 } from "../executeGitHubCompatibleWebhook.js";
 
-describe(`executeGitHubCompatibleWebhook`, () => {
-  mockRequest.post(`/webhooks/:webhook/:token/github`);
-  const config = mockSchema(executeGitHubCompatibleWebhookSchema);
+describe(`executeGitHubCompatibleWebhook`, { repeats: 5 }, () => {
+  const { config } = mockUtils.request.post(
+    `/webhooks/:webhook/:token/github`,
+    executeGitHubCompatibleWebhookSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(

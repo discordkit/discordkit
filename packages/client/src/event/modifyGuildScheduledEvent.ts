@@ -1,10 +1,19 @@
-import { isoTimestamp, nonEmpty, nullish, object, pipe, string } from "valibot";
+import {
+  exactOptional,
+  isoTimestamp,
+  nonEmpty,
+  nullish,
+  object,
+  pipe,
+  string
+} from "valibot";
 import {
   patch,
   type Fetcher,
   toProcedure,
   toValidated,
-  snowflake
+  snowflake,
+  datauri
 } from "@discordkit/core";
 import {
   type ScheduledEvent,
@@ -14,6 +23,7 @@ import { entityMetadataSchema } from "./types/EntityMetadata.js";
 import { scheduledEventPrivacyLevelSchema } from "./types/ScheduledEventPrivacyLevel.js";
 import { scheduledEventEntityTypeSchema } from "./types/ScheduledEventEntityType.js";
 import { scheduledEventStatusSchema } from "./types/ScheduledEventStatus.js";
+import { scheduledEventRecurrenceRuleSchema } from "./types/ScheduledEventRecurrenceRule.js";
 
 export const modifyGuildScheduledEventSchema = object({
   guild: snowflake,
@@ -24,21 +34,23 @@ export const modifyGuildScheduledEventSchema = object({
     /** entity metadata	the entity metadata of the scheduled event */
     entityMetadata: nullish(entityMetadataSchema),
     /** the name of the scheduled event */
-    name: nullish(pipe(string(), nonEmpty())),
+    name: exactOptional(pipe(string(), nonEmpty())),
     /** the privacy level of the scheduled event */
-    privacyLevel: nullish(scheduledEventPrivacyLevelSchema),
+    privacyLevel: exactOptional(scheduledEventPrivacyLevelSchema),
     /** the time to schedule the scheduled event */
-    scheduledStartTime: nullish(pipe(string(), isoTimestamp())),
+    scheduledStartTime: exactOptional(pipe(string(), isoTimestamp())),
     /** the time when the scheduled event is scheduled to end */
-    scheduledEndTime: nullish(pipe(string(), isoTimestamp())),
+    scheduledEndTime: exactOptional(pipe(string(), isoTimestamp())),
     /** the description of the scheduled event */
     description: nullish(pipe(string(), nonEmpty())),
     /** the entity type of the scheduled event */
-    entityType: nullish(scheduledEventEntityTypeSchema),
+    entityType: exactOptional(scheduledEventEntityTypeSchema),
     /** the status of the scheduled event */
-    status: nullish(scheduledEventStatusSchema),
+    status: exactOptional(scheduledEventStatusSchema),
     /** the cover image of the scheduled event */
-    image: nullish(pipe(string(), nonEmpty()))
+    image: exactOptional(datauri),
+    /** the definition for how often this event should recur */
+    recurrenceRule: exactOptional(scheduledEventRecurrenceRuleSchema)
   })
 });
 

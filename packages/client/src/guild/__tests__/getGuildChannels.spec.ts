@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import { array, length, pipe } from "valibot";
 import {
   getGuildChannelsProcedure,
@@ -9,12 +10,12 @@ import {
 } from "../getGuildChannels.js";
 import { channelSchema } from "../../channel/types/Channel.js";
 
-describe(`getGuildChannels`, () => {
-  const expected = mockRequest.get(
+describe(`getGuildChannels`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.get(
     `/guilds/:guild/channels`,
+    getGuildChannelsSchema,
     pipe(array(channelSchema), length(1))
   );
-  const config = mockSchema(getGuildChannelsSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getGuildChannelsSafe(config)).resolves.toEqual(expected);

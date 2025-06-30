@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import {
   getCurrentApplicationProcedure,
   getCurrentApplicationQuery,
@@ -7,8 +8,12 @@ import {
 } from "../getCurrentApplication.js";
 import { applicationSchema } from "../types/Application.js";
 
-describe(`getCurrentApplication`, () => {
-  const expected = mockRequest.get(`/applications/@me`, applicationSchema);
+describe(`getCurrentApplication`, { repeats: 5 }, () => {
+  const { expected } = mockUtils.request.get(
+    `/applications/@me`,
+    null,
+    applicationSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(getCurrentApplicationSafe()).resolves.toEqual(expected);

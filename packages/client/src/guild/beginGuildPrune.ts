@@ -9,9 +9,9 @@ import {
   nullable,
   number,
   object,
-  partial,
   string,
-  pipe
+  pipe,
+  exactOptional
 } from "valibot";
 import {
   post,
@@ -23,18 +23,16 @@ import {
 
 export const beginGuildPruneSchema = object({
   guild: snowflake,
-  body: partial(
-    object({
-      /** number of days to prune (1-30) */
-      days: pipe(number(), minValue(1), maxValue(30)),
-      /** whether pruned is returned, discouraged for large guilds */
-      computePruneCount: boolean(),
-      /** role(s) to include */
-      includeRoles: array(snowflake),
-      /** @deprecated reason for the prune */
-      reason: pipe(string(), nonEmpty())
-    })
-  )
+  body: object({
+    /** number of days to prune (1-30) */
+    days: pipe(number(), minValue(1), maxValue(30)),
+    /** whether pruned is returned, discouraged for large guilds */
+    computePruneCount: boolean(),
+    /** role(s) to include */
+    includeRoles: array(snowflake),
+    /** @deprecated reason for the prune */
+    reason: exactOptional(pipe(string(), nonEmpty()))
+  })
 });
 
 export const guildPruneResultSchema = object({

@@ -8,24 +8,26 @@ import {
   nullish,
   number,
   object,
-  optional,
-  partial,
   string,
-  pipe
+  pipe,
+  exactOptional
 } from "valibot";
 import {
   post,
   type Fetcher,
   toProcedure,
   toValidated,
-  snowflake
+  snowflake,
+  datauri,
+  asInteger
 } from "@discordkit/core";
 import { channelSchema } from "../channel/types/Channel.js";
 import { verificationLevelSchema } from "./types/VerificationLevel.js";
 import { defaultMessageNotificationLevelSchema } from "./types/DefaultMessageNotificationLevel.js";
 import { explicitContentFilterLevelSchema } from "./types/ExplicitContentFilterLevel.js";
-import { roleSchema } from "./types/Role.js";
+import { roleSchema } from "../permissions/Role.js";
 import { guildSchema, type Guild } from "./types/Guild.js";
+import { systemChannelFlag } from "./types/SystemChannelFlags.js";
 
 export const createGuildSchema = object({
   body: object({
@@ -34,25 +36,27 @@ export const createGuildSchema = object({
     /** @deprecated voice region id */
     region: nullish(pipe(string(), nonEmpty())),
     /** icon hash */
-    icon: nullish(pipe(string(), nonEmpty())),
+    icon: exactOptional(datauri),
     /** verification level */
-    verificationLevel: nullish(verificationLevelSchema),
+    verificationLevel: exactOptional(verificationLevelSchema),
     /** default message notification level */
-    defaultMessageNotifications: nullish(defaultMessageNotificationLevelSchema),
+    defaultMessageNotifications: exactOptional(
+      defaultMessageNotificationLevelSchema
+    ),
     /** explicit content filter level */
-    explicitContentFilter: nullish(explicitContentFilterLevelSchema),
+    explicitContentFilter: exactOptional(explicitContentFilterLevelSchema),
     /** new guild roles */
-    roles: nullish(array(roleSchema)),
+    roles: exactOptional(array(roleSchema)),
     /** new guild's channels */
-    channels: nullish(array(partial(channelSchema))),
+    channels: exactOptional(array(channelSchema)),
     /** id for afk channel */
-    afkChannelId: nullish(snowflake),
+    afkChannelId: exactOptional(snowflake),
     /** afk timeout in seconds */
-    afkTimeout: nullish(pipe(number(), integer(), minValue(0))),
+    afkTimeout: exactOptional(pipe(number(), integer(), minValue(0))),
     /** the id of the channel where guild notices such as welcome messages and boost events are posted */
-    systemChannelId: nullish(snowflake),
+    systemChannelId: exactOptional(snowflake),
     /** system channel flags */
-    systemChannelFlags: optional(pipe(number(), integer(), minValue(0)))
+    systemChannelFlags: exactOptional(asInteger(systemChannelFlag))
   })
 });
 

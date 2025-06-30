@@ -1,4 +1,13 @@
-import { pipe, object, string, minLength, url, partial } from "valibot";
+import {
+  pipe,
+  object,
+  string,
+  url,
+  partial,
+  exactOptional,
+  nullable,
+  nonEmpty
+} from "valibot";
 import {
   patch,
   type Fetcher,
@@ -10,15 +19,17 @@ import { webhookSchema, type Webhook } from "./types/Webhook.js";
 
 export const modifyWebhookSchema = object({
   webhook: snowflake,
-  body: partial(
-    object({
-      /** the default name of the webhook */
-      name: pipe(string(), minLength(1)),
-      /** image for the default webhook avatar */
-      avatar: pipe(string(), url()),
-      /** the new channel id this webhook should be moved to */
-      channelId: snowflake
-    })
+  body: exactOptional(
+    partial(
+      object({
+        /** the default name of the webhook */
+        name: pipe(string(), nonEmpty()),
+        /** image for the default webhook avatar */
+        avatar: nullable(pipe(string(), url())),
+        /** the new channel id this webhook should be moved to */
+        channelId: snowflake
+      })
+    )
   )
 });
 

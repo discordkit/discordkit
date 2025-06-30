@@ -1,6 +1,7 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
-import { array, length } from "valibot";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
+import { pipe, array, length } from "valibot";
 import {
   listGuildStickersProcedure,
   listGuildStickersQuery,
@@ -9,12 +10,12 @@ import {
 } from "../listGuildStickers.js";
 import { stickerSchema } from "../types/Sticker.js";
 
-describe(`listGuildStickers`, () => {
-  const expected = mockRequest.get(
+describe(`listGuildStickers`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.get(
     `/guilds/:guild/stickers`,
-    array(stickerSchema, [length(1)])
+    listGuildStickersSchema,
+    pipe(array(stickerSchema), length(1))
   );
-  const config = mockSchema(listGuildStickersSchema);
 
   it(`can be used standalone`, async () => {
     await expect(listGuildStickersSafe(config)).resolves.toEqual(expected);

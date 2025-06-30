@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import { array, length, pipe } from "valibot";
 import {
   getGuildWebhooksProcedure,
@@ -9,12 +10,12 @@ import {
 } from "../getGuildWebhooks.js";
 import { webhookSchema } from "../types/Webhook.js";
 
-describe(`getGuildWebhooks`, () => {
-  const expected = mockRequest.get(
+describe(`getGuildWebhooks`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.get(
     `/guilds/:guild/webhooks`,
+    getGuildWebhooksSchema,
     pipe(array(webhookSchema), length(1))
   );
-  const config = mockSchema(getGuildWebhooksSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getGuildWebhooksSafe(config)).resolves.toEqual(expected);

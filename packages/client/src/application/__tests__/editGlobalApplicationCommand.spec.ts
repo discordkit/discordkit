@@ -1,24 +1,20 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   editGlobalApplicationCommand,
   editGlobalApplicationCommandProcedure,
   editGlobalApplicationCommandSafe,
   editGlobalApplicationCommandSchema
 } from "../editGlobalApplicationCommand.js";
-import { applicationCommandSchema } from "../types/ApplicationCommand.js";
+import { applicationCommandSchema } from "../../application-commands/types/ApplicationCommand.js";
 
-describe(`editGlobalApplicationCommand`, () => {
-  const expected = mockRequest.patch(
+describe(`editGlobalApplicationCommand`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.patch(
     `/applications/:application/commands/:command`,
+    editGlobalApplicationCommandSchema,
     applicationCommandSchema
   );
-  const config = mockSchema(editGlobalApplicationCommandSchema);
 
   it(`can be used standalone`, async () => {
     await expect(editGlobalApplicationCommandSafe(config)).resolves.toEqual(

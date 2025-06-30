@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import {
   getWebhookProcedure,
   getWebhookQuery,
@@ -8,9 +9,12 @@ import {
 } from "../getWebhook.js";
 import { webhookSchema } from "../types/Webhook.js";
 
-describe(`getWebhook`, () => {
-  const expected = mockRequest.get(`/webhooks/:webhook`, webhookSchema);
-  const config = mockSchema(getWebhookSchema);
+describe(`getWebhook`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.get(
+    `/webhooks/:webhook`,
+    getWebhookSchema,
+    webhookSchema
+  );
 
   it(`can be used standalone`, async () => {
     await expect(getWebhookSafe(config)).resolves.toEqual(expected);

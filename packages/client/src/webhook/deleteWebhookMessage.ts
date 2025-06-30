@@ -1,10 +1,10 @@
 import {
   object,
   string,
-  minLength,
   partial,
   exactOptional,
-  pipe
+  pipe,
+  nonEmpty
 } from "valibot";
 import {
   remove,
@@ -17,7 +17,7 @@ import {
 
 export const deleteWebhookMessageSchema = object({
   webhook: snowflake,
-  token: pipe(string(), minLength(1)),
+  token: pipe(string(), nonEmpty()),
   message: snowflake,
   params: exactOptional(
     partial(

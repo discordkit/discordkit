@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import { array, length, pipe } from "valibot";
 import {
   searchGuildMembersProcedure,
@@ -9,12 +10,12 @@ import {
 } from "../searchGuildMembers.js";
 import { memberSchema } from "../types/Member.js";
 
-describe(`searchGuildMembers`, () => {
-  const expected = mockRequest.get(
+describe(`searchGuildMembers`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.get(
     `/guilds/:guild/members/search`,
+    searchGuildMembersSchema,
     pipe(array(memberSchema), length(1))
   );
-  const config = mockSchema(searchGuildMembersSchema);
 
   it(`can be used standalone`, async () => {
     await expect(searchGuildMembersSafe(config)).resolves.toEqual(expected);

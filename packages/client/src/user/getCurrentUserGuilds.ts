@@ -30,11 +30,9 @@ export const getCurrentUserGuildsSchema = object({
         /** get guilds after this guild ID */
         after: snowflake,
         /** max number of guilds to return (1-200) */
-        limit: exactOptional(
-          pipe(number(), integer(), minValue(1), maxValue(200))
-        ),
+        limit: pipe(number(), integer(), minValue(1), maxValue(200)),
         /** include approximate member and presence counts in response */
-        withCounts: exactOptional(boolean())
+        withCounts: boolean()
       })
     )
   )

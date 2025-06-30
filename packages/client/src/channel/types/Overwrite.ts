@@ -1,13 +1,6 @@
-import { snowflake } from "@discordkit/core";
-import {
-  object,
-  union,
-  literal,
-  string,
-  minLength,
-  type InferOutput,
-  pipe
-} from "valibot";
+import { asDigits, snowflake } from "@discordkit/core";
+import { object, union, literal, type InferOutput } from "valibot";
+import { permissionFlag } from "../../permissions/Permissions.js";
 
 export const overwriteSchema = object({
   /** role or user id */
@@ -15,9 +8,9 @@ export const overwriteSchema = object({
   /** either 0 (role) or 1 (member) */
   type: union([literal(0), literal(1)]),
   /** permission bit set */
-  allow: pipe(string(), minLength(1)),
+  allow: asDigits(permissionFlag),
   /** permission bit set */
-  deny: pipe(string(), minLength(1))
+  deny: asDigits(permissionFlag)
 });
 
 export type Overwrite = InferOutput<typeof overwriteSchema>;

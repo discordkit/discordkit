@@ -4,7 +4,8 @@ import {
   type Fetcher,
   toProcedure,
   toValidated,
-  snowflake
+  snowflake,
+  datauri
 } from "@discordkit/core";
 import { guildSchema, type Guild } from "../guild/types/Guild.js";
 
@@ -14,7 +15,7 @@ export const createGuildFromTemplateSchema = object({
     /** name of the guild (2-100 characters) */
     name: pipe(string(), minLength(2), maxLength(100)),
     /** base64 128x128 image for the guild icon */
-    icon: nullish(string())
+    icon: nullish(datauri)
   })
 });
 

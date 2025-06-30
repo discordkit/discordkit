@@ -8,11 +8,9 @@ export { editApplicationCommandPermissionsProcedure } from "./editApplicationCom
 export { editGlobalApplicationCommandProcedure } from "./editGlobalApplicationCommand.js";
 export { editGuildApplicationCommandProcedure } from "./editGuildApplicationCommand.js";
 export { getApplicationCommandPermissionsProcedure } from "./getApplicationCommandPermissions.js";
-export { getApplicationRoleConnectionMetadataRecordsProcedure } from "./getApplicationRoleConnectionMetadataRecords.js";
 export { getCurrentApplicationProcedure } from "./getCurrentApplication.js";
 export { getGlobalApplicationCommandProcedure } from "./getGlobalApplicationCommand.js";
 export { getGlobalApplicationCommandsProcedure } from "./getGlobalApplicationCommands.js";
 export { getGuildApplicationCommandProcedure } from "./getGuildApplicationCommand.js";
 export { getGuildApplicationCommandPermissionsProcedure } from "./getGuildApplicationCommandPermissions.js";
 export { getGuildApplicationCommandsProcedure } from "./getGuildApplicationCommands.js";
-export { updateApplicationRoleConnectionMetadataRecordsProcedure } from "./updateApplicationRoleConnectionMetadataRecords.js";

@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import {
   createGuildTemplate,
   createGuildTemplateProcedure,
@@ -13,12 +9,12 @@ import {
 } from "../createGuildTemplate.js";
 import { guildTemplateSchema } from "../types/GuildTemplate.js";
 
-describe(`createGuildTemplate`, () => {
-  const expected = mockRequest.post(
+describe(`createGuildTemplate`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.post(
     `/guilds/:guild/templates`,
+    createGuildTemplateSchema,
     guildTemplateSchema
   );
-  const config = mockSchema(createGuildTemplateSchema);
 
   it(`can be used standalone`, async () => {
     await expect(createGuildTemplateSafe(config)).resolves.toEqual(expected);

@@ -3,16 +3,16 @@ import {
   boolean,
   integer,
   nonEmpty,
-  nullish,
   number,
   object,
   pipe,
   lazy,
   string,
   union,
-  type InferOutput
+  type InferOutput,
+  exactOptional
 } from "valibot";
-import { applicationCommandOptionTypeSchema } from "../../application/types/ApplicationCommandOptionType.js";
+import { applicationCommandOptionTypeSchema } from "../../application-commands/types/ApplicationCommandOptionType.js";
 
 const base = object({
   /** Name of the parameter */
@@ -20,17 +20,17 @@ const base = object({
   /** Value of application command option type */
   type: applicationCommandOptionTypeSchema,
   /** Value of the option resulting from user input */
-  value: nullish(
+  value: exactOptional(
     union([string(), pipe(number(), integer()), number(), boolean()])
   ),
   /** true if this option is the currently focused option for autocomplete */
-  focused: nullish(boolean())
+  focused: exactOptional(boolean())
 });
 
 export const applicationCommandInteractionDataOptionSchema = object({
   ...base.entries,
   /** Present if this option is a group or subcommand */
-  options: lazy(() => nullish(array(base)))
+  options: exactOptional(lazy(() => array(base)))
 });
 
 export type ApplicationCommandInteractionDataOption = InferOutput<

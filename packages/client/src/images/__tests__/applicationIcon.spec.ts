@@ -1,4 +1,4 @@
-import { mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
 import { parse, pipe, string, url } from "valibot";
 import { applicationIcon, applicationIconSchema } from "../applicationIcon.js";
 
@@ -7,7 +7,7 @@ describe(`applicationIcon`, () => {
     expect(() =>
       parse(
         pipe(string(), url()),
-        applicationIcon(mockSchema(applicationIconSchema))
+        applicationIcon(mockUtils.schema(applicationIconSchema))
       )
     ).not.toThrow();
   });

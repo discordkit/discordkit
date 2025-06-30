@@ -1,6 +1,7 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
-import { array } from "valibot";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
+import { pipe, array, length } from "valibot";
 import {
   getChannelInvitesProcedure,
   getChannelInvitesQuery,
@@ -9,12 +10,12 @@ import {
 } from "../getChannelInvites.js";
 import { inviteMetadataSchema } from "../../invite/types/InviteMetadata.js";
 
-describe(`getChannelInvites`, () => {
-  const expected = mockRequest.get(
+describe(`getChannelInvites`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.get(
     `/channels/:channel/invites`,
-    array(inviteMetadataSchema)
+    getChannelInvitesSchema,
+    pipe(array(inviteMetadataSchema), length(1))
   );
-  const config = mockSchema(getChannelInvitesSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getChannelInvitesSafe(config)).resolves.toEqual(expected);

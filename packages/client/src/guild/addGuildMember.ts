@@ -3,7 +3,7 @@ import {
   boolean,
   nonEmpty,
   object,
-  optional,
+  exactOptional,
   pipe,
   string
 } from "valibot";
@@ -23,13 +23,13 @@ export const addGuildMemberSchema = object({
     /** an oauth2 access token granted with the `guilds.join` to the bot's application for the user you want to add to the guild */
     accessToken: pipe(string(), nonEmpty()),
     /** value to set user's nickname to	(Requires `MANAGE_NICKNAMES` permission) */
-    nick: optional(pipe(string(), nonEmpty())),
+    nick: exactOptional(pipe(string(), nonEmpty())),
     /** array of role ids the member is assigned (Requires `MANAGE_ROLES` permission) */
-    roles: optional(array(snowflake)),
+    roles: exactOptional(array(snowflake)),
     /** whether the user is muted in voice channels (Requires `MUTE_MEMBERS` permission) */
-    mute: optional(boolean()),
+    mute: exactOptional(boolean()),
     /** whether the user is deafened in voice channels (Requires `DEAFEN_MEMBERS` permission) */
-    deaf: optional(boolean())
+    deaf: exactOptional(boolean())
   })
 });
 

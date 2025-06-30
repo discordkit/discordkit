@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import {
   getGuildPruneCountProcedure,
   getGuildPruneCountQuery,
@@ -8,12 +9,12 @@ import {
   guildPruneCountSchema
 } from "../getGuildPruneCount.js";
 
-describe(`getGuildPruneCount`, () => {
-  const expected = mockRequest.get(
+describe(`getGuildPruneCount`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.get(
     `/guilds/:guild/prune`,
+    getGuildPruneCountSchema,
     guildPruneCountSchema
   );
-  const config = mockSchema(getGuildPruneCountSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getGuildPruneCountSafe(config)).resolves.toEqual(expected);

@@ -19,13 +19,13 @@ import {
 import {
   type ApplicationCommand,
   applicationCommandSchema
-} from "./types/ApplicationCommand.js";
+} from "../application-commands/types/ApplicationCommand.js";
 import { localesSchema } from "./types/Locales.js";
-import { applicationCommandOptionSchema } from "./types/ApplicationCommandOption.js";
+import { applicationCommandOptionSchema } from "../application-commands/types/ApplicationCommandOption.js";
 import {
   ApplicationCommandType,
   applicationCommandTypeSchema
-} from "./types/ApplicationCommandType.js";
+} from "../application-commands/types/ApplicationCommandType.js";
 
 export const bulkOverwriteGuildApplicationCommandsSchema = object({
   application: snowflake,

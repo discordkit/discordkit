@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import { runProcedure, runQuery, mockRequest, mockSchema } from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runQuery } from "#test-utils";
 import { array, length, pipe } from "valibot";
 import {
   getGuildApplicationCommandsSchema,
@@ -7,14 +8,14 @@ import {
   getGuildApplicationCommandsQuery,
   getGuildApplicationCommandsSafe
 } from "../getGuildApplicationCommands.js";
-import { applicationCommandSchema } from "../types/ApplicationCommand.js";
+import { applicationCommandSchema } from "../../application-commands/types/ApplicationCommand.js";
 
-describe(`getGuildApplicationCommands`, () => {
-  const expected = mockRequest.get(
+describe(`getGuildApplicationCommands`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.get(
     `/applications/:application/guilds/:guild/commands`,
+    getGuildApplicationCommandsSchema,
     pipe(array(applicationCommandSchema), length(1))
   );
-  const config = mockSchema(getGuildApplicationCommandsSchema);
 
   it(`can be used standalone`, async () => {
     await expect(getGuildApplicationCommandsSafe(config)).resolves.toEqual(

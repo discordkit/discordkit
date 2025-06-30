@@ -1,10 +1,6 @@
 import { waitFor } from "@testing-library/react";
-import {
-  runProcedure,
-  runMutation,
-  mockRequest,
-  mockSchema
-} from "#test-utils";
+import { mockUtils } from "#mocks";
+import { runProcedure, runMutation } from "#test-utils";
 import { array, length, pipe } from "valibot";
 import {
   bulkOverwriteGuildApplicationCommandsProcedure,
@@ -12,14 +8,14 @@ import {
   bulkOverwriteGuildApplicationCommandsSchema,
   bulkOverwriteGuildApplicationCommandsSafe
 } from "../bulkOverwriteGuildApplicationCommands.js";
-import { applicationCommandSchema } from "../types/ApplicationCommand.js";
+import { applicationCommandSchema } from "../../application-commands/types/ApplicationCommand.js";
 
-describe(`bulkOverwriteGuildApplicationCommands`, () => {
-  const expected = mockRequest.put(
+describe(`bulkOverwriteGuildApplicationCommands`, { repeats: 5 }, () => {
+  const { config, expected } = mockUtils.request.put(
     `/applications/:application/guilds/:guild/commands`,
+    bulkOverwriteGuildApplicationCommandsSchema,
     pipe(array(applicationCommandSchema), length(1))
   );
-  const config = mockSchema(bulkOverwriteGuildApplicationCommandsSchema);
 
   it(`can be used standalone`, async () => {
     await expect(

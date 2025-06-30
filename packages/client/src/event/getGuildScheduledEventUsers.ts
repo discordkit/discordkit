@@ -3,7 +3,6 @@ import {
   boolean,
   maxValue,
   minValue,
-  nullish,
   number,
   object,
   exactOptional,
@@ -30,13 +29,13 @@ export const getGuildScheduledEventUsersSchema = object({
     partial(
       object({
         /** number of users to return (up to maximum 100) (default: 100) */
-        limit: nullish(pipe(number(), minValue(1), maxValue(100)), 100),
+        limit: pipe(number(), minValue(1), maxValue(100)),
         /** include guild member data if it exists (default: false) */
-        withMember: nullish(boolean()),
+        withMember: boolean(),
         /** consider only users before given user id (default: null) */
-        before: nullish(snowflake),
+        before: snowflake,
         /** consider only users after given user id (default: null) */
-        after: nullish(snowflake)
+        after: snowflake
       })
     )
   )
