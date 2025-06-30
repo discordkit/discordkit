@@ -15,9 +15,18 @@ export const request = async <T>(
     throw new Error(`Auth Token must be set before requests can be made.`);
   }
 
+  const json = (): string | null | undefined => {
+    try {
+      return body ? JSON.stringify(toSnakeKeys(body)) : body; //?
+    } catch (err) {
+      console.error(`Received malformed request body:\n\n`, { body });
+      throw new Error(`Failed to stringify request body!`, err);
+    }
+  };
+
   const res = await fetch(resource.toString(), {
     method,
-    body: body ? JSON.stringify(toSnakeKeys(body)) : body,
+    body: json(),
     headers: {
       Authorization: token
     }
