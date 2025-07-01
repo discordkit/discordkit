@@ -4,7 +4,8 @@ import {
   string,
   type InferOutput,
   isoTimestamp,
-  pipe
+  pipe,
+  type GenericSchema
 } from "valibot";
 import { asInteger, snowflake } from "@discordkit/core";
 import { memberSchema } from "../../guild/types/Member.js";
@@ -18,7 +19,7 @@ export const threadMemberSchema = object({
   /** the time the current user last joined the thread */
   joinTimestamp: pipe(string(), isoTimestamp()),
   /** any user-thread settings, currently only used for notifications */
-  flags: asInteger(channelFlag),
+  flags: asInteger(channelFlag) as GenericSchema<number>,
   /** Additional information about the user */
   member: exactOptional(memberSchema)
 });

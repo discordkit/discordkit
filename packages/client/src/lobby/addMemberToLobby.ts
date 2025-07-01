@@ -1,5 +1,6 @@
 import {
   exactOptional,
+  type GenericSchema,
   maxEntries,
   nullish,
   object,
@@ -26,7 +27,7 @@ export const addMemberToLobbySchema = object({
     partial(
       object({
         metadata: nullish(pipe(record(string(), string()), maxEntries(1000))),
-        flags: asInteger(lobbyMemberFlag)
+        flags: asInteger(lobbyMemberFlag) as GenericSchema<number>
       })
     )
   )

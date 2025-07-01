@@ -14,7 +14,8 @@ import {
   nullable,
   exactOptional,
   lazy,
-  type InferOutput
+  type InferOutput,
+  type GenericSchema
 } from "valibot";
 import { asInteger, snowflake } from "@discordkit/core";
 import { stickerSchema } from "../../sticker/types/Sticker.js";
@@ -87,7 +88,7 @@ export const messageSchema = object({
   /** the message associated with the message_reference. This is a minimal subset of fields in a message (e.g. author is excluded.) */
   messageSnapshots: exactOptional(array(messageSnapshotSchema)),
   /** the message associated with the message_reference */
-  referencedMessage: nullish(lazy(() => messageSchema)),
+  referencedMessage: nullish(lazy((): GenericSchema => messageSchema)),
   /** Sent if the message is sent as a result of an interaction */
   interactionMetadata: exactOptional(
     applicationCommandInteractionMetadataSchea

@@ -1,4 +1,4 @@
-import type { InferOutput } from "valibot";
+import type { GenericSchema, InferOutput } from "valibot";
 import {
   array,
   exactOptional,
@@ -32,7 +32,7 @@ export const messageSnapshotSchema = object({
     /** when this message was edited (or null if never) */
     editedTimestamp: nullable(pipe(string(), isoTimestamp())),
     /** message flags combined as a bitfield */
-    flags: asInteger(messageFlag),
+    flags: asInteger(messageFlag) as GenericSchema<number>,
     /** users specifically mentioned in the message */
     mentions: array(userSchema),
     /** roles specifically mentioned in this message */

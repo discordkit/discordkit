@@ -18,7 +18,8 @@ import {
   picklist,
   variant,
   partial,
-  required
+  required,
+  type GenericSchema
 } from "valibot";
 import { snowflake, asDigits, asInteger } from "@discordkit/core";
 import { userSchema } from "../../user/types/User.js";
@@ -57,9 +58,9 @@ export const commonChannelSchema = object({
   /** when the last pinned message was pinned. This may be null in events such as `GUILD_CREATE` when a message is not pinned. */
   lastPinTimestamp: nullish(pipe(string(), isoTimestamp())),
   /** computed permissions for the invoking user in the channel, including overwrites, only included when part of the resolved data received on a slash command interaction */
-  permissions: exactOptional(asDigits(permissionFlag)),
+  permissions: exactOptional(asDigits(permissionFlag) as GenericSchema<string>),
   /** channel flags combined as a bitfield */
-  flags: exactOptional(asInteger(channelFlag))
+  flags: exactOptional(asInteger(channelFlag) as GenericSchema<number>)
 });
 
 export const guildOrganizationChannelSchema = object({

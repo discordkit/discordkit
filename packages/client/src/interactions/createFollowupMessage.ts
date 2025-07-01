@@ -1,6 +1,7 @@
 import {
   array,
   boolean,
+  type GenericSchema,
   literal,
   maxLength,
   nonEmpty,
@@ -53,7 +54,7 @@ export const createFollowupMessageSchema = object({
       /** attachment objects with filename and description */
       attachments: array(partial(attachmentSchema)),
       /** message flags combined as a bitfield */
-      flags: asInteger(messageFlag),
+      flags: asInteger(messageFlag) as GenericSchema<number>,
       /** name of thread to create (requires the webhook channel to be a forum channel) */
       threadName: pipe(string(), nonEmpty())
     })

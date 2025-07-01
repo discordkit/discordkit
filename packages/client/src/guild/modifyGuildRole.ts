@@ -1,5 +1,6 @@
 import {
   boolean,
+  type GenericSchema,
   integer,
   maxValue,
   minValue,
@@ -32,7 +33,7 @@ export const modifyGuildRoleSchema = object({
       /** name of the role */
       name: nullish(pipe(string(), nonEmpty())),
       /** bitwise value of the enabled/disabled permissions */
-      permissions: nullish(asDigits(permissionFlag)),
+      permissions: nullish(asDigits(permissionFlag) as GenericSchema<string>),
       /** RGB color value */
       color: pipe(number(), integer(), minValue(0x000000), maxValue(0xffffff)),
       /** the role's colors */

@@ -1,4 +1,5 @@
 import {
+  type GenericSchema,
   object,
   string,
   minLength,
@@ -65,7 +66,10 @@ export const applicationCommandOptionSchema = intersect([
           literal(ApplicationCommandOptionType.SUB_COMMAND_GROUP)
         ]),
         /** If the option is a subcommand or subcommand group type, these nested options will be the parameters */
-        options: lazy(() => nullish(array(applicationCommandOptionSchema)))
+        options: lazy(
+          (): GenericSchema<unknown[] | null | undefined> =>
+            nullish(array(applicationCommandOptionSchema))
+        )
       }),
       object({
         type: literal(ApplicationCommandOptionType.STRING),

@@ -12,7 +12,8 @@ import {
   minValue,
   boolean,
   type InferOutput,
-  pipe
+  pipe,
+  type GenericSchema
 } from "valibot";
 import { attachmentFlag } from "./AttachmentFlags.js";
 
@@ -44,7 +45,7 @@ export const attachmentSchema = object({
   /** base64 encoded bytearray representing a sampled waveform (currently for voice messages) */
   waveform: exactOptional(pipe(string(), base64())),
   /** attachment flags combined as a bitfield */
-  flags: exactOptional(asInteger(attachmentFlag))
+  flags: exactOptional(asInteger(attachmentFlag) as GenericSchema<number>)
 });
 
 export type Attachment = InferOutput<typeof attachmentSchema>;

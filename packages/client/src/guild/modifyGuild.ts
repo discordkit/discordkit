@@ -9,7 +9,8 @@ import {
   nullable,
   partial,
   pipe,
-  string
+  string,
+  type GenericSchema
 } from "valibot";
 import {
   patch,
@@ -61,7 +62,7 @@ export const modifyGuildSchema = object({
       /** the id of the channel where guild notices such as welcome messages and boost events are posted */
       systemChannelId: nullable(snowflake),
       /** system channel flags */
-      systemChannelFlags: asInteger(systemChannelFlag),
+      systemChannelFlags: asInteger(systemChannelFlag) as GenericSchema<number>,
       /** the id of the channel where Community guilds display rules and/or guidelines */
       rulesChannelId: nullable(snowflake),
       /** the id of the channel where admins and moderators of Community guilds receive notices from Discord */

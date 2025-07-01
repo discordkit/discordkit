@@ -8,7 +8,8 @@ import {
   pipe,
   type InferOutput,
   exactOptional,
-  nonEmpty
+  nonEmpty,
+  type GenericSchema
 } from "valibot";
 import { asDigits, asInteger, snowflake } from "@discordkit/core";
 import { userSchema } from "../../user/types/User.js";
@@ -36,11 +37,11 @@ export const memberSchema = object({
   /** whether the user is muted in voice channels */
   mute: boolean(),
   /** guild member flags represented as a bit set, defaults to 0 */
-  flags: asInteger(guildMemberFlag),
+  flags: asInteger(guildMemberFlag) as GenericSchema<number>,
   /** whether the user has not yet passed the guild's Membership Screening requirements */
   pending: exactOptional(boolean()),
   /** total permissions of the member in the channel, including overwrites, returned when in the interaction object */
-  permissions: exactOptional(asDigits(permissionFlag)),
+  permissions: exactOptional(asDigits(permissionFlag) as GenericSchema<string>),
   /** when the user's timeout will expire and the user will be able to communicate in the guild again, null or a time in the past if the user is not timed out */
   communicationDisabledUntil: nullish(pipe(string(), isoTimestamp())),
   /** data for the member's guild avatar decoration */

@@ -8,6 +8,7 @@
   "include": ["./**/*.{j,t}s?(x)", "./**/*.spec.ts"],
   "exclude": ["node_modules", "./scripts", "./**/.next/**/*.*", "./**/dist", "./*.mjs"],
   "compilerOptions": {
+    "noImplicitAny": true,
     "noEmit": true,
     "declaration": true,
     "sourceMap": true,

@@ -9,7 +9,8 @@ import {
   type InferOutput,
   pipe,
   nullish,
-  exactOptional
+  exactOptional,
+  type GenericSchema
 } from "valibot";
 import { snowflake, asDigits, asInteger } from "@discordkit/core";
 import { roleTagSchema } from "./RoleTag.js";
@@ -35,7 +36,7 @@ export const roleSchema = object({
   /** position of this role */
   position: pipe(number(), integer()),
   /** permission bit set */
-  permissions: asDigits(permissionFlag),
+  permissions: asDigits(permissionFlag) as GenericSchema<string>,
   /** whether this role is managed by an integration */
   managed: boolean(),
   /** whether this role is mentionable */
@@ -43,7 +44,7 @@ export const roleSchema = object({
   /** the tags this role has */
   tags: exactOptional(array(roleTagSchema)),
   /** role flags combined as a bitfield */
-  flags: asInteger(roleFlag)
+  flags: asInteger(roleFlag) as GenericSchema<number>
 });
 
 export type Role = InferOutput<typeof roleSchema>;

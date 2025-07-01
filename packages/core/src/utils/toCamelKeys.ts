@@ -9,6 +9,7 @@ export const toCamelKeys = <T extends object>(
     return o.map(toCamelKeys) as CamelCasedPropertiesDeep<T>;
   } else if (isObject(o)) {
     return Object.entries(o).reduce((acc, [key, value]) => {
+      // @ts-expect-error
       acc[toCamelCase(key)] = toCamelKeys(value);
       return acc;
     }, {}) as CamelCasedPropertiesDeep<T>;

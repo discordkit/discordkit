@@ -5,7 +5,8 @@ import {
   string,
   minLength,
   maxLength,
-  type InferOutput
+  type InferOutput,
+  type GenericSchema
 } from "valibot";
 import { initTRPC } from "@trpc/server";
 import { MockUtils } from "#mock-utils";
@@ -80,7 +81,7 @@ describe(`toProcedure`, () => {
   const userSchema = object({
     id: snowflake,
     username: pipe(string(), minLength(2), maxLength(16)),
-    permissions: asDigits(permissionFlag)
+    permissions: asDigits(permissionFlag) as GenericSchema<string>
   });
   const { expected } = mockUtils.request.get(
     `/listUsers`,

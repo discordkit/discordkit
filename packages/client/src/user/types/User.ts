@@ -13,7 +13,8 @@ import {
   email,
   type InferOutput,
   pipe,
-  nullable
+  nullable,
+  type GenericSchema
 } from "valibot";
 import { asInteger, snowflake } from "@discordkit/core";
 import { localesSchema } from "../../application/types/Locales.js";
@@ -49,11 +50,11 @@ export const userSchema = object({
   /** the user's email (scope: `email`) */
   email: nullish(pipe(string(), email())),
   /** the flags on a user's account (scope: `identify`) */
-  flags: exactOptional(asInteger(userFlag)),
+  flags: exactOptional(asInteger(userFlag) as GenericSchema<number>),
   /** the type of Nitro subscription on a user's account (scope: `identify`) */
   premiumType: exactOptional(premiumTypeSchema),
   /** the public flags on a user's account (scope: `identify`) */
-  publicFlags: exactOptional(asInteger(userFlag)),
+  publicFlags: exactOptional(asInteger(userFlag) as GenericSchema<number>),
   /** the user's avatar decoration hash	(scope: `identify`) */
   avatarDecoration: nullish(string())
 });

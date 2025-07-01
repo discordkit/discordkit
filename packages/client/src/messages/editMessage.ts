@@ -1,5 +1,6 @@
 import {
   array,
+  type GenericSchema,
   maxLength,
   object,
   partial,
@@ -32,7 +33,7 @@ export const editMessageSchema = object({
       /** Up to 10 rich embeds (up to 6000 characters) */
       embeds: pipe(array(embedSchema), maxLength(10)),
       /** Edit the flags of a message (only SUPPRESS_EMBEDS can currently be set/unset) */
-      flags: pipe(asInteger(messageFlag)),
+      flags: pipe(asInteger(messageFlag) as GenericSchema<number>),
       /** Allowed mentions for the message */
       allowedMentions: allowedMentionSchema,
       /** Components to include with the message */

@@ -75,7 +75,7 @@ export const toProcedure =
       return procedure
         .input(input)
         .output(output)
-        [type](async (opts) => fn(opts.input));
+        [type](async (opts: { input: unknown }) => fn(opts.input));
     }
     if (isNonNullable(input) && !isNonNullable(output)) {
       // @ts-expect-error

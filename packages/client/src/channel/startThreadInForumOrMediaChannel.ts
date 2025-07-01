@@ -1,4 +1,4 @@
-import type { InferOutput } from "valibot";
+import type { GenericSchema, InferOutput } from "valibot";
 import {
   array,
   exactOptional,
@@ -58,7 +58,7 @@ export const startThreadInForumOrMediaChannelSchema = object({
         /** Attachment objects with filename and description. See Uploading Files */
         attachments: array(partial(attachmentSchema)),
         /** Message flags combined as a bitfield (only `SUPPRESS_EMBEDS` and `SUPPRESS_NOTIFICATIONS` can be set) */
-        flags: asInteger(messageFlag)
+        flags: asInteger(messageFlag) as GenericSchema<number>
       })
     ),
     /** the IDs of the set of tags that have been applied to a thread in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */

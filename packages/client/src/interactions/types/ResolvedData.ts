@@ -51,7 +51,7 @@ export const resolvedDataSchema = object({
           /** the name of the channel (1-100 characters) */
           name: nullish(pipe(string(), minLength(1), maxLength(100))),
           /** computed permissions for the invoking user in the channel, including overwrites, only included when part of the resolved data received on a slash command interaction */
-          permissions: asDigits(permissionFlag)
+          permissions: asDigits(permissionFlag) as GenericSchema<string>
         }),
         variant(`type`, [
           object({

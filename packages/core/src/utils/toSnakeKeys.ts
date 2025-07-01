@@ -9,6 +9,7 @@ export const toSnakeKeys = <T extends object>(
     return o.map(toSnakeKeys) as SnakeCasedPropertiesDeep<T>;
   } else if (isObject(o)) {
     return Object.entries(o).reduce((acc, [key, value]) => {
+      // @ts-expect-error
       acc[toSnakeCase(key)] = toSnakeKeys(value);
       return acc;
     }, {}) as SnakeCasedPropertiesDeep<T>;

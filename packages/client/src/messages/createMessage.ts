@@ -1,6 +1,7 @@
 import {
   array,
   boolean,
+  type GenericSchema,
   maxLength,
   minLength,
   object,
@@ -50,7 +51,7 @@ export const createMessageSchema = object({
       /** Attachment objects with filename and description. See Uploading Files */
       attachments: array(partial(attachmentSchema)),
       /** Message flags combined as a bitfield (only SUPPRESS_EMBEDS can be set) */
-      flags: asInteger(messageFlag)
+      flags: asInteger(messageFlag) as GenericSchema<number>
     })
   )
 });

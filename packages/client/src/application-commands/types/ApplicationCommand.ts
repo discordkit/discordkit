@@ -14,15 +14,17 @@ import {
   literal,
   variant,
   union,
-  exactOptional
+  exactOptional,
+  type GenericSchema
 } from "valibot";
-import { snowflake } from "@discordkit/core";
+import { asDigits, snowflake } from "@discordkit/core";
 import { localesSchema } from "../../application/types/Locales.js";
 import { applicationCommandOptionSchema } from "./ApplicationCommandOption.js";
 import {
   ApplicationCommandType,
   applicationCommandTypeSchema
 } from "./ApplicationCommandType.js";
+import { permissionFlag } from "../../permissions/Permissions.js";
 
 export const applicationCommandSchema = intersect([
   object({
@@ -45,7 +47,9 @@ export const applicationCommandSchema = intersect([
       record(localesSchema, pipe(string(), minLength(0), maxLength(100)))
     ),
     /** Set of permissions represented as a bit set */
-    defaultMemberPermissions: nullable(string()),
+    defaultMemberPermissions: nullable(
+      asDigits(permissionFlag) as GenericSchema<string>
+    ),
     /** Indicates whether the command is available in DMs with the app, only for globally-scoped commands. By default, commands are visible. */
     dmPermission: exactOptional(boolean()),
     /** Not recommended for use as field will soon be deprecated. Indicates whether the command is enabled by default when the app is added to a guild, defaults to true */

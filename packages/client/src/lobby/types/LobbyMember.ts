@@ -1,5 +1,6 @@
 import {
   exactOptional,
+  type GenericSchema,
   maxEntries,
   nullish,
   object,
@@ -18,7 +19,7 @@ export const lobbyMemberSchema = object({
   /** dictionary of string key/value pairs. The max total length is 1000. */
   metaday: nullish(pipe(record(string(), string()), maxEntries(1000))),
   /** lobby member flags combined as a bitfield */
-  flags: exactOptional(asInteger(lobbyMemberFlag))
+  flags: exactOptional(asInteger(lobbyMemberFlag) as GenericSchema<number>)
 });
 
 export type LobbyMember = InferOutput<typeof lobbyMemberSchema>;

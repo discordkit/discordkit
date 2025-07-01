@@ -1,4 +1,4 @@
-import type { InferOutput } from "valibot";
+import type { GenericSchema, InferOutput } from "valibot";
 import { nonEmpty, object, pipe, string, url } from "valibot";
 import { asInteger, snowflake } from "@discordkit/core";
 import { skuTypesSchema } from "./SKUTypes.js";
@@ -17,7 +17,7 @@ export const skuSchema = object({
   /** System-generated URL slug based on the SKU's name */
   slug: pipe(string(), url()),
   /** SKU flags combined as a bitfield */
-  flags: asInteger(skuFlag)
+  flags: asInteger(skuFlag) as GenericSchema<number>
 });
 
 export type SKU = InferOutput<typeof skuSchema>;

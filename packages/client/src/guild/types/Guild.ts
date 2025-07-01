@@ -13,7 +13,8 @@ import {
   pipe,
   nonEmpty,
   nullable,
-  exactOptional
+  exactOptional,
+  type GenericSchema
 } from "valibot";
 import { snowflake, asDigits, asInteger } from "@discordkit/core";
 import { emojiSchema } from "../../emoji/types/Emoji.js";
@@ -50,7 +51,7 @@ export const guildSchema = object({
   /** id of owner */
   ownerId: snowflake,
   /** total permissions for the user in the guild (excludes overwrites) */
-  permissions: exactOptional(asDigits(permissionFlag)),
+  permissions: exactOptional(asDigits(permissionFlag) as GenericSchema<string>),
   /** @deprecated voice region id for the guild */
   region: nullish(pipe(string(), nonEmpty())),
   /** id of afk channel */
@@ -80,7 +81,7 @@ export const guildSchema = object({
   /** the id of the channel where guild notices such as welcome messages and boost events are posted */
   systemChannelId: nullable(snowflake),
   /** system channel flags */
-  systemChannelFlags: asInteger(systemChannelFlag),
+  systemChannelFlags: asInteger(systemChannelFlag) as GenericSchema<number>,
   /** the id of the channel where Community guilds can display rules and/or guidelines */
   rulesChannelId: nullable(snowflake),
   /** the maximum number of presences for the guild (null is always returned, apart from the largest of guilds) */

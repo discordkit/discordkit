@@ -15,7 +15,8 @@ import {
   exactOptional,
   url,
   maxLength,
-  entriesFromList
+  entriesFromList,
+  type GenericSchema
 } from "valibot";
 import { asInteger, snowflake } from "@discordkit/core";
 import { userSchema } from "../../user/types/User.js";
@@ -67,7 +68,7 @@ export const applicationSchema = object({
   /** App's default rich presence invite cover image hash */
   coverImage: exactOptional(string()),
   /** App's public flags */
-  flags: exactOptional(asInteger(applicationFlag)),
+  flags: exactOptional(asInteger(applicationFlag) as GenericSchema<number>),
   /** Approximate count of guilds the app has been added to */
   approximateGuildCount: exactOptional(pipe(number(), integer(), minValue(0))),
   /** Approximate count of users that have installed the app (authorized with `application.commands` as a scope) */

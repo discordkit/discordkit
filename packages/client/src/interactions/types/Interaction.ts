@@ -19,8 +19,8 @@ import { snowflake, asDigits } from "@discordkit/core";
 import { memberSchema } from "../../guild/types/Member.js";
 import { localesSchema } from "../../application/types/Locales.js";
 import { channelSchema } from "../../channel/types/Channel.js";
-import { type Message, messageSchema } from "../../messages/types/Message.js";
-import { type User, userSchema } from "../../user/types/User.js";
+import { messageSchema } from "../../messages/types/Message.js";
+import { userSchema } from "../../user/types/User.js";
 import { interactionTypeSchema } from "./InteractionType.js";
 import { applicationCommandDataSchema } from "./ApplicationCommandData.js";
 import { guildSchema } from "../../guild/types/index.js";
@@ -50,16 +50,15 @@ export const interactionSchema = object({
   /** Guild member data for the invoking user, including permissions */
   member: exactOptional(memberSchema),
   /** User object for the invoking user, if invoked in a DM */
-  // @ts-expect-error
-  user: exactOptional(lazy<GenericSchema<User>>(() => userSchema)),
+  user: exactOptional(lazy<GenericSchema>(() => userSchema)),
   /** Continuation token for responding to the interaction */
   token: pipe(string(), nonEmpty()),
   /** Read-only property, always 1 */
   version: literal(1),
   /** For components, the message they were attached to */
-  message: exactOptional(lazy<GenericSchema<Message>>(() => messageSchema)),
+  message: exactOptional(lazy<GenericSchema>(() => messageSchema)),
   /** Bitwise set of permissions the app or bot has within the channel the interaction was sent from */
-  appPermissions: asDigits(permissionFlag),
+  appPermissions: asDigits(permissionFlag) as GenericSchema<string>,
   /** Selected language of the invoking user */
   locale: exactOptional(localesSchema),
   /** Guild's preferred locale, if invoked in a guild */

@@ -11,7 +11,8 @@ import {
   url,
   unknown,
   pipe,
-  nonEmpty
+  nonEmpty,
+  type GenericSchema
 } from "valibot";
 import {
   post,
@@ -76,7 +77,7 @@ export const executeWebhookSchema = object({
       /** attachment objects with filename and description */
       attachments: array(partial(attachmentSchema)),
       /** message flags combined as a bitfield (only SUPPRESS_EMBEDS can be set) */
-      flags: asInteger(messageFlag),
+      flags: asInteger(messageFlag) as GenericSchema<number>,
       /** name of thread to create (requires the webhook channel to be a forum channel) */
       threadName: pipe(string(), nonEmpty()),
       /** array of tag ids to apply to the thread (requires the webhook channel to be a forum or media channel) */

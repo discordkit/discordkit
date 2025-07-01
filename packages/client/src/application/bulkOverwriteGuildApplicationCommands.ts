@@ -7,14 +7,16 @@ import {
   nullish,
   object,
   record,
-  string
+  string,
+  type GenericSchema
 } from "valibot";
 import {
   put,
   type Fetcher,
   toProcedure,
   toValidated,
-  snowflake
+  snowflake,
+  asDigits
 } from "@discordkit/core";
 import {
   type ApplicationCommand,
@@ -26,6 +28,7 @@ import {
   ApplicationCommandType,
   applicationCommandTypeSchema
 } from "../application-commands/types/ApplicationCommandType.js";
+import { permissionFlag } from "../permissions/Permissions.js";
 
 export const bulkOverwriteGuildApplicationCommandsSchema = object({
   application: snowflake,
@@ -50,7 +53,9 @@ export const bulkOverwriteGuildApplicationCommandsSchema = object({
         /** Parameters for the command */
         options: nullish(array(applicationCommandOptionSchema)),
         /** Set of permissions represented as a bit set */
-        defaultMemberPermissions: nullish(string()),
+        defaultMemberPermissions: nullish(
+          asDigits(permissionFlag) as GenericSchema<string>
+        ),
         /** Indicates whether the command is available in DMs with the app, only for globally-scoped commands. By default, commands are visible. */
         dmPermission: nullish(boolean()),
         /** Replaced by `defaultMemberPermissions` and will be deprecated in the future. Indicates whether the command is enabled by default when the app is added to a guild. Defaults to `true` */

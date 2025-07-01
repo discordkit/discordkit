@@ -12,7 +12,8 @@ import {
   minValue,
   integer,
   maxValue,
-  partial
+  partial,
+  type GenericSchema
 } from "valibot";
 import {
   post,
@@ -41,7 +42,9 @@ export const createLobbySchema = object({
               pipe(record(string(), string()), maxEntries(1000))
             ),
             /** lobby member flags combined as a bitfield */
-            flags: exactOptional(asInteger(lobbyMemberFlag))
+            flags: exactOptional(
+              asInteger(lobbyMemberFlag) as GenericSchema<number>
+            )
           })
         ),
         maxLength(25)

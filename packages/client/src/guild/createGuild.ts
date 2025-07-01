@@ -10,7 +10,8 @@ import {
   object,
   string,
   pipe,
-  exactOptional
+  exactOptional,
+  type GenericSchema
 } from "valibot";
 import {
   post,
@@ -56,7 +57,9 @@ export const createGuildSchema = object({
     /** the id of the channel where guild notices such as welcome messages and boost events are posted */
     systemChannelId: exactOptional(snowflake),
     /** system channel flags */
-    systemChannelFlags: exactOptional(asInteger(systemChannelFlag))
+    systemChannelFlags: exactOptional(
+      asInteger(systemChannelFlag) as GenericSchema<number>
+    )
   })
 });
 
