@@ -1,28 +1,21 @@
-import type { InferOutput } from "valibot";
-import {
-  boolean,
-  exactOptional,
-  nonEmpty,
-  object,
-  pipe,
-  string
-} from "valibot";
+import * as v from "valibot";
 import { snowflake } from "@discordkit/core";
 import { interactionTypeSchema } from "./InteractionType.js";
 
-export const interactionCallbackSchema = object({
+export const interactionCallbackSchema = v.object({
   /** ID of the interaction */
   id: snowflake,
   /** Interaction type */
   type: interactionTypeSchema,
   /** Instance ID of the Activity if one was launched or joined */
-  activityInstanceId: exactOptional(pipe(string(), nonEmpty())),
+  activityInstanceId: v.exactOptional(v.pipe(v.string(), v.nonEmpty())),
   /** ID of the message that was created by the interaction */
-  responseMessageId: exactOptional(snowflake),
+  responseMessageId: v.exactOptional(snowflake),
   /** Whether or not the message is in a loading state */
-  responseMessageLoading: exactOptional(boolean()),
+  responseMessageLoading: v.exactOptional(v.boolean()),
   /** Whether or not the response message was ephemeral */
-  responseMessageEphemeral: exactOptional(boolean())
+  responseMessageEphemeral: v.exactOptional(v.boolean())
 });
 
-export type InteractionCallback = InferOutput<typeof interactionCallbackSchema>;
+export interface InteractionCallback
+  extends v.InferOutput<typeof interactionCallbackSchema> {}

@@ -1,7 +1,7 @@
-import { exactOptional, object } from "valibot";
+import * as v from "valibot";
 import { installParamsSchema } from "./InstallParams.js";
 
-export const applicationIntegrationTypeConfigurationSchema = object({
+export const applicationIntegrationTypeConfigurationSchema = v.object({
   /** Install params for each installation context's default in-app authorization link */
-  oauth2InstallParams: exactOptional(installParamsSchema)
+  oauth2InstallParams: v.exactOptional(installParamsSchema)
 });

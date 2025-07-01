@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/prefer-literal-enum-member */
-import { enum_ } from "valibot";
+import * as v from "valibot";
 import { bitfield } from "@discordkit/core";
 
 export enum ChannelFlags {
@@ -12,7 +12,7 @@ export enum ChannelFlags {
   HIDE_MEDIA_DOWNLOAD_OPTIONS = 1 << 15
 }
 
-export const channelFlagsSchema = enum_(ChannelFlags);
+export const channelFlagsSchema = v.enum_(ChannelFlags);
 export const channelFlag = bitfield(
   `channelFlag`,
   ChannelFlags,

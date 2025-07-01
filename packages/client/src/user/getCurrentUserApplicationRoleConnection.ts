@@ -1,4 +1,4 @@
-import { object } from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -12,7 +12,7 @@ import {
   applicationRoleConnectionSchema
 } from "./types/ApplicationRoleConnection.js";
 
-export const getCurrentUserApplicationRoleConnectionSchema = object({
+export const getCurrentUserApplicationRoleConnectionSchema = v.object({
   application: snowflake
 });
 

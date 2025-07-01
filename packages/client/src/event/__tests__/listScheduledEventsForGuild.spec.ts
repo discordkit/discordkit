@@ -1,20 +1,20 @@
-import { waitFor } from "@testing-library/react";
+import * as v from "valibot";
 import { mockUtils } from "#mocks";
 import { runProcedure, runQuery } from "#test-utils";
-import { array, length, pipe } from "valibot";
+import { waitFor } from "@testing-library/dom";
+import { scheduledEventSchema } from "../types/ScheduledEvent.js";
 import {
   listScheduledEventsForGuildProcedure,
   listScheduledEventsForGuildQuery,
   listScheduledEventsForGuildSafe,
   listScheduledEventsForGuildSchema
 } from "../listScheduledEventsForGuild.js";
-import { scheduledEventSchema } from "../types/ScheduledEvent.js";
 
 describe(`listScheduledEventsForGuild`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.get(
     `/guilds/:guild/scheduled-events`,
     listScheduledEventsForGuildSchema,
-    pipe(array(scheduledEventSchema), length(1))
+    v.pipe(v.array(scheduledEventSchema), v.length(1))
   );
 
   it(`can be used standalone`, async () => {

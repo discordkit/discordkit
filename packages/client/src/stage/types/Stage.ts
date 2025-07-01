@@ -1,16 +1,8 @@
-import {
-  object,
-  string,
-  boolean,
-  type InferOutput,
-  nullable,
-  nonEmpty,
-  pipe
-} from "valibot";
+import * as v from "valibot";
 import { snowflake } from "@discordkit/core";
 import { stagePrivacyLevelSchema } from "./StagePrivacyLevel.js";
 
-export const stageSchema = object({
+export const stageSchema = v.object({
   /** The id of this Stage instance */
   id: snowflake,
   /** The guild id of the associated Stage channel */
@@ -18,13 +10,13 @@ export const stageSchema = object({
   /** The id of the associated Stage channel */
   channelId: snowflake,
   /** The topic of the Stage instance (1-120 characters) */
-  topic: pipe(string(), nonEmpty()),
+  topic: v.pipe(v.string(), v.nonEmpty()),
   /** The privacy level of the Stage instance */
   privacyLevel: stagePrivacyLevelSchema,
   /** @deprecated Whether or not Stage Discovery is disabled */
-  discoverableDisabled: boolean(),
+  discoverableDisabled: v.boolean(),
   /** The id of the scheduled event for this Stage instance */
-  guildScheduledEventId: nullable(snowflake)
+  guildScheduledEventId: v.nullable(snowflake)
 });
 
-export type Stage = InferOutput<typeof stageSchema>;
+export interface Stage extends v.InferOutput<typeof stageSchema> {}

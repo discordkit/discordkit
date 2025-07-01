@@ -1,4 +1,4 @@
-import { object, array, type InferOutput } from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -8,8 +8,8 @@ import {
 } from "@discordkit/core";
 import { stickerPackSchema } from "./types/StickerPack.js";
 
-export const stickerPacksSchema = object({
-  stickerPacks: array(stickerPackSchema)
+export const stickerPacksSchema = v.object({
+  stickerPacks: v.array(stickerPackSchema)
 });
 
 /**
@@ -21,7 +21,7 @@ export const stickerPacksSchema = object({
  */
 export const listStickerPacks: Fetcher<
   null,
-  InferOutput<typeof stickerPacksSchema>
+  v.InferOutput<typeof stickerPacksSchema>
 > = async () => get(`/sticker-packs`);
 
 export const listStickerPacksSafe = toValidated(

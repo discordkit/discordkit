@@ -1,4 +1,4 @@
-import { object } from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -9,7 +9,7 @@ import {
 } from "@discordkit/core";
 import { roleSchema, type Role } from "../permissions/Role.js";
 
-export const getGuildRoleSchema = object({
+export const getGuildRoleSchema = v.object({
   guild: snowflake,
   role: snowflake
 });

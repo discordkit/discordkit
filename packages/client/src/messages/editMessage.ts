@@ -1,13 +1,4 @@
-import {
-  array,
-  type GenericSchema,
-  maxLength,
-  object,
-  partial,
-  pipe,
-  string,
-  unknown
-} from "valibot";
+import * as v from "valibot";
 import {
   patch,
   type Fetcher,
@@ -23,25 +14,25 @@ import { messageComponentSchema } from "./types/MessageComponent.js";
 import { attachmentSchema } from "./types/Attachment.js";
 import { messageFlag } from "./types/MessageFlag.js";
 
-export const editMessageSchema = object({
+export const editMessageSchema = v.object({
   channel: snowflake,
   message: snowflake,
-  body: partial(
-    object({
+  body: v.partial(
+    v.object({
       /** Message contents (up to 2000 characters) */
-      content: pipe(string(), maxLength(2000)),
+      content: v.pipe(v.string(), v.maxLength(2000)),
       /** Up to 10 rich embeds (up to 6000 characters) */
-      embeds: pipe(array(embedSchema), maxLength(10)),
+      embeds: v.pipe(v.array(embedSchema), v.maxLength(10)),
       /** Edit the flags of a message (only SUPPRESS_EMBEDS can currently be set/unset) */
-      flags: pipe(asInteger(messageFlag) as GenericSchema<number>),
+      flags: v.pipe(asInteger(messageFlag) as v.GenericSchema<number>),
       /** Allowed mentions for the message */
       allowedMentions: allowedMentionSchema,
       /** Components to include with the message */
       components: messageComponentSchema,
       /** Contents of the file being sent/edited. See Uploading Files */
-      files: array(unknown()),
+      files: v.array(v.unknown()),
       /** Attached files to keep and possible descriptions for new files. See Uploading Files */
-      attachments: array(attachmentSchema)
+      attachments: v.array(attachmentSchema)
     })
   )
 });

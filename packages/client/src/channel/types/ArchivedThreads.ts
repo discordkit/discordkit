@@ -1,14 +1,15 @@
-import { object, array, boolean, type InferOutput } from "valibot";
+import * as v from "valibot";
 import { threadChannelSchema } from "./Channel.js";
 import { threadMemberSchema } from "./ThreadMember.js";
 
-export const archivedThreadsSchema = object({
+export const archivedThreadsSchema = v.object({
   /** the archived threads */
-  threads: array(threadChannelSchema),
+  threads: v.array(threadChannelSchema),
   /** a thread member object for each returned thread the current user has joined */
-  members: array(threadMemberSchema),
+  members: v.array(threadMemberSchema),
   /** whether there are potentially additional threads that could be returned on a subsequent call */
-  hasMore: boolean()
+  hasMore: v.boolean()
 });
 
-export type ArchivedThreads = InferOutput<typeof archivedThreadsSchema>;
+export interface ArchivedThreads
+  extends v.InferOutput<typeof archivedThreadsSchema> {}

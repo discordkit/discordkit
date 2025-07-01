@@ -1,8 +1,8 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 
 export enum InviteTarget {
   STREAM = 1,
   EMBEDDED_APPLICATION = 2
 }
 
-export const inviteTargetSchema = enum_(InviteTarget);
+export const inviteTargetSchema = v.enum_(InviteTarget);

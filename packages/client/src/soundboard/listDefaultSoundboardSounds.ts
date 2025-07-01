@@ -1,4 +1,4 @@
-import { array } from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -26,14 +26,14 @@ export const listDefaultSoundboardSounds: Fetcher<
 export const listDefaultSoundboardSoundsSafe = toValidated(
   listDefaultSoundboardSounds,
   null,
-  array(soundboardSoundSchema)
+  v.array(soundboardSoundSchema)
 );
 
 export const listDefaultSoundboardSoundsProcedure = toProcedure(
   `query`,
   listDefaultSoundboardSounds,
   null,
-  array(soundboardSoundSchema)
+  v.array(soundboardSoundSchema)
 );
 
 export const listDefaultSoundboardSoundsQuery = toQuery(

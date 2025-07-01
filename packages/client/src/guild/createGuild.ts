@@ -1,18 +1,4 @@
-import {
-  array,
-  integer,
-  maxLength,
-  minLength,
-  nonEmpty,
-  minValue,
-  nullish,
-  number,
-  object,
-  string,
-  pipe,
-  exactOptional,
-  type GenericSchema
-} from "valibot";
+import * as v from "valibot";
 import {
   post,
   type Fetcher,
@@ -30,35 +16,35 @@ import { roleSchema } from "../permissions/Role.js";
 import { guildSchema, type Guild } from "./types/Guild.js";
 import { systemChannelFlag } from "./types/SystemChannelFlags.js";
 
-export const createGuildSchema = object({
-  body: object({
+export const createGuildSchema = v.object({
+  body: v.object({
     /** name of the guild (2-100 characters) */
-    name: pipe(string(), minLength(2), maxLength(100)),
+    name: v.pipe(v.string(), v.minLength(2), v.maxLength(100)),
     /** @deprecated voice region id */
-    region: nullish(pipe(string(), nonEmpty())),
+    region: v.nullish(v.pipe(v.string(), v.nonEmpty())),
     /** icon hash */
-    icon: exactOptional(datauri),
+    icon: v.exactOptional(datauri),
     /** verification level */
-    verificationLevel: exactOptional(verificationLevelSchema),
+    verificationLevel: v.exactOptional(verificationLevelSchema),
     /** default message notification level */
-    defaultMessageNotifications: exactOptional(
+    defaultMessageNotifications: v.exactOptional(
       defaultMessageNotificationLevelSchema
     ),
     /** explicit content filter level */
-    explicitContentFilter: exactOptional(explicitContentFilterLevelSchema),
+    explicitContentFilter: v.exactOptional(explicitContentFilterLevelSchema),
     /** new guild roles */
-    roles: exactOptional(array(roleSchema)),
+    roles: v.exactOptional(v.array(roleSchema)),
     /** new guild's channels */
-    channels: exactOptional(array(channelSchema)),
+    channels: v.exactOptional(v.array(channelSchema)),
     /** id for afk channel */
-    afkChannelId: exactOptional(snowflake),
+    afkChannelId: v.exactOptional(snowflake),
     /** afk timeout in seconds */
-    afkTimeout: exactOptional(pipe(number(), integer(), minValue(0))),
+    afkTimeout: v.exactOptional(v.pipe(v.number(), v.integer(), v.minValue(0))),
     /** the id of the channel where guild notices such as welcome messages and boost events are posted */
-    systemChannelId: exactOptional(snowflake),
+    systemChannelId: v.exactOptional(snowflake),
     /** system channel flags */
-    systemChannelFlags: exactOptional(
-      asInteger(systemChannelFlag) as GenericSchema<number>
+    systemChannelFlags: v.exactOptional(
+      asInteger(systemChannelFlag) as v.GenericSchema<number>
     )
   })
 });

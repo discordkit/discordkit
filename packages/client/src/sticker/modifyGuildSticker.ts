@@ -1,4 +1,4 @@
-import { maxLength, minLength, object, partial, pipe, string } from "valibot";
+import * as v from "valibot";
 import {
   patch,
   type Fetcher,
@@ -8,17 +8,17 @@ import {
 } from "@discordkit/core";
 import { stickerSchema, type Sticker } from "./types/Sticker.js";
 
-export const modifyGuildStickerSchema = object({
+export const modifyGuildStickerSchema = v.object({
   guild: snowflake,
   sticker: snowflake,
-  body: partial(
-    object({
+  body: v.partial(
+    v.object({
       /** name of the sticker (2-30 characters) */
-      name: pipe(string(), minLength(2), maxLength(30)),
+      name: v.pipe(v.string(), v.minLength(2), v.maxLength(30)),
       /** description of the sticker (empty or 2-100 characters) */
-      description: pipe(string(), minLength(2), maxLength(100)),
+      description: v.pipe(v.string(), v.minLength(2), v.maxLength(100)),
       /** autocomplete/suggestion tags for the sticker (max 200 characters) */
-      tags: pipe(string(), minLength(1), maxLength(200))
+      tags: v.pipe(v.string(), v.minLength(1), v.maxLength(200))
     })
   )
 });

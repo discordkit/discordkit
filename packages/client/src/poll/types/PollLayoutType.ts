@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 
 /** We might have different layouts for polls in the future. For now though, this number will be 1. */
 export const PollLayoutType = {
@@ -6,4 +6,4 @@ export const PollLayoutType = {
   DEFAULT: 1
 } as const;
 
-export const pollLayoutTypeSchema = enum_(PollLayoutType);
+export const pollLayoutTypeSchema = v.enum_(PollLayoutType);

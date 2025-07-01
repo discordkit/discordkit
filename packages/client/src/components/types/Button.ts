@@ -1,20 +1,4 @@
-import {
-  object,
-  literal,
-  string,
-  maxLength,
-  pick,
-  url,
-  boolean,
-  type InferOutput,
-  pipe,
-  exactOptional,
-  number,
-  integer,
-  maxValue,
-  minValue,
-  nonEmpty
-} from "valibot";
+import * as v from "valibot";
 import { snowflake } from "@discordkit/core";
 import { emojiSchema } from "../../emoji/types/Emoji.js";
 import { buttonStyleSchema } from "./ButtonStyle.js";
@@ -33,27 +17,32 @@ import { ComponentType } from "./ComponentType.js";
  * - Premium buttons **must** contain a `sku_id`, and cannot have a `custom_id`, `label`, `url`, or `emoji`.
  * - Premium buttons do not send an interaction to your app when clicked
  */
-export const buttonSchema = object({
+export const buttonSchema = v.object({
   /** `2` for a button */
-  type: literal(ComponentType.Button),
+  type: v.literal(ComponentType.Button),
   /** Optional identifier for component */
-  id: exactOptional(
-    pipe(number(), integer(), minValue(0), maxValue(Number.MAX_SAFE_INTEGER))
+  id: v.exactOptional(
+    v.pipe(
+      v.number(),
+      v.integer(),
+      v.minValue(0),
+      v.maxValue(Number.MAX_SAFE_INTEGER)
+    )
   ),
   /** A button style */
   style: buttonStyleSchema,
   /** Text that appears on the button; max 80 characters */
-  label: exactOptional(pipe(string(), nonEmpty(), maxLength(80))),
+  label: v.exactOptional(v.pipe(v.string(), v.nonEmpty(), v.maxLength(80))),
   /** `name`, `id`, and `animated` */
-  emoji: exactOptional(pick(emojiSchema, [`id`, `name`, `animated`])),
+  emoji: v.exactOptional(v.pick(emojiSchema, [`id`, `name`, `animated`])),
   /** Developer-defined identifier for the button; max 100 characters */
-  customId: exactOptional(pipe(string(), nonEmpty(), maxLength(100))),
+  customId: v.exactOptional(v.pipe(v.string(), v.nonEmpty(), v.maxLength(100))),
   /** Identifier for a purchasable SKU, only available when using premium-style buttons */
-  skuId: exactOptional(snowflake),
+  skuId: v.exactOptional(snowflake),
   /** URL for link-style buttons */
-  url: exactOptional(pipe(string(), url())),
+  url: v.exactOptional(v.pipe(v.string(), v.url())),
   /** Whether the button is disabled (defaults to `false`) */
-  disabled: exactOptional(boolean())
+  disabled: v.exactOptional(v.boolean())
 });
 
-export type Button = InferOutput<typeof buttonSchema>;
+export interface Button extends v.InferOutput<typeof buttonSchema> {}

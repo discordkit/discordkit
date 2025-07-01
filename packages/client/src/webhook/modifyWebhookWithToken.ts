@@ -1,14 +1,4 @@
-import {
-  object,
-  string,
-  url,
-  partial,
-  omit,
-  pipe,
-  nullable,
-  nonEmpty,
-  exactOptional
-} from "valibot";
+import * as v from "valibot";
 import {
   patch,
   type Fetcher,
@@ -18,16 +8,16 @@ import {
 } from "@discordkit/core";
 import { webhookSchema, type Webhook } from "./types/Webhook.js";
 
-export const modifyWebhookWithTokenSchema = object({
+export const modifyWebhookWithTokenSchema = v.object({
   webhook: snowflake,
-  token: pipe(string(), nonEmpty()),
-  body: exactOptional(
-    partial(
-      object({
+  token: v.pipe(v.string(), v.nonEmpty()),
+  body: v.exactOptional(
+    v.partial(
+      v.object({
         /** the default name of the webhook */
-        name: pipe(string(), nonEmpty()),
+        name: v.pipe(v.string(), v.nonEmpty()),
         /** image for the default webhook avatar */
-        avatar: nullable(pipe(string(), url()))
+        avatar: v.nullable(v.pipe(v.string(), v.url()))
       })
     )
   )
@@ -57,12 +47,12 @@ export const modifyWebhookWithToken: Fetcher<
 export const modifyWebhookWithTokenSafe = toValidated(
   modifyWebhookWithToken,
   modifyWebhookWithTokenSchema,
-  omit(webhookSchema, [`user`])
+  v.omit(webhookSchema, [`user`])
 );
 
 export const modifyWebhookWithTokenProcedure = toProcedure(
   `mutation`,
   modifyWebhookWithToken,
   modifyWebhookWithTokenSchema,
-  omit(webhookSchema, [`user`])
+  v.omit(webhookSchema, [`user`])
 );

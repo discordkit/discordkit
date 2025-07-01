@@ -1,13 +1,4 @@
-import {
-  integer,
-  maxValue,
-  minValue,
-  number,
-  object,
-  exactOptional,
-  partial,
-  pipe
-} from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -19,11 +10,11 @@ import {
 import { type AuditLog, auditLogSchema } from "./types/AuditLog.js";
 import { auditLogEventSchema } from "./types/AuditLogEvent.js";
 
-export const getGuildAuditLogSchema = object({
+export const getGuildAuditLogSchema = v.object({
   guild: snowflake,
-  params: exactOptional(
-    partial(
-      object({
+  params: v.exactOptional(
+    v.partial(
+      v.object({
         /** Entries from a specific user ID */
         userId: snowflake,
         /** Entries for a specific audit log event */
@@ -33,7 +24,7 @@ export const getGuildAuditLogSchema = object({
         /** Entries with ID greater than a specific audit log entry ID */
         after: snowflake,
         /** Maximum number of entries (between 1-100) to return, defaults to 50 */
-        limit: pipe(number(), integer(), minValue(1), maxValue(100))
+        limit: v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(100))
       })
     )
   )

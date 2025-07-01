@@ -1,44 +1,32 @@
-import {
-  object,
-  exactOptional,
-  string,
-  maxLength,
-  boolean,
-  number,
-  integer,
-  type InferOutput,
-  pipe,
-  nullable,
-  nonEmpty
-} from "valibot";
+import * as v from "valibot";
 import { snowflake } from "@discordkit/core";
 import { userSchema } from "../../user/types/User.js";
 import { stickerFormatTypeSchema } from "./StickerFormatType.js";
 import { stickerTypeSchema } from "./StickerType.js";
 
-export const stickerSchema = object({
+export const stickerSchema = v.object({
   /** id of the sticker */
   id: snowflake,
   /** for standard stickers, id of the pack the sticker is from */
-  packId: exactOptional(snowflake),
+  packId: v.exactOptional(snowflake),
   /** name of the sticker */
-  name: string(),
+  name: v.string(),
   /** description of the sticker */
-  description: nullable(pipe(string(), nonEmpty())),
+  description: v.nullable(v.pipe(v.string(), v.nonEmpty())),
   /** autocomplete/suggestion tags for the sticker (max 200 characters) */
-  tags: pipe(string(), maxLength(200)),
+  tags: v.pipe(v.string(), v.maxLength(200)),
   /** type of sticker */
   type: stickerTypeSchema,
   /** type of sticker format */
   formatType: stickerFormatTypeSchema,
   /** whether this guild sticker can be used, may be false due to loss of Server Boosts */
-  available: exactOptional(boolean()),
+  available: v.exactOptional(v.boolean()),
   /** id of the guild that owns this sticker */
-  guildId: exactOptional(snowflake),
+  guildId: v.exactOptional(snowflake),
   /** the user that uploaded the guild sticker */
-  user: exactOptional(userSchema),
+  user: v.exactOptional(userSchema),
   /** the standard sticker's sort order within its pack */
-  sortValue: exactOptional(pipe(number(), integer()))
+  sortValue: v.exactOptional(v.pipe(v.number(), v.integer()))
 });
 
-export type Sticker = InferOutput<typeof stickerSchema>;
+export interface Sticker extends v.InferOutput<typeof stickerSchema> {}

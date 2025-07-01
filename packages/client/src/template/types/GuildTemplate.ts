@@ -1,44 +1,33 @@
-import {
-  object,
-  string,
-  partial,
-  number,
-  integer,
-  isoTimestamp,
-  boolean,
-  type InferOutput,
-  pipe,
-  nonEmpty,
-  nullable
-} from "valibot";
+import * as v from "valibot";
 import { snowflake } from "@discordkit/core";
 import { guildSchema } from "../../guild/types/Guild.js";
 import { userSchema } from "../../user/types/User.js";
 
-export const guildTemplateSchema = object({
+export const guildTemplateSchema = v.object({
   /** the template code (unique ID) */
-  code: pipe(string(), nonEmpty()),
+  code: v.pipe(v.string(), v.nonEmpty()),
   /** template name */
-  name: pipe(string(), nonEmpty()),
+  name: v.pipe(v.string(), v.nonEmpty()),
   /** the description for the template */
-  description: nullable(string()),
+  description: v.nullable(v.string()),
   /** number of times this template has been used */
-  usageCount: pipe(number(), integer()),
+  usageCount: v.pipe(v.number(), v.integer()),
   /** the ID of the user who created the template
     creator	user object	the user who created the template */
   creatorId: snowflake,
   /** the user who created the template */
   creator: userSchema,
   /** when this template was created */
-  createdAt: pipe(string(), isoTimestamp()),
+  createdAt: v.pipe(v.string(), v.isoTimestamp()),
   /** when this template was last synced to the source guild */
-  updatedAt: pipe(string(), isoTimestamp()),
+  updatedAt: v.pipe(v.string(), v.isoTimestamp()),
   /** the ID of the guild this template is based on */
   sourceGuildId: snowflake,
   /** the guild snapshot this template contains */
-  serializedSourceGuild: partial(guildSchema),
+  serializedSourceGuild: v.partial(guildSchema),
   /** whether the template has unsynced changes */
-  isDirty: nullable(boolean())
+  isDirty: v.nullable(v.boolean())
 });
 
-export type GuildTemplate = InferOutput<typeof guildTemplateSchema>;
+export interface GuildTemplate
+  extends v.InferOutput<typeof guildTemplateSchema> {}

@@ -1,12 +1,11 @@
-import type { InferOutput } from "valibot";
-import { isoTimestamp, object, pipe, string } from "valibot";
+import * as v from "valibot";
 import { messageSchema } from "./Message.js";
 
-export const messagePinSchema = object({
+export const messagePinSchema = v.object({
   /** the time the message was pinned */
-  pinnedAt: pipe(string(), isoTimestamp()),
+  pinnedAt: v.pipe(v.string(), v.isoTimestamp()),
   /** the pinned message */
   message: messageSchema
 });
 
-export type MessagePin = InferOutput<typeof messagePinSchema>;
+export interface MessagePin extends v.InferOutput<typeof messagePinSchema> {}

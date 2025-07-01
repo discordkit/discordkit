@@ -1,15 +1,4 @@
-import {
-  object,
-  array,
-  integer,
-  minValue,
-  maxValue,
-  number,
-  nullish,
-  partial,
-  exactOptional,
-  pipe
-} from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -20,20 +9,20 @@ import {
 } from "@discordkit/core";
 import { messageSchema, type Message } from "./types/Message.js";
 
-export const getChannelMessagesSchema = object({
+export const getChannelMessagesSchema = v.object({
   channel: snowflake,
-  params: exactOptional(
-    partial(
-      object({
+  params: v.exactOptional(
+    v.partial(
+      v.object({
         /** Get messages around this message ID */
-        around: nullish(snowflake),
+        around: v.nullish(snowflake),
         /** Get messages before this message ID */
-        before: nullish(snowflake),
+        before: v.nullish(snowflake),
         /** Get messages after this message ID */
-        after: nullish(snowflake),
+        after: v.nullish(snowflake),
         /** Max number of messages to return (1-100) Default: 50 */
-        limit: nullish(
-          pipe(number(), integer(), minValue(1), maxValue(100)),
+        limit: v.nullish(
+          v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(100)),
           50
         )
       })
@@ -64,14 +53,14 @@ export const getChannelMessages: Fetcher<
 export const getChannelMessagesSafe = toValidated(
   getChannelMessages,
   getChannelMessagesSchema,
-  array(messageSchema)
+  v.array(messageSchema)
 );
 
 export const getChannelMessagesProcedure = toProcedure(
   `query`,
   getChannelMessages,
   getChannelMessagesSchema,
-  array(messageSchema)
+  v.array(messageSchema)
 );
 
 export const getChannelMessagesQuery = toQuery(getChannelMessages);

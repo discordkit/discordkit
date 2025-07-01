@@ -1,28 +1,20 @@
-import {
-  object,
-  number,
-  boolean,
-  partial,
-  string,
-  array,
-  type InferOutput
-} from "valibot";
+import * as v from "valibot";
 import { emojiSchema } from "../../emoji/types/Emoji.js";
 import { reactionCountDetailsSchema } from "./ReactionCountDetails.js";
 
-export const reactionSchema = object({
+export const reactionSchema = v.object({
   /** times this emoji has been used to react */
-  count: number(),
+  count: v.number(),
   /** Reaction count details object */
   countDetails: reactionCountDetailsSchema,
   /** whether the current user reacted using this emoji */
-  me: boolean(),
+  me: v.boolean(),
   /** Whether the current user super-reacted using this emoji */
-  meBurst: boolean(),
+  meBurst: v.boolean(),
   /** emoji information */
-  emoji: partial(emojiSchema),
+  emoji: v.partial(emojiSchema),
   /** HEX colors used for super reaction */
-  burstColors: array(string())
+  burstColors: v.array(v.string())
 });
 
-export type Reaction = InferOutput<typeof reactionSchema>;
+export interface Reaction extends v.InferOutput<typeof reactionSchema> {}

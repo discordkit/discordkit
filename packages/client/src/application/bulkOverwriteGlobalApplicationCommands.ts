@@ -1,4 +1,4 @@
-import { pipe, array, maxLength, object } from "valibot";
+import * as v from "valibot";
 import {
   put,
   type Fetcher,
@@ -11,9 +11,9 @@ import {
   applicationCommandSchema
 } from "../application-commands/types/ApplicationCommand.js";
 
-export const bulkOverwriteGlobalApplicationCommandsSchema = object({
+export const bulkOverwriteGlobalApplicationCommandsSchema = v.object({
   application: snowflake,
-  body: pipe(array(applicationCommandSchema), maxLength(25))
+  body: v.pipe(v.array(applicationCommandSchema), v.maxLength(25))
 });
 
 /**
@@ -36,12 +36,12 @@ export const bulkOverwriteGlobalApplicationCommands: Fetcher<
 export const bulkOverwriteGlobalApplicationCommandsSafe = toValidated(
   bulkOverwriteGlobalApplicationCommands,
   bulkOverwriteGlobalApplicationCommandsSchema,
-  array(applicationCommandSchema)
+  v.array(applicationCommandSchema)
 );
 
 export const bulkOverwriteGlobalApplicationCommandsProcedure = toProcedure(
   `mutation`,
   bulkOverwriteGlobalApplicationCommands,
   bulkOverwriteGlobalApplicationCommandsSchema,
-  array(applicationCommandSchema)
+  v.array(applicationCommandSchema)
 );

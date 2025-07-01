@@ -1,11 +1,11 @@
+import * as v from "valibot";
 import { getAsset, snowflake } from "@discordkit/core";
-import { type InferOutput, object, exactOptional } from "valibot";
 import { imageSizes } from "./types/ImageSizes.js";
 
-export const avatarDecorationSchema = object({
+export const avatarDecorationSchema = v.object({
   asset: snowflake,
-  params: exactOptional(
-    object({
+  params: v.exactOptional(
+    v.object({
       size: imageSizes
     })
   )
@@ -14,5 +14,5 @@ export const avatarDecorationSchema = object({
 export const avatarDecoration = ({
   asset,
   params
-}: InferOutput<typeof avatarDecorationSchema>): string =>
+}: v.InferOutput<typeof avatarDecorationSchema>): string =>
   getAsset(`/avatar-decoration-presets/${asset}.png`, params);

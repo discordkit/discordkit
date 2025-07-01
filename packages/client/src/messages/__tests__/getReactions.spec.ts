@@ -1,20 +1,20 @@
-import { waitFor } from "@testing-library/react";
+import * as v from "valibot";
 import { mockUtils } from "#mocks";
 import { runProcedure, runQuery } from "#test-utils";
-import { array, length, pipe } from "valibot";
+import { waitFor } from "@testing-library/dom";
+import { userSchema } from "../../user/types/User.js";
 import {
   getReactionsProcedure,
   getReactionsQuery,
   getReactionsSafe,
   getReactionsSchema
 } from "../getReactions.js";
-import { userSchema } from "../../user/types/User.js";
 
 describe(`getReactions`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.get(
     `/channels/:channel/messages/:message/reactions/:emoji`,
     getReactionsSchema,
-    pipe(array(userSchema), length(1)),
+    v.pipe(v.array(userSchema), v.length(1)),
     { seed: 1 }
   );
 

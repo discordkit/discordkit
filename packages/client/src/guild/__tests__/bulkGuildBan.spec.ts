@@ -1,8 +1,8 @@
-import { waitFor } from "@testing-library/react";
-import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
+import * as v from "valibot";
 import { snowflake } from "@discordkit/core";
-import { object, array } from "valibot";
+import { mockUtils } from "#mocks";
+import { runMutation, runProcedure } from "#test-utils";
+import { waitFor } from "@testing-library/dom";
 import {
   bulkGuildBan,
   bulkGuildBanProcedure,
@@ -14,9 +14,9 @@ describe(`bulkGuildBan`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.post(
     `/guilds/:guild/bulk-ban`,
     bulkGuildBanSchema,
-    object({
-      bannedUsers: array(snowflake),
-      failedUsers: array(snowflake)
+    v.object({
+      bannedUsers: v.array(snowflake),
+      failedUsers: v.array(snowflake)
     })
   );
 

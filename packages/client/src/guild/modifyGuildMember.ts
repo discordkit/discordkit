@@ -1,15 +1,4 @@
-import {
-  array,
-  boolean,
-  type GenericSchema,
-  isoTimestamp,
-  nonEmpty,
-  nullish,
-  object,
-  partial,
-  pipe,
-  string
-} from "valibot";
+import * as v from "valibot";
 import {
   patch,
   type Fetcher,
@@ -21,25 +10,27 @@ import {
 import { memberSchema, type Member } from "./types/Member.js";
 import { guildMemberFlag } from "./types/GuildMemberFlags.js";
 
-export const modifyGuildMemberSchema = object({
+export const modifyGuildMemberSchema = v.object({
   guild: snowflake,
   user: snowflake,
-  body: partial(
-    object({
+  body: v.partial(
+    v.object({
       /** value to set user's nickname to	(Requires `MANAGE_NICKNAMES` permission) */
-      nick: nullish(pipe(string(), nonEmpty())),
+      nick: v.nullish(v.pipe(v.string(), v.nonEmpty())),
       /** array of role ids the member is assigned (Requires `MANAGE_ROLES` permission) */
-      roles: nullish(array(snowflake)),
+      roles: v.nullish(v.array(snowflake)),
       /** whether the user is muted in voice channels (Requires `MUTE_MEMBERS` permission) */
-      mute: nullish(boolean()),
+      mute: v.nullish(v.boolean()),
       /** whether the user is deafened in voice channels (Requires `DEAFEN_MEMBERS` permission) */
-      deaf: nullish(boolean()),
+      deaf: v.nullish(v.boolean()),
       /** id of channel to move user to (if they are connected to voice) (Requires `MOVE_MEMBERS` permission) */
-      channelId: nullish(snowflake),
+      channelId: v.nullish(snowflake),
       /** when the user's timeout will expire and the user will be able to communicate in the guild again (up to 28 days in the future), set to null to remove timeout. Will throw a 403 error if the user has the `ADMINISTRATOR` permission or is the owner of the guild (Requires `MODERATE_MEMBERS` permission) */
-      communicationDisabledUntil: nullish(pipe(string(), isoTimestamp())),
+      communicationDisabledUntil: v.nullish(
+        v.pipe(v.string(), v.isoTimestamp())
+      ),
       /** guild member flags */
-      flags: nullish(asInteger(guildMemberFlag) as GenericSchema<number>)
+      flags: v.nullish(asInteger(guildMemberFlag) as v.GenericSchema<number>)
     })
   )
 });

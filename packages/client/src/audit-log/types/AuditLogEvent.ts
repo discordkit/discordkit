@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 
 export enum AuditLogEvent {
   /** Server settings were updated */
@@ -135,4 +135,4 @@ export enum AuditLogEvent {
   HOME_SETTINGS_UPDATE = 191
 }
 
-export const auditLogEventSchema = enum_(AuditLogEvent);
+export const auditLogEventSchema = v.enum_(AuditLogEvent);

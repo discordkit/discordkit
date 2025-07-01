@@ -1,14 +1,4 @@
-import {
-  exactOptional,
-  type GenericSchema,
-  maxEntries,
-  nullish,
-  object,
-  partial,
-  pipe,
-  record,
-  string
-} from "valibot";
+import * as v from "valibot";
 import {
   put,
   type Fetcher,
@@ -20,14 +10,16 @@ import {
 import { lobbyMemberSchema, type LobbyMember } from "./types/LobbyMember.js";
 import { lobbyMemberFlag } from "./types/LobbyMemberFlags.js";
 
-export const addMemberToLobbySchema = object({
+export const addMemberToLobbySchema = v.object({
   lobby: snowflake,
   user: snowflake,
-  body: exactOptional(
-    partial(
-      object({
-        metadata: nullish(pipe(record(string(), string()), maxEntries(1000))),
-        flags: asInteger(lobbyMemberFlag) as GenericSchema<number>
+  body: v.exactOptional(
+    v.partial(
+      v.object({
+        metadata: v.nullish(
+          v.pipe(v.record(v.string(), v.string()), v.maxEntries(1000))
+        ),
+        flags: asInteger(lobbyMemberFlag) as v.GenericSchema<number>
       })
     )
   )

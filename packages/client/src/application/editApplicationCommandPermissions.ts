@@ -1,4 +1,4 @@
-import { array, maxLength, object, pipe } from "valibot";
+import * as v from "valibot";
 import {
   patch,
   type Fetcher,
@@ -12,15 +12,15 @@ import {
 } from "../application-commands/types/GuildApplicationCommandPermissions.js";
 import { applicationCommandPermissionsSchema } from "../application-commands/types/ApplicationCommandPermissions.js";
 
-export const editApplicationCommandPermissionsSchema = object({
+export const editApplicationCommandPermissionsSchema = v.object({
   application: snowflake,
   guild: snowflake,
   command: snowflake,
-  body: object({
+  body: v.object({
     /** Permissions for the command in the guild */
-    permissions: pipe(
-      array(applicationCommandPermissionsSchema),
-      maxLength(100)
+    permissions: v.pipe(
+      v.array(applicationCommandPermissionsSchema),
+      v.maxLength(100)
     )
   })
 });

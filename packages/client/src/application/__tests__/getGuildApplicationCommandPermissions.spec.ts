@@ -1,20 +1,20 @@
-import { waitFor } from "@testing-library/react";
+import * as v from "valibot";
 import { mockUtils } from "#mocks";
 import { runProcedure, runQuery } from "#test-utils";
-import { array, length, pipe } from "valibot";
+import { waitFor } from "@testing-library/dom";
+import { guildApplicationCommandPermissionsSchema } from "../../application-commands/types/GuildApplicationCommandPermissions.js";
 import {
   getGuildApplicationCommandPermissionsSchema,
   getGuildApplicationCommandPermissionsProcedure,
   getGuildApplicationCommandPermissionsQuery,
   getGuildApplicationCommandPermissionsSafe
 } from "../getGuildApplicationCommandPermissions.js";
-import { guildApplicationCommandPermissionsSchema } from "../../application-commands/types/GuildApplicationCommandPermissions.js";
 
 describe(`getGuildApplicationCommandPermissions`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.get(
     `/applications/:application/guilds/:guild/commands/permissions`,
     getGuildApplicationCommandPermissionsSchema,
-    pipe(array(guildApplicationCommandPermissionsSchema), length(1))
+    v.pipe(v.array(guildApplicationCommandPermissionsSchema), v.length(1))
   );
 
   it(`can be used standalone`, async () => {

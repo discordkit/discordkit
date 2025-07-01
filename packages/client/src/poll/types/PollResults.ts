@@ -1,4 +1,4 @@
-import { object, type InferOutput, boolean, array } from "valibot";
+import * as v from "valibot";
 import { pollAnswerCountSchema } from "./PollAnswerCount.js";
 
 /**
@@ -12,11 +12,11 @@ import { pollAnswerCountSchema } from "./PollAnswerCount.js";
  *
  * If `answerCounts` does not contain an entry for a particular answer, then there are no votes for that answer.
  */
-export const pollResultsSchema = object({
+export const pollResultsSchema = v.object({
   /** Whether the votes have been precisely counted */
-  isFinalized: boolean(),
+  isFinalized: v.boolean(),
   /** The counts for each answer */
-  answerCounts: array(pollAnswerCountSchema)
+  answerCounts: v.array(pollAnswerCountSchema)
 });
 
-export type PollResults = InferOutput<typeof pollResultsSchema>;
+export interface PollResults extends v.InferOutput<typeof pollResultsSchema> {}

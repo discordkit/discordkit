@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/prefer-literal-enum-member */
-import { enum_ } from "valibot";
+import * as v from "valibot";
 import { bitfield } from "@discordkit/core";
 
 export enum LobbyMemberFlags {
@@ -7,5 +7,5 @@ export enum LobbyMemberFlags {
   CanLinkLobby = 1 << 0
 }
 
-export const lobbyMemberFlagsSchema = enum_(LobbyMemberFlags);
+export const lobbyMemberFlagsSchema = v.enum_(LobbyMemberFlags);
 export const lobbyMemberFlag = bitfield(`lobbyMemberFlag`, LobbyMemberFlags);

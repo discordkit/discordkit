@@ -1,20 +1,20 @@
-import { waitFor } from "@testing-library/react";
+import * as v from "valibot";
 import { mockUtils } from "#mocks";
 import { runProcedure, runQuery } from "#test-utils";
-import { array, length, pipe } from "valibot";
+import { waitFor } from "@testing-library/dom";
+import { guildTemplateSchema } from "../types/GuildTemplate.js";
 import {
   getGuildTemplatesProcedure,
   getGuildTemplatesQuery,
   getGuildTemplatesSafe,
   getGuildTemplatesSchema
 } from "../getGuildTemplates.js";
-import { guildTemplateSchema } from "../types/GuildTemplate.js";
 
 describe(`getGuildTemplates`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.get(
     `/guilds/:guild/templates`,
     getGuildTemplatesSchema,
-    pipe(array(guildTemplateSchema), length(1))
+    v.pipe(v.array(guildTemplateSchema), v.length(1))
   );
 
   it(`can be used standalone`, async () => {

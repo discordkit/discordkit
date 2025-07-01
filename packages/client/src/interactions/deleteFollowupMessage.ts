@@ -1,4 +1,4 @@
-import { nonEmpty, object, pipe, string } from "valibot";
+import * as v from "valibot";
 import {
   remove,
   type Fetcher,
@@ -7,9 +7,9 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const deleteFollowupMessageSchema = object({
+export const deleteFollowupMessageSchema = v.object({
   application: snowflake,
-  token: pipe(string(), nonEmpty()),
+  token: v.pipe(v.string(), v.nonEmpty()),
   message: snowflake
 });
 

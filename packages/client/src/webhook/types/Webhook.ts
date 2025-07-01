@@ -1,46 +1,35 @@
-import {
-  type InferOutput,
-  nullish,
-  object,
-  url,
-  string,
-  partial,
-  pipe,
-  nullable,
-  exactOptional,
-  nonEmpty
-} from "valibot";
+import * as v from "valibot";
 import { snowflake } from "@discordkit/core";
 import { partialChannelSchema } from "../../channel/types/Channel.js";
 import { guildSchema } from "../../guild/types/Guild.js";
 import { userSchema } from "../../user/types/User.js";
 import { webhookTypeSchema } from "./WebhookType.js";
 
-export const webhookSchema = object({
+export const webhookSchema = v.object({
   /** the id of the webhook */
   id: snowflake,
   /** the type of the webhook */
   type: webhookTypeSchema,
   /** the guild id this webhook is for, if any */
-  guildId: nullish(snowflake),
+  guildId: v.nullish(snowflake),
   /** the channel id this webhook is for, if any */
-  channelId: nullable(snowflake),
+  channelId: v.nullable(snowflake),
   /** user object	the user this webhook was created by (not returned when getting a webhook with its token) */
-  user: exactOptional(userSchema),
+  user: v.exactOptional(userSchema),
   /** the default name of the webhook */
-  name: nullable(pipe(string(), nonEmpty())),
+  name: v.nullable(v.pipe(v.string(), v.nonEmpty())),
   /** the default user avatar hash of the webhook */
-  avatar: nullable(pipe(string(), nonEmpty())),
+  avatar: v.nullable(v.pipe(v.string(), v.nonEmpty())),
   /** the secure token of the webhook (returned for Incoming Webhooks) */
-  token: exactOptional(pipe(string(), nonEmpty())),
+  token: v.exactOptional(v.pipe(v.string(), v.nonEmpty())),
   /** the bot/OAuth2 application that created this webhook */
-  applicationId: nullable(snowflake),
+  applicationId: v.nullable(snowflake),
   /** the guild of the channel that this webhook is following (returned for Channel Follower Webhooks) */
-  sourceGuild: exactOptional(partial(guildSchema)),
+  sourceGuild: v.exactOptional(v.partial(guildSchema)),
   /** the channel that this webhook is following (returned for Channel Follower Webhooks) */
-  sourceChannel: exactOptional(partialChannelSchema),
+  sourceChannel: v.exactOptional(partialChannelSchema),
   /** the url used for executing the webhook (returned by the webhooks OAuth2 flow) */
-  url: exactOptional(pipe(string(), url()))
+  url: v.exactOptional(v.pipe(v.string(), v.url()))
 });
 
-export type Webhook = InferOutput<typeof webhookSchema>;
+export interface Webhook extends v.InferOutput<typeof webhookSchema> {}

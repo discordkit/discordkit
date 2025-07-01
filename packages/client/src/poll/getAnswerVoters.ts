@@ -1,14 +1,4 @@
-import {
-  array,
-  exactOptional,
-  integer,
-  maxValue,
-  minValue,
-  number,
-  object,
-  partial,
-  pipe
-} from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -20,17 +10,17 @@ import {
 import type { User } from "../user/types/User.js";
 import { userSchema } from "../user/types/User.js";
 
-export const getAnswerVotersSchema = object({
+export const getAnswerVotersSchema = v.object({
   channel: snowflake,
   message: snowflake,
-  answer: pipe(number(), integer(), minValue(0)),
-  params: exactOptional(
-    partial(
-      object({
+  answer: v.pipe(v.number(), v.integer(), v.minValue(0)),
+  params: v.exactOptional(
+    v.partial(
+      v.object({
         /** Get users after this user ID */
         after: snowflake,
         /** Max number of users to return (1-100) */
-        limit: pipe(number(), integer(), minValue(1), maxValue(100))
+        limit: v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(100))
       })
     )
   )
@@ -52,8 +42,8 @@ export const getAnswerVoters: Fetcher<
 export const getAnswerVotersSafe = toValidated(
   getAnswerVoters,
   getAnswerVotersSchema,
-  object({
-    users: array(userSchema)
+  v.object({
+    users: v.array(userSchema)
   })
 );
 
@@ -61,8 +51,8 @@ export const getAnswerVotersProcedure = toProcedure(
   `query`,
   getAnswerVoters,
   getAnswerVotersSchema,
-  object({
-    users: array(userSchema)
+  v.object({
+    users: v.array(userSchema)
   })
 );
 

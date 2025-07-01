@@ -1,4 +1,4 @@
-import { object, array } from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -12,7 +12,7 @@ import {
   type InviteMetadata
 } from "../invite/types/InviteMetadata.js";
 
-export const getGuildInvitesSchema = object({
+export const getGuildInvitesSchema = v.object({
   guild: snowflake
 });
 
@@ -31,14 +31,14 @@ export const getGuildInvites: Fetcher<
 export const getGuildInvitesSafe = toValidated(
   getGuildInvites,
   getGuildInvitesSchema,
-  array(inviteMetadataSchema)
+  v.array(inviteMetadataSchema)
 );
 
 export const getGuildInvitesProcedure = toProcedure(
   `query`,
   getGuildInvites,
   getGuildInvitesSchema,
-  array(inviteMetadataSchema)
+  v.array(inviteMetadataSchema)
 );
 
 export const getGuildInvitesQuery = toQuery(getGuildInvites);

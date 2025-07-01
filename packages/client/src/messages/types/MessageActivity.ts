@@ -1,18 +1,12 @@
-import {
-  object,
-  string,
-  nonEmpty,
-  exactOptional,
-  type InferOutput,
-  pipe
-} from "valibot";
+import * as v from "valibot";
 import { messageActivityTypeSchema } from "./MessageActivityType.js";
 
-export const messageActivitySchema = object({
+export const messageActivitySchema = v.object({
   /** type of message activity */
   type: messageActivityTypeSchema,
   /** partyId from a Rich Presence event */
-  partyId: exactOptional(pipe(string(), nonEmpty()))
+  partyId: v.exactOptional(v.pipe(v.string(), v.nonEmpty()))
 });
 
-export type MessageActivity = InferOutput<typeof messageActivitySchema>;
+export interface MessageActivity
+  extends v.InferOutput<typeof messageActivitySchema> {}

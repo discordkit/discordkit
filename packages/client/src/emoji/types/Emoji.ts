@@ -1,34 +1,24 @@
-import {
-  object,
-  string,
-  array,
-  boolean,
-  type InferOutput,
-  exactOptional,
-  nonEmpty,
-  nullable,
-  pipe
-} from "valibot";
+import * as v from "valibot";
 import { snowflake } from "@discordkit/core";
 import { userSchema } from "../../user/types/User.js";
 
-export const emojiSchema = object({
+export const emojiSchema = v.object({
   /** emoji id */
-  id: nullable(snowflake),
+  id: v.nullable(snowflake),
   /** (can be null only in reaction emoji objects)	emoji name */
-  name: nullable(pipe(string(), nonEmpty())),
+  name: v.nullable(v.pipe(v.string(), v.nonEmpty())),
   /** roles allowed to use this emoji */
-  roles: exactOptional(array(snowflake)),
+  roles: v.exactOptional(v.array(snowflake)),
   /** user that created this emoji */
-  user: exactOptional(userSchema),
+  user: v.exactOptional(userSchema),
   /** whether this emoji must be wrapped in colons */
-  requireColons: exactOptional(boolean()),
+  requireColons: v.exactOptional(v.boolean()),
   /** whether this emoji is managed */
-  managed: exactOptional(boolean()),
+  managed: v.exactOptional(v.boolean()),
   /** whether this emoji is animated */
-  animated: exactOptional(boolean()),
+  animated: v.exactOptional(v.boolean()),
   /** whether this emoji can be used, may be false due to loss of Server Boosts */
-  available: exactOptional(boolean())
+  available: v.exactOptional(v.boolean())
 });
 
-export type Emoji = InferOutput<typeof emojiSchema>;
+export interface Emoji extends v.InferOutput<typeof emojiSchema> {}

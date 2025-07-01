@@ -1,14 +1,4 @@
-import {
-  array,
-  exactOptional,
-  integer,
-  maxValue,
-  minValue,
-  number,
-  object,
-  partial,
-  pipe
-} from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -19,17 +9,17 @@ import {
 } from "@discordkit/core";
 import { subscriptionSchema, type Subscription } from "./types/Subscription.js";
 
-export const listSKUSubscriptionsSchema = object({
+export const listSKUSubscriptionsSchema = v.object({
   sku: snowflake,
-  params: exactOptional(
-    partial(
-      object({
+  params: v.exactOptional(
+    v.partial(
+      v.object({
         /** List subscriptions before this ID (Default: undefined) */
         before: snowflake,
         /** List subscriptions after this ID (Default: undefined) */
         after: snowflake,
         /** Number of results to return (1-100) (Default: 50) */
-        limit: pipe(number(), integer(), minValue(1), maxValue(100)),
+        limit: v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(100)),
         /** User ID for which to return subscriptions. Required except for OAuth queries. (Default: undefined) */
         userId: snowflake
       })
@@ -52,14 +42,14 @@ export const listSKUSubscriptions: Fetcher<
 export const listSKUSubscriptionsSafe = toValidated(
   listSKUSubscriptions,
   listSKUSubscriptionsSchema,
-  array(subscriptionSchema)
+  v.array(subscriptionSchema)
 );
 
 export const listSKUSubscriptionsProcedure = toProcedure(
   `query`,
   listSKUSubscriptions,
   listSKUSubscriptionsSchema,
-  array(subscriptionSchema)
+  v.array(subscriptionSchema)
 );
 
 export const listSKUSubscriptionsQuery = toQuery(listSKUSubscriptions);

@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 
 export enum InteractionCallbackType {
   /** ACK a `Ping` */
@@ -21,4 +21,4 @@ export enum InteractionCallbackType {
   LAUNCH_ACTIVITY = 12
 }
 
-export const interactionCallbackTypeSchema = enum_(InteractionCallbackType);
+export const interactionCallbackTypeSchema = v.enum_(InteractionCallbackType);

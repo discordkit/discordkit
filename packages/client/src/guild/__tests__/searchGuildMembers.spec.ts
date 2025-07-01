@@ -1,20 +1,20 @@
-import { waitFor } from "@testing-library/react";
+import * as v from "valibot";
 import { mockUtils } from "#mocks";
 import { runProcedure, runQuery } from "#test-utils";
-import { array, length, pipe } from "valibot";
+import { waitFor } from "@testing-library/dom";
+import { memberSchema } from "../types/Member.js";
 import {
   searchGuildMembersProcedure,
   searchGuildMembersQuery,
   searchGuildMembersSafe,
   searchGuildMembersSchema
 } from "../searchGuildMembers.js";
-import { memberSchema } from "../types/Member.js";
 
 describe(`searchGuildMembers`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.get(
     `/guilds/:guild/members/search`,
     searchGuildMembersSchema,
-    pipe(array(memberSchema), length(1))
+    v.pipe(v.array(memberSchema), v.length(1))
   );
 
   it(`can be used standalone`, async () => {

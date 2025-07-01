@@ -1,4 +1,4 @@
-import { object } from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -9,7 +9,7 @@ import {
 } from "@discordkit/core";
 import { stickerPackSchema, type StickerPack } from "./types/StickerPack.js";
 
-export const getStickerPackSchema = object({
+export const getStickerPackSchema = v.object({
   pack: snowflake
 });
 

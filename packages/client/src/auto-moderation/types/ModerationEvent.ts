@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 
 export enum ModerationEvent {
   /** when a member sends or edits a message in the guild */
@@ -7,4 +7,4 @@ export enum ModerationEvent {
   MEMBER_UPDATE = 2
 }
 
-export const moderationEventSchema = enum_(ModerationEvent);
+export const moderationEventSchema = v.enum_(ModerationEvent);

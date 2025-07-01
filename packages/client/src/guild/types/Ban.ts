@@ -1,11 +1,11 @@
-import { object, string, nullable, type InferOutput } from "valibot";
+import * as v from "valibot";
 import { userSchema } from "../../user/types/User.js";
 
-export const banSchema = object({
+export const banSchema = v.object({
   /** the reason for the ban */
-  reason: nullable(string()),
+  reason: v.nullable(v.string()),
   /** the banned user */
   user: userSchema
 });
 
-export type Ban = InferOutput<typeof banSchema>;
+export interface Ban extends v.InferOutput<typeof banSchema> {}

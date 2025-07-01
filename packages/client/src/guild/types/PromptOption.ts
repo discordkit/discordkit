@@ -1,36 +1,27 @@
-import {
-  type InferOutput,
-  array,
-  nonEmpty,
-  object,
-  nullable,
-  string,
-  pipe,
-  exactOptional,
-  boolean
-} from "valibot";
+import * as v from "valibot";
 import { snowflake } from "@discordkit/core";
 import { emojiSchema } from "../../emoji/types/Emoji.js";
 
-export const promptOptionSchema = object({
+export const promptOptionSchema = v.object({
   /** ID of the prompt option */
   id: snowflake,
   /** IDs for channels a member is added to when the option is selected */
-  channelIds: array(snowflake),
+  channelIds: v.array(snowflake),
   /** IDs for roles assigned to a member when the option is selected */
-  roleIds: array(snowflake),
+  roleIds: v.array(snowflake),
   /** Emoji of the option */
-  emoji: exactOptional(emojiSchema),
+  emoji: v.exactOptional(emojiSchema),
   /** Emoji ID of the option */
-  emojiId: exactOptional(snowflake),
+  emojiId: v.exactOptional(snowflake),
   /** Emoji name of the optio */
-  emojiName: exactOptional(pipe(string(), nonEmpty())),
+  emojiName: v.exactOptional(v.pipe(v.string(), v.nonEmpty())),
   /** Whether the emoji is animated */
-  emojiAnimated: exactOptional(boolean()),
+  emojiAnimated: v.exactOptional(v.boolean()),
   /** Title of the option */
-  title: pipe(string(), nonEmpty()),
+  title: v.pipe(v.string(), v.nonEmpty()),
   /** Description of the option */
-  description: nullable(string())
+  description: v.nullable(v.string())
 });
 
-export type PromptOption = InferOutput<typeof promptOptionSchema>;
+export interface PromptOption
+  extends v.InferOutput<typeof promptOptionSchema> {}

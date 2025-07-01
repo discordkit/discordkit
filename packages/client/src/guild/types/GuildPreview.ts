@@ -1,42 +1,41 @@
-import {
-  object,
-  string,
-  exactOptional,
-  array,
-  number,
-  integer,
-  minValue,
-  type InferOutput,
-  pipe
-} from "valibot";
+import * as v from "valibot";
 import { snowflake } from "@discordkit/core";
 import { emojiSchema } from "../../emoji/types/Emoji.js";
 import { stickerSchema } from "../../sticker/types/Sticker.js";
 import { guildFeaturesSchema } from "./GuildFeatures.js";
 
-export const guildPreviewSchema = object({
+export const guildPreviewSchema = v.object({
   /** guild id */
-  id: snowflake,
+  id: snowflake as v.GenericSchema<string>,
   /** guild name (2-100 characters) */
-  name: string(),
+  name: v.string(),
   /** icon hash */
-  icon: exactOptional(string()),
+  icon: v.exactOptional<v.GenericSchema<string>>(v.string()),
   /** splash hash */
-  splash: exactOptional(string()),
+  splash: v.exactOptional<v.GenericSchema<string>>(v.string()),
   /** discovery splash hash */
-  discoverySplash: exactOptional(string()),
+  discoverySplash: v.exactOptional<v.GenericSchema<string>>(v.string()),
   /** custom guild emojis */
-  emojis: array(emojiSchema),
+  emojis: v.array(emojiSchema),
   /** enabled guild features */
-  features: array(guildFeaturesSchema),
+  features: v.array(guildFeaturesSchema),
   /** approximate number of members in this guild */
-  approximateMemberCount: pipe(number(), integer(), minValue(0)),
+  approximateMemberCount: v.pipe(
+    v.number(),
+    v.integer(),
+    v.minValue(0)
+  ) as v.GenericSchema<number>,
   /** approximate number of online members in this guild */
-  approximatePresenceCount: pipe(number(), integer(), minValue(0)),
+  approximatePresenceCount: v.pipe(
+    v.number(),
+    v.integer(),
+    v.minValue(0)
+  ) as v.GenericSchema<number>,
   /** the description for the guild */
-  description: exactOptional(string()),
+  description: v.exactOptional(v.string()),
   /** custom guild stickers */
-  stickers: array(stickerSchema)
+  stickers: v.array(stickerSchema)
 });
 
-export type GuildPreview = InferOutput<typeof guildPreviewSchema>;
+export interface GuildPreview
+  extends v.InferOutput<typeof guildPreviewSchema> {}

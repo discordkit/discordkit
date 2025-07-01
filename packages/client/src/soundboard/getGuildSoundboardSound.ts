@@ -1,4 +1,4 @@
-import { object } from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -12,7 +12,7 @@ import {
   type SoundboardSound
 } from "./types/SoundboardSound.js";
 
-export const getGuildSoundboardSoundSchema = object({
+export const getGuildSoundboardSoundSchema = v.object({
   guild: snowflake,
   sound: snowflake
 });

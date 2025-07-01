@@ -1,4 +1,4 @@
-import { object } from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -12,7 +12,7 @@ import {
   type VoiceRegion
 } from "../voice/types/VoiceRegion.js";
 
-export const getGuildVoiceRegionsSchema = object({
+export const getGuildVoiceRegionsSchema = v.object({
   guild: snowflake
 });
 

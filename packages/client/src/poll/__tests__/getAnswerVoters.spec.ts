@@ -1,7 +1,7 @@
-import { waitFor } from "@testing-library/react";
-import { array, object } from "valibot";
+import * as v from "valibot";
 import { mockUtils } from "#mocks";
 import { runProcedure, runQuery } from "#test-utils";
+import { waitFor } from "@testing-library/dom";
 import {
   getAnswerVotersProcedure,
   getAnswerVotersQuery,
@@ -14,8 +14,8 @@ describe(`getAnswerVoters`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.get(
     `/channels/:channel/polls/:message/answers/:answer`,
     getAnswerVotersSchema,
-    object({
-      users: array(userSchema)
+    v.object({
+      users: v.array(userSchema)
     })
   );
 

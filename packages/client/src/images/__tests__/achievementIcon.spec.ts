@@ -1,12 +1,12 @@
+import * as v from "valibot";
 import { mockUtils } from "#mocks";
-import { parse, pipe, string, url } from "valibot";
 import { achievementIcon, achievementIconSchema } from "../achievementIcon.js";
 
 describe(`achievementIcon`, () => {
   it(`produces a valid URL`, () => {
     expect(() =>
-      parse(
-        pipe(string(), url()),
+      v.parse(
+        v.pipe(v.string(), v.url()),
         achievementIcon(mockUtils.schema(achievementIconSchema))
       )
     ).not.toThrow();

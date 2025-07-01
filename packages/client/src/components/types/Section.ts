@@ -1,18 +1,4 @@
-import type { InferOutput } from "valibot";
-import {
-  array,
-  exactOptional,
-  integer,
-  literal,
-  maxLength,
-  maxValue,
-  minValue,
-  nonEmpty,
-  number,
-  object,
-  pipe,
-  union
-} from "valibot";
+import * as v from "valibot";
 import { ComponentType } from "./ComponentType.js";
 import { buttonSchema } from "./Button.js";
 import { textDisplaySchema } from "./TextDisplay.js";
@@ -31,17 +17,22 @@ import { thumbnailSchema } from "./Thumbnail.js";
  * >
  * > Don't hardcode `components` to contain only text components. We may add other components in the future. Similarly, `accessory` may be expanded to include other components in the future.
  */
-export const sectionSchema = object({
+export const sectionSchema = v.object({
   /** `9` for section component */
-  type: literal(ComponentType.Section),
+  type: v.literal(ComponentType.Section),
   /** Optional identifier for component */
-  id: exactOptional(
-    pipe(number(), integer(), minValue(0), maxValue(Number.MAX_SAFE_INTEGER))
+  id: v.exactOptional(
+    v.pipe(
+      v.number(),
+      v.integer(),
+      v.minValue(0),
+      v.maxValue(Number.MAX_SAFE_INTEGER)
+    )
   ),
   /** One to three text components */
-  components: pipe(array(textDisplaySchema), nonEmpty(), maxLength(3)),
+  components: v.pipe(v.array(textDisplaySchema), v.nonEmpty(), v.maxLength(3)),
   /** A thumbnail or a button component, with a future possibility of adding more compatible components */
-  accessroy: union([thumbnailSchema, buttonSchema])
+  accessroy: v.union([thumbnailSchema, buttonSchema])
 });
 
-export type Section = InferOutput<typeof sectionSchema>;
+export interface Section extends v.InferOutput<typeof sectionSchema> {}

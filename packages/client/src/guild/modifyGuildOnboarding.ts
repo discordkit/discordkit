@@ -1,4 +1,4 @@
-import { array, boolean, object } from "valibot";
+import * as v from "valibot";
 import {
   put,
   type Fetcher,
@@ -13,15 +13,15 @@ import {
 import { onboardingPromptSchema } from "./types/OnboardingPrompt.js";
 import { onboardingModeSchema } from "./types/OnboardingMode.js";
 
-export const modifyGuildOnboardingSchema = object({
+export const modifyGuildOnboardingSchema = v.object({
   guild: snowflake,
-  body: object({
+  body: v.object({
     /** Prompts shown during onboarding and in customize community */
-    prompts: array(onboardingPromptSchema),
+    prompts: v.array(onboardingPromptSchema),
     /** Channel IDs that members get opted into automatically */
-    defaultChannelIds: array(snowflake),
+    defaultChannelIds: v.array(snowflake),
     /** Whether onboarding is enabled in the guild */
-    enabled: boolean(),
+    enabled: v.boolean(),
     /** Current mode of onboarding */
     mode: onboardingModeSchema
   })

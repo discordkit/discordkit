@@ -1,4 +1,4 @@
-import { boolean, isoTimestamp, object, partial, pipe, string } from "valibot";
+import * as v from "valibot";
 import {
   patch,
   type Fetcher,
@@ -8,16 +8,16 @@ import {
 } from "@discordkit/core";
 import type { VoiceState } from "./types/VoiceState.js";
 
-export const modifyCurrentUserVoiceStateSchema = object({
+export const modifyCurrentUserVoiceStateSchema = v.object({
   guild: snowflake,
-  body: partial(
-    object({
+  body: v.partial(
+    v.object({
       /** the id of the channel the user is currently in */
       channelId: snowflake,
       /** toggles the user's suppress state */
-      suppress: boolean(),
+      suppress: v.boolean(),
       /** sets the user's request to speak */
-      requestToSpeakTimestamp: pipe(string(), isoTimestamp())
+      requestToSpeakTimestamp: v.pipe(v.string(), v.isoTimestamp())
     })
   )
 });

@@ -1,16 +1,4 @@
-import {
-  maxLength,
-  maxValue,
-  minLength,
-  minValue,
-  nonEmpty,
-  nullish,
-  number,
-  object,
-  pipe,
-  string,
-  url
-} from "valibot";
+import * as v from "valibot";
 import {
   post,
   type Fetcher,
@@ -23,19 +11,19 @@ import {
   type SoundboardSound
 } from "./types/SoundboardSound.js";
 
-export const createGuildSoundboardSoundSchema = object({
+export const createGuildSoundboardSoundSchema = v.object({
   guild: snowflake,
-  body: object({
+  body: v.object({
     /** name of the soundboard sound (2-32 characters) */
-    name: pipe(string(), minLength(2), maxLength(32)),
+    name: v.pipe(v.string(), v.minLength(2), v.maxLength(32)),
     /** the mp3 or ogg sound data, base64 encoded, similar to image data */
-    sound: pipe(string(), url()),
+    sound: v.pipe(v.string(), v.url()),
     /** the volume of the soundboard sound, from 0 to 1, defaults to 1 */
-    volumn: nullish(pipe(number(), minValue(0), maxValue(1))),
+    volumn: v.nullish(v.pipe(v.number(), v.minValue(0), v.maxValue(1))),
     /** the id of the custom emoji for the soundboard sound */
-    emojiId: nullish(snowflake),
+    emojiId: v.nullish(snowflake),
     /** the unicode character of a standard emoji for the soundboard sound */
-    emojiName: nullish(pipe(string(), nonEmpty()))
+    emojiName: v.nullish(v.pipe(v.string(), v.nonEmpty()))
   })
 });
 

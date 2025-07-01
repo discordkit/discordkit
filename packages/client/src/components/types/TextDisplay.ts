@@ -1,15 +1,4 @@
-import {
-  exactOptional,
-  integer,
-  literal,
-  maxValue,
-  minValue,
-  number,
-  object,
-  pipe,
-  string,
-  type InferOutput
-} from "valibot";
+import * as v from "valibot";
 import { ComponentType } from "./ComponentType.js";
 
 /**
@@ -21,15 +10,20 @@ import { ComponentType } from "./ComponentType.js";
  * >
  * > To use this component, you need to send the message flag `1 << 15` (IS_COMPONENTS_V2) which can be activated on a per-message basis.
  */
-export const textDisplaySchema = object({
+export const textDisplaySchema = v.object({
   /** `10` for text display */
-  type: literal(ComponentType.TextDisplay),
+  type: v.literal(ComponentType.TextDisplay),
   /** Optional identifier for component */
-  id: exactOptional(
-    pipe(number(), integer(), minValue(0), maxValue(Number.MAX_SAFE_INTEGER))
+  id: v.exactOptional(
+    v.pipe(
+      v.number(),
+      v.integer(),
+      v.minValue(0),
+      v.maxValue(Number.MAX_SAFE_INTEGER)
+    )
   ),
   /** Text that will be displayed similar to a message */
-  content: string()
+  content: v.string()
 });
 
-export type TextDisplay = InferOutput<typeof textDisplaySchema>;
+export interface TextDisplay extends v.InferOutput<typeof textDisplaySchema> {}

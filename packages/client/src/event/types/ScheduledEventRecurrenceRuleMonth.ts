@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 
 export enum ScheduledEventRecurrenceRuleMonth {
   JANUARY = 1,
@@ -15,6 +15,6 @@ export enum ScheduledEventRecurrenceRuleMonth {
   DECEMBER = 12
 }
 
-export const scheduledEventRecurrenceRuleMonthSchema = enum_(
+export const scheduledEventRecurrenceRuleMonthSchema = v.enum_(
   ScheduledEventRecurrenceRuleMonth
 );

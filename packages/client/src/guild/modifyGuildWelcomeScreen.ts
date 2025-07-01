@@ -1,13 +1,4 @@
-import {
-  array,
-  boolean,
-  nonEmpty,
-  nullish,
-  object,
-  partial,
-  pipe,
-  string
-} from "valibot";
+import * as v from "valibot";
 import {
   patch,
   type Fetcher,
@@ -21,16 +12,16 @@ import {
 } from "./types/WelcomeScreen.js";
 import { welcomeChannelSchema } from "./types/WelcomeChannel.js";
 
-export const modifyGuildWelcomeScreenSchema = object({
+export const modifyGuildWelcomeScreenSchema = v.object({
   guild: snowflake,
-  body: partial(
-    object({
+  body: v.partial(
+    v.object({
       /** whether the welcome screen is enabled */
-      enabled: nullish(boolean()),
+      enabled: v.nullish(v.boolean()),
       /** channels linked in the welcome screen and their display options */
-      welcomeChannels: nullish(array(welcomeChannelSchema)),
+      welcomeChannels: v.nullish(v.array(welcomeChannelSchema)),
       /** the server description to show in the welcome screen */
-      description: nullish(pipe(string(), nonEmpty()))
+      description: v.nullish(v.pipe(v.string(), v.nonEmpty()))
     })
   )
 });

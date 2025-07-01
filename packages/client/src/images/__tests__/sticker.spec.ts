@@ -1,12 +1,12 @@
+import * as v from "valibot";
 import { mockUtils } from "#mocks";
-import { parse, pipe, string, url } from "valibot";
 import { sticker, stickerImageSchema } from "../sticker.js";
 
 describe(`sticker`, () => {
   it(`produces a valid URL`, () => {
     expect(() =>
-      parse(
-        pipe(string(), url()),
+      v.parse(
+        v.pipe(v.string(), v.url()),
         sticker(mockUtils.schema(stickerImageSchema))
       )
     ).not.toThrow();

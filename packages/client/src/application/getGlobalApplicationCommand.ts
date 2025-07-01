@@ -1,4 +1,4 @@
-import { object } from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -12,7 +12,7 @@ import {
   applicationCommandSchema
 } from "../application-commands/types/ApplicationCommand.js";
 
-export const getGlobalApplicationCommandSchema = object({
+export const getGlobalApplicationCommandSchema = v.object({
   application: snowflake,
   command: snowflake
 });

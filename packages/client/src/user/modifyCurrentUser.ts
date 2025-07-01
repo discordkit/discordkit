@@ -1,4 +1,4 @@
-import { nonEmpty, nullable, object, partial, pipe, string } from "valibot";
+import * as v from "valibot";
 import {
   patch,
   type Fetcher,
@@ -8,15 +8,15 @@ import {
 } from "@discordkit/core";
 import { userSchema, type User } from "./types/User.js";
 
-export const modifyCurrentUserSchema = object({
-  body: partial(
-    object({
+export const modifyCurrentUserSchema = v.object({
+  body: v.partial(
+    v.object({
       /** user's username, if changed may cause the user's discriminator to be randomized. */
-      username: pipe(string(), nonEmpty()),
+      username: v.pipe(v.string(), v.nonEmpty()),
       /** if passed, modifies the user's avatar */
-      avatar: nullable(datauri),
+      avatar: v.nullable(datauri),
       /** if passed, modifies the user's banner */
-      banner: nullable(datauri)
+      banner: v.nullable(datauri)
     })
   )
 });

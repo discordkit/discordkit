@@ -1,20 +1,20 @@
-import { waitFor } from "@testing-library/react";
+import * as v from "valibot";
 import { mockUtils } from "#mocks";
 import { runProcedure, runQuery } from "#test-utils";
-import { pipe, array, length } from "valibot";
+import { waitFor } from "@testing-library/dom";
+import { inviteMetadataSchema } from "../../invite/types/InviteMetadata.js";
 import {
   getChannelInvitesProcedure,
   getChannelInvitesQuery,
   getChannelInvitesSafe,
   getChannelInvitesSchema
 } from "../getChannelInvites.js";
-import { inviteMetadataSchema } from "../../invite/types/InviteMetadata.js";
 
 describe(`getChannelInvites`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.get(
     `/channels/:channel/invites`,
     getChannelInvitesSchema,
-    pipe(array(inviteMetadataSchema), length(1))
+    v.pipe(v.array(inviteMetadataSchema), v.length(1))
   );
 
   it(`can be used standalone`, async () => {

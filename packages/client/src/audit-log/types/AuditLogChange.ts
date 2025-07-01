@@ -1,20 +1,13 @@
-import {
-  object,
-  unknown,
-  string,
-  type InferOutput,
-  exactOptional,
-  pipe,
-  nonEmpty
-} from "valibot";
+import * as v from "valibot";
 
-export const auditLogChangeSchema = object({
+export const auditLogChangeSchema = v.object({
   /** New value of the key */
-  newValue: exactOptional(unknown()),
+  newValue: v.exactOptional(v.unknown()),
   /** Old value of the key */
-  oldValue: exactOptional(unknown()),
+  oldValue: v.exactOptional(v.unknown()),
   /** Name of the changed entity, with a few exceptions */
-  key: pipe(string(), nonEmpty())
+  key: v.pipe(v.string(), v.nonEmpty())
 });
 
-export type AuditLogChange = InferOutput<typeof auditLogChangeSchema>;
+export interface AuditLogChange
+  extends v.InferOutput<typeof auditLogChangeSchema> {}

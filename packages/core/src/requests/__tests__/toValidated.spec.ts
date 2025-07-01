@@ -11,8 +11,9 @@ import {
 import { toValidated } from "../toValidated.js";
 
 describe(`toValidated`, () => {
-  const actual = async (i, o) =>
+  const actual = async (i: string, o: unknown) =>
     toValidated(
+      // @ts-expect-error
       async (_: InferOutput<typeof i>) => Promise.resolve(o),
       pipe(string(), minLength(1), maxLength(5)),
       pipe(number(), minValue(1), maxValue(5))

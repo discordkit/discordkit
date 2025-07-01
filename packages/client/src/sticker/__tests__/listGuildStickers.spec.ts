@@ -1,20 +1,20 @@
-import { waitFor } from "@testing-library/react";
+import * as v from "valibot";
 import { mockUtils } from "#mocks";
 import { runProcedure, runQuery } from "#test-utils";
-import { pipe, array, length } from "valibot";
+import { waitFor } from "@testing-library/dom";
+import { stickerSchema } from "../types/Sticker.js";
 import {
   listGuildStickersProcedure,
   listGuildStickersQuery,
   listGuildStickersSafe,
   listGuildStickersSchema
 } from "../listGuildStickers.js";
-import { stickerSchema } from "../types/Sticker.js";
 
 describe(`listGuildStickers`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.get(
     `/guilds/:guild/stickers`,
     listGuildStickersSchema,
-    pipe(array(stickerSchema), length(1))
+    v.pipe(v.array(stickerSchema), v.length(1))
   );
 
   it(`can be used standalone`, async () => {

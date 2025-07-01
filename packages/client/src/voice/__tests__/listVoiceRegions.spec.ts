@@ -1,19 +1,19 @@
-import { waitFor } from "@testing-library/react";
+import * as v from "valibot";
 import { mockUtils } from "#mocks";
 import { runProcedure, runQuery } from "#test-utils";
-import { array, length, pipe } from "valibot";
+import { waitFor } from "@testing-library/dom";
+import { voiceRegionSchema } from "../types/VoiceRegion.js";
 import {
   listVoiceRegionsProcedure,
   listVoiceRegionsQuery,
   listVoiceRegionsSafe
 } from "../listVoiceRegions.js";
-import { voiceRegionSchema } from "../types/VoiceRegion.js";
 
 describe(`listVoiceRegions`, { repeats: 5 }, () => {
   const { expected } = mockUtils.request.get(
     `/voice/regions`,
     null,
-    pipe(array(voiceRegionSchema), length(1))
+    v.pipe(v.array(voiceRegionSchema), v.length(1))
   );
 
   it(`can be used standalone`, async () => {

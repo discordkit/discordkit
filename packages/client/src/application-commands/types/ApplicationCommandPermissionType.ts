@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 
 export const ApplicationCommandPermissionType = {
   ROLE: 1,
@@ -6,6 +6,6 @@ export const ApplicationCommandPermissionType = {
   CHANNEL: 3
 } as const;
 
-export const applicationCommandPermissionTypeSchema = enum_(
+export const applicationCommandPermissionTypeSchema = v.enum_(
   ApplicationCommandPermissionType
 );

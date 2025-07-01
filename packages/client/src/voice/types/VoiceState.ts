@@ -1,46 +1,36 @@
-import {
-  object,
-  string,
-  boolean,
-  nullable,
-  exactOptional,
-  nonEmpty,
-  isoTimestamp,
-  pipe,
-  type InferOutput
-} from "valibot";
+import * as v from "valibot";
 import { snowflake } from "@discordkit/core";
 import { memberSchema } from "../../guild/types/Member.js";
 
 // https://discord.com/developers/docs/resources/voice#voice-state-object-voice-state-structure
 /** Used to represent a user's voice connection status. */
-export const voiceStateSchema = object({
+export const voiceStateSchema = v.object({
   /** the guild id this voice state is for */
-  guildId: exactOptional(snowflake),
+  guildId: v.exactOptional(snowflake),
   /** the channel id this user is connected to */
-  channelId: nullable(snowflake),
+  channelId: v.nullable(snowflake),
   /** the user id this voice state is for */
   userId: snowflake,
   /** guild member object	the guild member this voice state is for */
-  member: exactOptional(memberSchema),
+  member: v.exactOptional(memberSchema),
   /** the session id for this voice state */
-  sessionId: pipe(string(), nonEmpty()),
+  sessionId: v.pipe(v.string(), v.nonEmpty()),
   /** whether this user is deafened by the server */
-  deaf: boolean(),
+  deaf: v.boolean(),
   /** whether this user is muted by the server */
-  mute: boolean(),
+  mute: v.boolean(),
   /** whether this user is locally deafened */
-  selfDeaf: boolean(),
+  selfDeaf: v.boolean(),
   /** whether this user is locally muted */
-  selfMute: boolean(),
+  selfMute: v.boolean(),
   /** whether this user is streaming using "Go Live" */
-  selfStream: exactOptional(boolean()),
+  selfStream: v.exactOptional(v.boolean()),
   /** whether this user's camera is enabled */
-  selfVideo: boolean(),
+  selfVideo: v.boolean(),
   /** whether this user is muted by the current user */
-  suppress: boolean(),
+  suppress: v.boolean(),
   /** the time at which the user requested to speak */
-  requestToSpeakTimestamp: nullable(pipe(string(), isoTimestamp()))
+  requestToSpeakTimestamp: v.nullable(v.pipe(v.string(), v.isoTimestamp()))
 });
 
-export type VoiceState = InferOutput<typeof voiceStateSchema>;
+export interface VoiceState extends v.InferOutput<typeof voiceStateSchema> {}

@@ -1,4 +1,4 @@
-import { boolean, nullish, object, exactOptional, partial } from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -9,14 +9,14 @@ import {
 } from "@discordkit/core";
 import { threadMemberSchema, type ThreadMember } from "./types/ThreadMember.js";
 
-export const getThreadMemberSchema = object({
+export const getThreadMemberSchema = v.object({
   channel: snowflake,
   user: snowflake,
-  params: exactOptional(
-    partial(
-      object({
+  params: v.exactOptional(
+    v.partial(
+      v.object({
         /** Whether to include a guild member object for the thread member */
-        withMember: nullish(boolean())
+        withMember: v.nullish(v.boolean())
       })
     )
   )

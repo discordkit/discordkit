@@ -1,4 +1,4 @@
-import { object } from "valibot";
+import * as v from "valibot";
 import {
   remove,
   type Fetcher,
@@ -7,7 +7,7 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const leaveLobbySchema = object({
+export const leaveLobbySchema = v.object({
   lobby: snowflake
 });
 

@@ -1,13 +1,13 @@
+import * as v from "valibot";
 import { getAsset, snowflake } from "@discordkit/core";
-import { type InferOutput, picklist, object, exactOptional } from "valibot";
 import { imageSizes } from "./types/ImageSizes.js";
 
-export const applicationAssetSchema = object({
+export const applicationAssetSchema = v.object({
   application: snowflake,
   asset: snowflake,
-  format: exactOptional(picklist([`png`, `jpg`, `webp`])),
-  params: exactOptional(
-    object({
+  format: v.exactOptional(v.picklist([`png`, `jpg`, `webp`])),
+  params: v.exactOptional(
+    v.object({
       size: imageSizes
     })
   )
@@ -18,5 +18,5 @@ export const applicationAsset = ({
   asset,
   format,
   params
-}: InferOutput<typeof applicationAssetSchema>): string =>
+}: v.InferOutput<typeof applicationAssetSchema>): string =>
   getAsset(`/app-assets/${application}/${asset}.${format ?? `png`}`, params);

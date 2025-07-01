@@ -1,20 +1,20 @@
-import { waitFor } from "@testing-library/react";
+import * as v from "valibot";
 import { mockUtils } from "#mocks";
 import { runProcedure, runQuery } from "#test-utils";
-import { array, length, pipe } from "valibot";
+import { waitFor } from "@testing-library/dom";
+import { integrationSchema } from "../types/Integration.js";
 import {
   getGuildIntegrationsProcedure,
   getGuildIntegrationsQuery,
   getGuildIntegrationsSafe,
   getGuildIntegrationsSchema
 } from "../getGuildIntegrations.js";
-import { integrationSchema } from "../types/Integration.js";
 
 describe(`getGuildIntegrations`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.get(
     `/guilds/:guild/integrations`,
     getGuildIntegrationsSchema,
-    pipe(array(integrationSchema), length(1))
+    v.pipe(v.array(integrationSchema), v.length(1))
   );
 
   it(`can be used standalone`, async () => {

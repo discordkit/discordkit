@@ -1,14 +1,12 @@
+import * as v from "valibot";
 import { snowflake } from "@discordkit/core";
-import type { InferOutput } from "valibot";
-import { nonEmpty, object, pipe, string } from "valibot";
 
-export const avatarDecorationDataSchema = object({
+export const avatarDecorationDataSchema = v.object({
   /** the avatar decoration hash */
-  asset: pipe(string(), nonEmpty()),
+  asset: v.pipe(v.string(), v.nonEmpty()),
   /** id of the avatar decoration's SKU */
   skuId: snowflake
 });
 
-export type AvatarDecorationData = InferOutput<
-  typeof avatarDecorationDataSchema
->;
+export interface AvatarDecorationData
+  extends v.InferOutput<typeof avatarDecorationDataSchema> {}

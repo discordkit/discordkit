@@ -1,12 +1,4 @@
-import {
-  exactOptional,
-  nonEmpty,
-  object,
-  partial,
-  pipe,
-  string,
-  type InferOutput
-} from "valibot";
+import * as v from "valibot";
 import { emojiSchema } from "../../emoji/types/Emoji.js";
 
 /**
@@ -16,11 +8,11 @@ import { emojiSchema } from "../../emoji/types/Emoji.js";
  *
  * When creating a poll answer with an emoji, one only needs to send either the `id` (custom emoji) or `name` (default emoji) as the only field.
  */
-export const pollMediaSchema = object({
+export const pollMediaSchema = v.object({
   /** The question of the poll. Only `text` is supported. */
-  text: exactOptional(pipe(string(), nonEmpty())),
+  text: v.exactOptional(v.pipe(v.string(), v.nonEmpty())),
   /** Each of the answers available in the poll. */
-  answers: exactOptional(partial(emojiSchema))
+  answers: v.exactOptional(v.partial(emojiSchema))
 });
 
-export type PollMedia = InferOutput<typeof pollMediaSchema>;
+export interface PollMedia extends v.InferOutput<typeof pollMediaSchema> {}

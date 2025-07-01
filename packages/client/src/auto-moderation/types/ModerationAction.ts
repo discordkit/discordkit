@@ -1,12 +1,13 @@
-import { type InferOutput, object, exactOptional } from "valibot";
+import * as v from "valibot";
 import { moderationActionMetaSchema } from "./ModerationActionMeta.js";
 import { moderationActionTypeSchema } from "./ModerationActionType.js";
 
-export const moderationActionSchema = object({
+export const moderationActionSchema = v.object({
   /** the type of action */
   type: moderationActionTypeSchema,
   /** action metadata	additional metadata needed during execution for this specific action type */
-  metadata: exactOptional(moderationActionMetaSchema)
+  metadata: v.exactOptional(moderationActionMetaSchema)
 });
 
-export type ModerationAction = InferOutput<typeof moderationActionSchema>;
+export interface ModerationAction
+  extends v.InferOutput<typeof moderationActionSchema> {}

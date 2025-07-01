@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 import { bitfield } from "@discordkit/core";
 
 // NOTE: Because teats bitwise operates as 32bit by default, we have
@@ -115,7 +115,7 @@ export const Permissions = {
   USE_EXTERNAL_APPS: 0x0004000000000000
 } as const;
 
-export const permissionsSchema = enum_(Permissions);
+export const permissionsSchema = v.enum_(Permissions);
 export const permissionFlag = bitfield(
   `permissionFlag`,
   Permissions,

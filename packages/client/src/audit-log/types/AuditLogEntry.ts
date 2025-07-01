@@ -1,34 +1,29 @@
-import {
-  object,
-  string,
-  array,
-  maxLength,
-  type InferOutput,
-  pipe,
-  nullable,
-  exactOptional,
-  nonEmpty
-} from "valibot";
+import * as v from "valibot";
 import { snowflake } from "@discordkit/core";
 import { auditLogChangeSchema } from "./AuditLogChange.js";
 import { auditLogEventSchema } from "./AuditLogEvent.js";
 import { optionalAuditEntryInfoSchema } from "./OptionalAuditEntryInfo.js";
 
-export const auditLogEntrySchema = object({
+export const auditLogEntrySchema = v.object({
   /** ID of the affected entity (webhook, user, role, etc.) */
-  targetId: nullable(pipe(string(), nonEmpty())),
+  targetId: v.nullable<v.GenericSchema<string>>(
+    v.pipe(v.string(), v.nonEmpty())
+  ),
   /** Changes made to the targetId */
-  changes: exactOptional(array(auditLogChangeSchema)),
+  changes: v.exactOptional(v.array(auditLogChangeSchema)),
   /** User or app that made the changes */
-  userId: nullable(snowflake),
+  userId: v.nullable<v.GenericSchema<string>>(snowflake),
   /** ID of the entry */
-  id: snowflake,
+  id: snowflake as v.GenericSchema<string>,
   /** Type of action that occurred */
   actionType: auditLogEventSchema,
   /** Additional info for certain event types */
-  options: exactOptional(optionalAuditEntryInfoSchema),
+  options: v.exactOptional(optionalAuditEntryInfoSchema),
   /** Reason for the change (1-512 characters) */
-  reason: exactOptional(pipe(string(), nonEmpty(), maxLength(512)))
+  reason: v.exactOptional<v.GenericSchema<string>>(
+    v.pipe(v.string(), v.nonEmpty(), v.maxLength(512))
+  )
 });
 
-export type AuditLogEntry = InferOutput<typeof auditLogEntrySchema>;
+export interface AuditLogEntry
+  extends v.InferOutput<typeof auditLogEntrySchema> {}

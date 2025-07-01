@@ -1,14 +1,4 @@
-import {
-  object,
-  array,
-  partial,
-  exactOptional,
-  number,
-  integer,
-  minValue,
-  maxValue,
-  pipe
-} from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -19,13 +9,13 @@ import {
 } from "@discordkit/core";
 import { banSchema, type Ban } from "./types/Ban.js";
 
-export const getGuildBansSchema = object({
+export const getGuildBansSchema = v.object({
   guild: snowflake,
-  params: exactOptional(
-    partial(
-      object({
+  params: v.exactOptional(
+    v.partial(
+      v.object({
         /** of users to return (up to maximum 1000) */
-        limit: pipe(number(), integer(), minValue(1), maxValue(1000)),
+        limit: v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(1000)),
         /** consider only users before given user id */
         before: snowflake,
         /** consider only users after given user id */
@@ -50,14 +40,14 @@ export const getGuildBans: Fetcher<typeof getGuildBansSchema, Ban[]> = async ({
 export const getGuildBansSafe = toValidated(
   getGuildBans,
   getGuildBansSchema,
-  array(banSchema)
+  v.array(banSchema)
 );
 
 export const getGuildBansProcedure = toProcedure(
   `query`,
   getGuildBans,
   getGuildBansSchema,
-  array(banSchema)
+  v.array(banSchema)
 );
 
 export const getGuildBansQuery = toQuery(getGuildBans);

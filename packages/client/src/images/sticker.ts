@@ -1,15 +1,15 @@
+import * as v from "valibot";
 import { getAsset, snowflake } from "@discordkit/core";
-import { type InferOutput, object, exactOptional, picklist } from "valibot";
 
-export const stickerImageSchema = object({
+export const stickerImageSchema = v.object({
   sticker: snowflake,
-  format: exactOptional(picklist([`png`, `json`, `gif`]))
+  format: v.exactOptional(v.picklist([`png`, `json`, `gif`]))
 });
 
 export const sticker = ({
   sticker: id,
   format
-}: InferOutput<typeof stickerImageSchema>): string =>
+}: v.InferOutput<typeof stickerImageSchema>): string =>
   format === `gif`
     ? `https://media.discordapp.net/stickers/${id}.gif`
     : getAsset(`/stickers/${id}.${format ?? `png`}`);

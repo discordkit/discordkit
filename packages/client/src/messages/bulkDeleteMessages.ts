@@ -1,4 +1,4 @@
-import { array, maxLength, minLength, object, pipe } from "valibot";
+import * as v from "valibot";
 import {
   post,
   type Fetcher,
@@ -7,11 +7,11 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const bulkDeleteMessagesSchema = object({
+export const bulkDeleteMessagesSchema = v.object({
   channel: snowflake,
-  body: object({
+  body: v.object({
     /** an array of message ids to delete (2-100) */
-    messages: pipe(array(snowflake), minLength(2), maxLength(100))
+    messages: v.pipe(v.array(snowflake), v.minLength(2), v.maxLength(100))
   })
 });
 

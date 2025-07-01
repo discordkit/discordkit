@@ -1,4 +1,4 @@
-import { array, boolean, nullish, object, exactOptional } from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -12,13 +12,13 @@ import {
   applicationCommandSchema
 } from "../application-commands/types/ApplicationCommand.js";
 
-export const getGuildApplicationCommandsSchema = object({
+export const getGuildApplicationCommandsSchema = v.object({
   application: snowflake,
   guild: snowflake,
-  params: exactOptional(
-    object({
+  params: v.exactOptional(
+    v.object({
       /** Whether to include full localization dictionaries (nameLocalizations and descriptionLocalizations) in the returned objects, instead of the nameLocalized and descriptionLocalized fields. Default false. */
-      withLocalizations: nullish(boolean())
+      withLocalizations: v.nullish(v.boolean())
     })
   )
 });
@@ -43,14 +43,14 @@ export const getGuildApplicationCommands: Fetcher<
 export const getGuildApplicationCommandsSafe = toValidated(
   getGuildApplicationCommands,
   getGuildApplicationCommandsSchema,
-  array(applicationCommandSchema)
+  v.array(applicationCommandSchema)
 );
 
 export const getGuildApplicationCommandsProcedure = toProcedure(
   `query`,
   getGuildApplicationCommands,
   getGuildApplicationCommandsSchema,
-  array(applicationCommandSchema)
+  v.array(applicationCommandSchema)
 );
 
 export const getGuildApplicationCommandsQuery = toQuery(

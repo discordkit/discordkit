@@ -1,4 +1,4 @@
-import { type InferOutput, array, object } from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -10,15 +10,15 @@ import {
 import { threadMemberSchema } from "../channel/types/ThreadMember.js";
 import { threadChannelSchema } from "../channel/types/Channel.js";
 
-export const listActiveGuildThreadsSchema = object({
+export const listActiveGuildThreadsSchema = v.object({
   guild: snowflake
 });
 
-export const activeGuildThreadsSchema = object({
+export const activeGuildThreadsSchema = v.object({
   /** the active threads */
-  threads: array(threadChannelSchema),
+  threads: v.array(threadChannelSchema),
   /** a thread member object for each returned thread the current user has joined */
-  members: array(threadMemberSchema)
+  members: v.array(threadMemberSchema)
 });
 
 /**
@@ -30,7 +30,7 @@ export const activeGuildThreadsSchema = object({
  */
 export const listActiveGuildThreads: Fetcher<
   typeof listActiveGuildThreadsSchema,
-  InferOutput<typeof activeGuildThreadsSchema>
+  v.InferOutput<typeof activeGuildThreadsSchema>
 > = async ({ guild }) => get(`/guilds/${guild}/threads/active`);
 
 export const listActiveGuildThreadsSafe = toValidated(

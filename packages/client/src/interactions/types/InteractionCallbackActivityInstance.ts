@@ -1,11 +1,9 @@
-import type { InferOutput } from "valibot";
-import { nonEmpty, object, pipe, string } from "valibot";
+import * as v from "valibot";
 
-export const interactionCallbackActivityInstanceSchema = object({
+export const interactionCallbackActivityInstanceSchema = v.object({
   /** 	Instance ID of the Activity if one was launched or joined. */
-  id: pipe(string(), nonEmpty())
+  id: v.pipe(v.string(), v.nonEmpty())
 });
 
-export type InteractionCallbackActivityInstance = InferOutput<
-  typeof interactionCallbackActivityInstanceSchema
->;
+export interface InteractionCallbackActivityInstance
+  extends v.InferOutput<typeof interactionCallbackActivityInstanceSchema> {}

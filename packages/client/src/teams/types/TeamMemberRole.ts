@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 
 export const TeamMemberRole = {
   /** Admins have similar access as owners, except they cannot take destructive actions on the team or team-owned apps. */
@@ -9,4 +9,4 @@ export const TeamMemberRole = {
   ReadOnly: `read_only`
 } as const;
 
-export const teamMemberRoleSchema = enum_(TeamMemberRole);
+export const teamMemberRoleSchema = v.enum_(TeamMemberRole);

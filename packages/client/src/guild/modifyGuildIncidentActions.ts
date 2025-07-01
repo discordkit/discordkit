@@ -1,4 +1,4 @@
-import { isoTimestamp, nullish, object, pipe, string } from "valibot";
+import * as v from "valibot";
 import {
   put,
   type Fetcher,
@@ -11,13 +11,13 @@ import {
   incidentsDataSchema
 } from "./types/IncidentsData.js";
 
-export const modifyGuildIncidentActionsSchema = object({
+export const modifyGuildIncidentActionsSchema = v.object({
   guild: snowflake,
-  body: object({
+  body: v.object({
     /** when invites will be enabled again */
-    invitesDisabledUntil: nullish(pipe(string(), isoTimestamp())),
+    invitesDisabledUntil: v.nullish(v.pipe(v.string(), v.isoTimestamp())),
     /** when direct messages will be enabled again */
-    dmsDisabledUntil: nullish(pipe(string(), isoTimestamp()))
+    dmsDisabledUntil: v.nullish(v.pipe(v.string(), v.isoTimestamp()))
   })
 });
 

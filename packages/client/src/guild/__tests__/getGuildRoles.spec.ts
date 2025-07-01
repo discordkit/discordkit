@@ -1,20 +1,20 @@
-import { waitFor } from "@testing-library/react";
+import * as v from "valibot";
 import { mockUtils } from "#mocks";
 import { runProcedure, runQuery } from "#test-utils";
-import { array, length, pipe } from "valibot";
+import { waitFor } from "@testing-library/dom";
+import { roleSchema } from "../../permissions/Role.js";
 import {
   getGuildRolesProcedure,
   getGuildRolesQuery,
   getGuildRolesSafe,
   getGuildRolesSchema
 } from "../getGuildRoles.js";
-import { roleSchema } from "../../permissions/Role.js";
 
 describe(`getGuildRoles`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.get(
     `/guilds/:guild/roles`,
     getGuildRolesSchema,
-    pipe(array(roleSchema), length(1))
+    v.pipe(v.array(roleSchema), v.length(1))
   );
 
   it(`can be used standalone`, async () => {

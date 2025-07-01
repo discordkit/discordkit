@@ -1,18 +1,19 @@
+import * as v from "valibot";
 import { snowflake } from "@discordkit/core";
-import { object, tuple, number, optional, type InferOutput } from "valibot";
 
-export const activityPartySchema = object({
+export const activityPartySchema = v.object({
   /** the id of the party */
   id: snowflake,
   /** (current_size, max_size)	used to show the party's current and maximum size */
-  size: optional(
-    tuple([
+  size: v.optional(
+    v.tuple([
       /** currentSize */
-      number(),
+      v.number(),
       /** maxSize */
-      number()
+      v.number()
     ])
   )
 });
 
-export type ActivityParty = InferOutput<typeof activityPartySchema>;
+export interface ActivityParty
+  extends v.InferOutput<typeof activityPartySchema> {}

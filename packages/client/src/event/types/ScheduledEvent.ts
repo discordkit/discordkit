@@ -1,22 +1,4 @@
-import {
-  type InferOutput,
-  object,
-  intersect,
-  string,
-  number,
-  nullish,
-  isoTimestamp,
-  integer,
-  minValue,
-  pipe,
-  nullable,
-  exactOptional,
-  variant,
-  literal,
-  null_,
-  nonEmpty,
-  maxLength
-} from "valibot";
+import * as v from "valibot";
 import { snowflake } from "@discordkit/core";
 import { userSchema } from "../../user/types/User.js";
 import { ScheduledEventEntityType } from "./ScheduledEventEntityType.js";
@@ -25,65 +7,65 @@ import { scheduledEventStatusSchema } from "./ScheduledEventStatus.js";
 import { entityMetadataSchema } from "./EntityMetadata.js";
 import { scheduledEventRecurrenceRuleSchema } from "./ScheduledEventRecurrenceRule.js";
 
-export const scheduledEventSchema = intersect([
-  object({
+export const scheduledEventSchema = v.intersect([
+  v.object({
     /** the id of the scheduled event */
     id: snowflake,
     /** the guild id which the scheduled event belongs to */
     guildId: snowflake,
     /** the id of the user that created the scheduled event */
-    creatorId: nullish(snowflake),
+    creatorId: v.nullish(snowflake),
     /** the name of the scheduled event (1-100 characters) */
-    name: pipe(string(), nonEmpty(), maxLength(100)),
+    name: v.pipe(v.string(), v.nonEmpty(), v.maxLength(100)),
     /** the description of the scheduled event (1-1000 characters) */
-    description: nullish(pipe(string(), nonEmpty(), maxLength(1000))),
+    description: v.nullish(v.pipe(v.string(), v.nonEmpty(), v.maxLength(1000))),
     /** the time the scheduled event will start */
-    scheduledStartTime: pipe(string(), isoTimestamp()),
+    scheduledStartTime: v.pipe(v.string(), v.isoTimestamp()),
     /** the time the scheduled event will end, required if entity_type is EXTERNAL */
-    scheduledEndTime: nullable(pipe(string(), isoTimestamp())),
+    scheduledEndTime: v.nullable(v.pipe(v.string(), v.isoTimestamp())),
     /** the privacy level of the scheduled event */
     privacyLevel: scheduledEventPrivacyLevelSchema,
     /** the status of the scheduled event */
     status: scheduledEventStatusSchema,
     /** the id of an entity associated with a guild scheduled event */
-    entityId: nullable(snowflake),
+    entityId: v.nullable(snowflake),
     /** the user that created the scheduled event */
-    creator: exactOptional(userSchema),
+    creator: v.exactOptional(userSchema),
     /** the number of users subscribed to the scheduled event */
-    userCount: exactOptional(pipe(number(), integer(), minValue(0))),
+    userCount: v.exactOptional(v.pipe(v.number(), v.integer(), v.minValue(0))),
     /** the cover image hash of the scheduled event */
-    image: nullish(pipe(string(), nonEmpty())),
+    image: v.nullish(v.pipe(v.string(), v.nonEmpty())),
     /** the definition for how often this event should recur */
-    recurrenceRule: nullable(scheduledEventRecurrenceRuleSchema)
+    recurrenceRule: v.nullable(scheduledEventRecurrenceRuleSchema)
   }),
-  variant(`entityType`, [
-    object({
+  v.variant(`entityType`, [
+    v.object({
       /** the type of the scheduled event */
-      entityType: literal(ScheduledEventEntityType.STAGE_INSTANCE),
+      entityType: v.literal(ScheduledEventEntityType.STAGE_INSTANCE),
       /** the channel id in which the scheduled event will be hosted, or null if scheduled entity type is EXTERNAL */
       channelId: snowflake,
       /** additional metadata for the guild scheduled event */
-      entityMetadata: null_()
+      entityMetadata: v.null_()
     }),
-    object({
+    v.object({
       /** the type of the scheduled event */
-      entityType: literal(ScheduledEventEntityType.VOICE),
+      entityType: v.literal(ScheduledEventEntityType.VOICE),
       /** the channel id in which the scheduled event will be hosted, or null if scheduled entity type is EXTERNAL */
       channelId: snowflake,
       /** additional metadata for the guild scheduled event */
-      entityMetadata: null_()
+      entityMetadata: v.null_()
     }),
-    object({
+    v.object({
       /** the type of the scheduled event */
-      entityType: literal(ScheduledEventEntityType.EXTERNAL),
+      entityType: v.literal(ScheduledEventEntityType.EXTERNAL),
       /** the channel id in which the scheduled event will be hosted, or null if scheduled entity type is EXTERNAL */
-      channelId: null_(),
+      channelId: v.null_(),
       /** the time the scheduled event will end, required if entity_type is EXTERNAL */
-      scheduledEndTime: pipe(string(), isoTimestamp()),
+      scheduledEndTime: v.pipe(v.string(), v.isoTimestamp()),
       /** additional metadata for the guild scheduled event */
       entityMetadata: entityMetadataSchema
     })
   ])
 ]);
 
-export type ScheduledEvent = InferOutput<typeof scheduledEventSchema>;
+export type ScheduledEvent = v.InferOutput<typeof scheduledEventSchema>;

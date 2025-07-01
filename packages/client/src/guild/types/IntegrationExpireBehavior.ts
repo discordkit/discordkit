@@ -1,8 +1,10 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 
 export enum IntegrationExpireBehavior {
   REMOVE_ROLE = 0,
   KICK = 1
 }
 
-export const integrationExpireBehaviorSchema = enum_(IntegrationExpireBehavior);
+export const integrationExpireBehaviorSchema = v.enum_(
+  IntegrationExpireBehavior
+);

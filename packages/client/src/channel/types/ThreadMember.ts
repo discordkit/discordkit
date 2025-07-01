@@ -1,27 +1,23 @@
-import {
-  object,
-  exactOptional,
-  string,
-  type InferOutput,
-  isoTimestamp,
-  pipe,
-  type GenericSchema
-} from "valibot";
+import * as v from "valibot";
 import { asInteger, snowflake } from "@discordkit/core";
 import { memberSchema } from "../../guild/types/Member.js";
 import { channelFlag } from "./ChannelFlags.js";
 
-export const threadMemberSchema = object({
+export const threadMemberSchema = v.object({
   /** the id of the thread */
-  id: exactOptional(snowflake),
+  id: v.exactOptional<v.GenericSchema<string>>(snowflake),
   /** the id of the user */
-  userId: exactOptional(snowflake),
+  userId: v.exactOptional<v.GenericSchema<string>>(snowflake),
   /** the time the current user last joined the thread */
-  joinTimestamp: pipe(string(), isoTimestamp()),
+  joinTimestamp: v.pipe(
+    v.string(),
+    v.isoTimestamp()
+  ) as v.GenericSchema<string>,
   /** any user-thread settings, currently only used for notifications */
-  flags: asInteger(channelFlag) as GenericSchema<number>,
+  flags: asInteger(channelFlag) as v.GenericSchema<number>,
   /** Additional information about the user */
-  member: exactOptional(memberSchema)
+  member: v.exactOptional(memberSchema)
 });
 
-export type ThreadMember = InferOutput<typeof threadMemberSchema>;
+export interface ThreadMember
+  extends v.InferOutput<typeof threadMemberSchema> {}

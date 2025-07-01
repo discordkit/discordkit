@@ -1,14 +1,4 @@
-import {
-  boolean,
-  integer,
-  maxValue,
-  minValue,
-  number,
-  object,
-  exactOptional,
-  partial,
-  pipe
-} from "valibot";
+import * as v from "valibot";
 import {
   post,
   type Fetcher,
@@ -19,19 +9,29 @@ import {
 import { type Invite, inviteSchema } from "../invite/types/Invite.js";
 import { inviteTargetSchema } from "../invite/types/InviteTarget.js";
 
-export const createChannelInviteSchema = object({
+export const createChannelInviteSchema = v.object({
   channel: snowflake,
-  body: exactOptional(
-    partial(
-      object({
+  body: v.exactOptional(
+    v.partial(
+      v.object({
         /** duration of invite in seconds before expiry, or 0 for never. between 0 and 604800 (7 days) (default: 86400 (24 hours)) */
-        maxAge: pipe(number(), integer(), minValue(0), maxValue(604800)),
+        maxAge: v.pipe(
+          v.number(),
+          v.integer(),
+          v.minValue(0),
+          v.maxValue(604800)
+        ),
         /** max number of uses or 0 for unlimited. between 0 and 100 (default: 0) */
-        maxUses: pipe(number(), integer(), minValue(0), maxValue(100)),
+        maxUses: v.pipe(
+          v.number(),
+          v.integer(),
+          v.minValue(0),
+          v.maxValue(100)
+        ),
         /** whether this invite only grants temporary membership (default: false) */
-        temporary: boolean(),
+        temporary: v.boolean(),
         /** if true, don't try to reuse a similar invite (useful for creating many unique one time use invites) (default: false) */
-        unique: boolean(),
+        unique: v.boolean(),
         /** the type of target for this voice channel invite */
         targetType: inviteTargetSchema,
         /** the id of the user whose stream to display for this invite, required if target_type is 1, the user must be streaming in the channel	 */

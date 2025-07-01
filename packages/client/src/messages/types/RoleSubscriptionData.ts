@@ -1,27 +1,20 @@
+import * as v from "valibot";
 import { snowflake } from "@discordkit/core";
-import type { InferOutput } from "valibot";
-import {
-  boolean,
-  integer,
-  minValue,
-  nonEmpty,
-  number,
-  object,
-  pipe,
-  string
-} from "valibot";
 
-export const roleSubscriptionDataSchema = object({
+export const roleSubscriptionDataSchema = v.object({
   /** the id of the sku and listing that the user is subscribed to */
-  roleSubscriptionListingId: snowflake,
+  roleSubscriptionListingId: snowflake as v.GenericSchema<string>,
   /** the name of the tier that the user is subscribed to */
-  tierName: pipe(string(), nonEmpty()),
+  tierName: v.pipe(v.string(), v.nonEmpty()) as v.GenericSchema<string>,
   /** the cumulative number of months that the user has been subscribed for */
-  totalMonthsSubscribed: pipe(number(), integer(), minValue(0)),
+  totalMonthsSubscribed: v.pipe(
+    v.number(),
+    v.integer(),
+    v.minValue(0)
+  ) as v.GenericSchema<number>,
   /** whether this notification is for a renewal rather than a new purchase */
-  isRenewal: boolean()
+  isRenewal: v.boolean()
 });
 
-export type RoleSubscriptionData = InferOutput<
-  typeof roleSubscriptionDataSchema
->;
+export interface RoleSubscriptionData
+  extends v.InferOutput<typeof roleSubscriptionDataSchema> {}

@@ -1,4 +1,4 @@
-import { intersect, literal, object } from "valibot";
+import * as v from "valibot";
 import {
   post,
   type Fetcher,
@@ -6,11 +6,10 @@ import {
   toValidated,
   snowflake
 } from "@discordkit/core";
-import { channelSchema, type Channel } from "../channel/types/Channel.js";
-import { ChannelType } from "../channel/types/ChannelType.js";
+import { directMessageChannelSchema } from "../channel/types/Channel.js";
 
-export const createDMSchema = object({
-  body: object({
+export const createDMSchema = v.object({
+  body: v.object({
     /** the recipient to open a DM channel with */
     recipientId: snowflake
   })
@@ -29,28 +28,18 @@ export const createDMSchema = object({
  */
 export const createDM: Fetcher<
   typeof createDMSchema,
-  Channel & { type: typeof ChannelType.DM }
+  v.InferOutput<typeof directMessageChannelSchema>
 > = async ({ body }) => post(`/users/@me/channels`, body);
 
 export const createDMSafe = toValidated(
   createDM,
   createDMSchema,
-  intersect([
-    channelSchema,
-    object({
-      type: literal(ChannelType.DM)
-    })
-  ])
+  directMessageChannelSchema
 );
 
 export const createDMProcedure = toProcedure(
   `mutation`,
   createDM,
   createDMSchema,
-  intersect([
-    channelSchema,
-    object({
-      type: literal(ChannelType.DM)
-    })
-  ])
+  directMessageChannelSchema
 );

@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 import { bitfield } from "@discordkit/core";
 
 export const RoleFlags = {
@@ -6,5 +6,5 @@ export const RoleFlags = {
   IN_PROMPT: 1 << 0
 } as const;
 
-export const roleFlagsSchema = enum_(RoleFlags);
+export const roleFlagsSchema = v.enum_(RoleFlags);
 export const roleFlag = bitfield(`roleFlag`, RoleFlags, `Invalid Role Flag`);

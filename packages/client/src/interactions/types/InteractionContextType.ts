@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 
 /**
  * Context in Discord where an interaction can be used, or where it was triggered from. Details about using interaction contexts for application commands is in the commands context documentation.
@@ -12,4 +12,4 @@ export const InteractionContextType = {
   PRIVATE_CHANNEL: 3
 } as const;
 
-export const interactionContextSchema = enum_(InteractionContextType);
+export const interactionContextSchema = v.enum_(InteractionContextType);

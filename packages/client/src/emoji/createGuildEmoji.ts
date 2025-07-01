@@ -1,4 +1,4 @@
-import { array, nonEmpty, object, pipe, string } from "valibot";
+import * as v from "valibot";
 import {
   post,
   type Fetcher,
@@ -9,15 +9,15 @@ import {
 } from "@discordkit/core";
 import { emojiSchema, type Emoji } from "./types/Emoji.js";
 
-export const createGuildEmojiSchema = object({
+export const createGuildEmojiSchema = v.object({
   guild: snowflake,
-  body: object({
+  body: v.object({
     /** name of the emoji */
-    name: pipe(string(), nonEmpty()),
+    name: v.pipe(v.string(), v.nonEmpty()),
     /** the 128x128 emoji image */
     image: datauri,
     /** roles allowed to use this emoji */
-    roles: array(snowflake)
+    roles: v.array(snowflake)
   })
 });
 

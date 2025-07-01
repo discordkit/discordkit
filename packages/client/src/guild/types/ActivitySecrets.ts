@@ -1,12 +1,13 @@
-import { type InferOutput, object, optional, string } from "valibot";
+import * as v from "valibot";
 
-export const activitySecretsSchema = object({
+export const activitySecretsSchema = v.object({
   /** the secret for joining a party */
-  join: optional(string()),
+  join: v.optional(v.string()),
   /** the secret for spectating a game */
-  spectate: optional(string()),
+  spectate: v.optional(v.string()),
   /** the secret for a specific instanced match */
-  match: optional(string())
+  match: v.optional(v.string())
 });
 
-export type ActivitySecrets = InferOutput<typeof activitySecretsSchema>;
+export interface ActivitySecrets
+  extends v.InferOutput<typeof activitySecretsSchema> {}

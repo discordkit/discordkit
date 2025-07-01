@@ -1,20 +1,13 @@
-import {
-  integer,
-  object,
-  pipe,
-  number,
-  minValue,
-  type InferOutput,
-  boolean
-} from "valibot";
+import * as v from "valibot";
 
-export const pollAnswerCountSchema = object({
+export const pollAnswerCountSchema = v.object({
   /** The answerId */
-  id: pipe(number(), integer(), minValue(0)),
+  id: v.pipe(v.number(), v.integer(), v.minValue(0)),
   /** The number of votes for this answer */
-  count: pipe(number(), integer(), minValue(0)),
+  count: v.pipe(v.number(), v.integer(), v.minValue(0)),
   /** Whether the current user voted for this answer */
-  meVoted: boolean()
+  meVoted: v.boolean()
 });
 
-export type PollAnswerCount = InferOutput<typeof pollAnswerCountSchema>;
+export interface PollAnswerCount
+  extends v.InferOutput<typeof pollAnswerCountSchema> {}

@@ -1,20 +1,4 @@
-import {
-  exactOptional,
-  maxEntries,
-  maxLength,
-  nullish,
-  array,
-  object,
-  pipe,
-  record,
-  string,
-  number,
-  minValue,
-  integer,
-  maxValue,
-  partial,
-  type GenericSchema
-} from "valibot";
+import * as v from "valibot";
 import {
   post,
   type Fetcher,
@@ -26,35 +10,37 @@ import {
 import { lobbySchema, type Lobby } from "./types/Lobby.js";
 import { lobbyMemberFlag } from "./types/LobbyMemberFlags.js";
 
-export const createLobbySchema = object({
-  body: partial(
-    object({
+export const createLobbySchema = v.object({
+  body: v.partial(
+    v.object({
       /** optional dictionary of string key/value pairs. The max total length is 1000. */
-      metadata: nullish(pipe(record(string(), string()), maxEntries(1000))),
+      metadata: v.nullish(
+        v.pipe(v.record(v.string(), v.string()), v.maxEntries(1000))
+      ),
       /** optional array of up to 25 users to be added to the lobby */
-      members: pipe(
-        array(
-          object({
+      members: v.pipe(
+        v.array(
+          v.object({
             /** Discord user id of the user to add to the lobby */
             id: snowflake,
             /** optional dictionary of string key/value pairs. The max total length is 1000. */
-            metadata: nullish(
-              pipe(record(string(), string()), maxEntries(1000))
+            metadata: v.nullish(
+              v.pipe(v.record(v.string(), v.string()), v.maxEntries(1000))
             ),
             /** lobby member flags combined as a bitfield */
-            flags: exactOptional(
-              asInteger(lobbyMemberFlag) as GenericSchema<number>
+            flags: v.exactOptional(
+              asInteger(lobbyMemberFlag) as v.GenericSchema<number>
             )
           })
         ),
-        maxLength(25)
+        v.maxLength(25)
       ),
       /** seconds to wait before shutting down a lobby after it becomes idle. Value can be between 5 and 604800 (7 days). See [`LobbyHandle`](https://discord.com/developers/docs/social-sdk/classdiscordpp_1_1LobbyHandle.html#a04cebab69ab0e7fb930346a14a87e843) for more details on this behavior. */
-      idleTimeoutSeconds: pipe(
-        number(),
-        integer(),
-        minValue(5),
-        maxValue(604800)
+      idleTimeoutSeconds: v.pipe(
+        v.number(),
+        v.integer(),
+        v.minValue(5),
+        v.maxValue(604800)
       )
     })
   )

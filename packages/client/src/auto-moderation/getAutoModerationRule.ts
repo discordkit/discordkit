@@ -1,4 +1,4 @@
-import { object } from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -12,7 +12,7 @@ import {
   type ModerationRule
 } from "./types/ModerationRule.js";
 
-export const getAutoModerationRuleSchema = object({
+export const getAutoModerationRuleSchema = v.object({
   guild: snowflake,
   rule: snowflake
 });

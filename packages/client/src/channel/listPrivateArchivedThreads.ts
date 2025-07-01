@@ -1,14 +1,4 @@
-import {
-  integer,
-  isoTimestamp,
-  minValue,
-  number,
-  object,
-  exactOptional,
-  partial,
-  pipe,
-  string
-} from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -22,15 +12,15 @@ import {
   type ArchivedThreads
 } from "./types/ArchivedThreads.js";
 
-export const listPrivateArchivedThreadsSchema = object({
+export const listPrivateArchivedThreadsSchema = v.object({
   channel: snowflake,
-  params: exactOptional(
-    partial(
-      object({
+  params: v.exactOptional(
+    v.partial(
+      v.object({
         /** returns threads before this timestamp */
-        before: pipe(string(), isoTimestamp()),
+        before: v.pipe(v.string(), v.isoTimestamp()),
         /** optional maximum number of threads to return */
-        limit: pipe(number(), integer(), minValue(0))
+        limit: v.pipe(v.number(), v.integer(), v.minValue(0))
       })
     )
   )

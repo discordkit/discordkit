@@ -1,15 +1,4 @@
-import {
-  array,
-  boolean,
-  integer,
-  maxValue,
-  minValue,
-  number,
-  object,
-  exactOptional,
-  partial,
-  pipe
-} from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -20,17 +9,17 @@ import {
 } from "@discordkit/core";
 import { threadMemberSchema, type ThreadMember } from "./types/ThreadMember.js";
 
-export const listThreadMembersSchema = object({
+export const listThreadMembersSchema = v.object({
   channel: snowflake,
-  params: exactOptional(
-    partial(
-      object({
+  params: v.exactOptional(
+    v.partial(
+      v.object({
         /** Whether to include a guild member object for each thread member */
-        withMember: boolean(),
+        withMember: v.boolean(),
         /** Get thread members after this user ID */
         after: snowflake,
         /** Max number of thread members to return (1-100). Defaults to 100. */
-        limit: pipe(number(), integer(), minValue(1), maxValue(100))
+        limit: v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(100))
       })
     )
   )
@@ -62,14 +51,14 @@ export const listThreadMembers: Fetcher<
 export const listThreadMembersSafe = toValidated(
   listThreadMembers,
   listThreadMembersSchema,
-  array(threadMemberSchema)
+  v.array(threadMemberSchema)
 );
 
 export const listThreadMembersProcedure = toProcedure(
   `query`,
   listThreadMembers,
   listThreadMembersSchema,
-  array(threadMemberSchema)
+  v.array(threadMemberSchema)
 );
 
 export const listThreadMembersQuery = toQuery(listThreadMembers);

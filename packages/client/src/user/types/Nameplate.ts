@@ -1,19 +1,18 @@
+import * as v from "valibot";
 import { snowflake } from "@discordkit/core";
-import type { InferOutput } from "valibot";
-import { nonEmpty, object, picklist, pipe, string, url } from "valibot";
 
 /**
  * The nameplate the user has.
  */
-export const nameplateSchema = object({
+export const nameplateSchema = v.object({
   /** id of the nameplate SKU */
   skuId: snowflake,
   /** path to the nameplate asset */
-  asset: pipe(string(), url()),
+  asset: v.pipe(v.string(), v.url()),
   /** the label of this nameplate. Currently unused */
-  label: pipe(string(), nonEmpty()),
+  label: v.pipe(v.string(), v.nonEmpty()),
   /** background color of the nameplate */
-  palette: picklist([
+  palette: v.picklist([
     `crimson`,
     `berry`,
     `sky`,
@@ -28,4 +27,4 @@ export const nameplateSchema = object({
   ])
 });
 
-export type Nameplate = InferOutput<typeof nameplateSchema>;
+export interface Nameplate extends v.InferOutput<typeof nameplateSchema> {}

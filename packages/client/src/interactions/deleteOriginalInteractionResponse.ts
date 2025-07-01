@@ -1,11 +1,4 @@
-import {
-  nonEmpty,
-  object,
-  exactOptional,
-  partial,
-  pipe,
-  string
-} from "valibot";
+import * as v from "valibot";
 import {
   remove,
   buildURL,
@@ -15,12 +8,12 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const deleteOriginalInteractionResponseSchema = object({
+export const deleteOriginalInteractionResponseSchema = v.object({
   application: snowflake,
-  token: pipe(string(), nonEmpty()),
-  params: exactOptional(
-    partial(
-      object({
+  token: v.pipe(v.string(), v.nonEmpty()),
+  params: v.exactOptional(
+    v.partial(
+      v.object({
         /** id of the thread the message is in */
         threadId: snowflake
       })

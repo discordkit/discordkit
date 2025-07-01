@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 
 export enum ModerationActionType {
   /** blocks the content of a message according to the rule */
@@ -11,4 +11,4 @@ export enum ModerationActionType {
   BLOCK_MEMBER_INTERACTION = 4
 }
 
-export const moderationActionTypeSchema = enum_(ModerationActionType);
+export const moderationActionTypeSchema = v.enum_(ModerationActionType);

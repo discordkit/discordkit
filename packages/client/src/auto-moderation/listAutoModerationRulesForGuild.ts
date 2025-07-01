@@ -1,4 +1,4 @@
-import { object, array } from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -12,7 +12,7 @@ import {
   type ModerationRule
 } from "./types/ModerationRule.js";
 
-export const listAutoModerationRulesForGuildSchema = object({
+export const listAutoModerationRulesForGuildSchema = v.object({
   guild: snowflake
 });
 
@@ -35,14 +35,14 @@ export const listAutoModerationRulesForGuild: Fetcher<
 export const listAutoModerationRulesForGuildSafe = toValidated(
   listAutoModerationRulesForGuild,
   listAutoModerationRulesForGuildSchema,
-  array(moderationRuleSchema)
+  v.array(moderationRuleSchema)
 );
 
 export const listAutoModerationRulesForGuildProcedure = toProcedure(
   `query`,
   listAutoModerationRulesForGuild,
   listAutoModerationRulesForGuildSchema,
-  array(moderationRuleSchema)
+  v.array(moderationRuleSchema)
 );
 
 export const listAutoModerationRulesForGuildQuery = toQuery(

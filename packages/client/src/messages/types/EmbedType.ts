@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 
 export enum EmbedType {
   /** generic embed rendered from embed attributes */
@@ -17,4 +17,4 @@ export enum EmbedType {
   POLL_RESULT = `poll_result`
 }
 
-export const embedTypeSchema = enum_(EmbedType);
+export const embedTypeSchema = v.enum_(EmbedType);

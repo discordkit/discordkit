@@ -1,20 +1,20 @@
-import { waitFor } from "@testing-library/react";
+import * as v from "valibot";
 import { mockUtils } from "#mocks";
 import { runProcedure, runQuery } from "#test-utils";
-import { pipe, array, length } from "valibot";
+import { waitFor } from "@testing-library/dom";
+import { soundboardSoundSchema } from "../types/SoundboardSound.js";
 import {
   listGuildSoundboardSoundsProcedure,
   listGuildSoundboardSoundsQuery,
   listGuildSoundboardSoundsSafe,
   listGuildSoundboardSoundsSchema
 } from "../listGuildSoundboardSounds.js";
-import { soundboardSoundSchema } from "../types/SoundboardSound.js";
 
 describe(`listGuildSoundboardSounds`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.get(
     `/guilds/:guild/soundboard-sounds`,
     listGuildSoundboardSoundsSchema,
-    pipe(array(soundboardSoundSchema), length(1))
+    v.pipe(v.array(soundboardSoundSchema), v.length(1))
   );
 
   it(`can be used standalone`, async () => {

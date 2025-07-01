@@ -1,20 +1,20 @@
-import { waitFor } from "@testing-library/react";
+import * as v from "valibot";
 import { mockUtils } from "#mocks";
 import { runProcedure, runQuery } from "#test-utils";
-import { partial } from "valibot";
+import { waitFor } from "@testing-library/dom";
+import { inviteSchema } from "../../invite/types/Invite.js";
 import {
   getGuildVanityURLProcedure,
   getGuildVanityURLQuery,
   getGuildVanityURLSafe,
   getGuildVanityURLSchema
 } from "../getGuildVanityURL.js";
-import { inviteSchema } from "../../invite/types/Invite.js";
 
 describe(`getGuildVanityURL`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.get(
     `/guilds/:guild/vanity-url`,
     getGuildVanityURLSchema,
-    partial(inviteSchema)
+    v.partial(inviteSchema)
   );
 
   it(`can be used standalone`, async () => {

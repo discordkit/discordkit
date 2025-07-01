@@ -1,17 +1,4 @@
-import {
-  boolean,
-  exactOptional,
-  integer,
-  maxLength,
-  maxValue,
-  minLength,
-  minValue,
-  nullish,
-  number,
-  object,
-  pipe,
-  string
-} from "valibot";
+import * as v from "valibot";
 import {
   toProcedure,
   post,
@@ -23,20 +10,20 @@ import { type Channel, channelSchema } from "./types/Channel.js";
 import { autoArchiveDurationSchema } from "./types/AutoArchiveDuration.js";
 import { channelTypeSchema } from "./types/ChannelType.js";
 
-export const startThreadWithoutMessageSchema = object({
+export const startThreadWithoutMessageSchema = v.object({
   channel: snowflake,
-  body: object({
+  body: v.object({
     /** 1-100 character channel name */
-    name: pipe(string(), minLength(1), maxLength(100)),
+    name: v.pipe(v.string(), v.minLength(1), v.maxLength(100)),
     /** duration in minutes to automatically archive the thread after recent activity, can be set to: 60, 1440, 4320, 10080 */
-    autoArchiveDuration: exactOptional(autoArchiveDurationSchema),
+    autoArchiveDuration: v.exactOptional(autoArchiveDurationSchema),
     /** the type of thread to create */
-    type: exactOptional(channelTypeSchema),
+    type: v.exactOptional(channelTypeSchema),
     /** whether non-moderators can add other non-moderators to a thread; only available when creating a private thread */
-    invitable: exactOptional(boolean()),
+    invitable: v.exactOptional(v.boolean()),
     /** amount of seconds a user has to wait before sending another message (0-21600) */
-    rateLimitPerUser: nullish(
-      pipe(number(), integer(), minValue(0), maxValue(21600))
+    rateLimitPerUser: v.nullish(
+      v.pipe(v.number(), v.integer(), v.minValue(0), v.maxValue(21600))
     )
   })
 });

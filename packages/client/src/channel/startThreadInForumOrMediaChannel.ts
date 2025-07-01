@@ -1,19 +1,4 @@
-import type { GenericSchema, InferOutput } from "valibot";
-import {
-  array,
-  exactOptional,
-  integer,
-  maxLength,
-  maxValue,
-  minLength,
-  minValue,
-  number,
-  object,
-  partial,
-  pipe,
-  string,
-  unknown
-} from "valibot";
+import * as v from "valibot";
 import {
   post,
   type Fetcher,
@@ -31,53 +16,52 @@ import { messageComponentSchema } from "../messages/types/MessageComponent.js";
 import { messageSchema } from "../messages/types/Message.js";
 import { messageFlag } from "../messages/index.js";
 
-export const startThreadInForumOrMediaChannelSchema = object({
+export const startThreadInForumOrMediaChannelSchema = v.object({
   channel: snowflake,
-  body: object({
+  body: v.object({
     /** 1-100 character channel name */
-    name: pipe(string(), minLength(1), maxLength(100)),
+    name: v.pipe(v.string(), v.minLength(1), v.maxLength(100)),
     /** duration in minutes to automatically archive the thread after recent activity, can be set to: 60, 1440, 4320, 10080 */
-    autoArchiveDuration: exactOptional(autoArchiveDurationSchema),
+    autoArchiveDuration: v.exactOptional(autoArchiveDurationSchema),
     /** amount of seconds a user has to wait before sending another message (0-21600) */
-    rateLimitPerUser: exactOptional(
-      pipe(number(), integer(), minValue(0), maxValue(21600))
+    rateLimitPerUser: v.exactOptional(
+      v.pipe(v.number(), v.integer(), v.minValue(0), v.maxValue(21600))
     ),
     /** contents of the first message in the forum thread */
-    message: partial(
-      object({
+    message: v.partial(
+      v.object({
         /** Message contents (up to 2000 characters) */
-        content: pipe(string(), minLength(1), maxLength(2000)),
+        content: v.pipe(v.string(), v.minLength(1), v.maxLength(2000)),
         /** Embedded rich content (up to 6000 characters) */
-        embeds: array(embedSchema),
+        embeds: v.array(embedSchema),
         /** Allowed mentions for the message */
         allowedMentions: allowedMentionSchema,
         /** Components to include with the message */
         components: messageComponentSchema,
         /** IDs of up to 3 stickers in the server to send in the message */
-        stickerIds: pipe(array(string()), maxLength(3)),
+        stickerIds: v.pipe(v.array(v.string()), v.maxLength(3)),
         /** Attachment objects with filename and description. See Uploading Files */
-        attachments: array(partial(attachmentSchema)),
+        attachments: v.array(v.partial(attachmentSchema)),
         /** Message flags combined as a bitfield (only `SUPPRESS_EMBEDS` and `SUPPRESS_NOTIFICATIONS` can be set) */
-        flags: asInteger(messageFlag) as GenericSchema<number>
+        flags: asInteger(messageFlag) as v.GenericSchema<number>
       })
     ),
     /** the IDs of the set of tags that have been applied to a thread in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */
-    appliedTags: exactOptional(array(snowflake)),
+    appliedTags: v.exactOptional(v.array(snowflake)),
     /** 	Contents of the file being sent. See Uploading Files */
-    files: exactOptional(unknown()),
+    files: v.exactOptional(v.unknown()),
     /** JSON-encoded body of non-file params, only for `multipart/form-data` requests. See Uploading Files */
-    payloadJson: exactOptional(unknown())
+    payloadJson: v.exactOptional(v.unknown())
   })
 });
 
-export const threadInForumOrMediaChannelResponseSchema = object({
+export const threadInForumOrMediaChannelResponseSchema = v.object({
   ...threadChannelSchema.entries,
   message: messageSchema
 });
 
-export type ThreadInForumOrMediaChannelResponse = InferOutput<
-  typeof threadInForumOrMediaChannelResponseSchema
->;
+export interface ThreadInForumOrMediaChannelResponse
+  extends v.InferOutput<typeof threadInForumOrMediaChannelResponseSchema> {}
 
 /**
  * ### [Start Thread in Forum or Media Channel](https://discord.com/developers/docs/resources/channel#start-thread-in-forum-or-media-channel)

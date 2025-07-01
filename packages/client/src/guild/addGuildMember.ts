@@ -1,12 +1,4 @@
-import {
-  array,
-  boolean,
-  nonEmpty,
-  object,
-  exactOptional,
-  pipe,
-  string
-} from "valibot";
+import * as v from "valibot";
 import {
   put,
   type Fetcher,
@@ -16,20 +8,20 @@ import {
 } from "@discordkit/core";
 import { memberSchema, type Member } from "./types/Member.js";
 
-export const addGuildMemberSchema = object({
+export const addGuildMemberSchema = v.object({
   guild: snowflake,
   user: snowflake,
-  body: object({
+  body: v.object({
     /** an oauth2 access token granted with the `guilds.join` to the bot's application for the user you want to add to the guild */
-    accessToken: pipe(string(), nonEmpty()),
+    accessToken: v.pipe(v.string(), v.nonEmpty()),
     /** value to set user's nickname to	(Requires `MANAGE_NICKNAMES` permission) */
-    nick: exactOptional(pipe(string(), nonEmpty())),
+    nick: v.exactOptional(v.pipe(v.string(), v.nonEmpty())),
     /** array of role ids the member is assigned (Requires `MANAGE_ROLES` permission) */
-    roles: exactOptional(array(snowflake)),
+    roles: v.exactOptional(v.array(snowflake)),
     /** whether the user is muted in voice channels (Requires `MUTE_MEMBERS` permission) */
-    mute: exactOptional(boolean()),
+    mute: v.exactOptional(v.boolean()),
     /** whether the user is deafened in voice channels (Requires `DEAFEN_MEMBERS` permission) */
-    deaf: exactOptional(boolean())
+    deaf: v.exactOptional(v.boolean())
   })
 });
 

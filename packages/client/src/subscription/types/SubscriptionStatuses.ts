@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 
 /**
  * Subscriptions can start and change between any of these statuses within the current period. A subscription can be `ACTIVE` outside its current period or `INACTIVE` within its current period.
@@ -21,4 +21,4 @@ export const SubscriptionStatuses = {
   INACTIVE: 2
 } as const;
 
-export const subscriptionStatusSchema = enum_(SubscriptionStatuses);
+export const subscriptionStatusSchema = v.enum_(SubscriptionStatuses);

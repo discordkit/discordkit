@@ -1,31 +1,21 @@
-import {
-  intersect,
-  object,
-  number,
-  integer,
-  minValue,
-  boolean,
-  string,
-  type InferOutput,
-  pipe,
-  isoTimestamp
-} from "valibot";
+import * as v from "valibot";
 import { inviteSchema } from "./Invite.js";
 
-export const inviteMetadataSchema = intersect([
+export const inviteMetadataSchema = v.intersect([
   inviteSchema,
-  object({
+  v.object({
     /** number of times this invite has been used */
-    uses: pipe(number(), integer(), minValue(0)),
+    uses: v.pipe(v.number(), v.integer(), v.minValue(0)),
     /** max number of times this invite can be used */
-    maxUses: pipe(number(), integer(), minValue(0)),
+    maxUses: v.pipe(v.number(), v.integer(), v.minValue(0)),
     /** duration (in seconds) after which the invite expires */
-    maxAge: pipe(number(), integer(), minValue(0)),
+    maxAge: v.pipe(v.number(), v.integer(), v.minValue(0)),
     /** whether this invite only grants temporary membership */
-    temporary: boolean(),
+    temporary: v.boolean(),
     /** when this invite was created */
-    createdAt: pipe(string(), isoTimestamp())
+    createdAt: v.pipe(v.string(), v.isoTimestamp())
   })
 ]);
 
-export type InviteMetadata = InferOutput<typeof inviteMetadataSchema>;
+export interface InviteMetadata
+  extends v.InferOutput<typeof inviteMetadataSchema> {}

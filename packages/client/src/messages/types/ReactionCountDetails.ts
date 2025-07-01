@@ -1,19 +1,19 @@
-import {
-  type InferOutput,
-  integer,
-  minValue,
-  number,
-  object,
-  pipe
-} from "valibot";
+import * as v from "valibot";
 
-export const reactionCountDetailsSchema = object({
+export const reactionCountDetailsSchema = v.object({
   /** Count of super reactions */
-  burst: pipe(number(), integer(), minValue(0)),
+  burst: v.pipe(
+    v.number(),
+    v.integer(),
+    v.minValue(0)
+  ) as v.GenericSchema<number>,
   /** Count of normal reactions */
-  normal: pipe(number(), integer(), minValue(0))
+  normal: v.pipe(
+    v.number(),
+    v.integer(),
+    v.minValue(0)
+  ) as v.GenericSchema<number>
 });
 
-export type ReactionCountDetails = InferOutput<
-  typeof reactionCountDetailsSchema
->;
+export interface ReactionCountDetails
+  extends v.InferOutput<typeof reactionCountDetailsSchema> {}

@@ -1,4 +1,4 @@
-import { array, object } from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -12,7 +12,7 @@ import {
   applicationRoleConnectionMetadataSchema
 } from "./types/ApplicationRoleConnectionMetadata.js";
 
-export const getApplicationRoleConnectionMetadataRecordsSchema = object({
+export const getApplicationRoleConnectionMetadataRecordsSchema = v.object({
   application: snowflake
 });
 
@@ -32,14 +32,14 @@ export const getApplicationRoleConnectionMetadataRecords: Fetcher<
 export const getApplicationRoleConnectionMetadataRecordsSafe = toValidated(
   getApplicationRoleConnectionMetadataRecords,
   getApplicationRoleConnectionMetadataRecordsSchema,
-  array(applicationRoleConnectionMetadataSchema)
+  v.array(applicationRoleConnectionMetadataSchema)
 );
 
 export const getApplicationRoleConnectionMetadataRecordsProcedure = toProcedure(
   `query`,
   getApplicationRoleConnectionMetadataRecords,
   getApplicationRoleConnectionMetadataRecordsSchema,
-  array(applicationRoleConnectionMetadataSchema)
+  v.array(applicationRoleConnectionMetadataSchema)
 );
 
 export const getApplicationRoleConnectionMetadataRecordsQuery = toQuery(

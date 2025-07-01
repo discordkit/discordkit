@@ -1,4 +1,4 @@
-import { object } from "valibot";
+import * as v from "valibot";
 import {
   put,
   type Fetcher,
@@ -7,7 +7,7 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const joinThreadSchema = object({
+export const joinThreadSchema = v.object({
   channel: snowflake
 });
 

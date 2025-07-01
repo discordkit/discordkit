@@ -7,13 +7,13 @@ import {
   startThreadFromMessageSafe,
   startThreadFromMessageSchema
 } from "../startThreadFromMessage.js";
-import { channelSchema } from "../types/Channel.js";
+import { threadChannelSchema } from "../types/Channel.js";
 
 describe(`startThreadFromMessage`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.post(
     `/channels/:channel/messages/:message/threads`,
     startThreadFromMessageSchema,
-    channelSchema
+    threadChannelSchema
   );
 
   it(`can be used standalone`, async () => {

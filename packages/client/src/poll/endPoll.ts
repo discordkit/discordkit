@@ -1,4 +1,4 @@
-import { object } from "valibot";
+import * as v from "valibot";
 import {
   post,
   type Fetcher,
@@ -7,7 +7,7 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const endPollSchema = object({
+export const endPollSchema = v.object({
   channel: snowflake,
   message: snowflake
 });

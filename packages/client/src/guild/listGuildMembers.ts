@@ -1,14 +1,4 @@
-import {
-  array,
-  integer,
-  maxValue,
-  minValue,
-  number,
-  object,
-  exactOptional,
-  partial,
-  pipe
-} from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -19,13 +9,13 @@ import {
 } from "@discordkit/core";
 import { memberSchema, type Member } from "./types/Member.js";
 
-export const listGuildMembersSchema = object({
+export const listGuildMembersSchema = v.object({
   guild: snowflake,
-  params: exactOptional(
-    partial(
-      object({
+  params: v.exactOptional(
+    v.partial(
+      v.object({
         /** max number of members to return (1-1000) */
-        limit: pipe(number(), integer(), minValue(1), maxValue(1000)),
+        limit: v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(1000)),
         /** the highest user id in the previous page */
         after: snowflake
       })
@@ -56,14 +46,14 @@ export const listGuildMembers: Fetcher<
 export const listGuildMembersSafe = toValidated(
   listGuildMembers,
   listGuildMembersSchema,
-  array(memberSchema)
+  v.array(memberSchema)
 );
 
 export const listGuildMembersProcedure = toProcedure(
   `query`,
   listGuildMembers,
   listGuildMembersSchema,
-  array(memberSchema)
+  v.array(memberSchema)
 );
 
 export const listGuildMembersQuery = toQuery(listGuildMembers);

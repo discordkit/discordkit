@@ -1,4 +1,4 @@
-import { object } from "valibot";
+import * as v from "valibot";
 import {
   post,
   type Fetcher,
@@ -11,9 +11,9 @@ import {
   type FollowedChannel
 } from "./types/FollowedChannel.js";
 
-export const followAnnouncementChannelSchema = object({
+export const followAnnouncementChannelSchema = v.object({
   channel: snowflake,
-  body: object({
+  body: v.object({
     /** id of target channel */
     webhookChannelId: snowflake
   })

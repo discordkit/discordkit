@@ -1,28 +1,25 @@
-import {
-  object,
-  boolean,
-  string,
-  isoTimestamp,
-  exactOptional,
-  nullish,
-  type InferOutput,
-  pipe
-} from "valibot";
+import * as v from "valibot";
 import { autoArchiveDurationSchema } from "./AutoArchiveDuration.js";
 
-export const threadMetadataSchema = object({
+export const threadMetadataSchema = v.object({
   /** whether the thread is archived */
-  archived: boolean(),
+  archived: v.boolean(),
   /** duration in minutes to automatically archive the thread after recent activity, can be set to: 60, 1440, 4320, 10080 */
   autoArchiveDuration: autoArchiveDurationSchema,
   /** timestamp when the thread's archive status was last changed, used for calculating recent activity */
-  archiveTimestamp: pipe(string(), isoTimestamp()),
+  archiveTimestamp: v.pipe(
+    v.string(),
+    v.isoTimestamp()
+  ) as v.GenericSchema<string>,
   /** whether the thread is locked; when a thread is locked, only users with MANAGE_THREADS can unarchive it */
-  locked: boolean(),
+  locked: v.boolean(),
   /** whether non-moderators can add other non-moderators to a thread; only available on private threads */
-  invitable: exactOptional(boolean()),
+  invitable: v.exactOptional(v.boolean()),
   /** timestamp when the thread was created; only populated for threads created after 2022-01-09 */
-  createTimestamp: nullish(pipe(string(), isoTimestamp()))
+  createTimestamp: v.nullish<v.GenericSchema<string>>(
+    v.pipe(v.string(), v.isoTimestamp())
+  )
 });
 
-export type ThreadMetadata = InferOutput<typeof threadMetadataSchema>;
+export interface ThreadMetadata
+  extends v.InferOutput<typeof threadMetadataSchema> {}

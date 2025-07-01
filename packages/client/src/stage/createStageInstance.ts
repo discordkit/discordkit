@@ -1,12 +1,4 @@
-import {
-  boolean,
-  maxLength,
-  minLength,
-  exactOptional,
-  object,
-  string,
-  pipe
-} from "valibot";
+import * as v from "valibot";
 import {
   post,
   type Fetcher,
@@ -17,16 +9,16 @@ import {
 import { type Stage, stageSchema } from "./types/Stage.js";
 import { stagePrivacyLevelSchema } from "./types/StagePrivacyLevel.js";
 
-export const createStageInstanceSchema = object({
-  body: object({
+export const createStageInstanceSchema = v.object({
+  body: v.object({
     /** The id of the Stage channel */
     channelId: snowflake,
     /** The topic of the Stage instance (1-120 characters) */
-    topic: pipe(string(), minLength(1), maxLength(120)),
+    topic: v.pipe(v.string(), v.minLength(1), v.maxLength(120)),
     /** The privacy level of the Stage instance (default GUILD_ONLY) */
-    privacyLevel: exactOptional(stagePrivacyLevelSchema),
+    privacyLevel: v.exactOptional(stagePrivacyLevelSchema),
     /** Notify @everyone that a Stage instance has started */
-    sendStartNotification: exactOptional(boolean())
+    sendStartNotification: v.exactOptional(v.boolean())
   })
 });
 

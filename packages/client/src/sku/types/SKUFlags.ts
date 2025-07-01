@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/prefer-literal-enum-member */
-import { enum_ } from "valibot";
+import * as v from "valibot";
 import { bitfield } from "@discordkit/core";
 
 /**
@@ -19,5 +19,5 @@ export enum SKUFlags {
   USER_SUBSCRIPTION = 1 << 8
 }
 
-export const skuFlagsSchema = enum_(SKUFlags);
+export const skuFlagsSchema = v.enum_(SKUFlags);
 export const skuFlag = bitfield(`skuFlag`, SKUFlags);

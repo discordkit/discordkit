@@ -1,13 +1,4 @@
-import {
-  boolean,
-  exactOptional,
-  nonEmpty,
-  object,
-  partial,
-  pipe,
-  string,
-  undefinedable
-} from "valibot";
+import * as v from "valibot";
 import {
   post,
   type Fetcher,
@@ -18,15 +9,15 @@ import {
 import type { InteractionCallbackResponse } from "./types/InteractionCallbackResponse.js";
 import { interactionCallbackResponseSchema } from "./types/InteractionCallbackResponse.js";
 
-export const createInteractionResponseSchema = object({
+export const createInteractionResponseSchema = v.object({
   interaction: snowflake,
-  token: pipe(string(), nonEmpty()),
+  token: v.pipe(v.string(), v.nonEmpty()),
   body: interactionCallbackResponseSchema,
-  params: exactOptional(
-    partial(
-      object({
+  params: v.exactOptional(
+    v.partial(
+      v.object({
         /** Whether to include an interaction callback object as the response */
-        withResponse: boolean()
+        withResponse: v.boolean()
       })
     )
   )
@@ -50,12 +41,12 @@ export const createInteractionResponse: Fetcher<
 export const createInteractionResponseSafe = toValidated(
   createInteractionResponse,
   createInteractionResponseSchema,
-  undefinedable(interactionCallbackResponseSchema)
+  v.undefinedable(interactionCallbackResponseSchema)
 );
 
 export const createInteractionResponseProcedure = toProcedure(
   `mutation`,
   createInteractionResponse,
   createInteractionResponseSchema,
-  undefinedable(interactionCallbackResponseSchema)
+  v.undefinedable(interactionCallbackResponseSchema)
 );

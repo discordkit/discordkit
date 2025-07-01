@@ -1,14 +1,14 @@
-import { nonEmpty, object, pipe, string, type InferOutput } from "valibot";
+import * as v from "valibot";
 import { snowflake } from "@discordkit/core";
 import { stickerFormatTypeSchema } from "./StickerFormatType.js";
 
-export const stickerItemSchema = object({
+export const stickerItemSchema = v.object({
   /** id of the sticker */
   id: snowflake,
   /** name of the sticker */
-  name: pipe(string(), nonEmpty()),
+  name: v.pipe(v.string(), v.nonEmpty()),
   /** type of sticker format */
   formatType: stickerFormatTypeSchema
 });
 
-export type StickerItem = InferOutput<typeof stickerItemSchema>;
+export interface StickerItem extends v.InferOutput<typeof stickerItemSchema> {}

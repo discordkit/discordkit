@@ -1,18 +1,4 @@
-import {
-  type InferOutput,
-  array,
-  boolean,
-  integer,
-  maxValue,
-  nonEmpty,
-  minValue,
-  nullable,
-  number,
-  object,
-  string,
-  pipe,
-  exactOptional
-} from "valibot";
+import * as v from "valibot";
 import {
   post,
   type Fetcher,
@@ -21,22 +7,22 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const beginGuildPruneSchema = object({
+export const beginGuildPruneSchema = v.object({
   guild: snowflake,
-  body: object({
+  body: v.object({
     /** number of days to prune (1-30) */
-    days: pipe(number(), minValue(1), maxValue(30)),
+    days: v.pipe(v.number(), v.minValue(1), v.maxValue(30)),
     /** whether pruned is returned, discouraged for large guilds */
-    computePruneCount: boolean(),
+    computePruneCount: v.boolean(),
     /** role(s) to include */
-    includeRoles: array(snowflake),
+    includeRoles: v.array(snowflake),
     /** @deprecated reason for the prune */
-    reason: exactOptional(pipe(string(), nonEmpty()))
+    reason: v.exactOptional(v.pipe(v.string(), v.nonEmpty()))
   })
 });
 
-export const guildPruneResultSchema = object({
-  pruned: nullable(pipe(number(), integer(), minValue(0)))
+export const guildPruneResultSchema = v.object({
+  pruned: v.nullable(v.pipe(v.number(), v.integer(), v.minValue(0)))
 });
 
 /**
@@ -54,7 +40,7 @@ export const guildPruneResultSchema = object({
  */
 export const beginGuildPrune: Fetcher<
   typeof beginGuildPruneSchema,
-  InferOutput<typeof guildPruneResultSchema>
+  v.InferOutput<typeof guildPruneResultSchema>
 > = async ({ guild, body }) => post(`/guilds/${guild}/prune`, body);
 
 export const beginGuildPruneSafe = toValidated(

@@ -1,4 +1,4 @@
-import { object } from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -9,7 +9,7 @@ import {
 } from "@discordkit/core";
 import { stickerSchema, type Sticker } from "./types/Sticker.js";
 
-export const getGuildStickerSchema = object({
+export const getGuildStickerSchema = v.object({
   guild: snowflake,
   sticker: snowflake
 });

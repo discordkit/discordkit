@@ -1,14 +1,4 @@
-import {
-  array,
-  boolean,
-  maxLength,
-  nonEmpty,
-  exactOptional,
-  object,
-  partial,
-  pipe,
-  string
-} from "valibot";
+import * as v from "valibot";
 import {
   patch,
   type Fetcher,
@@ -24,25 +14,25 @@ import { moderationEventSchema } from "./types/ModerationEvent.js";
 import { triggerMetaSchema } from "./types/TriggerMeta.js";
 import { moderationActionSchema } from "./types/ModerationAction.js";
 
-export const modifyAutoModerationRuleSchema = object({
+export const modifyAutoModerationRuleSchema = v.object({
   guild: snowflake,
   rule: snowflake,
-  body: partial(
-    object({
+  body: v.partial(
+    v.object({
       /** the rule name */
-      name: pipe(string(), nonEmpty()),
+      name: v.pipe(v.string(), v.nonEmpty()),
       /** the event type */
       eventType: moderationEventSchema,
       /** the trigger metadata */
-      triggerMetadata: exactOptional(triggerMetaSchema),
+      triggerMetadata: v.exactOptional(triggerMetaSchema),
       /** the actions which will execute when the rule is triggered */
-      actions: array(moderationActionSchema),
+      actions: v.array(moderationActionSchema),
       /** whether the rule is enabled (False by default) */
-      enabled: boolean(),
+      enabled: v.boolean(),
       /** the role ids that should not be affected by the rule (Maximum of 20) */
-      exemptRoles: pipe(array(snowflake), maxLength(20)),
+      exemptRoles: v.pipe(v.array(snowflake), v.maxLength(20)),
       /** the channel ids that should not be affected by the rule (Maximum of 50) */
-      exemptChannels: pipe(array(snowflake), maxLength(50))
+      exemptChannels: v.pipe(v.array(snowflake), v.maxLength(50))
     })
   )
 });

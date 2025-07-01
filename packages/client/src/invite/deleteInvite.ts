@@ -1,4 +1,4 @@
-import { object, string, pipe, nonEmpty } from "valibot";
+import * as v from "valibot";
 import {
   remove,
   type Fetcher,
@@ -7,8 +7,8 @@ import {
 } from "@discordkit/core";
 import { inviteSchema, type Invite } from "./types/Invite.js";
 
-export const deleteInviteSchema = object({
-  code: pipe(string(), nonEmpty())
+export const deleteInviteSchema = v.object({
+  code: v.pipe(v.string(), v.nonEmpty())
 });
 
 /**

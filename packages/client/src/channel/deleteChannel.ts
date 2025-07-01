@@ -1,4 +1,4 @@
-import { object } from "valibot";
+import * as v from "valibot";
 import {
   remove,
   type Fetcher,
@@ -8,7 +8,7 @@ import {
 } from "@discordkit/core";
 import { type Channel, channelSchema } from "./types/Channel.js";
 
-export const deleteChannelSchema = object({
+export const deleteChannelSchema = v.object({
   channel: snowflake
 });
 

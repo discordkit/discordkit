@@ -1,4 +1,4 @@
-import { array, object } from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -9,7 +9,7 @@ import {
 } from "@discordkit/core";
 import { roleSchema, type Role } from "../permissions/Role.js";
 
-export const getGuildRolesSchema = object({
+export const getGuildRolesSchema = v.object({
   guild: snowflake
 });
 
@@ -28,14 +28,14 @@ export const getGuildRoles: Fetcher<
 export const getGuildRolesSafe = toValidated(
   getGuildRoles,
   getGuildRolesSchema,
-  array(roleSchema)
+  v.array(roleSchema)
 );
 
 export const getGuildRolesProcedure = toProcedure(
   `query`,
   getGuildRoles,
   getGuildRolesSchema,
-  array(roleSchema)
+  v.array(roleSchema)
 );
 
 export const getGuildRolesQuery = toQuery(getGuildRoles);

@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 
 export const ApplicationCommandType = {
   /** Slash commands; a text-based command that shows up when a user types `/` */
@@ -11,4 +11,4 @@ export const ApplicationCommandType = {
   PRIMARY_ENTRY_POINT: 4
 } as const;
 
-export const applicationCommandTypeSchema = enum_(ApplicationCommandType);
+export const applicationCommandTypeSchema = v.enum_(ApplicationCommandType);

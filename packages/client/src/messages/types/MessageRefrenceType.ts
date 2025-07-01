@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 
 export enum MessageReferenceType {
   /** A standard reference used by replies. */
@@ -7,4 +7,4 @@ export enum MessageReferenceType {
   FORWARD = 1
 }
 
-export const messageReferenceTypeSchema = enum_(MessageReferenceType);
+export const messageReferenceTypeSchema = v.enum_(MessageReferenceType);

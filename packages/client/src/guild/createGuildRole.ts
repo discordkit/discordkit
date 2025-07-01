@@ -1,17 +1,4 @@
-import {
-  boolean,
-  type GenericSchema,
-  integer,
-  maxValue,
-  minValue,
-  nonEmpty,
-  nullable,
-  number,
-  object,
-  partial,
-  pipe,
-  string
-} from "valibot";
+import * as v from "valibot";
 import {
   post,
   type Fetcher,
@@ -25,26 +12,31 @@ import { roleSchema, type Role } from "../permissions/Role.js";
 import { permissionFlag } from "../permissions/Permissions.js";
 import { roleColorsSchema } from "../permissions/RoleColors.js";
 
-export const createGuildRoleSchema = object({
+export const createGuildRoleSchema = v.object({
   guild: snowflake,
-  body: partial(
-    object({
+  body: v.partial(
+    v.object({
       /** name of the role */
-      name: pipe(string(), nonEmpty()),
+      name: v.pipe(v.string(), v.nonEmpty()),
       /** bitwise value of the enabled/disabled permissions */
-      permissions: asDigits(permissionFlag) as GenericSchema<string>,
+      permissions: asDigits(permissionFlag) as v.GenericSchema<string>,
       /** RGB color value */
-      color: pipe(number(), integer(), minValue(0x000000), maxValue(0xffffff)),
+      color: v.pipe(
+        v.number(),
+        v.integer(),
+        v.minValue(0x000000),
+        v.maxValue(0xffffff)
+      ),
       /** the role's colors */
       colors: roleColorsSchema,
       /** whether the role should be displayed separately in the sidebar */
-      hoist: boolean(),
+      hoist: v.boolean(),
       /** the role's icon image (if the guild has the `ROLE_ICONS` feature) */
-      icon: nullable(datauri),
+      icon: v.nullable(datauri),
       /** the role's unicode emoji as a standard emoji (if the guild has the `ROLE_ICONS` feature) */
-      unicodeEmoji: nullable(pipe(string(), nonEmpty())),
+      unicodeEmoji: v.nullable(v.pipe(v.string(), v.nonEmpty())),
       /** whether the role should be mentionable */
-      mentionable: boolean()
+      mentionable: v.boolean()
     })
   )
 });

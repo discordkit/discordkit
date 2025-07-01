@@ -1,17 +1,4 @@
-import {
-  boolean,
-  type GenericSchema,
-  integer,
-  maxValue,
-  minValue,
-  nonEmpty,
-  nullish,
-  number,
-  object,
-  partial,
-  pipe,
-  string
-} from "valibot";
+import * as v from "valibot";
 import {
   patch,
   type Fetcher,
@@ -25,27 +12,34 @@ import { roleSchema, type Role } from "../permissions/Role.js";
 import { roleColorsSchema } from "../permissions/RoleColors.js";
 import { permissionFlag } from "../permissions/Permissions.js";
 
-export const modifyGuildRoleSchema = object({
+export const modifyGuildRoleSchema = v.object({
   guild: snowflake,
   role: snowflake,
-  body: partial(
-    object({
+  body: v.partial(
+    v.object({
       /** name of the role */
-      name: nullish(pipe(string(), nonEmpty())),
+      name: v.nullish(v.pipe(v.string(), v.nonEmpty())),
       /** bitwise value of the enabled/disabled permissions */
-      permissions: nullish(asDigits(permissionFlag) as GenericSchema<string>),
+      permissions: v.nullish(
+        asDigits(permissionFlag) as v.GenericSchema<string>
+      ),
       /** RGB color value */
-      color: pipe(number(), integer(), minValue(0x000000), maxValue(0xffffff)),
+      color: v.pipe(
+        v.number(),
+        v.integer(),
+        v.minValue(0x000000),
+        v.maxValue(0xffffff)
+      ),
       /** the role's colors */
       colors: roleColorsSchema,
       /** whether the role should be displayed separately in the sidebar */
-      hoist: nullish(boolean()),
+      hoist: v.nullish(v.boolean()),
       /** the role's icon image (if the guild has the `ROLE_ICONS` feature) */
-      icon: nullish(datauri),
+      icon: v.nullish(datauri),
       /** the role's unicode emoji as a standard emoji (if the guild has the `ROLE_ICONS` feature) */
-      unicodeEmoji: nullish(pipe(string(), nonEmpty())),
+      unicodeEmoji: v.nullish(v.pipe(v.string(), v.nonEmpty())),
       /** whether the role should be mentionable */
-      mentionable: nullish(boolean())
+      mentionable: v.nullish(v.boolean())
     })
   )
 });

@@ -1,10 +1,11 @@
-import { type InferOutput, object, string } from "valibot";
+import * as v from "valibot";
 
-export const integrationAccountSchema = object({
+export const integrationAccountSchema = v.object({
   /** id of the account */
-  id: string(),
+  id: v.string(),
   /** name of the account */
-  name: string()
+  name: v.string()
 });
 
-export type IntegrationAccount = InferOutput<typeof integrationAccountSchema>;
+export interface IntegrationAccount
+  extends v.InferOutput<typeof integrationAccountSchema> {}
