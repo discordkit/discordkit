@@ -1,6 +1,6 @@
 {
   "name": "feedback-scraper",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Checks a forum channel for new posts and archives them.",
   "license": "MIT",
   "author": "Drake Costa <drake@saeris.gg> (https://saeris.gg)",
