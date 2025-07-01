@@ -1,16 +1,4 @@
-import {
-  array,
-  boolean,
-  type GenericSchema,
-  literal,
-  maxLength,
-  nonEmpty,
-  object,
-  partial,
-  pipe,
-  string,
-  unknown
-} from "valibot";
+import * as v from "valibot";
 import {
   post,
   type Fetcher,
@@ -26,37 +14,37 @@ import { EmbedType } from "../messages/types/EmbedType.js";
 import { messageComponentSchema } from "../messages/types/MessageComponent.js";
 import { messageFlag } from "../messages/types/MessageFlag.js";
 
-export const createFollowupMessageSchema = object({
+export const createFollowupMessageSchema = v.object({
   application: snowflake,
-  token: pipe(string(), nonEmpty()),
-  body: partial(
-    object({
+  token: v.pipe(v.string(), v.nonEmpty()),
+  body: v.partial(
+    v.object({
       /** the message contents (up to 2000 characters) */
-      content: pipe(string(), nonEmpty(), maxLength(2000)),
+      content: v.pipe(v.string(), v.nonEmpty(), v.maxLength(2000)),
       /** true if this is a TTS message */
-      tts: boolean(),
+      tts: v.boolean(),
       /** embedded rich content */
-      embeds: pipe(
-        array(
-          object({
+      embeds: v.pipe(
+        v.array(
+          v.object({
             ...embedSchema.entries,
-            type: literal(EmbedType.RICH)
+            type: v.literal(EmbedType.RICH)
           })
         ),
-        maxLength(10)
+        v.maxLength(10)
       ),
       /** allowed mentions for the message */
       allowedMentions: allowedMentionSchema,
       /** the components to include with the message */
-      components: array(messageComponentSchema),
+      components: v.array(messageComponentSchema),
       /** the contents of the file being sent */
-      files: array(unknown()),
+      files: v.array(v.unknown()),
       /** attachment objects with filename and description */
-      attachments: array(partial(attachmentSchema)),
+      attachments: v.array(v.partial(attachmentSchema)),
       /** message flags combined as a bitfield */
-      flags: asInteger(messageFlag) as GenericSchema<number>,
+      flags: asInteger(messageFlag) as v.GenericSchema<number>,
       /** name of thread to create (requires the webhook channel to be a forum channel) */
-      threadName: pipe(string(), nonEmpty())
+      threadName: v.pipe(v.string(), v.nonEmpty())
     })
   )
 });

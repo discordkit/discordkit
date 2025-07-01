@@ -1,4 +1,4 @@
-import { union, type InferOutput } from "valibot";
+import * as v from "valibot";
 import { buttonSchema } from "./Button.js";
 import { textInputSchema } from "./TextInput.js";
 import { actionRowSchema } from "./ActionRow.js";
@@ -15,7 +15,7 @@ import { fileSchema } from "./File.js";
 import { separatorSchema } from "./Separator.js";
 import { containerSchema } from "./Container.js";
 
-export const componenetSchema = union([
+export const componenetSchema = v.union([
   actionRowSchema,
   buttonSchema,
   stringSelectSchema,
@@ -33,4 +33,4 @@ export const componenetSchema = union([
   containerSchema
 ]);
 
-export type Component = InferOutput<typeof componenetSchema>;
+export type Component = v.InferOutput<typeof componenetSchema>;

@@ -1,12 +1,12 @@
+import * as v from "valibot";
 import { snowflake } from "@discordkit/core";
-import { object, nullable, boolean, type InferOutput } from "valibot";
 
-export const guildWidgetSettingsSchema = object({
+export const guildWidgetSettingsSchema = v.object({
   /** whether the widget is enabled */
-  enabled: boolean(),
+  enabled: v.boolean(),
   /** the widget channel id */
-  channelId: nullable(snowflake)
+  channelId: v.nullable(snowflake)
 });
 
 export interface GuildWidgetSettings
-  extends InferOutput<typeof guildWidgetSettingsSchema> {}
+  extends v.InferOutput<typeof guildWidgetSettingsSchema> {}

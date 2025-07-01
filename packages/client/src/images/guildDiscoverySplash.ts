@@ -1,21 +1,13 @@
+import * as v from "valibot";
 import { getAsset, snowflake } from "@discordkit/core";
-import {
-  type InferOutput,
-  object,
-  string,
-  picklist,
-  exactOptional,
-  pipe,
-  nonEmpty
-} from "valibot";
 import { imageSizes } from "./types/ImageSizes.js";
 
-export const guildDiscoverySplashSchema = object({
+export const guildDiscoverySplashSchema = v.object({
   guild: snowflake,
-  splash: pipe(string(), nonEmpty()),
-  format: exactOptional(picklist([`png`, `jpg`, `webp`])),
-  params: exactOptional(
-    object({
+  splash: v.pipe(v.string(), v.nonEmpty()),
+  format: v.exactOptional(v.picklist([`png`, `jpg`, `webp`])),
+  params: v.exactOptional(
+    v.object({
       size: imageSizes
     })
   )
@@ -26,5 +18,5 @@ export const guildDiscoverySplash = ({
   splash,
   format,
   params
-}: InferOutput<typeof guildDiscoverySplashSchema>): string =>
+}: v.InferOutput<typeof guildDiscoverySplashSchema>): string =>
   getAsset(`/discovery-splashes/${guild}/${splash}.${format ?? `png`}`, params);

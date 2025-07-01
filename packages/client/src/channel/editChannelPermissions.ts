@@ -1,4 +1,4 @@
-import { nullish, object, picklist } from "valibot";
+import * as v from "valibot";
 import {
   put,
   type Fetcher,
@@ -9,16 +9,16 @@ import {
 } from "@discordkit/core";
 import { permissionFlag } from "../permissions/Permissions.js";
 
-export const editChannelPermissionsSchema = object({
+export const editChannelPermissionsSchema = v.object({
   channel: snowflake,
   overwrite: snowflake,
-  body: object({
+  body: v.object({
     /** the bitwise value of all allowed permissions (default "0") */
-    allow: nullish(asDigits(permissionFlag)),
+    allow: v.nullish(asDigits(permissionFlag)),
     /** the bitwise value of all disallowed permissions (default "0") */
-    deny: nullish(asDigits(permissionFlag)),
+    deny: v.nullish(asDigits(permissionFlag)),
     /** 0 for a role or 1 for a member */
-    type: picklist([0, 1])
+    type: v.picklist([0, 1])
   })
 });
 

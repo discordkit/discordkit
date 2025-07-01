@@ -1,4 +1,4 @@
-import { object, partial } from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -9,7 +9,7 @@ import {
 } from "@discordkit/core";
 import { inviteSchema, type Invite } from "../invite/types/Invite.js";
 
-export const getGuildVanityURLSchema = object({
+export const getGuildVanityURLSchema = v.object({
   guild: snowflake
 });
 
@@ -28,14 +28,14 @@ export const getGuildVanityURL: Fetcher<
 export const getGuildVanityURLSafe = toValidated(
   getGuildVanityURL,
   getGuildVanityURLSchema,
-  partial(inviteSchema)
+  v.partial(inviteSchema)
 );
 
 export const getGuildVanityURLProcedure = toProcedure(
   `query`,
   getGuildVanityURL,
   getGuildVanityURLSchema,
-  partial(inviteSchema)
+  v.partial(inviteSchema)
 );
 
 export const getGuildVanityURLQuery = toQuery(getGuildVanityURL);

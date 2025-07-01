@@ -1,14 +1,4 @@
-import {
-  maxLength,
-  minLength,
-  nullish,
-  object,
-  partial,
-  pipe,
-  record,
-  regex,
-  string
-} from "valibot";
+import * as v from "valibot";
 import {
   put,
   type Fetcher,
@@ -21,18 +11,23 @@ import {
   applicationRoleConnectionSchema
 } from "./types/ApplicationRoleConnection.js";
 
-export const updateCurrentUserApplicationRoleConnectionSchema = object({
+export const updateCurrentUserApplicationRoleConnectionSchema = v.object({
   application: snowflake,
-  body: partial(
-    object({
+  body: v.partial(
+    v.object({
       /** the vanity name of the platform a bot has connected (max 50 characters) */
-      platformName: nullish(string()),
+      platformName: v.nullish(v.string()),
       /** the username on the platform a bot has connected (max 100 characters) */
-      platformUsername: nullish(string()),
+      platformUsername: v.nullish(v.string()),
       /** object mapping application role connection metadata keys to their string-ified value (max 100 characters) for the user on the platform a bot has connected */
-      metadata: record(
-        pipe(string(), minLength(1), maxLength(50), regex(/[a-z0-9_]/)),
-        nullish(pipe(string(), maxLength(100)))
+      metadata: v.record(
+        v.pipe(
+          v.string(),
+          v.minLength(1),
+          v.maxLength(50),
+          v.regex(/[a-z0-9_]/)
+        ),
+        v.nullish(v.pipe(v.string(), v.maxLength(100)))
       )
     })
   )

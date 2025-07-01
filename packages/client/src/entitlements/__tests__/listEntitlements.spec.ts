@@ -1,20 +1,20 @@
-import { waitFor } from "@testing-library/react";
+import * as v from "valibot";
 import { mockUtils } from "#mocks";
 import { runProcedure, runQuery } from "#test-utils";
-import { array, length, pipe } from "valibot";
+import { waitFor } from "@testing-library/dom";
+import { entitlementSchema } from "../types/Entitlement.js";
 import {
   listEntitlementsProcedure,
   listEntitlementsQuery,
   listEntitlementsSafe,
   listEntitlementsSchema
 } from "../listEntitlements.js";
-import { entitlementSchema } from "../types/Entitlement.js";
 
 describe(`listEntitlements`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.get(
     `/applications/:application/entitlements`,
     listEntitlementsSchema,
-    pipe(array(entitlementSchema), length(1))
+    v.pipe(v.array(entitlementSchema), v.length(1))
   );
 
   it(`can be used standalone`, async () => {

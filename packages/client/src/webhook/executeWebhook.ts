@@ -1,19 +1,4 @@
-import {
-  object,
-  string,
-  minLength,
-  boolean,
-  exactOptional,
-  partial,
-  literal,
-  maxLength,
-  array,
-  url,
-  unknown,
-  pipe,
-  nonEmpty,
-  type GenericSchema
-} from "valibot";
+import * as v from "valibot";
 import {
   post,
   buildURL,
@@ -31,57 +16,57 @@ import { messageComponentSchema } from "../messages/types/MessageComponent.js";
 import { messageFlag } from "../messages/types/MessageFlag.js";
 import { pollSchema } from "../poll/types/Poll.js";
 
-export const executeWebhookSchema = object({
+export const executeWebhookSchema = v.object({
   webhook: snowflake,
-  token: pipe(string(), minLength(1)),
-  params: exactOptional(
-    partial(
-      object({
+  token: v.pipe(v.string(), v.minLength(1)),
+  params: v.exactOptional(
+    v.partial(
+      v.object({
         /** waits for server confirmation of message send before response, and returns the created message body (defaults to `false`; when `false` a message that is not saved does not return an error) */
-        wait: exactOptional(boolean()),
+        wait: v.exactOptional(v.boolean()),
         /** Send a message to the specified thread within a webhook's channel. The thread will automatically be unarchived. */
         threadId: snowflake,
         /** whether to respect the `components` field of the request. When enabled, allows application-owned webhooks to use all components and non-owned webhooks to use non-interactive components. (defaults to `false`) */
-        withComponents: boolean()
+        withComponents: v.boolean()
       })
     )
   ),
-  body: partial(
-    object({
+  body: v.partial(
+    v.object({
       /** the message contents (up to 2000 characters) */
-      content: pipe(string(), minLength(1), maxLength(2000)),
+      content: v.pipe(v.string(), v.minLength(1), v.maxLength(2000)),
       /** override the default username of the webhook */
-      username: pipe(string(), minLength(1)),
+      username: v.pipe(v.string(), v.minLength(1)),
       /** override the default avatar of the webhook */
-      avatarUrl: pipe(string(), url()),
+      avatarUrl: v.pipe(v.string(), v.url()),
       /** true if this is a TTS message */
-      tts: boolean(),
+      tts: v.boolean(),
       /** embedded rich content */
-      embeds: pipe(
-        array(
-          object({
+      embeds: v.pipe(
+        v.array(
+          v.object({
             ...embedSchema.entries,
-            type: literal(EmbedType.RICH)
+            type: v.literal(EmbedType.RICH)
           })
         ),
-        maxLength(10)
+        v.maxLength(10)
       ),
       /** allowed mentions for the message */
       allowedMentions: allowedMentionSchema,
       /** the components to include with the message */
-      components: array(messageComponentSchema),
+      components: v.array(messageComponentSchema),
       /** the contents of the file being sent */
-      files: array(unknown()),
+      files: v.array(v.unknown()),
       /** JSON encoded body of non-file params */
-      payloadJson: string(),
+      payloadJson: v.string(),
       /** attachment objects with filename and description */
-      attachments: array(partial(attachmentSchema)),
+      attachments: v.array(v.partial(attachmentSchema)),
       /** message flags combined as a bitfield (only SUPPRESS_EMBEDS can be set) */
-      flags: asInteger(messageFlag) as GenericSchema<number>,
+      flags: asInteger(messageFlag) as v.GenericSchema<number>,
       /** name of thread to create (requires the webhook channel to be a forum channel) */
-      threadName: pipe(string(), nonEmpty()),
+      threadName: v.pipe(v.string(), v.nonEmpty()),
       /** array of tag ids to apply to the thread (requires the webhook channel to be a forum or media channel) */
-      appliedTags: array(snowflake),
+      appliedTags: v.array(snowflake),
       /** A poll! */
       poll: pollSchema
     })

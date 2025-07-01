@@ -1,4 +1,4 @@
-import { object } from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -12,7 +12,7 @@ import {
   type WelcomeScreen
 } from "./types/WelcomeScreen.js";
 
-export const getGuildWelcomeScreenSchema = object({
+export const getGuildWelcomeScreenSchema = v.object({
   guild: snowflake
 });
 

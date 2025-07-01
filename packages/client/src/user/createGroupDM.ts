@@ -1,14 +1,14 @@
-import { post, type Fetcher, toProcedure, toValidated } from "@discordkit/core";
-import type { InferOutput } from "valibot";
-import { array, minLength, object, pipe, record, string } from "valibot";
+import * as v from "valibot";
+import type { Fetcher } from "@discordkit/core";
+import { post, toProcedure, toValidated } from "@discordkit/core";
 import { groupDirectMessageChannelSchema } from "../channel/types/Channel.js";
 
-export const createGroupDMSchema = object({
-  body: object({
+export const createGroupDMSchema = v.object({
+  body: v.object({
     /** access tokens of users that have granted your app the `gdm.join` scope */
-    accessTokens: array(string()),
+    accessTokens: v.array(v.string()),
     /** a dictionary of user ids to their respective nicknames */
-    nicks: record(pipe(string(), minLength(1)), string())
+    nicks: v.record(v.pipe(v.string(), v.minLength(1)), v.string())
   })
 });
 
@@ -25,7 +25,7 @@ export const createGroupDMSchema = object({
  */
 export const createGroupDM: Fetcher<
   typeof createGroupDMSchema,
-  InferOutput<typeof groupDirectMessageChannelSchema>
+  v.InferOutput<typeof groupDirectMessageChannelSchema>
 > = async ({ body }) => post(`/users/@me/channels`, body);
 
 export const createGroupDMSafe = toValidated(

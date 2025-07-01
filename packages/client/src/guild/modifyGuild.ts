@@ -1,17 +1,4 @@
-import {
-  array,
-  boolean,
-  integer,
-  minValue,
-  nonEmpty,
-  number,
-  object,
-  nullable,
-  partial,
-  pipe,
-  string,
-  type GenericSchema
-} from "valibot";
+import * as v from "valibot";
 import {
   patch,
   type Fetcher,
@@ -29,54 +16,56 @@ import { explicitContentFilterLevelSchema } from "./types/ExplicitContentFilterL
 import { guildFeaturesSchema } from "./types/GuildFeatures.js";
 import { systemChannelFlag } from "./types/SystemChannelFlags.js";
 
-export const modifyGuildSchema = object({
+export const modifyGuildSchema = v.object({
   guild: snowflake,
-  body: partial(
-    object({
+  body: v.partial(
+    v.object({
       /** guild name */
-      name: pipe(string(), nonEmpty()),
+      name: v.pipe(v.string(), v.nonEmpty()),
       /** @deprecated guild voice region id */
-      region: nullable(pipe(string(), nonEmpty())),
+      region: v.nullable(v.pipe(v.string(), v.nonEmpty())),
       /** verification level */
-      verificationLevel: nullable(verificationLevelSchema),
+      verificationLevel: v.nullable(verificationLevelSchema),
       /** default message notification level */
-      defaultMessageNotifications: nullable(
+      defaultMessageNotifications: v.nullable(
         defaultMessageNotificationLevelSchema
       ),
       /** explicit content filter level */
-      explicitContentFilter: nullable(explicitContentFilterLevelSchema),
+      explicitContentFilter: v.nullable(explicitContentFilterLevelSchema),
       /** id for afk channel */
-      afkChannelId: nullable(snowflake),
+      afkChannelId: v.nullable(snowflake),
       /** afk timeout in seconds */
-      afkTimeout: pipe(number(), integer(), minValue(0)),
+      afkTimeout: v.pipe(v.number(), v.integer(), v.minValue(0)),
       /** base64 1024x1024 png/jpeg/gif image for the guild icon (can be animated gif when the server has the ANIMATED_ICON feature) */
-      icon: nullable(datauri),
+      icon: v.nullable(datauri),
       /** user id to transfer guild ownership to (must be owner) */
       ownerId: snowflake,
       /** base64 16:9 png/jpeg image for the guild splash (when the server has the INVITE_SPLASH feature) */
-      splash: nullable(datauri),
+      splash: v.nullable(datauri),
       /** base64 16:9 png/jpeg image for the guild discovery splash (when the server has the DISCOVERABLE feature) */
-      discoverySplash: nullable(datauri),
+      discoverySplash: v.nullable(datauri),
       /** base64 16:9 png/jpeg image for the guild banner (when the server has the BANNER feature; can be animated gif when the server has the ANIMATED_BANNER feature) */
-      banner: nullable(datauri),
+      banner: v.nullable(datauri),
       /** the id of the channel where guild notices such as welcome messages and boost events are posted */
-      systemChannelId: nullable(snowflake),
+      systemChannelId: v.nullable(snowflake),
       /** system channel flags */
-      systemChannelFlags: asInteger(systemChannelFlag) as GenericSchema<number>,
+      systemChannelFlags: asInteger(
+        systemChannelFlag
+      ) as v.GenericSchema<number>,
       /** the id of the channel where Community guilds display rules and/or guidelines */
-      rulesChannelId: nullable(snowflake),
+      rulesChannelId: v.nullable(snowflake),
       /** the id of the channel where admins and moderators of Community guilds receive notices from Discord */
-      publicUpdatesChannelId: nullable(snowflake),
+      publicUpdatesChannelId: v.nullable(snowflake),
       /** the preferred locale of a Community guild used in server discovery and notices from Discord; defaults to "en-US" */
-      preferredLocale: nullable(localesSchema),
+      preferredLocale: v.nullable(localesSchema),
       /** enabled guild features */
-      features: array(guildFeaturesSchema),
+      features: v.array(guildFeaturesSchema),
       /** the description for the guild */
-      description: nullable(pipe(string(), nonEmpty())),
+      description: v.nullable(v.pipe(v.string(), v.nonEmpty())),
       /** whether the guild's boost progress bar should be enabled */
-      premiumProgressBarEnabled: boolean(),
+      premiumProgressBarEnabled: v.boolean(),
       /** the id of the channel where admins and moderators of Community guilds receive safety alerts from Discord */
-      safetyAlertsChannelId: nullable(snowflake)
+      safetyAlertsChannelId: v.nullable(snowflake)
     })
   )
 });

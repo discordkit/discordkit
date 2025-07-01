@@ -1,4 +1,4 @@
-import { object, partial } from "valibot";
+import * as v from "valibot";
 import {
   patch,
   type Fetcher,
@@ -11,9 +11,9 @@ import {
   type GuildWidgetSettings
 } from "./types/GuildWidgetSettings.js";
 
-export const modifyGuildWidgetSchema = object({
+export const modifyGuildWidgetSchema = v.object({
   guild: snowflake,
-  body: partial(guildWidgetSettingsSchema)
+  body: v.partial(guildWidgetSettingsSchema)
 });
 
 /**

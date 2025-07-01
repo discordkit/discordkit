@@ -1,20 +1,20 @@
-import { waitFor } from "@testing-library/react";
+import * as v from "valibot";
 import { mockUtils } from "#mocks";
 import { runProcedure, runQuery } from "#test-utils";
-import { array, length, pipe } from "valibot";
+import { waitFor } from "@testing-library/dom";
+import { channelSchema } from "../../channel/types/Channel.js";
 import {
   getGuildChannelsProcedure,
   getGuildChannelsQuery,
   getGuildChannelsSafe,
   getGuildChannelsSchema
 } from "../getGuildChannels.js";
-import { channelSchema } from "../../channel/types/Channel.js";
 
 describe(`getGuildChannels`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.get(
     `/guilds/:guild/channels`,
     getGuildChannelsSchema,
-    pipe(array(channelSchema), length(1))
+    v.pipe(v.array(channelSchema), v.length(1))
   );
 
   it(`can be used standalone`, async () => {

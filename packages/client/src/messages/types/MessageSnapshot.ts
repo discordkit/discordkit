@@ -1,13 +1,4 @@
-import type { GenericSchema, InferOutput } from "valibot";
-import {
-  array,
-  exactOptional,
-  isoTimestamp,
-  nullable,
-  object,
-  pipe,
-  string
-} from "valibot";
+import * as v from "valibot";
 import { asInteger, snowflake } from "@discordkit/core";
 import { stickerSchema } from "../../sticker/types/Sticker.js";
 import { userSchema } from "../../user/types/User.js";
@@ -17,34 +8,34 @@ import { messageComponentSchema } from "./MessageComponent.js";
 import { messageFlag } from "./MessageFlag.js";
 import { messageTypeSchema } from "./MessageType.js";
 
-export const messageSnapshotSchema = object({
-  message: object({
+export const messageSnapshotSchema = v.object({
+  message: v.object({
     /** type of message */
     type: messageTypeSchema,
     /** contents of the message */
-    content: string(),
+    content: v.string(),
     /** any embedded content */
-    embeds: array(embedSchema),
+    embeds: v.array(embedSchema),
     /** any attached files */
-    attachments: array(attachmentSchema),
+    attachments: v.array(attachmentSchema),
     /** when this message was sent */
-    timestamp: pipe(string(), isoTimestamp()),
+    timestamp: v.pipe(v.string(), v.isoTimestamp()),
     /** when this message was edited (or null if never) */
-    editedTimestamp: nullable(pipe(string(), isoTimestamp())),
+    editedTimestamp: v.nullable(v.pipe(v.string(), v.isoTimestamp())),
     /** message flags combined as a bitfield */
-    flags: asInteger(messageFlag) as GenericSchema<number>,
+    flags: asInteger(messageFlag) as v.GenericSchema<number>,
     /** users specifically mentioned in the message */
-    mentions: array(userSchema),
+    mentions: v.array(userSchema),
     /** roles specifically mentioned in this message */
-    mentionRoles: array(snowflake),
+    mentionRoles: v.array(snowflake),
     /** @deprecated the stickers sent with the message */
-    stickers: exactOptional(array(stickerSchema)),
+    stickers: v.exactOptional(v.array(stickerSchema)),
     /** sent if the message contains stickers */
-    stickerItems: exactOptional(array(stickerSchema)),
+    stickerItems: v.exactOptional(v.array(stickerSchema)),
     /** sent if the message contains components like buttons, action rows, or other interactive components */
-    components: exactOptional(array(messageComponentSchema))
+    components: v.exactOptional(v.array(messageComponentSchema))
   })
 });
 
 export interface MessageSnapshot
-  extends InferOutput<typeof messageSnapshotSchema> {}
+  extends v.InferOutput<typeof messageSnapshotSchema> {}

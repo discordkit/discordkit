@@ -1,28 +1,19 @@
-import {
-  object,
-  string,
-  nonEmpty,
-  nullable,
-  exactOptional,
-  pipe,
-  type InferOutput,
-  type GenericSchema
-} from "valibot";
+import * as v from "valibot";
 import { snowflake } from "@discordkit/core";
 import { type User, userSchema } from "../../user/types/User.js";
 
-export const integrationApplicationSchema = object({
+export const integrationApplicationSchema = v.object({
   /** the id of the app */
   id: snowflake,
   /** the name of the app */
-  name: pipe(string(), nonEmpty()) as GenericSchema<string>,
+  name: v.pipe(v.string(), v.nonEmpty()) as v.GenericSchema<string>,
   /** the icon hash of the app */
-  icon: nullable<GenericSchema<string>>(pipe(string(), nonEmpty())),
+  icon: v.nullable<v.GenericSchema<string>>(v.pipe(v.string(), v.nonEmpty())),
   /** the description of the app */
-  description: string(),
+  description: v.string(),
   /** the bot associated with this application */
-  bot: exactOptional<GenericSchema<User>>(userSchema)
+  bot: v.exactOptional<v.GenericSchema<User>>(userSchema)
 });
 
 export interface IntegrationApplication
-  extends InferOutput<typeof integrationApplicationSchema> {}
+  extends v.InferOutput<typeof integrationApplicationSchema> {}

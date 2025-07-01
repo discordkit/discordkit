@@ -1,4 +1,4 @@
-import { object } from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -9,7 +9,7 @@ import {
 } from "@discordkit/core";
 import { stageSchema, type Stage } from "./types/Stage.js";
 
-export const getStageInstanceSchema = object({
+export const getStageInstanceSchema = v.object({
   channel: snowflake
 });
 

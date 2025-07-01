@@ -1,14 +1,4 @@
-import {
-  array,
-  boolean,
-  maxValue,
-  minValue,
-  number,
-  object,
-  exactOptional,
-  partial,
-  pipe
-} from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -22,16 +12,16 @@ import {
   type ScheduledEventUser
 } from "./types/ScheduledEventUser.js";
 
-export const getGuildScheduledEventUsersSchema = object({
+export const getGuildScheduledEventUsersSchema = v.object({
   guild: snowflake,
   event: snowflake,
-  params: exactOptional(
-    partial(
-      object({
+  params: v.exactOptional(
+    v.partial(
+      v.object({
         /** number of users to return (up to maximum 100) (default: 100) */
-        limit: pipe(number(), minValue(1), maxValue(100)),
+        limit: v.pipe(v.number(), v.minValue(1), v.maxValue(100)),
         /** include guild member data if it exists (default: false) */
-        withMember: boolean(),
+        withMember: v.boolean(),
         /** consider only users before given user id (default: null) */
         before: snowflake,
         /** consider only users after given user id (default: null) */
@@ -57,14 +47,14 @@ export const getGuildScheduledEventUsers: Fetcher<
 export const getGuildScheduledEventUsersSafe = toValidated(
   getGuildScheduledEventUsers,
   getGuildScheduledEventUsersSchema,
-  array(scheduledEventUserSchema)
+  v.array(scheduledEventUserSchema)
 );
 
 export const getGuildScheduledEventUsersProcedure = toProcedure(
   `query`,
   getGuildScheduledEventUsers,
   getGuildScheduledEventUsersSchema,
-  array(scheduledEventUserSchema)
+  v.array(scheduledEventUserSchema)
 );
 
 export const getGuildScheduledEventUsersQuery = toQuery(

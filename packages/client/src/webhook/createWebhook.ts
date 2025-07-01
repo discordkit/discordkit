@@ -1,12 +1,4 @@
-import {
-  object,
-  string,
-  minLength,
-  maxLength,
-  url,
-  nullish,
-  pipe
-} from "valibot";
+import * as v from "valibot";
 import {
   post,
   type Fetcher,
@@ -16,13 +8,13 @@ import {
 } from "@discordkit/core";
 import { webhookSchema, type Webhook } from "./types/Webhook.js";
 
-export const createWebhookSchema = object({
+export const createWebhookSchema = v.object({
   channel: snowflake,
-  body: object({
+  body: v.object({
     /** name of the webhook (1-80 characters) */
-    name: pipe(string(), minLength(1), maxLength(80)),
+    name: v.pipe(v.string(), v.minLength(1), v.maxLength(80)),
     /** image for the default webhook avatar */
-    avatar: nullish(pipe(string(), url()))
+    avatar: v.nullish(v.pipe(v.string(), v.url()))
   })
 });
 

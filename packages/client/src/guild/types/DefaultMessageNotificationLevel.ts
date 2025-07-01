@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 
 export enum DefaultMessageNotificationLevel {
   /** members will receive notifications for all messages by default */
@@ -7,6 +7,6 @@ export enum DefaultMessageNotificationLevel {
   ONLY_MENTIONS = 1
 }
 
-export const defaultMessageNotificationLevelSchema = enum_(
+export const defaultMessageNotificationLevelSchema = v.enum_(
   DefaultMessageNotificationLevel
 );

@@ -1,4 +1,4 @@
-import { array, object } from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -12,7 +12,7 @@ import {
   type GuildApplicationCommandPermissions
 } from "../application-commands/types/GuildApplicationCommandPermissions.js";
 
-export const getGuildApplicationCommandPermissionsSchema = object({
+export const getGuildApplicationCommandPermissionsSchema = v.object({
   application: snowflake,
   guild: snowflake
 });
@@ -33,14 +33,14 @@ export const getGuildApplicationCommandPermissions: Fetcher<
 export const getGuildApplicationCommandPermissionsSafe = toValidated(
   getGuildApplicationCommandPermissions,
   getGuildApplicationCommandPermissionsSchema,
-  array(guildApplicationCommandPermissionsSchema)
+  v.array(guildApplicationCommandPermissionsSchema)
 );
 
 export const getGuildApplicationCommandPermissionsProcedure = toProcedure(
   `query`,
   getGuildApplicationCommandPermissions,
   getGuildApplicationCommandPermissionsSchema,
-  array(guildApplicationCommandPermissionsSchema)
+  v.array(guildApplicationCommandPermissionsSchema)
 );
 
 export const getGuildApplicationCommandPermissionsQuery = toQuery(

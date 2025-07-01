@@ -1,15 +1,14 @@
+import * as v from "valibot";
 import { snowflake } from "@discordkit/core";
-import type { InferOutput } from "valibot";
-import { array, isoTimestamp, nullish, object, pipe, string } from "valibot";
 
 /**
  * Information about the call in a private channel.
  */
-export const messageCallSchema = object({
+export const messageCallSchema = v.object({
   /** array of user object ids that participated in the call */
-  participants: array(snowflake),
+  participants: v.array(snowflake),
   /** time when call ended */
-  endedTimestamp: nullish(pipe(string(), isoTimestamp()))
+  endedTimestamp: v.nullish(v.pipe(v.string(), v.isoTimestamp()))
 });
 
-export interface MessageCall extends InferOutput<typeof messageCallSchema> {}
+export interface MessageCall extends v.InferOutput<typeof messageCallSchema> {}

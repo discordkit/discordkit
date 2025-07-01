@@ -1,20 +1,20 @@
-import { waitFor } from "@testing-library/react";
+import * as v from "valibot";
 import { mockUtils } from "#mocks";
 import { runProcedure, runQuery } from "#test-utils";
-import { array, length, pipe } from "valibot";
+import { waitFor } from "@testing-library/dom";
+import { emojiSchema } from "../types/Emoji.js";
 import {
   listGuildEmojisProcedure,
   listGuildEmojisQuery,
   listGuildEmojisSafe,
   listGuildEmojisSchema
 } from "../listGuildEmojis.js";
-import { emojiSchema } from "../types/Emoji.js";
 
 describe(`listGuildEmojis`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.get(
     `/guilds/:guild/emojis`,
     listGuildEmojisSchema,
-    pipe(array(emojiSchema), length(1))
+    v.pipe(v.array(emojiSchema), v.length(1))
   );
 
   it(`can be used standalone`, async () => {

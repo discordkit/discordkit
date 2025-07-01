@@ -1,11 +1,4 @@
-import {
-  object,
-  string,
-  partial,
-  exactOptional,
-  pipe,
-  nonEmpty
-} from "valibot";
+import * as v from "valibot";
 import {
   remove,
   buildURL,
@@ -15,13 +8,13 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const deleteWebhookMessageSchema = object({
+export const deleteWebhookMessageSchema = v.object({
   webhook: snowflake,
-  token: pipe(string(), nonEmpty()),
+  token: v.pipe(v.string(), v.nonEmpty()),
   message: snowflake,
-  params: exactOptional(
-    partial(
-      object({
+  params: v.exactOptional(
+    v.partial(
+      v.object({
         /** id of the thread the message is in */
         threadId: snowflake
       })

@@ -1,4 +1,4 @@
-import { object } from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -9,7 +9,7 @@ import {
 } from "@discordkit/core";
 import { memberSchema, type Member } from "../guild/types/Member.js";
 
-export const getCurrentUserGuildMemberSchema = object({
+export const getCurrentUserGuildMemberSchema = v.object({
   guild: snowflake
 });
 

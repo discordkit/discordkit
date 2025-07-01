@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 
 export enum ScheduledEventStatus {
   SCHEDULED = 1,
@@ -7,4 +7,4 @@ export enum ScheduledEventStatus {
   CANCELED = 4
 }
 
-export const scheduledEventStatusSchema = enum_(ScheduledEventStatus);
+export const scheduledEventStatusSchema = v.enum_(ScheduledEventStatus);

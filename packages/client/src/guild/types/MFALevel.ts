@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 
 export enum MFALevel {
   /** guild has no MFA/2FA requirement for moderation actions */
@@ -7,4 +7,4 @@ export enum MFALevel {
   ELEVATED = 1
 }
 
-export const mfaLevelSchema = enum_(MFALevel);
+export const mfaLevelSchema = v.enum_(MFALevel);

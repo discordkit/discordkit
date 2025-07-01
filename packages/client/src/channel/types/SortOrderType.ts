@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 
 export enum SortOrderType {
   /** Sort forum posts by activity */
@@ -7,4 +7,4 @@ export enum SortOrderType {
   CREATION_DATE = 1
 }
 
-export const sortOrderTypeSchema = enum_(SortOrderType);
+export const sortOrderTypeSchema = v.enum_(SortOrderType);

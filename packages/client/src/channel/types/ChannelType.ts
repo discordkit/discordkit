@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 
 export enum ChannelType {
   /** a text channel within a server */
@@ -29,4 +29,4 @@ export enum ChannelType {
   GUILD_MEDIA = 16
 }
 
-export const channelTypeSchema = enum_(ChannelType);
+export const channelTypeSchema = v.enum_(ChannelType);

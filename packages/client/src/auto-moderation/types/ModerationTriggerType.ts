@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 
 export enum ModerationTriggerType {
   /** check if content contains words from a user defined list of keywords */
@@ -13,4 +13,4 @@ export enum ModerationTriggerType {
   MEMBER_PROFILE = 6
 }
 
-export const moderationTriggerTypeSchema = enum_(ModerationTriggerType);
+export const moderationTriggerTypeSchema = v.enum_(ModerationTriggerType);

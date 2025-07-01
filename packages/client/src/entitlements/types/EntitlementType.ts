@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 
 export const EntitlementType = {
   /** Entitlement was purchased by user */
@@ -19,4 +19,4 @@ export const EntitlementType = {
   APPLICATION_SUBSCRIPTION: 8
 } as const;
 
-export const entitlementTypeSchema = enum_(EntitlementType);
+export const entitlementTypeSchema = v.enum_(EntitlementType);

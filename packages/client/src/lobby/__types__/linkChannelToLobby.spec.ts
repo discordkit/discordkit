@@ -1,20 +1,20 @@
-import { waitFor } from "@testing-library/react";
+import * as v from "valibot";
 import { mockUtils } from "#mocks";
 import { runProcedure, runMutation } from "#test-utils";
-import { required } from "valibot";
+import { waitFor } from "@testing-library/dom";
+import { lobbySchema } from "../types/Lobby.js";
 import {
   linkChannelToLobby,
   linkChannelToLobbyProcedure,
   linkChannelToLobbySafe,
   linkChannelToLobbySchema
 } from "../linkChannelToLobby.js";
-import { lobbySchema } from "../types/Lobby.js";
 
 describe(`linkChannelToLobby`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.patch(
     `/lobbies/:lobby/channel-linking`,
     linkChannelToLobbySchema,
-    required(lobbySchema, [`linkedChannel`])
+    v.required(lobbySchema, [`linkedChannel`])
   );
 
   it(`can be used standalone`, async () => {

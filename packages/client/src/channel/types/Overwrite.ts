@@ -1,22 +1,16 @@
+import * as v from "valibot";
 import { asDigits, snowflake } from "@discordkit/core";
-import {
-  object,
-  union,
-  literal,
-  type InferOutput,
-  type GenericSchema
-} from "valibot";
 import { permissionFlag } from "../../permissions/Permissions.js";
 
-export const overwriteSchema = object({
+export const overwriteSchema = v.object({
   /** role or user id */
-  id: snowflake as GenericSchema<string>,
+  id: snowflake as v.GenericSchema<string>,
   /** either 0 (role) or 1 (member) */
-  type: union([literal(0), literal(1)]),
+  type: v.union([v.literal(0), v.literal(1)]),
   /** permission bit set */
-  allow: asDigits(permissionFlag) as GenericSchema<string>,
+  allow: asDigits(permissionFlag) as v.GenericSchema<string>,
   /** permission bit set */
-  deny: asDigits(permissionFlag) as GenericSchema<string>
+  deny: asDigits(permissionFlag) as v.GenericSchema<string>
 });
 
-export interface Overwrite extends InferOutput<typeof overwriteSchema> {}
+export interface Overwrite extends v.InferOutput<typeof overwriteSchema> {}

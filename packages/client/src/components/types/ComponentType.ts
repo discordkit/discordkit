@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 
 export enum ComponentType {
   /** Container to display a row of interactive components (Style: `Layout`, Usage: `Message`, `Modal`) */
@@ -33,4 +33,4 @@ export enum ComponentType {
   Container = 17
 }
 
-export const componentTypeSchema = enum_(ComponentType);
+export const componentTypeSchema = v.enum_(ComponentType);

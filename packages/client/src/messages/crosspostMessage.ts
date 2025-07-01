@@ -1,4 +1,4 @@
-import { object } from "valibot";
+import * as v from "valibot";
 import {
   post,
   type Fetcher,
@@ -8,7 +8,7 @@ import {
 } from "@discordkit/core";
 import { messageSchema, type Message } from "./types/Message.js";
 
-export const crosspostMessageSchema = object({
+export const crosspostMessageSchema = v.object({
   channel: snowflake,
   message: snowflake
 });

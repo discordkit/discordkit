@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 
 /** Where an app can be installed, also called its supported installation contexts. */
 export const ApplicationIntegrationTypes = {
@@ -8,6 +8,6 @@ export const ApplicationIntegrationTypes = {
   USER_INSTALL: 1
 } as const;
 
-export const applicationIntegrationTypesSchema = enum_(
+export const applicationIntegrationTypesSchema = v.enum_(
   ApplicationIntegrationTypes
 );

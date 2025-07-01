@@ -1,20 +1,20 @@
-import { waitFor } from "@testing-library/react";
+import * as v from "valibot";
 import { mockUtils } from "#mocks";
 import { runProcedure, runQuery } from "#test-utils";
-import { array, length, partial, pipe } from "valibot";
+import { waitFor } from "@testing-library/dom";
+import { guildSchema } from "../../guild/types/Guild.js";
 import {
   getCurrentUserGuildsProcedure,
   getCurrentUserGuildsQuery,
   getCurrentUserGuildsSafe,
   getCurrentUserGuildsSchema
 } from "../getCurrentUserGuilds.js";
-import { guildSchema } from "../../guild/types/Guild.js";
 
 describe(`getCurrentUserGuilds`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.get(
     `/users/@me/guilds`,
     getCurrentUserGuildsSchema,
-    pipe(array(partial(guildSchema)), length(1))
+    v.pipe(v.array(v.partial(guildSchema)), v.length(1))
   );
 
   it(`can be used standalone`, async () => {

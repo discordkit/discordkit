@@ -1,4 +1,4 @@
-import { exactOptional, object, partial, picklist } from "valibot";
+import * as v from "valibot";
 import {
   post,
   type Fetcher,
@@ -7,17 +7,17 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const createTestEntitlementSchema = object({
+export const createTestEntitlementSchema = v.object({
   application: snowflake,
-  params: exactOptional(
-    partial(
-      object({
+  params: v.exactOptional(
+    v.partial(
+      v.object({
         /** ID of the SKU to grant the entitlement to */
         skuId: snowflake,
         /** ID of the guild or user to grant the entitlement to */
         ownerId: snowflake,
         /** `1` for a guild subscription, `2` for a user subscription */
-        ownerType: picklist([1, 2])
+        ownerType: v.picklist([1, 2])
       })
     )
   )

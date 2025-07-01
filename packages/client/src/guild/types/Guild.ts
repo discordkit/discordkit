@@ -1,21 +1,4 @@
-import {
-  object,
-  string,
-  minLength,
-  maxLength,
-  nullish,
-  boolean,
-  array,
-  integer,
-  minValue,
-  number,
-  type InferOutput,
-  pipe,
-  nonEmpty,
-  nullable,
-  exactOptional,
-  type GenericSchema
-} from "valibot";
+import * as v from "valibot";
 import { snowflake, asDigits, asInteger } from "@discordkit/core";
 import { emojiSchema } from "../../emoji/types/Emoji.js";
 import { stickerSchema } from "../../sticker/types/Sticker.js";
@@ -33,35 +16,49 @@ import { systemChannelFlag } from "./SystemChannelFlags.js";
 import { permissionFlag } from "../../permissions/Permissions.js";
 import { incidentsDataSchema } from "./IncidentsData.js";
 
-export const guildSchema = object({
+export const guildSchema = v.object({
   /** guild id */
-  id: snowflake as GenericSchema<string>,
+  id: snowflake as v.GenericSchema<string>,
   /** guild name (2-100 characters, excluding trailing and leading whitespace) */
-  name: pipe(string(), minLength(2), maxLength(100)) as GenericSchema<string>,
+  name: v.pipe(
+    v.string(),
+    v.minLength(2),
+    v.maxLength(100)
+  ) as v.GenericSchema<string>,
   /** icon hash */
-  icon: nullable<GenericSchema<string>>(pipe(string(), nonEmpty())),
+  icon: v.nullable<v.GenericSchema<string>>(v.pipe(v.string(), v.nonEmpty())),
   /** icon hash, returned when in the template object */
-  iconHash: nullish<GenericSchema<string>>(pipe(string(), nonEmpty())),
+  iconHash: v.nullish<v.GenericSchema<string>>(
+    v.pipe(v.string(), v.nonEmpty())
+  ),
   /** splash hash */
-  splash: nullable<GenericSchema<string>>(pipe(string(), nonEmpty())),
+  splash: v.nullable<v.GenericSchema<string>>(v.pipe(v.string(), v.nonEmpty())),
   /** discovery splash hash; only present for guilds with the "DISCOVERABLE" feature */
-  discoverySplash: nullable<GenericSchema<string>>(pipe(string(), nonEmpty())),
+  discoverySplash: v.nullable<v.GenericSchema<string>>(
+    v.pipe(v.string(), v.nonEmpty())
+  ),
   /** true if the user is the owner of the guild */
-  owner: exactOptional(boolean()),
+  owner: v.exactOptional(v.boolean()),
   /** id of owner */
-  ownerId: snowflake as GenericSchema<string>,
+  ownerId: snowflake as v.GenericSchema<string>,
   /** total permissions for the user in the guild (excludes overwrites) */
-  permissions: exactOptional(asDigits(permissionFlag) as GenericSchema<string>),
+  permissions: v.exactOptional(
+    asDigits(permissionFlag) as v.GenericSchema<string>
+  ),
   /** @deprecated voice region id for the guild */
-  region: nullish<GenericSchema<string>>(pipe(string(), nonEmpty())),
+  region: v.nullish<v.GenericSchema<string>>(v.pipe(v.string(), v.nonEmpty())),
   /** id of afk channel */
-  afkChannelId: nullable<GenericSchema<string>>(snowflake),
+  afkChannelId: v.nullable<v.GenericSchema<string>>(snowflake),
   /** afk timeout in seconds */
-  afkTimeout: pipe(number(), integer(), minValue(0)) as GenericSchema<number>,
+  afkTimeout: v.pipe(
+    v.number(),
+    v.integer(),
+    v.minValue(0)
+  ) as v.GenericSchema<number>,
   /** true if the server widget is enabled */
-  widgetEnabled: exactOptional(boolean()),
+  widgetEnabled: v.exactOptional(v.boolean()),
   /** the channel id that the widget will generate an invite to, or null if set to no invite */
-  widgetChannelId: nullish<GenericSchema<string>>(snowflake),
+  widgetChannelId: v.nullish<v.GenericSchema<string>>(snowflake),
   /** verification level required for the guild */
   verificationLevel: verificationLevelSchema,
   /** default message notifications level */
@@ -69,73 +66,75 @@ export const guildSchema = object({
   /** explicit content filter level */
   explicitContentFilter: explicitContentFilterLevelSchema,
   /** roles in the guild */
-  roles: array(roleSchema),
+  roles: v.array(roleSchema),
   /** custom guild emojis */
-  emojis: array(emojiSchema),
+  emojis: v.array(emojiSchema),
   /** enabled guild features */
-  features: array(guildFeaturesSchema),
+  features: v.array(guildFeaturesSchema),
   /** required MFA level for the guild */
   mfaLevel: mfaLevelSchema,
   /** application id of the guild creator if it is bot-created */
-  applicationId: nullable<GenericSchema<string>>(snowflake),
+  applicationId: v.nullable<v.GenericSchema<string>>(snowflake),
   /** the id of the channel where guild notices such as welcome messages and boost events are posted */
-  systemChannelId: nullable<GenericSchema<string>>(snowflake),
+  systemChannelId: v.nullable<v.GenericSchema<string>>(snowflake),
   /** system channel flags */
-  systemChannelFlags: asInteger(systemChannelFlag) as GenericSchema<number>,
+  systemChannelFlags: asInteger(systemChannelFlag) as v.GenericSchema<number>,
   /** the id of the channel where Community guilds can display rules and/or guidelines */
-  rulesChannelId: nullable<GenericSchema<string>>(snowflake),
+  rulesChannelId: v.nullable<v.GenericSchema<string>>(snowflake),
   /** the maximum number of presences for the guild (null is always returned, apart from the largest of guilds) */
-  maxPresences: nullish<GenericSchema<number>>(
-    pipe(number(), integer(), minValue(0))
+  maxPresences: v.nullish<v.GenericSchema<number>>(
+    v.pipe(v.number(), v.integer(), v.minValue(0))
   ),
   /** the maximum number of members for the guild */
-  maxMembers: exactOptional<GenericSchema<number>>(
-    pipe(number(), integer(), minValue(0))
+  maxMembers: v.exactOptional<v.GenericSchema<number>>(
+    v.pipe(v.number(), v.integer(), v.minValue(0))
   ),
   /** the vanity url code for the guild */
-  vanityUrlCode: nullable<GenericSchema<string>>(pipe(string(), nonEmpty())),
+  vanityUrlCode: v.nullable<v.GenericSchema<string>>(
+    v.pipe(v.string(), v.nonEmpty())
+  ),
   /** the description of a Community guild */
-  description: nullable(string()),
+  description: v.nullable(v.string()),
   /** banner hash */
-  banner: nullable<GenericSchema<string>>(pipe(string(), nonEmpty())),
+  banner: v.nullable<v.GenericSchema<string>>(v.pipe(v.string(), v.nonEmpty())),
   /** premium tier (Server Boost level) */
   premiumTier: premiumTierSchema,
   /** the number of boosts this guild currently has */
-  premiumSubscriptionCount: exactOptional<GenericSchema<number>>(
-    pipe(number(), integer(), minValue(0))
+  premiumSubscriptionCount: v.exactOptional<v.GenericSchema<number>>(
+    v.pipe(v.number(), v.integer(), v.minValue(0))
   ),
   /** the preferred locale of a Community guild; used in server discovery and notices from Discord, and sent in interactions; defaults to "en-US" */
   preferredLocale: localesSchema,
   /** the id of the channel where admins and moderators of Community guilds receive notices from Discord */
-  publicUpdatesChannelId: nullable<GenericSchema<string>>(snowflake),
+  publicUpdatesChannelId: v.nullable<v.GenericSchema<string>>(snowflake),
   /** the maximum amount of users in a video channel */
-  maxVideoChannelUsers: exactOptional<GenericSchema<number>>(
-    pipe(number(), integer(), minValue(0))
+  maxVideoChannelUsers: v.exactOptional<v.GenericSchema<number>>(
+    v.pipe(v.number(), v.integer(), v.minValue(0))
   ),
   /** the maximum amount of users in a stage video channel */
-  maxStageVideoChannelUsers: exactOptional<GenericSchema<number>>(
-    pipe(number(), integer(), minValue(0))
+  maxStageVideoChannelUsers: v.exactOptional<v.GenericSchema<number>>(
+    v.pipe(v.number(), v.integer(), v.minValue(0))
   ),
   /** approximate number of members in this guild, returned from the **GET** `/guilds/:guild` endpoint when `withCounts` is `true` */
-  approximateMemberCount: exactOptional<GenericSchema<number>>(
-    pipe(number(), integer(), minValue(0))
+  approximateMemberCount: v.exactOptional<v.GenericSchema<number>>(
+    v.pipe(v.number(), v.integer(), v.minValue(0))
   ),
   /** approximate number of non-offline members in this guild, returned from the **GET** `/guilds/:guild` endpoint when `withCounts` is `true` */ approximatePresenceCount:
-    exactOptional<GenericSchema<number>>(
-      pipe(number(), integer(), minValue(0))
+    v.exactOptional<v.GenericSchema<number>>(
+      v.pipe(v.number(), v.integer(), v.minValue(0))
     ),
   /** the welcome screen of a Community guild, shown to new members, returned in an Invite's guild object */
-  welcomeScreen: exactOptional(welcomeScreenSchema),
+  welcomeScreen: v.exactOptional(welcomeScreenSchema),
   /** guild NSFW level */
   nsfwLevel: guildNSFWLevelSchema,
   /** custom guild stickers */
-  stickers: exactOptional(array(stickerSchema)),
+  stickers: v.exactOptional(v.array(stickerSchema)),
   /** whether the guild has the boost progress bar enabled */
-  premiumProgressBarEnabled: boolean(),
+  premiumProgressBarEnabled: v.boolean(),
   /** the id of the channel where admins and moderators of Community guilds receive safety alerts from Discord */
-  safetyAlertsChannelId: nullable<GenericSchema<string>>(snowflake),
+  safetyAlertsChannelId: v.nullable<v.GenericSchema<string>>(snowflake),
   /** the incidents data for this guild */
-  incidentsData: exactOptional(incidentsDataSchema)
+  incidentsData: v.exactOptional(incidentsDataSchema)
 });
 
-export interface Guild extends InferOutput<typeof guildSchema> {}
+export interface Guild extends v.InferOutput<typeof guildSchema> {}

@@ -1,20 +1,20 @@
-import { waitFor } from "@testing-library/react";
+import * as v from "valibot";
 import { mockUtils } from "#mocks";
 import { runProcedure, runQuery } from "#test-utils";
-import { array, length, pipe } from "valibot";
+import { waitFor } from "@testing-library/dom";
+import { skuSchema } from "../types/SKU.js";
 import {
   listSKUsProcedure,
   listSKUsQuery,
   listSKUsSafe,
   listSKUsSchema
 } from "../listSKUs.js";
-import { skuSchema } from "../types/SKU.js";
 
 describe(`listSKUs`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.get(
     `/applications/:application/skus`,
     listSKUsSchema,
-    pipe(array(skuSchema), length(1))
+    v.pipe(v.array(skuSchema), v.length(1))
   );
 
   it(`can be used standalone`, async () => {

@@ -1,30 +1,22 @@
-import {
-  object,
-  array,
-  string,
-  pipe,
-  nonEmpty,
-  exactOptional,
-  type InferOutput
-} from "valibot";
+import * as v from "valibot";
 import { snowflake } from "@discordkit/core";
 import { stickerSchema } from "./Sticker.js";
 
-export const stickerPackSchema = object({
+export const stickerPackSchema = v.object({
   /** id of the sticker pack */
   id: snowflake,
   /** the stickers in the pack */
-  stickers: array(stickerSchema),
+  stickers: v.array(stickerSchema),
   /** name of the sticker pack */
-  name: pipe(string(), nonEmpty()),
+  name: v.pipe(v.string(), v.nonEmpty()),
   /** id of the pack's SKU */
   skuId: snowflake,
   /** id of a sticker in the pack which is shown as the pack's icon */
-  coverStickerId: exactOptional(snowflake),
+  coverStickerId: v.exactOptional(snowflake),
   /** description of the sticker pack */
-  description: pipe(string(), nonEmpty()),
+  description: v.pipe(v.string(), v.nonEmpty()),
   /** id of the sticker pack's banner image */
-  bannerAssetId: exactOptional(snowflake)
+  bannerAssetId: v.exactOptional(snowflake)
 });
 
-export interface StickerPack extends InferOutput<typeof stickerPackSchema> {}
+export interface StickerPack extends v.InferOutput<typeof stickerPackSchema> {}

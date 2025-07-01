@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 
 export enum TextInputStyle {
   /** Single-line input */
@@ -7,4 +7,4 @@ export enum TextInputStyle {
   Paragraph = 2
 }
 
-export const textInputStyleSchema = enum_(TextInputStyle);
+export const textInputStyleSchema = v.enum_(TextInputStyle);

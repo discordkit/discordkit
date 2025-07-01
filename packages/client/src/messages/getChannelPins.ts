@@ -1,15 +1,4 @@
-import {
-  object,
-  array,
-  integer,
-  minValue,
-  maxValue,
-  number,
-  nullish,
-  partial,
-  exactOptional,
-  pipe
-} from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -20,15 +9,18 @@ import {
 } from "@discordkit/core";
 import { messagePinSchema, type MessagePin } from "./types/MessagePin.js";
 
-export const getChannelPinsSchema = object({
+export const getChannelPinsSchema = v.object({
   channel: snowflake,
-  params: exactOptional(
-    partial(
-      object({
+  params: v.exactOptional(
+    v.partial(
+      v.object({
         /** Get messages pinned before this timestamp */
-        before: nullish(snowflake),
+        before: v.nullish(snowflake),
         /** Max number of pins to return (1-50) */
-        limit: nullish(pipe(number(), integer(), minValue(1), maxValue(50)), 50)
+        limit: v.nullish(
+          v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(50)),
+          50
+        )
       })
     )
   )
@@ -50,14 +42,14 @@ export const getChannelPins: Fetcher<
 export const getChannelPinsSafe = toValidated(
   getChannelPins,
   getChannelPinsSchema,
-  array(messagePinSchema)
+  v.array(messagePinSchema)
 );
 
 export const getChannelPinsProcedure = toProcedure(
   `query`,
   getChannelPins,
   getChannelPinsSchema,
-  array(messagePinSchema)
+  v.array(messagePinSchema)
 );
 
 export const getChannelPinsQuery = toQuery(getChannelPins);

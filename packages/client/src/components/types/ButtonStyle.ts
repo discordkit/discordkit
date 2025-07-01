@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 
 export enum ButtonStyle {
   /** The most important or recommended action in a group of options (Required Field: `customId`) */
@@ -15,4 +15,4 @@ export enum ButtonStyle {
   Premium = 6
 }
 
-export const buttonStyleSchema = enum_(ButtonStyle);
+export const buttonStyleSchema = v.enum_(ButtonStyle);

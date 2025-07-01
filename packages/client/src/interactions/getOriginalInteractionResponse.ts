@@ -1,11 +1,4 @@
-import {
-  nonEmpty,
-  object,
-  exactOptional,
-  partial,
-  pipe,
-  string
-} from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -19,12 +12,12 @@ import {
   interactionCallbackResponseSchema
 } from "./types/InteractionCallbackResponse.js";
 
-export const getOriginalInteractionResponseSchema = object({
+export const getOriginalInteractionResponseSchema = v.object({
   application: snowflake,
-  token: pipe(string(), nonEmpty()),
-  params: exactOptional(
-    partial(
-      object({
+  token: v.pipe(v.string(), v.nonEmpty()),
+  params: v.exactOptional(
+    v.partial(
+      v.object({
         /** id of the thread the message is in */
         threadId: snowflake
       })

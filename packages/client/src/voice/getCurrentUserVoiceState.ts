@@ -1,4 +1,4 @@
-import { object } from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -9,7 +9,7 @@ import {
 } from "@discordkit/core";
 import { voiceStateSchema, type VoiceState } from "./types/VoiceState.js";
 
-export const getCurrentUserVoiceStateSchema = object({
+export const getCurrentUserVoiceStateSchema = v.object({
   guild: snowflake
 });
 

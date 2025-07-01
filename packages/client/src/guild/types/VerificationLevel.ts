@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 
 export enum VerificationLevel {
   /** unrestricted */
@@ -13,4 +13,4 @@ export enum VerificationLevel {
   VERY_HIGH = 4
 }
 
-export const verificationLevelSchema = enum_(VerificationLevel);
+export const verificationLevelSchema = v.enum_(VerificationLevel);

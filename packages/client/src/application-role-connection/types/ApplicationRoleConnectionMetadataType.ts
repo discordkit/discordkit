@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 
 export const ApplicationRoleConnectionMetadataType = {
   /** the metadata value `(integer)` is less than or equal to the guild's configured value `(integer)` */
@@ -19,6 +19,6 @@ export const ApplicationRoleConnectionMetadataType = {
   BOOLEAN_NOT_EQUAL: 8
 } as const;
 
-export const applicationRoleConnectionMetadataTypeSchema = enum_(
+export const applicationRoleConnectionMetadataTypeSchema = v.enum_(
   ApplicationRoleConnectionMetadataType
 );

@@ -1,12 +1,4 @@
-import {
-  boolean,
-  nonEmpty,
-  object,
-  exactOptional,
-  partial,
-  pipe,
-  string
-} from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -17,15 +9,15 @@ import {
 } from "@discordkit/core";
 import { inviteSchema, type Invite } from "./types/Invite.js";
 
-export const getInviteSchema = object({
-  code: pipe(string(), nonEmpty()),
-  params: exactOptional(
-    partial(
-      object({
+export const getInviteSchema = v.object({
+  code: v.pipe(v.string(), v.nonEmpty()),
+  params: v.exactOptional(
+    v.partial(
+      v.object({
         /** whether the invite should contain approximate member counts */
-        withCounts: boolean(),
+        withCounts: v.boolean(),
         /** whether the invite should contain the expiration date */
-        withExpiration: boolean(),
+        withExpiration: v.boolean(),
         /** the guild scheduled event to include with the invite */
         guildScheduledEventId: snowflake
       })

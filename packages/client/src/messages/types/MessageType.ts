@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 
 export enum MessageType {
   DEFAULT = 0,
@@ -40,4 +40,4 @@ export enum MessageType {
   POLL_RESULT = 46
 }
 
-export const messageTypeSchema = enum_(MessageType);
+export const messageTypeSchema = v.enum_(MessageType);

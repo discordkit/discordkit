@@ -1,20 +1,20 @@
-import { waitFor } from "@testing-library/react";
+import * as v from "valibot";
 import { mockUtils } from "#mocks";
 import { runProcedure, runQuery } from "#test-utils";
-import { array, length, pipe } from "valibot";
+import { waitFor } from "@testing-library/dom";
+import { moderationRuleSchema } from "../types/ModerationRule.js";
 import {
   listAutoModerationRulesForGuildProcedure,
   listAutoModerationRulesForGuildQuery,
   listAutoModerationRulesForGuildSafe,
   listAutoModerationRulesForGuildSchema
 } from "../listAutoModerationRulesForGuild.js";
-import { moderationRuleSchema } from "../types/ModerationRule.js";
 
 describe(`listAutoModerationRulesForGuild`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.get(
     `/guilds/:guild/auto-moderation/rules`,
     listAutoModerationRulesForGuildSchema,
-    pipe(array(moderationRuleSchema), length(1)),
+    v.pipe(v.array(moderationRuleSchema), v.length(1)),
     { seed: 1 }
   );
 

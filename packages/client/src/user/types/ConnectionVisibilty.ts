@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 
 export enum ConnectionVisibilty {
   /** invisible to everyone except the user themselves */
@@ -7,4 +7,4 @@ export enum ConnectionVisibilty {
   EVERYONE = 1
 }
 
-export const connectionVisibiltySchema = enum_(ConnectionVisibilty);
+export const connectionVisibiltySchema = v.enum_(ConnectionVisibilty);

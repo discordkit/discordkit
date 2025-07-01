@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 
 export const InteractionType = {
   PING: 1,
@@ -8,4 +8,4 @@ export const InteractionType = {
   MODAL_SUBMIT: 5
 } as const;
 
-export const interactionTypeSchema = enum_(InteractionType);
+export const interactionTypeSchema = v.enum_(InteractionType);

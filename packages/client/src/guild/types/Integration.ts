@@ -1,18 +1,4 @@
-import {
-  object,
-  string,
-  boolean,
-  exactOptional,
-  type InferOutput,
-  minValue,
-  integer,
-  number,
-  array,
-  isoTimestamp,
-  pipe,
-  nonEmpty,
-  type GenericSchema
-} from "valibot";
+import * as v from "valibot";
 import { snowflake } from "@discordkit/core";
 import { type User, userSchema } from "../../user/types/User.js";
 import { scopesSchema } from "../../application/types/Scopes.js";
@@ -20,45 +6,45 @@ import { integrationApplicationSchema } from "./IntegrationApplication.js";
 import { integrationAccountSchema } from "./IntegrationAccount.js";
 import { integrationExpireBehaviorSchema } from "./IntegrationExpireBehavior.js";
 
-export const integrationSchema = object({
+export const integrationSchema = v.object({
   /** integration id */
-  id: snowflake as GenericSchema<string>,
+  id: snowflake as v.GenericSchema<string>,
   /** integration name */
-  name: pipe(string(), nonEmpty()) as GenericSchema<string>,
+  name: v.pipe(v.string(), v.nonEmpty()) as v.GenericSchema<string>,
   /** integration type (twitch, youtube, or discord) */
-  type: string(),
+  type: v.string(),
   /** is this integration enabled */
-  enabled: boolean(),
+  enabled: v.boolean(),
   /** is this integration syncing */
-  syncing: exactOptional(boolean()),
+  syncing: v.exactOptional(v.boolean()),
   /** id that this integration uses for "subscribers" */
-  roleId: exactOptional(snowflake),
+  roleId: v.exactOptional(snowflake),
   /** whether emoticons should be synced for this integration (twitch only currently) */
-  enableEmoticons: exactOptional(boolean()),
+  enableEmoticons: v.exactOptional(v.boolean()),
   /** the behavior of expiring subscribers */
-  expireBehavior: exactOptional(integrationExpireBehaviorSchema),
+  expireBehavior: v.exactOptional(integrationExpireBehaviorSchema),
   /** the grace period (in days) before expiring subscribers */
-  expireGracePeriod: exactOptional<GenericSchema<number>>(
-    pipe(number(), integer(), minValue(0))
+  expireGracePeriod: v.exactOptional<v.GenericSchema<number>>(
+    v.pipe(v.number(), v.integer(), v.minValue(0))
   ),
   /** user for this integration */
-  user: exactOptional<GenericSchema<User>>(userSchema),
+  user: v.exactOptional<v.GenericSchema<User>>(userSchema),
   /** integration account information */
   account: integrationAccountSchema,
   /** when this integration was last synced */
-  syncedAt: exactOptional<GenericSchema<string>>(
-    pipe(string(), isoTimestamp())
+  syncedAt: v.exactOptional<v.GenericSchema<string>>(
+    v.pipe(v.string(), v.isoTimestamp())
   ),
   /** how many subscribers this integration has */
-  subscriberCount: exactOptional<GenericSchema<number>>(
-    pipe(number(), integer(), minValue(0))
+  subscriberCount: v.exactOptional<v.GenericSchema<number>>(
+    v.pipe(v.number(), v.integer(), v.minValue(0))
   ),
   /** has this integration been revoked */
-  revoked: exactOptional(boolean()),
+  revoked: v.exactOptional(v.boolean()),
   /** The bot/OAuth2 application for discord integrations */
-  application: exactOptional(integrationApplicationSchema),
+  application: v.exactOptional(integrationApplicationSchema),
   /** the scopes the application has been authorized for */
-  scopes: exactOptional(array(scopesSchema))
+  scopes: v.exactOptional(v.array(scopesSchema))
 });
 
-export interface Integration extends InferOutput<typeof integrationSchema> {}
+export interface Integration extends v.InferOutput<typeof integrationSchema> {}

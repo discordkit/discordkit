@@ -1,11 +1,4 @@
-import {
-  exactOptional,
-  isoTimestamp,
-  nonEmpty,
-  object,
-  pipe,
-  string
-} from "valibot";
+import * as v from "valibot";
 import {
   post,
   type Fetcher,
@@ -23,29 +16,29 @@ import { scheduledEventPrivacyLevelSchema } from "./types/ScheduledEventPrivacyL
 import { scheduledEventEntityTypeSchema } from "./types/ScheduledEventEntityType.js";
 import { scheduledEventRecurrenceRuleSchema } from "./types/ScheduledEventRecurrenceRule.js";
 
-export const createGuildScheduledEventSchema = object({
+export const createGuildScheduledEventSchema = v.object({
   guild: snowflake,
-  body: object({
+  body: v.object({
     /** the channel id of the scheduled event. */
-    channelId: exactOptional(snowflake),
+    channelId: v.exactOptional(snowflake),
     /** entity metadata	the entity metadata of the scheduled event */
-    entityMetadata: exactOptional(entityMetadataSchema),
+    entityMetadata: v.exactOptional(entityMetadataSchema),
     /** the name of the scheduled event */
-    name: pipe(string(), nonEmpty()),
+    name: v.pipe(v.string(), v.nonEmpty()),
     /** the privacy level of the scheduled event */
     privacyLevel: scheduledEventPrivacyLevelSchema,
     /** the time to schedule the scheduled event */
-    scheduledStartTime: pipe(string(), isoTimestamp()),
+    scheduledStartTime: v.pipe(v.string(), v.isoTimestamp()),
     /** the time when the scheduled event is scheduled to end */
-    scheduledEndTime: exactOptional(pipe(string(), isoTimestamp())),
+    scheduledEndTime: v.exactOptional(v.pipe(v.string(), v.isoTimestamp())),
     /** the description of the scheduled event */
-    description: exactOptional(pipe(string(), nonEmpty())),
+    description: v.exactOptional(v.pipe(v.string(), v.nonEmpty())),
     /** the entity type of the scheduled event */
     entityType: scheduledEventEntityTypeSchema,
     /** the cover image of the scheduled event */
-    image: exactOptional(datauri),
+    image: v.exactOptional(datauri),
     /** the definition for how often this event should recur */
-    recurrenceRule: exactOptional(scheduledEventRecurrenceRuleSchema)
+    recurrenceRule: v.exactOptional(scheduledEventRecurrenceRuleSchema)
   })
 });
 

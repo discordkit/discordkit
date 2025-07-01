@@ -1,4 +1,4 @@
-import { object, omit } from "valibot";
+import * as v from "valibot";
 import {
   patch,
   type Fetcher,
@@ -8,7 +8,7 @@ import {
 } from "@discordkit/core";
 import { lobbySchema, type Lobby } from "./types/Lobby.js";
 
-export const unlinkChannelFromLobbySchema = object({
+export const unlinkChannelFromLobbySchema = v.object({
   lobby: snowflake
 });
 
@@ -33,12 +33,12 @@ export const unlinkChannelFromLobby: Fetcher<
 export const unlinkChannelFromLobbySafe = toValidated(
   unlinkChannelFromLobby,
   unlinkChannelFromLobbySchema,
-  omit(lobbySchema, [`linkedChannel`])
+  v.omit(lobbySchema, [`linkedChannel`])
 );
 
 export const unlinkChannelFromLobbyProcedure = toProcedure(
   `mutation`,
   unlinkChannelFromLobby,
   unlinkChannelFromLobbySchema,
-  omit(lobbySchema, [`linkedChannel`])
+  v.omit(lobbySchema, [`linkedChannel`])
 );

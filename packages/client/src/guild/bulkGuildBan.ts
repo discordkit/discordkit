@@ -1,14 +1,4 @@
-import {
-  array,
-  integer,
-  maxLength,
-  maxValue,
-  minValue,
-  nonEmpty,
-  number,
-  object,
-  pipe
-} from "valibot";
+import * as v from "valibot";
 import {
   post,
   type Fetcher,
@@ -17,17 +7,17 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const bulkGuildBanSchema = object({
+export const bulkGuildBanSchema = v.object({
   guild: snowflake,
-  body: object({
+  body: v.object({
     /** list of user ids to ban (max 200) */
-    userIds: pipe(array(snowflake), nonEmpty(), maxLength(200)),
+    userIds: v.pipe(v.array(snowflake), v.nonEmpty(), v.maxLength(200)),
     /** number of seconds to delete messages for, between 0 and 604800 (7 days) */
-    deleteMessageSeconds: pipe(
-      number(),
-      integer(),
-      minValue(0),
-      maxValue(604800)
+    deleteMessageSeconds: v.pipe(
+      v.number(),
+      v.integer(),
+      v.minValue(0),
+      v.maxValue(604800)
     )
   })
 });
@@ -51,9 +41,9 @@ export const bulkGuildBan: Fetcher<
 export const bulkGuildBanSafe = toValidated(
   bulkGuildBan,
   bulkGuildBanSchema,
-  object({
-    bannedUsers: array(snowflake),
-    failedUsers: array(snowflake)
+  v.object({
+    bannedUsers: v.array(snowflake),
+    failedUsers: v.array(snowflake)
   })
 );
 
@@ -61,8 +51,8 @@ export const bulkGuildBanProcedure = toProcedure(
   `mutation`,
   bulkGuildBan,
   bulkGuildBanSchema,
-  object({
-    bannedUsers: array(snowflake),
-    failedUsers: array(snowflake)
+  v.object({
+    bannedUsers: v.array(snowflake),
+    failedUsers: v.array(snowflake)
   })
 );

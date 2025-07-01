@@ -1,4 +1,4 @@
-import { object } from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -12,7 +12,7 @@ import {
   type GuildTemplate
 } from "./types/GuildTemplate.js";
 
-export const getGuildTemplateSchema = object({
+export const getGuildTemplateSchema = v.object({
   template: snowflake
 });
 

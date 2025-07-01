@@ -1,6 +1,6 @@
-import { type InferOutput, picklist } from "valibot";
+import * as v from "valibot";
 
-export const localesSchema = picklist([
+export const localesSchema = v.picklist([
   /** Indonesian | Bahasa Indonesia */
   `id`,
   /** Danish | Dansk */
@@ -65,4 +65,4 @@ export const localesSchema = picklist([
   `ko`
 ]);
 
-export type Locales = InferOutput<typeof localesSchema>;
+export type Locales = v.InferOutput<typeof localesSchema>;

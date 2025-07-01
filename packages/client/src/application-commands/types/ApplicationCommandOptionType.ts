@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 
 export const ApplicationCommandOptionType = {
   SUB_COMMAND: 1,
@@ -19,6 +19,6 @@ export const ApplicationCommandOptionType = {
   ATTACHMENT: 11
 } as const;
 
-export const applicationCommandOptionTypeSchema = enum_(
+export const applicationCommandOptionTypeSchema = v.enum_(
   ApplicationCommandOptionType
 );

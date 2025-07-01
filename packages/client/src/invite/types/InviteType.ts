@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 
 export const InviteType = {
   GUILD: 0,
@@ -6,4 +6,4 @@ export const InviteType = {
   FRIEND: 2
 } as const;
 
-export const inviteTypeSchema = enum_(InviteType);
+export const inviteTypeSchema = v.enum_(InviteType);

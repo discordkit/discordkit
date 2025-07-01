@@ -1,4 +1,4 @@
-import { array, object } from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -9,7 +9,7 @@ import {
 } from "@discordkit/core";
 import { skuSchema, type SKU } from "./types/SKU.js";
 
-export const listSKUsSchema = object({
+export const listSKUsSchema = v.object({
   application: snowflake
 });
 
@@ -31,14 +31,14 @@ export const listSKUs: Fetcher<typeof listSKUsSchema, SKU[]> = async ({
 export const listSKUsSafe = toValidated(
   listSKUs,
   listSKUsSchema,
-  array(skuSchema)
+  v.array(skuSchema)
 );
 
 export const listSKUsProcedure = toProcedure(
   `query`,
   listSKUs,
   listSKUsSchema,
-  array(skuSchema)
+  v.array(skuSchema)
 );
 
 export const listSKUsQuery = toQuery(listSKUs);

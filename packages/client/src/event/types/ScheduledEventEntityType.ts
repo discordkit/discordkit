@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 
 export enum ScheduledEventEntityType {
   STAGE_INSTANCE = 1,
@@ -6,4 +6,4 @@ export enum ScheduledEventEntityType {
   EXTERNAL = 3
 }
 
-export const scheduledEventEntityTypeSchema = enum_(ScheduledEventEntityType);
+export const scheduledEventEntityTypeSchema = v.enum_(ScheduledEventEntityType);

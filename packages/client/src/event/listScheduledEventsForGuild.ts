@@ -1,4 +1,4 @@
-import { array, boolean, object, exactOptional, partial } from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -12,12 +12,12 @@ import {
   type ScheduledEvent
 } from "./types/ScheduledEvent.js";
 
-export const listScheduledEventsForGuildSchema = object({
+export const listScheduledEventsForGuildSchema = v.object({
   guild: snowflake,
-  params: exactOptional(
-    partial(
-      object({
-        withUserCount: boolean()
+  params: v.exactOptional(
+    v.partial(
+      v.object({
+        withUserCount: v.boolean()
       })
     )
   )
@@ -39,14 +39,14 @@ export const listScheduledEventsForGuild: Fetcher<
 export const listScheduledEventsForGuildSafe = toValidated(
   listScheduledEventsForGuild,
   listScheduledEventsForGuildSchema,
-  array(scheduledEventSchema)
+  v.array(scheduledEventSchema)
 );
 
 export const listScheduledEventsForGuildProcedure = toProcedure(
   `query`,
   listScheduledEventsForGuild,
   listScheduledEventsForGuildSchema,
-  array(scheduledEventSchema)
+  v.array(scheduledEventSchema)
 );
 
 export const listScheduledEventsForGuildQuery = toQuery(

@@ -1,11 +1,4 @@
-import {
-  nonEmpty,
-  object,
-  exactOptional,
-  partial,
-  pipe,
-  string
-} from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -16,13 +9,13 @@ import {
 } from "@discordkit/core";
 import { messageSchema, type Message } from "../messages/types/Message.js";
 
-export const getFollowupMessageSchema = object({
+export const getFollowupMessageSchema = v.object({
   application: snowflake,
-  token: pipe(string(), nonEmpty()),
+  token: v.pipe(v.string(), v.nonEmpty()),
   message: snowflake,
-  params: exactOptional(
-    partial(
-      object({
+  params: v.exactOptional(
+    v.partial(
+      v.object({
         /** id of the thread the message is in */
         threadId: snowflake
       })

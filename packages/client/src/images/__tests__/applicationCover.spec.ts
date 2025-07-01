@@ -1,5 +1,5 @@
+import * as v from "valibot";
 import { mockUtils } from "#mocks";
-import { parse, pipe, string, url } from "valibot";
 import {
   applicationCover,
   applicationCoverSchema
@@ -8,8 +8,8 @@ import {
 describe(`applicationCover`, () => {
   it(`produces a valid URL`, () => {
     expect(() =>
-      parse(
-        pipe(string(), url()),
+      v.parse(
+        v.pipe(v.string(), v.url()),
         applicationCover(mockUtils.schema(applicationCoverSchema))
       )
     ).not.toThrow();

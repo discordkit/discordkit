@@ -1,4 +1,4 @@
-import { object } from "valibot";
+import * as v from "valibot";
 import {
   remove,
   type Fetcher,
@@ -7,7 +7,7 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const deleteApplicationEmojiSchema = object({
+export const deleteApplicationEmojiSchema = v.object({
   application: snowflake,
   emoji: snowflake
 });

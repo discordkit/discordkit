@@ -1,4 +1,4 @@
-import { object } from "valibot";
+import * as v from "valibot";
 import {
   put,
   type Fetcher,
@@ -7,7 +7,7 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const pinMessageSchema = object({
+export const pinMessageSchema = v.object({
   channel: snowflake,
   message: snowflake
 });

@@ -1,20 +1,20 @@
-import { waitFor } from "@testing-library/react";
+import * as v from "valibot";
 import { mockUtils } from "#mocks";
 import { runProcedure, runQuery } from "#test-utils";
-import { array, length, pipe } from "valibot";
+import { waitFor } from "@testing-library/dom";
+import { messagePinSchema } from "../types/MessagePin.js";
 import {
   getChannelPinsProcedure,
   getChannelPinsQuery,
   getChannelPinsSafe,
   getChannelPinsSchema
 } from "../getChannelPins.js";
-import { messagePinSchema } from "../types/MessagePin.js";
 
 describe(`getChannelPins`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.get(
     `/channels/:channel/messages/pins`,
     getChannelPinsSchema,
-    pipe(array(messagePinSchema), length(1))
+    v.pipe(v.array(messagePinSchema), v.length(1))
   );
 
   it(`can be used standalone`, async () => {

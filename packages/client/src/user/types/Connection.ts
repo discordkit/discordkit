@@ -1,38 +1,29 @@
-import {
-  type InferOutput,
-  object,
-  pipe,
-  string,
-  nonEmpty,
-  boolean,
-  exactOptional,
-  array
-} from "valibot";
+import * as v from "valibot";
 import { integrationSchema } from "../../guild/types/Integration.js";
 import { connectionVisibiltySchema } from "./ConnectionVisibilty.js";
 import { servicesSchema } from "./Services.js";
 
-export const connectionSchema = object({
+export const connectionSchema = v.object({
   /** id of the connection account */
-  id: pipe(string(), nonEmpty()),
+  id: v.pipe(v.string(), v.nonEmpty()),
   /** the username of the connection account */
-  name: pipe(string(), nonEmpty()),
+  name: v.pipe(v.string(), v.nonEmpty()),
   /** the service of the connection (twitch, youtube) */
   type: servicesSchema,
   /** whether the connection is revoked */
-  revoked: exactOptional(boolean()),
+  revoked: v.exactOptional(v.boolean()),
   /** an array of partial server integrations */
-  integrations: exactOptional(array(integrationSchema)),
+  integrations: v.exactOptional(v.array(integrationSchema)),
   /** whether the connection is verified */
-  verified: boolean(),
+  verified: v.boolean(),
   /** whether friend sync is enabled for this connection */
-  friendSync: boolean(),
+  friendSync: v.boolean(),
   /** whether activities related to this connection will be shown in presence updates */
-  showActivity: boolean(),
+  showActivity: v.boolean(),
   /** whether this connection has a corresponding third party OAuth2 token */
-  twoWayLink: boolean(),
+  twoWayLink: v.boolean(),
   /** visibility of this connection */
   visibility: connectionVisibiltySchema
 });
 
-export interface Connection extends InferOutput<typeof connectionSchema> {}
+export interface Connection extends v.InferOutput<typeof connectionSchema> {}

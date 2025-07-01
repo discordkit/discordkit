@@ -1,42 +1,28 @@
+import * as v from "valibot";
 import { snowflake } from "@discordkit/core";
-import {
-  type InferOutput,
-  union,
-  exactOptional,
-  object,
-  number,
-  integer,
-  minValue,
-  maxValue,
-  string,
-  nullish,
-  maxLength,
-  pipe,
-  type GenericSchema
-} from "valibot";
 
-export const moderationActionMetaSchema = union([
-  object({
+export const moderationActionMetaSchema = v.union([
+  v.object({
     /** channel to which user content should be logged */
-    channelId: exactOptional<GenericSchema<string>>(snowflake)
+    channelId: v.exactOptional<v.GenericSchema<string>>(snowflake)
   }),
-  object({
+  v.object({
     /** timeout duration in seconds */
-    durationSeconds: pipe(
-      number(),
-      integer(),
-      minValue(0),
-      maxValue(2419200)
-    ) as GenericSchema<number>
+    durationSeconds: v.pipe(
+      v.number(),
+      v.integer(),
+      v.minValue(0),
+      v.maxValue(2419200)
+    ) as v.GenericSchema<number>
   }),
-  object({
+  v.object({
     /** additional explanation that will be shown to members whenever their message is blocked */
-    customMessage: nullish<GenericSchema<string>>(
-      pipe(string(), maxLength(150))
+    customMessage: v.nullish<v.GenericSchema<string>>(
+      v.pipe(v.string(), v.maxLength(150))
     )
   })
 ]);
 
-export type ModerationActionMeta = InferOutput<
+export type ModerationActionMeta = v.InferOutput<
   typeof moderationActionMetaSchema
 >;

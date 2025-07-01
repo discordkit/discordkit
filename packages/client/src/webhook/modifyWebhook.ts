@@ -1,13 +1,4 @@
-import {
-  pipe,
-  object,
-  string,
-  url,
-  partial,
-  exactOptional,
-  nullable,
-  nonEmpty
-} from "valibot";
+import * as v from "valibot";
 import {
   patch,
   type Fetcher,
@@ -17,15 +8,15 @@ import {
 } from "@discordkit/core";
 import { webhookSchema, type Webhook } from "./types/Webhook.js";
 
-export const modifyWebhookSchema = object({
+export const modifyWebhookSchema = v.object({
   webhook: snowflake,
-  body: exactOptional(
-    partial(
-      object({
+  body: v.exactOptional(
+    v.partial(
+      v.object({
         /** the default name of the webhook */
-        name: pipe(string(), nonEmpty()),
+        name: v.pipe(v.string(), v.nonEmpty()),
         /** image for the default webhook avatar */
-        avatar: nullable(pipe(string(), url())),
+        avatar: v.nullable(v.pipe(v.string(), v.url())),
         /** the new channel id this webhook should be moved to */
         channelId: snowflake
       })

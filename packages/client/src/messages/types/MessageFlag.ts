@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/prefer-literal-enum-member */
-import { enum_ } from "valibot";
+import * as v from "valibot";
 import { bitfield } from "@discordkit/core";
 
 export enum MessageFlag {
@@ -31,7 +31,7 @@ export enum MessageFlag {
   IS_COMPONENTS_V2 = 1 << 15
 }
 
-export const messageFlagSchema = enum_(MessageFlag);
+export const messageFlagSchema = v.enum_(MessageFlag);
 export const messageFlag = bitfield(
   `messageFlag`,
   MessageFlag,

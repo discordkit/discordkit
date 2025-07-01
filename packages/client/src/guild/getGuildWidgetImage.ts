@@ -1,4 +1,4 @@
-import { picklist, object, exactOptional, partial } from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -8,13 +8,13 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const getGuildWidgetImageSchema = object({
+export const getGuildWidgetImageSchema = v.object({
   guild: snowflake,
-  params: exactOptional(
-    partial(
-      object({
+  params: v.exactOptional(
+    v.partial(
+      v.object({
         /** style of the widget image returned */
-        style: picklist([
+        style: v.picklist([
           /** shield style widget with Discord icon and guild members online count */
           `shield`,
           /** large image with guild icon, name and online count. "POWERED BY DISCORD" as the footer of the widget */

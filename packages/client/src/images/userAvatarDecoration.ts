@@ -1,19 +1,12 @@
+import * as v from "valibot";
 import { getAsset, snowflake } from "@discordkit/core";
-import {
-  type InferOutput,
-  nonEmpty,
-  object,
-  exactOptional,
-  pipe,
-  string
-} from "valibot";
 import { imageSizes } from "./types/ImageSizes.js";
 
-export const userAvatarDecorationSchema = object({
+export const userAvatarDecorationSchema = v.object({
   user: snowflake,
-  decoration: pipe(string(), nonEmpty()),
-  params: exactOptional(
-    object({
+  decoration: v.pipe(v.string(), v.nonEmpty()),
+  params: v.exactOptional(
+    v.object({
       size: imageSizes
     })
   )
@@ -23,5 +16,5 @@ export const userAvatarDecoration = ({
   user,
   decoration,
   params
-}: InferOutput<typeof userAvatarDecorationSchema>): string =>
+}: v.InferOutput<typeof userAvatarDecorationSchema>): string =>
   getAsset(`/avatar-decorations/${user}/${decoration}.png`, params);

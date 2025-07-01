@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 
 export enum StickerFormatType {
   PNG = 1,
@@ -7,4 +7,4 @@ export enum StickerFormatType {
   GIF = 4
 }
 
-export const stickerFormatTypeSchema = enum_(StickerFormatType);
+export const stickerFormatTypeSchema = v.enum_(StickerFormatType);

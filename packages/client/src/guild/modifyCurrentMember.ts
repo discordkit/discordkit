@@ -1,4 +1,4 @@
-import { nonEmpty, nullish, object, pipe, string } from "valibot";
+import * as v from "valibot";
 import {
   patch,
   type Fetcher,
@@ -8,11 +8,11 @@ import {
 } from "@discordkit/core";
 import { memberSchema, type Member } from "./types/Member.js";
 
-export const modifyCurrentMemberSchema = object({
+export const modifyCurrentMemberSchema = v.object({
   guild: snowflake,
-  body: object({
+  body: v.object({
     /** value to set user's nickname to (Requires `CHANGE_NICKNAME` permission) */
-    nick: nullish(pipe(string(), nonEmpty()))
+    nick: v.nullish(v.pipe(v.string(), v.nonEmpty()))
   })
 });
 

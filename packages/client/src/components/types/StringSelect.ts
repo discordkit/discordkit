@@ -1,19 +1,4 @@
-import type { InferOutput } from "valibot";
-import {
-  array,
-  boolean,
-  exactOptional,
-  integer,
-  literal,
-  maxLength,
-  maxValue,
-  minValue,
-  nonEmpty,
-  number,
-  object,
-  pipe,
-  string
-} from "valibot";
+import * as v from "valibot";
 import { ComponentType } from "./ComponentType.js";
 import { selectOptionSchema } from "./SelectOption.js";
 
@@ -24,29 +9,37 @@ import { selectOptionSchema } from "./SelectOption.js";
  *
  * String Selects must be placed inside an Action Row and are only available in messages. An Action Row can contain only one select menu and cannot contain buttons if it has a select menu.
  */
-export const stringSelectSchema = object({
+export const stringSelectSchema = v.object({
   /** `3` for string select */
-  type: literal(ComponentType.StringSelect),
+  type: v.literal(ComponentType.StringSelect),
   /** Optional identifier for component */
-  id: exactOptional(
-    pipe(number(), integer(), minValue(0), maxValue(Number.MAX_SAFE_INTEGER))
+  id: v.exactOptional(
+    v.pipe(
+      v.number(),
+      v.integer(),
+      v.minValue(0),
+      v.maxValue(Number.MAX_SAFE_INTEGER)
+    )
   ),
   /** ID for the select menu; max 100 characters */
-  customId: pipe(string(), nonEmpty(), maxLength(100)),
+  customId: v.pipe(v.string(), v.nonEmpty(), v.maxLength(100)),
   /** Specified choices in a select menu; max 25 */
-  options: pipe(array(selectOptionSchema), maxLength(25)),
+  options: v.pipe(v.array(selectOptionSchema), v.maxLength(25)),
   /** Placeholder text if nothing is selected or default; max 150 characters */
-  placeholder: exactOptional(pipe(string(), nonEmpty(), maxLength(150))),
+  placeholder: v.exactOptional(
+    v.pipe(v.string(), v.nonEmpty(), v.maxLength(150))
+  ),
   /** Minimum number of items that must be chosen (defaults to 1); min 0, max 25 */
-  minValues: exactOptional(
-    pipe(number(), integer(), minValue(0), maxValue(25))
+  minValues: v.exactOptional(
+    v.pipe(v.number(), v.integer(), v.minValue(0), v.maxValue(25))
   ),
   /** Maximum number of items that can be chosen (defaults to 1); max 25 */
-  maxValues: exactOptional(
-    pipe(number(), integer(), minValue(1), maxValue(25))
+  maxValues: v.exactOptional(
+    v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(25))
   ),
   /** Whether select menu is disabled (defaults to `false`) */
-  disabled: exactOptional(boolean())
+  disabled: v.exactOptional(v.boolean())
 });
 
-export interface StringSelect extends InferOutput<typeof stringSelectSchema> {}
+export interface StringSelect
+  extends v.InferOutput<typeof stringSelectSchema> {}

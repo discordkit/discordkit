@@ -1,26 +1,20 @@
-import {
-  object,
-  array,
-  boolean,
-  type InferOutput,
-  type GenericSchema
-} from "valibot";
+import * as v from "valibot";
 import { snowflake } from "@discordkit/core";
 import { onboardingPromptSchema } from "./OnboardingPrompt.js";
 import { onboardingModeSchema } from "./OnboardingMode.js";
 
-export const guildOnboardingSchema = object({
+export const guildOnboardingSchema = v.object({
   /** ID of the guild this onboarding is part of */
-  guildId: snowflake as GenericSchema<string>,
+  guildId: snowflake as v.GenericSchema<string>,
   /** Prompts shown during onboarding and in customize community */
-  prompts: array(onboardingPromptSchema),
+  prompts: v.array(onboardingPromptSchema),
   /** Channel IDs that members get opted into automatically */
-  defaultChannelIds: array(snowflake) as GenericSchema<string[]>,
+  defaultChannelIds: v.array(snowflake) as v.GenericSchema<string[]>,
   /** Whether onboarding is enabled in the guild */
-  enabled: boolean(),
+  enabled: v.boolean(),
   /** Current mode of onboarding */
   mode: onboardingModeSchema
 });
 
 export interface GuildOnboarding
-  extends InferOutput<typeof guildOnboardingSchema> {}
+  extends v.InferOutput<typeof guildOnboardingSchema> {}

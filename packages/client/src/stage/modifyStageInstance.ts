@@ -1,4 +1,4 @@
-import { maxLength, minLength, object, partial, string, pipe } from "valibot";
+import * as v from "valibot";
 import {
   patch,
   type Fetcher,
@@ -9,12 +9,12 @@ import {
 import { type Stage, stageSchema } from "./types/Stage.js";
 import { stagePrivacyLevelSchema } from "./types/StagePrivacyLevel.js";
 
-export const modifyStageInstanceSchema = object({
+export const modifyStageInstanceSchema = v.object({
   channel: snowflake,
-  body: partial(
-    object({
+  body: v.partial(
+    v.object({
       /** The topic of the Stage instance (1-120 characters) */
-      topic: pipe(string(), minLength(1), maxLength(120)),
+      topic: v.pipe(v.string(), v.minLength(1), v.maxLength(120)),
       /** The privacy level of the Stage instance */
       privacyLevel: stagePrivacyLevelSchema
     })

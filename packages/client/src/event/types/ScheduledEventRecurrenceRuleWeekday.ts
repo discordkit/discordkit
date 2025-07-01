@@ -1,4 +1,4 @@
-import { object, picklist, enum_, type InferOutput } from "valibot";
+import * as v from "valibot";
 
 export enum ScheduledEventRecurrenceRuleWeekday {
   MONDAY = 1,
@@ -10,14 +10,14 @@ export enum ScheduledEventRecurrenceRuleWeekday {
   SUNDAY = 7
 }
 
-export const scheduledEventRecurrenceRuleWeekdaySchema = enum_(
+export const scheduledEventRecurrenceRuleWeekdaySchema = v.enum_(
   ScheduledEventRecurrenceRuleWeekday
 );
 
-export const scheduledEventRecurrenceRuleNWeekdaySchema = object({
-  n: picklist([1, 2, 3, 4, 5]),
+export const scheduledEventRecurrenceRuleNWeekdaySchema = v.object({
+  n: v.picklist([1, 2, 3, 4, 5]),
   day: scheduledEventRecurrenceRuleWeekdaySchema
 });
 
 export interface ScheduledEventRecurrenceRuleNWeekday
-  extends InferOutput<typeof scheduledEventRecurrenceRuleNWeekdaySchema> {}
+  extends v.InferOutput<typeof scheduledEventRecurrenceRuleNWeekdaySchema> {}

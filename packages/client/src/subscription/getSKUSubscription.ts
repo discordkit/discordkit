@@ -1,4 +1,4 @@
-import { object } from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -9,7 +9,7 @@ import {
 } from "@discordkit/core";
 import { subscriptionSchema, type Subscription } from "./types/Subscription.js";
 
-export const getSKUSubscriptionSchema = object({
+export const getSKUSubscriptionSchema = v.object({
   sku: snowflake,
   subscription: snowflake
 });

@@ -1,4 +1,4 @@
-import { object } from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -9,7 +9,7 @@ import {
 } from "@discordkit/core";
 import { lobbySchema, type Lobby } from "./types/Lobby.js";
 
-export const getLobbySchema = object({
+export const getLobbySchema = v.object({
   lobby: snowflake
 });
 

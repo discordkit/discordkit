@@ -1,21 +1,13 @@
+import * as v from "valibot";
 import { getAsset, snowflake } from "@discordkit/core";
-import {
-  type InferOutput,
-  object,
-  exactOptional,
-  string,
-  picklist,
-  pipe,
-  nonEmpty
-} from "valibot";
 import { imageSizes } from "./types/ImageSizes.js";
 
-export const userAvatarSchema = object({
+export const userAvatarSchema = v.object({
   user: snowflake,
-  avatar: pipe(string(), nonEmpty()),
-  format: exactOptional(picklist([`png`, `jpg`, `webp`, `gif`])),
-  params: exactOptional(
-    object({
+  avatar: v.pipe(v.string(), v.nonEmpty()),
+  format: v.exactOptional(v.picklist([`png`, `jpg`, `webp`, `gif`])),
+  params: v.exactOptional(
+    v.object({
       size: imageSizes
     })
   )
@@ -26,5 +18,5 @@ export const userAvatar = ({
   avatar,
   format,
   params
-}: InferOutput<typeof userAvatarSchema>): string =>
+}: v.InferOutput<typeof userAvatarSchema>): string =>
   getAsset(`/avatars/${user}/${avatar}.${format ?? `png`}`, params);

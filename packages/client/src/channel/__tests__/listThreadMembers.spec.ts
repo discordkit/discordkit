@@ -1,20 +1,20 @@
-import { waitFor } from "@testing-library/react";
+import * as v from "valibot";
 import { mockUtils } from "#mocks";
 import { runProcedure, runQuery } from "#test-utils";
-import { array, length, pipe } from "valibot";
+import { waitFor } from "@testing-library/dom";
+import { threadMemberSchema } from "../types/ThreadMember.js";
 import {
   listThreadMembersProcedure,
   listThreadMembersQuery,
   listThreadMembersSafe,
   listThreadMembersSchema
 } from "../listThreadMembers.js";
-import { threadMemberSchema } from "../types/ThreadMember.js";
 
 describe(`listThreadMembers`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.get(
     `/channels/:channel/thread-members`,
     listThreadMembersSchema,
-    pipe(array(threadMemberSchema), length(1))
+    v.pipe(v.array(threadMemberSchema), v.length(1))
   );
 
   it(`can be used standalone`, async () => {

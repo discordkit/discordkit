@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/prefer-literal-enum-member */
-import { enum_ } from "valibot";
+import * as v from "valibot";
 import { bitfield } from "@discordkit/core";
 
 export enum SystemChannelFlags {
@@ -17,7 +17,7 @@ export enum SystemChannelFlags {
   SUPPRESS_ROLE_SUBSCRIPTION_PURCHASE_NOTIFICATION_REPLIES = 1 << 5
 }
 
-export const systemChannelFlagsSchema = enum_(SystemChannelFlags);
+export const systemChannelFlagsSchema = v.enum_(SystemChannelFlags);
 export const systemChannelFlag = bitfield(
   `systemChannelFlag`,
   SystemChannelFlags,

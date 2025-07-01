@@ -1,13 +1,4 @@
-import {
-  array,
-  boolean,
-  integer,
-  minValue,
-  nullish,
-  number,
-  object,
-  pipe
-} from "valibot";
+import * as v from "valibot";
 import {
   patch,
   type Fetcher,
@@ -16,18 +7,18 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const modifyGuildChannelPositionsSchema = object({
+export const modifyGuildChannelPositionsSchema = v.object({
   guild: snowflake,
-  body: array(
-    object({
+  body: v.array(
+    v.object({
       /** channel id */
       id: snowflake,
       /** sorting position of the channel */
-      position: nullish(pipe(number(), integer(), minValue(0))),
+      position: v.nullish(v.pipe(v.number(), v.integer(), v.minValue(0))),
       /** syncs the permission overwrites with the new parent, if moving to a new category */
-      lockPermissions: nullish(boolean()),
+      lockPermissions: v.nullish(v.boolean()),
       /** the new parent ID for the channel that is moved */
-      parentId: nullish(snowflake)
+      parentId: v.nullish(snowflake)
     })
   )
 });

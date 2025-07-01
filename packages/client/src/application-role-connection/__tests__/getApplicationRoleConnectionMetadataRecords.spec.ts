@@ -1,20 +1,20 @@
-import { waitFor } from "@testing-library/react";
+import * as v from "valibot";
 import { mockUtils } from "#mocks";
 import { runProcedure, runQuery } from "#test-utils";
-import { array, length, pipe } from "valibot";
+import { waitFor } from "@testing-library/dom";
+import { applicationRoleConnectionMetadataSchema } from "../types/ApplicationRoleConnectionMetadata.js";
 import {
   getApplicationRoleConnectionMetadataRecordsProcedure,
   getApplicationRoleConnectionMetadataRecordsQuery,
   getApplicationRoleConnectionMetadataRecordsSafe,
   getApplicationRoleConnectionMetadataRecordsSchema
 } from "../getApplicationRoleConnectionMetadataRecords.js";
-import { applicationRoleConnectionMetadataSchema } from "../types/ApplicationRoleConnectionMetadata.js";
 
 describe(`getApplicationRoleConnectionMetadataRecords`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.get(
     `/applications/:application/role-connections/metadata`,
     getApplicationRoleConnectionMetadataRecordsSchema,
-    pipe(array(applicationRoleConnectionMetadataSchema), length(1))
+    v.pipe(v.array(applicationRoleConnectionMetadataSchema), v.length(1))
   );
 
   it(`can be used standalone`, async () => {

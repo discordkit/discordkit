@@ -1,17 +1,8 @@
+import * as v from "valibot";
 import { snowflake } from "@discordkit/core";
-import type { InferOutput } from "valibot";
-import {
-  boolean,
-  exactOptional,
-  isoTimestamp,
-  nullable,
-  object,
-  pipe,
-  string
-} from "valibot";
 import { entitlementTypeSchema } from "./EntitlementType.js";
 
-export const entitlementSchema = object({
+export const entitlementSchema = v.object({
   /** ID of the entitlement */
   id: snowflake,
   /** ID of the SKU */
@@ -19,19 +10,19 @@ export const entitlementSchema = object({
   /** ID of the parent application */
   applicationId: snowflake,
   /** ID of the user that is granted access to the entitlement's sku */
-  userId: exactOptional(snowflake),
+  userId: v.exactOptional(snowflake),
   /** Type of entitlement */
   type: entitlementTypeSchema,
   /** Entitlement was deleted */
-  deleted: boolean(),
+  deleted: v.boolean(),
   /** Start date at which the entitlement is valid. */
-  startsAt: nullable(pipe(string(), isoTimestamp())),
+  startsAt: v.nullable(v.pipe(v.string(), v.isoTimestamp())),
   /** Date at which the entitlement is no longer valid. */
-  endsAt: nullable(pipe(string(), isoTimestamp())),
+  endsAt: v.nullable(v.pipe(v.string(), v.isoTimestamp())),
   /** ID of the guild that is granted access to the entitlement's sku */
-  guildId: exactOptional(snowflake),
+  guildId: v.exactOptional(snowflake),
   /** For consumable items, whether or not the entitlement has been consumed */
-  consumed: exactOptional(boolean())
+  consumed: v.exactOptional(v.boolean())
 });
 
-export interface Entitlement extends InferOutput<typeof entitlementSchema> {}
+export interface Entitlement extends v.InferOutput<typeof entitlementSchema> {}

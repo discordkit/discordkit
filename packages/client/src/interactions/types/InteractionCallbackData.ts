@@ -1,18 +1,4 @@
-import {
-  type InferOutput,
-  array,
-  boolean,
-  exactOptional,
-  integer,
-  maxLength,
-  nonEmpty,
-  number,
-  object,
-  partial,
-  pipe,
-  string,
-  union
-} from "valibot";
+import * as v from "valibot";
 import { allowedMentionSchema } from "../../messages/types/AllowedMention.js";
 import { embedSchema } from "../../messages/types/Embed.js";
 import { messageComponentSchema } from "../../messages/types/MessageComponent.js";
@@ -21,42 +7,45 @@ import { pollCreateRequestSchema } from "../../poll/types/PollCreateRequest.js";
 import { applicationCommandOptionChoiceSchema } from "../../application-commands/types/ApplicationCommandOptionChoice.js";
 import { componenetSchema } from "../../components/types/Component.js";
 
-export const interactionCallbackDataSchema = union([
+export const interactionCallbackDataSchema = v.union([
   /** Messages */
-  object({
+  v.object({
     /** is the response TTS */
-    tts: exactOptional(boolean()),
+    tts: v.exactOptional(v.boolean()),
     /** message content */
-    content: exactOptional(pipe(string(), nonEmpty())),
+    content: v.exactOptional(v.pipe(v.string(), v.nonEmpty())),
     /** supports up to 10 embeds */
-    embeds: exactOptional(pipe(array(embedSchema), maxLength(10))),
+    embeds: v.exactOptional(v.pipe(v.array(embedSchema), v.maxLength(10))),
     /** allowed mentions object */
-    allowedMentions: exactOptional(allowedMentionSchema),
+    allowedMentions: v.exactOptional(allowedMentionSchema),
     /** message flags combined as a bitfield (only SUPPRESS_EMBEDS and EPHEMERAL can be set) */
-    flags: exactOptional(pipe(number(), integer())),
+    flags: v.exactOptional(v.pipe(v.number(), v.integer())),
     /** message components */
-    components: exactOptional(messageComponentSchema),
+    components: v.exactOptional(messageComponentSchema),
     /** attachment objects with filename and description */
-    attachments: exactOptional(array(partial(attachmentSchema))),
+    attachments: v.exactOptional(v.array(v.partial(attachmentSchema))),
     /** Details about the poll */
-    poll: exactOptional(pollCreateRequestSchema)
+    poll: v.exactOptional(pollCreateRequestSchema)
   }),
   /** Autocomplete */
-  object({
+  v.object({
     /** autocomplete choices (max of 25 choices) */
-    choices: pipe(array(applicationCommandOptionChoiceSchema), maxLength(25))
+    choices: v.pipe(
+      v.array(applicationCommandOptionChoiceSchema),
+      v.maxLength(25)
+    )
   }),
   /** Modal */
-  object({
+  v.object({
     /** Developer-defined identifier for the modal, max 100 characters */
-    customId: pipe(string(), nonEmpty(), maxLength(100)),
+    customId: v.pipe(v.string(), v.nonEmpty(), v.maxLength(100)),
     /** Title of the popup modal, max 45 characters */
-    title: pipe(string(), nonEmpty(), maxLength(45)),
+    title: v.pipe(v.string(), v.nonEmpty(), v.maxLength(45)),
     /** Between 1 and 5 (inclusive) components that make up the modal */
-    components: pipe(array(componenetSchema), nonEmpty(), maxLength(5))
+    components: v.pipe(v.array(componenetSchema), v.nonEmpty(), v.maxLength(5))
   })
 ]);
 
-export type InteractionCallbackData = InferOutput<
+export type InteractionCallbackData = v.InferOutput<
   typeof interactionCallbackDataSchema
 >;

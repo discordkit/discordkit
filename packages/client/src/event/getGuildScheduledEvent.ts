@@ -1,4 +1,4 @@
-import { boolean, object, exactOptional, partial } from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -12,14 +12,14 @@ import {
   type ScheduledEvent
 } from "./types/ScheduledEvent.js";
 
-export const getGuildScheduledEventSchema = object({
+export const getGuildScheduledEventSchema = v.object({
   guild: snowflake,
   event: snowflake,
-  params: exactOptional(
-    partial(
-      object({
+  params: v.exactOptional(
+    v.partial(
+      v.object({
         /** include number of users subscribed to this event */
-        withUserCount: boolean()
+        withUserCount: v.boolean()
       })
     )
   )

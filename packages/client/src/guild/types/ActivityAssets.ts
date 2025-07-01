@@ -1,15 +1,15 @@
-import { object, optional, string, type InferOutput } from "valibot";
+import * as v from "valibot";
 
-export const activityAssetsSchema = object({
+export const activityAssetsSchema = v.object({
   /** see Activity Asset Image */
-  largeImage: optional(string()),
+  largeImage: v.optional(v.string()),
   /** text displayed when hovering over the large image of the activity */
-  largeText: optional(string()),
+  largeText: v.optional(v.string()),
   /** see Activity Asset Image */
-  smallImage: optional(string()),
+  smallImage: v.optional(v.string()),
   /** text displayed when hovering over the small image of the activity */
-  smallText: optional(string())
+  smallText: v.optional(v.string())
 });
 
 export interface ActivityAssets
-  extends InferOutput<typeof activityAssetsSchema> {}
+  extends v.InferOutput<typeof activityAssetsSchema> {}

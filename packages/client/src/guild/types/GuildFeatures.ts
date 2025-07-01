@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 
 export enum GuildFeatures {
   /** guild has access to set an animated guild banner image */
@@ -61,4 +61,4 @@ export enum GuildFeatures {
   ENHANCED_ROLE_COLORS = `ENHANCED_ROLE_COLORS`
 }
 
-export const guildFeaturesSchema = enum_(GuildFeatures);
+export const guildFeaturesSchema = v.enum_(GuildFeatures);

@@ -1,20 +1,20 @@
-import { waitFor } from "@testing-library/react";
+import * as v from "valibot";
 import { mockUtils } from "#mocks";
 import { runProcedure, runMutation } from "#test-utils";
-import { omit } from "valibot";
+import { waitFor } from "@testing-library/dom";
+import { lobbySchema } from "../types/Lobby.js";
 import {
   unlinkChannelFromLobby,
   unlinkChannelFromLobbyProcedure,
   unlinkChannelFromLobbySafe,
   unlinkChannelFromLobbySchema
 } from "../unlinkChannelFromLobby.js";
-import { lobbySchema } from "../types/Lobby.js";
 
 describe(`unlinkChannelFromLobby`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.patch(
     `/lobbies/:lobby/channel-linking`,
     unlinkChannelFromLobbySchema,
-    omit(lobbySchema, [`linkedChannel`])
+    v.omit(lobbySchema, [`linkedChannel`])
   );
 
   it(`can be used standalone`, async () => {

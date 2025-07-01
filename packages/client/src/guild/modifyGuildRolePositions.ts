@@ -1,12 +1,4 @@
-import {
-  array,
-  integer,
-  minValue,
-  nullish,
-  number,
-  object,
-  pipe
-} from "valibot";
+import * as v from "valibot";
 import {
   patch,
   type Fetcher,
@@ -16,14 +8,14 @@ import {
 } from "@discordkit/core";
 import { roleSchema, type Role } from "../permissions/Role.js";
 
-export const modifyGuildRolePositionsSchema = object({
+export const modifyGuildRolePositionsSchema = v.object({
   guild: snowflake,
-  body: array(
-    object({
+  body: v.array(
+    v.object({
       /** role */
       id: snowflake,
       /** sorting position of the role */
-      position: nullish(pipe(number(), integer(), minValue(0)))
+      position: v.nullish(v.pipe(v.number(), v.integer(), v.minValue(0)))
     })
   )
 });
@@ -47,12 +39,12 @@ export const modifyGuildRolePositions: Fetcher<
 export const modifyGuildRolePositionsSafe = toValidated(
   modifyGuildRolePositions,
   modifyGuildRolePositionsSchema,
-  array(roleSchema)
+  v.array(roleSchema)
 );
 
 export const modifyGuildRolePositionsProcedure = toProcedure(
   `mutation`,
   modifyGuildRolePositions,
   modifyGuildRolePositionsSchema,
-  array(roleSchema)
+  v.array(roleSchema)
 );

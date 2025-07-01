@@ -1,17 +1,4 @@
-import {
-  object,
-  literal,
-  union,
-  array,
-  type InferOutput,
-  pipe,
-  maxLength,
-  exactOptional,
-  number,
-  integer,
-  minValue,
-  maxValue
-} from "valibot";
+import * as v from "valibot";
 import { ComponentType } from "./ComponentType.js";
 import { buttonSchema } from "./Button.js";
 import { textInputSchema } from "./TextInput.js";
@@ -26,19 +13,24 @@ import { selectSchema } from "./Select.js";
  * - A single text input
  * - A single select component (string select, user select, role select, mentionable select, or channel select)
  */
-export const actionRowSchema = object({
+export const actionRowSchema = v.object({
   /** `1` for action row component */
-  type: literal(ComponentType.ActionRow),
+  type: v.literal(ComponentType.ActionRow),
   /** Optional identifier for component */
-  id: exactOptional(
-    pipe(number(), integer(), minValue(0), maxValue(Number.MAX_SAFE_INTEGER))
+  id: v.exactOptional(
+    v.pipe(
+      v.number(),
+      v.integer(),
+      v.minValue(0),
+      v.maxValue(Number.MAX_SAFE_INTEGER)
+    )
   ),
   /** Up to 5 interactive button components or a single select component */
-  components: union([
-    pipe(array(buttonSchema), maxLength(5)),
+  components: v.union([
+    v.pipe(v.array(buttonSchema), v.maxLength(5)),
     textInputSchema,
     selectSchema
   ])
 });
 
-export interface ActionRow extends InferOutput<typeof actionRowSchema> {}
+export interface ActionRow extends v.InferOutput<typeof actionRowSchema> {}

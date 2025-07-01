@@ -1,16 +1,4 @@
-import {
-  array,
-  literal,
-  maxLength,
-  minLength,
-  nonEmpty,
-  object,
-  exactOptional,
-  partial,
-  pipe,
-  string,
-  unknown
-} from "valibot";
+import * as v from "valibot";
 import {
   patch,
   buildURL,
@@ -29,39 +17,39 @@ import {
   interactionCallbackResponseSchema
 } from "./types/InteractionCallbackResponse.js";
 
-export const editOriginalInteractionResponseSchema = object({
+export const editOriginalInteractionResponseSchema = v.object({
   application: snowflake,
-  token: pipe(string(), nonEmpty()),
-  params: exactOptional(
-    partial(
-      object({
+  token: v.pipe(v.string(), v.nonEmpty()),
+  params: v.exactOptional(
+    v.partial(
+      v.object({
         /** id of the thread the message is in */
         threadId: snowflake
       })
     )
   ),
-  body: partial(
-    object({
+  body: v.partial(
+    v.object({
       /** the message contents (up to 2000 characters) */
-      content: pipe(string(), minLength(1), maxLength(2000)),
+      content: v.pipe(v.string(), v.minLength(1), v.maxLength(2000)),
       /** embedded `rich` content */
-      embeds: pipe(
-        array(
-          object({
+      embeds: v.pipe(
+        v.array(
+          v.object({
             ...embedSchema.entries,
-            type: literal(EmbedType.RICH)
+            type: v.literal(EmbedType.RICH)
           })
         ),
-        maxLength(10)
+        v.maxLength(10)
       ),
       /** allowed mentions for the message */
       allowedMentions: allowedMentionSchema,
       /** the components to include with the message */
-      components: array(messageComponentSchema),
+      components: v.array(messageComponentSchema),
       /** the contents of the file being sent */
-      files: array(unknown()),
+      files: v.array(v.unknown()),
       /** attachment objects with filename and description */
-      attachments: array(partial(attachmentSchema))
+      attachments: v.array(v.partial(attachmentSchema))
     })
   )
 });

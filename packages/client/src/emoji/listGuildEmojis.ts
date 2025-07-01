@@ -1,4 +1,4 @@
-import { array, object } from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -9,7 +9,7 @@ import {
 } from "@discordkit/core";
 import { emojiSchema, type Emoji } from "./types/Emoji.js";
 
-export const listGuildEmojisSchema = object({
+export const listGuildEmojisSchema = v.object({
   guild: snowflake
 });
 
@@ -28,14 +28,14 @@ export const listGuildEmojis: Fetcher<
 export const listGuildEmojisSafe = toValidated(
   listGuildEmojis,
   listGuildEmojisSchema,
-  array(emojiSchema)
+  v.array(emojiSchema)
 );
 
 export const listGuildEmojisProcedure = toProcedure(
   `query`,
   listGuildEmojis,
   listGuildEmojisSchema,
-  array(emojiSchema)
+  v.array(emojiSchema)
 );
 
 export const listGuildEmojisQuery = toQuery(listGuildEmojis);

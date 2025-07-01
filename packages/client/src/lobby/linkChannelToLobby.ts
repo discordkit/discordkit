@@ -1,4 +1,4 @@
-import { object, partial, required } from "valibot";
+import * as v from "valibot";
 import {
   patch,
   type Fetcher,
@@ -8,10 +8,10 @@ import {
 } from "@discordkit/core";
 import { lobbySchema, type Lobby } from "./types/Lobby.js";
 
-export const linkChannelToLobbySchema = object({
+export const linkChannelToLobbySchema = v.object({
   lobby: snowflake,
-  body: partial(
-    object({
+  body: v.partial(
+    v.object({
       /** the id of the channel to link to the lobby. If not provided, will unlink any currently linked channels from the lobby. */
       channelId: snowflake
     })
@@ -37,12 +37,12 @@ export const linkChannelToLobby: Fetcher<
 export const linkChannelToLobbySafe = toValidated(
   linkChannelToLobby,
   linkChannelToLobbySchema,
-  required(lobbySchema, [`linkedChannel`])
+  v.required(lobbySchema, [`linkedChannel`])
 );
 
 export const linkChannelToLobbyProcedure = toProcedure(
   `mutation`,
   linkChannelToLobby,
   linkChannelToLobbySchema,
-  required(lobbySchema, [`linkedChannel`])
+  v.required(lobbySchema, [`linkedChannel`])
 );

@@ -1,16 +1,16 @@
-import { type InferOutput, object, exactOptional } from "valibot";
+import * as v from "valibot";
 import { snowflake } from "@discordkit/core";
 import { memberSchema } from "../../guild/types/Member.js";
 import { userSchema } from "../../user/types/User.js";
 
-export const scheduledEventUserSchema = object({
+export const scheduledEventUserSchema = v.object({
   /** the scheduled event id which the user subscribed to */
   guildScheduledEventId: snowflake,
   /** user which subscribed to an event */
   user: userSchema,
   /** guild member data for this user for the guild which this event belongs to, if any */
-  member: exactOptional(memberSchema)
+  member: v.exactOptional(memberSchema)
 });
 
 export interface ScheduledEventUser
-  extends InferOutput<typeof scheduledEventUserSchema> {}
+  extends v.InferOutput<typeof scheduledEventUserSchema> {}

@@ -1,24 +1,4 @@
-import {
-  array,
-  base64,
-  boolean,
-  exactOptional,
-  type GenericSchema,
-  integer,
-  maxLength,
-  maxValue,
-  minLength,
-  minValue,
-  nonEmpty,
-  nullable,
-  number,
-  object,
-  partial,
-  picklist,
-  pipe,
-  string,
-  union
-} from "valibot";
+import * as v from "valibot";
 import type { Fetcher } from "@discordkit/core";
 import {
   toProcedure,
@@ -38,82 +18,90 @@ import { sortOrderTypeSchema } from "./types/SortOrderType.js";
 import { forumLayoutTypeSchema } from "./types/ForumLayoutType.js";
 import { channelFlag } from "./types/ChannelFlags.js";
 
-const groupDMOptions = partial(
-  object({
+const groupDMOptions = v.partial(
+  v.object({
     /** 1-100 character channel name */
-    name: pipe(string(), nonEmpty(), maxLength(100)),
+    name: v.pipe(v.string(), v.nonEmpty(), v.maxLength(100)),
     /** base64 encoded icon */
-    icon: pipe(string(), base64())
+    icon: v.pipe(v.string(), v.base64())
   })
 );
 
-const guildChannelOptions = partial(
-  object({
+const guildChannelOptions = v.partial(
+  v.object({
     /** the type of channel; only conversion between text and news is supported and only in guilds with the "NEWS" feature */
-    type: picklist([ChannelType.GUILD_ANNOUNCEMENT, ChannelType.GUILD_TEXT]),
+    type: v.picklist([ChannelType.GUILD_ANNOUNCEMENT, ChannelType.GUILD_TEXT]),
     /** 1-100 character channel name */
-    name: pipe(string(), nonEmpty(), maxLength(100)),
+    name: v.pipe(v.string(), v.nonEmpty(), v.maxLength(100)),
     /** the position of the channel in the left-hand listing */
-    position: nullable(pipe(number(), integer())),
+    position: v.nullable(v.pipe(v.number(), v.integer())),
     /** 0-1024 character channel topic */
-    topic: nullable(pipe(string(), minLength(0), maxLength(1024))),
+    topic: v.nullable(v.pipe(v.string(), v.minLength(0), v.maxLength(1024))),
     /** whether the channel is nsfw */
-    nsfw: nullable(boolean()),
+    nsfw: v.nullable(v.boolean()),
     /** amount of seconds a user has to wait before sending another message (0-21600); bots, as well as users with the permission manage_messages or manage_channel, are unaffected */
-    rateLimitPerUser: nullable(pipe(number(), minValue(0), maxValue(21600))),
+    rateLimitPerUser: v.nullable(
+      v.pipe(v.number(), v.minValue(0), v.maxValue(21600))
+    ),
     /** the bitrate (in bits) of the voice or stage channel; min 8000 */
-    bitrate: nullable(pipe(number(), minValue(8000))),
+    bitrate: v.nullable(v.pipe(v.number(), v.minValue(8000))),
     /** the user limit of the voice or stage channel, max 99 for voice channels and 10,000 for stage channels (0 refers to no limit) */
-    userLimit: nullable(pipe(number(), minValue(0), maxValue(10000))),
+    userLimit: v.nullable(v.pipe(v.number(), v.minValue(0), v.maxValue(10000))),
     /** channel or category-specific permissions */
-    permissionOverwrites: nullable(array(partial(overwriteSchema))),
+    permissionOverwrites: v.nullable(v.array(v.partial(overwriteSchema))),
     /** id of the new parent category for a channel */
-    parentId: nullable(snowflake),
+    parentId: v.nullable(snowflake),
     /** channel voice region id, automatic when set to null */
-    rtcRegion: nullable(pipe(string(), nonEmpty())),
+    rtcRegion: v.nullable(v.pipe(v.string(), v.nonEmpty())),
     /** the camera video quality mode of the voice channel */
-    videoQualityMode: nullable(videoQualityModeSchema),
+    videoQualityMode: v.nullable(videoQualityModeSchema),
     /** the default duration that the clients use (not the API) for newly created threads in the channel, in minutes, to automatically archive the thread after recent activity */
-    defaultAutoArchiveDuration: nullable(autoArchiveDurationSchema),
+    defaultAutoArchiveDuration: v.nullable(autoArchiveDurationSchema),
     /** channel flags combined as a bitfield. Currently only `REQUIRE_TAG` (1 << 4) is supported by `GUILD_FORUM` and `GUILD_MEDIA` channels. `HIDE_MEDIA_DOWNLOAD_OPTIONS` (1 << 15) is supported only by `GUILD_MEDIA` channels */
-    flags: asInteger(channelFlag) as GenericSchema<number>,
+    flags: asInteger(channelFlag) as v.GenericSchema<number>,
     /** the set of tags that can be used in a GUILD_FORUM or a GUILD_MEDIA channel; limited to 20 */
-    availableTags: pipe(array(forumTagSchema), maxLength(20)),
+    availableTags: v.pipe(v.array(forumTagSchema), v.maxLength(20)),
     /** reaction object	the emoji to show in the add reaction button on a thread in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */
-    defaultReactionEmoji: nullable(defaultReactionSchema),
+    defaultReactionEmoji: v.nullable(defaultReactionSchema),
     /** the initial `rateLimitPerUser` to set on newly created threads in a channel. this field is copied to the thread at creation time and does not live update */
-    defaultThreadRateLimitPerUser: pipe(number(), minValue(0), maxValue(21600)),
+    defaultThreadRateLimitPerUser: v.pipe(
+      v.number(),
+      v.minValue(0),
+      v.maxValue(21600)
+    ),
     /** the default sort order type used to order posts in `GUILD_FORUM` and GUILD_MED`IA channels */
-    defaultSortOrder: nullable(sortOrderTypeSchema),
+    defaultSortOrder: v.nullable(sortOrderTypeSchema),
     /** the default forum layout type used to display posts in `GUILD_FORUM` channels */
     defaultForumLayout: forumLayoutTypeSchema
   })
 );
 
-const threadOptions = partial(
-  object({
+const threadOptions = v.partial(
+  v.object({
     /** 1-100 character channel name */
-    name: pipe(string(), nonEmpty(), maxLength(100)),
+    name: v.pipe(v.string(), v.nonEmpty(), v.maxLength(100)),
     /** whether the thread is archived */
-    archived: boolean(),
+    archived: v.boolean(),
     /** duration in minutes to automatically archive the thread after recent activity, can be set to: `60`, `1440`, `4320`, `10080` */
     autoArchiveDuration: autoArchiveDurationSchema,
     /** whether the thread is locked; when a thread is locked, only users with `MANAGE_THREADS` can unarchive it */
-    locked: boolean(),
+    locked: v.boolean(),
     /** whether non-moderators can add other non-moderators to a thread; only available on private threads */
-    invitable: boolean(),
+    invitable: v.boolean(),
     /** amount of seconds a user has to wait before sending another message (0-21600); bots, as well as users with the permission `manage_messages`, `manage_thread`, or `manage_channel`, are unaffected */
-    rateLimitPerUser: nullable(pipe(number(), minValue(0), maxValue(21600))),
+    rateLimitPerUser: v.nullable(
+      v.pipe(v.number(), v.minValue(0), v.maxValue(21600))
+    ),
     /** channel flags combined as a bitfield; PINNED can only be set for threads in forum channels */
-    flags: exactOptional(asInteger(channelFlag) as GenericSchema<number>),
+    flags: v.exactOptional(asInteger(channelFlag) as v.GenericSchema<number>),
     /** the IDs of the set of tags that have been applied to a thread in a `GUILD_FORUM` or a `GUILD_MEDIA` channel; limited to 5 */
-    appliedTags: exactOptional(pipe(array(snowflake), maxLength(5)))
+    appliedTags: v.exactOptional(v.pipe(v.array(snowflake), v.maxLength(5)))
   })
 );
 
-export const modifyChannelSchema = object({
+export const modifyChannelSchema = v.object({
   channel: snowflake,
-  body: union([groupDMOptions, guildChannelOptions, threadOptions])
+  body: v.union([groupDMOptions, guildChannelOptions, threadOptions])
 });
 
 /**

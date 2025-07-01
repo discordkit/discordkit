@@ -1,4 +1,4 @@
-import { boolean, object, exactOptional, partial } from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -9,13 +9,13 @@ import {
 } from "@discordkit/core";
 import { guildSchema, type Guild } from "./types/Guild.js";
 
-export const getGuildSchema = object({
+export const getGuildSchema = v.object({
   id: snowflake,
-  params: exactOptional(
-    partial(
-      object({
+  params: v.exactOptional(
+    v.partial(
+      v.object({
         /** when true, will return approximate member and presence counts for the guild */
-        withCounts: boolean()
+        withCounts: v.boolean()
       })
     )
   )

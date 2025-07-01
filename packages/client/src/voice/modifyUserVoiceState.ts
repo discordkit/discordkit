@@ -1,4 +1,4 @@
-import { boolean, object, exactOptional } from "valibot";
+import * as v from "valibot";
 import {
   patch,
   type Fetcher,
@@ -8,14 +8,14 @@ import {
 } from "@discordkit/core";
 import type { VoiceState } from "./types/VoiceState.js";
 
-export const modifyUserVoiceStateSchema = object({
+export const modifyUserVoiceStateSchema = v.object({
   guild: snowflake,
   user: snowflake,
-  body: object({
+  body: v.object({
     /** the id of the channel the user is currently in */
     channelId: snowflake,
     /** toggles the user's suppress state */
-    suppress: exactOptional(boolean())
+    suppress: v.exactOptional(v.boolean())
   })
 });
 

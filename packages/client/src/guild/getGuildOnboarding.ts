@@ -1,4 +1,4 @@
-import { object } from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -12,7 +12,7 @@ import {
   type GuildOnboarding
 } from "./types/GuildOnboarding.js";
 
-export const getGuildOnboardingSchema = object({
+export const getGuildOnboardingSchema = v.object({
   guild: snowflake
 });
 

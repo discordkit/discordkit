@@ -1,16 +1,4 @@
-import {
-  array,
-  boolean,
-  integer,
-  maxLength,
-  maxValue,
-  minValue,
-  number,
-  object,
-  exactOptional,
-  partial,
-  pipe
-} from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -21,18 +9,18 @@ import {
 } from "@discordkit/core";
 import { guildSchema, type Guild } from "../guild/types/Guild.js";
 
-export const getCurrentUserGuildsSchema = object({
-  params: exactOptional(
-    partial(
-      object({
+export const getCurrentUserGuildsSchema = v.object({
+  params: v.exactOptional(
+    v.partial(
+      v.object({
         /** get guilds before this guild ID */
         before: snowflake,
         /** get guilds after this guild ID */
         after: snowflake,
         /** max number of guilds to return (1-200) */
-        limit: pipe(number(), integer(), minValue(1), maxValue(200)),
+        limit: v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(200)),
         /** include approximate member and presence counts in response */
-        withCounts: boolean()
+        withCounts: v.boolean()
       })
     )
   )
@@ -72,14 +60,14 @@ export const getCurrentUserGuilds: Fetcher<
 export const getCurrentUserGuildsSafe = toValidated(
   getCurrentUserGuilds,
   getCurrentUserGuildsSchema,
-  pipe(array(partial(guildSchema)), maxLength(200))
+  v.pipe(v.array(v.partial(guildSchema)), v.maxLength(200))
 );
 
 export const getCurrentUserGuildsProcedure = toProcedure(
   `query`,
   getCurrentUserGuilds,
   getCurrentUserGuildsSchema,
-  pipe(array(partial(guildSchema)), maxLength(200))
+  v.pipe(v.array(v.partial(guildSchema)), v.maxLength(200))
 );
 
 export const getCurrentUserGuildsQuery = toQuery(getCurrentUserGuilds);

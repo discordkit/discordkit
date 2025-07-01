@@ -1,15 +1,4 @@
-import {
-  array,
-  boolean,
-  type GenericSchema,
-  maxLength,
-  minLength,
-  object,
-  partial,
-  pipe,
-  string,
-  unknown
-} from "valibot";
+import * as v from "valibot";
 import {
   post,
   type Fetcher,
@@ -26,16 +15,16 @@ import { messageComponentSchema } from "./types/MessageComponent.js";
 import { attachmentSchema } from "./types/Attachment.js";
 import { messageFlag } from "./types/MessageFlag.js";
 
-export const createMessageSchema = object({
+export const createMessageSchema = v.object({
   channel: snowflake,
-  body: partial(
-    object({
+  body: v.partial(
+    v.object({
       /** Message contents (up to 2000 characters) */
-      content: pipe(string(), minLength(0), maxLength(2000)),
+      content: v.pipe(v.string(), v.minLength(0), v.maxLength(2000)),
       /** true if this is a TTS message */
-      tts: boolean(),
+      tts: v.boolean(),
       /** Embedded rich content (up to 6000 characters) */
-      embeds: array(embedSchema),
+      embeds: v.array(embedSchema),
       /** allowed mention object	Allowed mentions for the message */
       allowedMentions: allowedMentionSchema,
       /** Include to make your message a reply */
@@ -43,15 +32,15 @@ export const createMessageSchema = object({
       /** Components to include with the message */
       components: messageComponentSchema,
       /** IDs of up to 3 stickers in the server to send in the message */
-      stickerIds: pipe(array(string()), maxLength(3)),
+      stickerIds: v.pipe(v.array(v.string()), v.maxLength(3)),
       /** Contents of the file being sent. See Uploading Files */
-      files: unknown(),
+      files: v.unknown(),
       /** JSON-encoded body of non-file params, only for multipart/form-data requests. See Uploading Files */
-      payloadJson: string(),
+      payloadJson: v.string(),
       /** Attachment objects with filename and description. See Uploading Files */
-      attachments: array(partial(attachmentSchema)),
+      attachments: v.array(v.partial(attachmentSchema)),
       /** Message flags combined as a bitfield (only SUPPRESS_EMBEDS can be set) */
-      flags: asInteger(messageFlag) as GenericSchema<number>
+      flags: asInteger(messageFlag) as v.GenericSchema<number>
     })
   )
 });

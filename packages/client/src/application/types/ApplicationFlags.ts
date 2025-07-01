@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 import { bitfield } from "@discordkit/core";
 
 // https://discord.com/developers/docs/resources/application#application-object-application-flags
@@ -26,7 +26,7 @@ export const ApplicationFlags = {
   APPLICATION_COMMAND_BADGE: 1 << 23
 } as const;
 
-export const applicationFlagsSchema = enum_(ApplicationFlags);
+export const applicationFlagsSchema = v.enum_(ApplicationFlags);
 export const applicationFlag = bitfield(
   `applicationFlag`,
   ApplicationFlags,

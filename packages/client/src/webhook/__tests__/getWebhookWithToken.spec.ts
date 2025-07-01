@@ -1,20 +1,20 @@
-import { waitFor } from "@testing-library/react";
+import * as v from "valibot";
 import { mockUtils } from "#mocks";
 import { runProcedure, runQuery } from "#test-utils";
-import { omit } from "valibot";
+import { waitFor } from "@testing-library/dom";
+import { webhookSchema } from "../types/Webhook.js";
 import {
   getWebhookWithTokenProcedure,
   getWebhookWithTokenQuery,
   getWebhookWithTokenSafe,
   getWebhookWithTokenSchema
 } from "../getWebhookWithToken.js";
-import { webhookSchema } from "../types/Webhook.js";
 
 describe(`getWebhookWithToken`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.get(
     `/webhooks/:webhook/:token`,
     getWebhookWithTokenSchema,
-    omit(webhookSchema, [`user`])
+    v.omit(webhookSchema, [`user`])
   );
 
   it(`can be used standalone`, async () => {

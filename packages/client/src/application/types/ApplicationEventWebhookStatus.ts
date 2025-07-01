@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 
 /** Status indicating whether event webhooks are enabled or disabled for an application. */
 export const ApplicationEventWebhookStatus = {
@@ -10,6 +10,6 @@ export const ApplicationEventWebhookStatus = {
   DISABLED_BY_DISCORD: 3
 } as const;
 
-export const applicationEventWebhookStatusSchema = enum_(
+export const applicationEventWebhookStatusSchema = v.enum_(
   ApplicationEventWebhookStatus
 );

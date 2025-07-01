@@ -1,4 +1,4 @@
-import { object } from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -9,7 +9,7 @@ import {
 } from "@discordkit/core";
 import { userSchema, type User } from "./types/User.js";
 
-export const getUserSchema = object({
+export const getUserSchema = v.object({
   user: snowflake
 });
 

@@ -1,4 +1,4 @@
-import { object, array } from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -12,7 +12,7 @@ import {
   type SoundboardSound
 } from "./types/SoundboardSound.js";
 
-export const listGuildSoundboardSoundsSchema = object({
+export const listGuildSoundboardSoundsSchema = v.object({
   guild: snowflake
 });
 
@@ -31,14 +31,14 @@ export const listGuildSoundboardSounds: Fetcher<
 export const listGuildSoundboardSoundsSafe = toValidated(
   listGuildSoundboardSounds,
   listGuildSoundboardSoundsSchema,
-  array(soundboardSoundSchema)
+  v.array(soundboardSoundSchema)
 );
 
 export const listGuildSoundboardSoundsProcedure = toProcedure(
   `query`,
   listGuildSoundboardSounds,
   listGuildSoundboardSoundsSchema,
-  array(soundboardSoundSchema)
+  v.array(soundboardSoundSchema)
 );
 
 export const listGuildSoundboardSoundsQuery = toQuery(

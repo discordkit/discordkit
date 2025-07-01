@@ -1,4 +1,4 @@
-import { object } from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -12,7 +12,7 @@ import {
   type GuildWidgetSettings
 } from "./types/GuildWidgetSettings.js";
 
-export const getGuildWidgetSettingsSchema = object({ guild: snowflake });
+export const getGuildWidgetSettingsSchema = v.object({ guild: snowflake });
 
 /**
  * ### [Get Guild Widget Settings](https://discord.com/developers/docs/resources/guild#get-guild-widget-settings)

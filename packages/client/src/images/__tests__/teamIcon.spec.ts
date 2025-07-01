@@ -1,11 +1,14 @@
+import * as v from "valibot";
 import { mockUtils } from "#mocks";
-import { parse, pipe, string, url } from "valibot";
 import { teamIcon, teamIconSchema } from "../teamIcon.js";
 
 describe(`teamIcon`, () => {
   it(`produces a valid URL`, () => {
     expect(() =>
-      parse(pipe(string(), url()), teamIcon(mockUtils.schema(teamIconSchema)))
+      v.parse(
+        v.pipe(v.string(), v.url()),
+        teamIcon(mockUtils.schema(teamIconSchema))
+      )
     ).not.toThrow();
   });
 });

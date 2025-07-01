@@ -1,15 +1,4 @@
-import {
-  array,
-  integer,
-  maxValue,
-  nonEmpty,
-  minValue,
-  number,
-  object,
-  optional,
-  string,
-  pipe
-} from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -20,13 +9,15 @@ import {
 } from "@discordkit/core";
 import { memberSchema, type Member } from "./types/Member.js";
 
-export const searchGuildMembersSchema = object({
+export const searchGuildMembersSchema = v.object({
   guild: snowflake,
-  params: object({
+  params: v.object({
     /** Query string to match username(s) and nickname(s) against. */
-    query: pipe(string(), nonEmpty()),
+    query: v.pipe(v.string(), v.nonEmpty()),
     /** max number of members to return (1-1000) */
-    limit: optional(pipe(number(), integer(), minValue(1), maxValue(1000)))
+    limit: v.exactOptional(
+      v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(1000))
+    )
   })
 });
 
@@ -49,14 +40,14 @@ export const searchGuildMembers: Fetcher<
 export const searchGuildMembersSafe = toValidated(
   searchGuildMembers,
   searchGuildMembersSchema,
-  array(memberSchema)
+  v.array(memberSchema)
 );
 
 export const searchGuildMembersProcedure = toProcedure(
   `query`,
   searchGuildMembers,
   searchGuildMembersSchema,
-  array(memberSchema)
+  v.array(memberSchema)
 );
 
 export const searchGuildMembersQuery = toQuery(searchGuildMembers);

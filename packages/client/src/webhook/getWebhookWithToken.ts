@@ -1,4 +1,4 @@
-import { pipe, object, string, omit, nonEmpty } from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -9,9 +9,9 @@ import {
 } from "@discordkit/core";
 import { webhookSchema, type Webhook } from "./types/Webhook.js";
 
-export const getWebhookWithTokenSchema = object({
+export const getWebhookWithTokenSchema = v.object({
   webhook: snowflake,
-  token: pipe(string(), nonEmpty())
+  token: v.pipe(v.string(), v.nonEmpty())
 });
 
 /**
@@ -29,14 +29,14 @@ export const getWebhookWithToken: Fetcher<
 export const getWebhookWithTokenSafe = toValidated(
   getWebhookWithToken,
   getWebhookWithTokenSchema,
-  omit(webhookSchema, [`user`])
+  v.omit(webhookSchema, [`user`])
 );
 
 export const getWebhookWithTokenProcedure = toProcedure(
   `query`,
   getWebhookWithToken,
   getWebhookWithTokenSchema,
-  omit(webhookSchema, [`user`])
+  v.omit(webhookSchema, [`user`])
 );
 
 export const getWebhookWithTokenQuery = toQuery(getWebhookWithToken);

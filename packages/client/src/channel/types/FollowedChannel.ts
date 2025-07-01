@@ -1,12 +1,12 @@
+import * as v from "valibot";
 import { snowflake } from "@discordkit/core";
-import { object, type InferOutput, type GenericSchema } from "valibot";
 
-export const followedChannelSchema = object({
+export const followedChannelSchema = v.object({
   /** source channel id */
-  channelId: snowflake as GenericSchema<string>,
+  channelId: snowflake as v.GenericSchema<string>,
   /** created target webhook id */
-  webhookId: snowflake as GenericSchema<string>
+  webhookId: snowflake as v.GenericSchema<string>
 });
 
 export interface FollowedChannel
-  extends InferOutput<typeof followedChannelSchema> {}
+  extends v.InferOutput<typeof followedChannelSchema> {}

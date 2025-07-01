@@ -1,4 +1,4 @@
-import { object, exactOptional } from "valibot";
+import * as v from "valibot";
 import {
   post,
   type Fetcher,
@@ -7,13 +7,13 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const sendSoundboardSoundSchema = object({
+export const sendSoundboardSoundSchema = v.object({
   channel: snowflake,
-  body: object({
+  body: v.object({
     /** the id of the soundboard sound to play */
     soundId: snowflake,
     /** the id of the guild the soundboard sound is from, required to play sounds from different servers */
-    sourceGuildId: exactOptional(snowflake)
+    sourceGuildId: v.exactOptional(snowflake)
   })
 });
 

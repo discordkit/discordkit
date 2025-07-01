@@ -1,39 +1,34 @@
-import {
-  object,
-  string,
-  minLength,
-  maxLength,
-  nullable,
-  partial,
-  array,
-  number,
-  integer,
-  minValue,
-  type InferOutput,
-  pipe,
-  type GenericSchema
-} from "valibot";
+import * as v from "valibot";
 import { snowflake } from "@discordkit/core";
 import { guildVoiceChannelSchema } from "../../channel/types/Channel.js";
 import { type User, userSchema } from "../../user/types/User.js";
 
-export const guildWidgetSchema = object({
+export const guildWidgetSchema = v.object({
   /** guild id */
-  id: snowflake as GenericSchema<string>,
+  id: snowflake as v.GenericSchema<string>,
   /** guild name (2-100 characters) */
-  name: pipe(string(), minLength(2), maxLength(100)) as GenericSchema<string>,
+  name: v.pipe(
+    v.string(),
+    v.minLength(2),
+    v.maxLength(100)
+  ) as v.GenericSchema<string>,
   /** instant invite for the guilds specified widget invite channel */
-  instantInvite: nullable(
-    pipe(string(), minLength(1))
-  ) as GenericSchema<string>,
+  instantInvite: v.nullable(
+    v.pipe(v.string(), v.minLength(1))
+  ) as v.GenericSchema<string>,
   /** voice and stage channels which are accessible by @everyone */
-  channels: array(guildVoiceChannelSchema),
+  channels: v.array(guildVoiceChannelSchema),
   /** special widget user objects that includes users presence (Limit 100) */
-  members: pipe(array(partial(userSchema)), maxLength(100)) as GenericSchema<
-    Array<Partial<User>>
-  >,
+  members: v.pipe(
+    v.array(v.partial(userSchema)),
+    v.maxLength(100)
+  ) as v.GenericSchema<Array<Partial<User>>>,
   /** number of online members in this guild */
-  presenceCount: pipe(number(), integer(), minValue(0)) as GenericSchema<number>
+  presenceCount: v.pipe(
+    v.number(),
+    v.integer(),
+    v.minValue(0)
+  ) as v.GenericSchema<number>
 });
 
-export interface GuildWidget extends InferOutput<typeof guildWidgetSchema> {}
+export interface GuildWidget extends v.InferOutput<typeof guildWidgetSchema> {}

@@ -1,4 +1,4 @@
-import { minLength, object, pipe, string } from "valibot";
+import * as v from "valibot";
 import {
   put,
   type Fetcher,
@@ -7,14 +7,14 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const groupDMAddRecipientSchema = object({
+export const groupDMAddRecipientSchema = v.object({
   channel: snowflake,
   user: snowflake,
-  body: object({
+  body: v.object({
     /** access token of a user that has granted your app the gdm.join scope */
-    accessToken: pipe(string(), minLength(1)),
+    accessToken: v.pipe(v.string(), v.minLength(1)),
     /** nickname of the user being added */
-    nick: pipe(string(), minLength(1))
+    nick: v.pipe(v.string(), v.minLength(1))
   })
 });
 

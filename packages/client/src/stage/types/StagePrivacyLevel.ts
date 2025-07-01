@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 
 export const StagePrivacyLevel = {
   /** @deprecated The Stage instance is visible publicly. */
@@ -7,4 +7,4 @@ export const StagePrivacyLevel = {
   GUILD_ONLY: 2
 } as const;
 
-export const stagePrivacyLevelSchema = enum_(StagePrivacyLevel);
+export const stagePrivacyLevelSchema = v.enum_(StagePrivacyLevel);

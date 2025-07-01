@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 
 export enum OnboardingMode {
   /** Counts only Default Channels towards constraints */
@@ -7,4 +7,4 @@ export enum OnboardingMode {
   ONBOARDING_ADVANCED = 1
 }
 
-export const onboardingModeSchema = enum_(OnboardingMode);
+export const onboardingModeSchema = v.enum_(OnboardingMode);

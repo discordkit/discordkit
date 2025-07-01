@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/prefer-literal-enum-member */
-import { enum_ } from "valibot";
+import * as v from "valibot";
 import { bitfield } from "@discordkit/core";
 
 export enum GuildMemberFlags {
@@ -23,7 +23,7 @@ export enum GuildMemberFlags {
   DM_SETTINGS_UPSELL_ACKNOWLEDGED = 1 << 9
 }
 
-export const guildMemberFlagsSchema = enum_(GuildMemberFlags);
+export const guildMemberFlagsSchema = v.enum_(GuildMemberFlags);
 export const guildMemberFlag = bitfield(
   `guildMemberFlag`,
   GuildMemberFlags,

@@ -1,20 +1,20 @@
-import { waitFor } from "@testing-library/react";
+import * as v from "valibot";
 import { mockUtils } from "#mocks";
 import { runProcedure, runMutation } from "#test-utils";
-import { undefinedable } from "valibot";
+import { waitFor } from "@testing-library/dom";
+import { interactionCallbackResponseSchema } from "../types/InteractionCallbackResponse.js";
 import {
   createInteractionResponse,
   createInteractionResponseProcedure,
   createInteractionResponseSafe,
   createInteractionResponseSchema
 } from "../createInteractionResponse.js";
-import { interactionCallbackResponseSchema } from "../types/InteractionCallbackResponse.js";
 
 describe(`createInteractionResponse`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.post(
     `/interactions/:interaction/:token/callback`,
     createInteractionResponseSchema,
-    undefinedable(interactionCallbackResponseSchema)
+    v.undefinedable(interactionCallbackResponseSchema)
   );
 
   it(`can be used standalone`, async () => {

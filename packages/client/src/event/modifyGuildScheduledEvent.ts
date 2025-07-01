@@ -1,12 +1,4 @@
-import {
-  exactOptional,
-  isoTimestamp,
-  nonEmpty,
-  nullish,
-  object,
-  pipe,
-  string
-} from "valibot";
+import * as v from "valibot";
 import {
   patch,
   type Fetcher,
@@ -25,32 +17,32 @@ import { scheduledEventEntityTypeSchema } from "./types/ScheduledEventEntityType
 import { scheduledEventStatusSchema } from "./types/ScheduledEventStatus.js";
 import { scheduledEventRecurrenceRuleSchema } from "./types/ScheduledEventRecurrenceRule.js";
 
-export const modifyGuildScheduledEventSchema = object({
+export const modifyGuildScheduledEventSchema = v.object({
   guild: snowflake,
   event: snowflake,
-  body: object({
+  body: v.object({
     /** the channel id of the scheduled event. */
-    channelId: nullish(snowflake),
+    channelId: v.nullish(snowflake),
     /** entity metadata	the entity metadata of the scheduled event */
-    entityMetadata: nullish(entityMetadataSchema),
+    entityMetadata: v.nullish(entityMetadataSchema),
     /** the name of the scheduled event */
-    name: exactOptional(pipe(string(), nonEmpty())),
+    name: v.exactOptional(v.pipe(v.string(), v.nonEmpty())),
     /** the privacy level of the scheduled event */
-    privacyLevel: exactOptional(scheduledEventPrivacyLevelSchema),
+    privacyLevel: v.exactOptional(scheduledEventPrivacyLevelSchema),
     /** the time to schedule the scheduled event */
-    scheduledStartTime: exactOptional(pipe(string(), isoTimestamp())),
+    scheduledStartTime: v.exactOptional(v.pipe(v.string(), v.isoTimestamp())),
     /** the time when the scheduled event is scheduled to end */
-    scheduledEndTime: exactOptional(pipe(string(), isoTimestamp())),
+    scheduledEndTime: v.exactOptional(v.pipe(v.string(), v.isoTimestamp())),
     /** the description of the scheduled event */
-    description: nullish(pipe(string(), nonEmpty())),
+    description: v.nullish(v.pipe(v.string(), v.nonEmpty())),
     /** the entity type of the scheduled event */
-    entityType: exactOptional(scheduledEventEntityTypeSchema),
+    entityType: v.exactOptional(scheduledEventEntityTypeSchema),
     /** the status of the scheduled event */
-    status: exactOptional(scheduledEventStatusSchema),
+    status: v.exactOptional(scheduledEventStatusSchema),
     /** the cover image of the scheduled event */
-    image: exactOptional(datauri),
+    image: v.exactOptional(datauri),
     /** the definition for how often this event should recur */
-    recurrenceRule: exactOptional(scheduledEventRecurrenceRuleSchema)
+    recurrenceRule: v.exactOptional(scheduledEventRecurrenceRuleSchema)
   })
 });
 

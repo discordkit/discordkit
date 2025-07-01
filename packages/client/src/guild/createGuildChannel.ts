@@ -1,19 +1,4 @@
-import {
-  array,
-  boolean,
-  integer,
-  maxLength,
-  maxValue,
-  minLength,
-  minValue,
-  nonEmpty,
-  nullish,
-  number,
-  object,
-  partial,
-  pipe,
-  string
-} from "valibot";
+import * as v from "valibot";
 import {
   post,
   type Fetcher,
@@ -31,48 +16,48 @@ import { forumTagSchema } from "../channel/types/ForumTag.js";
 import { sortOrderTypeSchema } from "../channel/types/SortOrderType.js";
 import { forumLayoutTypeSchema } from "../channel/types/ForumLayoutType.js";
 
-export const createGuildChannelSchema = object({
+export const createGuildChannelSchema = v.object({
   guild: snowflake,
-  body: object({
+  body: v.object({
     /** channel name (1-100 characters) */
-    name: pipe(string(), nonEmpty()),
+    name: v.pipe(v.string(), v.nonEmpty()),
     /** the type of channel */
-    type: nullish(channelTypeSchema),
+    type: v.nullish(channelTypeSchema),
     /** channel topic (0-1024 characters) */
-    topic: nullish(pipe(string(), minLength(0), maxLength(1024))),
+    topic: v.nullish(v.pipe(v.string(), v.minLength(0), v.maxLength(1024))),
     /** the bitrate (in bits) of the voice or stage channel; min 8000 */
-    bitrate: nullish(pipe(number(), minValue(8000))),
+    bitrate: v.nullish(v.pipe(v.number(), v.minValue(8000))),
     /** the user limit of the voice channel */
-    userLimit: nullish(pipe(number(), integer(), minValue(0))),
+    userLimit: v.nullish(v.pipe(v.number(), v.integer(), v.minValue(0))),
     /** amount of seconds a user has to wait before sending another message (0-21600); bots, as well as users with the permission manage_messages or manage_channel, are unaffected */
-    rateLimitPerYser: nullish(
-      pipe(number(), integer(), minValue(0), maxValue(21600))
+    rateLimitPerYser: v.nullish(
+      v.pipe(v.number(), v.integer(), v.minValue(0), v.maxValue(21600))
     ),
     /** sorting position of the channel */
-    position: nullish(pipe(number(), integer(), minValue(0))),
+    position: v.nullish(v.pipe(v.number(), v.integer(), v.minValue(0))),
     /** the channel's permission overwrites */
-    permissionOverwrites: nullish(array(partial(overwriteSchema))),
+    permissionOverwrites: v.nullish(v.array(v.partial(overwriteSchema))),
     /** id of the parent category for a channel */
-    parentId: nullish(snowflake),
+    parentId: v.nullish(snowflake),
     /** whether the channel is nsfw */
-    nsfw: nullish(boolean()),
+    nsfw: v.nullish(v.boolean()),
     /** channel voice region id of the voice or stage channel, automatic when set to null */
-    rtcRegion: nullish(pipe(string(), nonEmpty())),
+    rtcRegion: v.nullish(v.pipe(v.string(), v.nonEmpty())),
     /** the camera video quality mode of the voice channel */
-    videoQualityMode: nullish(videoQualityModeSchema),
+    videoQualityMode: v.nullish(videoQualityModeSchema),
     /** the default duration that the clients use (not the API) for newly created threads in the channel, in minutes, to automatically archive the thread after recent activity */
-    defaultAutoArchiveDuration: nullish(autoArchiveDurationSchema),
+    defaultAutoArchiveDuration: v.nullish(autoArchiveDurationSchema),
     /** emoji to show in the add reaction button on a thread in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */
-    defaultReactionEmoji: nullish(defaultReactionSchema),
+    defaultReactionEmoji: v.nullish(defaultReactionSchema),
     /** set of tags that can be used in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */
-    availableTags: nullish(array(forumTagSchema)),
+    availableTags: v.nullish(v.array(forumTagSchema)),
     /** the default sort order type used to order posts in `GUILD_FORUM` and `GUILD_MEDIA` channels */
-    defaultSortOrder: nullish(sortOrderTypeSchema),
+    defaultSortOrder: v.nullish(sortOrderTypeSchema),
     /** the default forum layout view used to display posts in `GUILD_FORUM` channels */
-    defaultForumLayout: nullish(forumLayoutTypeSchema),
+    defaultForumLayout: v.nullish(forumLayoutTypeSchema),
     /** the initial `rateLimitPerUser` to set on newly created threads in a channel. this field is copied to the thread at creation time and does not live update. */
-    defaultThreadRateLimitPerUser: nullish(
-      pipe(number(), integer(), minValue(0), maxValue(21600))
+    defaultThreadRateLimitPerUser: v.nullish(
+      v.pipe(v.number(), v.integer(), v.minValue(0), v.maxValue(21600))
     )
   })
 });

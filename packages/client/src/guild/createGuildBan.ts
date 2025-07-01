@@ -1,13 +1,4 @@
-import {
-  integer,
-  maxValue,
-  minValue,
-  number,
-  object,
-  exactOptional,
-  partial,
-  pipe
-} from "valibot";
+import * as v from "valibot";
 import {
   put,
   type Fetcher,
@@ -16,20 +7,25 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const createGuildBanSchema = object({
+export const createGuildBanSchema = v.object({
   guild: snowflake,
   user: snowflake,
-  body: exactOptional(
-    partial(
-      object({
+  body: v.exactOptional(
+    v.partial(
+      v.object({
         /** number of days to delete messages for (0-7) */
-        deleteMessageDays: pipe(number(), integer(), minValue(1), maxValue(7)),
+        deleteMessageDays: v.pipe(
+          v.number(),
+          v.integer(),
+          v.minValue(1),
+          v.maxValue(7)
+        ),
         /** number of seconds to delete messages for, between 0 and 604800 (7 days) */
-        deleteMessageSeconds: pipe(
-          number(),
-          integer(),
-          minValue(1),
-          maxValue(7)
+        deleteMessageSeconds: v.pipe(
+          v.number(),
+          v.integer(),
+          v.minValue(1),
+          v.maxValue(7)
         )
       })
     )

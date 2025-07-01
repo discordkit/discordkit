@@ -1,11 +1,4 @@
-import {
-  integer,
-  object,
-  pipe,
-  number,
-  minValue,
-  type InferOutput
-} from "valibot";
+import * as v from "valibot";
 import { pollMediaSchema } from "./PollMedia.js";
 
 /**
@@ -13,11 +6,11 @@ import { pollMediaSchema } from "./PollMedia.js";
 
 Currently, there is a maximum of 10 answers per poll.
  */
-export const pollAnswerSchema = object({
+export const pollAnswerSchema = v.object({
   /** The ID of the answer (Only sent as part of responses from Discord's API/Gateway.) */
-  answerId: pipe(number(), integer(), minValue(0)),
+  answerId: v.pipe(v.number(), v.integer(), v.minValue(0)),
   /** The data of the answer. */
   pollMedia: pollMediaSchema
 });
 
-export interface PollAnswer extends InferOutput<typeof pollAnswerSchema> {}
+export interface PollAnswer extends v.InferOutput<typeof pollAnswerSchema> {}

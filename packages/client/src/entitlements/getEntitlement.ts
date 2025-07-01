@@ -1,4 +1,4 @@
-import { object } from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -9,7 +9,7 @@ import {
 } from "@discordkit/core";
 import { type Entitlement, entitlementSchema } from "./types/Entitlement.js";
 
-export const getEntitlementSchema = object({
+export const getEntitlementSchema = v.object({
   application: snowflake,
   entitlement: snowflake
 });

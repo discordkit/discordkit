@@ -1,4 +1,4 @@
-import { nonEmpty, object, partial, pipe, string } from "valibot";
+import * as v from "valibot";
 import {
   patch,
   type Fetcher,
@@ -8,13 +8,13 @@ import {
 } from "@discordkit/core";
 import { emojiSchema, type Emoji } from "./types/Emoji.js";
 
-export const modifyApplicationEmojiSchema = object({
+export const modifyApplicationEmojiSchema = v.object({
   application: snowflake,
   emoji: snowflake,
-  body: partial(
-    object({
+  body: v.partial(
+    v.object({
       /** name of the emoji */
-      name: pipe(string(), nonEmpty())
+      name: v.pipe(v.string(), v.nonEmpty())
     })
   )
 });

@@ -1,12 +1,4 @@
-import {
-  maxLength,
-  minLength,
-  nullish,
-  object,
-  partial,
-  string,
-  pipe
-} from "valibot";
+import * as v from "valibot";
 import {
   patch,
   type Fetcher,
@@ -19,15 +11,17 @@ import {
   type GuildTemplate
 } from "./types/GuildTemplate.js";
 
-export const modifyGuildTemplateSchema = object({
+export const modifyGuildTemplateSchema = v.object({
   guild: snowflake,
   template: snowflake,
-  body: partial(
-    object({
+  body: v.partial(
+    v.object({
       /** name of the template (1-100 characters) */
-      name: pipe(string(), minLength(1), maxLength(100)),
+      name: v.pipe(v.string(), v.minLength(1), v.maxLength(100)),
       /** description for the template (0-120 characters) */
-      description: nullish(pipe(string(), minLength(1), maxLength(120)))
+      description: v.nullish(
+        v.pipe(v.string(), v.minLength(1), v.maxLength(120))
+      )
     })
   )
 });

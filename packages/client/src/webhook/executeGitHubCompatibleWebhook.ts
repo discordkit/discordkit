@@ -1,12 +1,4 @@
-import {
-  object,
-  string,
-  minLength,
-  boolean,
-  partial,
-  exactOptional,
-  pipe
-} from "valibot";
+import * as v from "valibot";
 import {
   post,
   buildURL,
@@ -16,16 +8,16 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const executeGitHubCompatibleWebhookSchema = object({
+export const executeGitHubCompatibleWebhookSchema = v.object({
   webhook: snowflake,
-  token: pipe(string(), minLength(1)),
-  params: exactOptional(
-    partial(
-      object({
+  token: v.pipe(v.string(), v.minLength(1)),
+  params: v.exactOptional(
+    v.partial(
+      v.object({
         /** id of the thread to send the message in */
         threadId: snowflake,
         /** waits for server confirmation of message send before response (defaults to `true`; when `false` a message that is not saved does not return an error) */
-        wait: exactOptional(boolean())
+        wait: v.exactOptional(v.boolean())
       })
     )
   )

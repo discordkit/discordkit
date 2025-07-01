@@ -1,4 +1,4 @@
-import { enum_ } from "valibot";
+import * as v from "valibot";
 import { bitfield } from "@discordkit/core";
 
 export const ActivityFlags = {
@@ -13,7 +13,7 @@ export const ActivityFlags = {
   EMBEDDED: 1 << 8
 } as const;
 
-export const activityFlagsSchema = enum_(ActivityFlags);
+export const activityFlagsSchema = v.enum_(ActivityFlags);
 export const activityFlag = bitfield(
   `activityFlag`,
   ActivityFlags,

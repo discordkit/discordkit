@@ -1,4 +1,4 @@
-import { maxLength, minLength, nullish, object, pipe, string } from "valibot";
+import * as v from "valibot";
 import {
   post,
   type Fetcher,
@@ -9,13 +9,13 @@ import {
 } from "@discordkit/core";
 import { guildSchema, type Guild } from "../guild/types/Guild.js";
 
-export const createGuildFromTemplateSchema = object({
+export const createGuildFromTemplateSchema = v.object({
   template: snowflake,
-  body: object({
+  body: v.object({
     /** name of the guild (2-100 characters) */
-    name: pipe(string(), minLength(2), maxLength(100)),
+    name: v.pipe(v.string(), v.minLength(2), v.maxLength(100)),
     /** base64 128x128 image for the guild icon */
-    icon: nullish(datauri)
+    icon: v.nullish(datauri)
   })
 });
 

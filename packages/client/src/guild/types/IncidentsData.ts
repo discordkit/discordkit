@@ -1,22 +1,23 @@
-import type { GenericSchema, InferOutput } from "valibot";
-import { isoTimestamp, nullable, nullish, object, pipe, string } from "valibot";
+import * as v from "valibot";
 
-export const incidentsDataSchema = object({
+export const incidentsDataSchema = v.object({
   /** when invites get enabled again */
-  invitesDisabledUntil: nullable<GenericSchema<string>>(
-    pipe(string(), isoTimestamp())
+  invitesDisabledUntil: v.nullable<v.GenericSchema<string>>(
+    v.pipe(v.string(), v.isoTimestamp())
   ),
   /** when direct messages get enabled again */
-  dmsDisabledUntil: nullable<GenericSchema<string>>(
-    pipe(string(), isoTimestamp())
+  dmsDisabledUntil: v.nullable<v.GenericSchema<string>>(
+    v.pipe(v.string(), v.isoTimestamp())
   ),
   /** when the dm spam was detected */
-  dmSpamDetectedAt: nullish<GenericSchema<string>>(
-    pipe(string(), isoTimestamp())
+  dmSpamDetectedAt: v.nullish<v.GenericSchema<string>>(
+    v.pipe(v.string(), v.isoTimestamp())
   ),
   /** when the raid was detected */
-  raidDetectedAt: nullish<GenericSchema<string>>(pipe(string(), isoTimestamp()))
+  raidDetectedAt: v.nullish<v.GenericSchema<string>>(
+    v.pipe(v.string(), v.isoTimestamp())
+  )
 });
 
 export interface IncidentsData
-  extends InferOutput<typeof incidentsDataSchema> {}
+  extends v.InferOutput<typeof incidentsDataSchema> {}

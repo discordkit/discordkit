@@ -1,7 +1,7 @@
 // https://discord.com/developers/docs/topics/oauth2#shared-resources-oauth2-scopes
-import { picklist, type InferOutput } from "valibot";
+import * as v from "valibot";
 
-export const scopesSchema = picklist([
+export const scopesSchema = v.picklist([
   /** allows your app to fetch data from a user's "Now Playing/Recently Played" list - requires Discord approval */
   `activities.read`,
   /** allows your app to update a user's activity - requires Discord approval (NOT REQUIRED FOR GAMESDK ACTIVITY MANAGER) */
@@ -60,4 +60,4 @@ export const scopesSchema = picklist([
   `webhook.incoming`
 ]);
 
-export type Scopes = InferOutput<typeof scopesSchema>;
+export type Scopes = v.InferOutput<typeof scopesSchema>;

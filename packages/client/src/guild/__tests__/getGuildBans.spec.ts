@@ -1,20 +1,20 @@
-import { waitFor } from "@testing-library/react";
+import * as v from "valibot";
 import { mockUtils } from "#mocks";
 import { runProcedure, runQuery } from "#test-utils";
-import { array, length, pipe } from "valibot";
+import { waitFor } from "@testing-library/dom";
+import { banSchema } from "../types/Ban.js";
 import {
   getGuildBansProcedure,
   getGuildBansQuery,
   getGuildBansSafe,
   getGuildBansSchema
 } from "../getGuildBans.js";
-import { banSchema } from "../types/Ban.js";
 
 describe(`getGuildBans`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.get(
     `/guilds/:guild/bans`,
     getGuildBansSchema,
-    pipe(array(banSchema), length(1))
+    v.pipe(v.array(banSchema), v.length(1))
   );
 
   it(`can be used standalone`, async () => {

@@ -1,10 +1,9 @@
-import type { InferOutput } from "valibot";
-import { exactOptional, object } from "valibot";
+import * as v from "valibot";
 import { nameplateSchema } from "./Nameplate.js";
 
-export const collectableSchema = object({
+export const collectableSchema = v.object({
   /** object mapping of nameplate data */
-  nameplate: exactOptional(nameplateSchema)
+  nameplate: v.exactOptional(nameplateSchema)
 });
 
-export interface Collectable extends InferOutput<typeof collectableSchema> {}
+export interface Collectable extends v.InferOutput<typeof collectableSchema> {}

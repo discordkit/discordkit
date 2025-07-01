@@ -1,4 +1,4 @@
-import { object } from "valibot";
+import * as v from "valibot";
 import {
   put,
   type Fetcher,
@@ -7,7 +7,7 @@ import {
   snowflake
 } from "@discordkit/core";
 
-export const addGuildMemberRoleSchema = object({
+export const addGuildMemberRoleSchema = v.object({
   guild: snowflake,
   user: snowflake,
   role: snowflake

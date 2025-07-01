@@ -1,12 +1,12 @@
-import type { InferOutput } from "valibot";
-import { array, maxLength, nonEmpty, object, pipe, string } from "valibot";
+import * as v from "valibot";
 import { messageComponentSchema } from "../../messages/index.js";
 
-export const modalSubmitData = object({
+export const modalSubmitData = v.object({
   /** custom_id of the modal */
-  customId: pipe(string(), nonEmpty(), maxLength(100)),
+  customId: v.pipe(v.string(), v.nonEmpty(), v.maxLength(100)),
   /** Values submitted by the user */
-  components: array(messageComponentSchema)
+  components: v.array(messageComponentSchema)
 });
 
-export interface ModalSubmitData extends InferOutput<typeof modalSubmitData> {}
+export interface ModalSubmitData
+  extends v.InferOutput<typeof modalSubmitData> {}

@@ -1,15 +1,4 @@
-import {
-  array,
-  integer,
-  maxValue,
-  minValue,
-  nullish,
-  number,
-  object,
-  exactOptional,
-  partial,
-  pipe
-} from "valibot";
+import * as v from "valibot";
 import {
   get,
   type Fetcher,
@@ -20,18 +9,18 @@ import {
 } from "@discordkit/core";
 import { userSchema, type User } from "../user/types/User.js";
 
-export const getReactionsSchema = object({
+export const getReactionsSchema = v.object({
   channel: snowflake,
   message: snowflake,
   emoji: snowflake,
-  params: exactOptional(
-    partial(
-      object({
+  params: v.exactOptional(
+    v.partial(
+      v.object({
         /** Get users after this user ID */
-        after: nullish(snowflake),
+        after: v.nullish(snowflake),
         /** Max number of users to return (1-100) Default: 25 */
-        limit: nullish(
-          pipe(number(), integer(), minValue(1), maxValue(100)),
+        limit: v.nullish(
+          v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(100)),
           25
         )
       })
@@ -57,14 +46,14 @@ export const getReactions: Fetcher<typeof getReactionsSchema, User[]> = async ({
 export const getReactionsSafe = toValidated(
   getReactions,
   getReactionsSchema,
-  array(userSchema)
+  v.array(userSchema)
 );
 
 export const getReactionsProcedure = toProcedure(
   `query`,
   getReactions,
   getReactionsSchema,
-  array(userSchema)
+  v.array(userSchema)
 );
 
 export const getReactionsQuery = toQuery(getReactions);

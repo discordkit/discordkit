@@ -1,6 +1,6 @@
-import { picklist, type InferOutput } from "valibot";
+import * as v from "valibot";
 
-export const servicesSchema = picklist([
+export const servicesSchema = v.picklist([
   `amazon-music`,
   `battlenet`,
   `bungie`,
@@ -29,4 +29,4 @@ export const servicesSchema = picklist([
   `youtube`
 ]);
 
-export type Services = InferOutput<typeof servicesSchema>;
+export type Services = v.InferOutput<typeof servicesSchema>;

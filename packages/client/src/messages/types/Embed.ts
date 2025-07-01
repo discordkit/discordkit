@@ -1,142 +1,153 @@
-import {
-  object,
-  partial,
-  string,
-  maxLength,
-  exactOptional,
-  isoTimestamp,
-  number,
-  integer,
-  minValue,
-  url,
-  array,
-  boolean,
-  type InferOutput,
-  pipe,
-  maxValue,
-  nonEmpty,
-  type GenericSchema
-} from "valibot";
+import * as v from "valibot";
 import { embedTypeSchema } from "./EmbedType.js";
 
-export const embedSchema = partial(
-  object({
+export const embedSchema = v.partial(
+  v.object({
     /** title of embed */
-    title: pipe(string(), maxLength(256)) as GenericSchema<string>,
+    title: v.pipe(v.string(), v.maxLength(256)) as v.GenericSchema<string>,
     /** type of embed (always "rich" for webhook embeds) */
     type: embedTypeSchema,
     /** description of embed */
-    description: pipe(string(), maxLength(4096)) as GenericSchema<string>,
+    description: v.pipe(
+      v.string(),
+      v.maxLength(4096)
+    ) as v.GenericSchema<string>,
     /** url of embed */
-    url: pipe(string(), url()) as GenericSchema<string>,
+    url: v.pipe(v.string(), v.url()) as v.GenericSchema<string>,
     /** timestamp of embed content */
-    timestamp: pipe(string(), isoTimestamp()) as GenericSchema<string>,
+    timestamp: v.pipe(v.string(), v.isoTimestamp()) as v.GenericSchema<string>,
     /** color code of the embed */
-    color: pipe(
-      number(),
-      integer(),
-      minValue(0x000000),
-      maxValue(0xffffff)
-    ) as GenericSchema<number>,
+    color: v.pipe(
+      v.number(),
+      v.integer(),
+      v.minValue(0x000000),
+      v.maxValue(0xffffff)
+    ) as v.GenericSchema<number>,
     /** footer information */
-    footer: object({
+    footer: v.object({
       /** footer text */
-      text: pipe(
-        string(),
-        nonEmpty(),
-        maxLength(2048)
-      ) as GenericSchema<string>,
+      text: v.pipe(
+        v.string(),
+        v.nonEmpty(),
+        v.maxLength(2048)
+      ) as v.GenericSchema<string>,
       /** url of footer icon (only supports http(s) and attachments) */
-      iconUrl: exactOptional<GenericSchema<string>>(pipe(string(), url())),
+      iconUrl: v.exactOptional<v.GenericSchema<string>>(
+        v.pipe(v.string(), v.url())
+      ),
       /**	a proxied url of footer icon */
-      proxyIconUrl: exactOptional<GenericSchema<string>>(pipe(string(), url()))
+      proxyIconUrl: v.exactOptional<v.GenericSchema<string>>(
+        v.pipe(v.string(), v.url())
+      )
     }),
     /** image information */
-    image: object({
+    image: v.object({
       /** source url of image (only supports http(s) and attachments) */
-      url: pipe(string(), url()) as GenericSchema<string>,
+      url: v.pipe(v.string(), v.url()) as v.GenericSchema<string>,
       /** a proxied url of the image */
-      proxyUrl: exactOptional<GenericSchema<string>>(pipe(string(), url())),
+      proxyUrl: v.exactOptional<v.GenericSchema<string>>(
+        v.pipe(v.string(), v.url())
+      ),
       /** height of image */
-      height: exactOptional<GenericSchema<number>>(
-        pipe(number(), integer(), minValue(0))
+      height: v.exactOptional<v.GenericSchema<number>>(
+        v.pipe(v.number(), v.integer(), v.minValue(0))
       ),
       /** width of image */
-      width: exactOptional<GenericSchema<number>>(
-        pipe(number(), integer(), minValue(0))
+      width: v.exactOptional<v.GenericSchema<number>>(
+        v.pipe(v.number(), v.integer(), v.minValue(0))
       )
     }),
     /** thumbnail information */
-    thumbnail: object({
+    thumbnail: v.object({
       /** source url of thumbnail (only supports http(s) and attachments) */
-      url: pipe(string(), url()) as GenericSchema<string>,
+      url: v.pipe(v.string(), v.url()) as v.GenericSchema<string>,
       /** a proxied url of the thumbnail */
-      proxyUrl: exactOptional<GenericSchema<string>>(pipe(string(), url())),
+      proxyUrl: v.exactOptional<v.GenericSchema<string>>(
+        v.pipe(v.string(), v.url())
+      ),
       /** height of thumbnail */
-      height: exactOptional<GenericSchema<number>>(
-        pipe(number(), integer(), minValue(0))
+      height: v.exactOptional<v.GenericSchema<number>>(
+        v.pipe(v.number(), v.integer(), v.minValue(0))
       ),
       /** width of thumbnail */
-      width: exactOptional<GenericSchema<number>>(
-        pipe(number(), integer(), minValue(0))
+      width: v.exactOptional<v.GenericSchema<number>>(
+        v.pipe(v.number(), v.integer(), v.minValue(0))
       )
     }),
     /** video information */
-    video: partial(
-      object({
+    video: v.partial(
+      v.object({
         /** source url of video */
-        url: pipe(string(), url()) as GenericSchema<string>,
+        url: v.pipe(v.string(), v.url()) as v.GenericSchema<string>,
         /** a proxied url of the video */
-        proxyUrl: pipe(string(), url()) as GenericSchema<string>,
+        proxyUrl: v.pipe(v.string(), v.url()) as v.GenericSchema<string>,
         /** height of video */
-        height: pipe(number(), integer(), minValue(0)) as GenericSchema<number>,
+        height: v.pipe(
+          v.number(),
+          v.integer(),
+          v.minValue(0)
+        ) as v.GenericSchema<number>,
         /** width of video */
-        width: pipe(number(), integer(), minValue(0)) as GenericSchema<number>
+        width: v.pipe(
+          v.number(),
+          v.integer(),
+          v.minValue(0)
+        ) as v.GenericSchema<number>
       })
     ),
     /** provider information */
-    provider: partial(
-      object({
+    provider: v.partial(
+      v.object({
         /** name of provider */
-        name: pipe(string(), nonEmpty()) as GenericSchema<string>,
+        name: v.pipe(v.string(), v.nonEmpty()) as v.GenericSchema<string>,
         /** url of provider */
-        url: pipe(string(), url()) as GenericSchema<string>
+        url: v.pipe(v.string(), v.url()) as v.GenericSchema<string>
       })
     ),
     /** author information */
-    author: object({
+    author: v.object({
       /** name of author */
-      name: pipe(string(), nonEmpty(), maxLength(256)) as GenericSchema<string>,
+      name: v.pipe(
+        v.string(),
+        v.nonEmpty(),
+        v.maxLength(256)
+      ) as v.GenericSchema<string>,
       /** url of author */
-      url: exactOptional<GenericSchema<string>>(pipe(string(), url())),
+      url: v.exactOptional<v.GenericSchema<string>>(
+        v.pipe(v.string(), v.url())
+      ),
       /** url of author icon (only supports http(s) and attachments) */
-      iconUrl: exactOptional<GenericSchema<string>>(pipe(string(), url())),
+      iconUrl: v.exactOptional<v.GenericSchema<string>>(
+        v.pipe(v.string(), v.url())
+      ),
       /** a proxied url of author icon */
-      proxyIconUrl: exactOptional<GenericSchema<string>>(pipe(string(), url()))
+      proxyIconUrl: v.exactOptional<v.GenericSchema<string>>(
+        v.pipe(v.string(), v.url())
+      )
     }),
     /** fields information */
-    fields: pipe(
-      array(
-        object({
+    fields: v.pipe(
+      v.array(
+        v.object({
           /** name of the field */
-          name: pipe(
-            string(),
-            nonEmpty(),
-            maxLength(256)
-          ) as GenericSchema<string>,
+          name: v.pipe(
+            v.string(),
+            v.nonEmpty(),
+            v.maxLength(256)
+          ) as v.GenericSchema<string>,
           /** value of the field */
-          value: pipe(
-            string(),
-            nonEmpty(),
-            maxLength(1024)
-          ) as GenericSchema<string>,
+          value: v.pipe(
+            v.string(),
+            v.nonEmpty(),
+            v.maxLength(1024)
+          ) as v.GenericSchema<string>,
           /** whether or not this field should display inline */
-          inline: exactOptional(boolean())
+          inline: v.exactOptional(v.boolean())
         })
       ),
-      maxLength(25)
+      v.maxLength(25)
     )
   })
 );
 
-export interface Embed extends InferOutput<typeof embedSchema> {}
+export interface Embed extends v.InferOutput<typeof embedSchema> {}
