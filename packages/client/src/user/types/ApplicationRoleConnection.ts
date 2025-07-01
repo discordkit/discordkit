@@ -22,6 +22,5 @@ export const applicationRoleConnectionSchema = object({
   )
 });
 
-export type ApplicationRoleConnection = InferOutput<
-  typeof applicationRoleConnectionSchema
->;
+export interface ApplicationRoleConnection
+  extends InferOutput<typeof applicationRoleConnectionSchema> {}

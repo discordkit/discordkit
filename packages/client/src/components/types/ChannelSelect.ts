@@ -52,4 +52,5 @@ export const channelSelectSchema = object({
   disabled: exactOptional(boolean())
 });
 
-export type ChannelSelect = InferOutput<typeof channelSelectSchema>;
+export interface ChannelSelect
+  extends InferOutput<typeof channelSelectSchema> {}

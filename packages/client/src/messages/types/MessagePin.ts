@@ -9,4 +9,4 @@ export const messagePinSchema = object({
   message: messageSchema
 });
 
-export type MessagePin = InferOutput<typeof messagePinSchema>;
+export interface MessagePin extends InferOutput<typeof messagePinSchema> {}

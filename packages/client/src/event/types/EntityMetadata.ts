@@ -12,4 +12,5 @@ export const entityMetadataSchema = object({
   location: pipe(string(), minLength(1), maxLength(100))
 });
 
-export type EntityMetadata = InferOutput<typeof entityMetadataSchema>;
+export interface EntityMetadata
+  extends InferOutput<typeof entityMetadataSchema> {}

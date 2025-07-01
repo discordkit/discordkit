@@ -20,4 +20,4 @@ export const pollAnswerSchema = object({
   pollMedia: pollMediaSchema
 });
 
-export type PollAnswer = InferOutput<typeof pollAnswerSchema>;
+export interface PollAnswer extends InferOutput<typeof pollAnswerSchema> {}

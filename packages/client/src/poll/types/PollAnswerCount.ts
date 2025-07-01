@@ -17,4 +17,5 @@ export const pollAnswerCountSchema = object({
   meVoted: boolean()
 });
 
-export type PollAnswerCount = InferOutput<typeof pollAnswerCountSchema>;
+export interface PollAnswerCount
+  extends InferOutput<typeof pollAnswerCountSchema> {}

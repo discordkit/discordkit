@@ -1,5 +1,5 @@
 import { snowflake } from "@discordkit/core";
-import type { InferOutput } from "valibot";
+import type { GenericSchema, InferOutput } from "valibot";
 import {
   object,
   record,
@@ -15,7 +15,7 @@ import { messageComponentInteractionMetadataSchema } from "./MessageComponentInt
 
 export const modalSubmitInteractionMetadataSchema = object({
   /** ID of the interaction */
-  id: snowflake,
+  id: snowflake as GenericSchema<string>,
   /** Type of interaction */
   type: interactionTypeSchema,
   /** User who triggered the interaction */
@@ -23,10 +23,10 @@ export const modalSubmitInteractionMetadataSchema = object({
   /** IDs for installation context(s) related to an interaction. Details in Authorizing Integration Owners Object */
   authoringIntegrationOwners: record(
     picklist([`GUILD_INSTALL`, `USER_INSTALL`]),
-    union([snowflake, literal(0)])
+    union([snowflake as GenericSchema<string>, literal(0)])
   ),
   /** ID of the original response message, present only on follow-up messages */
-  originalResponseMessageId: exactOptional(snowflake),
+  originalResponseMessageId: exactOptional<GenericSchema<string>>(snowflake),
   /** Metadata for the interaction that was used to open the modal */
   triggeringInteractionMetadata: union([
     applicationCommandInteractionMetadataSchea,
@@ -34,6 +34,5 @@ export const modalSubmitInteractionMetadataSchema = object({
   ])
 });
 
-export type ModalSubmitInteractionMetadata = InferOutput<
-  typeof modalSubmitInteractionMetadataSchema
->;
+export interface ModalSubmitInteractionMetadata
+  extends InferOutput<typeof modalSubmitInteractionMetadataSchema> {}

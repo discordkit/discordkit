@@ -29,6 +29,5 @@ export const messageComponentInteractionMetadataSchema = object({
   interactedMessageId: exactOptional(snowflake)
 });
 
-export type MessageComponentInteractionMetadata = InferOutput<
-  typeof messageComponentInteractionMetadataSchema
->;
+export interface MessageComponentInteractionMetadata
+  extends InferOutput<typeof messageComponentInteractionMetadataSchema> {}

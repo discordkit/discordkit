@@ -11,4 +11,5 @@ export const activityAssetsSchema = object({
   smallText: optional(string())
 });
 
-export type ActivityAssets = InferOutput<typeof activityAssetsSchema>;
+export interface ActivityAssets
+  extends InferOutput<typeof activityAssetsSchema> {}

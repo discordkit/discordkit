@@ -29,6 +29,5 @@ export const applicationCommandDataSchema = object({
   targetId: exactOptional(snowflake)
 });
 
-export type ApplicationCommandDataSchema = InferOutput<
-  typeof applicationCommandDataSchema
->;
+export interface ApplicationCommandDataSchema
+  extends InferOutput<typeof applicationCommandDataSchema> {}

@@ -35,4 +35,4 @@ export const connectionSchema = object({
   visibility: connectionVisibiltySchema
 });
 
-export type Connection = InferOutput<typeof connectionSchema>;
+export interface Connection extends InferOutput<typeof connectionSchema> {}

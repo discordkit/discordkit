@@ -41,4 +41,4 @@ export const fileSchema = object({
   size: pipe(number(), integer())
 });
 
-export type File = InferOutput<typeof fileSchema>;
+export interface File extends InferOutput<typeof fileSchema> {}

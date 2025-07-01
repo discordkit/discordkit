@@ -49,4 +49,4 @@ export const roleSelectSchema = object({
   disabled: exactOptional(boolean())
 });
 
-export type RoleSelect = InferOutput<typeof roleSelectSchema>;
+export interface RoleSelect extends InferOutput<typeof roleSelectSchema> {}

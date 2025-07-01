@@ -19,6 +19,5 @@ export const scheduledEventRecurrenceRuleNWeekdaySchema = object({
   day: scheduledEventRecurrenceRuleWeekdaySchema
 });
 
-export type ScheduledEventRecurrenceRuleNWeekday = InferOutput<
-  typeof scheduledEventRecurrenceRuleNWeekdaySchema
->;
+export interface ScheduledEventRecurrenceRuleNWeekday
+  extends InferOutput<typeof scheduledEventRecurrenceRuleNWeekdaySchema> {}

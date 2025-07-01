@@ -43,4 +43,4 @@ export const voiceStateSchema = object({
   requestToSpeakTimestamp: nullable(pipe(string(), isoTimestamp()))
 });
 
-export type VoiceState = InferOutput<typeof voiceStateSchema>;
+export interface VoiceState extends InferOutput<typeof voiceStateSchema> {}

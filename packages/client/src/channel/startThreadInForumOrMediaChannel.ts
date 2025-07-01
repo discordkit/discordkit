@@ -75,9 +75,8 @@ export const threadInForumOrMediaChannelResponseSchema = object({
   message: messageSchema
 });
 
-export type ThreadInForumOrMediaChannelResponse = InferOutput<
-  typeof threadInForumOrMediaChannelResponseSchema
->;
+export interface ThreadInForumOrMediaChannelResponse
+  extends InferOutput<typeof threadInForumOrMediaChannelResponseSchema> {}
 
 /**
  * ### [Start Thread in Forum or Media Channel](https://discord.com/developers/docs/resources/channel#start-thread-in-forum-or-media-channel)

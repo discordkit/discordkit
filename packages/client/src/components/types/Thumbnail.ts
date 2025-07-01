@@ -40,4 +40,4 @@ export const thumbnailSchema = object({
   spoiler: exactOptional(boolean())
 });
 
-export type Thumbnail = InferOutput<typeof thumbnailSchema>;
+export interface Thumbnail extends InferOutput<typeof thumbnailSchema> {}

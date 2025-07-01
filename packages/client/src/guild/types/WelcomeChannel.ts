@@ -19,4 +19,5 @@ export const welcomeChannelSchema = object({
   emojiName: nullable(pipe(string(), nonEmpty()))
 });
 
-export type WelcomeChannel = InferOutput<typeof welcomeChannelSchema>;
+export interface WelcomeChannel
+  extends InferOutput<typeof welcomeChannelSchema> {}

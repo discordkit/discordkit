@@ -1,4 +1,5 @@
 import {
+  type GenericSchema,
   type InferOutput,
   integer,
   minValue,
@@ -9,11 +10,10 @@ import {
 
 export const reactionCountDetailsSchema = object({
   /** Count of super reactions */
-  burst: pipe(number(), integer(), minValue(0)),
+  burst: pipe(number(), integer(), minValue(0)) as GenericSchema<number>,
   /** Count of normal reactions */
-  normal: pipe(number(), integer(), minValue(0))
+  normal: pipe(number(), integer(), minValue(0)) as GenericSchema<number>
 });
 
-export type ReactionCountDetails = InferOutput<
-  typeof reactionCountDetailsSchema
->;
+export interface ReactionCountDetails
+  extends InferOutput<typeof reactionCountDetailsSchema> {}

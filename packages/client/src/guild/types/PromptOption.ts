@@ -33,4 +33,4 @@ export const promptOptionSchema = object({
   description: nullable(string())
 });
 
-export type PromptOption = InferOutput<typeof promptOptionSchema>;
+export interface PromptOption extends InferOutput<typeof promptOptionSchema> {}

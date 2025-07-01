@@ -35,4 +35,4 @@ export const pollSchema = object({
   results: exactOptional(pollResultsSchema)
 });
 
-export type Poll = InferOutput<typeof pollSchema>;
+export interface Poll extends InferOutput<typeof pollSchema> {}

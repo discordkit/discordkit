@@ -17,4 +17,5 @@ export const auditLogChangeSchema = object({
   key: pipe(string(), nonEmpty())
 });
 
-export type AuditLogChange = InferOutput<typeof auditLogChangeSchema>;
+export interface AuditLogChange
+  extends InferOutput<typeof auditLogChangeSchema> {}

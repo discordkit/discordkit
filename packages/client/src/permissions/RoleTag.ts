@@ -19,4 +19,4 @@ export const roleTagSchema = object({
   guildConnections: exactOptional(null_())
 });
 
-export type RoleTag = InferOutput<typeof roleTagSchema>;
+export interface RoleTag extends InferOutput<typeof roleTagSchema> {}

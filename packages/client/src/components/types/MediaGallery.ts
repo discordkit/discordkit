@@ -35,4 +35,4 @@ export const mediaGallerySchema = object({
   items: pipe(array(mediaGalleryItemSchema), nonEmpty(), maxLength(10))
 });
 
-export type MediaGallery = InferOutput<typeof mediaGallerySchema>;
+export interface MediaGallery extends InferOutput<typeof mediaGallerySchema> {}

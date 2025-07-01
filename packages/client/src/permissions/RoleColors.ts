@@ -31,4 +31,4 @@ export const roleColorsSchema = object({
   )
 });
 
-export type RoleColors = InferOutput<typeof roleColorsSchema>;
+export interface RoleColors extends InferOutput<typeof roleColorsSchema> {}

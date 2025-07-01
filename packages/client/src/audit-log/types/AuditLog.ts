@@ -27,4 +27,4 @@ export const auditLogSchema = object({
   webhooks: array(webhookSchema)
 });
 
-export type AuditLog = InferOutput<typeof auditLogSchema>;
+export interface AuditLog extends InferOutput<typeof auditLogSchema> {}

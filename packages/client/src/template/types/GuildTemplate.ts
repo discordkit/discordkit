@@ -41,4 +41,5 @@ export const guildTemplateSchema = object({
   isDirty: nullable(boolean())
 });
 
-export type GuildTemplate = InferOutput<typeof guildTemplateSchema>;
+export interface GuildTemplate
+  extends InferOutput<typeof guildTemplateSchema> {}

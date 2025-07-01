@@ -17,10 +17,14 @@ import {
   type GenericSchema
 } from "valibot";
 import { snowflake, asDigits } from "@discordkit/core";
+import type { User } from "../../user/types/User.js";
 import { userSchema } from "../../user/types/User.js";
 import { memberSchema } from "../../guild/types/Member.js";
-import { roleSchema } from "../../permissions/Role.js";
-import { attachmentSchema } from "../../messages/types/Attachment.js";
+import { type Role, roleSchema } from "../../permissions/Role.js";
+import {
+  type Attachment,
+  attachmentSchema
+} from "../../messages/types/Attachment.js";
 import { type Message, messageSchema } from "../../messages/types/Message.js";
 import {
   ChannelType,
@@ -31,13 +35,17 @@ import { threadMetadataSchema } from "../../channel/types/ThreadMetadata.js";
 
 export const resolvedDataSchema = object({
   /** the ids and User objects */
-  users: exactOptional(record(snowflake, userSchema)),
+  users: exactOptional<GenericSchema<Record<string, User>>>(
+    record(snowflake, userSchema)
+  ),
   /** the ids and partial Member objects */
   members: exactOptional(
     record(snowflake, partial(omit(memberSchema, [`user`, `deaf`, `mute`])))
   ),
   /** the ids and Role objects */
-  roles: exactOptional(record(snowflake, roleSchema)),
+  roles: exactOptional<GenericSchema<Record<string, Role>>>(
+    record(snowflake, roleSchema)
+  ),
   /** the ids and partial Channel objects */
   channels: exactOptional(
     record(
@@ -82,7 +90,9 @@ export const resolvedDataSchema = object({
     )
   ),
   /** the ids and attachment objects */
-  attachments: exactOptional(record(snowflake, attachmentSchema))
+  attachments: exactOptional<GenericSchema<Record<string, Attachment>>>(
+    record(snowflake, attachmentSchema)
+  )
 });
 
-export type ResolvedData = InferOutput<typeof resolvedDataSchema>;
+export interface ResolvedData extends InferOutput<typeof resolvedDataSchema> {}

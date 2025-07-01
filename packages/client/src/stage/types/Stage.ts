@@ -27,4 +27,4 @@ export const stageSchema = object({
   guildScheduledEventId: nullable(snowflake)
 });
 
-export type Stage = InferOutput<typeof stageSchema>;
+export interface Stage extends InferOutput<typeof stageSchema> {}

@@ -16,4 +16,5 @@ export const welcomeScreenSchema = object({
   welcomeChannels: pipe(array(welcomeChannelSchema), maxLength(5))
 });
 
-export type WelcomeScreen = InferOutput<typeof welcomeScreenSchema>;
+export interface WelcomeScreen
+  extends InferOutput<typeof welcomeScreenSchema> {}

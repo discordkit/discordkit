@@ -9,6 +9,5 @@ export const avatarDecorationDataSchema = object({
   skuId: snowflake
 });
 
-export type AvatarDecorationData = InferOutput<
-  typeof avatarDecorationDataSchema
->;
+export interface AvatarDecorationData
+  extends InferOutput<typeof avatarDecorationDataSchema> {}

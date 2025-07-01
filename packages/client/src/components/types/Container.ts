@@ -56,4 +56,4 @@ export const containerSchema = object({
   spoiler: exactOptional(boolean())
 });
 
-export type Container = InferOutput<typeof containerSchema>;
+export interface Container extends InferOutput<typeof containerSchema> {}

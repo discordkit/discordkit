@@ -11,6 +11,5 @@ export const applicationCommandPermissionsSchema = object({
   permission: boolean()
 });
 
-export type ApplicationCommandPermissions = InferOutput<
-  typeof applicationCommandPermissionsSchema
->;
+export interface ApplicationCommandPermissions
+  extends InferOutput<typeof applicationCommandPermissionsSchema> {}

@@ -20,4 +20,4 @@ export const skuSchema = object({
   flags: asInteger(skuFlag) as GenericSchema<number>
 });
 
-export type SKU = InferOutput<typeof skuSchema>;
+export interface SKU extends InferOutput<typeof skuSchema> {}

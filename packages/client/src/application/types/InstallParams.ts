@@ -12,4 +12,5 @@ export const installParamsSchema = object({
   permissions: asDigits(permissionFlag) as GenericSchema<string>
 });
 
-export type InstallParams = InferOutput<typeof installParamsSchema>;
+export interface InstallParams
+  extends InferOutput<typeof installParamsSchema> {}

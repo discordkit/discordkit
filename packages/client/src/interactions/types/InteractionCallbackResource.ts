@@ -13,6 +13,5 @@ export const interactionCallbackResourceSchema = object({
   message: exactOptional(messageSchema)
 });
 
-export type InteractionCallbackResource = InferOutput<
-  typeof interactionCallbackResourceSchema
->;
+export interface InteractionCallbackResource
+  extends InferOutput<typeof interactionCallbackResourceSchema> {}

@@ -19,4 +19,4 @@ export const pollResultsSchema = object({
   answerCounts: array(pollAnswerCountSchema)
 });
 
-export type PollResults = InferOutput<typeof pollResultsSchema>;
+export interface PollResults extends InferOutput<typeof pollResultsSchema> {}

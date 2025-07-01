@@ -36,6 +36,5 @@ export const applicationCommandInteractionMetadataSchea = object({
   targetMessageId: exactOptional(snowflake)
 });
 
-export type ApplicationCommandInteractionMetadata = InferOutput<
-  typeof applicationCommandInteractionMetadataSchea
->;
+export interface ApplicationCommandInteractionMetadata
+  extends InferOutput<typeof applicationCommandInteractionMetadataSchea> {}

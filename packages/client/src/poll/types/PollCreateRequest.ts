@@ -33,4 +33,5 @@ export const pollCreateRequestSchema = object({
   layoutType: pollLayoutTypeSchema
 });
 
-export type PollCreateRequest = InferOutput<typeof pollCreateRequestSchema>;
+export interface PollCreateRequest
+  extends InferOutput<typeof pollCreateRequestSchema> {}

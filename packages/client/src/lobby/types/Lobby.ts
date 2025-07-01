@@ -35,4 +35,4 @@ export const lobbySchema = object({
   )
 });
 
-export type Lobby = InferOutput<typeof lobbySchema>;
+export interface Lobby extends InferOutput<typeof lobbySchema> {}

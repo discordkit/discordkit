@@ -48,6 +48,5 @@ export const scheduledEventRecurrenceRuleSchema = object({
   count: nullable(pipe(number(), integer(), minValue(1)))
 });
 
-export type ScheduledEventRecurrenceRule = InferOutput<
-  typeof scheduledEventRecurrenceRuleSchema
->;
+export interface ScheduledEventRecurrenceRule
+  extends InferOutput<typeof scheduledEventRecurrenceRuleSchema> {}

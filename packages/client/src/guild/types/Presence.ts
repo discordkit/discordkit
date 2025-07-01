@@ -22,4 +22,4 @@ export const presenceSchema = object({
   clientStatus: clientStatusSchema
 });
 
-export type Presence = InferOutput<typeof presenceSchema>;
+export interface Presence extends InferOutput<typeof presenceSchema> {}

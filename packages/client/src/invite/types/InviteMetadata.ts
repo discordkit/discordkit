@@ -28,4 +28,5 @@ export const inviteMetadataSchema = intersect([
   })
 ]);
 
-export type InviteMetadata = InferOutput<typeof inviteMetadataSchema>;
+export interface InviteMetadata
+  extends InferOutput<typeof inviteMetadataSchema> {}

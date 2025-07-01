@@ -10,10 +10,11 @@ import {
   array,
   isoTimestamp,
   pipe,
-  nonEmpty
+  nonEmpty,
+  type GenericSchema
 } from "valibot";
 import { snowflake } from "@discordkit/core";
-import { userSchema } from "../../user/types/User.js";
+import { type User, userSchema } from "../../user/types/User.js";
 import { scopesSchema } from "../../application/types/Scopes.js";
 import { integrationApplicationSchema } from "./IntegrationApplication.js";
 import { integrationAccountSchema } from "./IntegrationAccount.js";
@@ -21,9 +22,9 @@ import { integrationExpireBehaviorSchema } from "./IntegrationExpireBehavior.js"
 
 export const integrationSchema = object({
   /** integration id */
-  id: snowflake,
+  id: snowflake as GenericSchema<string>,
   /** integration name */
-  name: pipe(string(), nonEmpty()),
+  name: pipe(string(), nonEmpty()) as GenericSchema<string>,
   /** integration type (twitch, youtube, or discord) */
   type: string(),
   /** is this integration enabled */
@@ -37,15 +38,21 @@ export const integrationSchema = object({
   /** the behavior of expiring subscribers */
   expireBehavior: exactOptional(integrationExpireBehaviorSchema),
   /** the grace period (in days) before expiring subscribers */
-  expireGracePeriod: exactOptional(pipe(number(), integer(), minValue(0))),
+  expireGracePeriod: exactOptional<GenericSchema<number>>(
+    pipe(number(), integer(), minValue(0))
+  ),
   /** user for this integration */
-  user: exactOptional(userSchema),
+  user: exactOptional<GenericSchema<User>>(userSchema),
   /** integration account information */
   account: integrationAccountSchema,
   /** when this integration was last synced */
-  syncedAt: exactOptional(pipe(string(), isoTimestamp())),
+  syncedAt: exactOptional<GenericSchema<string>>(
+    pipe(string(), isoTimestamp())
+  ),
   /** how many subscribers this integration has */
-  subscriberCount: exactOptional(pipe(number(), integer(), minValue(0))),
+  subscriberCount: exactOptional<GenericSchema<number>>(
+    pipe(number(), integer(), minValue(0))
+  ),
   /** has this integration been revoked */
   revoked: exactOptional(boolean()),
   /** The bot/OAuth2 application for discord integrations */
@@ -54,4 +61,4 @@ export const integrationSchema = object({
   scopes: exactOptional(array(scopesSchema))
 });
 
-export type Integration = InferOutput<typeof integrationSchema>;
+export interface Integration extends InferOutput<typeof integrationSchema> {}

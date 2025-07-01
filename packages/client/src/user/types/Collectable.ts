@@ -7,4 +7,4 @@ export const collectableSchema = object({
   nameplate: exactOptional(nameplateSchema)
 });
 
-export type Collectable = InferOutput<typeof collectableSchema>;
+export interface Collectable extends InferOutput<typeof collectableSchema> {}

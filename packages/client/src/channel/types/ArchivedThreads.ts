@@ -11,4 +11,5 @@ export const archivedThreadsSchema = object({
   hasMore: boolean()
 });
 
-export type ArchivedThreads = InferOutput<typeof archivedThreadsSchema>;
+export interface ArchivedThreads
+  extends InferOutput<typeof archivedThreadsSchema> {}

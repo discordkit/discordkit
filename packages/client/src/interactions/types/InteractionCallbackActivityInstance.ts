@@ -6,6 +6,5 @@ export const interactionCallbackActivityInstanceSchema = object({
   id: pipe(string(), nonEmpty())
 });
 
-export type InteractionCallbackActivityInstance = InferOutput<
-  typeof interactionCallbackActivityInstanceSchema
->;
+export interface InteractionCallbackActivityInstance
+  extends InferOutput<typeof interactionCallbackActivityInstanceSchema> {}

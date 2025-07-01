@@ -6,4 +6,5 @@ export const messageComponentSchema = pipe(
   maxLength(5)
 );
 
-export type MessageComponent = InferOutput<typeof messageComponentSchema>;
+export interface MessageComponent
+  extends InferOutput<typeof messageComponentSchema> {}

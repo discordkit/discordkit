@@ -6,7 +6,8 @@ import {
   boolean,
   maxLength,
   pipe,
-  nonEmpty
+  nonEmpty,
+  type GenericSchema
 } from "valibot";
 import { snowflake } from "@discordkit/core";
 import { moderationActionSchema } from "./ModerationAction.js";
@@ -16,13 +17,13 @@ import { triggerMetaSchema } from "./TriggerMeta.js";
 
 export const moderationRuleSchema = object({
   /** the id of this rule */
-  id: snowflake,
+  id: snowflake as GenericSchema<string>,
   /** the guild which this rule belongs to */
-  guildId: snowflake,
+  guildId: snowflake as GenericSchema<string>,
   /** the rule name */
-  name: pipe(string(), nonEmpty()),
+  name: pipe(string(), nonEmpty()) as GenericSchema<string>,
   /** the user which first created this rule */
-  creatorId: snowflake,
+  creatorId: snowflake as GenericSchema<string>,
   /** the rule event type */
   eventType: moderationEventSchema,
   /** the rule trigger type */
@@ -34,9 +35,12 @@ export const moderationRuleSchema = object({
   /** whether the rule is enabled */
   enabled: boolean(),
   /** the role ids that should not be affected by the rule (Maximum of 20) */
-  exemptRoles: pipe(array(snowflake), maxLength(20)),
+  exemptRoles: pipe(array(snowflake), maxLength(20)) as GenericSchema<string[]>,
   /** the channel ids that should not be affected by the rule (Maximum of 50) */
-  exemptChannels: pipe(array(snowflake), maxLength(50))
+  exemptChannels: pipe(array(snowflake), maxLength(50)) as GenericSchema<
+    string[]
+  >
 });
 
-export type ModerationRule = InferOutput<typeof moderationRuleSchema>;
+export interface ModerationRule
+  extends InferOutput<typeof moderationRuleSchema> {}

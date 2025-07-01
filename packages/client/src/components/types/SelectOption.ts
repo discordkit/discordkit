@@ -24,4 +24,4 @@ export const selectOptionSchema = object({
   default: exactOptional(boolean())
 });
 
-export type SelectOption = InferOutput<typeof selectOptionSchema>;
+export interface SelectOption extends InferOutput<typeof selectOptionSchema> {}

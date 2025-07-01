@@ -8,4 +8,4 @@ export const banSchema = object({
   user: userSchema
 });
 
-export type Ban = InferOutput<typeof banSchema>;
+export interface Ban extends InferOutput<typeof banSchema> {}

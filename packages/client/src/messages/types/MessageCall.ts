@@ -12,4 +12,4 @@ export const messageCallSchema = object({
   endedTimestamp: nullish(pipe(string(), isoTimestamp()))
 });
 
-export type MessageCall = InferOutput<typeof messageCallSchema>;
+export interface MessageCall extends InferOutput<typeof messageCallSchema> {}

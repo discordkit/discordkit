@@ -20,4 +20,5 @@ export const onboardingPromptSchema = object({
   inOnboarding: boolean()
 });
 
-export type OnboardingPrompt = InferOutput<typeof onboardingPromptSchema>;
+export interface OnboardingPrompt
+  extends InferOutput<typeof onboardingPromptSchema> {}

@@ -9,4 +9,4 @@ export const modalSubmitData = object({
   components: array(messageComponentSchema)
 });
 
-export type ModalSubmitData = InferOutput<typeof modalSubmitData>;
+export interface ModalSubmitData extends InferOutput<typeof modalSubmitData> {}

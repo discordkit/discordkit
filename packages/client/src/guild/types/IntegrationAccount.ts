@@ -7,4 +7,5 @@ export const integrationAccountSchema = object({
   name: string()
 });
 
-export type IntegrationAccount = InferOutput<typeof integrationAccountSchema>;
+export interface IntegrationAccount
+  extends InferOutput<typeof integrationAccountSchema> {}

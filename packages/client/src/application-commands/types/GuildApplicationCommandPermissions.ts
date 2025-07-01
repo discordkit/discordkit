@@ -13,6 +13,5 @@ export const guildApplicationCommandPermissionsSchema = object({
   permissions: pipe(array(applicationCommandPermissionsSchema), maxLength(100))
 });
 
-export type GuildApplicationCommandPermissions = InferOutput<
-  typeof guildApplicationCommandPermissionsSchema
->;
+export interface GuildApplicationCommandPermissions
+  extends InferOutput<typeof guildApplicationCommandPermissionsSchema> {}

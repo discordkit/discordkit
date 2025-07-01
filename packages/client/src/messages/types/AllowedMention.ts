@@ -23,4 +23,5 @@ export const allowedMentionSchema = partial(
   })
 );
 
-export type AllowedMention = InferOutput<typeof allowedMentionSchema>;
+export interface AllowedMention
+  extends InferOutput<typeof allowedMentionSchema> {}

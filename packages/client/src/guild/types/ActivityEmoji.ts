@@ -10,4 +10,5 @@ export const activityEmojiSchema = object({
   animated: optional(boolean())
 });
 
-export type ActivityEmoji = InferOutput<typeof activityEmojiSchema>;
+export interface ActivityEmoji
+  extends InferOutput<typeof activityEmojiSchema> {}

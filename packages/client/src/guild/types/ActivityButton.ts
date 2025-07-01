@@ -8,4 +8,5 @@ export const activityButtonSchema = object({
   url: string()
 });
 
-export type ActivityButton = InferOutput<typeof activityButtonSchema>;
+export interface ActivityButton
+  extends InferOutput<typeof activityButtonSchema> {}

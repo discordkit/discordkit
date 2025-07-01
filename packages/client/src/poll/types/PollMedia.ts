@@ -23,4 +23,4 @@ export const pollMediaSchema = object({
   answers: exactOptional(partial(emojiSchema))
 });
 
-export type PollMedia = InferOutput<typeof pollMediaSchema>;
+export interface PollMedia extends InferOutput<typeof pollMediaSchema> {}

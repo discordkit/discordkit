@@ -9,4 +9,5 @@ export const moderationActionSchema = object({
   metadata: exactOptional(moderationActionMetaSchema)
 });
 
-export type ModerationAction = InferOutput<typeof moderationActionSchema>;
+export interface ModerationAction
+  extends InferOutput<typeof moderationActionSchema> {}

@@ -77,4 +77,4 @@ export const interactionSchema = object({
   attachmentSizeLimit: pipe(number(), integer(), minValue(0))
 });
 
-export type Interaction = InferOutput<typeof interactionSchema>;
+export interface Interaction extends InferOutput<typeof interactionSchema> {}

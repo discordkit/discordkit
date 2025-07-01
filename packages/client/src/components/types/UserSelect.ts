@@ -49,4 +49,4 @@ export const userSelectSchema = object({
   disabled: exactOptional(boolean())
 });
 
-export type UserSelect = InferOutput<typeof userSelectSchema>;
+export interface UserSelect extends InferOutput<typeof userSelectSchema> {}

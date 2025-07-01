@@ -27,4 +27,4 @@ export const stickerPackSchema = object({
   bannerAssetId: exactOptional(snowflake)
 });
 
-export type StickerPack = InferOutput<typeof stickerPackSchema>;
+export interface StickerPack extends InferOutput<typeof stickerPackSchema> {}

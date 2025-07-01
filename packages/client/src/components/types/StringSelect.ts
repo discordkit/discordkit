@@ -49,4 +49,4 @@ export const stringSelectSchema = object({
   disabled: exactOptional(boolean())
 });
 
-export type StringSelect = InferOutput<typeof stringSelectSchema>;
+export interface StringSelect extends InferOutput<typeof stringSelectSchema> {}

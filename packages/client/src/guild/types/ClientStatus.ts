@@ -11,4 +11,4 @@ export const clientStatusSchema = object({
   web: optional(string())
 });
 
-export type ClientStatus = InferOutput<typeof clientStatusSchema>;
+export interface ClientStatus extends InferOutput<typeof clientStatusSchema> {}

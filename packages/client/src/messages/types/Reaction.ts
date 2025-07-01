@@ -25,4 +25,4 @@ export const reactionSchema = object({
   burstColors: array(string())
 });
 
-export type Reaction = InferOutput<typeof reactionSchema>;
+export interface Reaction extends InferOutput<typeof reactionSchema> {}

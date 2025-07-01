@@ -12,4 +12,5 @@ export const scheduledEventUserSchema = object({
   member: exactOptional(memberSchema)
 });
 
-export type ScheduledEventUser = InferOutput<typeof scheduledEventUserSchema>;
+export interface ScheduledEventUser
+  extends InferOutput<typeof scheduledEventUserSchema> {}

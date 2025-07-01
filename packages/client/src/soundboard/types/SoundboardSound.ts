@@ -33,4 +33,5 @@ export const soundboardSoundSchema = object({
   user: exactOptional(userSchema)
 });
 
-export type SoundboardSound = InferOutput<typeof soundboardSoundSchema>;
+export interface SoundboardSound
+  extends InferOutput<typeof soundboardSoundSchema> {}

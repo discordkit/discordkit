@@ -29,22 +29,30 @@ import { permissionFlag } from "../../permissions/Permissions.js";
 export const applicationCommandSchema = intersect([
   object({
     /** Unique ID of command */
-    id: snowflake,
+    id: snowflake as GenericSchema<string>,
     /** ID of the parent application */
-    applicationId: snowflake,
+    applicationId: snowflake as GenericSchema<string>,
     /** Guild ID of the command, if not global */
-    guildId: exactOptional(snowflake),
+    guildId: exactOptional<GenericSchema<string>>(snowflake),
     /** Name of command, 1-32 characters */
-    name: pipe(string(), minLength(1), maxLength(32)),
+    name: pipe(string(), minLength(1), maxLength(32)) as GenericSchema<string>,
     /** Localization dictionary for name field. Values follow the same restrictions as name */
     nameLocalizations: nullish(
-      record(localesSchema, pipe(string(), minLength(1), maxLength(32)))
+      record(
+        localesSchema,
+        pipe(string(), minLength(1), maxLength(32)) as GenericSchema<string>
+      )
     ),
     /** Description for CHAT_INPUT commands, 1-100 characters. Empty string for USER and MESSAGE commands */
-    description: exactOptional(pipe(string(), minLength(0), maxLength(100))),
+    description: exactOptional<GenericSchema<string>>(
+      pipe(string(), minLength(0), maxLength(100))
+    ),
     /** Localization dictionary for description field. Values follow the same restrictions as description */
     descriptionLocalizations: nullish(
-      record(localesSchema, pipe(string(), minLength(0), maxLength(100)))
+      record(
+        localesSchema,
+        pipe(string(), minLength(0), maxLength(100)) as GenericSchema<string>
+      )
     ),
     /** Set of permissions represented as a bit set */
     defaultMemberPermissions: nullable(
@@ -59,7 +67,7 @@ export const applicationCommandSchema = intersect([
     // TODO: integrationTypes
     // TODO: contexts
     /** Autoincrementing version identifier updated during substantial record changes */
-    version: snowflake
+    version: snowflake as GenericSchema<string>
   }),
   union([
     // Common variants

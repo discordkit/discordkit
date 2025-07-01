@@ -15,4 +15,5 @@ export const messageActivitySchema = object({
   partyId: exactOptional(pipe(string(), nonEmpty()))
 });
 
-export type MessageActivity = InferOutput<typeof messageActivitySchema>;
+export interface MessageActivity
+  extends InferOutput<typeof messageActivitySchema> {}

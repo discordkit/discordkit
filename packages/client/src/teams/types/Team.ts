@@ -16,4 +16,4 @@ export const teamSchema = object({
   ownerUserId: string()
 });
 
-export type Team = InferOutput<typeof teamSchema>;
+export interface Team extends InferOutput<typeof teamSchema> {}

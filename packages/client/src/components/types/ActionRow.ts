@@ -41,4 +41,4 @@ export const actionRowSchema = object({
   ])
 });
 
-export type ActionRow = InferOutput<typeof actionRowSchema>;
+export interface ActionRow extends InferOutput<typeof actionRowSchema> {}

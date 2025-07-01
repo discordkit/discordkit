@@ -28,4 +28,5 @@ export const unfurledMediaItemSchema = object({
   attachmentId: snowflake
 });
 
-export type UnfurledMediaItem = InferOutput<typeof unfurledMediaItemSchema>;
+export interface UnfurledMediaItem
+  extends InferOutput<typeof unfurledMediaItemSchema> {}

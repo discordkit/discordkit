@@ -15,4 +15,4 @@ export const voiceRegionSchema = object({
   custom: boolean()
 });
 
-export type VoiceRegion = InferOutput<typeof voiceRegionSchema>;
+export interface VoiceRegion extends InferOutput<typeof voiceRegionSchema> {}

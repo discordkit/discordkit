@@ -40,4 +40,4 @@ export const subscriptionSchema = object({
   country: exactOptional(pipe(string(), nonEmpty()))
 });
 
-export type Subscription = InferOutput<typeof subscriptionSchema>;
+export interface Subscription extends InferOutput<typeof subscriptionSchema> {}

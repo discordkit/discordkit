@@ -24,15 +24,18 @@ import { userFlag } from "./UserFlags.js";
 // https://discord.com/developers/docs/resources/user#user-object-user-structure
 export const userSchema = object({
   /** the user's id (scope: `identify`) */
-  id: snowflake,
+  id: snowflake as GenericSchema<string>,
   /** the user's username, not unique across the platform (scope: `identify`) */
-  username: pipe(string(), minLength(1)),
+  username: pipe(string(), minLength(1)) as GenericSchema<string>,
   /** the user's 4-digit discord-tag (scope: `identify`) */
-  discriminator: union([pipe(string(), length(4)), literal(`0`)]),
+  discriminator: union([
+    pipe(string(), length(4)) as GenericSchema<string>,
+    literal(`0`)
+  ]),
   /** the user's display name, if it is set. For bots, this is the application name (scope: `identify`) */
   globalName: nullable(string()),
   /** the user's avatar hash (scope: `identify`) */
-  avatar: nullable(pipe(string(), minLength(1))),
+  avatar: nullable<GenericSchema<string>>(pipe(string(), minLength(1))),
   /** whether the user belongs to an OAuth2 application (scope: `identify`) */
   bot: exactOptional(boolean()),
   /** whether the user is an Official Discord System user (part of the urgent message system) (scope: `identify`) */
@@ -40,15 +43,15 @@ export const userSchema = object({
   /** whether the user has two factor enabled on their account (scope: `identify`) */
   mfaEnabled: exactOptional(boolean()),
   /** the user's banner hash (scope: `identify`) */
-  banner: nullish(pipe(string(), minLength(1))),
+  banner: nullish<GenericSchema<string>>(pipe(string(), minLength(1))),
   /** the user's banner color encoded as an integer representation of hexadecimal color code (scope: `identify`) */
-  accentColor: nullish(pipe(number(), integer())),
+  accentColor: nullish<GenericSchema<number>>(pipe(number(), integer())),
   /** the user's chosen language option (scope: `identify`) */
   locale: exactOptional(localesSchema),
   /** whether the email on this account has been verified (scope: `email`) */
   verified: exactOptional(boolean()),
   /** the user's email (scope: `email`) */
-  email: nullish(pipe(string(), email())),
+  email: nullish<GenericSchema<string>>(pipe(string(), email())),
   /** the flags on a user's account (scope: `identify`) */
   flags: exactOptional(asInteger(userFlag) as GenericSchema<number>),
   /** the type of Nitro subscription on a user's account (scope: `identify`) */
@@ -59,4 +62,4 @@ export const userSchema = object({
   avatarDecoration: nullish(string())
 });
 
-export type User = InferOutput<typeof userSchema>;
+export interface User extends InferOutput<typeof userSchema> {}

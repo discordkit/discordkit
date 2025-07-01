@@ -22,4 +22,4 @@ export const lobbyMemberSchema = object({
   flags: exactOptional(asInteger(lobbyMemberFlag) as GenericSchema<number>)
 });
 
-export type LobbyMember = InferOutput<typeof lobbyMemberSchema>;
+export interface LobbyMember extends InferOutput<typeof lobbyMemberSchema> {}

@@ -28,4 +28,4 @@ export const nameplateSchema = object({
   ])
 });
 
-export type Nameplate = InferOutput<typeof nameplateSchema>;
+export interface Nameplate extends InferOutput<typeof nameplateSchema> {}

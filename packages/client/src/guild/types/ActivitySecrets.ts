@@ -9,4 +9,5 @@ export const activitySecretsSchema = object({
   match: optional(string())
 });
 
-export type ActivitySecrets = InferOutput<typeof activitySecretsSchema>;
+export interface ActivitySecrets
+  extends InferOutput<typeof activitySecretsSchema> {}

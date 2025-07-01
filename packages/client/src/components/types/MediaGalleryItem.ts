@@ -19,4 +19,5 @@ export const mediaGalleryItemSchema = object({
   spoiler: exactOptional(boolean())
 });
 
-export type MediaGalleryItem = InferOutput<typeof mediaGalleryItemSchema>;
+export interface MediaGalleryItem
+  extends InferOutput<typeof mediaGalleryItemSchema> {}

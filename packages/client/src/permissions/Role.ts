@@ -47,4 +47,4 @@ export const roleSchema = object({
   flags: asInteger(roleFlag) as GenericSchema<number>
 });
 
-export type Role = InferOutput<typeof roleSchema>;
+export interface Role extends InferOutput<typeof roleSchema> {}

@@ -52,4 +52,4 @@ export const textInputSchema = object({
   placeholder: exactOptional(pipe(string(), nonEmpty(), maxLength(100)))
 });
 
-export type TextInput = InferOutput<typeof textInputSchema>;
+export interface TextInput extends InferOutput<typeof textInputSchema> {}

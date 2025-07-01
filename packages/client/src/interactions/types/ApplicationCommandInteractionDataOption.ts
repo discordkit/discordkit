@@ -33,6 +33,5 @@ export const applicationCommandInteractionDataOptionSchema = object({
   options: exactOptional(lazy(() => array(base)))
 });
 
-export type ApplicationCommandInteractionDataOption = InferOutput<
-  typeof applicationCommandInteractionDataOptionSchema
->;
+export interface ApplicationCommandInteractionDataOption
+  extends InferOutput<typeof applicationCommandInteractionDataOptionSchema> {}

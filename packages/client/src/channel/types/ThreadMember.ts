@@ -13,15 +13,15 @@ import { channelFlag } from "./ChannelFlags.js";
 
 export const threadMemberSchema = object({
   /** the id of the thread */
-  id: exactOptional(snowflake),
+  id: exactOptional<GenericSchema<string>>(snowflake),
   /** the id of the user */
-  userId: exactOptional(snowflake),
+  userId: exactOptional<GenericSchema<string>>(snowflake),
   /** the time the current user last joined the thread */
-  joinTimestamp: pipe(string(), isoTimestamp()),
+  joinTimestamp: pipe(string(), isoTimestamp()) as GenericSchema<string>,
   /** any user-thread settings, currently only used for notifications */
   flags: asInteger(channelFlag) as GenericSchema<number>,
   /** Additional information about the user */
   member: exactOptional(memberSchema)
 });
 
-export type ThreadMember = InferOutput<typeof threadMemberSchema>;
+export interface ThreadMember extends InferOutput<typeof threadMemberSchema> {}

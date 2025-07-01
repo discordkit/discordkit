@@ -13,4 +13,5 @@ export const channelMentionSchema = object({
   name: string()
 });
 
-export type ChannelMention = InferOutput<typeof channelMentionSchema>;
+export interface ChannelMention
+  extends InferOutput<typeof channelMentionSchema> {}

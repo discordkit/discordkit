@@ -19,6 +19,7 @@ import {
   type GenericSchema
 } from "valibot";
 import { asInteger, snowflake } from "@discordkit/core";
+import type { User } from "../../user/types/User.js";
 import { userSchema } from "../../user/types/User.js";
 import { teamSchema } from "../../teams/types/Team.js";
 import { guildSchema } from "../../guild/types/Guild.js";
@@ -36,23 +37,27 @@ export const applicationSchema = object({
   /** Name of the app */
   name: string(),
   /** Icon hash of the app */
-  icon: nullable(pipe(string(), nonEmpty())),
+  icon: nullable<GenericSchema<string>>(pipe(string(), nonEmpty())),
   /** Description of the app */
   description: string(),
   /** List of RPC origin URLs, if RPC is enabled */
-  rpcOrigins: exactOptional(array(pipe(string(), url()))),
+  rpcOrigins: exactOptional<GenericSchema<string[]>>(
+    array(pipe(string(), url()))
+  ),
   /** When `false`, only the app owner can add the app to guilds */
   botPublic: boolean(),
   /** When `true`, the app's bot will only join upon completion of the full OAuth2 code grant flow */
   botRequireCodeGrant: boolean(),
   /** Partial user object for the bot user associated with the app */
-  bot: exactOptional(partial(userSchema)),
+  bot: exactOptional<GenericSchema<Partial<User>>>(partial(userSchema)),
   /** URL of the app's Terms of Service */
-  termsOfServiceUrl: exactOptional(string()),
+  termsOfServiceUrl: exactOptional<GenericSchema<string>>(
+    pipe(string(), url())
+  ),
   /** URL of the app's Privacy Policy */
-  privacyPolicyUrl: exactOptional(string()),
+  privacyPolicyUrl: exactOptional<GenericSchema<string>>(pipe(string(), url())),
   /** Partial user object for the owner of the app */
-  owner: exactOptional(partial(userSchema)),
+  owner: exactOptional<GenericSchema<Partial<User>>>(partial(userSchema)),
   /** Hex encoded key for verification in interactions and the GameSDK's GetTicket */
   verifyKey: string(),
   /** If the app belongs to a team, this will be a list of the members of that team */
@@ -70,29 +75,39 @@ export const applicationSchema = object({
   /** App's public flags */
   flags: exactOptional(asInteger(applicationFlag) as GenericSchema<number>),
   /** Approximate count of guilds the app has been added to */
-  approximateGuildCount: exactOptional(pipe(number(), integer(), minValue(0))),
+  approximateGuildCount: exactOptional<GenericSchema<number>>(
+    pipe(number(), integer(), minValue(0))
+  ),
   /** Approximate count of users that have installed the app (authorized with `application.commands` as a scope) */
-  approximateUserInstallCount: exactOptional(
+  approximateUserInstallCount: exactOptional<GenericSchema<number>>(
     pipe(number(), integer(), minValue(0))
   ),
   /** Approximate count of users that have OAuth2 authorizations for the app */
-  approximateUserAuthorizationCount: exactOptional(
+  approximateUserAuthorizationCount: exactOptional<GenericSchema<number>>(
     pipe(number(), integer(), minValue(0))
   ),
   /** Array of redirect URIs for the app */
-  redirectUris: nullish(array(pipe(string(), url()))),
+  redirectUris: nullish<GenericSchema<string[]>>(array(pipe(string(), url()))),
   /** Interactions endpoint URL for the app */
-  interactionsEndpointUrl: nullish(pipe(string(), url())),
+  interactionsEndpointUrl: nullish<GenericSchema<string>>(
+    pipe(string(), url())
+  ),
   /** Role connection verification URL for the app */
-  roleConnectionsVerificationUrl: nullish(pipe(string(), url())),
+  roleConnectionsVerificationUrl: nullish<GenericSchema<string>>(
+    pipe(string(), url())
+  ),
   /** Event webhooks URL for the app to receive webhook events */
-  eventWebhooksUrl: nullish(pipe(string(), url())),
+  eventWebhooksUrl: nullish<GenericSchema<string>>(pipe(string(), url())),
   /** If webhook events are enabled for the app. `1` (default) means disabled, `2` means enabled, and `3` means disabled by Discord */
   eventWebhooksStatus: applicationEventWebhookStatusSchema,
   /** List of Webhook event types the app subscribes to */
-  eventWebhooksTypes: exactOptional(array(pipe(string(), nonEmpty()))),
+  eventWebhooksTypes: exactOptional<GenericSchema<string[]>>(
+    array(pipe(string(), nonEmpty()))
+  ),
   /** List of tags describing the content and functionality of the app. Max of 5 tags. */
-  tags: exactOptional(pipe(array(pipe(string(), nonEmpty())), maxLength(5))),
+  tags: exactOptional<GenericSchema<string[]>>(
+    pipe(array(pipe(string(), nonEmpty())), maxLength(5))
+  ),
   /** Settings for the app's default in-app authorization link, if enabled */
   installParams: exactOptional(installParamsSchema),
   /** Default scopes and permissions for each supported installation context. Value for each key is an integration type configuration object */
@@ -105,7 +120,7 @@ export const applicationSchema = object({
     )
   ),
   /** Default custom authorization URL for the app, if enabled */
-  customInstallUrl: exactOptional(pipe(string(), url()))
+  customInstallUrl: exactOptional<GenericSchema<string>>(pipe(string(), url()))
 });
 
-export type Application = InferOutput<typeof applicationSchema>;
+export interface Application extends InferOutput<typeof applicationSchema> {}

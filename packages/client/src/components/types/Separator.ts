@@ -35,4 +35,4 @@ export const separatorSchema = object({
   spacing: exactOptional(picklist([1, 2]))
 });
 
-export type Separator = InferOutput<typeof separatorSchema>;
+export interface Separator extends InferOutput<typeof separatorSchema> {}

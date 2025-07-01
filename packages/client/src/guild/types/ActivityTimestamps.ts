@@ -7,4 +7,5 @@ export const activityTimestampsSchema = object({
   end: optional(number())
 });
 
-export type ActivityTimestamps = InferOutput<typeof activityTimestampsSchema>;
+export interface ActivityTimestamps
+  extends InferOutput<typeof activityTimestampsSchema> {}

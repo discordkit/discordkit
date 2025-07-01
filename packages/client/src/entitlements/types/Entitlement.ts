@@ -34,4 +34,4 @@ export const entitlementSchema = object({
   consumed: exactOptional(boolean())
 });
 
-export type Entitlement = InferOutput<typeof entitlementSchema>;
+export interface Entitlement extends InferOutput<typeof entitlementSchema> {}

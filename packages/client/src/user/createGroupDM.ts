@@ -1,16 +1,7 @@
 import { post, type Fetcher, toProcedure, toValidated } from "@discordkit/core";
-import {
-  array,
-  intersect,
-  literal,
-  minLength,
-  object,
-  pipe,
-  record,
-  string
-} from "valibot";
-import { channelSchema, type Channel } from "../channel/types/Channel.js";
-import { ChannelType } from "../channel/types/ChannelType.js";
+import type { InferOutput } from "valibot";
+import { array, minLength, object, pipe, record, string } from "valibot";
+import { groupDirectMessageChannelSchema } from "../channel/types/Channel.js";
 
 export const createGroupDMSchema = object({
   body: object({
@@ -34,28 +25,18 @@ export const createGroupDMSchema = object({
  */
 export const createGroupDM: Fetcher<
   typeof createGroupDMSchema,
-  Channel & { type: typeof ChannelType.GROUP_DM }
+  InferOutput<typeof groupDirectMessageChannelSchema>
 > = async ({ body }) => post(`/users/@me/channels`, body);
 
 export const createGroupDMSafe = toValidated(
   createGroupDM,
   createGroupDMSchema,
-  intersect([
-    channelSchema,
-    object({
-      type: literal(ChannelType.GROUP_DM)
-    })
-  ])
+  groupDirectMessageChannelSchema
 );
 
 export const createGroupDMProcedure = toProcedure(
   `mutation`,
   createGroupDM,
   createGroupDMSchema,
-  intersect([
-    channelSchema,
-    object({
-      type: literal(ChannelType.GROUP_DM)
-    })
-  ])
+  groupDirectMessageChannelSchema
 );

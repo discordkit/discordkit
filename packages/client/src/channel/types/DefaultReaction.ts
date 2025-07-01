@@ -5,14 +5,16 @@ import {
   string,
   nonEmpty,
   type InferOutput,
-  pipe
+  pipe,
+  type GenericSchema
 } from "valibot";
 
 export const defaultReactionSchema = object({
   /** the id of a guild's custom emoji */
-  emojiId: nullable(snowflake),
+  emojiId: nullable<GenericSchema<string>>(snowflake),
   /** the unicode character of the emoji */
-  emojiName: nullable(pipe(string(), nonEmpty()))
+  emojiName: nullable<GenericSchema<string>>(pipe(string(), nonEmpty()))
 });
 
-export type DefaultReaction = InferOutput<typeof defaultReactionSchema>;
+export interface DefaultReaction
+  extends InferOutput<typeof defaultReactionSchema> {}

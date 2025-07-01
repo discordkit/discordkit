@@ -44,4 +44,4 @@ export const sectionSchema = object({
   accessroy: union([thumbnailSchema, buttonSchema])
 });
 
-export type Section = InferOutput<typeof sectionSchema>;
+export interface Section extends InferOutput<typeof sectionSchema> {}

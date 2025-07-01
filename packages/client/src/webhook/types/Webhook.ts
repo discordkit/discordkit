@@ -43,4 +43,4 @@ export const webhookSchema = object({
   url: exactOptional(pipe(string(), url()))
 });
 
-export type Webhook = InferOutput<typeof webhookSchema>;
+export interface Webhook extends InferOutput<typeof webhookSchema> {}

@@ -16,4 +16,4 @@ export const teamMemberSchema = object({
   role: teamMemberRoleSchema
 });
 
-export type TeamMember = InferOutput<typeof teamMemberSchema>;
+export interface TeamMember extends InferOutput<typeof teamMemberSchema> {}

@@ -56,4 +56,4 @@ export const buttonSchema = object({
   disabled: exactOptional(boolean())
 });
 
-export type Button = InferOutput<typeof buttonSchema>;
+export interface Button extends InferOutput<typeof buttonSchema> {}

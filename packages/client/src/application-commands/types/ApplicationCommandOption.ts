@@ -32,19 +32,29 @@ import { applicationCommandOptionChoiceSchema } from "./ApplicationCommandOption
 export const applicationCommandOptionSchema = intersect([
   object({
     /** 1-32 character name */
-    name: pipe(string(), minLength(1), maxLength(32)),
+    name: pipe(string(), minLength(1), maxLength(32)) as GenericSchema<string>,
     /** Localization dictionary for the name field. Values follow the same restrictions as name */
     nameLocalizations: nullish(
-      record(localesSchema, pipe(string(), minLength(1), maxLength(32)))
+      record(
+        localesSchema,
+        pipe(string(), minLength(1), maxLength(32)) as GenericSchema<string>
+      )
     ),
     /** 1-100 character description */
-    description: pipe(string(), minLength(1), maxLength(100)),
+    description: pipe(
+      string(),
+      minLength(1),
+      maxLength(100)
+    ) as GenericSchema<string>,
     /** Localization dictionary for the description field. Values follow the same restrictions as description */
     descriptionLocalizations: nullish(
-      record(localesSchema, pipe(string(), minLength(1), maxLength(100)))
+      record(
+        localesSchema,
+        pipe(string(), minLength(1), maxLength(100)) as GenericSchema<string>
+      )
     ),
     /** If the parameter is required or optional--default false */
-    required: nullish(boolean(), false),
+    required: nullish(boolean()),
     /** Choices for STRING, INTEGER, and NUMBER types for the user to pick from, max 25 */
     choices: nullish(
       pipe(array(applicationCommandOptionChoiceSchema), maxLength(25))
@@ -74,20 +84,20 @@ export const applicationCommandOptionSchema = intersect([
       object({
         type: literal(ApplicationCommandOptionType.STRING),
         /** For option type STRING, the minimum allowed length (minimum of 0, maximum of 6000) */
-        minLength: nullable(
+        minLength: nullable<GenericSchema<number>>(
           pipe(number(), integer(), minValue(0), maxValue(6000))
         ),
         /** For option type STRING, the maximum allowed length (minimum of 1, maximum of 6000) */
-        maxLength: nullable(
+        maxLength: nullable<GenericSchema<number>>(
           pipe(number(), integer(), minValue(0), maxValue(6000))
         )
       }),
       object({
         type: literal(ApplicationCommandOptionType.INTEGER),
         /** If the option is an INTEGER or NUMBER type, the minimum value permitted */
-        minValue: nullable(pipe(number(), integer())),
+        minValue: nullable<GenericSchema<number>>(pipe(number(), integer())),
         /** If the option is an INTEGER or NUMBER type, the maximum value permitted */
-        maxValue: nullable(pipe(number(), integer()))
+        maxValue: nullable<GenericSchema<number>>(pipe(number(), integer()))
       }),
       object({
         type: literal(ApplicationCommandOptionType.NUMBER),

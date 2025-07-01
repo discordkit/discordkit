@@ -24,4 +24,5 @@ export const inviteStageInstanceSchema = object({
   topic: pipe(string(), minLength(1), maxLength(120))
 });
 
-export type InviteStageInstance = InferOutput<typeof inviteStageInstanceSchema>;
+export interface InviteStageInstance
+  extends InferOutput<typeof inviteStageInstanceSchema> {}

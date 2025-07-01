@@ -26,4 +26,5 @@ export const messageInteractionSchema = object({
   member: exactOptional(partial(memberSchema))
 });
 
-export type MessageInteraction = InferOutput<typeof messageInteractionSchema>;
+export interface MessageInteraction
+  extends InferOutput<typeof messageInteractionSchema> {}

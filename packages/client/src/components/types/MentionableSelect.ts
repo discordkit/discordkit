@@ -49,4 +49,5 @@ export const mentionableSelectSchema = object({
   disabled: exactOptional(boolean())
 });
 
-export type MentionableSelect = InferOutput<typeof mentionableSelectSchema>;
+export interface MentionableSelect
+  extends InferOutput<typeof mentionableSelectSchema> {}

@@ -31,4 +31,4 @@ export const emojiSchema = object({
   available: exactOptional(boolean())
 });
 
-export type Emoji = InferOutput<typeof emojiSchema>;
+export interface Emoji extends InferOutput<typeof emojiSchema> {}

@@ -8,4 +8,5 @@ export const selectDefaultValueSchema = object({
   type: union([literal(`user`), literal(`role`), literal(`channel`)])
 });
 
-export type SelectDefaultValue = InferOutput<typeof selectDefaultValueSchema>;
+export interface SelectDefaultValue
+  extends InferOutput<typeof selectDefaultValueSchema> {}

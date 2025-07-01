@@ -22,7 +22,7 @@ import {
   type GenericSchema
 } from "valibot";
 import { snowflake, asDigits, asInteger } from "@discordkit/core";
-import { userSchema } from "../../user/types/User.js";
+import { type User, userSchema } from "../../user/types/User.js";
 import { autoArchiveDurationSchema } from "./AutoArchiveDuration.js";
 import { ChannelType, channelTypeSchema } from "./ChannelType.js";
 import { overwriteSchema } from "./Overwrite.js";
@@ -38,25 +38,31 @@ import { permissionFlag } from "../../permissions/Permissions.js";
 
 export const commonChannelSchema = object({
   /** the id of this channel */
-  id: snowflake,
+  id: snowflake as GenericSchema<string>,
   /** the type of channel */
   type: channelTypeSchema,
   /** explicit permission overwrites for members and roles */
   permissionOverwrites: exactOptional(array(overwriteSchema)),
   /** the name of the channel (1-100 characters) */
-  name: nullish(pipe(string(), minLength(1), maxLength(100))),
+  name: nullish<GenericSchema<string>>(
+    pipe(string(), minLength(1), maxLength(100))
+  ),
   /** the channel topic (0-4096 characters for GUILD_FORUM and GUILD_MEDIA channels, 0-1024 characters for all others) */
-  topic: nullish(pipe(string(), minLength(0), maxLength(1024))),
+  topic: nullish<GenericSchema<string>>(
+    pipe(string(), minLength(0), maxLength(1024))
+  ),
   /** whether the channel is nsfw */
   nsfw: exactOptional(boolean()),
   /** the id of the last message sent in this channel (may not point to an existing or valid message) */
-  lastMessageId: nullish(snowflake),
+  lastMessageId: nullish<GenericSchema<string>>(snowflake),
   /** amount of seconds a user has to wait before sending another message (0-21600); bots, as well as users with the permission `manage_messages` or `manage_channel`, are unaffected */
-  rateLimitPerUser: exactOptional(
+  rateLimitPerUser: exactOptional<GenericSchema<number>>(
     pipe(number(), integer(), minValue(0), maxValue(21600))
   ),
   /** when the last pinned message was pinned. This may be null in events such as `GUILD_CREATE` when a message is not pinned. */
-  lastPinTimestamp: nullish(pipe(string(), isoTimestamp())),
+  lastPinTimestamp: nullish<GenericSchema<string>>(
+    pipe(string(), isoTimestamp())
+  ),
   /** computed permissions for the invoking user in the channel, including overwrites, only included when part of the resolved data received on a slash command interaction */
   permissions: exactOptional(asDigits(permissionFlag) as GenericSchema<string>),
   /** channel flags combined as a bitfield */
@@ -67,20 +73,20 @@ export const guildOrganizationChannelSchema = object({
   ...commonChannelSchema.entries,
   type: picklist([ChannelType.GUILD_CATEGORY, ChannelType.GUILD_DIRECTORY]),
   /** the id of the guild (may be missing for some channel objects received over gateway guild dispatches) */
-  guildId: exactOptional(snowflake),
+  guildId: exactOptional<GenericSchema<string>>(snowflake),
   /** sorting position of the channel */
-  position: exactOptional(pipe(number(), minValue(0)))
+  position: exactOptional<GenericSchema<number>>(pipe(number(), minValue(0)))
 });
 
 export const guildTextChannelSchema = object({
   ...commonChannelSchema.entries,
   type: picklist([ChannelType.GUILD_ANNOUNCEMENT, ChannelType.GUILD_TEXT]),
   /** the id of the guild (may be missing for some channel objects received over gateway guild dispatches) */
-  guildId: exactOptional(snowflake),
+  guildId: exactOptional<GenericSchema<string>>(snowflake),
   /** for guild channels: id of the parent category for a channel (each parent category can contain up to 50 channels), for threads: id of the text channel this thread was created */
-  parentId: nullish(snowflake),
+  parentId: nullish<GenericSchema<string>>(snowflake),
   /** sorting position of the channel */
-  position: exactOptional(pipe(number(), minValue(0)))
+  position: exactOptional<GenericSchema<number>>(pipe(number(), minValue(0)))
 });
 
 export const guildVoiceChannelSchema = object({
@@ -88,17 +94,21 @@ export const guildVoiceChannelSchema = object({
   /** the type of channel */
   type: picklist([ChannelType.GUILD_STAGE_VOICE, ChannelType.GUILD_VOICE]),
   /** the id of the guild (may be missing for some channel objects received over gateway guild dispatches) */
-  guildId: exactOptional(snowflake),
+  guildId: exactOptional<GenericSchema<string>>(snowflake),
   /** for guild channels: id of the parent category for a channel (each parent category can contain up to 50 channels), for threads: id of the text channel this thread was created */
-  parentId: nullish(snowflake),
+  parentId: nullish<GenericSchema<string>>(snowflake),
   /** sorting position of the channel */
-  position: exactOptional(pipe(number(), minValue(0))),
+  position: exactOptional<GenericSchema<number>>(pipe(number(), minValue(0))),
   /** the bitrate (in bits) of the voice channel */
-  bitrate: exactOptional(pipe(number(), integer(), minValue(0))),
+  bitrate: exactOptional<GenericSchema<number>>(
+    pipe(number(), integer(), minValue(0))
+  ),
   /** the user limit of the voice channel */
-  userLimit: exactOptional(pipe(number(), integer(), minValue(0))),
+  userLimit: exactOptional<GenericSchema<number>>(
+    pipe(number(), integer(), minValue(0))
+  ),
   /** voice region id for the voice channel, automatic when set to null */
-  rtcRegion: nullish(pipe(string(), minLength(1))),
+  rtcRegion: nullish<GenericSchema<string>>(pipe(string(), minLength(1))),
   /** the camera video quality mode of the voice channel, 1 when not present */
   videoQualityMode: exactOptional(videoQualityModeSchema)
 });
@@ -107,13 +117,15 @@ export const guildForumChannelSchema = object({
   ...commonChannelSchema.entries,
   type: picklist([ChannelType.GUILD_FORUM, ChannelType.GUILD_MEDIA]),
   /** the id of the guild (may be missing for some channel objects received over gateway guild dispatches) */
-  guildId: exactOptional(snowflake),
+  guildId: exactOptional<GenericSchema<string>>(snowflake),
   /** for guild channels: id of the parent category for a channel (each parent category can contain up to 50 channels), for threads: id of the text channel this thread was created */
-  parentId: nullish(snowflake),
+  parentId: nullish<GenericSchema<string>>(snowflake),
   /** sorting position of the channel */
-  position: exactOptional(pipe(number(), minValue(0))),
+  position: exactOptional<GenericSchema<number>>(pipe(number(), minValue(0))),
   /** the channel topic (0-4096 characters for GUILD_FORUM and GUILD_MEDIA channels, 0-1024 characters for all others) */
-  topic: nullish(pipe(string(), minLength(0), maxLength(4096))),
+  topic: nullish<GenericSchema<string>>(
+    pipe(string(), minLength(0), maxLength(4096))
+  ),
   /** the set of tags that can be used in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */
   availableTags: exactOptional(array(forumTagSchema)),
   /** the emoji to show in the add reaction button on a thread in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */
@@ -132,29 +144,35 @@ export const threadChannelSchema = object({
     ChannelType.PUBLIC_THREAD
   ]),
   /** the id of the guild (may be missing for some channel objects received over gateway guild dispatches) */
-  guildId: exactOptional(snowflake),
+  guildId: exactOptional<GenericSchema<string>>(snowflake),
   /** for guild channels: id of the parent category for a channel (each parent category can contain up to 50 channels), for threads: id of the text channel this thread was created */
-  parentId: nullish(snowflake),
+  parentId: nullish<GenericSchema<string>>(snowflake),
   /** id of the creator of the group DM or thread */
-  ownerId: exactOptional(snowflake),
+  ownerId: exactOptional<GenericSchema<string>>(snowflake),
   /** sorting position of the channel */
-  position: exactOptional(pipe(number(), minValue(0))),
+  position: exactOptional<GenericSchema<number>>(pipe(number(), minValue(0))),
   /** an approximate count of messages in a thread, stops counting at 50 */
-  messageCount: exactOptional(pipe(number(), integer(), maxValue(50))),
+  messageCount: exactOptional<GenericSchema<number>>(
+    pipe(number(), integer(), maxValue(50))
+  ),
   /** an approximate count of users in a thread, stops counting at 50 */
-  memberCount: exactOptional(pipe(number(), integer(), maxValue(50))),
+  memberCount: exactOptional<GenericSchema<number>>(
+    pipe(number(), integer(), maxValue(50))
+  ),
   /** thread-specific fields not needed by other channels */
   threadMetadata: exactOptional(threadMetadataSchema),
   /** the IDs of the set of tags that have been applied to a thread in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */
-  appliedTags: exactOptional(array(snowflake)),
+  appliedTags: exactOptional<GenericSchema<string[]>>(array(snowflake)),
   /** thread member object for the current user, if they have joined the thread, only included on certain API endpoints */
   member: exactOptional(threadMemberSchema),
   /** default duration that the clients (not the API) will use for newly created threads, in minutes, to automatically archive the thread after recent activity, can be set to: 60, 1440, 4320, 10080 */
   defaultAutoArchiveDuration: exactOptional(autoArchiveDurationSchema),
   /** number of messages ever sent in a thread, it's similar to messageCount on message creation, but will not decrement the number when a message is deleted */
-  totalMessageSent: exactOptional(pipe(number(), integer(), minValue(0))),
+  totalMessageSent: exactOptional<GenericSchema<number>>(
+    pipe(number(), integer(), minValue(0))
+  ),
   /** the initial rateLimitPerUser to set on newly created threads in a channel. this field is copied to the thread at creation time and does not live update */
-  defaultThreadRateLimitPerUser: exactOptional(
+  defaultThreadRateLimitPerUser: exactOptional<GenericSchema<number>>(
     pipe(number(), integer(), minValue(0))
   )
 });
@@ -163,23 +181,32 @@ export const directMessageChannelSchema = object({
   ...commonChannelSchema.entries,
   type: literal(ChannelType.DM),
   /** the recipients of the DM */
-  recipients: exactOptional(array(userSchema))
+  recipients: exactOptional<GenericSchema<User[]>>(array(userSchema))
 });
 
 export const groupDirectMessageChannelSchema = object({
   ...commonChannelSchema.entries,
   type: literal(ChannelType.GROUP_DM),
   /** the recipients of the DM */
-  recipients: exactOptional(array(userSchema)),
+  recipients: exactOptional<GenericSchema<User[]>>(array(userSchema)),
   /** icon hash of the group DM */
-  icon: nullish(pipe(string(), minLength(1))),
+  icon: nullish<GenericSchema<string>>(pipe(string(), minLength(1))),
   /** id of the creator of the group DM or thread */
-  ownerId: exactOptional(snowflake),
+  ownerId: exactOptional<GenericSchema<string>>(snowflake),
   /** application id of the group DM creator if it is bot-created */
-  applicationId: exactOptional(snowflake),
+  applicationId: exactOptional<GenericSchema<string>>(snowflake),
   /** for group DM channels: whether the channel is managed by an application via the gdm.join OAuth2 scope */
   managed: exactOptional(boolean())
 });
+
+export type Channel =
+  | InferOutput<typeof guildOrganizationChannelSchema>
+  | InferOutput<typeof guildTextChannelSchema>
+  | InferOutput<typeof guildVoiceChannelSchema>
+  | InferOutput<typeof guildForumChannelSchema>
+  | InferOutput<typeof threadChannelSchema>
+  | InferOutput<typeof directMessageChannelSchema>
+  | InferOutput<typeof groupDirectMessageChannelSchema>;
 
 // https://discord.com/developers/docs/resources/channel#channel-object-channel-structure
 export const channelSchema = variant(`type`, [
@@ -190,7 +217,7 @@ export const channelSchema = variant(`type`, [
   threadChannelSchema,
   directMessageChannelSchema,
   groupDirectMessageChannelSchema
-]);
+]) as GenericSchema<Channel>;
 
 export const partialChannelSchema = variant(`type`, [
   required(partial(guildOrganizationChannelSchema), [`type`]),
@@ -201,5 +228,3 @@ export const partialChannelSchema = variant(`type`, [
   required(partial(directMessageChannelSchema), [`type`]),
   required(partial(groupDirectMessageChannelSchema), [`type`])
 ]);
-
-export type Channel = InferOutput<typeof channelSchema>;

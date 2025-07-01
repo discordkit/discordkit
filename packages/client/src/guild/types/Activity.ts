@@ -51,4 +51,4 @@ export const activitySchema = object({
   buttons: optional(array(activityButtonSchema))
 });
 
-export type Activity = InferOutput<typeof activitySchema>;
+export interface Activity extends InferOutput<typeof activitySchema> {}

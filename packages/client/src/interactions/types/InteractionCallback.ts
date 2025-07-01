@@ -25,4 +25,5 @@ export const interactionCallbackSchema = object({
   responseMessageEphemeral: exactOptional(boolean())
 });
 
-export type InteractionCallback = InferOutput<typeof interactionCallbackSchema>;
+export interface InteractionCallback
+  extends InferOutput<typeof interactionCallbackSchema> {}

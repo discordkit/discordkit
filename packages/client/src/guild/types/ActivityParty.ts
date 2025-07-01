@@ -15,4 +15,5 @@ export const activityPartySchema = object({
   )
 });
 
-export type ActivityParty = InferOutput<typeof activityPartySchema>;
+export interface ActivityParty
+  extends InferOutput<typeof activityPartySchema> {}

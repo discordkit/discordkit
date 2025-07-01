@@ -32,4 +32,4 @@ export const textDisplaySchema = object({
   content: string()
 });
 
-export type TextDisplay = InferOutput<typeof textDisplaySchema>;
+export interface TextDisplay extends InferOutput<typeof textDisplaySchema> {}

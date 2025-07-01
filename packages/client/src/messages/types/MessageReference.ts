@@ -17,4 +17,5 @@ export const messageReferenceSchema = partial(
   })
 );
 
-export type MessageReference = InferOutput<typeof messageReferenceSchema>;
+export interface MessageReference
+  extends InferOutput<typeof messageReferenceSchema> {}

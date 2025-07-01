@@ -23,4 +23,5 @@ export const messageComponentData = object({
   resolved: exactOptional(resolvedDataSchema)
 });
 
-export type MessageComponentData = InferOutput<typeof messageComponentData>;
+export interface MessageComponentData
+  extends InferOutput<typeof messageComponentData> {}

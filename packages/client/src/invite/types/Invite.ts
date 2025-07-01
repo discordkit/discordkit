@@ -50,4 +50,4 @@ export const inviteSchema = object({
   guildScheduledEvent: exactOptional(scheduledEventSchema)
 });
 
-export type Invite = InferOutput<typeof inviteSchema>;
+export interface Invite extends InferOutput<typeof inviteSchema> {}

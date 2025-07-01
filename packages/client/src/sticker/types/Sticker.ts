@@ -41,4 +41,4 @@ export const stickerSchema = object({
   sortValue: exactOptional(pipe(number(), integer()))
 });
 
-export type Sticker = InferOutput<typeof stickerSchema>;
+export interface Sticker extends InferOutput<typeof stickerSchema> {}

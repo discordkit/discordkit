@@ -11,4 +11,4 @@ export const stickerItemSchema = object({
   formatType: stickerFormatTypeSchema
 });
 
-export type StickerItem = InferOutput<typeof stickerItemSchema>;
+export interface StickerItem extends InferOutput<typeof stickerItemSchema> {}
