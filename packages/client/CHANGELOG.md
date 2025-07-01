@@ -1,5 +1,14 @@
 # @discordkit/client
 
+## 3.0.1
+
+### Patch Changes
+
+- [`01e8f20`](https://github.com/discordkit/discordkit/commit/01e8f2068a50a99db8f592694bf012a2a53a5fbf) Thanks [@Saeris](https://github.com/Saeris)! - Fix complex types generating as `any` during build
+
+- Updated dependencies [[`01e8f20`](https://github.com/discordkit/discordkit/commit/01e8f2068a50a99db8f592694bf012a2a53a5fbf)]:
+  - @discordkit/core@3.0.1
+
 ## 3.0.0
 
 ### Major Changes
