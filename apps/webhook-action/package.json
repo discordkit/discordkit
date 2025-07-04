@@ -8,17 +8,14 @@
   "main": "./src/index.ts",
   "type": "module",
   "scripts": {
-    "build:apps": "tsup",
+    "build:apps": "tsdown",
     "lint": "eslint --cache"
   },
   "dependencies": {
     "@discordkit/client": "workspace:^",
     "valibot": "^1.1.0"
   },
-  "devDependencies": {
-    "tsup": "^8.5.0"
-  },
-  "tsup": {
+  "tsdown": {
     "entry": [
       "./src/index.ts"
     ],
@@ -28,5 +25,8 @@
     ],
     "minify": true,
     "treeshake": true
+  },
+  "devDependencies": {
+    "tsdown": "^0.12.9"
   }
 }
