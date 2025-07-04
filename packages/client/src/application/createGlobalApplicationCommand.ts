@@ -5,7 +5,8 @@ import {
   toProcedure,
   toValidated,
   snowflake,
-  asDigits
+  asDigits,
+  boundedString
 } from "@discordkit/core";
 import {
   applicationCommandSchema,
@@ -16,6 +17,7 @@ import {
   ApplicationCommandType,
   applicationCommandTypeSchema
 } from "../application-commands/types/ApplicationCommandType.js";
+import type { Locales } from "./types/Locales.js";
 import { localesSchema } from "./types/Locales.js";
 import { permissionFlag } from "../permissions/Permissions.js";
 
@@ -23,31 +25,25 @@ export const createGlobalApplicationCommandSchema = v.object({
   application: snowflake,
   body: v.object({
     /** Name of command, 1-32 characters */
-    name: v.pipe(v.string(), v.minLength(1), v.maxLength(32)),
+    name: boundedString({ max: 32 }),
     /** Localization dictionary for the name field. Values follow the same restrictions as name */
     nameLocalizations: v.nullish(
-      v.record(
-        localesSchema,
-        v.pipe(v.string(), v.minLength(1), v.maxLength(32))
-      )
+      v.record(localesSchema, boundedString({ max: 32 })) as v.GenericSchema<
+        Record<Locales, string>
+      >
     ),
     /** 1-100 character description for CHAT_INPUT commands */
-    description: v.nullish(
-      v.pipe(v.string(), v.minLength(1), v.maxLength(100))
-    ),
+    description: v.nullish(boundedString({ max: 100 })),
     /** Localization dictionary for the description field. Values follow the same restrictions as description */
     descriptionLocalizations: v.nullish(
-      v.record(
-        localesSchema,
-        v.pipe(v.string(), v.minLength(1), v.maxLength(100))
-      )
+      v.record(localesSchema, boundedString({ max: 100 })) as v.GenericSchema<
+        Record<Locales, string>
+      >
     ),
     /** the parameters for the command */
     options: v.nullish(v.array(applicationCommandOptionSchema)),
     /** Set of permissions represented as a bit set */
-    defaultMemberPermissions: v.nullish(
-      asDigits(permissionFlag) as v.GenericSchema<string>
-    ),
+    defaultMemberPermissions: v.nullish(asDigits(permissionFlag)),
     /** Indicates whether the command is available in DMs with the app, only for globally-scoped commands. By default, commands are visible. */
     dmPermission: v.nullish(v.boolean()),
     /** Replaced by defaultMemberPermissions and will be deprecated in the future. Indicates whether the command is enabled by default when the app is added to a guild. Defaults to true */

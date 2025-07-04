@@ -1,4 +1,5 @@
 import * as v from "valibot";
+import { timestamp } from "@discordkit/core";
 import { scheduledEventRecurrenceRuleFrequencySchema } from "./ScheduledEventRecurrenceRuleFrequency.js";
 import {
   scheduledEventRecurrenceRuleNWeekdaySchema,
@@ -11,9 +12,9 @@ import { scheduledEventRecurrenceRuleMonthSchema } from "./ScheduledEventRecurre
  */
 export const scheduledEventRecurrenceRuleSchema = v.object({
   /** Starting time of the recurrence interval */
-  start: v.pipe(v.string(), v.isoTimestamp()),
+  start: timestamp,
   /** Ending time of the recurrence interval */
-  end: v.nullable(v.pipe(v.string(), v.isoTimestamp())),
+  end: v.nullable(timestamp),
   /** How often the event occurs */
   frequency: scheduledEventRecurrenceRuleFrequencySchema,
   /** The spacing between the events, defined by `frequency`. For example, `frequency` of `WEEKLY` and an `interval` of `2` would be "every-other week" */

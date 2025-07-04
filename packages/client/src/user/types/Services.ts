@@ -1,6 +1,6 @@
 import * as v from "valibot";
 
-export const servicesSchema = v.picklist([
+export const services = [
   `amazon-music`,
   `battlenet`,
   `bungie`,
@@ -27,6 +27,8 @@ export const servicesSchema = v.picklist([
   `twitter`,
   `xbox`,
   `youtube`
-]);
+] as const;
 
-export type Services = v.InferOutput<typeof servicesSchema>;
+export type Services = (typeof services)[number];
+
+export const servicesSchema = v.picklist(services) as v.GenericSchema<Services>;

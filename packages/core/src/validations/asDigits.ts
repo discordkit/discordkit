@@ -1,23 +1,14 @@
-import type {
-  CustomSchema,
-  DigitsAction,
-  SchemaWithPipe,
-  TransformAction
-} from "valibot";
-import { digits, pipe, transform } from "valibot";
+import * as v from "valibot";
 import type { bitfield } from "./bitfield.js";
 
+/**
+ * Transforms a `bitfield` schema into a numeric string
+ */
 export const asDigits = (
   schema: ReturnType<typeof bitfield>
-): SchemaWithPipe<
-  readonly [
-    CustomSchema<string | number | bigint, string>,
-    TransformAction<string | number | bigint, string>,
-    DigitsAction<string, undefined>
-  ]
-> =>
-  pipe(
+): v.GenericSchema<string> =>
+  v.pipe(
     schema,
-    transform((val) => val.toString()),
-    digits()
-  );
+    v.transform((val) => val.toString()),
+    v.digits()
+  ) as v.GenericSchema<string>;

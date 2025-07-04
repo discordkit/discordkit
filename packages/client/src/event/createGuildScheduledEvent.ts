@@ -5,7 +5,8 @@ import {
   toProcedure,
   toValidated,
   snowflake,
-  datauri
+  datauri,
+  timestamp
 } from "@discordkit/core";
 import {
   type ScheduledEvent,
@@ -28,9 +29,9 @@ export const createGuildScheduledEventSchema = v.object({
     /** the privacy level of the scheduled event */
     privacyLevel: scheduledEventPrivacyLevelSchema,
     /** the time to schedule the scheduled event */
-    scheduledStartTime: v.pipe(v.string(), v.isoTimestamp()),
+    scheduledStartTime: timestamp,
     /** the time when the scheduled event is scheduled to end */
-    scheduledEndTime: v.exactOptional(v.pipe(v.string(), v.isoTimestamp())),
+    scheduledEndTime: v.exactOptional(timestamp),
     /** the description of the scheduled event */
     description: v.exactOptional(v.pipe(v.string(), v.nonEmpty())),
     /** the entity type of the scheduled event */

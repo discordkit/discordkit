@@ -1,10 +1,8 @@
-import * as v from "valibot";
+import type * as v from "valibot";
+import { boundedArray } from "@discordkit/core";
 import { actionRowSchema } from "../../components/types/ActionRow.js";
 
-export const messageComponentSchema = v.pipe(
-  v.array(actionRowSchema),
-  v.maxLength(5)
-);
+export const messageComponentSchema = boundedArray(actionRowSchema, { max: 5 });
 
 export interface MessageComponent
   extends v.InferOutput<typeof messageComponentSchema> {}

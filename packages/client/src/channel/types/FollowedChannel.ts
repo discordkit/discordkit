@@ -3,9 +3,9 @@ import { snowflake } from "@discordkit/core";
 
 export const followedChannelSchema = v.object({
   /** source channel id */
-  channelId: snowflake as v.GenericSchema<string>,
+  channelId: snowflake,
   /** created target webhook id */
-  webhookId: snowflake as v.GenericSchema<string>
+  webhookId: snowflake
 });
 
 export interface FollowedChannel

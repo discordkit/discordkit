@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { snowflake } from "@discordkit/core";
+import { snowflake, timestamp } from "@discordkit/core";
 import { entitlementTypeSchema } from "./EntitlementType.js";
 
 export const entitlementSchema = v.object({
@@ -16,9 +16,9 @@ export const entitlementSchema = v.object({
   /** Entitlement was deleted */
   deleted: v.boolean(),
   /** Start date at which the entitlement is valid. */
-  startsAt: v.nullable(v.pipe(v.string(), v.isoTimestamp())),
+  startsAt: v.nullable(timestamp),
   /** Date at which the entitlement is no longer valid. */
-  endsAt: v.nullable(v.pipe(v.string(), v.isoTimestamp())),
+  endsAt: v.nullable(timestamp),
   /** ID of the guild that is granted access to the entitlement's sku */
   guildId: v.exactOptional(snowflake),
   /** For consumable items, whether or not the entitlement has been consumed */

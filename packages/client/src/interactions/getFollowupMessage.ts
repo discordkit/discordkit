@@ -5,13 +5,14 @@ import {
   toProcedure,
   toQuery,
   toValidated,
-  snowflake
+  snowflake,
+  boundedString
 } from "@discordkit/core";
 import { messageSchema, type Message } from "../messages/types/Message.js";
 
 export const getFollowupMessageSchema = v.object({
   application: snowflake,
-  token: v.pipe(v.string(), v.nonEmpty()),
+  token: boundedString(),
   message: snowflake,
   params: v.exactOptional(
     v.partial(

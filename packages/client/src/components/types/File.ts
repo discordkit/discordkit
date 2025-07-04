@@ -1,4 +1,5 @@
 import * as v from "valibot";
+import { boundedInteger, boundedString } from "@discordkit/core";
 import { unfurledMediaItemSchema } from "./UnfurledMediaItem.js";
 import { ComponentType } from "./ComponentType.js";
 
@@ -15,22 +16,15 @@ export const fileSchema = v.object({
   /** `13` for a file component */
   type: v.literal(ComponentType.File),
   /** Optional identifier for component */
-  id: v.exactOptional(
-    v.pipe(
-      v.number(),
-      v.integer(),
-      v.minValue(0),
-      v.maxValue(Number.MAX_SAFE_INTEGER)
-    )
-  ),
+  id: v.exactOptional(boundedInteger()),
   /** This unfurled media item is unique in that it **only** supports attachment references using the `attachment://<filename>` syntax */
   file: unfurledMediaItemSchema,
   /** Whether the media should be a spoiler (or blurred out). Defaults to `false` */
   spoiler: v.exactOptional(v.boolean()),
   /** The name of the file. This field is ignored and provided by the API as part of the response */
-  name: v.pipe(v.string(), v.nonEmpty()),
+  name: boundedString(),
   /** The size of the file in bytes. This field is ignored and provided by the API as part of the response */
-  size: v.pipe(v.number(), v.integer())
+  size: boundedInteger()
 });
 
 export interface File extends v.InferOutput<typeof fileSchema> {}

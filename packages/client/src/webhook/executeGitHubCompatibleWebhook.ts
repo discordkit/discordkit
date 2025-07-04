@@ -5,12 +5,13 @@ import {
   type Fetcher,
   toProcedure,
   toValidated,
-  snowflake
+  snowflake,
+  boundedString
 } from "@discordkit/core";
 
 export const executeGitHubCompatibleWebhookSchema = v.object({
   webhook: snowflake,
-  token: v.pipe(v.string(), v.minLength(1)),
+  token: boundedString(),
   params: v.exactOptional(
     v.partial(
       v.object({

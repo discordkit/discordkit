@@ -5,7 +5,8 @@ import {
   toProcedure,
   toQuery,
   toValidated,
-  snowflake
+  snowflake,
+  boundedInteger
 } from "@discordkit/core";
 import { userSchema, type User } from "../user/types/User.js";
 
@@ -19,10 +20,7 @@ export const getReactionsSchema = v.object({
         /** Get users after this user ID */
         after: v.nullish(snowflake),
         /** Max number of users to return (1-100) Default: 25 */
-        limit: v.nullish(
-          v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(100)),
-          25
-        )
+        limit: v.nullish(boundedInteger({ min: 1, max: 100 }))
       })
     )
   )

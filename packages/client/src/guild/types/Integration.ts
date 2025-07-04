@@ -1,5 +1,10 @@
 import * as v from "valibot";
-import { snowflake } from "@discordkit/core";
+import {
+  snowflake,
+  timestamp,
+  boundedInteger,
+  boundedString
+} from "@discordkit/core";
 import { type User, userSchema } from "../../user/types/User.js";
 import { scopesSchema } from "../../application/types/Scopes.js";
 import { integrationApplicationSchema } from "./IntegrationApplication.js";
@@ -8,9 +13,9 @@ import { integrationExpireBehaviorSchema } from "./IntegrationExpireBehavior.js"
 
 export const integrationSchema = v.object({
   /** integration id */
-  id: snowflake as v.GenericSchema<string>,
+  id: snowflake,
   /** integration name */
-  name: v.pipe(v.string(), v.nonEmpty()) as v.GenericSchema<string>,
+  name: boundedString(),
   /** integration type (twitch, youtube, or discord) */
   type: v.string(),
   /** is this integration enabled */
@@ -24,21 +29,15 @@ export const integrationSchema = v.object({
   /** the behavior of expiring subscribers */
   expireBehavior: v.exactOptional(integrationExpireBehaviorSchema),
   /** the grace period (in days) before expiring subscribers */
-  expireGracePeriod: v.exactOptional<v.GenericSchema<number>>(
-    v.pipe(v.number(), v.integer(), v.minValue(0))
-  ),
+  expireGracePeriod: v.exactOptional(boundedInteger()),
   /** user for this integration */
   user: v.exactOptional<v.GenericSchema<User>>(userSchema),
   /** integration account information */
   account: integrationAccountSchema,
   /** when this integration was last synced */
-  syncedAt: v.exactOptional<v.GenericSchema<string>>(
-    v.pipe(v.string(), v.isoTimestamp())
-  ),
+  syncedAt: v.exactOptional(timestamp),
   /** how many subscribers this integration has */
-  subscriberCount: v.exactOptional<v.GenericSchema<number>>(
-    v.pipe(v.number(), v.integer(), v.minValue(0))
-  ),
+  subscriberCount: v.exactOptional(boundedInteger()),
   /** has this integration been revoked */
   revoked: v.exactOptional(v.boolean()),
   /** The bot/OAuth2 application for discord integrations */

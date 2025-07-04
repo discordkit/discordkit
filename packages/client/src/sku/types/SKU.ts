@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { asInteger, snowflake } from "@discordkit/core";
+import { asInteger, snowflake, boundedString, url } from "@discordkit/core";
 import { skuTypesSchema } from "./SKUTypes.js";
 import { skuFlag } from "./SKUFlags.js";
 
@@ -12,11 +12,11 @@ export const skuSchema = v.object({
   /** ID of the parent application */
   applicationId: snowflake,
   /** Customer-facing name of your premium offering */
-  name: v.pipe(v.string(), v.nonEmpty()),
+  name: boundedString(),
   /** System-generated URL slug based on the SKU's name */
-  slug: v.pipe(v.string(), v.url()),
+  slug: url,
   /** SKU flags combined as a bitfield */
-  flags: asInteger(skuFlag) as v.GenericSchema<number>
+  flags: asInteger(skuFlag)
 });
 
 export interface SKU extends v.InferOutput<typeof skuSchema> {}

@@ -1,5 +1,11 @@
 import * as v from "valibot";
-import { asDigits, snowflake } from "@discordkit/core";
+import {
+  asDigits,
+  snowflake,
+  boundedArray,
+  boundedString
+} from "@discordkit/core";
+import type { Locales } from "../../application/types/Locales.js";
 import { localesSchema } from "../../application/types/Locales.js";
 import { applicationCommandOptionSchema } from "./ApplicationCommandOption.js";
 import {
@@ -11,47 +17,27 @@ import { permissionFlag } from "../../permissions/Permissions.js";
 export const applicationCommandSchema = v.intersect([
   v.object({
     /** Unique ID of command */
-    id: snowflake as v.GenericSchema<string>,
+    id: snowflake,
     /** ID of the parent application */
-    applicationId: snowflake as v.GenericSchema<string>,
+    applicationId: snowflake,
     /** Guild ID of the command, if not global */
-    guildId: v.exactOptional<v.GenericSchema<string>>(snowflake),
+    guildId: v.exactOptional(snowflake),
     /** Name of command, 1-32 characters */
-    name: v.pipe(
-      v.string(),
-      v.minLength(1),
-      v.maxLength(32)
-    ) as v.GenericSchema<string>,
+    name: boundedString({ max: 32 }),
     /** Localization dictionary for name field. Values follow the same restrictions as name */
     nameLocalizations: v.nullish(
-      v.record(
-        localesSchema,
-        v.pipe(
-          v.string(),
-          v.minLength(1),
-          v.maxLength(32)
-        ) as v.GenericSchema<string>
-      )
+      v.record(localesSchema, boundedString({ max: 32 })) as v.GenericSchema<
+        Record<Locales, string>
+      >
     ),
     /** Description for CHAT_INPUT commands, 1-100 characters. Empty string for USER and MESSAGE commands */
-    description: v.exactOptional<v.GenericSchema<string>>(
-      v.pipe(v.string(), v.minLength(0), v.maxLength(100))
-    ),
+    description: v.exactOptional(boundedString({ min: 0, max: 100 })),
     /** Localization dictionary for description field. Values follow the same restrictions as description */
     descriptionLocalizations: v.nullish(
-      v.record(
-        localesSchema,
-        v.pipe(
-          v.string(),
-          v.minLength(0),
-          v.maxLength(100)
-        ) as v.GenericSchema<string>
-      )
+      v.record(localesSchema, boundedString({ min: 0, max: 100 }))
     ),
     /** Set of permissions represented as a bit set */
-    defaultMemberPermissions: v.nullable(
-      asDigits(permissionFlag) as v.GenericSchema<string>
-    ),
+    defaultMemberPermissions: v.nullable(asDigits(permissionFlag)),
     /** Indicates whether the command is available in DMs with the app, only for globally-scoped commands. By default, commands are visible. */
     dmPermission: v.exactOptional(v.boolean()),
     /** Not recommended for use as field will soon be deprecated. Indicates whether the command is enabled by default when the app is added to a guild, defaults to true */
@@ -61,7 +47,7 @@ export const applicationCommandSchema = v.intersect([
     // TODO: integrationTypes
     // TODO: contexts
     /** Autoincrementing version identifier updated during substantial record changes */
-    version: snowflake as v.GenericSchema<string>
+    version: snowflake
   }),
   v.union([
     // Common variants
@@ -75,7 +61,7 @@ export const applicationCommandSchema = v.intersect([
         type: v.literal(ApplicationCommandType.CHAT_INPUT),
         /** Parameters for the command, max of 25 */
         options: v.exactOptional(
-          v.pipe(v.array(applicationCommandOptionSchema), v.maxLength(25))
+          boundedArray(applicationCommandOptionSchema, { max: 25 })
         )
       }),
       // Properties unique to PRIMARY_ENTRY_POINT

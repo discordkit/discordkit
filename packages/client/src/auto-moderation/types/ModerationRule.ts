@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { snowflake } from "@discordkit/core";
+import { snowflake, boundedArray, boundedString } from "@discordkit/core";
 import { moderationActionSchema } from "./ModerationAction.js";
 import { moderationEventSchema } from "./ModerationEvent.js";
 import { moderationTriggerTypeSchema } from "./ModerationTriggerType.js";
@@ -7,13 +7,13 @@ import { triggerMetaSchema } from "./TriggerMeta.js";
 
 export const moderationRuleSchema = v.object({
   /** the id of this rule */
-  id: snowflake as v.GenericSchema<string>,
+  id: snowflake,
   /** the guild which this rule belongs to */
-  guildId: snowflake as v.GenericSchema<string>,
+  guildId: snowflake,
   /** the rule name */
-  name: v.pipe(v.string(), v.nonEmpty()) as v.GenericSchema<string>,
+  name: boundedString(),
   /** the user which first created this rule */
-  creatorId: snowflake as v.GenericSchema<string>,
+  creatorId: snowflake,
   /** the rule event type */
   eventType: moderationEventSchema,
   /** the rule trigger type */
@@ -25,14 +25,9 @@ export const moderationRuleSchema = v.object({
   /** whether the rule is enabled */
   enabled: v.boolean(),
   /** the role ids that should not be affected by the rule (Maximum of 20) */
-  exemptRoles: v.pipe(v.array(snowflake), v.maxLength(20)) as v.GenericSchema<
-    string[]
-  >,
+  exemptRoles: boundedArray(snowflake, { max: 20 }),
   /** the channel ids that should not be affected by the rule (Maximum of 50) */
-  exemptChannels: v.pipe(
-    v.array(snowflake),
-    v.maxLength(50)
-  ) as v.GenericSchema<string[]>
+  exemptChannels: boundedArray(snowflake, { max: 50 })
 });
 
 export interface ModerationRule

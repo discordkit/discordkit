@@ -5,12 +5,13 @@ import {
   toProcedure,
   toQuery,
   toValidated,
-  snowflake
+  snowflake,
+  boundedString
 } from "@discordkit/core";
 import { inviteSchema, type Invite } from "./types/Invite.js";
 
 export const getInviteSchema = v.object({
-  code: v.pipe(v.string(), v.nonEmpty()),
+  code: boundedString(),
   params: v.exactOptional(
     v.partial(
       v.object({

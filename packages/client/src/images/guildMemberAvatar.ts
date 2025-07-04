@@ -1,11 +1,11 @@
 import * as v from "valibot";
-import { getAsset, snowflake } from "@discordkit/core";
+import { getAsset, snowflake, boundedString } from "@discordkit/core";
 import { imageSizes } from "./types/ImageSizes.js";
 
 export const guildMemberAvatarSchema = v.object({
   guild: snowflake,
   user: snowflake,
-  avatar: v.pipe(v.string(), v.nonEmpty()),
+  avatar: boundedString(),
   format: v.exactOptional(v.picklist([`png`, `jpg`, `webp`, `gif`])),
   params: v.exactOptional(
     v.object({

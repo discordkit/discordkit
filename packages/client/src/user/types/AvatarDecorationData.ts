@@ -1,9 +1,9 @@
 import * as v from "valibot";
-import { snowflake } from "@discordkit/core";
+import { snowflake, boundedString } from "@discordkit/core";
 
 export const avatarDecorationDataSchema = v.object({
   /** the avatar decoration hash */
-  asset: v.pipe(v.string(), v.nonEmpty()),
+  asset: boundedString(),
   /** id of the avatar decoration's SKU */
   skuId: snowflake
 });

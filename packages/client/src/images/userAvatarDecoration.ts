@@ -1,10 +1,10 @@
 import * as v from "valibot";
-import { getAsset, snowflake } from "@discordkit/core";
+import { getAsset, snowflake, boundedString } from "@discordkit/core";
 import { imageSizes } from "./types/ImageSizes.js";
 
 export const userAvatarDecorationSchema = v.object({
   user: snowflake,
-  decoration: v.pipe(v.string(), v.nonEmpty()),
+  decoration: boundedString(),
   params: v.exactOptional(
     v.object({
       size: imageSizes

@@ -2,6 +2,9 @@
   "name": "with-nextjs",
   "version": "0.1.3",
   "private": true,
+  "imports": {
+    "#src/*": "./src/*"
+  },
   "scripts": {
     "dev": "next dev",
     "build:examples": "next build",
@@ -10,6 +13,7 @@
   },
   "dependencies": {
     "@discordkit/client": "workspace:^",
+    "@next/env": "^15.3.4",
     "@tanstack/react-query": "^5.81.5",
     "@tanstack/react-query-devtools": "^5.81.5",
     "@trpc/client": "^11.4.3",
@@ -20,6 +24,7 @@
     "valibot": "^1.1.0"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.11",
     "@types/node": "^24.0.7",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
@@ -30,7 +35,7 @@
   },
   "postcss": {
     "plugins": {
-      "tailwindcss": {},
+      "@tailwindcss/postcss": {},
       "autoprefixer": {}
     }
   }

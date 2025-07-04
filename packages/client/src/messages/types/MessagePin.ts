@@ -1,9 +1,10 @@
 import * as v from "valibot";
+import { timestamp } from "@discordkit/core";
 import { messageSchema } from "./Message.js";
 
 export const messagePinSchema = v.object({
   /** the time the message was pinned */
-  pinnedAt: v.pipe(v.string(), v.isoTimestamp()),
+  pinnedAt: timestamp,
   /** the pinned message */
   message: messageSchema
 });

@@ -1,4 +1,5 @@
 import * as v from "valibot";
+import { boundedString } from "@discordkit/core";
 
 export const applicationRoleConnectionSchema = v.object({
   /** the vanity name of the platform a bot has connected (max 50 characters) */
@@ -7,8 +8,8 @@ export const applicationRoleConnectionSchema = v.object({
   platformUsername: v.nullable(v.string()),
   /** object mapping application role connection metadata keys to their string-ified value (max 100 characters) for the user on the platform a bot has connected */
   metadata: v.record(
-    v.pipe(v.string(), v.minLength(1), v.maxLength(50), v.regex(/[a-z0-9_]/)),
-    v.pipe(v.string(), v.maxLength(100))
+    v.pipe(boundedString({ max: 50 }), v.regex(/[a-z0-9_]/)),
+    boundedString({ max: 100 })
   )
 });
 

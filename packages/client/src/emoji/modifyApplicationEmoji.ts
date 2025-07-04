@@ -4,7 +4,8 @@ import {
   type Fetcher,
   toProcedure,
   toValidated,
-  snowflake
+  snowflake,
+  boundedString
 } from "@discordkit/core";
 import { emojiSchema, type Emoji } from "./types/Emoji.js";
 
@@ -14,7 +15,7 @@ export const modifyApplicationEmojiSchema = v.object({
   body: v.partial(
     v.object({
       /** name of the emoji */
-      name: v.pipe(v.string(), v.nonEmpty())
+      name: boundedString()
     })
   )
 });

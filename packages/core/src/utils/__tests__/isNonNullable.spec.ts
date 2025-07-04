@@ -1,4 +1,4 @@
-import { isNonNullable } from "../../utils/isNonNullable.js";
+import { isNonNullable } from "../isNonNullable.js";
 
 describe(`isNonNullable`, () => {
   it.each([

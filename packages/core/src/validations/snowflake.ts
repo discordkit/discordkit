@@ -1,36 +1,9 @@
-import {
-  custom,
-  pipe,
-  transform,
-  union,
-  string,
-  number,
-  is,
-  title
-} from "valibot";
+import * as v from "valibot";
 import { isNonNullable } from "../utils/isNonNullable.js";
+import { isNumericString } from "../utils/isNumericString.js";
 
+/** UNIX timestamp representing the first second of 2015 */
 export const DISCORD_EPOCH = 1420070400000n;
-
-export const snowflake = pipe(
-  custom<string>(
-    (val) =>
-      isNonNullable(val) &&
-      (typeof val === `bigint` ||
-        typeof val === `number` ||
-        typeof val === `string`)
-        ? is(
-            pipe(
-              union([string(), number()]),
-              transform((input) => new Date(input))
-            ),
-            Number((BigInt(val) >> 22n) + DISCORD_EPOCH)
-          )
-        : false,
-    `Invalid Snowflake ID`
-  ),
-  title(`snowflake`)
-);
 
 /**
  * Converts a `snowflake` string to a Date relative to the given epoch
@@ -41,21 +14,35 @@ export const snowflake = pipe(
  */
 export const snowflakeToDate = (
   /** A snowflake string to convert */
-  val: string,
+  val: string | number | bigint,
   /** time in milliseconds to use as the epoch to derive a Date from */
   epoch = DISCORD_EPOCH
 ): Date => new Date(Number((BigInt(val) >> 22n) + epoch));
 
 /**
- * Converts a Date to a `snowflake` string relative to the given epoch
+ * An up to 64-bit unsigned numeric value derived from a timestamp which
+ * serves as a unique identifier within Discord.
  *
- * Uses Discord's epoch by default
- *
- * https://discord.com/developers/docs/reference#snowflakes
+ * Validates whether a given `number`, `bigint`, or numeric `string` is
+ * a valid [Snowflake](https://discord.com/developers/docs/reference#snowflakes)
+ * by checking if it's derived timestamp is a valid time at or after
+ * the Discord epoch (the first second of 2015, ie: `1420070400000`).
  */
-export const dateToSnowflake = (
-  /** A Date to convert to a `snowflake` */
-  val: Date,
-  /** time in milliseconds to use as the epoch to derive a `snowflake` from */
-  epoch = DISCORD_EPOCH
-): string => String((BigInt(val.getMilliseconds()) - epoch) << 22n);
+export const snowflake: v.GenericSchema<string> = v.pipe(
+  v.custom<string, `Invalid Snowflake`>(
+    (val) =>
+      // at runtime this could be any value, so filter out
+      // obviously invalid input first
+      isNonNullable(val) &&
+      // then verify we have a numeric value
+      (typeof val === `bigint` ||
+        typeof val === `number` ||
+        isNumericString(val)) &&
+      // finally, verify that it accurately represents ms
+      // at or after the Discord epoch (timestamps before
+      // that cannot possibly be a valid Discord snowflake)
+      snowflakeToDate(val).getTime() >= DISCORD_EPOCH,
+    `Invalid Snowflake`
+  ),
+  v.title(`snowflake`)
+);

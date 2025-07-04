@@ -1,20 +1,17 @@
 import * as v from "valibot";
-import { asInteger, snowflake } from "@discordkit/core";
+import { asInteger, snowflake, timestamp } from "@discordkit/core";
 import { memberSchema } from "../../guild/types/Member.js";
 import { channelFlag } from "./ChannelFlags.js";
 
 export const threadMemberSchema = v.object({
   /** the id of the thread */
-  id: v.exactOptional<v.GenericSchema<string>>(snowflake),
+  id: v.exactOptional(snowflake),
   /** the id of the user */
-  userId: v.exactOptional<v.GenericSchema<string>>(snowflake),
+  userId: v.exactOptional(snowflake),
   /** the time the current user last joined the thread */
-  joinTimestamp: v.pipe(
-    v.string(),
-    v.isoTimestamp()
-  ) as v.GenericSchema<string>,
+  joinTimestamp: timestamp,
   /** any user-thread settings, currently only used for notifications */
-  flags: asInteger(channelFlag) as v.GenericSchema<number>,
+  flags: asInteger(channelFlag),
   /** Additional information about the user */
   member: v.exactOptional(memberSchema)
 });

@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { snowflake, asDigits } from "@discordkit/core";
+import { snowflake, asDigits, boundedString } from "@discordkit/core";
 import type { User } from "../../user/types/User.js";
 import { userSchema } from "../../user/types/User.js";
 import { memberSchema } from "../../guild/types/Member.js";
@@ -43,9 +43,9 @@ export const resolvedDataSchema = v.object({
           /** the type of channel */
           type: channelTypeSchema,
           /** the name of the channel (1-100 characters) */
-          name: v.nullish(v.pipe(v.string(), v.minLength(1), v.maxLength(100))),
+          name: v.nullish(boundedString({ max: 100 })),
           /** computed permissions for the invoking user in the channel, including overwrites, only included when part of the resolved data received on a slash command interaction */
-          permissions: asDigits(permissionFlag) as v.GenericSchema<string>
+          permissions: asDigits(permissionFlag)
         }),
         v.variant(`type`, [
           v.object({
@@ -54,9 +54,7 @@ export const resolvedDataSchema = v.object({
               ChannelType.PRIVATE_THREAD,
               ChannelType.PUBLIC_THREAD
             ]),
-            parentId: v.nullish(
-              v.pipe(v.string(), v.minLength(1), v.maxLength(50))
-            ),
+            parentId: v.nullish(boundedString({ max: 50 })),
             /** thread-specific fields not needed by other channels */
             threadMetadata: v.exactOptional(threadMetadataSchema)
           }),
@@ -71,10 +69,7 @@ export const resolvedDataSchema = v.object({
   messages: v.exactOptional(
     v.record(
       snowflake,
-      v.lazy<v.GenericSchema<Partial<Message>>>(
-        // @ts-expect-error
-        () => v.partial(messageSchema)
-      )
+      v.lazy<v.GenericSchema<Partial<Message>>>(() => v.partial(messageSchema))
     )
   ),
   /** the ids and attachment objects */

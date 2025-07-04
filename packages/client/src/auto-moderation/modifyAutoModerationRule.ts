@@ -4,7 +4,9 @@ import {
   type Fetcher,
   toProcedure,
   toValidated,
-  snowflake
+  snowflake,
+  boundedArray,
+  boundedString
 } from "@discordkit/core";
 import {
   type ModerationRule,
@@ -20,7 +22,7 @@ export const modifyAutoModerationRuleSchema = v.object({
   body: v.partial(
     v.object({
       /** the rule name */
-      name: v.pipe(v.string(), v.nonEmpty()),
+      name: boundedString(),
       /** the event type */
       eventType: moderationEventSchema,
       /** the trigger metadata */
@@ -30,9 +32,9 @@ export const modifyAutoModerationRuleSchema = v.object({
       /** whether the rule is enabled (False by default) */
       enabled: v.boolean(),
       /** the role ids that should not be affected by the rule (Maximum of 20) */
-      exemptRoles: v.pipe(v.array(snowflake), v.maxLength(20)),
+      exemptRoles: boundedArray(snowflake, { max: 20 }),
       /** the channel ids that should not be affected by the rule (Maximum of 50) */
-      exemptChannels: v.pipe(v.array(snowflake), v.maxLength(50))
+      exemptChannels: boundedArray(snowflake, { max: 50 })
     })
   )
 });

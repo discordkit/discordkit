@@ -1,5 +1,12 @@
 import * as v from "valibot";
-import { asInteger, snowflake } from "@discordkit/core";
+import {
+  asInteger,
+  boundedArray,
+  boundedInteger,
+  boundedString,
+  snowflake,
+  url
+} from "@discordkit/core";
 import type { User } from "../../user/types/User.js";
 import { userSchema } from "../../user/types/User.js";
 import { teamSchema } from "../../teams/types/Team.js";
@@ -18,13 +25,11 @@ export const applicationSchema = v.object({
   /** Name of the app */
   name: v.string(),
   /** Icon hash of the app */
-  icon: v.nullable<v.GenericSchema<string>>(v.pipe(v.string(), v.nonEmpty())),
+  icon: v.nullable(boundedString()),
   /** Description of the app */
   description: v.string(),
   /** List of RPC origin URLs, if RPC is enabled */
-  rpcOrigins: v.exactOptional<v.GenericSchema<string[]>>(
-    v.array(v.pipe(v.string(), v.url()))
-  ),
+  rpcOrigins: v.exactOptional(v.array(url)),
   /** When `false`, only the app owner can add the app to guilds */
   botPublic: v.boolean(),
   /** When `true`, the app's bot will only join upon completion of the full OAuth2 code grant flow */
@@ -32,13 +37,9 @@ export const applicationSchema = v.object({
   /** Partial user object for the bot user associated with the app */
   bot: v.exactOptional(v.partial(userSchema) as v.GenericSchema<Partial<User>>),
   /** URL of the app's Terms of Service */
-  termsOfServiceUrl: v.exactOptional<v.GenericSchema<string>>(
-    v.pipe(v.string(), v.url())
-  ),
+  termsOfServiceUrl: v.exactOptional(url),
   /** URL of the app's Privacy Policy */
-  privacyPolicyUrl: v.exactOptional<v.GenericSchema<string>>(
-    v.pipe(v.string(), v.url())
-  ),
+  privacyPolicyUrl: v.exactOptional(url),
   /** Partial user object for the owner of the app */
   owner: v.exactOptional(
     v.partial(userSchema) as v.GenericSchema<Partial<User>>
@@ -58,60 +59,44 @@ export const applicationSchema = v.object({
   /** App's default rich presence invite cover image hash */
   coverImage: v.exactOptional(v.string()),
   /** App's public flags */
-  flags: v.exactOptional(asInteger(applicationFlag) as v.GenericSchema<number>),
+  flags: v.exactOptional(asInteger(applicationFlag)),
   /** Approximate count of guilds the app has been added to */
-  approximateGuildCount: v.exactOptional<v.GenericSchema<number>>(
-    v.pipe(v.number(), v.integer(), v.minValue(0))
-  ),
+  approximateGuildCount: v.exactOptional(boundedInteger()),
   /** Approximate count of users that have installed the app (authorized with `application.commands` as a scope) */
-  approximateUserInstallCount: v.exactOptional<v.GenericSchema<number>>(
-    v.pipe(v.number(), v.integer(), v.minValue(0))
-  ),
+  approximateUserInstallCount: v.exactOptional(boundedInteger()),
   /** Approximate count of users that have OAuth2 authorizations for the app */
-  approximateUserAuthorizationCount: v.exactOptional<v.GenericSchema<number>>(
-    v.pipe(v.number(), v.integer(), v.minValue(0))
-  ),
+  approximateUserAuthorizationCount: v.exactOptional(boundedInteger()),
   /** Array of redirect URIs for the app */
-  redirectUris: v.nullish<v.GenericSchema<string[]>>(
-    v.array(v.pipe(v.string(), v.url()))
-  ),
+  redirectUris: v.nullish(v.array(url)),
   /** Interactions endpoint URL for the app */
-  interactionsEndpointUrl: v.nullish<v.GenericSchema<string>>(
-    v.pipe(v.string(), v.url())
-  ),
+  interactionsEndpointUrl: v.nullish(url),
   /** Role connection verification URL for the app */
-  roleConnectionsVerificationUrl: v.nullish<v.GenericSchema<string>>(
-    v.pipe(v.string(), v.url())
-  ),
+  roleConnectionsVerificationUrl: v.nullish(url),
   /** Event webhooks URL for the app to receive webhook events */
-  eventWebhooksUrl: v.nullish<v.GenericSchema<string>>(
-    v.pipe(v.string(), v.url())
-  ),
+  eventWebhooksUrl: v.nullish(url),
   /** If webhook events are enabled for the app. `1` (default) means disabled, `2` means enabled, and `3` means disabled by Discord */
-  eventWebhooksStatus: applicationEventWebhookStatusSchema,
+  eventWebhooksStatus: v.exactOptional(applicationEventWebhookStatusSchema),
   /** List of Webhook event types the app subscribes to */
-  eventWebhooksTypes: v.exactOptional<v.GenericSchema<string[]>>(
-    v.array(v.pipe(v.string(), v.nonEmpty()))
-  ),
+  eventWebhooksTypes: v.exactOptional(v.array(boundedString())),
   /** List of tags describing the content and functionality of the app. Max of 5 tags. */
   tags: v.exactOptional<v.GenericSchema<string[]>>(
-    v.pipe(v.array(v.pipe(v.string(), v.nonEmpty())), v.maxLength(5))
+    boundedArray(boundedString(), { max: 5 })
   ),
   /** Settings for the app's default in-app authorization link, if enabled */
   installParams: v.exactOptional(installParamsSchema),
   /** Default scopes and permissions for each supported installation context. Value for each key is an integration type configuration object */
   integrationTypesConfig: v.exactOptional(
-    v.object(
-      v.entriesFromList(
-        Object.values(ApplicationIntegrationTypes),
-        applicationIntegrationTypeConfigurationSchema
+    v.partial(
+      v.object(
+        v.entriesFromList(
+          Object.values(ApplicationIntegrationTypes),
+          applicationIntegrationTypeConfigurationSchema
+        )
       )
     )
   ),
   /** Default custom authorization URL for the app, if enabled */
-  customInstallUrl: v.exactOptional<v.GenericSchema<string>>(
-    v.pipe(v.string(), v.url())
-  )
+  customInstallUrl: v.exactOptional(url)
 });
 
 export interface Application extends v.InferOutput<typeof applicationSchema> {}

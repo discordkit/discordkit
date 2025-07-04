@@ -5,7 +5,8 @@ import {
   toProcedure,
   toQuery,
   toValidated,
-  snowflake
+  snowflake,
+  boundedInteger
 } from "@discordkit/core";
 import { messageSchema, type Message } from "./types/Message.js";
 
@@ -21,10 +22,7 @@ export const getChannelMessagesSchema = v.object({
         /** Get messages after this message ID */
         after: v.nullish(snowflake),
         /** Max number of messages to return (1-100) Default: 50 */
-        limit: v.nullish(
-          v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(100)),
-          50
-        )
+        limit: v.nullish(boundedInteger({ min: 1, max: 100 }))
       })
     )
   )

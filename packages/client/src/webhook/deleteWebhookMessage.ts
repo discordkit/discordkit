@@ -5,12 +5,13 @@ import {
   type Fetcher,
   toProcedure,
   toValidated,
-  snowflake
+  snowflake,
+  boundedString
 } from "@discordkit/core";
 
 export const deleteWebhookMessageSchema = v.object({
   webhook: snowflake,
-  token: v.pipe(v.string(), v.nonEmpty()),
+  token: boundedString(),
   message: snowflake,
   params: v.exactOptional(
     v.partial(

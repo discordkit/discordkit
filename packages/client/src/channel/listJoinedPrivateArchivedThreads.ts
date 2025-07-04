@@ -5,7 +5,8 @@ import {
   toProcedure,
   toQuery,
   toValidated,
-  snowflake
+  snowflake,
+  timestamp
 } from "@discordkit/core";
 import {
   archivedThreadsSchema,
@@ -18,7 +19,7 @@ export const listJoinedPrivateArchivedThreadsSchema = v.object({
     v.partial(
       v.object({
         /** returns threads before this timestamp */
-        before: v.pipe(v.string(), v.isoTimestamp()),
+        before: timestamp,
         /** optional maximum number of threads to return */
         limit: v.pipe(v.number(), v.integer(), v.minValue(0))
       })

@@ -1,7 +1,7 @@
 // https://discord.com/developers/docs/topics/oauth2#shared-resources-oauth2-scopes
 import * as v from "valibot";
 
-export const scopesSchema = v.picklist([
+export const scopes = [
   /** allows your app to fetch data from a user's "Now Playing/Recently Played" list - requires Discord approval */
   `activities.read`,
   /** allows your app to update a user's activity - requires Discord approval (NOT REQUIRED FOR GAMESDK ACTIVITY MANAGER) */
@@ -58,6 +58,8 @@ export const scopesSchema = v.picklist([
   `voice`,
   /** this generates a webhook that is returned in the oauth token response for authorization code grants */
   `webhook.incoming`
-]);
+] as const;
 
-export type Scopes = v.InferOutput<typeof scopesSchema>;
+export type Scopes = (typeof scopes)[number];
+
+export const scopesSchema = v.picklist(scopes) as v.GenericSchema<Scopes>;

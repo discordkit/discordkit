@@ -5,7 +5,8 @@ import {
   toProcedure,
   toQuery,
   toValidated,
-  snowflake
+  snowflake,
+  boundedInteger
 } from "@discordkit/core";
 import { messagePinSchema, type MessagePin } from "./types/MessagePin.js";
 
@@ -17,10 +18,7 @@ export const getChannelPinsSchema = v.object({
         /** Get messages pinned before this timestamp */
         before: v.nullish(snowflake),
         /** Max number of pins to return (1-50) */
-        limit: v.nullish(
-          v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(50)),
-          50
-        )
+        limit: v.nullish(boundedInteger({ min: 1, max: 100 }))
       })
     )
   )

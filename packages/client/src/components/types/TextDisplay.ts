@@ -1,4 +1,5 @@
 import * as v from "valibot";
+import { boundedInteger } from "@discordkit/core";
 import { ComponentType } from "./ComponentType.js";
 
 /**
@@ -14,14 +15,7 @@ export const textDisplaySchema = v.object({
   /** `10` for text display */
   type: v.literal(ComponentType.TextDisplay),
   /** Optional identifier for component */
-  id: v.exactOptional(
-    v.pipe(
-      v.number(),
-      v.integer(),
-      v.minValue(0),
-      v.maxValue(Number.MAX_SAFE_INTEGER)
-    )
-  ),
+  id: v.exactOptional(boundedInteger()),
   /** Text that will be displayed similar to a message */
   content: v.string()
 });

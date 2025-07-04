@@ -3,12 +3,13 @@ import {
   remove,
   type Fetcher,
   toProcedure,
-  toValidated
+  toValidated,
+  boundedString
 } from "@discordkit/core";
 import { inviteSchema, type Invite } from "./types/Invite.js";
 
 export const deleteInviteSchema = v.object({
-  code: v.pipe(v.string(), v.nonEmpty())
+  code: boundedString()
 });
 
 /**

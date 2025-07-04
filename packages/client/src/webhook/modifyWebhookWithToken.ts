@@ -4,20 +4,22 @@ import {
   type Fetcher,
   toProcedure,
   toValidated,
-  snowflake
+  snowflake,
+  boundedString,
+  url
 } from "@discordkit/core";
 import { webhookSchema, type Webhook } from "./types/Webhook.js";
 
 export const modifyWebhookWithTokenSchema = v.object({
   webhook: snowflake,
-  token: v.pipe(v.string(), v.nonEmpty()),
+  token: boundedString(),
   body: v.exactOptional(
     v.partial(
       v.object({
         /** the default name of the webhook */
-        name: v.pipe(v.string(), v.nonEmpty()),
+        name: boundedString(),
         /** image for the default webhook avatar */
-        avatar: v.nullable(v.pipe(v.string(), v.url()))
+        avatar: url
       })
     )
   )

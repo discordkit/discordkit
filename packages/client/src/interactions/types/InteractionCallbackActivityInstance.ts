@@ -1,8 +1,9 @@
 import * as v from "valibot";
+import { boundedString } from "@discordkit/core";
 
 export const interactionCallbackActivityInstanceSchema = v.object({
   /** 	Instance ID of the Activity if one was launched or joined. */
-  id: v.pipe(v.string(), v.nonEmpty())
+  id: boundedString()
 });
 
 export interface InteractionCallbackActivityInstance

@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { snowflake } from "@discordkit/core";
+import { snowflake, timestamp, boundedString } from "@discordkit/core";
 import { memberSchema } from "../../guild/types/Member.js";
 
 // https://discord.com/developers/docs/resources/voice#voice-state-object-voice-state-structure
@@ -14,7 +14,7 @@ export const voiceStateSchema = v.object({
   /** guild member object	the guild member this voice state is for */
   member: v.exactOptional(memberSchema),
   /** the session id for this voice state */
-  sessionId: v.pipe(v.string(), v.nonEmpty()),
+  sessionId: boundedString(),
   /** whether this user is deafened by the server */
   deaf: v.boolean(),
   /** whether this user is muted by the server */
@@ -30,7 +30,7 @@ export const voiceStateSchema = v.object({
   /** whether this user is muted by the current user */
   suppress: v.boolean(),
   /** the time at which the user requested to speak */
-  requestToSpeakTimestamp: v.nullable(v.pipe(v.string(), v.isoTimestamp()))
+  requestToSpeakTimestamp: v.nullable(timestamp)
 });
 
 export interface VoiceState extends v.InferOutput<typeof voiceStateSchema> {}

@@ -1,4 +1,5 @@
 import * as v from "valibot";
+import { boundedInteger } from "@discordkit/core";
 import { ComponentType } from "./ComponentType.js";
 
 /**
@@ -14,14 +15,7 @@ export const separatorSchema = v.object({
   /** `14` for separator component */
   type: v.literal(ComponentType.Separator),
   /** Optional identifier for component */
-  id: v.exactOptional(
-    v.pipe(
-      v.number(),
-      v.integer(),
-      v.minValue(0),
-      v.maxValue(Number.MAX_SAFE_INTEGER)
-    )
-  ),
+  id: v.exactOptional(boundedInteger()),
   /** Whether a visual divider should be displayed in the component. Defaults to `true` */
   divider: v.exactOptional(v.boolean()),
   /** Size of separator padding— `1` for small padding, `2` for large padding. Defaults to `1` */

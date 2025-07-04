@@ -1,10 +1,10 @@
 import * as v from "valibot";
-import { getAsset, snowflake } from "@discordkit/core";
+import { getAsset, snowflake, boundedString } from "@discordkit/core";
 import { imageSizes } from "./types/ImageSizes.js";
 
 export const userBannerSchema = v.object({
   user: snowflake,
-  banner: v.pipe(v.string(), v.nonEmpty()),
+  banner: boundedString(),
   format: v.exactOptional(v.picklist([`png`, `jpg`, `webp`, `gif`])),
   params: v.exactOptional(
     v.object({

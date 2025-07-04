@@ -4,14 +4,15 @@ import {
   type Fetcher,
   toProcedure,
   toValidated,
-  snowflake
+  snowflake,
+  boundedArray
 } from "@discordkit/core";
 
 export const bulkDeleteMessagesSchema = v.object({
   channel: snowflake,
   body: v.object({
     /** an array of message ids to delete (2-100) */
-    messages: v.pipe(v.array(snowflake), v.minLength(2), v.maxLength(100))
+    messages: boundedArray(snowflake, { min: 2, max: 100 })
   })
 });
 

@@ -1,17 +1,13 @@
 import * as v from "valibot";
-import { snowflake } from "@discordkit/core";
+import { snowflake, boundedInteger, boundedString } from "@discordkit/core";
 
 export const roleSubscriptionDataSchema = v.object({
   /** the id of the sku and listing that the user is subscribed to */
-  roleSubscriptionListingId: snowflake as v.GenericSchema<string>,
+  roleSubscriptionListingId: snowflake,
   /** the name of the tier that the user is subscribed to */
-  tierName: v.pipe(v.string(), v.nonEmpty()) as v.GenericSchema<string>,
+  tierName: boundedString(),
   /** the cumulative number of months that the user has been subscribed for */
-  totalMonthsSubscribed: v.pipe(
-    v.number(),
-    v.integer(),
-    v.minValue(0)
-  ) as v.GenericSchema<number>,
+  totalMonthsSubscribed: boundedInteger(),
   /** whether this notification is for a renewal rather than a new purchase */
   isRenewal: v.boolean()
 });

@@ -5,7 +5,9 @@ import {
   toProcedure,
   toValidated,
   snowflake,
-  asInteger
+  asInteger,
+  boundedArray,
+  boundedString
 } from "@discordkit/core";
 import { type Message, messageSchema } from "./types/Message.js";
 import { embedSchema } from "./types/Embed.js";
@@ -20,11 +22,11 @@ export const editMessageSchema = v.object({
   body: v.partial(
     v.object({
       /** Message contents (up to 2000 characters) */
-      content: v.pipe(v.string(), v.maxLength(2000)),
+      content: boundedString({ max: 2000 }),
       /** Up to 10 rich embeds (up to 6000 characters) */
-      embeds: v.pipe(v.array(embedSchema), v.maxLength(10)),
+      embeds: boundedArray(embedSchema, { max: 10 }),
       /** Edit the flags of a message (only SUPPRESS_EMBEDS can currently be set/unset) */
-      flags: v.pipe(asInteger(messageFlag) as v.GenericSchema<number>),
+      flags: asInteger(messageFlag),
       /** Allowed mentions for the message */
       allowedMentions: allowedMentionSchema,
       /** Components to include with the message */

@@ -1,4 +1,5 @@
 import * as v from "valibot";
+import { boundedInteger } from "@discordkit/core";
 import { actionRowSchema } from "./ActionRow.js";
 import { textDisplaySchema } from "./TextDisplay.js";
 import { sectionSchema } from "./Section.js";
@@ -20,14 +21,7 @@ export const containerSchema = v.object({
   /** `17` for container component */
   type: v.literal(ComponentType.Container),
   /** Optional identifier for component */
-  id: v.exactOptional(
-    v.pipe(
-      v.number(),
-      v.integer(),
-      v.minValue(0),
-      v.maxValue(Number.MAX_SAFE_INTEGER)
-    )
-  ),
+  id: v.exactOptional(boundedInteger()),
   /** Components of the type action row, text display, section, media gallery, separator, or file */
   components: v.array(
     v.union([
@@ -40,9 +34,7 @@ export const containerSchema = v.object({
     ])
   ),
   /** Color for the accent on the container as RGB from `0x000000` to `0xFFFFFF` */
-  accentColor: v.nullish(
-    v.pipe(v.number(), v.integer(), v.minValue(0x000000), v.maxValue(0xffffff))
-  ),
+  accentColor: v.nullish(boundedInteger({ min: 0x000000, max: 0xffffff })),
   /** Whether the container should be a spoiler (or blurred out). Defaults to `false`. */
   spoiler: v.exactOptional(v.boolean())
 });

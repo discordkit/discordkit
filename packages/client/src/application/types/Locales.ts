@@ -1,6 +1,6 @@
 import * as v from "valibot";
 
-export const localesSchema = v.picklist([
+export const locales = [
   /** Indonesian | Bahasa Indonesia */
   `id`,
   /** Danish | Dansk */
@@ -63,6 +63,8 @@ export const localesSchema = v.picklist([
   `zh-TW`,
   /** Korean | 한국어 */
   `ko`
-]);
+] as const;
 
-export type Locales = v.InferOutput<typeof localesSchema>;
+export type Locales = (typeof locales)[number];
+
+export const localesSchema = v.picklist(locales) as v.GenericSchema<Locales>;

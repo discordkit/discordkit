@@ -152,7 +152,7 @@ export class MockUtils {
     schema: SchemaMaybeWithPipe<TSchema>,
     val: InferInput<TSchema>
   ): InferOutput<TSchema> =>
-    schema.pipe
+    Array.isArray(schema.pipe)
       ? this.#getTransforms(schema.pipe).reduce(
           (result, transform) => transform(result),
           val

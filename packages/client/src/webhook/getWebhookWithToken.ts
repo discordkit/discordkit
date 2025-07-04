@@ -5,13 +5,14 @@ import {
   toProcedure,
   toQuery,
   toValidated,
-  snowflake
+  snowflake,
+  boundedString
 } from "@discordkit/core";
 import { webhookSchema, type Webhook } from "./types/Webhook.js";
 
 export const getWebhookWithTokenSchema = v.object({
   webhook: snowflake,
-  token: v.pipe(v.string(), v.nonEmpty())
+  token: boundedString()
 });
 
 /**

@@ -5,7 +5,8 @@ import {
   toProcedure,
   toValidated,
   snowflake,
-  asDigits
+  asDigits,
+  boundedString
 } from "@discordkit/core";
 import {
   applicationCommandSchema,
@@ -22,35 +23,25 @@ export const editGuildApplicationCommandSchema = v.object({
   body: v.partial(
     v.object({
       /** Name of command, 1-32 characters */
-      name: v.nullish(v.pipe(v.string(), v.minLength(1), v.maxLength(32))),
+      name: v.nullish(boundedString({ max: 32 })),
       /** Localization dictionary for the name field. Values follow the same restrictions as name */
       nameLocalizations: v.nullish(
-        v.record(
-          localesSchema,
-          v.pipe(v.string(), v.minLength(1), v.maxLength(32))
-        )
+        v.record(localesSchema, boundedString({ max: 32 }))
       ),
       /** 1-100 character description */
-      description: v.nullish(
-        v.pipe(v.string(), v.minLength(1), v.maxLength(100))
-      ),
+      description: v.nullish(boundedString({ max: 100 })),
       /** Localization dictionary for the description field. Values follow the same restrictions as description */
       descriptionLocalizations: v.nullish(
-        v.record(
-          localesSchema,
-          v.pipe(v.string(), v.minLength(1), v.maxLength(100))
-        )
+        v.record(localesSchema, boundedString({ max: 100 }))
       ),
       /** the parameters for the command */
       options: v.nullish(v.array(applicationCommandOptionSchema)),
       /** Set of permissions represented as a bit set */
-      defaultMemberPermissions: v.nullish(
-        asDigits(permissionFlag) as v.GenericSchema<string>
-      ),
+      defaultMemberPermissions: v.nullish(asDigits(permissionFlag)),
       /** Indicates whether the command is available in DMs with the app, only for globally-scoped commands. By default, commands are visible. */
       dmPermission: v.nullish(v.boolean()),
       /** Replaced by default_member_permissions and will be deprecated in the future. Indicates whether the command is enabled by default when the app is added to a guild. Defaults to true */
-      defaultPermission: v.nullish(v.boolean(), true),
+      defaultPermission: v.nullish(v.boolean()),
       /** Indicates whether the command is age-restricted */
       nsfw: v.nullish(v.boolean())
     })

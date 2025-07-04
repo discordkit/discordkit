@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { snowflake } from "@discordkit/core";
+import { snowflake, timestamp } from "@discordkit/core";
 import { userSchema } from "../../user/types/User.js";
 import { ScheduledEventEntityType } from "./ScheduledEventEntityType.js";
 import { scheduledEventPrivacyLevelSchema } from "./ScheduledEventPrivacyLevel.js";
@@ -20,9 +20,9 @@ export const scheduledEventSchema = v.intersect([
     /** the description of the scheduled event (1-1000 characters) */
     description: v.nullish(v.pipe(v.string(), v.nonEmpty(), v.maxLength(1000))),
     /** the time the scheduled event will start */
-    scheduledStartTime: v.pipe(v.string(), v.isoTimestamp()),
+    scheduledStartTime: timestamp,
     /** the time the scheduled event will end, required if entity_type is EXTERNAL */
-    scheduledEndTime: v.nullable(v.pipe(v.string(), v.isoTimestamp())),
+    scheduledEndTime: v.nullable(timestamp),
     /** the privacy level of the scheduled event */
     privacyLevel: scheduledEventPrivacyLevelSchema,
     /** the status of the scheduled event */
@@ -61,7 +61,7 @@ export const scheduledEventSchema = v.intersect([
       /** the channel id in which the scheduled event will be hosted, or null if scheduled entity type is EXTERNAL */
       channelId: v.null_(),
       /** the time the scheduled event will end, required if entity_type is EXTERNAL */
-      scheduledEndTime: v.pipe(v.string(), v.isoTimestamp()),
+      scheduledEndTime: timestamp,
       /** additional metadata for the guild scheduled event */
       entityMetadata: entityMetadataSchema
     })

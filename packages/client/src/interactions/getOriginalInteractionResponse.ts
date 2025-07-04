@@ -5,7 +5,8 @@ import {
   toProcedure,
   toQuery,
   toValidated,
-  snowflake
+  snowflake,
+  boundedString
 } from "@discordkit/core";
 import {
   type InteractionCallbackResponse,
@@ -14,7 +15,7 @@ import {
 
 export const getOriginalInteractionResponseSchema = v.object({
   application: snowflake,
-  token: v.pipe(v.string(), v.nonEmpty()),
+  token: boundedString(),
   params: v.exactOptional(
     v.partial(
       v.object({

@@ -1,4 +1,5 @@
 import * as v from "valibot";
+import { boundedInteger, boundedString } from "@discordkit/core";
 import { ComponentType } from "./ComponentType.js";
 import { unfurledMediaItemSchema } from "./UnfurledMediaItem.js";
 
@@ -15,20 +16,11 @@ export const thumbnailSchema = v.object({
   /** `11` for thumbnail component */
   type: v.literal(ComponentType.Thumbnail),
   /** Optional identifier for component */
-  id: v.exactOptional(
-    v.pipe(
-      v.number(),
-      v.integer(),
-      v.minValue(0),
-      v.maxValue(Number.MAX_SAFE_INTEGER)
-    )
-  ),
+  id: v.exactOptional(boundedInteger()),
   /** A url or attachment */
   media: unfurledMediaItemSchema,
   /** Alt text for the media, max 1024 characters */
-  description: v.exactOptional(
-    v.pipe(v.string(), v.nonEmpty(), v.maxLength(1024))
-  ),
+  description: v.exactOptional(boundedString({ max: 1024 })),
   /** Whether the thumbnail should be a spoiler (or blurred out). Defaults to false */
   spoiler: v.exactOptional(v.boolean())
 });

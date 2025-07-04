@@ -1,4 +1,5 @@
 import * as v from "valibot";
+import { boundedArray, boundedInteger, boundedString } from "@discordkit/core";
 import { allowedMentionSchema } from "../../messages/types/AllowedMention.js";
 import { embedSchema } from "../../messages/types/Embed.js";
 import { messageComponentSchema } from "../../messages/types/MessageComponent.js";
@@ -13,13 +14,13 @@ export const interactionCallbackDataSchema = v.union([
     /** is the response TTS */
     tts: v.exactOptional(v.boolean()),
     /** message content */
-    content: v.exactOptional(v.pipe(v.string(), v.nonEmpty())),
+    content: v.exactOptional(boundedString()),
     /** supports up to 10 embeds */
-    embeds: v.exactOptional(v.pipe(v.array(embedSchema), v.maxLength(10))),
+    embeds: v.exactOptional(boundedArray(embedSchema, { max: 10 })),
     /** allowed mentions object */
     allowedMentions: v.exactOptional(allowedMentionSchema),
     /** message flags combined as a bitfield (only SUPPRESS_EMBEDS and EPHEMERAL can be set) */
-    flags: v.exactOptional(v.pipe(v.number(), v.integer())),
+    flags: v.exactOptional(boundedInteger()),
     /** message components */
     components: v.exactOptional(messageComponentSchema),
     /** attachment objects with filename and description */
@@ -30,19 +31,16 @@ export const interactionCallbackDataSchema = v.union([
   /** Autocomplete */
   v.object({
     /** autocomplete choices (max of 25 choices) */
-    choices: v.pipe(
-      v.array(applicationCommandOptionChoiceSchema),
-      v.maxLength(25)
-    )
+    choices: boundedArray(applicationCommandOptionChoiceSchema, { max: 25 })
   }),
   /** Modal */
   v.object({
     /** Developer-defined identifier for the modal, max 100 characters */
-    customId: v.pipe(v.string(), v.nonEmpty(), v.maxLength(100)),
+    customId: boundedString({ max: 100 }),
     /** Title of the popup modal, max 45 characters */
-    title: v.pipe(v.string(), v.nonEmpty(), v.maxLength(45)),
+    title: boundedString({ max: 45 }),
     /** Between 1 and 5 (inclusive) components that make up the modal */
-    components: v.pipe(v.array(componenetSchema), v.nonEmpty(), v.maxLength(5))
+    components: boundedArray(componenetSchema, { max: 5 })
   })
 ]);
 

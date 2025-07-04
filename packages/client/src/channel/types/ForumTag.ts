@@ -1,23 +1,17 @@
 import * as v from "valibot";
-import { snowflake } from "@discordkit/core";
+import { snowflake, boundedString } from "@discordkit/core";
 
 export const forumTagSchema = v.object({
   /** the id of the tag */
-  id: snowflake as v.GenericSchema<string>,
+  id: snowflake,
   /** the name of the tag (0-20 characters) */
-  name: v.pipe(
-    v.string(),
-    v.minLength(0),
-    v.maxLength(20)
-  ) as v.GenericSchema<string>,
+  name: boundedString({ min: 0, max: 20 }),
   /** whether this tag can only be added to or removed from threads by a member with the `MANAGE_THREADS` permission */
   moderated: v.boolean(),
   /** the id of a guild's custom emoji */
-  emojiId: v.nullable<v.GenericSchema<string>>(snowflake),
+  emojiId: v.nullable(snowflake),
   /** the unicode character of the emoji */
-  emojiName: v.nullable<v.GenericSchema<string>>(
-    v.pipe(v.string(), v.nonEmpty())
-  )
+  emojiName: v.nullable(boundedString())
 });
 
 export interface ForumTag extends v.InferOutput<typeof forumTagSchema> {}

@@ -5,13 +5,14 @@ import {
   toProcedure,
   toQuery,
   toValidated,
-  snowflake
+  snowflake,
+  boundedString
 } from "@discordkit/core";
 import { messageSchema, type Message } from "../messages/types/Message.js";
 
 export const getWebhookMessageSchema = v.object({
   webhook: snowflake,
-  token: v.pipe(v.string(), v.nonEmpty()),
+  token: boundedString(),
   message: snowflake,
   params: v.exactOptional(
     v.partial(

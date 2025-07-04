@@ -4,7 +4,8 @@ import {
   type Fetcher,
   toProcedure,
   toValidated,
-  snowflake
+  snowflake,
+  boundedArray
 } from "@discordkit/core";
 import {
   guildApplicationCommandPermissionsSchema,
@@ -18,10 +19,7 @@ export const editApplicationCommandPermissionsSchema = v.object({
   command: snowflake,
   body: v.object({
     /** Permissions for the command in the guild */
-    permissions: v.pipe(
-      v.array(applicationCommandPermissionsSchema),
-      v.maxLength(100)
-    )
+    permissions: boundedArray(applicationCommandPermissionsSchema, { max: 100 })
   })
 });
 

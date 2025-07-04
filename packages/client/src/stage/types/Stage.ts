@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { snowflake } from "@discordkit/core";
+import { snowflake, boundedString } from "@discordkit/core";
 import { stagePrivacyLevelSchema } from "./StagePrivacyLevel.js";
 
 export const stageSchema = v.object({
@@ -10,7 +10,7 @@ export const stageSchema = v.object({
   /** The id of the associated Stage channel */
   channelId: snowflake,
   /** The topic of the Stage instance (1-120 characters) */
-  topic: v.pipe(v.string(), v.nonEmpty()),
+  topic: boundedString(),
   /** The privacy level of the Stage instance */
   privacyLevel: stagePrivacyLevelSchema,
   /** @deprecated Whether or not Stage Discovery is disabled */

@@ -1,4 +1,5 @@
 import * as v from "valibot";
+import { boundedArray, boundedInteger } from "@discordkit/core";
 import { ComponentType } from "./ComponentType.js";
 import { mediaGalleryItemSchema } from "./MediaGalleryItem.js";
 
@@ -15,16 +16,9 @@ export const mediaGallerySchema = v.object({
   /** `12` for media gallery component */
   type: v.literal(ComponentType.MediaGallery),
   /** Optional identifier for component */
-  id: v.exactOptional(
-    v.pipe(
-      v.number(),
-      v.integer(),
-      v.minValue(0),
-      v.maxValue(Number.MAX_SAFE_INTEGER)
-    )
-  ),
+  id: v.exactOptional(boundedInteger()),
   /** 1 to 10 media gallery items */
-  items: v.pipe(v.array(mediaGalleryItemSchema), v.nonEmpty(), v.maxLength(10))
+  items: boundedArray(mediaGalleryItemSchema, { max: 10 })
 });
 
 export interface MediaGallery

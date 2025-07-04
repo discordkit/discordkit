@@ -1,4 +1,5 @@
 import * as v from "valibot";
+import { timestamp } from "@discordkit/core";
 import { pollMediaSchema } from "./PollMedia.js";
 import { pollAnswerSchema } from "./PollAnswer.js";
 import { pollLayoutTypeSchema } from "./PollLayoutType.js";
@@ -15,7 +16,7 @@ export const pollSchema = v.object({
   /** Each of the answers available in the poll. */
   answers: v.pipe(v.array(pollAnswerSchema), v.maxLength(10)),
   /** The time when the poll ends. */
-  expiry: v.nullable(v.pipe(v.string(), v.isoTimestamp())),
+  expiry: v.nullable(timestamp),
   /** Whether a user can select multiple answers */
   allowMultiselect: v.boolean(),
   /** The layout type of the poll */

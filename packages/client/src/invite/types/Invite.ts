@@ -1,4 +1,5 @@
 import * as v from "valibot";
+import { timestamp, boundedInteger } from "@discordkit/core";
 import { applicationSchema } from "../../application/types/Application.js";
 import { channelSchema } from "../../channel/types/Channel.js";
 import { scheduledEventSchema } from "../../event/types/ScheduledEvent.js";
@@ -28,11 +29,11 @@ export const inviteSchema = v.object({
     v.lazy(() => v.partial(applicationSchema))
   ),
   /** approximate count of online members, returned from the `GET /invites/<code>` endpoint when `with_counts` is true */
-  approximatePresenceCount: v.exactOptional(v.pipe(v.number(), v.integer())),
+  approximatePresenceCount: v.exactOptional(boundedInteger()),
   /** approximate count of total members, returned from the `GET /invites/<code>` endpoint when `with_counts` is true */
-  approximateMemberCount: v.exactOptional(v.pipe(v.number(), v.integer())),
+  approximateMemberCount: v.exactOptional(boundedInteger()),
   /** the expiration date of this invite, returned from the `GET /invites/<code>` endpoint when `with_expiration` is true */
-  expiresAt: v.nullish(v.pipe(v.string(), v.isoTimestamp())),
+  expiresAt: v.nullish(timestamp),
   /** stage instance data if there is a public Stage instance in the Stage channel this invite is for (deprecated) */
   stageInstance: v.exactOptional(inviteStageInstanceSchema),
   /** guild scheduled event data, only included if `guild_scheduled_event_id` contains a valid guild scheduled event id */

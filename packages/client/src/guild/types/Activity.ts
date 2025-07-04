@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { snowflake } from "@discordkit/core";
+import { snowflake, timestamp } from "@discordkit/core";
 import { activityButtonSchema } from "./ActivityButton.js";
 import { activitySecretsSchema } from "./ActivitySecrets.js";
 import { activityAssetsSchema } from "./ActivityAssets.js";
@@ -15,7 +15,7 @@ export const activitySchema = v.object({
   /** stream url, is validated when type is 1 */
   url: v.optional(v.string()),
   /** unix timestamp (in milliseconds) of when the activity was added to the user's session */
-  createdAt: v.pipe(v.string(), v.isoTimestamp()),
+  createdAt: timestamp,
   /** unix timestamps for start and/or end of the game */
   timestamps: v.optional(activityTimestampsSchema),
   /** application id for the game */

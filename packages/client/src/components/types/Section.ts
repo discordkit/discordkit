@@ -1,4 +1,5 @@
 import * as v from "valibot";
+import { boundedInteger, boundedArray } from "@discordkit/core";
 import { ComponentType } from "./ComponentType.js";
 import { buttonSchema } from "./Button.js";
 import { textDisplaySchema } from "./TextDisplay.js";
@@ -21,16 +22,9 @@ export const sectionSchema = v.object({
   /** `9` for section component */
   type: v.literal(ComponentType.Section),
   /** Optional identifier for component */
-  id: v.exactOptional(
-    v.pipe(
-      v.number(),
-      v.integer(),
-      v.minValue(0),
-      v.maxValue(Number.MAX_SAFE_INTEGER)
-    )
-  ),
+  id: v.exactOptional(boundedInteger()),
   /** One to three text components */
-  components: v.pipe(v.array(textDisplaySchema), v.nonEmpty(), v.maxLength(3)),
+  components: boundedArray(textDisplaySchema, { max: 3 }),
   /** A thumbnail or a button component, with a future possibility of adding more compatible components */
   accessroy: v.union([thumbnailSchema, buttonSchema])
 });

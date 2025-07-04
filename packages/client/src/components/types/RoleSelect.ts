@@ -1,4 +1,5 @@
 import * as v from "valibot";
+import { boundedInteger, boundedString } from "@discordkit/core";
 import { ComponentType } from "./ComponentType.js";
 import { selectDefaultValueSchema } from "./SelectDefaultValue.js";
 
@@ -13,30 +14,17 @@ export const roleSelectSchema = v.object({
   /** `6` for role select */
   type: v.literal(ComponentType.RoleSelect),
   /** Optional identifier for component */
-  id: v.exactOptional(
-    v.pipe(
-      v.number(),
-      v.integer(),
-      v.minValue(0),
-      v.maxValue(Number.MAX_SAFE_INTEGER)
-    )
-  ),
+  id: v.exactOptional(boundedInteger()),
   /** Developer-defined identifier for the input; max 100 characters */
-  customId: v.pipe(v.string(), v.nonEmpty(), v.maxLength(100)),
+  customId: boundedString({ max: 100 }),
   /** Placeholder text if nothing is selected; max 150 characters */
-  placeholder: v.exactOptional(
-    v.pipe(v.string(), v.nonEmpty(), v.maxLength(150))
-  ),
+  placeholder: v.exactOptional(boundedString({ max: 150 })),
   /** List of default values for auto-populated select menu components; number of default values must be in the range defined by `minValues` and `maxValues` */
   defaultValues: v.exactOptional(v.array(selectDefaultValueSchema)),
   /** Minimum number of items that must be chosen (defaults to 1); min 0, max 25 */
-  minValues: v.exactOptional(
-    v.pipe(v.number(), v.integer(), v.minValue(0), v.maxValue(25))
-  ),
+  minValues: v.exactOptional(boundedInteger({ max: 25 })),
   /** Maximum number of items that can be chosen (defaults to 1); max 25 */
-  maxValues: v.exactOptional(
-    v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(25))
-  ),
+  maxValues: v.exactOptional(boundedInteger({ min: 1, max: 25 })),
   /** Whether select menu is disabled (defaults to `false`) */
   disabled: v.exactOptional(v.boolean())
 });

@@ -1,5 +1,10 @@
 import * as v from "valibot";
-import { snowflake } from "@discordkit/core";
+import {
+  snowflake,
+  boundedInteger,
+  boundedString,
+  url
+} from "@discordkit/core";
 import { emojiSchema } from "../../emoji/types/Emoji.js";
 import { buttonStyleSchema } from "./ButtonStyle.js";
 import { ComponentType } from "./ComponentType.js";
@@ -21,26 +26,25 @@ export const buttonSchema = v.object({
   /** `2` for a button */
   type: v.literal(ComponentType.Button),
   /** Optional identifier for component */
-  id: v.exactOptional(
-    v.pipe(
-      v.number(),
-      v.integer(),
-      v.minValue(0),
-      v.maxValue(Number.MAX_SAFE_INTEGER)
-    )
-  ),
+  id: v.exactOptional(boundedInteger()),
   /** A button style */
   style: buttonStyleSchema,
   /** Text that appears on the button; max 80 characters */
-  label: v.exactOptional(v.pipe(v.string(), v.nonEmpty(), v.maxLength(80))),
+  label: v.exactOptional(boundedString({ max: 80 })),
   /** `name`, `id`, and `animated` */
-  emoji: v.exactOptional(v.pick(emojiSchema, [`id`, `name`, `animated`])),
+  emoji: v.exactOptional(
+    v.object({
+      id: emojiSchema.entries.id,
+      name: emojiSchema.entries.name,
+      animated: emojiSchema.entries.animated
+    })
+  ),
   /** Developer-defined identifier for the button; max 100 characters */
-  customId: v.exactOptional(v.pipe(v.string(), v.nonEmpty(), v.maxLength(100))),
+  customId: v.exactOptional(boundedString({ max: 100 })),
   /** Identifier for a purchasable SKU, only available when using premium-style buttons */
   skuId: v.exactOptional(snowflake),
   /** URL for link-style buttons */
-  url: v.exactOptional(v.pipe(v.string(), v.url())),
+  url: v.exactOptional(url),
   /** Whether the button is disabled (defaults to `false`) */
   disabled: v.exactOptional(v.boolean())
 });

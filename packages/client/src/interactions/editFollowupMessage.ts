@@ -4,7 +4,9 @@ import {
   type Fetcher,
   toProcedure,
   toValidated,
-  snowflake
+  snowflake,
+  boundedString,
+  boundedArray
 } from "@discordkit/core";
 import { messageSchema, type Message } from "../messages/types/Message.js";
 import { embedSchema } from "../messages/types/Embed.js";
@@ -20,16 +22,14 @@ export const editFollowupMessageSchema = v.object({
   body: v.partial(
     v.object({
       /** the message contents (up to 2000 characters) */
-      content: v.pipe(v.string(), v.minLength(1), v.maxLength(2000)),
+      content: boundedString({ max: 2000 }),
       /** embedded `rich` content */
-      embeds: v.pipe(
-        v.array(
-          v.object({
-            ...embedSchema.entries,
-            type: v.literal(EmbedType.RICH)
-          })
-        ),
-        v.maxLength(10)
+      embeds: boundedArray(
+        v.object({
+          ...embedSchema.entries,
+          type: v.literal(EmbedType.RICH)
+        }),
+        { max: 10 }
       ),
       /** allowed mentions for the message */
       allowedMentions: allowedMentionSchema,

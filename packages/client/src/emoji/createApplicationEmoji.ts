@@ -5,7 +5,8 @@ import {
   toProcedure,
   toValidated,
   snowflake,
-  datauri
+  datauri,
+  boundedString
 } from "@discordkit/core";
 import { emojiSchema, type Emoji } from "./types/Emoji.js";
 
@@ -13,9 +14,9 @@ export const createApplicationEmojiSchema = v.object({
   application: snowflake,
   body: v.object({
     /** name of the emoji */
-    name: v.pipe(v.string(), v.nonEmpty()),
+    name: boundedString(),
     /** the 128x128 emoji image */
-    image: v.pipe(datauri)
+    image: datauri
   })
 });
 

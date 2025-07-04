@@ -1,14 +1,14 @@
 import * as v from "valibot";
-import { snowflake } from "@discordkit/core";
+import { snowflake, boundedString } from "@discordkit/core";
 import { type User, userSchema } from "../../user/types/User.js";
 
 export const integrationApplicationSchema = v.object({
   /** the id of the app */
   id: snowflake,
   /** the name of the app */
-  name: v.pipe(v.string(), v.nonEmpty()) as v.GenericSchema<string>,
+  name: boundedString(),
   /** the icon hash of the app */
-  icon: v.nullable<v.GenericSchema<string>>(v.pipe(v.string(), v.nonEmpty())),
+  icon: v.nullable(boundedString()),
   /** the description of the app */
   description: v.string(),
   /** the bot associated with this application */

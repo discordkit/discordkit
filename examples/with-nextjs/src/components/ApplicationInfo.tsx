@@ -27,6 +27,8 @@ export const ApplicationInfo: React.FC = () => {
             height={128}
           />
         ) : null}
+
+        <h1>{data.name}</h1>
       </div>
     );
   }

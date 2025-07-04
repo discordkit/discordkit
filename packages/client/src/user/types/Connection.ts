@@ -1,13 +1,14 @@
 import * as v from "valibot";
+import { boundedString } from "@discordkit/core";
 import { integrationSchema } from "../../guild/types/Integration.js";
 import { connectionVisibiltySchema } from "./ConnectionVisibilty.js";
 import { servicesSchema } from "./Services.js";
 
 export const connectionSchema = v.object({
   /** id of the connection account */
-  id: v.pipe(v.string(), v.nonEmpty()),
+  id: boundedString(),
   /** the username of the connection account */
-  name: v.pipe(v.string(), v.nonEmpty()),
+  name: boundedString(),
   /** the service of the connection (twitch, youtube) */
   type: servicesSchema,
   /** whether the connection is revoked */

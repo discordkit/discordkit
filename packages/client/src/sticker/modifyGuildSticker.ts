@@ -4,7 +4,8 @@ import {
   type Fetcher,
   toProcedure,
   toValidated,
-  snowflake
+  snowflake,
+  boundedString
 } from "@discordkit/core";
 import { stickerSchema, type Sticker } from "./types/Sticker.js";
 
@@ -14,11 +15,11 @@ export const modifyGuildStickerSchema = v.object({
   body: v.partial(
     v.object({
       /** name of the sticker (2-30 characters) */
-      name: v.pipe(v.string(), v.minLength(2), v.maxLength(30)),
+      name: boundedString({ min: 2, max: 30 }),
       /** description of the sticker (empty or 2-100 characters) */
-      description: v.pipe(v.string(), v.minLength(2), v.maxLength(100)),
+      description: boundedString({ min: 2, max: 100 }),
       /** autocomplete/suggestion tags for the sticker (max 200 characters) */
-      tags: v.pipe(v.string(), v.minLength(1), v.maxLength(200))
+      tags: boundedString({ max: 200 })
     })
   )
 });

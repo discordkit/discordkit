@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { asInteger, snowflake } from "@discordkit/core";
+import { asInteger, snowflake, timestamp } from "@discordkit/core";
 import { stickerSchema } from "../../sticker/types/Sticker.js";
 import { userSchema } from "../../user/types/User.js";
 import { attachmentSchema } from "./Attachment.js";
@@ -19,11 +19,11 @@ export const messageSnapshotSchema = v.object({
     /** any attached files */
     attachments: v.array(attachmentSchema),
     /** when this message was sent */
-    timestamp: v.pipe(v.string(), v.isoTimestamp()),
+    timestamp: timestamp,
     /** when this message was edited (or null if never) */
-    editedTimestamp: v.nullable(v.pipe(v.string(), v.isoTimestamp())),
+    editedTimestamp: v.nullable(timestamp),
     /** message flags combined as a bitfield */
-    flags: asInteger(messageFlag) as v.GenericSchema<number>,
+    flags: asInteger(messageFlag),
     /** users specifically mentioned in the message */
     mentions: v.array(userSchema),
     /** roles specifically mentioned in this message */

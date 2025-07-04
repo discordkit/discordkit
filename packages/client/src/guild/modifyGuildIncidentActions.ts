@@ -4,7 +4,8 @@ import {
   type Fetcher,
   toProcedure,
   toValidated,
-  snowflake
+  snowflake,
+  timestamp
 } from "@discordkit/core";
 import {
   type IncidentsData,
@@ -15,9 +16,9 @@ export const modifyGuildIncidentActionsSchema = v.object({
   guild: snowflake,
   body: v.object({
     /** when invites will be enabled again */
-    invitesDisabledUntil: v.nullish(v.pipe(v.string(), v.isoTimestamp())),
+    invitesDisabledUntil: v.nullish(timestamp),
     /** when direct messages will be enabled again */
-    dmsDisabledUntil: v.nullish(v.pipe(v.string(), v.isoTimestamp()))
+    dmsDisabledUntil: v.nullish(timestamp)
   })
 });
 

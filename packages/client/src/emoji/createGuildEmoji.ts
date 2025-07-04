@@ -5,6 +5,7 @@ import {
   toProcedure,
   toValidated,
   snowflake,
+  boundedString,
   datauri
 } from "@discordkit/core";
 import { emojiSchema, type Emoji } from "./types/Emoji.js";
@@ -13,7 +14,7 @@ export const createGuildEmojiSchema = v.object({
   guild: snowflake,
   body: v.object({
     /** name of the emoji */
-    name: v.pipe(v.string(), v.nonEmpty()),
+    name: boundedString(),
     /** the 128x128 emoji image */
     image: datauri,
     /** roles allowed to use this emoji */

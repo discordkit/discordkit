@@ -4,7 +4,9 @@ import {
   type Fetcher,
   toProcedure,
   toValidated,
-  snowflake
+  snowflake,
+  boundedString,
+  url
 } from "@discordkit/core";
 import { webhookSchema, type Webhook } from "./types/Webhook.js";
 
@@ -12,9 +14,9 @@ export const createWebhookSchema = v.object({
   channel: snowflake,
   body: v.object({
     /** name of the webhook (1-80 characters) */
-    name: v.pipe(v.string(), v.minLength(1), v.maxLength(80)),
+    name: boundedString({ max: 80 }),
     /** image for the default webhook avatar */
-    avatar: v.nullish(v.pipe(v.string(), v.url()))
+    avatar: url
   })
 });
 

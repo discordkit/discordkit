@@ -1,12 +1,12 @@
 import * as v from "valibot";
-import { snowflake } from "@discordkit/core";
+import { snowflake, boundedString } from "@discordkit/core";
 import { userSchema } from "../../user/types/User.js";
 
 export const emojiSchema = v.object({
   /** emoji id */
   id: v.nullable(snowflake),
   /** (can be null only in reaction emoji objects)	emoji name */
-  name: v.nullable(v.pipe(v.string(), v.nonEmpty())),
+  name: v.nullable(boundedString()),
   /** roles allowed to use this emoji */
   roles: v.exactOptional(v.array(snowflake)),
   /** user that created this emoji */

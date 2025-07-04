@@ -1,18 +1,11 @@
 import * as v from "valibot";
+import { boundedInteger } from "@discordkit/core";
 
 export const reactionCountDetailsSchema = v.object({
   /** Count of super reactions */
-  burst: v.pipe(
-    v.number(),
-    v.integer(),
-    v.minValue(0)
-  ) as v.GenericSchema<number>,
+  burst: boundedInteger(),
   /** Count of normal reactions */
-  normal: v.pipe(
-    v.number(),
-    v.integer(),
-    v.minValue(0)
-  ) as v.GenericSchema<number>
+  normal: boundedInteger()
 });
 
 export interface ReactionCountDetails

@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { snowflake } from "@discordkit/core";
+import { snowflake, timestamp } from "@discordkit/core";
 import { subscriptionStatusSchema } from "./SubscriptionStatuses.js";
 
 /**
@@ -19,13 +19,13 @@ export const subscriptionSchema = v.object({
   /** List of SKUs that this user will be subscribed to at renewal */
   renewalSkuIds: v.nullable(v.array(snowflake)),
   /** Start of the current subscription period */
-  currentPeriodStart: v.pipe(v.string(), v.isoTimestamp()),
+  currentPeriodStart: timestamp,
   /** End of the current subscription period */
-  currentPeriodEnd: v.pipe(v.string(), v.isoTimestamp()),
+  currentPeriodEnd: timestamp,
   /** Current status of the subscription */
   status: subscriptionStatusSchema,
   /** When the subscription was canceled */
-  canceledAt: v.nullable(v.pipe(v.string(), v.isoTimestamp())),
+  canceledAt: v.nullable(timestamp),
   /** ISO3166-1 alpha-2 country code of the payment source used to purchase the subscription. Missing unless queried with a private OAuth scope. */
   country: v.exactOptional(v.pipe(v.string(), v.nonEmpty()))
 });

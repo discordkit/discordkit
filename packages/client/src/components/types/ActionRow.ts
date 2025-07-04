@@ -1,4 +1,5 @@
 import * as v from "valibot";
+import { boundedArray, boundedInteger } from "@discordkit/core";
 import { ComponentType } from "./ComponentType.js";
 import { buttonSchema } from "./Button.js";
 import { textInputSchema } from "./TextInput.js";
@@ -17,17 +18,10 @@ export const actionRowSchema = v.object({
   /** `1` for action row component */
   type: v.literal(ComponentType.ActionRow),
   /** Optional identifier for component */
-  id: v.exactOptional(
-    v.pipe(
-      v.number(),
-      v.integer(),
-      v.minValue(0),
-      v.maxValue(Number.MAX_SAFE_INTEGER)
-    )
-  ),
+  id: v.exactOptional(boundedInteger()),
   /** Up to 5 interactive button components or a single select component */
   components: v.union([
-    v.pipe(v.array(buttonSchema), v.maxLength(5)),
+    boundedArray(buttonSchema, { max: 5 }),
     textInputSchema,
     selectSchema
   ])

@@ -4,12 +4,13 @@ import {
   type Fetcher,
   toProcedure,
   toValidated,
-  snowflake
+  snowflake,
+  boundedString
 } from "@discordkit/core";
 
 export const deleteWebhookWithTokenSchema = v.object({
   webhook: snowflake,
-  token: v.pipe(v.string(), v.nonEmpty())
+  token: boundedString()
 });
 
 /**

@@ -1,23 +1,14 @@
-import type {
-  CustomSchema,
-  IntegerAction,
-  SchemaWithPipe,
-  TransformAction
-} from "valibot";
-import { integer, pipe, transform } from "valibot";
+import * as v from "valibot";
 import type { bitfield } from "./bitfield.js";
 
+/**
+ * Transforms a `bitfield` schema into an integer
+ */
 export const asInteger = (
   schema: ReturnType<typeof bitfield>
-): SchemaWithPipe<
-  readonly [
-    CustomSchema<string | number | bigint, string>,
-    TransformAction<string | number | bigint, number>,
-    IntegerAction<number, undefined>
-  ]
-> =>
-  pipe(
+): v.GenericSchema<number> =>
+  v.pipe(
     schema,
-    transform((val) => parseInt(val.toString(), 10)),
-    integer()
-  );
+    v.transform((val) => parseInt(val.toString(), 10)),
+    v.integer()
+  ) as v.GenericSchema<number>;

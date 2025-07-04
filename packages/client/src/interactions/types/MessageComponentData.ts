@@ -1,11 +1,12 @@
 import * as v from "valibot";
+import { boundedString } from "@discordkit/core";
 import { componentTypeSchema } from "../../components/types/ComponentType.js";
 import { selectOptionSchema } from "../../components/types/SelectOption.js";
 import { resolvedDataSchema } from "./ResolvedData.js";
 
 export const messageComponentData = v.object({
   /** custom_id of the component */
-  customId: v.pipe(v.string(), v.nonEmpty(), v.maxLength(100)),
+  customId: boundedString({ max: 100 }),
   /** type of the component */
   componentType: componentTypeSchema,
   /** Values the user selected in a select menu component */

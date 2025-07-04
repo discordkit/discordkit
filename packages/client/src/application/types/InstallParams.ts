@@ -1,5 +1,6 @@
 import * as v from "valibot";
 import { asDigits } from "@discordkit/core";
+import type { Scopes } from "./Scopes.js";
 import { scopesSchema } from "./Scopes.js";
 import { permissionFlag } from "../../permissions/Permissions.js";
 
@@ -7,9 +8,9 @@ import { permissionFlag } from "../../permissions/Permissions.js";
 
 export const installParamsSchema = v.object({
   /** Scopes to add the application to the server with */
-  scopes: v.array(scopesSchema),
+  scopes: v.array(scopesSchema) as v.GenericSchema<Scopes[]>,
   /** 	Permissions to request for the bot role */
-  permissions: asDigits(permissionFlag) as v.GenericSchema<string>
+  permissions: asDigits(permissionFlag)
 });
 
 export interface InstallParams

@@ -4,7 +4,8 @@ import {
   type Fetcher,
   toProcedure,
   toValidated,
-  snowflake
+  snowflake,
+  boundedString
 } from "@discordkit/core";
 import { type Stage, stageSchema } from "./types/Stage.js";
 import { stagePrivacyLevelSchema } from "./types/StagePrivacyLevel.js";
@@ -14,7 +15,7 @@ export const modifyStageInstanceSchema = v.object({
   body: v.partial(
     v.object({
       /** The topic of the Stage instance (1-120 characters) */
-      topic: v.pipe(v.string(), v.minLength(1), v.maxLength(120)),
+      topic: boundedString({ max: 120 }),
       /** The privacy level of the Stage instance */
       privacyLevel: stagePrivacyLevelSchema
     })

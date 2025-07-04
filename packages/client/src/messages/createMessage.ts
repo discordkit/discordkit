@@ -5,7 +5,9 @@ import {
   toProcedure,
   toValidated,
   snowflake,
-  asInteger
+  asInteger,
+  boundedArray,
+  boundedString
 } from "@discordkit/core";
 import { type Message, messageSchema } from "./types/Message.js";
 import { embedSchema } from "./types/Embed.js";
@@ -20,7 +22,7 @@ export const createMessageSchema = v.object({
   body: v.partial(
     v.object({
       /** Message contents (up to 2000 characters) */
-      content: v.pipe(v.string(), v.minLength(0), v.maxLength(2000)),
+      content: boundedString({ max: 20000 }),
       /** true if this is a TTS message */
       tts: v.boolean(),
       /** Embedded rich content (up to 6000 characters) */
@@ -32,7 +34,7 @@ export const createMessageSchema = v.object({
       /** Components to include with the message */
       components: messageComponentSchema,
       /** IDs of up to 3 stickers in the server to send in the message */
-      stickerIds: v.pipe(v.array(v.string()), v.maxLength(3)),
+      stickerIds: boundedArray(v.string(), { max: 3 }),
       /** Contents of the file being sent. See Uploading Files */
       files: v.unknown(),
       /** JSON-encoded body of non-file params, only for multipart/form-data requests. See Uploading Files */
@@ -40,7 +42,7 @@ export const createMessageSchema = v.object({
       /** Attachment objects with filename and description. See Uploading Files */
       attachments: v.array(v.partial(attachmentSchema)),
       /** Message flags combined as a bitfield (only SUPPRESS_EMBEDS can be set) */
-      flags: asInteger(messageFlag) as v.GenericSchema<number>
+      flags: asInteger(messageFlag)
     })
   )
 });

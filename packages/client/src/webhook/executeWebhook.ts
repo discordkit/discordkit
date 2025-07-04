@@ -6,7 +6,10 @@ import {
   toProcedure,
   toValidated,
   snowflake,
-  asInteger
+  asInteger,
+  boundedArray,
+  boundedString,
+  url
 } from "@discordkit/core";
 import { embedSchema } from "../messages/types/Embed.js";
 import { allowedMentionSchema } from "../messages/types/AllowedMention.js";
@@ -18,7 +21,7 @@ import { pollSchema } from "../poll/types/Poll.js";
 
 export const executeWebhookSchema = v.object({
   webhook: snowflake,
-  token: v.pipe(v.string(), v.minLength(1)),
+  token: boundedString(),
   params: v.exactOptional(
     v.partial(
       v.object({
@@ -34,22 +37,20 @@ export const executeWebhookSchema = v.object({
   body: v.partial(
     v.object({
       /** the message contents (up to 2000 characters) */
-      content: v.pipe(v.string(), v.minLength(1), v.maxLength(2000)),
+      content: boundedString({ max: 2000 }),
       /** override the default username of the webhook */
-      username: v.pipe(v.string(), v.minLength(1)),
+      username: boundedString(),
       /** override the default avatar of the webhook */
-      avatarUrl: v.pipe(v.string(), v.url()),
+      avatarUrl: url,
       /** true if this is a TTS message */
       tts: v.boolean(),
       /** embedded rich content */
-      embeds: v.pipe(
-        v.array(
-          v.object({
-            ...embedSchema.entries,
-            type: v.literal(EmbedType.RICH)
-          })
-        ),
-        v.maxLength(10)
+      embeds: boundedArray(
+        v.object({
+          ...embedSchema.entries,
+          type: v.literal(EmbedType.RICH)
+        }),
+        { max: 10 }
       ),
       /** allowed mentions for the message */
       allowedMentions: allowedMentionSchema,
@@ -62,9 +63,9 @@ export const executeWebhookSchema = v.object({
       /** attachment objects with filename and description */
       attachments: v.array(v.partial(attachmentSchema)),
       /** message flags combined as a bitfield (only SUPPRESS_EMBEDS can be set) */
-      flags: asInteger(messageFlag) as v.GenericSchema<number>,
+      flags: asInteger(messageFlag),
       /** name of thread to create (requires the webhook channel to be a forum channel) */
-      threadName: v.pipe(v.string(), v.nonEmpty()),
+      threadName: boundedString(),
       /** array of tag ids to apply to the thread (requires the webhook channel to be a forum or media channel) */
       appliedTags: v.array(snowflake),
       /** A poll! */

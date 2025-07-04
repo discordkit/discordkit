@@ -1,9 +1,4 @@
-import type {
-  GenericSchema,
-  GenericSchemaAsync,
-  InferInput,
-  InferOutput
-} from "valibot";
+import type * as v from "valibot";
 import type {
   AnyProcedureBuilder,
   MutationProcedure,
@@ -14,11 +9,11 @@ import type {
 import { isNonNullable } from "../utils/isNonNullable.js";
 import type { Fetcher } from "./methods.js";
 
-type Result<T = void> = T extends GenericSchema | GenericSchemaAsync
-  ? InferOutput<T>
+type Result<T = void> = T extends v.GenericSchema | v.GenericSchemaAsync
+  ? v.InferOutput<T>
   : T;
 
-type Schema = GenericSchema | GenericSchemaAsync;
+type Schema = v.GenericSchema | v.GenericSchemaAsync;
 
 type ProvedureDef<
   I extends Schema | null = null,
@@ -26,13 +21,13 @@ type ProvedureDef<
 > = I extends Schema
   ? O extends Schema
     ? {
-        input: InferInput<I>;
-        output: InferOutput<O>;
+        input: v.InferInput<I>;
+        output: v.InferOutput<O>;
         meta: unknown;
       }
-    : { input: InferInput<I>; output: undefined; meta: unknown }
+    : { input: v.InferInput<I>; output: undefined; meta: unknown }
   : O extends Schema
-    ? { input: undefined; output: InferOutput<O>; meta: unknown }
+    ? { input: undefined; output: v.InferOutput<O>; meta: unknown }
     : {
         input: undefined;
         output: undefined;
@@ -58,33 +53,42 @@ type BaseProcedure<
 export const toProcedure =
   <
     T extends ProcedureType,
-    I extends GenericSchema | GenericSchemaAsync | null = null,
-    O extends GenericSchema | GenericSchemaAsync | null = null
+    I extends Schema | null = null,
+    O extends Schema | null = null
   >(
     type: T,
-    fn: Fetcher<
-      I extends GenericSchema | GenericSchemaAsync ? I : null,
-      Result<O>
-    >,
+    fn: Fetcher<I extends Schema ? I : null, Result<O>>,
     input?: I,
     output?: O
   ) =>
-  (procedure: AnyProcedureBuilder): BaseProcedure<T, I, O> => {
-    if (isNonNullable(input) && isNonNullable(output)) {
+  (
+    procedure: AnyProcedureBuilder,
+    errorHandler?: (error: unknown) => void
+  ): BaseProcedure<T, I, O> => {
+    try {
+      if (isNonNullable(input) && isNonNullable(output)) {
+        // @ts-expect-error
+        return procedure
+          .input(input)
+          .output(output)
+          [type](async (opts: { input: unknown }) => fn(opts.input));
+      }
+      if (isNonNullable(input) && !isNonNullable(output)) {
+        // @ts-expect-error
+        return procedure.input(input)[type](async (opts) => fn(opts.input));
+      }
+      if (!isNonNullable(input) && isNonNullable(output)) {
+        // @ts-expect-error
+        return procedure.output(output)[type](async () => fn());
+      }
       // @ts-expect-error
-      return procedure
-        .input(input)
-        .output(output)
-        [type](async (opts: { input: unknown }) => fn(opts.input));
+      return procedure[type](async () => fn());
+    } catch (error: unknown) {
+      if (typeof errorHandler === `function`) {
+        errorHandler(error);
+      }
+      throw new Error(`Unhandled Procedure Error!`, {
+        cause: error
+      });
     }
-    if (isNonNullable(input) && !isNonNullable(output)) {
-      // @ts-expect-error
-      return procedure.input(input)[type](async (opts) => fn(opts.input));
-    }
-    if (!isNonNullable(input) && isNonNullable(output)) {
-      // @ts-expect-error
-      return procedure.output(output)[type](async () => fn());
-    }
-    // @ts-expect-error
-    return procedure[type](async () => fn());
   };

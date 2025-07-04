@@ -4,7 +4,8 @@ import {
   type Fetcher,
   toProcedure,
   toValidated,
-  snowflake
+  snowflake,
+  boundedString
 } from "@discordkit/core";
 import {
   soundboardSoundSchema,
@@ -17,13 +18,13 @@ export const modifyGuildSoundboardSoundSchema = v.object({
   body: v.partial(
     v.object({
       /** name of the soundboard sound (2-32 characters) */
-      name: v.pipe(v.string(), v.minLength(2), v.maxLength(32)),
+      name: boundedString({ min: 2, max: 32 }),
       /** the volume of the soundboard sound, from 0 to 1, defaults to 1 */
       volumn: v.nullable(v.pipe(v.number(), v.minValue(0), v.maxValue(1))),
       /** the id of the custom emoji for the soundboard sound */
       emojiId: v.nullable(snowflake),
       /** the unicode character of a standard emoji for the soundboard sound */
-      emojiName: v.nullable(v.pipe(v.string(), v.nonEmpty()))
+      emojiName: v.nullable(boundedString())
     })
   )
 });

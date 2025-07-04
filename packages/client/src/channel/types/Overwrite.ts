@@ -4,13 +4,13 @@ import { permissionFlag } from "../../permissions/Permissions.js";
 
 export const overwriteSchema = v.object({
   /** role or user id */
-  id: snowflake as v.GenericSchema<string>,
+  id: snowflake,
   /** either 0 (role) or 1 (member) */
-  type: v.union([v.literal(0), v.literal(1)]),
+  type: v.picklist([0, 1]),
   /** permission bit set */
-  allow: asDigits(permissionFlag) as v.GenericSchema<string>,
+  allow: asDigits(permissionFlag),
   /** permission bit set */
-  deny: asDigits(permissionFlag) as v.GenericSchema<string>
+  deny: asDigits(permissionFlag)
 });
 
 export interface Overwrite extends v.InferOutput<typeof overwriteSchema> {}

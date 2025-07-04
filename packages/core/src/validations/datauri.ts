@@ -1,4 +1,4 @@
-import { custom, is, nonEmpty, pipe, regex, string, title } from "valibot";
+import * as v from "valibot";
 
 export const datauriRegex =
   /^data:((?<mediaType>(?<mimeType>[a-z]+\/[a-z0-9-+.]+)(?<params>;[a-z0-9-.!#$%*+.{}|~`]+=[a-z0-9-.!#$%*+.{}()_|~`]+)*))?(?<encoding>;base64)?,(?<data>[a-z0-9!$&',()*+;=\-._~:@\/?%\s<>]*?)$/i;
@@ -32,10 +32,11 @@ export const toBase64 = (data: string): string =>
 /**
  * Validates that a string is a [data URI scheme](https://en.wikipedia.org/wiki/Data_URI_scheme)
  */
-export const datauri = pipe(
-  custom<string>(
-    (val) => is(pipe(string(), nonEmpty(), regex(datauriRegex)), val),
+export const datauri: v.GenericSchema<string> = v.pipe(
+  v.custom<string>(
+    (val) =>
+      typeof val === `string` && val.length > 0 && datauriRegex.test(val),
     `Invalid Data URI`
   ),
-  title(`datauri`)
+  v.title(`datauri`)
 );

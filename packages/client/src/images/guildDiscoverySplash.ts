@@ -1,10 +1,10 @@
 import * as v from "valibot";
-import { getAsset, snowflake } from "@discordkit/core";
+import { getAsset, snowflake, boundedString } from "@discordkit/core";
 import { imageSizes } from "./types/ImageSizes.js";
 
 export const guildDiscoverySplashSchema = v.object({
   guild: snowflake,
-  splash: v.pipe(v.string(), v.nonEmpty()),
+  splash: boundedString(),
   format: v.exactOptional(v.picklist([`png`, `jpg`, `webp`])),
   params: v.exactOptional(
     v.object({

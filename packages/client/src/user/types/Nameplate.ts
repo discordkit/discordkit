@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { snowflake } from "@discordkit/core";
+import { snowflake, boundedString, url } from "@discordkit/core";
 
 /**
  * The nameplate the user has.
@@ -8,9 +8,9 @@ export const nameplateSchema = v.object({
   /** id of the nameplate SKU */
   skuId: snowflake,
   /** path to the nameplate asset */
-  asset: v.pipe(v.string(), v.url()),
+  asset: url,
   /** the label of this nameplate. Currently unused */
-  label: v.pipe(v.string(), v.nonEmpty()),
+  label: boundedString(),
   /** background color of the nameplate */
   palette: v.picklist([
     `crimson`,

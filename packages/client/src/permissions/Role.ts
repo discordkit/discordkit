@@ -1,5 +1,11 @@
 import * as v from "valibot";
-import { snowflake, asDigits, asInteger } from "@discordkit/core";
+import {
+  snowflake,
+  asDigits,
+  asInteger,
+  boundedInteger,
+  boundedString
+} from "@discordkit/core";
 import { roleTagSchema } from "./RoleTag.js";
 import { permissionFlag } from "./Permissions.js";
 import { roleFlag } from "./RoleFlags.js";
@@ -11,19 +17,19 @@ export const roleSchema = v.object({
   /** role id */
   id: snowflake,
   /** role name */
-  name: v.pipe(v.string(), v.nonEmpty()),
+  name: boundedString(),
   /** integer representation of hexadecimal color code */
-  color: v.pipe(v.number(), v.integer()),
+  color: boundedInteger(),
   /** if this role is pinned in the user listing */
   hoist: v.boolean(),
   /** role icon hash */
-  icon: v.nullish(v.pipe(v.string(), v.nonEmpty())),
+  icon: v.nullish(boundedString()),
   /** role unicode emoji */
-  unicodeEmoji: v.nullish(v.pipe(v.string(), v.nonEmpty())),
+  unicodeEmoji: v.nullish(boundedString()),
   /** position of this role */
-  position: v.pipe(v.number(), v.integer()),
+  position: boundedInteger(),
   /** permission bit set */
-  permissions: asDigits(permissionFlag) as v.GenericSchema<string>,
+  permissions: asDigits(permissionFlag),
   /** whether this role is managed by an integration */
   managed: v.boolean(),
   /** whether this role is mentionable */
@@ -31,7 +37,7 @@ export const roleSchema = v.object({
   /** the tags this role has */
   tags: v.exactOptional(v.array(roleTagSchema)),
   /** role flags combined as a bitfield */
-  flags: asInteger(roleFlag) as v.GenericSchema<number>
+  flags: asInteger(roleFlag)
 });
 
 export interface Role extends v.InferOutput<typeof roleSchema> {}

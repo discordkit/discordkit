@@ -15,11 +15,11 @@ export const metadata: Metadata = {
 const RootLayout: React.FC<{ readonly children: React.ReactNode }> = ({
   children
 }) => (
-  <html lang="en">
-    <body className={inter.className}>
-      <TrpcProvider>{children}</TrpcProvider>
-    </body>
-  </html>
+  <TrpcProvider>
+    <html lang="en">
+      <body className={inter.className}>{children}</body>
+    </html>
+  </TrpcProvider>
 );
 
 export default RootLayout;

@@ -4,7 +4,8 @@ import {
   type Fetcher,
   toProcedure,
   toValidated,
-  snowflake
+  snowflake,
+  timestamp
 } from "@discordkit/core";
 import type { VoiceState } from "./types/VoiceState.js";
 
@@ -17,7 +18,7 @@ export const modifyCurrentUserVoiceStateSchema = v.object({
       /** toggles the user's suppress state */
       suppress: v.boolean(),
       /** sets the user's request to speak */
-      requestToSpeakTimestamp: v.pipe(v.string(), v.isoTimestamp())
+      requestToSpeakTimestamp: timestamp
     })
   )
 });

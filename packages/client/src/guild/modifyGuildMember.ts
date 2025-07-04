@@ -5,7 +5,8 @@ import {
   toProcedure,
   toValidated,
   snowflake,
-  asInteger
+  asInteger,
+  timestamp
 } from "@discordkit/core";
 import { memberSchema, type Member } from "./types/Member.js";
 import { guildMemberFlag } from "./types/GuildMemberFlags.js";
@@ -26,9 +27,7 @@ export const modifyGuildMemberSchema = v.object({
       /** id of channel to move user to (if they are connected to voice) (Requires `MOVE_MEMBERS` permission) */
       channelId: v.nullish(snowflake),
       /** when the user's timeout will expire and the user will be able to communicate in the guild again (up to 28 days in the future), set to null to remove timeout. Will throw a 403 error if the user has the `ADMINISTRATOR` permission or is the owner of the guild (Requires `MODERATE_MEMBERS` permission) */
-      communicationDisabledUntil: v.nullish(
-        v.pipe(v.string(), v.isoTimestamp())
-      ),
+      communicationDisabledUntil: v.nullish(timestamp),
       /** guild member flags */
       flags: v.nullish(asInteger(guildMemberFlag) as v.GenericSchema<number>)
     })

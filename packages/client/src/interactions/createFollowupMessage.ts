@@ -5,7 +5,9 @@ import {
   toProcedure,
   toValidated,
   snowflake,
-  asInteger
+  asInteger,
+  boundedString,
+  boundedArray
 } from "@discordkit/core";
 import { embedSchema } from "../messages/types/Embed.js";
 import { allowedMentionSchema } from "../messages/types/AllowedMention.js";
@@ -16,22 +18,20 @@ import { messageFlag } from "../messages/types/MessageFlag.js";
 
 export const createFollowupMessageSchema = v.object({
   application: snowflake,
-  token: v.pipe(v.string(), v.nonEmpty()),
+  token: boundedString(),
   body: v.partial(
     v.object({
       /** the message contents (up to 2000 characters) */
-      content: v.pipe(v.string(), v.nonEmpty(), v.maxLength(2000)),
+      content: boundedString({ max: 2000 }),
       /** true if this is a TTS message */
       tts: v.boolean(),
       /** embedded rich content */
-      embeds: v.pipe(
-        v.array(
-          v.object({
-            ...embedSchema.entries,
-            type: v.literal(EmbedType.RICH)
-          })
-        ),
-        v.maxLength(10)
+      embeds: boundedArray(
+        v.object({
+          ...embedSchema.entries,
+          type: v.literal(EmbedType.RICH)
+        }),
+        { max: 10 }
       ),
       /** allowed mentions for the message */
       allowedMentions: allowedMentionSchema,
@@ -42,9 +42,9 @@ export const createFollowupMessageSchema = v.object({
       /** attachment objects with filename and description */
       attachments: v.array(v.partial(attachmentSchema)),
       /** message flags combined as a bitfield */
-      flags: asInteger(messageFlag) as v.GenericSchema<number>,
+      flags: asInteger(messageFlag),
       /** name of thread to create (requires the webhook channel to be a forum channel) */
-      threadName: v.pipe(v.string(), v.nonEmpty())
+      threadName: boundedString()
     })
   )
 });

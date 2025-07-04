@@ -5,7 +5,9 @@ import {
   type Fetcher,
   toProcedure,
   toValidated,
-  snowflake
+  snowflake,
+  boundedString,
+  boundedArray
 } from "@discordkit/core";
 import { embedSchema } from "../messages/types/Embed.js";
 import { allowedMentionSchema } from "../messages/types/AllowedMention.js";
@@ -19,7 +21,7 @@ import {
 
 export const editOriginalInteractionResponseSchema = v.object({
   application: snowflake,
-  token: v.pipe(v.string(), v.nonEmpty()),
+  token: boundedString(),
   params: v.exactOptional(
     v.partial(
       v.object({
@@ -31,16 +33,14 @@ export const editOriginalInteractionResponseSchema = v.object({
   body: v.partial(
     v.object({
       /** the message contents (up to 2000 characters) */
-      content: v.pipe(v.string(), v.minLength(1), v.maxLength(2000)),
+      content: boundedString({ max: 2000 }),
       /** embedded `rich` content */
-      embeds: v.pipe(
-        v.array(
-          v.object({
-            ...embedSchema.entries,
-            type: v.literal(EmbedType.RICH)
-          })
-        ),
-        v.maxLength(10)
+      embeds: boundedArray(
+        v.object({
+          ...embedSchema.entries,
+          type: v.literal(EmbedType.RICH)
+        }),
+        { max: 10 }
       ),
       /** allowed mentions for the message */
       allowedMentions: allowedMentionSchema,

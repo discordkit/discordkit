@@ -1,6 +1,12 @@
 import * as v from "valibot";
-import { snowflake, asDigits } from "@discordkit/core";
+import {
+  snowflake,
+  asDigits,
+  boundedString,
+  boundedInteger
+} from "@discordkit/core";
 import { memberSchema } from "../../guild/types/Member.js";
+import type { Locales } from "../../application/types/Locales.js";
 import { localesSchema } from "../../application/types/Locales.js";
 import { channelSchema } from "../../channel/types/Channel.js";
 import { messageSchema } from "../../messages/types/Message.js";
@@ -37,17 +43,17 @@ export const interactionSchema = v.object({
   /** User object for the invoking user, if invoked in a DM */
   user: v.exactOptional(v.lazy<v.GenericSchema<User>>(() => userSchema)),
   /** Continuation token for responding to the interaction */
-  token: v.pipe(v.string(), v.nonEmpty()),
+  token: boundedString(),
   /** Read-only property, always 1 */
   version: v.literal(1),
   /** For components, the message they were attached to */
   message: v.exactOptional(v.lazy<v.GenericSchema>(() => messageSchema)),
   /** Bitwise set of permissions the app or bot has within the channel the interaction was sent from */
-  appPermissions: asDigits(permissionFlag) as v.GenericSchema<string>,
+  appPermissions: asDigits(permissionFlag),
   /** Selected language of the invoking user */
-  locale: v.exactOptional(localesSchema),
+  locale: v.exactOptional<v.GenericSchema<Locales>>(localesSchema),
   /** Guild's preferred locale, if invoked in a guild */
-  guildLocale: v.exactOptional(localesSchema),
+  guildLocale: v.exactOptional<v.GenericSchema<Locales>>(localesSchema),
   /** For monetized apps, any entitlements for the invoking user, representing access to premium SKUs */
   entitlements: v.array(entitlementSchema),
   authorizingIntegrationOwners: v.object(
@@ -59,7 +65,7 @@ export const interactionSchema = v.object({
   /** Context where the interaction was triggered from */
   context: v.exactOptional(interactionContextSchema),
   /** Attachment size limit in bytes */
-  attachmentSizeLimit: v.pipe(v.number(), v.integer(), v.minValue(0))
+  attachmentSizeLimit: boundedInteger()
 });
 
 export interface Interaction extends v.InferOutput<typeof interactionSchema> {}
