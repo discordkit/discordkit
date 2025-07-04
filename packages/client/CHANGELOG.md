@@ -1,5 +1,18 @@
 # @discordkit/client
 
+## 3.1.0
+
+### Minor Changes
+
+- [`357ff21`](https://github.com/discordkit/discordkit/commit/357ff21d9a3d7a7a3f9ef1be920720f8e34fa096) Thanks [@Saeris](https://github.com/Saeris)! - ## Reduce generated types complexity with new core schemas
+
+  This update is mainly internal refactoring. It introduces some new custom schemas to `@discordkit/core` that help to reduce overall type complexity in the generated types. This is accomplished by encapsulating common validation patterns into reusable schemas, which are then coerced to simple types which mask the complexity of their pipelines. As an end-user, this would make no difference in the runtime validation behavior, nor would it change the shape of the types you consume. However it does obfuscate the internal types of most schemas, which would make them a little more difficult to hook into and make modifications to.
+
+### Patch Changes
+
+- Updated dependencies [[`357ff21`](https://github.com/discordkit/discordkit/commit/357ff21d9a3d7a7a3f9ef1be920720f8e34fa096)]:
+  - @discordkit/core@3.1.0
+
 ## 3.0.2
 
 ### Patch Changes
