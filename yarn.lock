@@ -2190,12 +2190,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:^19.1.6":
-  version: 19.1.6
-  resolution: "@types/react-dom@npm:19.1.6"
+"@types/react-dom@npm:^19.1.7":
+  version: 19.1.7
+  resolution: "@types/react-dom@npm:19.1.7"
   peerDependencies:
     "@types/react": ^19.0.0
-  checksum: 10/b5b20b7f0797f34c5a11915b74dcf8b3b7a9da9fea90279975ce6f150ca5d31bb069dbb0838638a5e9e168098aa4bb4a6f61d078efa1bbb55d7f0bdfe47bb142
+  checksum: 10/a99465e5a17d40725dedb3708357f8998c57caab768cee0992b4bb7822ce7ed2ec697a5f426cb98d3397b020756a6e4b0986dc5f6f4254e13b3536afb38538e6
   languageName: node
   linkType: hard
 
@@ -3908,7 +3908,7 @@ __metadata:
     "@trpc/server": "npm:^11.4.3"
     "@types/node": "npm:^24.0.7"
     "@types/react": "npm:^19.1.8"
-    "@types/react-dom": "npm:^19.1.6"
+    "@types/react-dom": "npm:^19.1.7"
     "@vitest/coverage-v8": "npm:^3.2.4"
     eslint: "npm:^9.30.0"
     happy-dom: "npm:^18.0.1"
@@ -3916,7 +3916,7 @@ __metadata:
     nodejs-snowflake: "npm:^2.0.1"
     prettier: "npm:^3.6.2"
     react: "npm:^19.1.0"
-    react-dom: "npm:^19.1.0"
+    react-dom: "npm:^19.1.1"
     rimraf: "npm:^6.0.1"
     tsx: "npm:^4.20.3"
     turbo: "npm:2.5.4"
@@ -7519,14 +7519,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^19.1.0":
-  version: 19.1.0
-  resolution: "react-dom@npm:19.1.0"
+"react-dom@npm:^19.1.1":
+  version: 19.1.1
+  resolution: "react-dom@npm:19.1.1"
   dependencies:
     scheduler: "npm:^0.26.0"
   peerDependencies:
-    react: ^19.1.0
-  checksum: 10/c5b58605862c7b0bb044416b01c73647bb8e89717fb5d7a2c279b11815fb7b49b619fe685c404e59f55eb52c66831236cc565c25ee1c2d042739f4a2cc538aa2
+    react: ^19.1.1
+  checksum: 10/9005415d2175b1f1eb4a544ad04afb29691bb7b6dd43bbdaa09932146b310b73bd4552bc772ad78fa481f409eada1560cf887606c83c1a53a922c1e30f1b3a34
   languageName: node
   linkType: hard
 
@@ -9820,12 +9820,12 @@ __metadata:
     "@trpc/react-query": "npm:^11.4.3"
     "@types/node": "npm:^24.0.7"
     "@types/react": "npm:^19.1.8"
-    "@types/react-dom": "npm:^19.1.6"
+    "@types/react-dom": "npm:^19.1.7"
     autoprefixer: "npm:^10.4.21"
     next: "npm:^15.3.4"
     postcss: "npm:^8.5.6"
     react: "npm:^19.1.0"
-    react-dom: "npm:^19.1.0"
+    react-dom: "npm:^19.1.1"
     tailwindcss: "npm:^4.1.11"
     typescript: "npm:^5.8.3"
     valibot: "npm:^1.1.0"
