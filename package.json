@@ -34,7 +34,7 @@
     "@changesets/cli": "^2.29.5",
     "@faker-js/faker": "^9.8.0",
     "@saeris/eslint-config": "^3.1.2",
-    "@tanstack/react-query": "^5.81.5",
+    "@tanstack/react-query": "^5.85.6",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.3.0",
     "@trpc/server": "^11.4.3",
