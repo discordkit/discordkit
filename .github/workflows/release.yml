@@ -40,7 +40,7 @@ jobs:
           version: yarn changeset version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
 
       - name: Announce new release to Discord Channel
         uses: ./apps/webhook-action
