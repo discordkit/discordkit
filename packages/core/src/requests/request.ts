@@ -17,20 +17,15 @@ export const request = async <T>(
 
   const json = (): string | null | undefined => {
     try {
-      return body ? JSON.stringify(toSnakeKeys(body)) : body; //?
-    } catch (err) {
+      return body ? JSON.stringify(toSnakeKeys(body)) : body;
+    } catch (cause) {
       console.error(`Received malformed request body:\n\n`, { body });
-      throw new Error(`Failed to stringify request body!`, err);
+      throw new Error(`Failed to stringify request body!`, { cause });
     }
   };
 
-  const res = await fetch(resource.toString(), {
-    method,
-    body: json(),
-    headers: {
-      Authorization: token
-    }
-  });
+  // Queue the request through the rate limiter
+  const res = await discord.queueRequest(resource, method, json());
 
   if (!res.ok) {
     throw new Error(

@@ -5,3 +5,4 @@ export * from "./methods.js";
 export * from "./toProcedure.js";
 export * from "./toQuery.js";
 export * from "./toValidated.js";
+export * from "./verifyKey.js";
