@@ -1,7 +1,7 @@
 {
   "name": "@discordkit/core",
   "description": "Core utility functions for Discordkit",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "license": "MIT",
   "author": "Drake Costa <drake@saeris.gg> (https://saeris.gg)",
   "keywords": [
