@@ -17,8 +17,8 @@
     "target": "ESNext",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "baseUrl": ".",
     "paths": {
+      "*": ["../../*"],
       "#mock-utils": ["./scripts/mock-utils.ts"],
       "#test-utils": ["./scripts/test-utils.ts"]
     },
