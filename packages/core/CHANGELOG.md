@@ -1,5 +1,11 @@
 # @discordkit/core
 
+## 3.2.0
+
+### Minor Changes
+
+- [#47](https://github.com/discordkit/discordkit/pull/47) [`1a9de57`](https://github.com/discordkit/discordkit/commit/1a9de5746861831bfc0c24c5237b98d9ae45ca6c) Thanks [@Saeris](https://github.com/Saeris)! - Add request queue process with automatic rate limit throttling
+
 ## 3.1.0
 
 ### Minor Changes
