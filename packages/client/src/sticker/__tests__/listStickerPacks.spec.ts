@@ -1,12 +1,7 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
-import {
-  listStickerPacksProcedure,
-  listStickerPacksQuery,
-  listStickerPacksSafe,
-  stickerPacksSchema
-} from "../listStickerPacks.js";
+import { stickerPacksSchema, listStickerPacks } from "../listStickerPacks.js";
 
 describe(`listStickerPacks`, { repeats: 5 }, () => {
   const { expected } = mockUtils.request.get(
@@ -15,19 +10,9 @@ describe(`listStickerPacks`, { repeats: 5 }, () => {
     stickerPacksSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(listStickerPacksSafe()).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
-    await expect(runProcedure(listStickerPacksProcedure)()).resolves.toEqual(
-      expected
-    );
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(listStickerPacksQuery);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
+  it(`validates input, fetches, and validates output`, async () => {
+    await expect(
+      toValidated(listStickerPacks, null, stickerPacksSchema)()
+    ).resolves.toEqual(expected);
   });
 });

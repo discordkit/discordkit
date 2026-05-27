@@ -1,12 +1,9 @@
+import { toValidated } from "@discordkit/core";
 import * as v from "valibot";
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
-import { waitFor } from "@testing-library/dom";
 import { lobbySchema } from "../types/Lobby.js";
 import {
   unlinkChannelFromLobby,
-  unlinkChannelFromLobbyProcedure,
-  unlinkChannelFromLobbySafe,
   unlinkChannelFromLobbySchema
 } from "../unlinkChannelFromLobby.js";
 
@@ -17,20 +14,13 @@ describe(`unlinkChannelFromLobby`, { repeats: 5 }, () => {
     v.omit(lobbySchema, [`linkedChannel`])
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(unlinkChannelFromLobbySafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(unlinkChannelFromLobbyProcedure)(config)
+      toValidated(
+        unlinkChannelFromLobby,
+        unlinkChannelFromLobbySchema,
+        v.omit(lobbySchema, [`linkedChannel`])
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(unlinkChannelFromLobby);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

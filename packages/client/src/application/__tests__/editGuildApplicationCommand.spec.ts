@@ -1,10 +1,8 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
 import {
   editGuildApplicationCommand,
-  editGuildApplicationCommandProcedure,
-  editGuildApplicationCommandSafe,
   editGuildApplicationCommandSchema
 } from "../editGuildApplicationCommand.js";
 import { applicationCommandSchema } from "../../application-commands/types/ApplicationCommand.js";
@@ -16,22 +14,13 @@ describe(`editGuildApplicationCommand`, { repeats: 5 }, () => {
     applicationCommandSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(editGuildApplicationCommandSafe(config)).resolves.toEqual(
-      expected
-    );
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(editGuildApplicationCommandProcedure)(config)
+      toValidated(
+        editGuildApplicationCommand,
+        editGuildApplicationCommandSchema,
+        applicationCommandSchema
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(editGuildApplicationCommand);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

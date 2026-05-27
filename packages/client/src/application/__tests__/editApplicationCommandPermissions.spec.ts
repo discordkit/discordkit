@@ -1,10 +1,8 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
 import {
   editApplicationCommandPermissions,
-  editApplicationCommandPermissionsProcedure,
-  editApplicationCommandPermissionsSafe,
   editApplicationCommandPermissionsSchema
 } from "../editApplicationCommandPermissions.js";
 import { guildApplicationCommandPermissionsSchema } from "../../application-commands/types/GuildApplicationCommandPermissions.js";
@@ -16,22 +14,13 @@ describe(`editApplicationCommandPermissions`, { repeats: 5 }, () => {
     guildApplicationCommandPermissionsSchema
   );
 
-  it(`can be used standalone`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      editApplicationCommandPermissionsSafe(config)
+      toValidated(
+        editApplicationCommandPermissions,
+        editApplicationCommandPermissionsSchema,
+        guildApplicationCommandPermissionsSchema
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
-    await expect(
-      runProcedure(editApplicationCommandPermissionsProcedure)(config)
-    ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(editApplicationCommandPermissions);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

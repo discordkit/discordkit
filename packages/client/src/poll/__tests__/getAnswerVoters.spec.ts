@@ -1,13 +1,7 @@
+import { toValidated } from "@discordkit/core";
 import * as v from "valibot";
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
-import { waitFor } from "@testing-library/dom";
-import {
-  getAnswerVotersProcedure,
-  getAnswerVotersQuery,
-  getAnswerVotersSafe,
-  getAnswerVotersSchema
-} from "../getAnswerVoters.js";
+import { getAnswerVotersSchema, getAnswerVoters } from "../getAnswerVoters.js";
 import { userSchema } from "../../user/types/User.js";
 
 describe(`getAnswerVoters`, { repeats: 5 }, () => {
@@ -19,19 +13,15 @@ describe(`getAnswerVoters`, { repeats: 5 }, () => {
     })
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(getAnswerVotersSafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(getAnswerVotersProcedure)(config)
+      toValidated(
+        getAnswerVoters,
+        getAnswerVotersSchema,
+        v.object({
+          users: v.array(userSchema)
+        })
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(getAnswerVotersQuery, config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

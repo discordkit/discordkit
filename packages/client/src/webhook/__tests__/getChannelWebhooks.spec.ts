@@ -1,13 +1,10 @@
+import { toValidated } from "@discordkit/core";
 import * as v from "valibot";
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
-import { waitFor } from "@testing-library/dom";
 import { webhookSchema } from "../types/Webhook.js";
 import {
-  getChannelWebhooksProcedure,
-  getChannelWebhooksQuery,
-  getChannelWebhooksSafe,
-  getChannelWebhooksSchema
+  getChannelWebhooksSchema,
+  getChannelWebhooks
 } from "../getChannelWebhooks.js";
 
 describe(`getChannelWebhooks`, { repeats: 5 }, () => {
@@ -17,19 +14,13 @@ describe(`getChannelWebhooks`, { repeats: 5 }, () => {
     v.pipe(v.array(webhookSchema), v.length(1))
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(getChannelWebhooksSafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(getChannelWebhooksProcedure)(config)
+      toValidated(
+        getChannelWebhooks,
+        getChannelWebhooksSchema,
+        v.pipe(v.array(webhookSchema), v.length(1))
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(getChannelWebhooksQuery, config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

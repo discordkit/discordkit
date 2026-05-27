@@ -1,10 +1,8 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
 import {
   groupDMRemoveRecipient,
-  groupDMRemoveRecipientProcedure,
-  groupDMRemoveRecipientSafe,
   groupDMRemoveRecipientSchema
 } from "../groupDMRemoveRecipient.js";
 
@@ -14,19 +12,9 @@ describe(`groupDMRemoveRecipient`, { repeats: 5 }, () => {
     groupDMRemoveRecipientSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(groupDMRemoveRecipientSafe(config)).resolves.not.toThrow();
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(groupDMRemoveRecipientProcedure)(config)
+      toValidated(groupDMRemoveRecipient, groupDMRemoveRecipientSchema)(config)
     ).resolves.not.toThrow();
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(groupDMRemoveRecipient);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
   });
 });

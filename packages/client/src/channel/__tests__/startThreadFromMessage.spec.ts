@@ -1,10 +1,8 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
 import {
   startThreadFromMessage,
-  startThreadFromMessageProcedure,
-  startThreadFromMessageSafe,
   startThreadFromMessageSchema
 } from "../startThreadFromMessage.js";
 import { threadChannelSchema } from "../types/Channel.js";
@@ -16,20 +14,13 @@ describe(`startThreadFromMessage`, { repeats: 5 }, () => {
     threadChannelSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(startThreadFromMessageSafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(startThreadFromMessageProcedure)(config)
+      toValidated(
+        startThreadFromMessage,
+        startThreadFromMessageSchema,
+        threadChannelSchema
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(startThreadFromMessage);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

@@ -1,10 +1,8 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
 import {
   modifyAutoModerationRule,
-  modifyAutoModerationRuleProcedure,
-  modifyAutoModerationRuleSafe,
   modifyAutoModerationRuleSchema
 } from "../modifyAutoModerationRule.js";
 import { moderationRuleSchema } from "../types/ModerationRule.js";
@@ -17,22 +15,13 @@ describe(`modifyAutoModerationRule`, { repeats: 5 }, () => {
     { seed: 1 }
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(modifyAutoModerationRuleSafe(config)).resolves.toEqual(
-      expected
-    );
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(modifyAutoModerationRuleProcedure)(config)
+      toValidated(
+        modifyAutoModerationRule,
+        modifyAutoModerationRuleSchema,
+        moderationRuleSchema
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(modifyAutoModerationRule);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

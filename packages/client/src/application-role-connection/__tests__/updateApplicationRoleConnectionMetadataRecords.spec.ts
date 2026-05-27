@@ -1,13 +1,10 @@
+import { toValidated } from "@discordkit/core";
 import * as v from "valibot";
 import { mockUtils } from "#mocks";
-import { runMutation, runProcedure } from "#test-utils";
-import { waitFor } from "@testing-library/dom";
 import { applicationRoleConnectionMetadataSchema } from "../types/ApplicationRoleConnectionMetadata.js";
 import {
-  updateApplicationRoleConnectionMetadataRecordsProcedure,
   updateApplicationRoleConnectionMetadataRecords,
-  updateApplicationRoleConnectionMetadataRecordsSchema,
-  updateApplicationRoleConnectionMetadataRecordsSafe
+  updateApplicationRoleConnectionMetadataRecordsSchema
 } from "../updateApplicationRoleConnectionMetadataRecords.js";
 
 describe(
@@ -20,27 +17,14 @@ describe(
       v.pipe(v.array(applicationRoleConnectionMetadataSchema), v.length(1))
     );
 
-    it(`can be used standalone`, async () => {
+    it(`validates input, fetches, and validates output`, async () => {
       await expect(
-        updateApplicationRoleConnectionMetadataRecordsSafe(config)
+        toValidated(
+          updateApplicationRoleConnectionMetadataRecords,
+          updateApplicationRoleConnectionMetadataRecordsSchema,
+          v.pipe(v.array(applicationRoleConnectionMetadataSchema), v.length(1))
+        )(config)
       ).resolves.toEqual(expected);
-    });
-
-    it(`is tRPC compatible`, async () => {
-      await expect(
-        runProcedure(updateApplicationRoleConnectionMetadataRecordsProcedure)(
-          config
-        )
-      ).resolves.toEqual(expected);
-    });
-
-    it(`is react-query compatible`, async () => {
-      const { result } = runMutation(
-        updateApplicationRoleConnectionMetadataRecords
-      );
-      result.current.mutate(config);
-      await waitFor(() => expect(result.current.isSuccess).toBe(true));
-      expect(result.current.data).toEqual(expected);
     });
   }
 );

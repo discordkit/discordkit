@@ -1,12 +1,7 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
-import {
-  getThreadMemberProcedure,
-  getThreadMemberQuery,
-  getThreadMemberSafe,
-  getThreadMemberSchema
-} from "../getThreadMember.js";
+import { getThreadMemberSchema, getThreadMember } from "../getThreadMember.js";
 import { threadMemberSchema } from "../types/ThreadMember.js";
 
 describe(`getThreadMember`, { repeats: 5 }, () => {
@@ -16,19 +11,13 @@ describe(`getThreadMember`, { repeats: 5 }, () => {
     threadMemberSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(getThreadMemberSafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(getThreadMemberProcedure)(config)
+      toValidated(
+        getThreadMember,
+        getThreadMemberSchema,
+        threadMemberSchema
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(getThreadMemberQuery, config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

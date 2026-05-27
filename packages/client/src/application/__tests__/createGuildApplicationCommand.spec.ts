@@ -1,11 +1,9 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
 import {
-  createGuildApplicationCommandProcedure,
   createGuildApplicationCommand,
-  createGuildApplicationCommandSchema,
-  createGuildApplicationCommandSafe
+  createGuildApplicationCommandSchema
 } from "../createGuildApplicationCommand.js";
 import { applicationCommandSchema } from "../../application-commands/types/ApplicationCommand.js";
 
@@ -16,22 +14,13 @@ describe(`createGuildApplicationCommand`, { repeats: 5 }, () => {
     applicationCommandSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(createGuildApplicationCommandSafe(config)).resolves.toEqual(
-      expected
-    );
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(createGuildApplicationCommandProcedure)(config)
+      toValidated(
+        createGuildApplicationCommand,
+        createGuildApplicationCommandSchema,
+        applicationCommandSchema
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(createGuildApplicationCommand);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

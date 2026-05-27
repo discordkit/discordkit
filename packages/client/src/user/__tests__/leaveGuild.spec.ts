@@ -1,12 +1,7 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
-import {
-  leaveGuild,
-  leaveGuildProcedure,
-  leaveGuildSafe,
-  leaveGuildSchema
-} from "../leaveGuild.js";
+import { leaveGuild, leaveGuildSchema } from "../leaveGuild.js";
 
 describe(`leaveGuild`, { repeats: 5 }, () => {
   const { config } = mockUtils.request.delete(
@@ -14,19 +9,9 @@ describe(`leaveGuild`, { repeats: 5 }, () => {
     leaveGuildSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(leaveGuildSafe(config)).resolves.not.toThrow();
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(leaveGuildProcedure)(config)
+      toValidated(leaveGuild, leaveGuildSchema)(config)
     ).resolves.not.toThrow();
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(leaveGuild);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
   });
 });

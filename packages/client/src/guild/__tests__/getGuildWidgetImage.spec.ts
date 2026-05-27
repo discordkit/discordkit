@@ -1,11 +1,9 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
 import {
-  getGuildWidgetImageProcedure,
-  getGuildWidgetImageQuery,
-  getGuildWidgetImageSafe,
-  getGuildWidgetImageSchema
+  getGuildWidgetImageSchema,
+  getGuildWidgetImage
 } from "../getGuildWidgetImage.js";
 
 describe(`getGuildWidgetImage`, { repeats: 5 }, () => {
@@ -14,18 +12,9 @@ describe(`getGuildWidgetImage`, { repeats: 5 }, () => {
     getGuildWidgetImageSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(getGuildWidgetImageSafe(config)).resolves.not.toThrow();
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(getGuildWidgetImageProcedure)(config)
+      toValidated(getGuildWidgetImage, getGuildWidgetImageSchema)(config)
     ).resolves.not.toThrow();
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(getGuildWidgetImageQuery, config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
   });
 });

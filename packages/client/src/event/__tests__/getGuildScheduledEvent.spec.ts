@@ -1,11 +1,9 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
 import {
-  getGuildScheduledEventProcedure,
-  getGuildScheduledEventQuery,
-  getGuildScheduledEventSafe,
-  getGuildScheduledEventSchema
+  getGuildScheduledEventSchema,
+  getGuildScheduledEvent
 } from "../getGuildScheduledEvent.js";
 import { scheduledEventSchema } from "../types/ScheduledEvent.js";
 
@@ -16,19 +14,13 @@ describe(`getGuildScheduledEvent`, { repeats: 5 }, () => {
     scheduledEventSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(getGuildScheduledEventSafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(getGuildScheduledEventProcedure)(config)
+      toValidated(
+        getGuildScheduledEvent,
+        getGuildScheduledEventSchema,
+        scheduledEventSchema
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(getGuildScheduledEventQuery, config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

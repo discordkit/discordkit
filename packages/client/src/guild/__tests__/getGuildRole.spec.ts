@@ -1,12 +1,7 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
-import {
-  getGuildRoleProcedure,
-  getGuildRoleQuery,
-  getGuildRoleSafe,
-  getGuildRoleSchema
-} from "../getGuildRole.js";
+import { getGuildRoleSchema, getGuildRole } from "../getGuildRole.js";
 import { roleSchema } from "../../permissions/Role.js";
 
 describe(`getGuildRole`, { repeats: 5 }, () => {
@@ -16,19 +11,9 @@ describe(`getGuildRole`, { repeats: 5 }, () => {
     roleSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(getGuildRoleSafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
-    await expect(runProcedure(getGuildRoleProcedure)(config)).resolves.toEqual(
-      expected
-    );
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(getGuildRoleQuery, config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
+  it(`validates input, fetches, and validates output`, async () => {
+    await expect(
+      toValidated(getGuildRole, getGuildRoleSchema, roleSchema)(config)
+    ).resolves.toEqual(expected);
   });
 });

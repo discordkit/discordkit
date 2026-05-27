@@ -1,13 +1,10 @@
+import { toValidated } from "@discordkit/core";
 import * as v from "valibot";
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
-import { waitFor } from "@testing-library/dom";
 import { guildTemplateSchema } from "../types/GuildTemplate.js";
 import {
-  getGuildTemplatesProcedure,
-  getGuildTemplatesQuery,
-  getGuildTemplatesSafe,
-  getGuildTemplatesSchema
+  getGuildTemplatesSchema,
+  getGuildTemplates
 } from "../getGuildTemplates.js";
 
 describe(`getGuildTemplates`, { repeats: 5 }, () => {
@@ -17,19 +14,13 @@ describe(`getGuildTemplates`, { repeats: 5 }, () => {
     v.pipe(v.array(guildTemplateSchema), v.length(1))
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(getGuildTemplatesSafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(getGuildTemplatesProcedure)(config)
+      toValidated(
+        getGuildTemplates,
+        getGuildTemplatesSchema,
+        v.pipe(v.array(guildTemplateSchema), v.length(1))
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(getGuildTemplatesQuery, config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

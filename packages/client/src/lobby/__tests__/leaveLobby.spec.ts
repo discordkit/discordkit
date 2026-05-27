@@ -1,12 +1,7 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
-import {
-  leaveLobby,
-  leaveLobbyProcedure,
-  leaveLobbySafe,
-  leaveLobbySchema
-} from "../leaveLobby.js";
+import { leaveLobby, leaveLobbySchema } from "../leaveLobby.js";
 
 describe(`leaveLobby`, { repeats: 5 }, () => {
   const { config } = mockUtils.request.delete(
@@ -14,19 +9,9 @@ describe(`leaveLobby`, { repeats: 5 }, () => {
     leaveLobbySchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(leaveLobbySafe(config)).resolves.not.toThrow();
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(leaveLobbyProcedure)(config)
+      toValidated(leaveLobby, leaveLobbySchema)(config)
     ).resolves.not.toThrow();
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(leaveLobby);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
   });
 });

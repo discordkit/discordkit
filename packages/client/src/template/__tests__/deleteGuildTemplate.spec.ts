@@ -1,10 +1,8 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
 import {
   deleteGuildTemplate,
-  deleteGuildTemplateProcedure,
-  deleteGuildTemplateSafe,
   deleteGuildTemplateSchema
 } from "../deleteGuildTemplate.js";
 import { guildTemplateSchema } from "../types/GuildTemplate.js";
@@ -16,20 +14,13 @@ describe(`deleteGuildTemplate`, { repeats: 5 }, () => {
     guildTemplateSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(deleteGuildTemplateSafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(deleteGuildTemplateProcedure)(config)
+      toValidated(
+        deleteGuildTemplate,
+        deleteGuildTemplateSchema,
+        guildTemplateSchema
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(deleteGuildTemplate);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

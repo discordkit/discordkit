@@ -1,10 +1,8 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
 import {
   groupDMAddRecipient,
-  groupDMAddRecipientProcedure,
-  groupDMAddRecipientSafe,
   groupDMAddRecipientSchema
 } from "../groupDMAddRecipient.js";
 
@@ -14,19 +12,9 @@ describe(`groupDMAddRecipient`, { repeats: 5 }, () => {
     groupDMAddRecipientSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(groupDMAddRecipientSafe(config)).resolves.not.toThrow();
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(groupDMAddRecipientProcedure)(config)
+      toValidated(groupDMAddRecipient, groupDMAddRecipientSchema)(config)
     ).resolves.not.toThrow();
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(groupDMAddRecipient);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
   });
 });

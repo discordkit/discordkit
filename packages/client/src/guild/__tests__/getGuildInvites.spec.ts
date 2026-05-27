@@ -1,14 +1,8 @@
+import { toValidated } from "@discordkit/core";
 import * as v from "valibot";
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
-import { waitFor } from "@testing-library/dom";
 import { inviteMetadataSchema } from "../../invite/types/InviteMetadata.js";
-import {
-  getGuildInvitesProcedure,
-  getGuildInvitesQuery,
-  getGuildInvitesSafe,
-  getGuildInvitesSchema
-} from "../getGuildInvites.js";
+import { getGuildInvitesSchema, getGuildInvites } from "../getGuildInvites.js";
 
 describe(`getGuildInvites`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.get(
@@ -17,19 +11,13 @@ describe(`getGuildInvites`, { repeats: 5 }, () => {
     v.pipe(v.array(inviteMetadataSchema), v.length(1))
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(getGuildInvitesSafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(getGuildInvitesProcedure)(config)
+      toValidated(
+        getGuildInvites,
+        getGuildInvitesSchema,
+        v.pipe(v.array(inviteMetadataSchema), v.length(1))
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(getGuildInvitesQuery, config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

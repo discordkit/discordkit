@@ -1,10 +1,8 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
 import {
   modifyCurrentUserVoiceState,
-  modifyCurrentUserVoiceStateProcedure,
-  modifyCurrentUserVoiceStateSafe,
   modifyCurrentUserVoiceStateSchema
 } from "../modifyCurrentUserVoiceState.js";
 
@@ -14,21 +12,12 @@ describe(`modifyCurrentUserVoiceState`, { repeats: 5 }, () => {
     modifyCurrentUserVoiceStateSchema
   );
 
-  it(`can be used standalone`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      modifyCurrentUserVoiceStateSafe(config)
+      toValidated(
+        modifyCurrentUserVoiceState,
+        modifyCurrentUserVoiceStateSchema
+      )(config)
     ).resolves.not.toThrow();
-  });
-
-  it(`is tRPC compatible`, async () => {
-    await expect(
-      runProcedure(modifyCurrentUserVoiceStateProcedure)(config)
-    ).resolves.not.toThrow();
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(modifyCurrentUserVoiceState);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
   });
 });

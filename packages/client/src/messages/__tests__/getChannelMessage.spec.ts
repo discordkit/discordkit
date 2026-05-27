@@ -1,11 +1,9 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
 import {
-  getChannelMessageProcedure,
-  getChannelMessageQuery,
-  getChannelMessageSafe,
-  getChannelMessageSchema
+  getChannelMessageSchema,
+  getChannelMessage
 } from "../getChannelMessage.js";
 import { messageSchema } from "../types/Message.js";
 
@@ -16,19 +14,13 @@ describe(`getChannelMessage`, { repeats: 5 }, () => {
     messageSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(getChannelMessageSafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(getChannelMessageProcedure)(config)
+      toValidated(
+        getChannelMessage,
+        getChannelMessageSchema,
+        messageSchema
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(getChannelMessageQuery, config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

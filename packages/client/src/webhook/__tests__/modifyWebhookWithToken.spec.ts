@@ -1,12 +1,9 @@
+import { toValidated } from "@discordkit/core";
 import * as v from "valibot";
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
-import { waitFor } from "@testing-library/dom";
 import { webhookSchema } from "../types/Webhook.js";
 import {
   modifyWebhookWithToken,
-  modifyWebhookWithTokenProcedure,
-  modifyWebhookWithTokenSafe,
   modifyWebhookWithTokenSchema
 } from "../modifyWebhookWithToken.js";
 
@@ -17,20 +14,13 @@ describe(`modifyWebhookWithToken`, { repeats: 5 }, () => {
     v.omit(webhookSchema, [`user`])
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(modifyWebhookWithTokenSafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(modifyWebhookWithTokenProcedure)(config)
+      toValidated(
+        modifyWebhookWithToken,
+        modifyWebhookWithTokenSchema,
+        v.omit(webhookSchema, [`user`])
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(modifyWebhookWithToken);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

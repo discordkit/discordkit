@@ -1,12 +1,7 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
-import {
-  modifyChannel,
-  modifyChannelProcedure,
-  modifyChannelSafe,
-  modifyChannelSchema
-} from "../modifyChannel.js";
+import { modifyChannel, modifyChannelSchema } from "../modifyChannel.js";
 import { channelSchema } from "../types/Channel.js";
 
 describe(`modifyChannel`, { repeats: 5 }, () => {
@@ -16,20 +11,9 @@ describe(`modifyChannel`, { repeats: 5 }, () => {
     channelSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(modifyChannelSafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
-    await expect(runProcedure(modifyChannelProcedure)(config)).resolves.toEqual(
-      expected
-    );
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(modifyChannel);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
+  it(`validates input, fetches, and validates output`, async () => {
+    await expect(
+      toValidated(modifyChannel, modifyChannelSchema, channelSchema)(config)
+    ).resolves.toEqual(expected);
   });
 });

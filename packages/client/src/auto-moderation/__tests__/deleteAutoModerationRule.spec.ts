@@ -1,10 +1,8 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
 import {
   deleteAutoModerationRule,
-  deleteAutoModerationRuleProcedure,
-  deleteAutoModerationRuleSafe,
   deleteAutoModerationRuleSchema
 } from "../deleteAutoModerationRule.js";
 
@@ -14,19 +12,12 @@ describe(`deleteAutoModerationRule`, { repeats: 5 }, () => {
     deleteAutoModerationRuleSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(deleteAutoModerationRuleSafe(config)).resolves.not.toThrow();
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(deleteAutoModerationRuleProcedure)(config)
+      toValidated(
+        deleteAutoModerationRule,
+        deleteAutoModerationRuleSchema
+      )(config)
     ).resolves.not.toThrow();
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(deleteAutoModerationRule);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
   });
 });

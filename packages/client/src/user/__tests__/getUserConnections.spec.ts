@@ -1,11 +1,7 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
-import {
-  getUserConnectionsProcedure,
-  getUserConnectionsQuery,
-  getUserConnectionsSafe
-} from "../getUserConnections.js";
+import { getUserConnections } from "../getUserConnections.js";
 import { connectionSchema } from "../types/Connection.js";
 
 describe(`getUserConnections`, { repeats: 5 }, () => {
@@ -15,19 +11,9 @@ describe(`getUserConnections`, { repeats: 5 }, () => {
     connectionSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(getUserConnectionsSafe()).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
-    await expect(runProcedure(getUserConnectionsProcedure)()).resolves.toEqual(
-      expected
-    );
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(getUserConnectionsQuery);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
+  it(`validates input, fetches, and validates output`, async () => {
+    await expect(
+      toValidated(getUserConnections, null, connectionSchema)()
+    ).resolves.toEqual(expected);
   });
 });

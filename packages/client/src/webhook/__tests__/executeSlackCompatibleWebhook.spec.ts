@@ -1,10 +1,8 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
 import {
   executeSlackCompatibleWebhook,
-  executeSlackCompatibleWebhookProcedure,
-  executeSlackCompatibleWebhookSafe,
   executeSlackCompatibleWebhookSchema
 } from "../executeSlackCompatibleWebhook.js";
 
@@ -14,21 +12,12 @@ describe(`executeSlackCompatibleWebhook`, { repeats: 5 }, () => {
     executeSlackCompatibleWebhookSchema
   );
 
-  it(`can be used standalone`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      executeSlackCompatibleWebhookSafe(config)
+      toValidated(
+        executeSlackCompatibleWebhook,
+        executeSlackCompatibleWebhookSchema
+      )(config)
     ).resolves.not.toThrow();
-  });
-
-  it(`is tRPC compatible`, async () => {
-    await expect(
-      runProcedure(executeSlackCompatibleWebhookProcedure)(config)
-    ).resolves.not.toThrow();
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(executeSlackCompatibleWebhook);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
   });
 });

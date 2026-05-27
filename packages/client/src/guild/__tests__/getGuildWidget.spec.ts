@@ -1,12 +1,7 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
-import {
-  getGuildWidgetProcedure,
-  getGuildWidgetQuery,
-  getGuildWidgetSafe,
-  getGuildWidgetSchema
-} from "../getGuildWidget.js";
+import { getGuildWidgetSchema, getGuildWidget } from "../getGuildWidget.js";
 import { guildWidgetSchema } from "../types/GuildWidget.js";
 
 describe(`getGuildWidget`, { repeats: 5 }, () => {
@@ -16,19 +11,13 @@ describe(`getGuildWidget`, { repeats: 5 }, () => {
     guildWidgetSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(getGuildWidgetSafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(getGuildWidgetProcedure)(config)
+      toValidated(
+        getGuildWidget,
+        getGuildWidgetSchema,
+        guildWidgetSchema
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(getGuildWidgetQuery, config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

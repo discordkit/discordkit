@@ -1,10 +1,8 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
 import {
   startThreadInForumOrMediaChannel,
-  startThreadInForumOrMediaChannelProcedure,
-  startThreadInForumOrMediaChannelSafe,
   startThreadInForumOrMediaChannelSchema,
   threadInForumOrMediaChannelResponseSchema
 } from "../startThreadInForumOrMediaChannel.js";
@@ -16,22 +14,13 @@ describe(`startThreadInForumOrMediaChannel`, { repeats: 5 }, () => {
     threadInForumOrMediaChannelResponseSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(startThreadInForumOrMediaChannelSafe(config)).resolves.toEqual(
-      expected
-    );
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(startThreadInForumOrMediaChannelProcedure)(config)
+      toValidated(
+        startThreadInForumOrMediaChannel,
+        startThreadInForumOrMediaChannelSchema,
+        threadInForumOrMediaChannelResponseSchema
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(startThreadInForumOrMediaChannel);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

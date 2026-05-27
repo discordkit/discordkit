@@ -1,10 +1,8 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
 import {
   deleteWebhookMessage,
-  deleteWebhookMessageProcedure,
-  deleteWebhookMessageSafe,
   deleteWebhookMessageSchema
 } from "../deleteWebhookMessage.js";
 
@@ -14,19 +12,9 @@ describe(`deleteWebhookMessage`, { repeats: 5 }, () => {
     deleteWebhookMessageSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(deleteWebhookMessageSafe(config)).resolves.not.toThrow();
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(deleteWebhookMessageProcedure)(config)
+      toValidated(deleteWebhookMessage, deleteWebhookMessageSchema)(config)
     ).resolves.not.toThrow();
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(deleteWebhookMessage);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
   });
 });

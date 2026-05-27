@@ -1,11 +1,9 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
 import {
   getGlobalApplicationCommandSchema,
-  getGlobalApplicationCommandProcedure,
-  getGlobalApplicationCommandQuery,
-  getGlobalApplicationCommandSafe
+  getGlobalApplicationCommand
 } from "../getGlobalApplicationCommand.js";
 import { applicationCommandSchema } from "../../application-commands/types/ApplicationCommand.js";
 
@@ -16,21 +14,13 @@ describe(`getGlobalApplicationCommand`, { repeats: 5 }, () => {
     applicationCommandSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(getGlobalApplicationCommandSafe(config)).resolves.toEqual(
-      expected
-    );
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(getGlobalApplicationCommandProcedure)(config)
+      toValidated(
+        getGlobalApplicationCommand,
+        getGlobalApplicationCommandSchema,
+        applicationCommandSchema
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(getGlobalApplicationCommandQuery, config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

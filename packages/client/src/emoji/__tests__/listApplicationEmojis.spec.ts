@@ -1,13 +1,10 @@
+import { toValidated } from "@discordkit/core";
 import * as v from "valibot";
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
-import { waitFor } from "@testing-library/dom";
 import { emojiSchema } from "../types/Emoji.js";
 import {
-  listApplicationEmojisProcedure,
-  listApplicationEmojisQuery,
-  listApplicationEmojisSafe,
-  listApplicationEmojisSchema
+  listApplicationEmojisSchema,
+  listApplicationEmojis
 } from "../listApplicationEmojis.js";
 
 describe(`listApplicationEmojis`, { repeats: 5 }, () => {
@@ -17,19 +14,13 @@ describe(`listApplicationEmojis`, { repeats: 5 }, () => {
     v.object({ items: v.pipe(v.array(emojiSchema), v.length(1)) })
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(listApplicationEmojisSafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(listApplicationEmojisProcedure)(config)
+      toValidated(
+        listApplicationEmojis,
+        listApplicationEmojisSchema,
+        v.object({ items: v.pipe(v.array(emojiSchema), v.length(1)) })
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(listApplicationEmojisQuery, config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

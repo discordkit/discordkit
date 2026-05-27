@@ -1,11 +1,9 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
 import {
-  getSKUSubscriptionProcedure,
-  getSKUSubscriptionQuery,
-  getSKUSubscriptionSafe,
-  getSKUSubscriptionSchema
+  getSKUSubscriptionSchema,
+  getSKUSubscription
 } from "../getSKUSubscription.js";
 import { subscriptionSchema } from "../types/Subscription.js";
 
@@ -16,19 +14,13 @@ describe(`getSKUSubscription`, { repeats: 5 }, () => {
     subscriptionSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(getSKUSubscriptionSafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(getSKUSubscriptionProcedure)(config)
+      toValidated(
+        getSKUSubscription,
+        getSKUSubscriptionSchema,
+        subscriptionSchema
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(getSKUSubscriptionQuery, config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

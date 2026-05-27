@@ -1,10 +1,8 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
 import {
   deleteFollowupMessage,
-  deleteFollowupMessageProcedure,
-  deleteFollowupMessageSafe,
   deleteFollowupMessageSchema
 } from "../deleteFollowupMessage.js";
 
@@ -14,19 +12,9 @@ describe(`deleteFollowupMessage`, { repeats: 5 }, () => {
     deleteFollowupMessageSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(deleteFollowupMessageSafe(config)).resolves.not.toThrow();
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(deleteFollowupMessageProcedure)(config)
+      toValidated(deleteFollowupMessage, deleteFollowupMessageSchema)(config)
     ).resolves.not.toThrow();
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(deleteFollowupMessage);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
   });
 });

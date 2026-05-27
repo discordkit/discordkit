@@ -1,10 +1,8 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
 import {
   deleteGuildApplicationCommand,
-  deleteGuildApplicationCommandProcedure,
-  deleteGuildApplicationCommandSafe,
   deleteGuildApplicationCommandSchema
 } from "../deleteGuildApplicationCommand.js";
 
@@ -14,21 +12,12 @@ describe(`deleteGuildApplicationCommand`, { repeats: 5 }, () => {
     deleteGuildApplicationCommandSchema
   );
 
-  it(`can be used standalone`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      deleteGuildApplicationCommandSafe(config)
+      toValidated(
+        deleteGuildApplicationCommand,
+        deleteGuildApplicationCommandSchema
+      )(config)
     ).resolves.not.toThrow();
-  });
-
-  it(`is tRPC compatible`, async () => {
-    await expect(
-      runProcedure(deleteGuildApplicationCommandProcedure)(config)
-    ).resolves.not.toThrow();
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(deleteGuildApplicationCommand);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
   });
 });

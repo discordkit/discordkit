@@ -1,11 +1,9 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
 import {
-  getGuildOnboardingProcedure,
-  getGuildOnboardingQuery,
-  getGuildOnboardingSafe,
-  getGuildOnboardingSchema
+  getGuildOnboardingSchema,
+  getGuildOnboarding
 } from "../getGuildOnboarding.js";
 import { guildOnboardingSchema } from "../types/GuildOnboarding.js";
 
@@ -16,19 +14,13 @@ describe(`getGuildOnboarding`, { repeats: 5 }, () => {
     guildOnboardingSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(getGuildOnboardingSafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(getGuildOnboardingProcedure)(config)
+      toValidated(
+        getGuildOnboarding,
+        getGuildOnboardingSchema,
+        guildOnboardingSchema
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(getGuildOnboardingQuery, config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

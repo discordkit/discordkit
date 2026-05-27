@@ -1,12 +1,7 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
-import {
-  removeGuildBan,
-  removeGuildBanProcedure,
-  removeGuildBanSafe,
-  removeGuildBanSchema
-} from "../removeGuildBan.js";
+import { removeGuildBan, removeGuildBanSchema } from "../removeGuildBan.js";
 
 describe(`removeGuildBan`, { repeats: 5 }, () => {
   const { config } = mockUtils.request.delete(
@@ -14,19 +9,9 @@ describe(`removeGuildBan`, { repeats: 5 }, () => {
     removeGuildBanSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(removeGuildBanSafe(config)).resolves.not.toThrow();
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(removeGuildBanProcedure)(config)
+      toValidated(removeGuildBan, removeGuildBanSchema)(config)
     ).resolves.not.toThrow();
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(removeGuildBan);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
   });
 });

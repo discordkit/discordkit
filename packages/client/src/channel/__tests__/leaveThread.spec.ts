@@ -1,12 +1,7 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
-import {
-  leaveThread,
-  leaveThreadProcedure,
-  leaveThreadSafe,
-  leaveThreadSchema
-} from "../leaveThread.js";
+import { leaveThread, leaveThreadSchema } from "../leaveThread.js";
 
 describe(`leaveThread`, { repeats: 5 }, () => {
   const { config } = mockUtils.request.delete(
@@ -14,19 +9,9 @@ describe(`leaveThread`, { repeats: 5 }, () => {
     leaveThreadSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(leaveThreadSafe(config)).resolves.not.toThrow();
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(leaveThreadProcedure)(config)
+      toValidated(leaveThread, leaveThreadSchema)(config)
     ).resolves.not.toThrow();
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(leaveThread);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
   });
 });

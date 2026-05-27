@@ -1,13 +1,10 @@
+import { toValidated } from "@discordkit/core";
 import * as v from "valibot";
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
-import { waitFor } from "@testing-library/dom";
 import { scheduledEventUserSchema } from "../types/ScheduledEventUser.js";
 import {
-  getGuildScheduledEventUsersProcedure,
-  getGuildScheduledEventUsersQuery,
-  getGuildScheduledEventUsersSafe,
-  getGuildScheduledEventUsersSchema
+  getGuildScheduledEventUsersSchema,
+  getGuildScheduledEventUsers
 } from "../getGuildScheduledEventUsers.js";
 
 describe(`getGuildScheduledEventUsers`, { repeats: 5 }, () => {
@@ -17,21 +14,13 @@ describe(`getGuildScheduledEventUsers`, { repeats: 5 }, () => {
     v.pipe(v.array(scheduledEventUserSchema), v.length(1))
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(getGuildScheduledEventUsersSafe(config)).resolves.toEqual(
-      expected
-    );
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(getGuildScheduledEventUsersProcedure)(config)
+      toValidated(
+        getGuildScheduledEventUsers,
+        getGuildScheduledEventUsersSchema,
+        v.pipe(v.array(scheduledEventUserSchema), v.length(1))
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(getGuildScheduledEventUsersQuery, config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

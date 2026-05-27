@@ -1,10 +1,8 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
 import {
   addMemberToLobby,
-  addMemberToLobbyProcedure,
-  addMemberToLobbySafe,
   addMemberToLobbySchema
 } from "../addMemberToLobby.js";
 import { lobbyMemberSchema } from "../types/LobbyMember.js";
@@ -16,20 +14,13 @@ describe(`addMemberToLobby`, { repeats: 5 }, () => {
     lobbyMemberSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(addMemberToLobbySafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(addMemberToLobbyProcedure)(config)
+      toValidated(
+        addMemberToLobby,
+        addMemberToLobbySchema,
+        lobbyMemberSchema
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(addMemberToLobby);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

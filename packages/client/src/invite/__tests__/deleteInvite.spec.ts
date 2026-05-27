@@ -1,12 +1,7 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
-import {
-  deleteInvite,
-  deleteInviteProcedure,
-  deleteInviteSafe,
-  deleteInviteSchema
-} from "../deleteInvite.js";
+import { deleteInvite, deleteInviteSchema } from "../deleteInvite.js";
 import { inviteSchema } from "../types/Invite.js";
 
 describe(`deleteInvite`, { repeats: 5 }, () => {
@@ -16,19 +11,9 @@ describe(`deleteInvite`, { repeats: 5 }, () => {
     inviteSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(deleteInviteSafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
-    await expect(runProcedure(deleteInviteProcedure)(config)).resolves.toEqual(
-      expected
-    );
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(deleteInvite);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+  it(`validates input, fetches, and validates output`, async () => {
+    await expect(
+      toValidated(deleteInvite, deleteInviteSchema, inviteSchema)(config)
+    ).resolves.toEqual(expected);
   });
 });

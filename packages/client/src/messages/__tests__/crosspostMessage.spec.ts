@@ -1,10 +1,8 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
 import {
   crosspostMessage,
-  crosspostMessageProcedure,
-  crosspostMessageSafe,
   crosspostMessageSchema
 } from "../crosspostMessage.js";
 import { messageSchema } from "../types/Message.js";
@@ -16,20 +14,13 @@ describe(`crosspostMessage`, { repeats: 5 }, () => {
     messageSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(crosspostMessageSafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(crosspostMessageProcedure)(config)
+      toValidated(
+        crosspostMessage,
+        crosspostMessageSchema,
+        messageSchema
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(crosspostMessage);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

@@ -1,13 +1,10 @@
+import { toValidated } from "@discordkit/core";
 import * as v from "valibot";
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
-import { waitFor } from "@testing-library/dom";
 import { integrationSchema } from "../types/Integration.js";
 import {
-  getGuildIntegrationsProcedure,
-  getGuildIntegrationsQuery,
-  getGuildIntegrationsSafe,
-  getGuildIntegrationsSchema
+  getGuildIntegrationsSchema,
+  getGuildIntegrations
 } from "../getGuildIntegrations.js";
 
 describe(`getGuildIntegrations`, { repeats: 5 }, () => {
@@ -17,19 +14,13 @@ describe(`getGuildIntegrations`, { repeats: 5 }, () => {
     v.pipe(v.array(integrationSchema), v.length(1))
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(getGuildIntegrationsSafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(getGuildIntegrationsProcedure)(config)
+      toValidated(
+        getGuildIntegrations,
+        getGuildIntegrationsSchema,
+        v.pipe(v.array(integrationSchema), v.length(1))
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(getGuildIntegrationsQuery, config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

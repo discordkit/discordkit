@@ -1,12 +1,10 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
 import {
   activeGuildThreadsSchema,
-  listActiveGuildThreadsProcedure,
-  listActiveGuildThreadsQuery,
-  listActiveGuildThreadsSafe,
-  listActiveGuildThreadsSchema
+  listActiveGuildThreadsSchema,
+  listActiveGuildThreads
 } from "../listActiveGuildThreads.js";
 
 describe(`listActiveGuildThreads`, { repeats: 5 }, () => {
@@ -16,19 +14,13 @@ describe(`listActiveGuildThreads`, { repeats: 5 }, () => {
     activeGuildThreadsSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(listActiveGuildThreadsSafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(listActiveGuildThreadsProcedure)(config)
+      toValidated(
+        listActiveGuildThreads,
+        listActiveGuildThreadsSchema,
+        activeGuildThreadsSchema
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(listActiveGuildThreadsQuery, config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });
