@@ -7,6 +7,10 @@ export default defineConfig({
       dev: { command: "vp pack --watch", cache: false }
     }
   },
+  test: {
+    globals: true,
+    environment: `happy-dom`
+  },
   pack: {
     entry: "src/index.ts",
     dts: true,
