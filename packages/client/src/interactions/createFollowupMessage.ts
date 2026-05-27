@@ -2,8 +2,6 @@ import * as v from "valibot";
 import {
   post,
   type Fetcher,
-  toProcedure,
-  toValidated,
   snowflake,
   asInteger,
   boundedString,
@@ -66,14 +64,3 @@ export const createFollowupMessage: Fetcher<
   typeof createFollowupMessageSchema
 > = async ({ application, token, body }) =>
   post(`/webhooks/${application}/${token}`, body);
-
-export const createFollowupMessageSafe = toValidated(
-  createFollowupMessage,
-  createFollowupMessageSchema
-);
-
-export const createFollowupMessageProcedure = toProcedure(
-  `mutation`,
-  createFollowupMessage,
-  createFollowupMessageSchema
-);

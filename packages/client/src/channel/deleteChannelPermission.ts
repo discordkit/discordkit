@@ -1,11 +1,5 @@
 import * as v from "valibot";
-import {
-  remove,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { remove, type Fetcher, snowflake } from "@discordkit/core";
 
 export const deleteChannelPermissionSchema = v.object({
   channel: snowflake,
@@ -27,14 +21,3 @@ export const deleteChannelPermission: Fetcher<
   typeof deleteChannelPermissionSchema
 > = async ({ channel, overwrite }) =>
   remove(`/channels/${channel}/permissions/${overwrite}`);
-
-export const deleteChannelPermissionSafe = toValidated(
-  deleteChannelPermission,
-  deleteChannelPermissionSchema
-);
-
-export const deleteChannelPermissionProcedure = toProcedure(
-  `mutation`,
-  deleteChannelPermission,
-  deleteChannelPermissionSchema
-);

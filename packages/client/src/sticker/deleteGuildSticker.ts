@@ -1,11 +1,5 @@
 import * as v from "valibot";
-import {
-  remove,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { remove, type Fetcher, snowflake } from "@discordkit/core";
 
 export const deleteGuildStickerSchema = v.object({
   guild: snowflake,
@@ -27,14 +21,3 @@ export const deleteGuildSticker: Fetcher<
   typeof deleteGuildStickerSchema
 > = async ({ guild, sticker }) =>
   remove(`/guilds/${guild}/stickers/${sticker}`);
-
-export const deleteGuildStickerSafe = toValidated(
-  deleteGuildSticker,
-  deleteGuildStickerSchema
-);
-
-export const deleteGuildStickerProcedure = toProcedure(
-  `mutation`,
-  deleteGuildSticker,
-  deleteGuildStickerSchema
-);

@@ -2,15 +2,10 @@ import * as v from "valibot";
 import {
   patch,
   type Fetcher,
-  toProcedure,
-  toValidated,
   snowflake,
   boundedString
 } from "@discordkit/core";
-import {
-  soundboardSoundSchema,
-  type SoundboardSound
-} from "./types/SoundboardSound.js";
+import { type SoundboardSound } from "./types/SoundboardSound.js";
 
 export const modifyGuildSoundboardSoundSchema = v.object({
   guild: snowflake,
@@ -49,16 +44,3 @@ export const modifyGuildSoundboardSound: Fetcher<
   SoundboardSound
 > = async ({ guild, sound, body }) =>
   patch(`/guilds/${guild}/soundboard-sounds/${sound}`, body);
-
-export const modifyGuildSoundboardSoundSafe = toValidated(
-  modifyGuildSoundboardSound,
-  modifyGuildSoundboardSoundSchema,
-  soundboardSoundSchema
-);
-
-export const modifyGuildSoundboardSoundProcedure = toProcedure(
-  `mutation`,
-  modifyGuildSoundboardSound,
-  modifyGuildSoundboardSoundSchema,
-  soundboardSoundSchema
-);

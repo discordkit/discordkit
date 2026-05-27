@@ -1,13 +1,6 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import { channelSchema, type Channel } from "./types/Channel.js";
+import { get, type Fetcher, snowflake } from "@discordkit/core";
+import { type Channel } from "./types/Channel.js";
 
 export const getChannelSchema = v.object({
   channel: snowflake
@@ -23,18 +16,3 @@ export const getChannelSchema = v.object({
 export const getChannel: Fetcher<typeof getChannelSchema, Channel> = async ({
   channel
 }) => get(`/channels/${channel}`);
-
-export const getChannelSafe = toValidated(
-  getChannel,
-  getChannelSchema,
-  channelSchema
-);
-
-export const getChannelProcedure = toProcedure(
-  `query`,
-  getChannel,
-  getChannelSchema,
-  channelSchema
-);
-
-export const getChannelQuery = toQuery(getChannel);

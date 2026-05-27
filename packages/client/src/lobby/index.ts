@@ -9,4 +9,3 @@ export * from "./removeMemberFromLobby.js";
 export * from "./unlinkChannelFromLobby.js";
 
 export * from "./types/index.js";
-export * as lobbyProcedures from "./procedures.js";

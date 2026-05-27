@@ -1,11 +1,5 @@
 import * as v from "valibot";
-import {
-  remove,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { remove, type Fetcher, snowflake } from "@discordkit/core";
 
 export const removeGuildBanSchema = v.object({
   guild: snowflake,
@@ -27,14 +21,3 @@ export const removeGuildBan: Fetcher<typeof removeGuildBanSchema> = async ({
   guild,
   user
 }) => remove(`/guilds/${guild}/bans/${user}`);
-
-export const removeGuildBanSafe = toValidated(
-  removeGuildBan,
-  removeGuildBanSchema
-);
-
-export const removeGuildBanProcedure = toProcedure(
-  `mutation`,
-  removeGuildBan,
-  removeGuildBanSchema
-);

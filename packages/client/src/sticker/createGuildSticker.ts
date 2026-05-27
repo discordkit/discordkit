@@ -1,13 +1,6 @@
 import * as v from "valibot";
-import {
-  post,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake,
-  boundedString
-} from "@discordkit/core";
-import { stickerSchema, type Sticker } from "./types/Sticker.js";
+import { post, type Fetcher, snowflake, boundedString } from "@discordkit/core";
+import { type Sticker } from "./types/Sticker.js";
 
 export const createGuildStickerSchema = v.object({
   guild: snowflake,
@@ -48,16 +41,3 @@ export const createGuildSticker: Fetcher<
   typeof createGuildStickerSchema,
   Sticker
 > = async ({ guild, body }) => post(`/guilds/${guild}/stickers`, body);
-
-export const createGuildStickerSafe = toValidated(
-  createGuildSticker,
-  createGuildStickerSchema,
-  stickerSchema
-);
-
-export const createGuildStickerProcedure = toProcedure(
-  `mutation`,
-  createGuildSticker,
-  createGuildStickerSchema,
-  stickerSchema
-);

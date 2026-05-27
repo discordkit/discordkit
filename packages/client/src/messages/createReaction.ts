@@ -1,11 +1,5 @@
 import * as v from "valibot";
-import {
-  put,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { put, type Fetcher, snowflake } from "@discordkit/core";
 
 export const createReactionSchema = v.object({
   channel: snowflake,
@@ -25,14 +19,3 @@ export const createReaction: Fetcher<typeof createReactionSchema> = async ({
   message,
   emoji
 }) => put(`/channels/${channel}/messages/${message}/reactions/${emoji}/@me`);
-
-export const createReactionSafe = toValidated(
-  createReaction,
-  createReactionSchema
-);
-
-export const createReactionProcedure = toProcedure(
-  `mutation`,
-  createReaction,
-  createReactionSchema
-);

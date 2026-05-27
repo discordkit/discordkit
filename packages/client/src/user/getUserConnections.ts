@@ -1,11 +1,5 @@
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated
-} from "@discordkit/core";
-import { connectionSchema, type Connection } from "./types/Connection.js";
+import { get, type Fetcher } from "@discordkit/core";
+import { type Connection } from "./types/Connection.js";
 
 /**
  * ### [Get User Connections](https://discord.com/developers/docs/resources/user#get-user-connections)
@@ -16,18 +10,3 @@ import { connectionSchema, type Connection } from "./types/Connection.js";
  */
 export const getUserConnections: Fetcher<null, Connection> = async () =>
   get(`/users/@me/connections`);
-
-export const getUserConnectionsSafe = toValidated(
-  getUserConnections,
-  null,
-  connectionSchema
-);
-
-export const getUserConnectionsProcedure = toProcedure(
-  `query`,
-  getUserConnections,
-  null,
-  connectionSchema
-);
-
-export const getUserConnectionsQuery = toQuery(getUserConnections);

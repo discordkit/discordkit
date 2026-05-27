@@ -1,15 +1,6 @@
 import * as v from "valibot";
-import {
-  patch,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import {
-  welcomeScreenSchema,
-  type WelcomeScreen
-} from "./types/WelcomeScreen.js";
+import { patch, type Fetcher, snowflake } from "@discordkit/core";
+import { type WelcomeScreen } from "./types/WelcomeScreen.js";
 import { welcomeChannelSchema } from "./types/WelcomeChannel.js";
 
 export const modifyGuildWelcomeScreenSchema = v.object({
@@ -45,16 +36,3 @@ export const modifyGuildWelcomeScreen: Fetcher<
   typeof modifyGuildWelcomeScreenSchema,
   WelcomeScreen
 > = async ({ guild, body }) => patch(`/guilds/${guild}/welcome-screen`, body);
-
-export const modifyGuildWelcomeScreenSafe = toValidated(
-  modifyGuildWelcomeScreen,
-  modifyGuildWelcomeScreenSchema,
-  welcomeScreenSchema
-);
-
-export const modifyGuildWelcomeScreenProcedure = toProcedure(
-  `mutation`,
-  modifyGuildWelcomeScreen,
-  modifyGuildWelcomeScreenSchema,
-  welcomeScreenSchema
-);

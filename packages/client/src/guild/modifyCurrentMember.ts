@@ -1,12 +1,6 @@
 import * as v from "valibot";
-import {
-  patch,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import { memberSchema, type Member } from "./types/Member.js";
+import { patch, type Fetcher, snowflake } from "@discordkit/core";
+import { type Member } from "./types/Member.js";
 
 export const modifyCurrentMemberSchema = v.object({
   guild: snowflake,
@@ -31,16 +25,3 @@ export const modifyCurrentMember: Fetcher<
   typeof modifyCurrentMemberSchema,
   Member
 > = async ({ guild, body }) => patch(`/guilds/${guild}/members/@me`, body);
-
-export const modifyCurrentMemberSafe = toValidated(
-  modifyCurrentMember,
-  modifyCurrentMemberSchema,
-  memberSchema
-);
-
-export const modifyCurrentMemberProcedure = toProcedure(
-  `mutation`,
-  modifyCurrentMember,
-  modifyCurrentMemberSchema,
-  memberSchema
-);

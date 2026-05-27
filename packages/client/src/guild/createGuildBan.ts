@@ -1,11 +1,5 @@
 import * as v from "valibot";
-import {
-  put,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { put, type Fetcher, snowflake } from "@discordkit/core";
 
 export const createGuildBanSchema = v.object({
   guild: snowflake,
@@ -48,14 +42,3 @@ export const createGuildBan: Fetcher<typeof createGuildBanSchema> = async ({
   user,
   body
 }) => put(`/guilds/${guild}/bans/${user}`, body);
-
-export const createGuildBanSafe = toValidated(
-  createGuildBan,
-  createGuildBanSchema
-);
-
-export const createGuildBanProcedure = toProcedure(
-  `mutation`,
-  createGuildBan,
-  createGuildBanSchema
-);

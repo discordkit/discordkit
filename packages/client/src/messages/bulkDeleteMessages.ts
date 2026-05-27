@@ -1,12 +1,5 @@
 import * as v from "valibot";
-import {
-  post,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake,
-  boundedArray
-} from "@discordkit/core";
+import { post, type Fetcher, snowflake, boundedArray } from "@discordkit/core";
 
 export const bulkDeleteMessagesSchema = v.object({
   channel: snowflake,
@@ -37,14 +30,3 @@ export const bulkDeleteMessages: Fetcher<
   typeof bulkDeleteMessagesSchema
 > = async ({ channel, body }) =>
   post(`/channels/${channel}/messages/bulk-delete`, body);
-
-export const bulkDeleteMessagesSafe = toValidated(
-  bulkDeleteMessages,
-  bulkDeleteMessagesSchema
-);
-
-export const bulkDeleteMessagesProcedure = toProcedure(
-  `mutation`,
-  bulkDeleteMessages,
-  bulkDeleteMessagesSchema
-);

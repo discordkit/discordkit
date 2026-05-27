@@ -1,13 +1,6 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import { guildSchema, type Guild } from "../guild/types/Guild.js";
+import { get, type Fetcher, snowflake } from "@discordkit/core";
+import { type Guild } from "../guild/types/Guild.js";
 
 export const getCurrentUserGuildsSchema = v.object({
   params: v.exactOptional(
@@ -56,18 +49,3 @@ export const getCurrentUserGuilds: Fetcher<
   typeof getCurrentUserGuildsSchema,
   Array<Partial<Guild>>
 > = async ({ params }) => get(`/users/@me/guilds`, params);
-
-export const getCurrentUserGuildsSafe = toValidated(
-  getCurrentUserGuilds,
-  getCurrentUserGuildsSchema,
-  v.pipe(v.array(v.partial(guildSchema)), v.maxLength(200))
-);
-
-export const getCurrentUserGuildsProcedure = toProcedure(
-  `query`,
-  getCurrentUserGuilds,
-  getCurrentUserGuildsSchema,
-  v.pipe(v.array(v.partial(guildSchema)), v.maxLength(200))
-);
-
-export const getCurrentUserGuildsQuery = toQuery(getCurrentUserGuilds);

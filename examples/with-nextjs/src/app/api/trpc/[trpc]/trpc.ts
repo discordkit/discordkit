@@ -1,5 +1,10 @@
 import { initTRPC, TRPCError } from "@trpc/server";
-import { discord, getCurrentApplicationProcedure } from "@discordkit/client";
+import { toProcedure } from "@discordkit/core";
+import {
+  applicationSchema,
+  discord,
+  getCurrentApplication
+} from "@discordkit/client";
 import { summarize, ValiError } from "valibot";
 
 const token = process.env.BOT_TOKEN;
@@ -18,6 +23,13 @@ const loggedProcedure = baseProcedure.use(async (opts) => {
 
   return result;
 });
+
+const getCurrentApplicationProcedure = toProcedure(
+  `query`,
+  getCurrentApplication,
+  null,
+  applicationSchema
+);
 
 export const router = t.router({
   getCurrentApplication: getCurrentApplicationProcedure(

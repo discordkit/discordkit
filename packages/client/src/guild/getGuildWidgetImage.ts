@@ -1,12 +1,5 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { get, type Fetcher, snowflake } from "@discordkit/core";
 
 export const getGuildWidgetImageSchema = v.object({
   guild: snowflake,
@@ -45,16 +38,3 @@ export const getGuildWidgetImageSchema = v.object({
 export const getGuildWidgetImage: Fetcher<
   typeof getGuildWidgetImageSchema
 > = async ({ guild, params }) => get(`/guilds/${guild}/widget.png`, params);
-
-export const getGuildWidgetImageSafe = toValidated(
-  getGuildWidgetImage,
-  getGuildWidgetImageSchema
-);
-
-export const getGuildWidgetImageProcedure = toProcedure(
-  `query`,
-  getGuildWidgetImage,
-  getGuildWidgetImageSchema
-);
-
-export const getGuildWidgetImageQuery = toQuery(getGuildWidgetImage);

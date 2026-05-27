@@ -23,4 +23,3 @@ export * from "./startThreadWithoutMessage.js";
 export * from "./triggerTypingIndicator.js";
 
 export * from "./types/index.js";
-export * as channelProcedures from "./procedures.js";

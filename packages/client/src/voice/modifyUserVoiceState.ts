@@ -1,11 +1,5 @@
 import * as v from "valibot";
-import {
-  patch,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { patch, type Fetcher, snowflake } from "@discordkit/core";
 import type { VoiceState } from "./types/VoiceState.js";
 
 export const modifyUserVoiceStateSchema = v.object({
@@ -43,14 +37,3 @@ export const modifyUserVoiceState: Fetcher<
   VoiceState
 > = async ({ guild, user, body }) =>
   patch(`/guilds/${guild}/voice-states/${user}`, body);
-
-export const modifyUserVoiceStateSafe = toValidated(
-  modifyUserVoiceState,
-  modifyUserVoiceStateSchema
-);
-
-export const modifyUserVoiceStateProcedure = toProcedure(
-  `mutation`,
-  modifyUserVoiceState,
-  modifyUserVoiceStateSchema
-);

@@ -1,12 +1,6 @@
 import * as v from "valibot";
-import {
-  post,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import { channelSchema, type Channel } from "../channel/types/Channel.js";
+import { post, type Fetcher, snowflake } from "@discordkit/core";
+import { type Channel } from "../channel/types/Channel.js";
 import { channelTypeSchema } from "../channel/types/ChannelType.js";
 import { overwriteSchema } from "../channel/types/Overwrite.js";
 import { videoQualityModeSchema } from "../channel/types/VideoQualityMode.js";
@@ -81,16 +75,3 @@ export const createGuildChannel: Fetcher<
   typeof createGuildChannelSchema,
   Channel
 > = async ({ guild, body }) => post(`/guilds/${guild}/channels`, body);
-
-export const createGuildChannelSafe = toValidated(
-  createGuildChannel,
-  createGuildChannelSchema,
-  channelSchema
-);
-
-export const createGuildChannelProcedure = toProcedure(
-  `mutation`,
-  createGuildChannel,
-  createGuildChannelSchema,
-  channelSchema
-);

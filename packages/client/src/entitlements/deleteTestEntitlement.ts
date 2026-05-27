@@ -1,11 +1,5 @@
 import * as v from "valibot";
-import {
-  remove,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { remove, type Fetcher, snowflake } from "@discordkit/core";
 
 export const deleteTestEntitlementSchema = v.object({
   application: snowflake,
@@ -25,14 +19,3 @@ export const deleteTestEntitlement: Fetcher<
   typeof deleteTestEntitlementSchema
 > = async ({ application, entitlement }) =>
   remove(`/applications/${application}/entitlements/${entitlement}`);
-
-export const deleteTestEntitlementSafe = toValidated(
-  deleteTestEntitlement,
-  deleteTestEntitlementSchema
-);
-
-export const deleteTestEntitlementProcedure = toProcedure(
-  `mutation`,
-  deleteTestEntitlement,
-  deleteTestEntitlementSchema
-);

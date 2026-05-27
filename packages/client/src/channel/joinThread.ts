@@ -1,11 +1,5 @@
 import * as v from "valibot";
-import {
-  put,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { put, type Fetcher, snowflake } from "@discordkit/core";
 
 export const joinThreadSchema = v.object({
   channel: snowflake
@@ -21,11 +15,3 @@ export const joinThreadSchema = v.object({
 export const joinThread: Fetcher<typeof joinThreadSchema> = async ({
   channel
 }) => put(`/channels/${channel}/thread-members/@me`);
-
-export const joinThreadSafe = toValidated(joinThread, joinThreadSchema);
-
-export const joinThreadProcedure = toProcedure(
-  `mutation`,
-  joinThread,
-  joinThreadSchema
-);

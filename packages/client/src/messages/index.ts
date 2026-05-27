@@ -16,4 +16,3 @@ export * from "./pinMessage.js";
 export * from "./unpinMessage.js";
 
 export * from "./types/index.js";
-export * as messageProcedures from "./procedures.js";

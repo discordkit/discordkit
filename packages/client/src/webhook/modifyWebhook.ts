@@ -2,13 +2,11 @@ import * as v from "valibot";
 import {
   patch,
   type Fetcher,
-  toProcedure,
-  toValidated,
   snowflake,
   boundedString,
   url
 } from "@discordkit/core";
-import { webhookSchema, type Webhook } from "./types/Webhook.js";
+import { type Webhook } from "./types/Webhook.js";
 
 export const modifyWebhookSchema = v.object({
   webhook: snowflake,
@@ -45,16 +43,3 @@ export const modifyWebhook: Fetcher<
   typeof modifyWebhookSchema,
   Webhook
 > = async ({ webhook, body }) => patch(`/webhooks/${webhook}`, body);
-
-export const modifyWebhookSafe = toValidated(
-  modifyWebhook,
-  modifyWebhookSchema,
-  webhookSchema
-);
-
-export const modifyWebhookProcedure = toProcedure(
-  `mutation`,
-  modifyWebhook,
-  modifyWebhookSchema,
-  webhookSchema
-);

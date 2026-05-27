@@ -2,8 +2,6 @@ import * as v from "valibot";
 import {
   post,
   type Fetcher,
-  toProcedure,
-  toValidated,
   snowflake,
   datauri,
   asInteger
@@ -13,7 +11,7 @@ import { verificationLevelSchema } from "./types/VerificationLevel.js";
 import { defaultMessageNotificationLevelSchema } from "./types/DefaultMessageNotificationLevel.js";
 import { explicitContentFilterLevelSchema } from "./types/ExplicitContentFilterLevel.js";
 import { roleSchema } from "../permissions/Role.js";
-import { guildSchema, type Guild } from "./types/Guild.js";
+import { type Guild } from "./types/Guild.js";
 import { systemChannelFlag } from "./types/SystemChannelFlags.js";
 
 export const createGuildSchema = v.object({
@@ -63,16 +61,3 @@ export const createGuildSchema = v.object({
 export const createGuild: Fetcher<typeof createGuildSchema, Guild> = async ({
   body
 }) => post(`/guilds`, body);
-
-export const createGuildSafe = toValidated(
-  createGuild,
-  createGuildSchema,
-  guildSchema
-);
-
-export const createGuildProcedure = toProcedure(
-  `mutation`,
-  createGuild,
-  createGuildSchema,
-  guildSchema
-);

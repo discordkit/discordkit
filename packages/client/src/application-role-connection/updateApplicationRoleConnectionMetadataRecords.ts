@@ -1,11 +1,5 @@
 import * as v from "valibot";
-import {
-  type Fetcher,
-  toProcedure,
-  put,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { type Fetcher, put, snowflake } from "@discordkit/core";
 import {
   type ApplicationRoleConnectionMetadata,
   applicationRoleConnectionMetadataSchema
@@ -30,17 +24,3 @@ export const updateApplicationRoleConnectionMetadataRecords: Fetcher<
   ApplicationRoleConnectionMetadata[]
 > = async ({ application, body }) =>
   put(`/applications/${application}/role-connections/metadata`, body);
-
-export const updateApplicationRoleConnectionMetadataRecordsSafe = toValidated(
-  updateApplicationRoleConnectionMetadataRecords,
-  updateApplicationRoleConnectionMetadataRecordsSchema,
-  v.array(applicationRoleConnectionMetadataSchema)
-);
-
-export const updateApplicationRoleConnectionMetadataRecordsProcedure =
-  toProcedure(
-    `mutation`,
-    updateApplicationRoleConnectionMetadataRecords,
-    updateApplicationRoleConnectionMetadataRecordsSchema,
-    v.array(applicationRoleConnectionMetadataSchema)
-  );

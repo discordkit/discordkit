@@ -1,11 +1,5 @@
 import * as v from "valibot";
-import {
-  remove,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { remove, type Fetcher, snowflake } from "@discordkit/core";
 
 export const unpinMessageSchema = v.object({
   channel: snowflake,
@@ -27,11 +21,3 @@ export const unpinMessage: Fetcher<typeof unpinMessageSchema> = async ({
   channel,
   message
 }) => remove(`/channels/${channel}/messages/pins/${message}`);
-
-export const unpinMessageSafe = toValidated(unpinMessage, unpinMessageSchema);
-
-export const unpinMessageProcedure = toProcedure(
-  `mutation`,
-  unpinMessage,
-  unpinMessageSchema
-);

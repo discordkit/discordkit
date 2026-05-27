@@ -1,11 +1,5 @@
 import * as v from "valibot";
-import {
-  remove,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { remove, type Fetcher, snowflake } from "@discordkit/core";
 
 export const deleteAutoModerationRuleSchema = v.object({
   guild: snowflake,
@@ -31,14 +25,3 @@ export const deleteAutoModerationRule: Fetcher<
   typeof deleteAutoModerationRuleSchema
 > = async ({ guild, rule }) =>
   remove(`/guilds/${guild}/auto-moderation/rules/${rule}`);
-
-export const deleteAutoModerationRuleSafe = toValidated(
-  deleteAutoModerationRule,
-  deleteAutoModerationRuleSchema
-);
-
-export const deleteAutoModerationRuleProcedure = toProcedure(
-  `mutation`,
-  deleteAutoModerationRule,
-  deleteAutoModerationRuleSchema
-);

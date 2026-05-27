@@ -10,4 +10,3 @@ export * from "./modifyApplicationEmoji.js";
 export * from "./modifyGuildEmoji.js";
 
 export * from "./types/index.js";
-export * as emojiProcedures from "./procedures.js";

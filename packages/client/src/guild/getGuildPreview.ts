@@ -1,13 +1,6 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import { guildPreviewSchema, type GuildPreview } from "./types/GuildPreview.js";
+import { get, type Fetcher, snowflake } from "@discordkit/core";
+import { type GuildPreview } from "./types/GuildPreview.js";
 
 export const getGuildPreviewSchema = v.object({
   guild: snowflake
@@ -24,18 +17,3 @@ export const getGuildPreview: Fetcher<
   typeof getGuildPreviewSchema,
   GuildPreview
 > = async ({ guild }) => get(`/guilds/${guild}/preview`);
-
-export const getGuildPreviewSafe = toValidated(
-  getGuildPreview,
-  getGuildPreviewSchema,
-  guildPreviewSchema
-);
-
-export const getGuildPreviewProcedure = toProcedure(
-  `query`,
-  getGuildPreview,
-  getGuildPreviewSchema,
-  guildPreviewSchema
-);
-
-export const getGuildPreviewQuery = toQuery(getGuildPreview);

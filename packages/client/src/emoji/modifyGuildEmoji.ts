@@ -2,12 +2,10 @@ import * as v from "valibot";
 import {
   patch,
   type Fetcher,
-  toProcedure,
-  toValidated,
   snowflake,
   boundedString
 } from "@discordkit/core";
-import { emojiSchema, type Emoji } from "./types/Emoji.js";
+import { type Emoji } from "./types/Emoji.js";
 
 export const modifyGuildEmojiSchema = v.object({
   guild: snowflake,
@@ -42,16 +40,3 @@ export const modifyGuildEmoji: Fetcher<
   Emoji
 > = async ({ guild, emoji, body }) =>
   patch(`/guilds/${guild}/emojis/${emoji}`, body);
-
-export const modifyGuildEmojiSafe = toValidated(
-  modifyGuildEmoji,
-  modifyGuildEmojiSchema,
-  emojiSchema
-);
-
-export const modifyGuildEmojiProcedure = toProcedure(
-  `mutation`,
-  modifyGuildEmoji,
-  modifyGuildEmojiSchema,
-  emojiSchema
-);

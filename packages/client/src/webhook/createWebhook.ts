@@ -2,13 +2,11 @@ import * as v from "valibot";
 import {
   post,
   type Fetcher,
-  toProcedure,
-  toValidated,
   snowflake,
   boundedString,
   url
 } from "@discordkit/core";
-import { webhookSchema, type Webhook } from "./types/Webhook.js";
+import { type Webhook } from "./types/Webhook.js";
 
 export const createWebhookSchema = v.object({
   channel: snowflake,
@@ -40,16 +38,3 @@ export const createWebhook: Fetcher<
   typeof createWebhookSchema,
   Webhook
 > = async ({ channel, body }) => post(`/channels/${channel}/webhooks`, body);
-
-export const createWebhookSafe = toValidated(
-  createWebhook,
-  createWebhookSchema,
-  webhookSchema
-);
-
-export const createWebhookProcedure = toProcedure(
-  `mutation`,
-  createWebhook,
-  createWebhookSchema,
-  webhookSchema
-);

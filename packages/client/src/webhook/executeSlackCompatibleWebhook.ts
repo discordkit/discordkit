@@ -3,8 +3,6 @@ import {
   post,
   buildURL,
   type Fetcher,
-  toProcedure,
-  toValidated,
   snowflake,
   boundedString
 } from "@discordkit/core";
@@ -35,14 +33,3 @@ export const executeSlackCompatibleWebhook: Fetcher<
   typeof executeSlackCompatibleWebhookSchema
 > = async ({ webhook, token, params }) =>
   post(buildURL(`/webhooks/${webhook}/${token}/slack`, params).href);
-
-export const executeSlackCompatibleWebhookSafe = toValidated(
-  executeSlackCompatibleWebhook,
-  executeSlackCompatibleWebhookSchema
-);
-
-export const executeSlackCompatibleWebhookProcedure = toProcedure(
-  `mutation`,
-  executeSlackCompatibleWebhook,
-  executeSlackCompatibleWebhookSchema
-);

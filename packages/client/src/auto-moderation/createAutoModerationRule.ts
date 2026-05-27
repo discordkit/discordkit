@@ -2,16 +2,11 @@ import * as v from "valibot";
 import {
   post,
   type Fetcher,
-  toProcedure,
-  toValidated,
   snowflake,
   boundedString,
   boundedArray
 } from "@discordkit/core";
-import {
-  type ModerationRule,
-  moderationRuleSchema
-} from "./types/ModerationRule.js";
+import { type ModerationRule } from "./types/ModerationRule.js";
 import { moderationEventSchema } from "./types/ModerationEvent.js";
 import { moderationTriggerTypeSchema } from "./types/ModerationTriggerType.js";
 import { triggerMetaSchema } from "./types/TriggerMeta.js";
@@ -59,16 +54,3 @@ export const createAutoModerationRule: Fetcher<
   ModerationRule
 > = async ({ guild, body }) =>
   post(`/guilds/${guild}/auto-moderation/rules`, body);
-
-export const createAutoModerationRuleSafe = toValidated(
-  createAutoModerationRule,
-  createAutoModerationRuleSchema,
-  moderationRuleSchema
-);
-
-export const createAutoModerationRuleProcedure = toProcedure(
-  `mutation`,
-  createAutoModerationRule,
-  createAutoModerationRuleSchema,
-  moderationRuleSchema
-);

@@ -1,11 +1,5 @@
 import * as v from "valibot";
-import {
-  post,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { post, type Fetcher, snowflake } from "@discordkit/core";
 import { directMessageChannelSchema } from "../channel/types/Channel.js";
 
 export const createDMSchema = v.object({
@@ -30,16 +24,3 @@ export const createDM: Fetcher<
   typeof createDMSchema,
   v.InferOutput<typeof directMessageChannelSchema>
 > = async ({ body }) => post(`/users/@me/channels`, body);
-
-export const createDMSafe = toValidated(
-  createDM,
-  createDMSchema,
-  directMessageChannelSchema
-);
-
-export const createDMProcedure = toProcedure(
-  `mutation`,
-  createDM,
-  createDMSchema,
-  directMessageChannelSchema
-);

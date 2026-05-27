@@ -7,4 +7,3 @@ export * from "./modifyGuildTemplate.js";
 export * from "./syncGuildTemplate.js";
 
 export * from "./types/index.js";
-export * as tempalteProcedures from "./procedures.js";

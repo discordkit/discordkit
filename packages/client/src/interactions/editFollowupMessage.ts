@@ -2,13 +2,11 @@ import * as v from "valibot";
 import {
   patch,
   type Fetcher,
-  toProcedure,
-  toValidated,
   snowflake,
   boundedString,
   boundedArray
 } from "@discordkit/core";
-import { messageSchema, type Message } from "../messages/types/Message.js";
+import { type Message } from "../messages/types/Message.js";
 import { embedSchema } from "../messages/types/Embed.js";
 import { allowedMentionSchema } from "../messages/types/AllowedMention.js";
 import { attachmentSchema } from "../messages/types/Attachment.js";
@@ -55,16 +53,3 @@ export const editFollowupMessage: Fetcher<
   Message
 > = async ({ application, token, message, body }) =>
   patch(`/webhooks/${application}/${token}/messages/${message}`, body);
-
-export const editFollowupMessageSafe = toValidated(
-  editFollowupMessage,
-  editFollowupMessageSchema,
-  messageSchema
-);
-
-export const editFollowupMessageProcedure = toProcedure(
-  `mutation`,
-  editFollowupMessage,
-  editFollowupMessageSchema,
-  messageSchema
-);

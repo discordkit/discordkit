@@ -1,12 +1,5 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { get, type Fetcher, snowflake } from "@discordkit/core";
 import { threadMemberSchema } from "../channel/types/ThreadMember.js";
 import { threadChannelSchema } from "../channel/types/Channel.js";
 
@@ -32,18 +25,3 @@ export const listActiveGuildThreads: Fetcher<
   typeof listActiveGuildThreadsSchema,
   v.InferOutput<typeof activeGuildThreadsSchema>
 > = async ({ guild }) => get(`/guilds/${guild}/threads/active`);
-
-export const listActiveGuildThreadsSafe = toValidated(
-  listActiveGuildThreads,
-  listActiveGuildThreadsSchema,
-  activeGuildThreadsSchema
-);
-
-export const listActiveGuildThreadsProcedure = toProcedure(
-  `query`,
-  listActiveGuildThreads,
-  listActiveGuildThreadsSchema,
-  activeGuildThreadsSchema
-);
-
-export const listActiveGuildThreadsQuery = toQuery(listActiveGuildThreads);

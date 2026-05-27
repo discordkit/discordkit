@@ -1,12 +1,5 @@
 import * as v from "valibot";
-import {
-  put,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake,
-  asDigits
-} from "@discordkit/core";
+import { put, type Fetcher, snowflake, asDigits } from "@discordkit/core";
 import { permissionFlag } from "../permissions/Permissions.js";
 
 export const editChannelPermissionsSchema = v.object({
@@ -37,14 +30,3 @@ export const editChannelPermissions: Fetcher<
   typeof editChannelPermissionsSchema
 > = async ({ channel, overwrite, body }) =>
   put(`/channels/${channel}/permissions/${overwrite}`, body);
-
-export const editChannelPermissionsSafe = toValidated(
-  editChannelPermissions,
-  editChannelPermissionsSchema
-);
-
-export const editChannelPermissionsProcedure = toProcedure(
-  `mutation`,
-  editChannelPermissions,
-  editChannelPermissionsSchema
-);

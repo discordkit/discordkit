@@ -1,13 +1,6 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import { memberSchema, type Member } from "../guild/types/Member.js";
+import { get, type Fetcher, snowflake } from "@discordkit/core";
+import { type Member } from "../guild/types/Member.js";
 
 export const getCurrentUserGuildMemberSchema = v.object({
   guild: snowflake
@@ -24,20 +17,3 @@ export const getCurrentUserGuildMember: Fetcher<
   typeof getCurrentUserGuildMemberSchema,
   Member
 > = async ({ guild }) => get(`/users/@me/guilds/${guild}/member`);
-
-export const getCurrentUserGuildMemberSafe = toValidated(
-  getCurrentUserGuildMember,
-  getCurrentUserGuildMemberSchema,
-  memberSchema
-);
-
-export const getCurrentUserGuildMemberProcedure = toProcedure(
-  `query`,
-  getCurrentUserGuildMember,
-  getCurrentUserGuildMemberSchema,
-  memberSchema
-);
-
-export const getCurrentUserGuildMemberQuery = toQuery(
-  getCurrentUserGuildMember
-);

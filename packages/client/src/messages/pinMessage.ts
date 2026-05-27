@@ -1,11 +1,5 @@
 import * as v from "valibot";
-import {
-  put,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { put, type Fetcher, snowflake } from "@discordkit/core";
 
 export const pinMessageSchema = v.object({
   channel: snowflake,
@@ -31,11 +25,3 @@ export const pinMessage: Fetcher<typeof pinMessageSchema> = async ({
   channel,
   message
 }) => put(`/channels/${channel}/messages/pins/${message}`);
-
-export const pinMessageSafe = toValidated(pinMessage, pinMessageSchema);
-
-export const pinMessageProcedure = toProcedure(
-  `mutation`,
-  pinMessage,
-  pinMessageSchema
-);

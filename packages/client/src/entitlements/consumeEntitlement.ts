@@ -1,11 +1,5 @@
 import * as v from "valibot";
-import {
-  post,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { post, type Fetcher, snowflake } from "@discordkit/core";
 
 export const consumeEntitlementSchema = v.object({
   application: snowflake,
@@ -25,14 +19,3 @@ export const consumeEntitlement: Fetcher<
   typeof consumeEntitlementSchema
 > = async ({ application, entitlement }) =>
   post(`/applications/${application}/entitlements/${entitlement}/consume`);
-
-export const consumeEntitlementSafe = toValidated(
-  consumeEntitlement,
-  consumeEntitlementSchema
-);
-
-export const consumeEntitlementProcedure = toProcedure(
-  `mutation`,
-  consumeEntitlement,
-  consumeEntitlementSchema
-);

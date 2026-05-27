@@ -1,11 +1,5 @@
 import * as v from "valibot";
-import {
-  post,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { post, type Fetcher, snowflake } from "@discordkit/core";
 
 export const triggerTypingIndicatorSchema = v.object({
   channel: snowflake
@@ -21,14 +15,3 @@ export const triggerTypingIndicatorSchema = v.object({
 export const triggerTypingIndicator: Fetcher<
   typeof triggerTypingIndicatorSchema
 > = async ({ channel }) => post(`/channels/${channel}/typing`);
-
-export const triggerTypingIndicatorSafe = toValidated(
-  triggerTypingIndicator,
-  triggerTypingIndicatorSchema
-);
-
-export const triggerTypingIndicatorProcedure = toProcedure(
-  `mutation`,
-  triggerTypingIndicator,
-  triggerTypingIndicatorSchema
-);

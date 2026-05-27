@@ -7,4 +7,3 @@ export * from "./listStickerPacks.js";
 export * from "./modifyGuildSticker.js";
 
 export * from "./types/index.js";
-export * as stickerProcedures from "./procedures.js";

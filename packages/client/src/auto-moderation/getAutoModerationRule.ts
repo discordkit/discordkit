@@ -1,16 +1,6 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import {
-  moderationRuleSchema,
-  type ModerationRule
-} from "./types/ModerationRule.js";
+import { get, type Fetcher, snowflake } from "@discordkit/core";
+import { type ModerationRule } from "./types/ModerationRule.js";
 
 export const getAutoModerationRuleSchema = v.object({
   guild: snowflake,
@@ -33,18 +23,3 @@ export const getAutoModerationRule: Fetcher<
   ModerationRule
 > = async ({ guild, rule }) =>
   get(`/guilds/${guild}/auto-moderation/rules/${rule}`);
-
-export const getAutoModerationRuleSafe = toValidated(
-  getAutoModerationRule,
-  getAutoModerationRuleSchema,
-  moderationRuleSchema
-);
-
-export const getAutoModerationRuleProcedure = toProcedure(
-  `query`,
-  getAutoModerationRule,
-  getAutoModerationRuleSchema,
-  moderationRuleSchema
-);
-
-export const getAutoModerationRuleQuery = toQuery(getAutoModerationRule);

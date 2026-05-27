@@ -1,12 +1,6 @@
 import * as v from "valibot";
-import {
-  remove,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  boundedString
-} from "@discordkit/core";
-import { inviteSchema, type Invite } from "./types/Invite.js";
+import { remove, type Fetcher, boundedString } from "@discordkit/core";
+import { type Invite } from "./types/Invite.js";
 
 export const deleteInviteSchema = v.object({
   code: boundedString()
@@ -25,16 +19,3 @@ export const deleteInviteSchema = v.object({
 export const deleteInvite: Fetcher<typeof deleteInviteSchema, Invite> = async ({
   code
 }) => remove(`/invites/${code}`);
-
-export const deleteInviteSafe = toValidated(
-  deleteInvite,
-  deleteInviteSchema,
-  inviteSchema
-);
-
-export const deleteInviteProcedure = toProcedure(
-  `mutation`,
-  deleteInvite,
-  deleteInviteSchema,
-  inviteSchema
-);

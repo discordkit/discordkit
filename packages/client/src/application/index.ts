@@ -16,4 +16,3 @@ export * from "./getGuildApplicationCommandPermissions.js";
 export * from "./getGuildApplicationCommands.js";
 
 export * from "./types/index.js";
-export * as applicationProcedures from "./procedures.js";

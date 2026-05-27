@@ -1,13 +1,6 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import { emojiSchema, type Emoji } from "./types/Emoji.js";
+import { get, type Fetcher, snowflake } from "@discordkit/core";
+import { type Emoji } from "./types/Emoji.js";
 
 export const getGuildEmojiSchema = v.object({
   guild: snowflake,
@@ -25,18 +18,3 @@ export const getGuildEmoji: Fetcher<
   typeof getGuildEmojiSchema,
   Emoji
 > = async ({ guild, emoji }) => get(`/guilds/${guild}/emojis/${emoji}`);
-
-export const getGuildEmojiSafe = toValidated(
-  getGuildEmoji,
-  getGuildEmojiSchema,
-  emojiSchema
-);
-
-export const getGuildEmojiProcedure = toProcedure(
-  `query`,
-  getGuildEmoji,
-  getGuildEmojiSchema,
-  emojiSchema
-);
-
-export const getGuildEmojiQuery = toQuery(getGuildEmoji);

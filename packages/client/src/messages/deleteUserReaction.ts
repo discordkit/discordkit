@@ -1,11 +1,5 @@
 import * as v from "valibot";
-import {
-  remove,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { remove, type Fetcher, snowflake } from "@discordkit/core";
 
 export const deleteUserReactionSchema = v.object({
   channel: snowflake,
@@ -25,14 +19,3 @@ export const deleteUserReaction: Fetcher<
   typeof deleteUserReactionSchema
 > = async ({ channel, message, emoji, user }) =>
   remove(`/channels/${channel}/messages/${message}/reactions/${emoji}/${user}`);
-
-export const deleteUserReactionSafe = toValidated(
-  deleteUserReaction,
-  deleteUserReactionSchema
-);
-
-export const deleteUserReactionProcedure = toProcedure(
-  `mutation`,
-  deleteUserReaction,
-  deleteUserReactionSchema
-);

@@ -1,16 +1,6 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import {
-  scheduledEventUserSchema,
-  type ScheduledEventUser
-} from "./types/ScheduledEventUser.js";
+import { get, type Fetcher, snowflake } from "@discordkit/core";
+import { type ScheduledEventUser } from "./types/ScheduledEventUser.js";
 
 export const getGuildScheduledEventUsersSchema = v.object({
   guild: snowflake,
@@ -43,20 +33,3 @@ export const getGuildScheduledEventUsers: Fetcher<
   ScheduledEventUser[]
 > = async ({ guild, event, params }) =>
   get(`/guilds/${guild}/scheduled-events/${event}/users`, params);
-
-export const getGuildScheduledEventUsersSafe = toValidated(
-  getGuildScheduledEventUsers,
-  getGuildScheduledEventUsersSchema,
-  v.array(scheduledEventUserSchema)
-);
-
-export const getGuildScheduledEventUsersProcedure = toProcedure(
-  `query`,
-  getGuildScheduledEventUsers,
-  getGuildScheduledEventUsersSchema,
-  v.array(scheduledEventUserSchema)
-);
-
-export const getGuildScheduledEventUsersQuery = toQuery(
-  getGuildScheduledEventUsers
-);

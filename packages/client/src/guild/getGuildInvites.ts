@@ -1,16 +1,6 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import {
-  inviteMetadataSchema,
-  type InviteMetadata
-} from "../invite/types/InviteMetadata.js";
+import { get, type Fetcher, snowflake } from "@discordkit/core";
+import { type InviteMetadata } from "../invite/types/InviteMetadata.js";
 
 export const getGuildInvitesSchema = v.object({
   guild: snowflake
@@ -27,18 +17,3 @@ export const getGuildInvites: Fetcher<
   typeof getGuildInvitesSchema,
   InviteMetadata[]
 > = async ({ guild }) => get(`/guilds/${guild}/invites`);
-
-export const getGuildInvitesSafe = toValidated(
-  getGuildInvites,
-  getGuildInvitesSchema,
-  v.array(inviteMetadataSchema)
-);
-
-export const getGuildInvitesProcedure = toProcedure(
-  `query`,
-  getGuildInvites,
-  getGuildInvitesSchema,
-  v.array(inviteMetadataSchema)
-);
-
-export const getGuildInvitesQuery = toQuery(getGuildInvites);

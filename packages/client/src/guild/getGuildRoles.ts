@@ -1,13 +1,6 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import { roleSchema, type Role } from "../permissions/Role.js";
+import { get, type Fetcher, snowflake } from "@discordkit/core";
+import { type Role } from "../permissions/Role.js";
 
 export const getGuildRolesSchema = v.object({
   guild: snowflake
@@ -24,18 +17,3 @@ export const getGuildRoles: Fetcher<
   typeof getGuildRolesSchema,
   Role[]
 > = async ({ guild }) => get(`/guilds/${guild}/roles`);
-
-export const getGuildRolesSafe = toValidated(
-  getGuildRoles,
-  getGuildRolesSchema,
-  v.array(roleSchema)
-);
-
-export const getGuildRolesProcedure = toProcedure(
-  `query`,
-  getGuildRoles,
-  getGuildRolesSchema,
-  v.array(roleSchema)
-);
-
-export const getGuildRolesQuery = toQuery(getGuildRoles);

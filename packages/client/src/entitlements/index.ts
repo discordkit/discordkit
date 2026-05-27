@@ -5,4 +5,3 @@ export * from "./getEntitlement.js";
 export * from "./listEntitlements.js";
 
 export * from "./types/index.js";
-export * as entitlementProcedures from "./procedures.js";

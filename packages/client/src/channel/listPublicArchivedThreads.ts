@@ -1,17 +1,6 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake,
-  timestamp
-} from "@discordkit/core";
-import {
-  archivedThreadsSchema,
-  type ArchivedThreads
-} from "./types/ArchivedThreads.js";
+import { get, type Fetcher, snowflake, timestamp } from "@discordkit/core";
+import { type ArchivedThreads } from "./types/ArchivedThreads.js";
 
 export const listPublicArchivedThreadsSchema = v.object({
   channel: snowflake,
@@ -39,20 +28,3 @@ export const listPublicArchivedThreads: Fetcher<
   ArchivedThreads
 > = async ({ channel, params }) =>
   get(`/channels/${channel}/threads/archived/public`, params);
-
-export const listPublicArchivedThreadsSafe = toValidated(
-  listPublicArchivedThreads,
-  listPublicArchivedThreadsSchema,
-  archivedThreadsSchema
-);
-
-export const listPublicArchivedThreadsProcedure = toProcedure(
-  `query`,
-  listPublicArchivedThreads,
-  listPublicArchivedThreadsSchema,
-  archivedThreadsSchema
-);
-
-export const listPublicArchivedThreadsQuery = toQuery(
-  listPublicArchivedThreads
-);

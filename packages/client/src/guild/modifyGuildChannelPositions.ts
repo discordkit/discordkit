@@ -1,11 +1,5 @@
 import * as v from "valibot";
-import {
-  patch,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { patch, type Fetcher, snowflake } from "@discordkit/core";
 
 export const modifyGuildChannelPositionsSchema = v.object({
   guild: snowflake,
@@ -37,14 +31,3 @@ export const modifyGuildChannelPositionsSchema = v.object({
 export const modifyGuildChannelPositions: Fetcher<
   typeof modifyGuildChannelPositionsSchema
 > = async ({ guild, body }) => patch(`/guilds/${guild}/channels`, body);
-
-export const modifyGuildChannelPositionsSafe = toValidated(
-  modifyGuildChannelPositions,
-  modifyGuildChannelPositionsSchema
-);
-
-export const modifyGuildChannelPositionsProcedure = toProcedure(
-  `mutation`,
-  modifyGuildChannelPositions,
-  modifyGuildChannelPositionsSchema
-);

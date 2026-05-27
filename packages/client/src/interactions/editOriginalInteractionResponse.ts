@@ -3,8 +3,6 @@ import {
   patch,
   buildURL,
   type Fetcher,
-  toProcedure,
-  toValidated,
   snowflake,
   boundedString,
   boundedArray
@@ -14,10 +12,7 @@ import { allowedMentionSchema } from "../messages/types/AllowedMention.js";
 import { attachmentSchema } from "../messages/types/Attachment.js";
 import { messageComponentSchema } from "../messages/types/MessageComponent.js";
 import { EmbedType } from "../messages/types/EmbedType.js";
-import {
-  type InteractionCallbackResponse,
-  interactionCallbackResponseSchema
-} from "./types/InteractionCallbackResponse.js";
+import { type InteractionCallbackResponse } from "./types/InteractionCallbackResponse.js";
 
 export const editOriginalInteractionResponseSchema = v.object({
   application: snowflake,
@@ -70,16 +65,3 @@ export const editOriginalInteractionResponse: Fetcher<
       .href,
     body
   );
-
-export const editOriginalInteractionResponseSafe = toValidated(
-  editOriginalInteractionResponse,
-  editOriginalInteractionResponseSchema,
-  interactionCallbackResponseSchema
-);
-
-export const editOriginalInteractionResponseProcedure = toProcedure(
-  `mutation`,
-  editOriginalInteractionResponse,
-  editOriginalInteractionResponseSchema,
-  interactionCallbackResponseSchema
-);

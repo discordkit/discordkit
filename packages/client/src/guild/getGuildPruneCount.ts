@@ -1,12 +1,5 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { get, type Fetcher, snowflake } from "@discordkit/core";
 
 export const getGuildPruneCountSchema = v.object({
   guild: snowflake,
@@ -42,18 +35,3 @@ export const getGuildPruneCount: Fetcher<
   typeof getGuildPruneCountSchema,
   v.InferOutput<typeof guildPruneCountSchema>
 > = async ({ guild, params }) => get(`/guilds/${guild}/prune`, params);
-
-export const getGuildPruneCountSafe = toValidated(
-  getGuildPruneCount,
-  getGuildPruneCountSchema,
-  guildPruneCountSchema
-);
-
-export const getGuildPruneCountProcedure = toProcedure(
-  `query`,
-  getGuildPruneCount,
-  getGuildPruneCountSchema,
-  guildPruneCountSchema
-);
-
-export const getGuildPruneCountQuery = toQuery(getGuildPruneCount);

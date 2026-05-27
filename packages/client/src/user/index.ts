@@ -11,4 +11,3 @@ export * from "./modifyCurrentUser.js";
 export * from "./updateCurrentUserApplicationRoleConnection.js";
 
 export * from "./types/index.js";
-export * as userProcedures from "./procedures.js";

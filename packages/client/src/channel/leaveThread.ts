@@ -1,11 +1,5 @@
 import * as v from "valibot";
-import {
-  remove,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { remove, type Fetcher, snowflake } from "@discordkit/core";
 
 export const leaveThreadSchema = v.object({
   channel: snowflake
@@ -21,11 +15,3 @@ export const leaveThreadSchema = v.object({
 export const leaveThread: Fetcher<typeof leaveThreadSchema> = async ({
   channel
 }) => remove(`/channels/${channel}/thread-members/@me`);
-
-export const leaveThreadSafe = toValidated(leaveThread, leaveThreadSchema);
-
-export const leaveThreadProcedure = toProcedure(
-  `mutation`,
-  leaveThread,
-  leaveThreadSchema
-);

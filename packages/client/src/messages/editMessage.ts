@@ -2,14 +2,12 @@ import * as v from "valibot";
 import {
   patch,
   type Fetcher,
-  toProcedure,
-  toValidated,
   snowflake,
   asInteger,
   boundedArray,
   boundedString
 } from "@discordkit/core";
-import { type Message, messageSchema } from "./types/Message.js";
+import { type Message } from "./types/Message.js";
 import { embedSchema } from "./types/Embed.js";
 import { allowedMentionSchema } from "./types/AllowedMention.js";
 import { messageComponentSchema } from "./types/MessageComponent.js";
@@ -65,16 +63,3 @@ export const editMessage: Fetcher<typeof editMessageSchema, Message> = async ({
   message,
   body
 }) => patch(`/channels/${channel}/messages/${message}`, body);
-
-export const editMessageSafe = toValidated(
-  editMessage,
-  editMessageSchema,
-  messageSchema
-);
-
-export const editMessageProcedure = toProcedure(
-  `mutation`,
-  editMessage,
-  editMessageSchema,
-  messageSchema
-);

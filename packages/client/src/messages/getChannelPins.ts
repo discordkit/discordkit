@@ -1,14 +1,6 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake,
-  boundedInteger
-} from "@discordkit/core";
-import { messagePinSchema, type MessagePin } from "./types/MessagePin.js";
+import { get, type Fetcher, snowflake, boundedInteger } from "@discordkit/core";
+import { type MessagePin } from "./types/MessagePin.js";
 
 export const getChannelPinsSchema = v.object({
   channel: snowflake,
@@ -36,18 +28,3 @@ export const getChannelPins: Fetcher<
   MessagePin[]
 > = async ({ channel, params }) =>
   get(`/channels/${channel}/messages/pins`, params);
-
-export const getChannelPinsSafe = toValidated(
-  getChannelPins,
-  getChannelPinsSchema,
-  v.array(messagePinSchema)
-);
-
-export const getChannelPinsProcedure = toProcedure(
-  `query`,
-  getChannelPins,
-  getChannelPinsSchema,
-  v.array(messagePinSchema)
-);
-
-export const getChannelPinsQuery = toQuery(getChannelPins);

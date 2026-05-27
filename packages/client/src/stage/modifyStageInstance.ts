@@ -2,12 +2,10 @@ import * as v from "valibot";
 import {
   patch,
   type Fetcher,
-  toProcedure,
-  toValidated,
   snowflake,
   boundedString
 } from "@discordkit/core";
-import { type Stage, stageSchema } from "./types/Stage.js";
+import { type Stage } from "./types/Stage.js";
 import { stagePrivacyLevelSchema } from "./types/StagePrivacyLevel.js";
 
 export const modifyStageInstanceSchema = v.object({
@@ -39,16 +37,3 @@ export const modifyStageInstance: Fetcher<
   typeof modifyStageInstanceSchema,
   Stage
 > = async ({ channel, body }) => patch(`/stage-instances/${channel}`, body);
-
-export const modifyStageInstanceSafe = toValidated(
-  modifyStageInstance,
-  modifyStageInstanceSchema,
-  stageSchema
-);
-
-export const modifyStageInstanceProcedure = toProcedure(
-  `mutation`,
-  modifyStageInstance,
-  modifyStageInstanceSchema,
-  stageSchema
-);

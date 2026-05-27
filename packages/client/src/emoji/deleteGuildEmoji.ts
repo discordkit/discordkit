@@ -1,11 +1,5 @@
 import * as v from "valibot";
-import {
-  remove,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { remove, type Fetcher, snowflake } from "@discordkit/core";
 
 export const deleteGuildEmojiSchema = v.object({
   guild: snowflake,
@@ -27,14 +21,3 @@ export const deleteGuildEmoji: Fetcher<typeof deleteGuildEmojiSchema> = async ({
   guild,
   emoji
 }) => remove(`/guilds/${guild}/emojis/${emoji}`);
-
-export const deleteGuildEmojiSafe = toValidated(
-  deleteGuildEmoji,
-  deleteGuildEmojiSchema
-);
-
-export const deleteGuildEmojiProcedure = toProcedure(
-  `mutation`,
-  deleteGuildEmoji,
-  deleteGuildEmojiSchema
-);

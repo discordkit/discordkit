@@ -1,13 +1,6 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import { stickerSchema, type Sticker } from "./types/Sticker.js";
+import { get, type Fetcher, snowflake } from "@discordkit/core";
+import { type Sticker } from "./types/Sticker.js";
 
 export const getGuildStickerSchema = v.object({
   guild: snowflake,
@@ -25,18 +18,3 @@ export const getGuildSticker: Fetcher<
   typeof getGuildStickerSchema,
   Sticker
 > = async ({ guild, sticker }) => get(`/guilds/${guild}/stickers/${sticker}`);
-
-export const getGuildStickerSafe = toValidated(
-  getGuildSticker,
-  getGuildStickerSchema,
-  stickerSchema
-);
-
-export const getGuildStickerProcedure = toProcedure(
-  `query`,
-  getGuildSticker,
-  getGuildStickerSchema,
-  stickerSchema
-);
-
-export const getGuildStickerQuery = toQuery(getGuildSticker);

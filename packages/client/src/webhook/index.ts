@@ -15,4 +15,3 @@ export * from "./modifyWebhook.js";
 export * from "./modifyWebhookWithToken.js";
 
 export * from "./types/index.js";
-export * as webhookProcedures from "./procedures.js";

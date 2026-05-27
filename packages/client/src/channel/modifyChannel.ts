@@ -1,13 +1,7 @@
 import * as v from "valibot";
 import type { Fetcher } from "@discordkit/core";
-import {
-  toProcedure,
-  patch,
-  toValidated,
-  snowflake,
-  asInteger
-} from "@discordkit/core";
-import { type Channel, channelSchema } from "./types/Channel.js";
+import { patch, snowflake, asInteger } from "@discordkit/core";
+import { type Channel } from "./types/Channel.js";
 import { autoArchiveDurationSchema } from "./types/AutoArchiveDuration.js";
 import { ChannelType } from "./types/ChannelType.js";
 import { videoQualityModeSchema } from "./types/VideoQualityMode.js";
@@ -119,16 +113,3 @@ export const modifyChannel: Fetcher<
   typeof modifyChannelSchema,
   Channel
 > = async ({ channel, body }) => patch(`/channels/${channel}`, body);
-
-export const modifyChannelSafe = toValidated(
-  modifyChannel,
-  modifyChannelSchema,
-  channelSchema
-);
-
-export const modifyChannelProcedure = toProcedure(
-  `mutation`,
-  modifyChannel,
-  modifyChannelSchema,
-  channelSchema
-);

@@ -1,16 +1,6 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import {
-  voiceRegionSchema,
-  type VoiceRegion
-} from "../voice/types/VoiceRegion.js";
+import { get, type Fetcher, snowflake } from "@discordkit/core";
+import { type VoiceRegion } from "../voice/types/VoiceRegion.js";
 
 export const getGuildVoiceRegionsSchema = v.object({
   guild: snowflake
@@ -27,18 +17,3 @@ export const getGuildVoiceRegions: Fetcher<
   typeof getGuildVoiceRegionsSchema,
   VoiceRegion
 > = async ({ guild }) => get(`/guilds/${guild}/regions`);
-
-export const getGuildVoiceRegionsSafe = toValidated(
-  getGuildVoiceRegions,
-  getGuildVoiceRegionsSchema,
-  voiceRegionSchema
-);
-
-export const getGuildVoiceRegionsProcedure = toProcedure(
-  `query`,
-  getGuildVoiceRegions,
-  getGuildVoiceRegionsSchema,
-  voiceRegionSchema
-);
-
-export const getGuildVoiceRegionsQuery = toQuery(getGuildVoiceRegions);

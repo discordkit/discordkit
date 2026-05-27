@@ -3,8 +3,6 @@ import {
   post,
   buildURL,
   type Fetcher,
-  toProcedure,
-  toValidated,
   snowflake,
   boundedString
 } from "@discordkit/core";
@@ -35,14 +33,3 @@ export const executeGitHubCompatibleWebhook: Fetcher<
   typeof executeGitHubCompatibleWebhookSchema
 > = async ({ webhook, token, params }) =>
   post(buildURL(`/webhooks/${webhook}/${token}/github`, params).href);
-
-export const executeGitHubCompatibleWebhookSafe = toValidated(
-  executeGitHubCompatibleWebhook,
-  executeGitHubCompatibleWebhookSchema
-);
-
-export const executeGitHubCompatibleWebhookProcedure = toProcedure(
-  `mutation`,
-  executeGitHubCompatibleWebhook,
-  executeGitHubCompatibleWebhookSchema
-);

@@ -2,16 +2,11 @@ import * as v from "valibot";
 import {
   patch,
   type Fetcher,
-  toProcedure,
-  toValidated,
   snowflake,
   datauri,
   timestamp
 } from "@discordkit/core";
-import {
-  type ScheduledEvent,
-  scheduledEventSchema
-} from "./types/ScheduledEvent.js";
+import { type ScheduledEvent } from "./types/ScheduledEvent.js";
 import { entityMetadataSchema } from "./types/EntityMetadata.js";
 import { scheduledEventPrivacyLevelSchema } from "./types/ScheduledEventPrivacyLevel.js";
 import { scheduledEventEntityTypeSchema } from "./types/ScheduledEventEntityType.js";
@@ -71,16 +66,3 @@ export const modifyGuildScheduledEvent: Fetcher<
   ScheduledEvent
 > = async ({ guild, event, body }) =>
   patch(`/guilds/${guild}/scheduled-events/${event}`, body);
-
-export const modifyGuildScheduledEventSafe = toValidated(
-  modifyGuildScheduledEvent,
-  modifyGuildScheduledEventSchema,
-  scheduledEventSchema
-);
-
-export const modifyGuildScheduledEventProcedure = toProcedure(
-  `mutation`,
-  modifyGuildScheduledEvent,
-  modifyGuildScheduledEventSchema,
-  scheduledEventSchema
-);

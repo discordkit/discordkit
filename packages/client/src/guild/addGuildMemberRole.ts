@@ -1,11 +1,5 @@
 import * as v from "valibot";
-import {
-  put,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { put, type Fetcher, snowflake } from "@discordkit/core";
 
 export const addGuildMemberRoleSchema = v.object({
   guild: snowflake,
@@ -28,14 +22,3 @@ export const addGuildMemberRole: Fetcher<
   typeof addGuildMemberRoleSchema
 > = async ({ guild, user, role }) =>
   put(`/guilds/${guild}/members/${user}/roles/${role}`);
-
-export const addGuildMemberRoleSafe = toValidated(
-  addGuildMemberRole,
-  addGuildMemberRoleSchema
-);
-
-export const addGuildMemberRoleProcedure = toProcedure(
-  `mutation`,
-  addGuildMemberRole,
-  addGuildMemberRoleSchema
-);

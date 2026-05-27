@@ -8,4 +8,3 @@ export * from "./getFollowupMessage.js";
 export * from "./getOriginalInteractionResponse.js";
 
 export * from "./types/index.js";
-export * as interactionProcedures from "./procedures.js";

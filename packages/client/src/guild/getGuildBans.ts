@@ -1,13 +1,6 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import { banSchema, type Ban } from "./types/Ban.js";
+import { get, type Fetcher, snowflake } from "@discordkit/core";
+import { type Ban } from "./types/Ban.js";
 
 export const getGuildBansSchema = v.object({
   guild: snowflake,
@@ -36,18 +29,3 @@ export const getGuildBans: Fetcher<typeof getGuildBansSchema, Ban[]> = async ({
   guild,
   params
 }) => get(`/guilds/${guild}/bans`, params);
-
-export const getGuildBansSafe = toValidated(
-  getGuildBans,
-  getGuildBansSchema,
-  v.array(banSchema)
-);
-
-export const getGuildBansProcedure = toProcedure(
-  `query`,
-  getGuildBans,
-  getGuildBansSchema,
-  v.array(banSchema)
-);
-
-export const getGuildBansQuery = toQuery(getGuildBans);

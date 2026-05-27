@@ -1,15 +1,5 @@
-import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated
-} from "@discordkit/core";
-import {
-  soundboardSoundSchema,
-  type SoundboardSound
-} from "./types/SoundboardSound.js";
+import { get, type Fetcher } from "@discordkit/core";
+import { type SoundboardSound } from "./types/SoundboardSound.js";
 
 /**
  * ### [List Default Soundboard Sounds](https://discord.com/developers/docs/resources/soundboard#list-default-soundboard-sounds)
@@ -22,20 +12,3 @@ export const listDefaultSoundboardSounds: Fetcher<
   null,
   SoundboardSound[]
 > = async () => get(`/soundboard-default-sounds`);
-
-export const listDefaultSoundboardSoundsSafe = toValidated(
-  listDefaultSoundboardSounds,
-  null,
-  v.array(soundboardSoundSchema)
-);
-
-export const listDefaultSoundboardSoundsProcedure = toProcedure(
-  `query`,
-  listDefaultSoundboardSounds,
-  null,
-  v.array(soundboardSoundSchema)
-);
-
-export const listDefaultSoundboardSoundsQuery = toQuery(
-  listDefaultSoundboardSounds
-);

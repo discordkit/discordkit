@@ -1,12 +1,6 @@
 import * as v from "valibot";
-import {
-  patch,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import { lobbySchema, type Lobby } from "./types/Lobby.js";
+import { patch, type Fetcher, snowflake } from "@discordkit/core";
+import { type Lobby } from "./types/Lobby.js";
 
 export const unlinkChannelFromLobbySchema = v.object({
   lobby: snowflake
@@ -29,16 +23,3 @@ export const unlinkChannelFromLobby: Fetcher<
   typeof unlinkChannelFromLobbySchema,
   Omit<Lobby, `linkedChannel`>
 > = async ({ lobby }) => patch(`/lobbies/${lobby}/channel-linking`);
-
-export const unlinkChannelFromLobbySafe = toValidated(
-  unlinkChannelFromLobby,
-  unlinkChannelFromLobbySchema,
-  v.omit(lobbySchema, [`linkedChannel`])
-);
-
-export const unlinkChannelFromLobbyProcedure = toProcedure(
-  `mutation`,
-  unlinkChannelFromLobby,
-  unlinkChannelFromLobbySchema,
-  v.omit(lobbySchema, [`linkedChannel`])
-);

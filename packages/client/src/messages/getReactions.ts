@@ -1,14 +1,6 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake,
-  boundedInteger
-} from "@discordkit/core";
-import { userSchema, type User } from "../user/types/User.js";
+import { get, type Fetcher, snowflake, boundedInteger } from "@discordkit/core";
+import { type User } from "../user/types/User.js";
 
 export const getReactionsSchema = v.object({
   channel: snowflake,
@@ -40,18 +32,3 @@ export const getReactions: Fetcher<typeof getReactionsSchema, User[]> = async ({
   params
 }) =>
   get(`/channels/${channel}/messages/${message}/reactions/${emoji}`, params);
-
-export const getReactionsSafe = toValidated(
-  getReactions,
-  getReactionsSchema,
-  v.array(userSchema)
-);
-
-export const getReactionsProcedure = toProcedure(
-  `query`,
-  getReactions,
-  getReactionsSchema,
-  v.array(userSchema)
-);
-
-export const getReactionsQuery = toQuery(getReactions);

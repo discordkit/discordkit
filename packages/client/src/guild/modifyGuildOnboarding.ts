@@ -1,15 +1,6 @@
 import * as v from "valibot";
-import {
-  put,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import {
-  type GuildOnboarding,
-  guildOnboardingSchema
-} from "./types/GuildOnboarding.js";
+import { put, type Fetcher, snowflake } from "@discordkit/core";
+import { type GuildOnboarding } from "./types/GuildOnboarding.js";
 import { onboardingPromptSchema } from "./types/OnboardingPrompt.js";
 import { onboardingModeSchema } from "./types/OnboardingMode.js";
 
@@ -46,16 +37,3 @@ export const modifyGuildOnboarding: Fetcher<
   typeof modifyGuildOnboardingSchema,
   GuildOnboarding
 > = async ({ guild, body }) => put(`/guilds/${guild}/onboarding`, body);
-
-export const modifyGuildOnboardingSafe = toValidated(
-  modifyGuildOnboarding,
-  modifyGuildOnboardingSchema,
-  guildOnboardingSchema
-);
-
-export const modifyGuildOnboardingProcedure = toProcedure(
-  `mutation`,
-  modifyGuildOnboarding,
-  modifyGuildOnboardingSchema,
-  guildOnboardingSchema
-);

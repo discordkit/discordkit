@@ -1,16 +1,6 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import {
-  type ApplicationCommand,
-  applicationCommandSchema
-} from "../application-commands/types/ApplicationCommand.js";
+import { get, type Fetcher, snowflake } from "@discordkit/core";
+import { type ApplicationCommand } from "../application-commands/types/ApplicationCommand.js";
 
 export const getGuildApplicationCommandsSchema = v.object({
   application: snowflake,
@@ -39,20 +29,3 @@ export const getGuildApplicationCommands: Fetcher<
   ApplicationCommand[]
 > = async ({ application, guild, params }) =>
   get(`/applications/${application}/guilds/${guild}/commands`, params);
-
-export const getGuildApplicationCommandsSafe = toValidated(
-  getGuildApplicationCommands,
-  getGuildApplicationCommandsSchema,
-  v.array(applicationCommandSchema)
-);
-
-export const getGuildApplicationCommandsProcedure = toProcedure(
-  `query`,
-  getGuildApplicationCommands,
-  getGuildApplicationCommandsSchema,
-  v.array(applicationCommandSchema)
-);
-
-export const getGuildApplicationCommandsQuery = toQuery(
-  getGuildApplicationCommands
-);

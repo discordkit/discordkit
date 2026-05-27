@@ -1,11 +1,5 @@
 import * as v from "valibot";
-import {
-  put,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { put, type Fetcher, snowflake } from "@discordkit/core";
 
 export const groupDMAddRecipientSchema = v.object({
   channel: snowflake,
@@ -29,14 +23,3 @@ export const groupDMAddRecipient: Fetcher<
   typeof groupDMAddRecipientSchema
 > = async ({ channel, user, body }) =>
   put(`/channels/${channel}/recipients/${user}`, body);
-
-export const groupDMAddRecipientSafe = toValidated(
-  groupDMAddRecipient,
-  groupDMAddRecipientSchema
-);
-
-export const groupDMAddRecipientProcedure = toProcedure(
-  `mutation`,
-  groupDMAddRecipient,
-  groupDMAddRecipientSchema
-);

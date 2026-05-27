@@ -1,11 +1,5 @@
 import * as v from "valibot";
-import {
-  remove,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { remove, type Fetcher, snowflake } from "@discordkit/core";
 
 export const deleteGuildSoundboardSoundSchema = v.object({
   guild: snowflake,
@@ -23,14 +17,3 @@ export const deleteGuildSoundboardSound: Fetcher<
   typeof deleteGuildSoundboardSoundSchema
 > = async ({ guild, sound }) =>
   remove(`/guilds/${guild}/soundboard-sounds/${sound}`);
-
-export const deleteGuildSoundboardSoundSafe = toValidated(
-  deleteGuildSoundboardSound,
-  deleteGuildSoundboardSoundSchema
-);
-
-export const deleteGuildSoundboardSoundProcedure = toProcedure(
-  `mutation`,
-  deleteGuildSoundboardSound,
-  deleteGuildSoundboardSoundSchema
-);

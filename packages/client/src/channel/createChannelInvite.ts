@@ -1,12 +1,6 @@
 import * as v from "valibot";
-import {
-  post,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import { type Invite, inviteSchema } from "../invite/types/Invite.js";
+import { post, type Fetcher, snowflake } from "@discordkit/core";
+import { type Invite } from "../invite/types/Invite.js";
 import { inviteTargetSchema } from "../invite/types/InviteTarget.js";
 
 export const createChannelInviteSchema = v.object({
@@ -58,16 +52,3 @@ export const createChannelInvite: Fetcher<
   typeof createChannelInviteSchema,
   Invite
 > = async ({ channel, body }) => post(`/channels/${channel}/invites`, body);
-
-export const createChannelInviteSafe = toValidated(
-  createChannelInvite,
-  createChannelInviteSchema,
-  inviteSchema
-);
-
-export const createChannelInviteProcedure = toProcedure(
-  `mutation`,
-  createChannelInvite,
-  createChannelInviteSchema,
-  inviteSchema
-);

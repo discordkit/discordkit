@@ -2,16 +2,11 @@ import * as v from "valibot";
 import {
   post,
   type Fetcher,
-  toProcedure,
-  toValidated,
   snowflake,
   asDigits,
   boundedString
 } from "@discordkit/core";
-import {
-  applicationCommandSchema,
-  type ApplicationCommand
-} from "../application-commands/types/ApplicationCommand.js";
+import { type ApplicationCommand } from "../application-commands/types/ApplicationCommand.js";
 import { applicationCommandOptionSchema } from "../application-commands/types/ApplicationCommandOption.js";
 import {
   ApplicationCommandType,
@@ -74,16 +69,3 @@ export const createGlobalApplicationCommand: Fetcher<
   ApplicationCommand
 > = async ({ application, body }) =>
   post(`/applications/${application}/commands`, body);
-
-export const createGlobalApplicationCommandSafe = toValidated(
-  createGlobalApplicationCommand,
-  createGlobalApplicationCommandSchema,
-  applicationCommandSchema
-);
-
-export const createGlobalApplicationCommandProcedure = toProcedure(
-  `mutation`,
-  createGlobalApplicationCommand,
-  createGlobalApplicationCommandSchema,
-  applicationCommandSchema
-);

@@ -1,6 +1,6 @@
 import * as v from "valibot";
 import type { Fetcher } from "@discordkit/core";
-import { post, toProcedure, toValidated } from "@discordkit/core";
+import { post } from "@discordkit/core";
 import { groupDirectMessageChannelSchema } from "../channel/types/Channel.js";
 
 export const createGroupDMSchema = v.object({
@@ -27,16 +27,3 @@ export const createGroupDM: Fetcher<
   typeof createGroupDMSchema,
   v.InferOutput<typeof groupDirectMessageChannelSchema>
 > = async ({ body }) => post(`/users/@me/channels`, body);
-
-export const createGroupDMSafe = toValidated(
-  createGroupDM,
-  createGroupDMSchema,
-  groupDirectMessageChannelSchema
-);
-
-export const createGroupDMProcedure = toProcedure(
-  `mutation`,
-  createGroupDM,
-  createGroupDMSchema,
-  groupDirectMessageChannelSchema
-);

@@ -1,11 +1,5 @@
 import * as v from "valibot";
-import {
-  post,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { post, type Fetcher, snowflake } from "@discordkit/core";
 
 export const sendSoundboardSoundSchema = v.object({
   channel: snowflake,
@@ -30,14 +24,3 @@ export const sendSoundboardSound: Fetcher<
   typeof sendSoundboardSoundSchema
 > = async ({ channel, body }) =>
   post(`/channels/${channel}/send-soundboard-sound`, body);
-
-export const sendSoundboardSoundSafe = toValidated(
-  sendSoundboardSound,
-  sendSoundboardSoundSchema
-);
-
-export const sendSoundboardSoundProcedure = toProcedure(
-  `mutation`,
-  sendSoundboardSound,
-  sendSoundboardSoundSchema
-);

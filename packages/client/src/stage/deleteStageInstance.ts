@@ -1,11 +1,5 @@
 import * as v from "valibot";
-import {
-  remove,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { remove, type Fetcher, snowflake } from "@discordkit/core";
 
 export const deleteStageInstanceSchema = v.object({
   channel: snowflake
@@ -27,14 +21,3 @@ export const deleteStageInstanceSchema = v.object({
 export const deleteStageInstance: Fetcher<
   typeof deleteStageInstanceSchema
 > = async ({ channel }) => remove(`/stage-instances/${channel}`);
-
-export const deleteStageInstanceSafe = toValidated(
-  deleteStageInstance,
-  deleteStageInstanceSchema
-);
-
-export const deleteStageInstanceProcedure = toProcedure(
-  `mutation`,
-  deleteStageInstance,
-  deleteStageInstanceSchema
-);

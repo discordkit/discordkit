@@ -1,13 +1,6 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import { webhookSchema, type Webhook } from "./types/Webhook.js";
+import { get, type Fetcher, snowflake } from "@discordkit/core";
+import { type Webhook } from "./types/Webhook.js";
 
 export const getChannelWebhooksSchema = v.object({
   channel: snowflake
@@ -24,18 +17,3 @@ export const getChannelWebhooks: Fetcher<
   typeof getChannelWebhooksSchema,
   Webhook[]
 > = async ({ channel }) => get(`/channels/${channel}/webhooks`);
-
-export const getChannelWebhooksSafe = toValidated(
-  getChannelWebhooks,
-  getChannelWebhooksSchema,
-  v.array(webhookSchema)
-);
-
-export const getChannelWebhooksProcedure = toProcedure(
-  `query`,
-  getChannelWebhooks,
-  getChannelWebhooksSchema,
-  v.array(webhookSchema)
-);
-
-export const getChannelWebhooksQuery = toQuery(getChannelWebhooks);

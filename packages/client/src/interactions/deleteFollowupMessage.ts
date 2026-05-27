@@ -1,11 +1,5 @@
 import * as v from "valibot";
-import {
-  remove,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { remove, type Fetcher, snowflake } from "@discordkit/core";
 
 export const deleteFollowupMessageSchema = v.object({
   application: snowflake,
@@ -24,14 +18,3 @@ export const deleteFollowupMessage: Fetcher<
   typeof deleteFollowupMessageSchema
 > = async ({ application, token, message }) =>
   remove(`/webhooks/${application}/${token}/messages/${message}`);
-
-export const deleteFollowupMessageSafe = toValidated(
-  deleteFollowupMessage,
-  deleteFollowupMessageSchema
-);
-
-export const deleteFollowupMessageProcedure = toProcedure(
-  `mutation`,
-  deleteFollowupMessage,
-  deleteFollowupMessageSchema
-);

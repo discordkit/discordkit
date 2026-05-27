@@ -3,8 +3,6 @@ import {
   post,
   buildURL,
   type Fetcher,
-  toProcedure,
-  toValidated,
   snowflake,
   asInteger,
   boundedArray,
@@ -99,14 +97,3 @@ export const executeWebhook: Fetcher<typeof executeWebhookSchema> = async ({
   params,
   body
 }) => post(buildURL(`/webhooks/${webhook}/${token}`, params).href, body);
-
-export const executeWebhookSafe = toValidated(
-  executeWebhook,
-  executeWebhookSchema
-);
-
-export const executeWebhookProcedure = toProcedure(
-  `mutation`,
-  executeWebhook,
-  executeWebhookSchema
-);

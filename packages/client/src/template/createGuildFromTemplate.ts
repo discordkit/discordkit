@@ -1,13 +1,6 @@
 import * as v from "valibot";
-import {
-  post,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake,
-  datauri
-} from "@discordkit/core";
-import { guildSchema, type Guild } from "../guild/types/Guild.js";
+import { post, type Fetcher, snowflake, datauri } from "@discordkit/core";
+import { type Guild } from "../guild/types/Guild.js";
 
 export const createGuildFromTemplateSchema = v.object({
   template: snowflake,
@@ -34,16 +27,3 @@ export const createGuildFromTemplate: Fetcher<
   typeof createGuildFromTemplateSchema,
   Guild
 > = async ({ template, body }) => post(`/guilds/templates/${template}`, body);
-
-export const createGuildFromTemplateSafe = toValidated(
-  createGuildFromTemplate,
-  createGuildFromTemplateSchema,
-  guildSchema
-);
-
-export const createGuildFromTemplateProcedure = toProcedure(
-  `mutation`,
-  createGuildFromTemplate,
-  createGuildFromTemplateSchema,
-  guildSchema
-);

@@ -2,16 +2,11 @@ import * as v from "valibot";
 import {
   put,
   type Fetcher,
-  toProcedure,
-  toValidated,
   snowflake,
   asDigits,
   boundedString
 } from "@discordkit/core";
-import {
-  type ApplicationCommand,
-  applicationCommandSchema
-} from "../application-commands/types/ApplicationCommand.js";
+import { type ApplicationCommand } from "../application-commands/types/ApplicationCommand.js";
 import type { Locales } from "./types/Locales.js";
 import { localesSchema } from "./types/Locales.js";
 import { applicationCommandOptionSchema } from "../application-commands/types/ApplicationCommandOption.js";
@@ -84,16 +79,3 @@ export const bulkOverwriteGuildApplicationCommands: Fetcher<
   ApplicationCommand[]
 > = async ({ application, guild, body }) =>
   put(`/applications/${application}/guilds/${guild}/commands`, body);
-
-export const bulkOverwriteGuildApplicationCommandsSafe = toValidated(
-  bulkOverwriteGuildApplicationCommands,
-  bulkOverwriteGuildApplicationCommandsSchema,
-  v.array(applicationCommandSchema)
-);
-
-export const bulkOverwriteGuildApplicationCommandsProcedure = toProcedure(
-  `mutation`,
-  bulkOverwriteGuildApplicationCommands,
-  bulkOverwriteGuildApplicationCommandsSchema,
-  v.array(applicationCommandSchema)
-);

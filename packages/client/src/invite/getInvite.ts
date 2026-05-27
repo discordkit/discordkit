@@ -1,14 +1,6 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake,
-  boundedString
-} from "@discordkit/core";
-import { inviteSchema, type Invite } from "./types/Invite.js";
+import { get, type Fetcher, snowflake, boundedString } from "@discordkit/core";
+import { type Invite } from "./types/Invite.js";
 
 export const getInviteSchema = v.object({
   code: boundedString(),
@@ -37,18 +29,3 @@ export const getInvite: Fetcher<typeof getInviteSchema, Invite> = async ({
   code,
   params
 }) => get(`/invites/${code}`, params);
-
-export const getInviteSafe = toValidated(
-  getInvite,
-  getInviteSchema,
-  inviteSchema
-);
-
-export const getInviteProcedure = toProcedure(
-  `query`,
-  getInvite,
-  getInviteSchema,
-  inviteSchema
-);
-
-export const getInviteQuery = toQuery(getInvite);

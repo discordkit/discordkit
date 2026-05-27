@@ -1,11 +1,5 @@
 import * as v from "valibot";
-import {
-  put,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { put, type Fetcher, snowflake } from "@discordkit/core";
 import {
   type ApplicationCommand,
   applicationCommandSchema
@@ -32,16 +26,3 @@ export const bulkOverwriteGlobalApplicationCommands: Fetcher<
   ApplicationCommand[]
 > = async ({ application, body }) =>
   put(`/applications/${application}/commands`, body);
-
-export const bulkOverwriteGlobalApplicationCommandsSafe = toValidated(
-  bulkOverwriteGlobalApplicationCommands,
-  bulkOverwriteGlobalApplicationCommandsSchema,
-  v.array(applicationCommandSchema)
-);
-
-export const bulkOverwriteGlobalApplicationCommandsProcedure = toProcedure(
-  `mutation`,
-  bulkOverwriteGlobalApplicationCommands,
-  bulkOverwriteGlobalApplicationCommandsSchema,
-  v.array(applicationCommandSchema)
-);

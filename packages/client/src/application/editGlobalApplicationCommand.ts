@@ -2,16 +2,11 @@ import * as v from "valibot";
 import {
   patch,
   type Fetcher,
-  toProcedure,
-  toValidated,
   snowflake,
   asDigits,
   boundedString
 } from "@discordkit/core";
-import {
-  applicationCommandSchema,
-  type ApplicationCommand
-} from "../application-commands/types/ApplicationCommand.js";
+import { type ApplicationCommand } from "../application-commands/types/ApplicationCommand.js";
 import { applicationCommandOptionSchema } from "../application-commands/types/ApplicationCommandOption.js";
 import { localesSchema } from "./types/Locales.js";
 import { permissionFlag } from "../permissions/Permissions.js";
@@ -63,16 +58,3 @@ export const editGlobalApplicationCommand: Fetcher<
   ApplicationCommand
 > = async ({ application, command, body }) =>
   patch(`/applications/${application}/commands/${command}`, body);
-
-export const editGlobalApplicationCommandSafe = toValidated(
-  editGlobalApplicationCommand,
-  editGlobalApplicationCommandSchema,
-  applicationCommandSchema
-);
-
-export const editGlobalApplicationCommandProcedure = toProcedure(
-  `mutation`,
-  editGlobalApplicationCommand,
-  editGlobalApplicationCommandSchema,
-  applicationCommandSchema
-);

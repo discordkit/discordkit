@@ -1,12 +1,6 @@
 import * as v from "valibot";
-import {
-  remove,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import { type Channel, channelSchema } from "./types/Channel.js";
+import { remove, type Fetcher, snowflake } from "@discordkit/core";
+import { type Channel } from "./types/Channel.js";
 
 export const deleteChannelSchema = v.object({
   channel: snowflake
@@ -35,16 +29,3 @@ export const deleteChannel: Fetcher<
   typeof deleteChannelSchema,
   Channel
 > = async ({ channel }) => remove(`/channels/${channel}`);
-
-export const deleteChannelSafe = toValidated(
-  deleteChannel,
-  deleteChannelSchema,
-  channelSchema
-);
-
-export const deleteChannelProcedure = toProcedure(
-  `mutation`,
-  deleteChannel,
-  deleteChannelSchema,
-  channelSchema
-);

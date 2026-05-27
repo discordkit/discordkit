@@ -1,15 +1,6 @@
 import * as v from "valibot";
-import {
-  post,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import {
-  followedChannelSchema,
-  type FollowedChannel
-} from "./types/FollowedChannel.js";
+import { post, type Fetcher, snowflake } from "@discordkit/core";
+import { type FollowedChannel } from "./types/FollowedChannel.js";
 
 export const followAnnouncementChannelSchema = v.object({
   channel: snowflake,
@@ -30,16 +21,3 @@ export const followAnnouncementChannel: Fetcher<
   typeof followAnnouncementChannelSchema,
   FollowedChannel
 > = async ({ channel, body }) => post(`/channels/${channel}/followers`, body);
-
-export const followAnnouncementChannelSafe = toValidated(
-  followAnnouncementChannel,
-  followAnnouncementChannelSchema,
-  followedChannelSchema
-);
-
-export const followAnnouncementChannelProcedure = toProcedure(
-  `mutation`,
-  followAnnouncementChannel,
-  followAnnouncementChannelSchema,
-  followedChannelSchema
-);

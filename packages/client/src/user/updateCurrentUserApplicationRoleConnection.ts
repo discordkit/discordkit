@@ -1,15 +1,6 @@
 import * as v from "valibot";
-import {
-  put,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import {
-  type ApplicationRoleConnection,
-  applicationRoleConnectionSchema
-} from "./types/ApplicationRoleConnection.js";
+import { put, type Fetcher, snowflake } from "@discordkit/core";
+import { type ApplicationRoleConnection } from "./types/ApplicationRoleConnection.js";
 
 export const updateCurrentUserApplicationRoleConnectionSchema = v.object({
   application: snowflake,
@@ -45,16 +36,3 @@ export const updateCurrentUserApplicationRoleConnection: Fetcher<
   ApplicationRoleConnection
 > = async ({ application, body }) =>
   put(`/users/@me/applications/${application}/role-connection`, body);
-
-export const updateCurrentUserApplicationRoleConnectionSafe = toValidated(
-  updateCurrentUserApplicationRoleConnection,
-  updateCurrentUserApplicationRoleConnectionSchema,
-  applicationRoleConnectionSchema
-);
-
-export const updateCurrentUserApplicationRoleConnectionProcedure = toProcedure(
-  `mutation`,
-  updateCurrentUserApplicationRoleConnection,
-  updateCurrentUserApplicationRoleConnectionSchema,
-  applicationRoleConnectionSchema
-);

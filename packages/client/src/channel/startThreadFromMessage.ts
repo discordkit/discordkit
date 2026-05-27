@@ -1,11 +1,5 @@
 import * as v from "valibot";
-import {
-  post,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { post, type Fetcher, snowflake } from "@discordkit/core";
 import { threadChannelSchema } from "./types/Channel.js";
 import { autoArchiveDurationSchema } from "./types/AutoArchiveDuration.js";
 
@@ -42,16 +36,3 @@ export const startThreadFromMessage: Fetcher<
   v.InferOutput<typeof threadChannelSchema>
 > = async ({ channel, message, body }) =>
   post(`/channels/${channel}/messages/${message}/threads`, body);
-
-export const startThreadFromMessageSafe = toValidated(
-  startThreadFromMessage,
-  startThreadFromMessageSchema,
-  threadChannelSchema
-);
-
-export const startThreadFromMessageProcedure = toProcedure(
-  `mutation`,
-  startThreadFromMessage,
-  startThreadFromMessageSchema,
-  threadChannelSchema
-);

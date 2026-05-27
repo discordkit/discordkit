@@ -1,16 +1,6 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import {
-  guildTemplateSchema,
-  type GuildTemplate
-} from "./types/GuildTemplate.js";
+import { get, type Fetcher, snowflake } from "@discordkit/core";
+import { type GuildTemplate } from "./types/GuildTemplate.js";
 
 export const getGuildTemplateSchema = v.object({
   template: snowflake
@@ -27,18 +17,3 @@ export const getGuildTemplate: Fetcher<
   typeof getGuildTemplateSchema,
   GuildTemplate
 > = async ({ template }) => get(`/guilds/templates/${template}`);
-
-export const getGuildTemplateSafe = toValidated(
-  getGuildTemplate,
-  getGuildTemplateSchema,
-  guildTemplateSchema
-);
-
-export const getGuildTemplateProcedure = toProcedure(
-  `query`,
-  getGuildTemplate,
-  getGuildTemplateSchema,
-  guildTemplateSchema
-);
-
-export const getGuildTemplateQuery = toQuery(getGuildTemplate);

@@ -1,12 +1,5 @@
 import * as v from "valibot";
-import {
-  remove,
-  buildURL,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { remove, buildURL, type Fetcher, snowflake } from "@discordkit/core";
 
 export const deleteOriginalInteractionResponseSchema = v.object({
   application: snowflake,
@@ -35,14 +28,3 @@ export const deleteOriginalInteractionResponse: Fetcher<
     buildURL(`/webhooks/${application}/${token}/messages/@original}`, params)
       .href
   );
-
-export const deleteOriginalInteractionResponseSafe = toValidated(
-  deleteOriginalInteractionResponse,
-  deleteOriginalInteractionResponseSchema
-);
-
-export const deleteOriginalInteractionResponseProcedure = toProcedure(
-  `mutation`,
-  deleteOriginalInteractionResponse,
-  deleteOriginalInteractionResponseSchema
-);

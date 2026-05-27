@@ -1,13 +1,6 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import { subscriptionSchema, type Subscription } from "./types/Subscription.js";
+import { get, type Fetcher, snowflake } from "@discordkit/core";
+import { type Subscription } from "./types/Subscription.js";
 
 export const getSKUSubscriptionSchema = v.object({
   sku: snowflake,
@@ -26,18 +19,3 @@ export const getSKUSubscription: Fetcher<
   Subscription
 > = async ({ sku, subscription }) =>
   get(`/skus/${sku}/subscriptions/${subscription}`);
-
-export const getSKUSubscriptionSafe = toValidated(
-  getSKUSubscription,
-  getSKUSubscriptionSchema,
-  subscriptionSchema
-);
-
-export const getSKUSubscriptionProcedure = toProcedure(
-  `query`,
-  getSKUSubscription,
-  getSKUSubscriptionSchema,
-  subscriptionSchema
-);
-
-export const getSKUSubscriptionQuery = toQuery(getSKUSubscription);

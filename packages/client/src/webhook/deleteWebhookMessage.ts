@@ -3,8 +3,6 @@ import {
   remove,
   buildURL,
   type Fetcher,
-  toProcedure,
-  toValidated,
   snowflake,
   boundedString
 } from "@discordkit/core";
@@ -36,14 +34,3 @@ export const deleteWebhookMessage: Fetcher<
   remove(
     buildURL(`/webhooks/${webhook}/${token}/messages/${message}`, params).href
   );
-
-export const deleteWebhookMessageSafe = toValidated(
-  deleteWebhookMessage,
-  deleteWebhookMessageSchema
-);
-
-export const deleteWebhookMessageProcedure = toProcedure(
-  `mutation`,
-  deleteWebhookMessage,
-  deleteWebhookMessageSchema
-);

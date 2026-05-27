@@ -2,8 +2,6 @@ import * as v from "valibot";
 import {
   remove,
   type Fetcher,
-  toProcedure,
-  toValidated,
   snowflake,
   boundedString
 } from "@discordkit/core";
@@ -23,14 +21,3 @@ export const deleteWebhookWithTokenSchema = v.object({
 export const deleteWebhookWithToken: Fetcher<
   typeof deleteWebhookWithTokenSchema
 > = async ({ webhook, token }) => remove(`/webhooks/${webhook}/${token}`);
-
-export const deleteWebhookWithTokenSafe = toValidated(
-  deleteWebhookWithToken,
-  deleteWebhookWithTokenSchema
-);
-
-export const deleteWebhookWithTokenProcedure = toProcedure(
-  `mutation`,
-  deleteWebhookWithToken,
-  deleteWebhookWithTokenSchema
-);

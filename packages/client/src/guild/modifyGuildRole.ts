@@ -2,13 +2,11 @@ import * as v from "valibot";
 import {
   patch,
   type Fetcher,
-  toProcedure,
-  toValidated,
   snowflake,
   asDigits,
   datauri
 } from "@discordkit/core";
-import { roleSchema, type Role } from "../permissions/Role.js";
+import { type Role } from "../permissions/Role.js";
 import { roleColorsSchema } from "../permissions/RoleColors.js";
 import { permissionFlag } from "../permissions/Permissions.js";
 
@@ -64,16 +62,3 @@ export const modifyGuildRole: Fetcher<
   Role
 > = async ({ guild, role, body }) =>
   patch(`/guilds/${guild}/roles/${role}`, body);
-
-export const modifyGuildRoleSafe = toValidated(
-  modifyGuildRole,
-  modifyGuildRoleSchema,
-  roleSchema
-);
-
-export const modifyGuildRoleProcedure = toProcedure(
-  `mutation`,
-  modifyGuildRole,
-  modifyGuildRoleSchema,
-  roleSchema
-);

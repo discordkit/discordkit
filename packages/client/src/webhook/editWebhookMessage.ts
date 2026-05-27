@@ -3,13 +3,11 @@ import {
   patch,
   buildURL,
   type Fetcher,
-  toProcedure,
-  toValidated,
   snowflake,
   boundedArray,
   boundedString
 } from "@discordkit/core";
-import { messageSchema, type Message } from "../messages/types/Message.js";
+import { type Message } from "../messages/types/Message.js";
 import { embedSchema } from "../messages/types/Embed.js";
 import { allowedMentionSchema } from "../messages/types/AllowedMention.js";
 import { attachmentSchema } from "../messages/types/Attachment.js";
@@ -86,16 +84,3 @@ export const editWebhookMessage: Fetcher<
     buildURL(`/webhooks/${webhook}/${token}/messages/${message}`, params).href,
     body
   );
-
-export const editWebhookMessageSafe = toValidated(
-  editWebhookMessage,
-  editWebhookMessageSchema,
-  messageSchema
-);
-
-export const editWebhookMessageProcedure = toProcedure(
-  `mutation`,
-  editWebhookMessage,
-  editWebhookMessageSchema,
-  messageSchema
-);

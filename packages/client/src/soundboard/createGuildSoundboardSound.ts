@@ -2,16 +2,11 @@ import * as v from "valibot";
 import {
   post,
   type Fetcher,
-  toProcedure,
-  toValidated,
   snowflake,
   boundedString,
   datauri
 } from "@discordkit/core";
-import {
-  soundboardSoundSchema,
-  type SoundboardSound
-} from "./types/SoundboardSound.js";
+import { type SoundboardSound } from "./types/SoundboardSound.js";
 
 export const createGuildSoundboardSoundSchema = v.object({
   guild: snowflake,
@@ -48,16 +43,3 @@ export const createGuildSoundboardSound: Fetcher<
   typeof createGuildSoundboardSoundSchema,
   SoundboardSound
 > = async ({ guild, body }) => post(`/guilds/${guild}/soundboard-sounds`, body);
-
-export const createGuildSoundboardSoundSafe = toValidated(
-  createGuildSoundboardSound,
-  createGuildSoundboardSoundSchema,
-  soundboardSoundSchema
-);
-
-export const createGuildSoundboardSoundProcedure = toProcedure(
-  `mutation`,
-  createGuildSoundboardSound,
-  createGuildSoundboardSoundSchema,
-  soundboardSoundSchema
-);

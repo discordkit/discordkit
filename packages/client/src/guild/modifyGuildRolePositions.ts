@@ -1,12 +1,6 @@
 import * as v from "valibot";
-import {
-  patch,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import { roleSchema, type Role } from "../permissions/Role.js";
+import { patch, type Fetcher, snowflake } from "@discordkit/core";
+import { type Role } from "../permissions/Role.js";
 
 export const modifyGuildRolePositionsSchema = v.object({
   guild: snowflake,
@@ -35,16 +29,3 @@ export const modifyGuildRolePositions: Fetcher<
   typeof modifyGuildRolePositionsSchema,
   Role[]
 > = async ({ guild, body }) => patch(`/guilds/${guild}/roles`, body);
-
-export const modifyGuildRolePositionsSafe = toValidated(
-  modifyGuildRolePositions,
-  modifyGuildRolePositionsSchema,
-  v.array(roleSchema)
-);
-
-export const modifyGuildRolePositionsProcedure = toProcedure(
-  `mutation`,
-  modifyGuildRolePositions,
-  modifyGuildRolePositionsSchema,
-  v.array(roleSchema)
-);

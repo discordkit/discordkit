@@ -1,12 +1,5 @@
 import * as v from "valibot";
-import {
-  post,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake,
-  asInteger
-} from "@discordkit/core";
+import { post, type Fetcher, snowflake, asInteger } from "@discordkit/core";
 import { threadChannelSchema } from "./types/Channel.js";
 import { autoArchiveDurationSchema } from "./types/AutoArchiveDuration.js";
 import { embedSchema } from "../messages/types/Embed.js";
@@ -60,8 +53,9 @@ export const threadInForumOrMediaChannelResponseSchema = v.object({
   message: messageSchema
 });
 
-export interface ThreadInForumOrMediaChannelResponse
-  extends v.InferOutput<typeof threadInForumOrMediaChannelResponseSchema> {}
+export interface ThreadInForumOrMediaChannelResponse extends v.InferOutput<
+  typeof threadInForumOrMediaChannelResponseSchema
+> {}
 
 /**
  * ### [Start Thread in Forum or Media Channel](https://discord.com/developers/docs/resources/channel#start-thread-in-forum-or-media-channel)
@@ -91,16 +85,3 @@ export const startThreadInForumOrMediaChannel: Fetcher<
   typeof startThreadInForumOrMediaChannelSchema,
   ThreadInForumOrMediaChannelResponse
 > = async ({ channel, body }) => post(`/channels/${channel}/threads`, body);
-
-export const startThreadInForumOrMediaChannelSafe = toValidated(
-  startThreadInForumOrMediaChannel,
-  startThreadInForumOrMediaChannelSchema,
-  threadInForumOrMediaChannelResponseSchema
-);
-
-export const startThreadInForumOrMediaChannelProcedure = toProcedure(
-  `mutation`,
-  startThreadInForumOrMediaChannel,
-  startThreadInForumOrMediaChannelSchema,
-  threadInForumOrMediaChannelResponseSchema
-);

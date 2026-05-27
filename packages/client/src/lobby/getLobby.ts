@@ -1,13 +1,6 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import { lobbySchema, type Lobby } from "./types/Lobby.js";
+import { get, type Fetcher, snowflake } from "@discordkit/core";
+import { type Lobby } from "./types/Lobby.js";
 
 export const getLobbySchema = v.object({
   lobby: snowflake
@@ -23,14 +16,3 @@ export const getLobbySchema = v.object({
 export const getLobby: Fetcher<typeof getLobbySchema, Lobby> = async ({
   lobby
 }) => get(`/lobbies/${lobby}`);
-
-export const getLobbySafe = toValidated(getLobby, getLobbySchema, lobbySchema);
-
-export const getLobbyProcedure = toProcedure(
-  `query`,
-  getLobby,
-  getLobbySchema,
-  lobbySchema
-);
-
-export const getLobbyQuery = toQuery(getLobby);

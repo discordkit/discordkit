@@ -1,11 +1,5 @@
 import * as v from "valibot";
-import {
-  post,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { post, type Fetcher, snowflake } from "@discordkit/core";
 import type { InteractionCallbackResponse } from "./types/InteractionCallbackResponse.js";
 import { interactionCallbackResponseSchema } from "./types/InteractionCallbackResponse.js";
 
@@ -37,16 +31,3 @@ export const createInteractionResponse: Fetcher<
   InteractionCallbackResponse | undefined
 > = async ({ interaction, token, body }) =>
   post(`/interactions/${interaction}/${token}/callback`, body);
-
-export const createInteractionResponseSafe = toValidated(
-  createInteractionResponse,
-  createInteractionResponseSchema,
-  v.undefinedable(interactionCallbackResponseSchema)
-);
-
-export const createInteractionResponseProcedure = toProcedure(
-  `mutation`,
-  createInteractionResponse,
-  createInteractionResponseSchema,
-  v.undefinedable(interactionCallbackResponseSchema)
-);

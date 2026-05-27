@@ -1,13 +1,6 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import { threadMemberSchema, type ThreadMember } from "./types/ThreadMember.js";
+import { get, type Fetcher, snowflake } from "@discordkit/core";
+import { type ThreadMember } from "./types/ThreadMember.js";
 
 export const getThreadMemberSchema = v.object({
   channel: snowflake,
@@ -36,18 +29,3 @@ export const getThreadMember: Fetcher<
   ThreadMember
 > = async ({ channel, user, params }) =>
   get(`/channels/${channel}/thread-members/${user}`, params);
-
-export const getThreadMemberSafe = toValidated(
-  getThreadMember,
-  getThreadMemberSchema,
-  threadMemberSchema
-);
-
-export const getThreadMemberProcedure = toProcedure(
-  `query`,
-  getThreadMember,
-  getThreadMemberSchema,
-  threadMemberSchema
-);
-
-export const getThreadMemberQuery = toQuery(getThreadMember);

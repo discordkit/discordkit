@@ -2,16 +2,11 @@ import * as v from "valibot";
 import {
   patch,
   type Fetcher,
-  toProcedure,
-  toValidated,
   snowflake,
   asDigits,
   boundedString
 } from "@discordkit/core";
-import {
-  applicationCommandSchema,
-  type ApplicationCommand
-} from "../application-commands/types/ApplicationCommand.js";
+import { type ApplicationCommand } from "../application-commands/types/ApplicationCommand.js";
 import { applicationCommandOptionSchema } from "../application-commands/types/ApplicationCommandOption.js";
 import { localesSchema } from "./types/Locales.js";
 import { permissionFlag } from "../permissions/Permissions.js";
@@ -67,16 +62,3 @@ export const editGuildApplicationCommand: Fetcher<
     `/applications/${application}/guilds/${guild}/commands/${command}`,
     body
   );
-
-export const editGuildApplicationCommandSafe = toValidated(
-  editGuildApplicationCommand,
-  editGuildApplicationCommandSchema,
-  applicationCommandSchema
-);
-
-export const editGuildApplicationCommandProcedure = toProcedure(
-  `mutation`,
-  editGuildApplicationCommand,
-  editGuildApplicationCommandSchema,
-  applicationCommandSchema
-);

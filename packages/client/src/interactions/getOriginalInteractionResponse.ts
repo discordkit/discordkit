@@ -1,17 +1,6 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake,
-  boundedString
-} from "@discordkit/core";
-import {
-  type InteractionCallbackResponse,
-  interactionCallbackResponseSchema
-} from "./types/InteractionCallbackResponse.js";
+import { get, type Fetcher, snowflake, boundedString } from "@discordkit/core";
+import { type InteractionCallbackResponse } from "./types/InteractionCallbackResponse.js";
 
 export const getOriginalInteractionResponseSchema = v.object({
   application: snowflake,
@@ -38,20 +27,3 @@ export const getOriginalInteractionResponse: Fetcher<
   InteractionCallbackResponse
 > = async ({ application, token, params }) =>
   get(`/webhooks/${application}/${token}/messages/@original`, params);
-
-export const getOriginalInteractionResponseSafe = toValidated(
-  getOriginalInteractionResponse,
-  getOriginalInteractionResponseSchema,
-  interactionCallbackResponseSchema
-);
-
-export const getOriginalInteractionResponseProcedure = toProcedure(
-  `query`,
-  getOriginalInteractionResponse,
-  getOriginalInteractionResponseSchema,
-  interactionCallbackResponseSchema
-);
-
-export const getOriginalInteractionResponseQuery = toQuery(
-  getOriginalInteractionResponse
-);

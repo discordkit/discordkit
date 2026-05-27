@@ -1,16 +1,6 @@
 import * as v from "valibot";
-import {
-  patch,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake,
-  boundedArray
-} from "@discordkit/core";
-import {
-  guildApplicationCommandPermissionsSchema,
-  type GuildApplicationCommandPermissions
-} from "../application-commands/types/GuildApplicationCommandPermissions.js";
+import { patch, type Fetcher, snowflake, boundedArray } from "@discordkit/core";
+import { type GuildApplicationCommandPermissions } from "../application-commands/types/GuildApplicationCommandPermissions.js";
 import { applicationCommandPermissionsSchema } from "../application-commands/types/ApplicationCommandPermissions.js";
 
 export const editApplicationCommandPermissionsSchema = v.object({
@@ -56,16 +46,3 @@ export const editApplicationCommandPermissions: Fetcher<
     `/applications/${application}/guilds/${guild}/commands/${command}/permissions`,
     body
   );
-
-export const editApplicationCommandPermissionsSafe = toValidated(
-  editApplicationCommandPermissions,
-  editApplicationCommandPermissionsSchema,
-  guildApplicationCommandPermissionsSchema
-);
-
-export const editApplicationCommandPermissionsProcedure = toProcedure(
-  `mutation`,
-  editApplicationCommandPermissions,
-  editApplicationCommandPermissionsSchema,
-  guildApplicationCommandPermissionsSchema
-);

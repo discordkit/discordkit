@@ -46,4 +46,3 @@ export * from "./removeGuildMemberRole.js";
 export * from "./searchGuildMembers.js";
 
 export * from "./types/index.js";
-export * as guildProcedures from "./procedures.js";

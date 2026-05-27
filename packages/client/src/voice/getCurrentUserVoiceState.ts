@@ -1,13 +1,6 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import { voiceStateSchema, type VoiceState } from "./types/VoiceState.js";
+import { get, type Fetcher, snowflake } from "@discordkit/core";
+import { type VoiceState } from "./types/VoiceState.js";
 
 export const getCurrentUserVoiceStateSchema = v.object({
   guild: snowflake
@@ -24,18 +17,3 @@ export const getCurrentUserVoiceState: Fetcher<
   typeof getCurrentUserVoiceStateSchema,
   VoiceState
 > = async ({ guild }) => get(`/guilds/${guild}/voice-states/@me`);
-
-export const getCurrentUserVoiceStateSafe = toValidated(
-  getCurrentUserVoiceState,
-  getCurrentUserVoiceStateSchema,
-  voiceStateSchema
-);
-
-export const getCurrentUserVoiceStateProcedure = toProcedure(
-  `query`,
-  getCurrentUserVoiceState,
-  getCurrentUserVoiceStateSchema,
-  voiceStateSchema
-);
-
-export const getCurrentUserVoiceStateQuery = toQuery(getCurrentUserVoiceState);

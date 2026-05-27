@@ -1,11 +1,5 @@
 import * as v from "valibot";
-import {
-  remove,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { remove, type Fetcher, snowflake } from "@discordkit/core";
 
 export const deleteGuildRoleSchema = v.object({
   guild: snowflake,
@@ -27,14 +21,3 @@ export const deleteGuildRole: Fetcher<typeof deleteGuildRoleSchema> = async ({
   guild,
   role
 }) => remove(`/guilds/${guild}/roles/${role}`);
-
-export const deleteGuildRoleSafe = toValidated(
-  deleteGuildRole,
-  deleteGuildRoleSchema
-);
-
-export const deleteGuildRoleProcedure = toProcedure(
-  `mutation`,
-  deleteGuildRole,
-  deleteGuildRoleSchema
-);

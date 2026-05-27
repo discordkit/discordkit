@@ -1,7 +1,6 @@
-import * as v from "valibot";
 import type { Fetcher } from "@discordkit/core";
-import { get, toProcedure, toQuery, toValidated } from "@discordkit/core";
-import { voiceRegionSchema, type VoiceRegion } from "./types/VoiceRegion.js";
+import { get } from "@discordkit/core";
+import { type VoiceRegion } from "./types/VoiceRegion.js";
 
 /**
  * ### [List Voice Regions](https://discord.com/developers/docs/resources/voice#list-voice-regions)
@@ -12,18 +11,3 @@ import { voiceRegionSchema, type VoiceRegion } from "./types/VoiceRegion.js";
  */
 export const listVoiceRegions: Fetcher<null, VoiceRegion[]> = async () =>
   get(`/voice/regions`);
-
-export const listVoiceRegionsSafe = toValidated(
-  listVoiceRegions,
-  null,
-  v.array(voiceRegionSchema)
-);
-
-export const listVoiceRegionsProcedure = toProcedure(
-  `query`,
-  listVoiceRegions,
-  null,
-  v.array(voiceRegionSchema)
-);
-
-export const listVoiceRegionsQuery = toQuery(listVoiceRegions);

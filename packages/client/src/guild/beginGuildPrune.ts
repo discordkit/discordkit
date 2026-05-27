@@ -1,11 +1,5 @@
 import * as v from "valibot";
-import {
-  post,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { post, type Fetcher, snowflake } from "@discordkit/core";
 
 export const beginGuildPruneSchema = v.object({
   guild: snowflake,
@@ -42,16 +36,3 @@ export const beginGuildPrune: Fetcher<
   typeof beginGuildPruneSchema,
   v.InferOutput<typeof guildPruneResultSchema>
 > = async ({ guild, body }) => post(`/guilds/${guild}/prune`, body);
-
-export const beginGuildPruneSafe = toValidated(
-  beginGuildPrune,
-  beginGuildPruneSchema,
-  guildPruneResultSchema
-);
-
-export const beginGuildPruneProcedure = toProcedure(
-  `mutation`,
-  beginGuildPrune,
-  beginGuildPruneSchema,
-  guildPruneResultSchema
-);

@@ -1,13 +1,6 @@
 import * as v from "valibot";
-import {
-  post,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake,
-  asInteger
-} from "@discordkit/core";
-import { lobbySchema, type Lobby } from "./types/Lobby.js";
+import { post, type Fetcher, snowflake, asInteger } from "@discordkit/core";
+import { type Lobby } from "./types/Lobby.js";
 import { lobbyMemberFlag } from "./types/LobbyMemberFlags.js";
 
 export const createLobbySchema = v.object({
@@ -62,16 +55,3 @@ export const createLobbySchema = v.object({
 export const createLobby: Fetcher<typeof createLobbySchema, Lobby> = async ({
   body
 }) => post(`/lobbies`, body);
-
-export const createLobbySafe = toValidated(
-  createLobby,
-  createLobbySchema,
-  lobbySchema
-);
-
-export const createLobbyProcedure = toProcedure(
-  `mutation`,
-  createLobby,
-  createLobbySchema,
-  lobbySchema
-);

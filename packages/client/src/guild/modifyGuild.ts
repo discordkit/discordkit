@@ -2,14 +2,12 @@ import * as v from "valibot";
 import {
   patch,
   type Fetcher,
-  toProcedure,
-  toValidated,
   snowflake,
   datauri,
   asInteger
 } from "@discordkit/core";
 import { localesSchema } from "../application/types/Locales.js";
-import { type Guild, guildSchema } from "./types/Guild.js";
+import { type Guild } from "./types/Guild.js";
 import { verificationLevelSchema } from "./types/VerificationLevel.js";
 import { defaultMessageNotificationLevelSchema } from "./types/DefaultMessageNotificationLevel.js";
 import { explicitContentFilterLevelSchema } from "./types/ExplicitContentFilterLevel.js";
@@ -93,16 +91,3 @@ export const modifyGuild: Fetcher<typeof modifyGuildSchema, Guild> = async ({
   guild,
   body
 }) => patch(`/guilds/${guild}`, body);
-
-export const modifyGuildSafe = toValidated(
-  modifyGuild,
-  modifyGuildSchema,
-  guildSchema
-);
-
-export const modifyGuildProcedure = toProcedure(
-  `mutation`,
-  modifyGuild,
-  modifyGuildSchema,
-  guildSchema
-);

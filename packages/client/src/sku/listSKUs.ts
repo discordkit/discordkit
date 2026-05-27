@@ -1,13 +1,6 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import { skuSchema, type SKU } from "./types/SKU.js";
+import { get, type Fetcher, snowflake } from "@discordkit/core";
+import { type SKU } from "./types/SKU.js";
 
 export const listSKUsSchema = v.object({
   application: snowflake
@@ -27,18 +20,3 @@ export const listSKUsSchema = v.object({
 export const listSKUs: Fetcher<typeof listSKUsSchema, SKU[]> = async ({
   application
 }) => get(`/applications/${application}/skus`);
-
-export const listSKUsSafe = toValidated(
-  listSKUs,
-  listSKUsSchema,
-  v.array(skuSchema)
-);
-
-export const listSKUsProcedure = toProcedure(
-  `query`,
-  listSKUs,
-  listSKUsSchema,
-  v.array(skuSchema)
-);
-
-export const listSKUsQuery = toQuery(listSKUs);

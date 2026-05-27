@@ -1,11 +1,5 @@
 import * as v from "valibot";
-import {
-  patch,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { patch, type Fetcher, snowflake } from "@discordkit/core";
 import { mfaLevelSchema, type MFALevel } from "./types/MFALevel.js";
 
 export const modifyGuildMFALevelSchema = v.object({
@@ -31,16 +25,3 @@ export const modifyGuildMFALevel: Fetcher<
   typeof modifyGuildMFALevelSchema,
   MFALevel
 > = async ({ guild, body }) => patch(`/guilds/${guild}/mfa`, body);
-
-export const modifyGuildMFALevelSafe = toValidated(
-  modifyGuildMFALevel,
-  modifyGuildMFALevelSchema,
-  mfaLevelSchema
-);
-
-export const modifyGuildMFALevelProcedure = toProcedure(
-  `mutation`,
-  modifyGuildMFALevel,
-  modifyGuildMFALevelSchema,
-  mfaLevelSchema
-);

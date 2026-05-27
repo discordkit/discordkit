@@ -1,11 +1,5 @@
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated
-} from "@discordkit/core";
-import { userSchema, type User } from "./types/User.js";
+import { get, type Fetcher } from "@discordkit/core";
+import { type User } from "./types/User.js";
 
 /**
  * ### [Get Current User](https://discord.com/developers/docs/resources/user#get-current-user)
@@ -16,14 +10,3 @@ import { userSchema, type User } from "./types/User.js";
  */
 export const getCurrentUser: Fetcher<null, User> = async () =>
   get(`/users/@me`);
-
-export const getCurrentUserSafe = toValidated(getCurrentUser, null, userSchema);
-
-export const getCurrentUserProcedure = toProcedure(
-  `query`,
-  getCurrentUser,
-  null,
-  userSchema
-);
-
-export const getCurrentUserQuery = toQuery(getCurrentUser);

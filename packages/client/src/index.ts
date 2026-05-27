@@ -28,5 +28,3 @@ export * from "./template/index.js";
 export * from "./user/index.js";
 export * from "./voice/index.js";
 export * from "./webhook/index.js";
-
-export * as allProcedures from "./procedures.js";

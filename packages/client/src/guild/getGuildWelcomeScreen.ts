@@ -1,16 +1,6 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import {
-  welcomeScreenSchema,
-  type WelcomeScreen
-} from "./types/WelcomeScreen.js";
+import { get, type Fetcher, snowflake } from "@discordkit/core";
+import { type WelcomeScreen } from "./types/WelcomeScreen.js";
 
 export const getGuildWelcomeScreenSchema = v.object({
   guild: snowflake
@@ -26,18 +16,3 @@ export const getGuildWelcomeScreen: Fetcher<
   typeof getGuildWelcomeScreenSchema,
   WelcomeScreen
 > = async ({ guild }) => get(`/guilds/${guild}/welcome-screen`);
-
-export const getGuildWelcomeScreenSafe = toValidated(
-  getGuildWelcomeScreen,
-  getGuildWelcomeScreenSchema,
-  welcomeScreenSchema
-);
-
-export const getGuildWelcomeScreenProcedure = toProcedure(
-  `query`,
-  getGuildWelcomeScreen,
-  getGuildWelcomeScreenSchema,
-  welcomeScreenSchema
-);
-
-export const getGuildWelcomeScreenQuery = toQuery(getGuildWelcomeScreen);

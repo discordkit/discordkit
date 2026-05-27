@@ -1,12 +1,6 @@
 import * as v from "valibot";
-import {
-  toProcedure,
-  post,
-  type Fetcher,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import { type Channel, channelSchema } from "./types/Channel.js";
+import { post, type Fetcher, snowflake } from "@discordkit/core";
+import { type Channel } from "./types/Channel.js";
 import { autoArchiveDurationSchema } from "./types/AutoArchiveDuration.js";
 import { channelTypeSchema } from "./types/ChannelType.js";
 
@@ -43,16 +37,3 @@ export const startThreadWithoutMessage: Fetcher<
   typeof startThreadWithoutMessageSchema,
   Channel
 > = async ({ channel, body }) => post(`/channels/${channel}/threads`, body);
-
-export const startThreadWithoutMessageSafe = toValidated(
-  startThreadWithoutMessage,
-  startThreadWithoutMessageSchema,
-  channelSchema
-);
-
-export const startThreadWithoutMessageProcedure = toProcedure(
-  `mutation`,
-  startThreadWithoutMessage,
-  startThreadWithoutMessageSchema,
-  channelSchema
-);

@@ -1,11 +1,5 @@
 import * as v from "valibot";
-import {
-  remove,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { remove, type Fetcher, snowflake } from "@discordkit/core";
 
 export const deleteGuildScheduledEventSchema = v.object({
   guild: snowflake,
@@ -23,14 +17,3 @@ export const deleteGuildScheduledEvent: Fetcher<
   typeof deleteGuildScheduledEventSchema
 > = async ({ guild, event }) =>
   remove(`/guilds/${guild}/scheduled-events/${event}`);
-
-export const deleteGuildScheduledEventSafe = toValidated(
-  deleteGuildScheduledEvent,
-  deleteGuildScheduledEventSchema
-);
-
-export const deleteGuildScheduledEventProcedure = toProcedure(
-  `mutation`,
-  deleteGuildScheduledEvent,
-  deleteGuildScheduledEventSchema
-);

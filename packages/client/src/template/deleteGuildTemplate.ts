@@ -1,15 +1,6 @@
 import * as v from "valibot";
-import {
-  remove,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import {
-  guildTemplateSchema,
-  type GuildTemplate
-} from "./types/GuildTemplate.js";
+import { remove, type Fetcher, snowflake } from "@discordkit/core";
+import { type GuildTemplate } from "./types/GuildTemplate.js";
 
 export const deleteGuildTemplateSchema = v.object({
   guild: snowflake,
@@ -28,16 +19,3 @@ export const deleteGuildTemplate: Fetcher<
   GuildTemplate
 > = async ({ guild, template }) =>
   remove(`/guilds/${guild}/templates/${template}`);
-
-export const deleteGuildTemplateSafe = toValidated(
-  deleteGuildTemplate,
-  deleteGuildTemplateSchema,
-  guildTemplateSchema
-);
-
-export const deleteGuildTemplateProcedure = toProcedure(
-  `mutation`,
-  deleteGuildTemplate,
-  deleteGuildTemplateSchema,
-  guildTemplateSchema
-);

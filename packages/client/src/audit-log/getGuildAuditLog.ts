@@ -1,13 +1,6 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import { type AuditLog, auditLogSchema } from "./types/AuditLog.js";
+import { get, type Fetcher, snowflake } from "@discordkit/core";
+import { type AuditLog } from "./types/AuditLog.js";
 import { auditLogEventSchema } from "./types/AuditLogEvent.js";
 
 export const getGuildAuditLogSchema = v.object({
@@ -43,18 +36,3 @@ export const getGuildAuditLog: Fetcher<
   typeof getGuildAuditLogSchema,
   AuditLog
 > = async ({ guild, params }) => get(`/guilds/${guild}/audit-logs`, params);
-
-export const getGuildAuditLogSafe = toValidated(
-  getGuildAuditLog,
-  getGuildAuditLogSchema,
-  auditLogSchema
-);
-
-export const getGuildAuditLogProcedure = toProcedure(
-  `query`,
-  getGuildAuditLog,
-  getGuildAuditLogSchema,
-  auditLogSchema
-);
-
-export const getGuildAuditLogQuery = toQuery(getGuildAuditLog);

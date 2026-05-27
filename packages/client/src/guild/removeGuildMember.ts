@@ -1,11 +1,5 @@
 import * as v from "valibot";
-import {
-  remove,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { remove, type Fetcher, snowflake } from "@discordkit/core";
 
 export const removeGuildMemberSchema = v.object({
   guild: snowflake,
@@ -26,14 +20,3 @@ export const removeGuildMemberSchema = v.object({
 export const removeGuildMember: Fetcher<
   typeof removeGuildMemberSchema
 > = async ({ guild, user }) => remove(`/guilds/${guild}/members/${user}`);
-
-export const removeGuildMemberSafe = toValidated(
-  removeGuildMember,
-  removeGuildMemberSchema
-);
-
-export const removeGuildMemberProcedure = toProcedure(
-  `mutation`,
-  removeGuildMember,
-  removeGuildMemberSchema
-);
