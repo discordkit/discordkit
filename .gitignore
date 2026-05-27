@@ -71,9 +71,10 @@ storybook-static/
 .env
 .env.*
 
-.turbo
 .next/
 .cache/
+.vite-hooks/
+.claude/settings.local.json
 **/dist/
 coverage/
 **/public/workbox-*.js*

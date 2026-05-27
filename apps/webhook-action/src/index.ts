@@ -1,5 +1,5 @@
 import { nonEmpty, object, pipe, safeParse, string, summarize } from "valibot";
-import { executeWebhookSafe } from "@discordkit/client/webhook/executeWebhook";
+import { executeWebhookSafe } from "@discordkit/client";
 
 const isRequired = `must be a string`;
 const isEmpty = `must not be empty`;

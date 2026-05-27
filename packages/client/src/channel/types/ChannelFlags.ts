@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/prefer-literal-enum-member */
+/* oxlint-disable @typescript-eslint/prefer-literal-enum-member */
 import * as v from "valibot";
 import { bitfield } from "@discordkit/core";
 

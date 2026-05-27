@@ -7,27 +7,12 @@
   "private": true,
   "main": "./src/index.ts",
   "type": "module",
-  "scripts": {
-    "build:apps": "tsup",
-    "lint": "eslint --cache"
-  },
   "dependencies": {
     "@discordkit/client": "workspace:^",
-    "dotenv": "^17.0.0",
-    "valibot": "^1.1.0"
+    "dotenv": "^17.4.2",
+    "valibot": "^1.4.0"
   },
   "devDependencies": {
-    "tsup": "^8.5.0"
-  },
-  "tsup": {
-    "entry": [
-      "./src/index.ts"
-    ],
-    "format": "esm",
-    "noExternal": [
-      "@discordkit/client"
-    ],
-    "minify": true,
-    "treeshake": true
+    "vite-plus": "catalog:"
   }
 }

@@ -26,9 +26,6 @@
     "registry": "https://registry.npmjs.org"
   },
   "type": "module",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
   "imports": {
     "#mocks": "./src/__mocks__/mockSchema.mock.ts",
     "#mock-utils": "../../scripts/mock-utils.ts",
@@ -36,12 +33,9 @@
   },
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    },
-    "./*": {
-      "types": "./dist/*.d.ts",
-      "default": "./dist/*.js"
+      "development": "./src/index.ts",
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
     },
     "./package.json": "./package.json"
   },
@@ -49,18 +43,10 @@
     "dist/**/*"
   ],
   "sideEffects": false,
-  "scripts": {
-    "dev": "yarn build --watch --declarationmap",
-    "build": "tsc",
-    "lint": "eslint --cache"
-  },
   "dependencies": {
     "@discordkit/core": "workspace:^"
   },
   "peerDependencies": {
     "valibot": ">= 1.0.0"
-  },
-  "devDependencies": {
-    "typescript": "^5.8.3"
   }
 }

@@ -1,4 +1,4 @@
-import { afterAll } from "vitest";
+import { afterAll } from "vite-plus/test";
 import { MockUtils } from "#mock-utils";
 import { datauri, discord, snowflake } from "@discordkit/core";
 import { faker } from "@faker-js/faker";

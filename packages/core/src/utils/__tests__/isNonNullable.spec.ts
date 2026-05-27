@@ -5,7 +5,7 @@ describe(`isNonNullable`, () => {
     [null, false],
     [undefined, false],
     // void
-    // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
+    // oxlint-disable-next-line @typescript-eslint/no-confusing-void-expression
     [(() => {})(), false],
     // Truthy
     [`string`, true],

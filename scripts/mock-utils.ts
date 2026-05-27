@@ -127,7 +127,7 @@ export class MockUtils {
   #msw: SetupServer = setupServer();
   static uid = new Snowflake({ custom_epoch: 1420070400000 });
 
-  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
+  // oxlint-disable-next-line @typescript-eslint/class-methods-use-this
   get uid(): Snowflake {
     return MockUtils.uid;
   }
@@ -255,7 +255,7 @@ export class MockUtils {
       }
     }).mock(schema);
 
-  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
+  // oxlint-disable-next-line @typescript-eslint/class-methods-use-this
   #serialize = (val: unknown): string | undefined => {
     try {
       return JSON.stringify(val);
@@ -302,7 +302,7 @@ export class MockUtils {
         throw new Error(`Failed to mock request!`, err);
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
+      // oxlint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
       return {
         config,
         expected
