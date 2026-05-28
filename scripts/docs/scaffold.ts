@@ -31,91 +31,96 @@ import {
   type DocFieldType
 } from "./parse.ts";
 
-const PROJECT_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
-const DOCS_CACHE = join(PROJECT_ROOT, ".discord-docs");
-const CLIENT_SRC = join(PROJECT_ROOT, "packages/client/src");
+const PROJECT_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), `../..`);
+const DOCS_CACHE = join(PROJECT_ROOT, `.discord-docs`);
+const CLIENT_SRC = join(PROJECT_ROOT, `packages/client/src`);
 
 /** Folder → docs page mapping (mirrors audit.ts). */
 const FOLDER_MAP: Record<string, string[]> = {
-  application: ["resources/application.md", "interactions/application-commands.md"],
-  "application-commands": ["interactions/application-commands.md"],
-  "application-role-connection": ["resources/application-role-connection-metadata.md"],
-  "audit-log": ["resources/audit-log.md"],
-  "auto-moderation": ["resources/auto-moderation.md"],
-  channel: ["resources/channel.md"],
-  components: ["components/reference.md"],
-  emoji: ["resources/emoji.md"],
-  entitlements: ["resources/entitlement.md"],
-  event: ["resources/guild-scheduled-event.md"],
-  guild: ["resources/guild.md"],
-  interactions: ["interactions/receiving-and-responding.md"],
-  invite: ["resources/invite.md"],
-  lobby: ["resources/lobby.md"],
-  messages: ["resources/message.md"],
-  poll: ["resources/poll.md"],
-  sku: ["resources/sku.md"],
-  soundboard: ["resources/soundboard.md"],
-  stage: ["resources/stage-instance.md"],
-  sticker: ["resources/sticker.md"],
-  subscription: ["resources/subscription.md"],
-  template: ["resources/guild-template.md"],
-  user: ["resources/user.md"],
-  voice: ["resources/voice.md"],
-  webhook: ["resources/webhook.md"]
+  application: [
+    `resources/application.md`,
+    `interactions/application-commands.md`
+  ],
+  "application-commands": [`interactions/application-commands.md`],
+  "application-role-connection": [
+    `resources/application-role-connection-metadata.md`
+  ],
+  "audit-log": [`resources/audit-log.md`],
+  "auto-moderation": [`resources/auto-moderation.md`],
+  channel: [`resources/channel.md`],
+  components: [`components/reference.md`],
+  emoji: [`resources/emoji.md`],
+  entitlements: [`resources/entitlement.md`],
+  event: [`resources/guild-scheduled-event.md`],
+  guild: [`resources/guild.md`],
+  interactions: [`interactions/receiving-and-responding.md`],
+  invite: [`resources/invite.md`],
+  lobby: [`resources/lobby.md`],
+  messages: [`resources/message.md`],
+  poll: [`resources/poll.md`],
+  sku: [`resources/sku.md`],
+  soundboard: [`resources/soundboard.md`],
+  stage: [`resources/stage-instance.md`],
+  sticker: [`resources/sticker.md`],
+  subscription: [`resources/subscription.md`],
+  template: [`resources/guild-template.md`],
+  user: [`resources/user.md`],
+  voice: [`resources/voice.md`],
+  webhook: [`resources/webhook.md`]
 };
 
 const FOLDER_DOC_BASE: Record<string, string> = {
-  application: "resources/application",
-  "application-commands": "interactions/application-commands",
-  "application-role-connection": "resources/application-role-connection-metadata",
-  "audit-log": "resources/audit-log",
-  "auto-moderation": "resources/auto-moderation",
-  channel: "resources/channel",
-  components: "components/reference",
-  emoji: "resources/emoji",
-  entitlements: "resources/entitlement",
-  event: "resources/guild-scheduled-event",
-  guild: "resources/guild",
-  interactions: "interactions/receiving-and-responding",
-  invite: "resources/invite",
-  lobby: "resources/lobby",
-  messages: "resources/message",
-  poll: "resources/poll",
-  sku: "resources/sku",
-  soundboard: "resources/soundboard",
-  stage: "resources/stage-instance",
-  sticker: "resources/sticker",
-  subscription: "resources/subscription",
-  template: "resources/guild-template",
-  user: "resources/user",
-  voice: "resources/voice",
-  webhook: "resources/webhook"
+  application: `resources/application`,
+  "application-commands": `interactions/application-commands`,
+  "application-role-connection": `resources/application-role-connection-metadata`,
+  "audit-log": `resources/audit-log`,
+  "auto-moderation": `resources/auto-moderation`,
+  channel: `resources/channel`,
+  components: `components/reference`,
+  emoji: `resources/emoji`,
+  entitlements: `resources/entitlement`,
+  event: `resources/guild-scheduled-event`,
+  guild: `resources/guild`,
+  interactions: `interactions/receiving-and-responding`,
+  invite: `resources/invite`,
+  lobby: `resources/lobby`,
+  messages: `resources/message`,
+  poll: `resources/poll`,
+  sku: `resources/sku`,
+  soundboard: `resources/soundboard`,
+  stage: `resources/stage-instance`,
+  sticker: `resources/sticker`,
+  subscription: `resources/subscription`,
+  template: `resources/guild-template`,
+  user: `resources/user`,
+  voice: `resources/voice`,
+  webhook: `resources/webhook`
 };
 
 const PRESERVE_CASE = new Set([
-  "DM",
-  "URL",
-  "URI",
-  "OAuth2",
-  "MFA",
-  "TTS",
-  "SKU",
-  "GIF",
-  "NSFW",
-  "API",
-  "GitHub",
-  "JSON"
+  `DM`,
+  `URL`,
+  `URI`,
+  `OAuth2`,
+  `MFA`,
+  `TTS`,
+  `SKU`,
+  `GIF`,
+  `NSFW`,
+  `API`,
+  `GitHub`,
+  `JSON`
 ]);
 
 // ─── CLI ──────────────────────────────────────────────────────────────────
 
 const args = process.argv.slice(2);
-const positional = args.filter((a) => !a.startsWith("--"));
-const write = args.includes("--write");
+const positional = args.filter((a) => !a.startsWith(`--`));
+const write = args.includes(`--write`);
 
 if (positional.length < 2) {
   console.error(
-    "usage: node --experimental-strip-types scripts/docs/scaffold.ts <folder> <endpoint-slug> [--write]"
+    `usage: node --experimental-strip-types scripts/docs/scaffold.ts <folder> <endpoint-slug> [--write]`
   );
   process.exit(1);
 }
@@ -131,7 +136,7 @@ function main(folder: string, slug: string, write: boolean): void {
   }
   let endpoint: DocEndpoint | undefined;
   for (const page of pages) {
-    const md = readFileSync(join(DOCS_CACHE, page), "utf8");
+    const md = readFileSync(join(DOCS_CACHE, page), `utf8`);
     const r = parseResource(md);
     endpoint = r.endpoints.find((e) => e.slug === slug);
     if (endpoint) break;
@@ -147,27 +152,40 @@ function main(folder: string, slug: string, write: boolean): void {
 
   if (write) {
     const filePath = join(CLIENT_SRC, folder, `${filename}.ts`);
-    const specPath = join(CLIENT_SRC, folder, "__tests__", `${filename}.spec.ts`);
+    const specPath = join(
+      CLIENT_SRC,
+      folder,
+      `__tests__`,
+      `${filename}.spec.ts`
+    );
     if (existsSync(filePath)) {
       console.error(`Refusing to overwrite ${filePath}`);
       process.exit(1);
     }
     mkdirSync(dirname(specPath), { recursive: true });
-    writeFileSync(filePath, source, "utf8");
-    writeFileSync(specPath, spec, "utf8");
+    writeFileSync(filePath, source, `utf8`);
+    writeFileSync(specPath, spec, `utf8`);
     console.log(`wrote ${filePath}`);
     console.log(`wrote ${specPath}`);
   } else {
-    console.log(`// ── ${filename}.ts ───────────────────────────────────────────`);
+    console.log(
+      `// ── ${filename}.ts ───────────────────────────────────────────`
+    );
     console.log(source);
-    console.log(`// ── __tests__/${filename}.spec.ts ───────────────────────────`);
+    console.log(
+      `// ── __tests__/${filename}.spec.ts ───────────────────────────`
+    );
     console.log(spec);
   }
 }
 
 // ─── rendering ────────────────────────────────────────────────────────────
 
-function renderEndpoint(folder: string, filename: string, ep: DocEndpoint): string {
+function renderEndpoint(
+  folder: string,
+  filename: string,
+  ep: DocEndpoint
+): string {
   const docBase = FOLDER_DOC_BASE[folder];
   const fullDocUrl = `https://discord.com/developers/docs/${docBase}#${ep.slug}`;
   const methodFn = methodToFn(ep.method);
@@ -181,10 +199,9 @@ function renderEndpoint(folder: string, filename: string, ep: DocEndpoint): stri
   const formFields = ep.formParams.flatMap((g) => g.fields);
 
   // Collect imports needed.
-  const coreImports = new Set<string>([methodFn, "type Fetcher"]);
-  if (pathParams.length > 0) coreImports.add("snowflake");
+  const coreImports = new Set<string>([methodFn, `type Fetcher`]);
+  if (pathParams.length > 0) coreImports.add(`snowflake`);
   const valibotImports: string[] = [];
-  const otherImports: { path: string; named: string[] }[] = [];
 
   // Build the schema body.
   const schemaName = `${filename}Schema`;
@@ -197,13 +214,15 @@ function renderEndpoint(folder: string, filename: string, ep: DocEndpoint): stri
 
   // Body fields nested under `body`.
   if (jsonFields.length > 0) {
-    coreImports.add("snowflake");
+    coreImports.add(`snowflake`);
     const bodyLines = jsonFields.map((f) => renderFieldLine(f, coreImports));
     const allOptional = jsonFields.every((f) => f.optional);
     if (allOptional) {
-      schemaParts.push(`  body: v.partial(\n    v.object({\n${bodyLines.join(",\n")}\n    })\n  )`);
+      schemaParts.push(
+        `  body: v.partial(\n    v.object({\n${bodyLines.join(`,\n`)}\n    })\n  )`
+      );
     } else {
-      schemaParts.push(`  body: v.object({\n${bodyLines.join(",\n")}\n  })`);
+      schemaParts.push(`  body: v.object({\n${bodyLines.join(`,\n`)}\n  })`);
     }
   }
 
@@ -212,8 +231,8 @@ function renderEndpoint(folder: string, filename: string, ep: DocEndpoint): stri
     const paramLines = queryFields.map((f) => renderFieldLine(f, coreImports));
     schemaParts.push(
       `  params: v.exactOptional(\n    v.partial(\n      v.object({\n${paramLines
-        .map((l) => "  " + l)
-        .join(",\n")}\n      })\n    )\n  )`
+        .map((l) => `  ` + l)
+        .join(`,\n`)}\n      })\n    )\n  )`
     );
   }
 
@@ -221,11 +240,15 @@ function renderEndpoint(folder: string, filename: string, ep: DocEndpoint): stri
   // treat like JSON params; the generated file will need hand-tuning.
   if (formFields.length > 0 && jsonFields.length === 0) {
     const lines = formFields.map((f) => renderFieldLine(f, coreImports));
-    schemaParts.push(`  body: v.object({\n${lines.join(",\n")}\n  })`);
+    schemaParts.push(`  body: v.object({\n${lines.join(`,\n`)}\n  })`);
   }
 
   const hasInputs = schemaParts.length > 0;
-  const hasParams = pathParams.length > 0 || jsonFields.length > 0 || queryFields.length > 0 || formFields.length > 0;
+  const hasParams =
+    pathParams.length > 0 ||
+    jsonFields.length > 0 ||
+    queryFields.length > 0 ||
+    formFields.length > 0;
 
   // Path expression — substitute :param with `${param}` template literals.
   let pathExpr = `\`${ep.path}\``;
@@ -235,13 +258,13 @@ function renderEndpoint(folder: string, filename: string, ep: DocEndpoint): stri
 
   // Argument destructuring for the Fetcher.
   const destructured: string[] = pathParams.map((p) => p.name);
-  if (jsonFields.length > 0 || formFields.length > 0) destructured.push("body");
-  if (queryFields.length > 0) destructured.push("params");
+  if (jsonFields.length > 0 || formFields.length > 0) destructured.push(`body`);
+  if (queryFields.length > 0) destructured.push(`params`);
 
   // The call expression.
   const callArgs: string[] = [pathExpr];
-  if (jsonFields.length > 0 || formFields.length > 0) callArgs.push("body");
-  if (queryFields.length > 0) callArgs.push("params");
+  if (jsonFields.length > 0 || formFields.length > 0) callArgs.push(`body`);
+  if (queryFields.length > 0) callArgs.push(`params`);
 
   // Return type — naive: needs hand-tuning. We emit `unknown` as a placeholder.
   const returnType = inferReturnType(ep);
@@ -260,7 +283,7 @@ function renderEndpoint(folder: string, filename: string, ep: DocEndpoint): stri
   }
   for (const note of ep.notes) {
     jsdocLines.push(` *`);
-    const kind = note.kind === "Warn" ? "WARNING" : note.kind.toUpperCase();
+    const kind = note.kind === `Warn` ? `WARNING` : note.kind.toUpperCase();
     jsdocLines.push(` * > [!${kind}]`);
     jsdocLines.push(` * >`);
     jsdocLines.push(` * > ${note.content}`);
@@ -274,34 +297,36 @@ function renderEndpoint(folder: string, filename: string, ep: DocEndpoint): stri
   }
   const coreList = [...coreImports].sort((a, b) => {
     // Put runtime helpers (post/get/etc.) first, then types, then primitives.
-    const av = a.startsWith("type ") ? 2 : a === methodFn ? 0 : 1;
-    const bv = b.startsWith("type ") ? 2 : b === methodFn ? 0 : 1;
+    const av = a.startsWith(`type `) ? 2 : a === methodFn ? 0 : 1;
+    const bv = b.startsWith(`type `) ? 2 : b === methodFn ? 0 : 1;
     return av - bv;
   });
-  importLines.push(`import { ${coreList.join(", ")} } from "@discordkit/core";`);
+  importLines.push(
+    `import { ${coreList.join(`, `)} } from "@discordkit/core";`
+  );
 
   // Fetcher signature + body.
   const fetcherSignature = hasInputs
     ? `Fetcher<\n  typeof ${schemaName},\n  ${returnType}\n>`
     : `Fetcher<null, ${returnType}>`;
   const fetcherImpl = hasParams
-    ? `async ({ ${destructured.join(", ")} }) =>\n  ${methodFn}(${callArgs.join(", ")})`
-    : `async () => ${methodFn}(${callArgs.join(", ")})`;
+    ? `async ({ ${destructured.join(`, `)} }) =>\n  ${methodFn}(${callArgs.join(`, `)})`
+    : `async () => ${methodFn}(${callArgs.join(`, `)})`;
 
   const lines: string[] = [];
   lines.push(...importLines);
-  lines.push("");
+  lines.push(``);
   if (hasInputs) {
     lines.push(`export const ${schemaName} = v.object({`);
-    lines.push(schemaParts.join(",\n"));
+    lines.push(schemaParts.join(`,\n`));
     lines.push(`});`);
-    lines.push("");
+    lines.push(``);
   }
-  lines.push(jsdocLines.join("\n"));
+  lines.push(jsdocLines.join(`\n`));
   lines.push(`export const ${filename}: ${fetcherSignature} = ${fetcherImpl};`);
-  lines.push("");
+  lines.push(``);
 
-  return lines.join("\n");
+  return lines.join(`\n`);
 }
 
 function renderSpec(folder: string, filename: string, ep: DocEndpoint): string {
@@ -318,39 +343,49 @@ function renderSpec(folder: string, filename: string, ep: DocEndpoint): string {
   // TODO: response schema goes as 3rd arg if available
   mockArgs.push(`/* TODO: response schema */ null`);
 
-  const importedNames = hasInputs ? `${filename}, ${schemaName}` : `${filename}`;
+  const importedNames = hasInputs
+    ? `${filename}, ${schemaName}`
+    : `${filename}`;
 
   const lines: string[] = [];
   lines.push(`import { toValidated } from "@discordkit/core";`);
-  lines.push("");
+  lines.push(``);
   lines.push(`import { mockUtils } from "#mocks";`);
   lines.push(`import { ${importedNames} } from "../${filename}.js";`);
-  lines.push("");
+  lines.push(``);
   lines.push(`describe(\`${filename}\`, { repeats: 5 }, () => {`);
   lines.push(`  const { config, expected } = mockUtils.request.${method}(`);
-  lines.push(`    ${mockArgs.join(",\n    ")}`);
+  lines.push(`    ${mockArgs.join(`,\n    `)}`);
   lines.push(`  );`);
-  lines.push("");
-  lines.push(`  it(\`validates input, fetches, and validates output\`, async () => {`);
+  lines.push(``);
+  lines.push(
+    `  it(\`validates input, fetches, and validates output\`, async () => {`
+  );
   if (hasInputs) {
     lines.push(`    await expect(`);
-    lines.push(`      toValidated(${filename}, ${schemaName}, /* TODO: response schema */)(config)`);
+    lines.push(
+      `      toValidated(${filename}, ${schemaName}, /* TODO: response schema */)(config)`
+    );
     lines.push(`    ).resolves.toEqual(expected);`);
   } else {
     lines.push(`    await expect(`);
-    lines.push(`      toValidated(${filename}, null, /* TODO: response schema */)()`);
+    lines.push(
+      `      toValidated(${filename}, null, /* TODO: response schema */)()`
+    );
     lines.push(`    ).resolves.toEqual(expected);`);
   }
   lines.push(`  });`);
   lines.push(`});`);
-  lines.push("");
-  return lines.join("\n");
+  lines.push(``);
+  return lines.join(`\n`);
 }
 
 // ─── field rendering ──────────────────────────────────────────────────────
 
 function renderFieldLine(field: DocField, coreImports: Set<string>): string {
-  const comment = field.description ? `    /** ${field.description.replace(/\s+/g, " ").trim()} */\n` : "";
+  const comment = field.description
+    ? `    /** ${field.description.replace(/\s+/g, ` `).trim()} */\n`
+    : ``;
   const value = renderFieldType(field.type, coreImports);
   const wrapped = field.optional ? `v.exactOptional(${value})` : value;
   // partial() at the parent level handles optional, but only when ALL fields are optional.
@@ -360,23 +395,23 @@ function renderFieldLine(field: DocField, coreImports: Set<string>): string {
 
 function renderFieldType(t: DocFieldType, coreImports: Set<string>): string {
   switch (t.kind) {
-    case "primitive": {
+    case `primitive`: {
       const base = primitiveToValibot(t.name, coreImports);
       return t.nullable ? `v.nullable(${base})` : base;
     }
-    case "ref": {
+    case `ref`: {
       // Best-effort: derive a likely schema name from refName ("user" → userSchema).
       // The scaffolder doesn't know which folder the ref lives in — flagged
       // as TODO for the human.
       const refSchema = `/* TODO: ${t.refName}Schema */ v.unknown()`;
       return t.nullable ? `v.nullable(${refSchema})` : refSchema;
     }
-    case "array": {
+    case `array`: {
       const inner = renderFieldType(t.element, coreImports);
       const arr = `v.array(${inner})`;
       return t.nullable ? `v.nullable(${arr})` : arr;
     }
-    case "raw": {
+    case `raw`: {
       return `/* TODO: ${t.raw} */ v.unknown()`;
     }
   }
@@ -384,31 +419,31 @@ function renderFieldType(t: DocFieldType, coreImports: Set<string>): string {
 
 function primitiveToValibot(name: string, coreImports: Set<string>): string {
   switch (name) {
-    case "snowflake":
-      coreImports.add("snowflake");
+    case `snowflake`:
+      coreImports.add(`snowflake`);
       return `snowflake`;
-    case "string":
+    case `string`:
       return `v.string()`;
-    case "integer":
+    case `integer`:
       return `v.pipe(v.number(), v.integer())`;
-    case "number":
-    case "float":
+    case `number`:
+    case `float`:
       return `v.number()`;
-    case "boolean":
-    case "bool":
+    case `boolean`:
+    case `bool`:
       return `v.boolean()`;
-    case "iso8601 timestamp":
+    case `iso8601 timestamp`:
       return `v.pipe(v.string(), v.isoTimestamp())`;
-    case "object":
-    case "dict":
+    case `object`:
+    case `dict`:
       return `v.record(v.string(), v.unknown())`;
-    case "any":
-    case "mixed":
+    case `any`:
+    case `mixed`:
       return `v.unknown()`;
-    case "binary":
-    case "file contents":
+    case `binary`:
+    case `file contents`:
       return `v.unknown() /* TODO: file/binary type */`;
-    case "null":
+    case `null`:
       return `v.null_()`;
     default:
       return `v.unknown() /* TODO: ${name} */`;
@@ -429,18 +464,18 @@ function extractPathParams(path: string): { name: string }[] {
 
 function methodToFn(method: string): string {
   switch (method.toUpperCase()) {
-    case "GET":
-      return "get";
-    case "POST":
-      return "post";
-    case "PUT":
-      return "put";
-    case "PATCH":
-      return "patch";
-    case "DELETE":
-      return "remove";
+    case `GET`:
+      return `get`;
+    case `POST`:
+      return `post`;
+    case `PUT`:
+      return `put`;
+    case `PATCH`:
+      return `patch`;
+    case `DELETE`:
+      return `remove`;
     default:
-      return "get";
+      return `get`;
   }
 }
 
@@ -450,11 +485,15 @@ function inferReturnType(ep: DocEndpoint): string {
   const desc = ep.description;
   if (!desc) return `void`;
 
-  const arrayMatch = /Returns a list of(?:\s+partial)?\s+\[([^\]]+)\]/i.exec(desc);
+  const arrayMatch = /Returns a list of(?:\s+partial)?\s+\[([^\]]+)\]/i.exec(
+    desc
+  );
   if (arrayMatch) {
     return `${pascalCase(arrayMatch[1])}[] /* TODO: confirm type */`;
   }
-  const singleMatch = /Returns(?:\s+a|\s+the|\s+an)?\s+\[([^\]]+)\]/i.exec(desc);
+  const singleMatch = /Returns(?:\s+a|\s+the|\s+an)?\s+\[([^\]]+)\]/i.exec(
+    desc
+  );
   if (singleMatch) {
     return `${pascalCase(singleMatch[1])} /* TODO: confirm type */`;
   }
@@ -464,8 +503,8 @@ function inferReturnType(ep: DocEndpoint): string {
 
 function toCamelCase(heading: string): string {
   const words = heading
-    .replace(/[/-]/g, " ")
-    .replace(/[^a-zA-Z0-9\s]/g, "")
+    .replace(/[/-]/g, ` `)
+    .replace(/[^a-zA-Z0-9\s]/g, ``)
     .trim()
     .split(/\s+/);
   return words
@@ -475,12 +514,12 @@ function toCamelCase(heading: string): string {
       if (i === 0) return w.toLowerCase();
       return w[0].toUpperCase() + w.slice(1).toLowerCase();
     })
-    .join("");
+    .join(``);
 }
 
 function pascalCase(text: string): string {
   return text
-    .replace(/[^a-zA-Z0-9\s]/g, " ")
+    .replace(/[^a-zA-Z0-9\s]/g, ` `)
     .trim()
     .split(/\s+/)
     .map((w) => {
@@ -488,14 +527,14 @@ function pascalCase(text: string): string {
       if (preserved) return preserved;
       return w[0].toUpperCase() + w.slice(1).toLowerCase();
     })
-    .join("");
+    .join(``);
 }
 
 function matchPreserved(word: string): string | null {
   const upper = word.toUpperCase();
   const direct = [...PRESERVE_CASE].find((p) => p.toUpperCase() === upper);
   if (direct) return direct;
-  if (word.length > 1 && word.endsWith("s")) {
+  if (word.length > 1 && word.endsWith(`s`)) {
     const stem = word.slice(0, -1).toUpperCase();
     const stemMatch = [...PRESERVE_CASE].find((p) => p.toUpperCase() === stem);
     if (stemMatch) return `${stemMatch}s`;

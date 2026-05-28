@@ -33,29 +33,27 @@ import remarkParse from "remark-parse";
 import remarkGfm from "remark-gfm";
 import remarkMdx from "remark-mdx";
 import { toString as mdToString } from "mdast-util-to-string";
-import type {
-  Root,
-  RootContent,
-  Table,
-  PhrasingContent
-} from "mdast";
+import type { Root, RootContent, Table, PhrasingContent } from "mdast";
 
 // MDX AST node interfaces.
 interface MdxJsxElement {
-  type: "mdxJsxFlowElement" | "mdxJsxTextElement";
+  type: `mdxJsxFlowElement` | `mdxJsxTextElement`;
   name: string | null;
   attributes: MdxJsxAttribute[];
   children: RootContent[];
 }
 interface MdxJsxAttribute {
-  type: "mdxJsxAttribute";
+  type: `mdxJsxAttribute`;
   name: string;
-  value: string | { type: "mdxJsxAttributeValueExpression"; value: string } | null;
+  value:
+    | string
+    | { type: `mdxJsxAttributeValueExpression`; value: string }
+    | null;
 }
 
 // ─── public types ─────────────────────────────────────────────────────────
 
-export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+export type HttpMethod = `GET` | `POST` | `PUT` | `PATCH` | `DELETE`;
 
 export interface DocResource {
   title: string;
@@ -101,7 +99,7 @@ export interface DocEndpoint {
 }
 
 export interface AdmonitionBlock {
-  kind: "Note" | "Warning" | "Warn" | "Info" | "Tip" | "Danger";
+  kind: `Note` | `Warning` | `Warn` | `Info` | `Tip` | `Danger`;
   content: string;
 }
 
@@ -121,38 +119,44 @@ export interface DocField {
 }
 
 export type DocFieldType =
-  | { kind: "primitive"; name: string; nullable: boolean }
-  | { kind: "ref"; refName: string; refUrl: string; nullable: boolean; objectSuffix: boolean }
-  | { kind: "array"; element: DocFieldType; nullable: boolean }
-  | { kind: "raw"; raw: string; nullable: boolean };
+  | { kind: `primitive`; name: string; nullable: boolean }
+  | {
+      kind: `ref`;
+      refName: string;
+      refUrl: string;
+      nullable: boolean;
+      objectSuffix: boolean;
+    }
+  | { kind: `array`; element: DocFieldType; nullable: boolean }
+  | { kind: `raw`; raw: string; nullable: boolean };
 
 // ─── constants ─────────────────────────────────────────────────────────────
 
 const PRIMITIVE_TYPES = new Set([
-  "snowflake",
-  "string",
-  "integer",
-  "number",
-  "float",
-  "boolean",
-  "bool",
-  "object",
-  "dict",
-  "any",
-  "null",
-  "iso8601 timestamp",
-  "binary",
-  "file contents",
-  "mixed"
+  `snowflake`,
+  `string`,
+  `integer`,
+  `number`,
+  `float`,
+  `boolean`,
+  `bool`,
+  `object`,
+  `dict`,
+  `any`,
+  `null`,
+  `iso8601 timestamp`,
+  `binary`,
+  `file contents`,
+  `mixed`
 ]);
 
-const ADMONITION_NAMES = new Set<AdmonitionBlock["kind"]>([
-  "Note",
-  "Warning",
-  "Warn",
-  "Info",
-  "Tip",
-  "Danger"
+const ADMONITION_NAMES = new Set<AdmonitionBlock[`kind`]>([
+  `Note`,
+  `Warning`,
+  `Warn`,
+  `Info`,
+  `Tip`,
+  `Danger`
 ]);
 
 // ─── public entry point ────────────────────────────────────────────────────
@@ -181,7 +185,7 @@ export function parseResource(markdown: string): DocResource {
   const stack: (string | null)[] = [null, null, null, null, null, null, null];
   for (let i = bodyStart; i < tree.children.length; i++) {
     const node = tree.children[i];
-    if (node.type === "heading") {
+    if (node.type === `heading`) {
       const depth = node.depth;
       const text = mdToString(node).trim();
       stack[depth] = text;
@@ -193,8 +197,9 @@ export function parseResource(markdown: string): DocResource {
     const stackCopy: (string | null)[] = [...stack];
     let deepest: { depth: number; text: string } | null = null;
     for (let d = 6; d >= 2; d--) {
-      if (stackCopy[d]) {
-        deepest = { depth: d, text: stackCopy[d] };
+      const heading = stackCopy[d];
+      if (heading) {
+        deepest = { depth: d, text: heading };
         break;
       }
     }
@@ -215,7 +220,7 @@ export function parseResource(markdown: string): DocResource {
     notes: AdmonitionBlock[];
     /** Param groups by kind, keyed by variant label. */
     paramTables: {
-      kind: "json" | "query" | "form";
+      kind: `json` | `query` | `form`;
       variant: string;
       table: Table;
       headingText: string; // the sub-heading title that wrapped this table
@@ -224,17 +229,20 @@ export function parseResource(markdown: string): DocResource {
   const endpointSeeds: EndpointSeed[] = [];
   /** Map from heading text + depth to seed (so we can attach later-found content). */
   const endpointByKey = new Map<string, EndpointSeed>();
-  const headingKey = (depth: number, text: string): string => `${depth}::${text}`;
+  const headingKey = (depth: number, text: string): string =>
+    `${depth}::${text}`;
 
   for (const entry of indexed) {
     const route = findRouteMdx(entry.node);
     if (!route) continue;
-    const methodAttr = getMdxAttribute(route, "method");
+    const methodAttr = getMdxAttribute(route, `method`);
     if (!methodAttr) continue;
     // The endpoint's heading is the closest H2 in the stack (most reliable signal).
     // Fallback: deepest heading at any level.
     const anchor =
-      (entry.stack[2] ? { depth: 2, text: entry.stack[2] } : entry.deepestHeading) ?? null;
+      (entry.stack[2]
+        ? { depth: 2, text: entry.stack[2] }
+        : entry.deepestHeading) ?? null;
     if (!anchor) continue;
 
     const method = methodAttr.toUpperCase() as HttpMethod;
@@ -256,8 +264,10 @@ export function parseResource(markdown: string): DocResource {
   // Second pass — for each non-heading node, attach to its closest endpoint
   // OR record as candidate for object/enum.
   const tableCandidates: { entry: IndexedNode; table: Table }[] = [];
-  const admonitionCandidates: { entry: IndexedNode; admonition: AdmonitionBlock }[] = [];
-  const descriptionRunNodes = new Map<string, RootContent[]>(); // keyed by endpointKey
+  const admonitionCandidates: {
+    entry: IndexedNode;
+    admonition: AdmonitionBlock;
+  }[] = [];
 
   for (const entry of indexed) {
     const { node, stack } = entry;
@@ -282,16 +292,16 @@ export function parseResource(markdown: string): DocResource {
     }
 
     // Skip ManualAnchor, mdxjsEsm, html, and other meta nodes.
-    if (isMdxElement(node, "ManualAnchor")) continue;
-    if (node.type === "mdxjsEsm") continue;
-    if (node.type === "html") continue;
-    if (node.type === "thematicBreak") continue;
+    if (isMdxElement(node, `ManualAnchor`)) continue;
+    if (node.type === `mdxjsEsm`) continue;
+    if (node.type === `html`) continue;
+    if (node.type === `thematicBreak`) continue;
 
     // Tables: classify shape and attach as either endpoint params or object/enum candidate.
-    if (node.type === "table") {
+    if (node.type === `table`) {
       const header = parseTableHeader(node);
       const tableKind = classifyTable(header, entry);
-      if (tableKind && endpointSeed && tableKind.kind === "param") {
+      if (tableKind && endpointSeed && tableKind.kind === `param`) {
         endpointSeed.paramTables.push({
           kind: tableKind.paramKind,
           variant: tableKind.variant,
@@ -305,7 +315,12 @@ export function parseResource(markdown: string): DocResource {
     }
 
     // If under an endpoint and before any sub-heading, treat as description prose.
-    if (endpointSeed && stack[6] === null && stack[5] === null && stack[4] === null) {
+    if (
+      endpointSeed &&
+      stack[6] === null &&
+      stack[5] === null &&
+      stack[4] === null
+    ) {
       // Only include nodes that sit directly under the endpoint's heading
       // (i.e., the deepest non-null heading equals the endpoint's heading).
       const deepestNonNull = entry.deepestHeading;
@@ -328,10 +343,13 @@ export function parseResource(markdown: string): DocResource {
     const queryParams: DocFieldGroup[] = [];
     const formParams: DocFieldGroup[] = [];
     for (const p of seed.paramTables) {
-      const group: DocFieldGroup = { variant: p.variant, fields: parseFieldsTable(p.table) };
-      if (p.kind === "json") jsonParams.push(group);
-      else if (p.kind === "query") queryParams.push(group);
-      else if (p.kind === "form") formParams.push(group);
+      const group: DocFieldGroup = {
+        variant: p.variant,
+        fields: parseFieldsTable(p.table)
+      };
+      if (p.kind === `json`) jsonParams.push(group);
+      else if (p.kind === `query`) queryParams.push(group);
+      else if (p.kind === `form`) formParams.push(group);
     }
     return {
       name: seed.headingText,
@@ -410,8 +428,7 @@ export function parseResource(markdown: string): DocResource {
       // It's an object. The structure may be under a sub-heading (Structure)
       // or directly under the object heading.
       const fields = parseFieldsTable(structureGroup.table);
-      const description = ""; // could be filled in by tracking prose between heading and table
-      const nameStripped = stripObjectSuffix(structureGroup.headingText);
+      const description = ``; // could be filled in by tracking prose between heading and table
       objects.push({
         name: structureGroup.headingText,
         anchor: null,
@@ -440,12 +457,16 @@ export function parseResource(markdown: string): DocResource {
   const seenAsObject = new Set(objects.map((o) => o.name));
   // Find all H2 headings in the doc.
   for (const node of tree.children) {
-    if (node.type === "heading" && node.depth === 2) {
+    if (node.type === `heading` && node.depth === 2) {
       const text = mdToString(node).trim();
       if (seenAsEndpoint.has(text)) continue;
       if (seenAsObject.has(text)) continue;
       // Allow obj-suffix mismatch.
-      if (seenAsObject.has(`${text} Object`) || seenAsObject.has(`${text} Structure`)) continue;
+      if (
+        seenAsObject.has(`${text} Object`) ||
+        seenAsObject.has(`${text} Structure`)
+      )
+        continue;
       unparsedSections.push(text);
     }
   }
@@ -455,15 +476,17 @@ export function parseResource(markdown: string): DocResource {
 
 // ─── helpers ───────────────────────────────────────────────────────────────
 
-function extractHeader(
-  children: RootContent[]
-): { title: string; description: string; bodyStart: number } {
-  let title = "";
-  let description = "";
+function extractHeader(children: RootContent[]): {
+  title: string;
+  description: string;
+  bodyStart: number;
+} {
+  let title = ``;
+  let description = ``;
   let i = 0;
   for (; i < children.length; i++) {
     const node = children[i];
-    if (node.type === "heading" && node.depth === 1) {
+    if (node.type === `heading` && node.depth === 1) {
       title = mdToString(node).trim();
       i++;
       break;
@@ -471,11 +494,11 @@ function extractHeader(
   }
   for (; i < children.length; i++) {
     const node = children[i];
-    if (node.type === "heading") break;
-    if (node.type === "blockquote") {
+    if (node.type === `heading`) break;
+    if (node.type === `blockquote`) {
       const text = mdToString(node).trim();
       // Skip the "Documentation Index" header bot every Discord page has.
-      if (text.startsWith("## Documentation Index")) continue;
+      if (text.startsWith(`## Documentation Index`)) continue;
       description = text;
       i++;
       break;
@@ -485,12 +508,17 @@ function extractHeader(
 }
 
 function nodeAsAdmonition(node: RootContent): AdmonitionBlock | null {
-  if (node.type !== "mdxJsxFlowElement" && node.type !== "mdxJsxTextElement") return null;
+  if (node.type !== `mdxJsxFlowElement` && node.type !== `mdxJsxTextElement`)
+    return null;
   const el = node as unknown as MdxJsxElement;
   if (!el.name) return null;
-  if (!ADMONITION_NAMES.has(el.name as AdmonitionBlock["kind"])) return null;
-  const content = el.children.map((c) => mdToString(c)).join(" ").replace(/\s+/g, " ").trim();
-  return { kind: el.name as AdmonitionBlock["kind"], content };
+  if (!ADMONITION_NAMES.has(el.name as AdmonitionBlock[`kind`])) return null;
+  const content = el.children
+    .map((c) => mdToString(c))
+    .join(` `)
+    .replace(/\s+/g, ` `)
+    .trim();
+  return { kind: el.name as AdmonitionBlock[`kind`], content };
 }
 
 function nodeContainsRoute(node: RootContent): boolean {
@@ -498,34 +526,36 @@ function nodeContainsRoute(node: RootContent): boolean {
 }
 
 function findRouteMdx(node: RootContent): MdxJsxElement | null {
-  if (isMdxElement(node, "Route")) return node as unknown as MdxJsxElement;
-  if (node.type === "paragraph") {
+  if (isMdxElement(node, `Route`)) return node as unknown as MdxJsxElement;
+  if (node.type === `paragraph`) {
     for (const c of node.children) {
-      const cAny = c as unknown as MdxJsxElement;
-      if (
-        (c.type === "mdxJsxTextElement" || c.type === "mdxJsxFlowElement") &&
-        cAny.name === "Route"
-      ) {
-        return cAny;
+      // Inside a paragraph, only inline MDX elements (mdxJsxTextElement) appear.
+      // Flow-level mdxJsxFlowElement can't nest under phrasing content.
+      if (c.type === `mdxJsxTextElement`) {
+        const cAny = c as unknown as MdxJsxElement;
+        if (cAny.name === `Route`) return cAny;
       }
     }
   }
   return null;
 }
 
-function isMdxElement(node: RootContent, name: string): node is RootContent & MdxJsxElement {
+function isMdxElement(
+  node: RootContent,
+  name: string
+): node is RootContent & MdxJsxElement {
   return (
-    (node.type === "mdxJsxFlowElement" || node.type === "mdxJsxTextElement") &&
+    (node.type === `mdxJsxFlowElement` || node.type === `mdxJsxTextElement`) &&
     (node as unknown as MdxJsxElement).name === name
   );
 }
 
 function getMdxAttribute(el: MdxJsxElement, attrName: string): string | null {
   for (const attr of el.attributes) {
-    if (attr.type !== "mdxJsxAttribute") continue;
+    if (attr.type !== `mdxJsxAttribute`) continue;
     if (attr.name !== attrName) continue;
-    if (typeof attr.value === "string") return attr.value;
-    if (attr.value && typeof attr.value === "object" && "value" in attr.value) {
+    if (typeof attr.value === `string`) return attr.value;
+    if (attr.value && typeof attr.value === `object` && `value` in attr.value) {
       return attr.value.value;
     }
   }
@@ -533,14 +563,14 @@ function getMdxAttribute(el: MdxJsxElement, attrName: string): string | null {
 }
 
 function mdxElementText(el: MdxJsxElement): string {
-  return el.children.map((c) => mdToString(c)).join("");
+  return el.children.map((c) => mdToString(c)).join(``);
 }
 
 // ─── table classification ──────────────────────────────────────────────────
 
 interface TableClassification {
-  kind: "param" | "object" | "enum" | "unknown";
-  paramKind?: "json" | "query" | "form";
+  kind: `param` | `object` | `enum` | `unknown`;
+  paramKind?: `json` | `query` | `form`;
   variant?: string;
   headingText?: string;
 }
@@ -553,22 +583,42 @@ interface IndexedNodeView {
 function classifyTable(
   header: string[] | null,
   entry: IndexedNodeView
-): { kind: "param"; paramKind: "json" | "query" | "form"; variant: string; headingText: string } | null {
+): {
+  kind: `param`;
+  paramKind: `json` | `query` | `form`;
+  variant: string;
+  headingText: string;
+} | null {
   if (!header) return null;
   // Param tables sit under a heading whose title starts with "JSON Params", "Query String Params", or "Form Params" (or JSON/Form Params).
   // The heading is most often H6 but Discord also uses H3 in some places.
   for (let d = 6; d >= 3; d--) {
     const t = entry.stack[d];
     if (!t) continue;
-    const baseTitle = t.replace(/\s*\([^)]*\)\s*$/, "").trim();
+    const baseTitle = t.replace(/\s*\([^)]*\)\s*$/, ``).trim();
     if (/^JSON Params$/i.test(baseTitle)) {
-      return { kind: "param", paramKind: "json", variant: extractVariantLabel(t), headingText: t };
+      return {
+        kind: `param`,
+        paramKind: `json`,
+        variant: extractVariantLabel(t),
+        headingText: t
+      };
     }
     if (/^Query String Params$/i.test(baseTitle)) {
-      return { kind: "param", paramKind: "query", variant: extractVariantLabel(t), headingText: t };
+      return {
+        kind: `param`,
+        paramKind: `query`,
+        variant: extractVariantLabel(t),
+        headingText: t
+      };
     }
     if (/^Form Params$|^JSON\/Form Params$/i.test(baseTitle)) {
-      return { kind: "param", paramKind: "form", variant: extractVariantLabel(t), headingText: t };
+      return {
+        kind: `param`,
+        paramKind: `form`,
+        variant: extractVariantLabel(t),
+        headingText: t
+      };
     }
     // Only check the deepest heading that's set — anything above is irrelevant.
     break;
@@ -578,57 +628,72 @@ function classifyTable(
 
 function isStructureHeader(header: string[]): boolean {
   // First column is Field or Name, second is Type.
-  return (header[0] === "field" || header[0] === "name") && header[1] === "type";
+  return (
+    (header[0] === `field` || header[0] === `name`) && header[1] === `type`
+  );
 }
 
-function tableAsEnum(
-  group: { headingText: string; deeperHeading: { depth: number; text: string } | null; table: Table }
-): DocEnum | null {
+function tableAsEnum(group: {
+  headingText: string;
+  deeperHeading: { depth: number; text: string } | null;
+  table: Table;
+}): DocEnum | null {
   const table = group.table;
   const header = parseTableHeader(table);
   if (!header) return null;
   if (isStructureHeader(header)) return null;
 
-  const descIdx = header.findIndex((c) => c === "description");
-  let valueIdx = header.findIndex((c) => c === "value");
-  if (valueIdx === -1) valueIdx = header.findIndex((c) => c === "id");
-  let labelIdx = header.findIndex((c) => c === "name");
+  const descIdx = header.findIndex((c) => c === `description`);
+  let valueIdx = header.findIndex((c) => c === `value`);
+  if (valueIdx === -1) valueIdx = header.findIndex((c) => c === `id`);
+  let labelIdx = header.findIndex((c) => c === `name`);
   if (labelIdx === -1) {
-    labelIdx = header.findIndex((c, i) => i !== valueIdx && c !== "description");
+    labelIdx = header.findIndex(
+      (c, i) => i !== valueIdx && c !== `description`
+    );
   }
   if (valueIdx === -1) {
     if (header.length < 2) return null;
-    valueIdx = header.findIndex((c, i) => i !== labelIdx && c !== "description");
+    valueIdx = header.findIndex(
+      (c, i) => i !== labelIdx && c !== `description`
+    );
   }
   if (valueIdx === -1 || labelIdx === -1) return null;
 
   const rows = parseTableRowsAsRecord(table, header).map((row) => ({
-    value: row[header[valueIdx]] ?? "",
-    name: row[header[labelIdx]] ?? "",
-    description: descIdx >= 0 ? row[header[descIdx]] ?? null : null
+    value: row[header[valueIdx]] ?? ``,
+    name: row[header[labelIdx]] ?? ``,
+    description: descIdx >= 0 ? (row[header[descIdx]] ?? null) : null
   }));
   if (rows.length === 0) return null;
 
   // Enum name: if there's a deeper-heading (level 4-6), use it. Otherwise use the object-level heading.
-  const name = group.deeperHeading ? group.deeperHeading.text : stripObjectSuffix(group.headingText);
+  const name = group.deeperHeading
+    ? group.deeperHeading.text
+    : stripObjectSuffix(group.headingText);
   return { name, anchor: null, rows };
 }
 
 function parseTableHeader(table: Table): string[] | null {
   const headerRow = table.children[0];
-  if (!headerRow || headerRow.type !== "tableRow") return null;
-  return headerRow.children.map((cell) => mdToString(cell).trim().toLowerCase());
+  if (!headerRow || headerRow.type !== `tableRow`) return null;
+  return headerRow.children.map((cell) =>
+    mdToString(cell).trim().toLowerCase()
+  );
 }
 
-function parseTableRowsAsRecord(table: Table, header: string[]): Record<string, string>[] {
+function parseTableRowsAsRecord(
+  table: Table,
+  header: string[]
+): Record<string, string>[] {
   const rows: Record<string, string>[] = [];
   for (let i = 1; i < table.children.length; i++) {
     const row = table.children[i];
-    if (row.type !== "tableRow") continue;
+    if (row.type !== `tableRow`) continue;
     const record: Record<string, string> = {};
     for (let c = 0; c < header.length; c++) {
       const cell = row.children[c];
-      record[header[c]] = cell ? cellToMarkdown(cell) : "";
+      record[header[c]] = cell ? cellToMarkdown(cell) : ``;
     }
     rows.push(record);
   }
@@ -638,28 +703,36 @@ function parseTableRowsAsRecord(table: Table, header: string[]): Record<string, 
 function parseFieldsTable(table: Table): DocField[] {
   const header = parseTableHeader(table);
   if (!header) return [];
-  const fieldIdx = header.findIndex((c) => c === "field" || c === "name");
-  const typeIdx = header.findIndex((c) => c === "type");
-  const descIdx = header.findIndex((c) => c === "description");
-  const reqIdx = header.findIndex((c) => c === "required");
-  const defaultIdx = header.findIndex((c) => c === "default");
+  const fieldIdx = header.findIndex((c) => c === `field` || c === `name`);
+  const typeIdx = header.findIndex((c) => c === `type`);
+  const descIdx = header.findIndex((c) => c === `description`);
+  const reqIdx = header.findIndex((c) => c === `required`);
+  const defaultIdx = header.findIndex((c) => c === `default`);
   if (fieldIdx === -1 || typeIdx === -1) return [];
 
   const fields: DocField[] = [];
   for (let i = 1; i < table.children.length; i++) {
     const row = table.children[i];
-    if (row.type !== "tableRow") continue;
+    if (row.type !== `tableRow`) continue;
     const cells = row.children;
-    const fieldText = (cells[fieldIdx] ? mdToString(cells[fieldIdx]) : "").trim();
+    const fieldText = (
+      cells[fieldIdx] ? mdToString(cells[fieldIdx]) : ``
+    ).trim();
     const typeCell = cells[typeIdx];
-    const descText = descIdx >= 0 && cells[descIdx] ? cellToMarkdown(cells[descIdx]) : "";
+    const descText =
+      descIdx >= 0 && cells[descIdx] ? cellToMarkdown(cells[descIdx]) : ``;
     const reqText =
-      reqIdx >= 0 && cells[reqIdx] ? mdToString(cells[reqIdx]).trim().toLowerCase() : "";
-    const defaultText = defaultIdx >= 0 && cells[defaultIdx] ? mdToString(cells[defaultIdx]).trim() : "";
+      reqIdx >= 0 && cells[reqIdx]
+        ? mdToString(cells[reqIdx]).trim().toLowerCase()
+        : ``;
+    const defaultText =
+      defaultIdx >= 0 && cells[defaultIdx]
+        ? mdToString(cells[defaultIdx]).trim()
+        : ``;
 
     let optional = false;
     let rawName = fieldText;
-    if (rawName.endsWith("?")) {
+    if (rawName.endsWith(`?`)) {
       optional = true;
       rawName = rawName.slice(0, -1);
     }
@@ -672,9 +745,9 @@ function parseFieldsTable(table: Table): DocField[] {
       description: descText,
       required:
         reqIdx >= 0
-          ? reqText === "true"
+          ? reqText === `true`
             ? true
-            : reqText === "false"
+            : reqText === `false`
               ? false
               : null
           : null,
@@ -685,45 +758,45 @@ function parseFieldsTable(table: Table): DocField[] {
 }
 
 function cellToMarkdown(cell: RootContent | PhrasingContent): string {
-  if (cell.type === "tableCell") {
-    return cell.children.map(phrasingToMarkdown).join("");
+  if (cell.type === `tableCell`) {
+    return cell.children.map(phrasingToMarkdown).join(``);
   }
   return mdToString(cell);
 }
 
 function phrasingToMarkdown(node: PhrasingContent): string {
   switch (node.type) {
-    case "text":
+    case `text`:
       return node.value;
-    case "inlineCode":
+    case `inlineCode`:
       return `\`${node.value}\``;
-    case "strong":
-      return `**${node.children.map(phrasingToMarkdown).join("")}**`;
-    case "emphasis":
-      return `*${node.children.map(phrasingToMarkdown).join("")}*`;
-    case "link":
-      return `[${node.children.map(phrasingToMarkdown).join("")}](${node.url})`;
-    case "html":
+    case `strong`:
+      return `**${node.children.map(phrasingToMarkdown).join(``)}**`;
+    case `emphasis`:
+      return `*${node.children.map(phrasingToMarkdown).join(``)}*`;
+    case `link`:
+      return `[${node.children.map(phrasingToMarkdown).join(``)}](${node.url})`;
+    case `html`:
       return node.value;
-    case "break":
-      return "\n";
+    case `break`:
+      return `\n`;
     default: {
       const maybeChildren = (node as { children?: PhrasingContent[] }).children;
-      if (maybeChildren) return maybeChildren.map(phrasingToMarkdown).join("");
+      if (maybeChildren) return maybeChildren.map(phrasingToMarkdown).join(``);
       return mdToString(node as unknown as PhrasingContent);
     }
   }
 }
 
 function parseTypeCell(cell: RootContent | undefined): DocFieldType {
-  if (!cell) return { kind: "raw", raw: "", nullable: false };
+  if (!cell) return { kind: `raw`, raw: ``, nullable: false };
   let text =
-    cell.type === "tableCell"
-      ? cell.children.map(phrasingToMarkdown).join("").trim()
+    cell.type === `tableCell`
+      ? cell.children.map(phrasingToMarkdown).join(``).trim()
       : mdToString(cell).trim();
 
   let nullable = false;
-  if (text.startsWith("?")) {
+  if (text.startsWith(`?`)) {
     nullable = true;
     text = text.slice(1).trim();
   }
@@ -738,24 +811,28 @@ function parseTypeCell(cell: RootContent | undefined): DocFieldType {
   const arrayMatch = /^array(?:\s+of\s+(.+))?$/i.exec(text);
   if (arrayMatch) {
     if (!arrayMatch[1]) {
-      return { kind: "array", element: { kind: "raw", raw: "unknown", nullable: false }, nullable };
+      return {
+        kind: `array`,
+        element: { kind: `raw`, raw: `unknown`, nullable: false },
+        nullable
+      };
     }
-    let elementText = arrayMatch[1].replace(/^partial\s+/i, "").trim();
-    if (/^strings?$/i.test(elementText)) elementText = "string";
-    else if (/^snowflakes?$/i.test(elementText)) elementText = "snowflake";
-    else if (/^integers?$/i.test(elementText)) elementText = "integer";
-    const fakeCell: PhrasingContent = { type: "text", value: elementText };
+    let elementText = arrayMatch[1].replace(/^partial\s+/i, ``).trim();
+    if (/^strings?$/i.test(elementText)) elementText = `string`;
+    else if (/^snowflakes?$/i.test(elementText)) elementText = `snowflake`;
+    else if (/^integers?$/i.test(elementText)) elementText = `integer`;
+    const fakeCell: PhrasingContent = { type: `text`, value: elementText };
     const wrapped: RootContent = {
-      type: "tableCell",
+      type: `tableCell`,
       children: [fakeCell]
     } as RootContent;
-    return { kind: "array", element: parseTypeCell(wrapped), nullable };
+    return { kind: `array`, element: parseTypeCell(wrapped), nullable };
   }
 
   const linkMatch = /^\[([^\]]+)\]\(([^)]+)\)\s*$/.exec(text);
   if (linkMatch) {
     return {
-      kind: "ref",
+      kind: `ref`,
       refName: linkMatch[1].trim(),
       refUrl: linkMatch[2].trim(),
       nullable,
@@ -765,20 +842,23 @@ function parseTypeCell(cell: RootContent | undefined): DocFieldType {
 
   const lower = text.toLowerCase();
   if (PRIMITIVE_TYPES.has(lower)) {
-    return { kind: "primitive", name: lower, nullable };
+    return { kind: `primitive`, name: lower, nullable };
   }
 
-  return { kind: "raw", raw: text, nullable };
+  return { kind: `raw`, raw: text, nullable };
 }
 
 // ─── misc helpers ──────────────────────────────────────────────────────────
 
 function nodesToText(nodes: RootContent[]): string {
   return nodes
-    .filter((n) => n.type !== "html" || !(n as { value: string }).value.startsWith("<!--"))
+    .filter(
+      (n) =>
+        n.type !== `html` || !(n as { value: string }).value.startsWith(`<!--`)
+    )
     .map((n) => mdToString(n))
-    .join("\n\n")
-    .replace(/\n{3,}/g, "\n\n");
+    .join(`\n\n`)
+    .replace(/\n{3,}/g, `\n\n`);
 }
 
 function normalizePath(rawPath: string): string {
@@ -790,24 +870,40 @@ function normalizePath(rawPath: string): string {
   // Standalone placeholders like `{instance_id}` (no dot prefix) get
   // converted to `:instanceId` (camelCase, matching repo convention).
   return rawPath
-    .replace(/\[\\?\{([^.}]+)\.([^}]+)\}\]\([^)]+\)/g, (_, prefix: string, suffix: string) => {
-      const cleanSuffix = suffix.replace(/\\_/g, "_");
-      return cleanSuffix === "id" ? `:${prefix}` : `:${snakeToCamel(cleanSuffix)}`;
-    })
-    .replace(/\[\\?\{([^}]+)\}\]\([^)]+\)/g, (_, raw: string) => `:${snakeToCamel(raw.replace(/\\_/g, "_"))}`)
-    .replace(/\\?\{([^.}]+)\.([^}]+)\}/g, (_, prefix: string, suffix: string) => {
-      const cleanSuffix = suffix.replace(/\\_/g, "_");
-      return cleanSuffix === "id" ? `:${prefix}` : `:${snakeToCamel(cleanSuffix)}`;
-    })
-    .replace(/\\?\{([^}]+)\}/g, (_, raw: string) => `:${snakeToCamel(raw.replace(/\\_/g, "_"))}`);
+    .replace(
+      /\[\\?\{([^.}]+)\.([^}]+)\}\]\([^)]+\)/g,
+      (_, prefix: string, suffix: string) => {
+        const cleanSuffix = suffix.replace(/\\_/g, `_`);
+        return cleanSuffix === `id`
+          ? `:${prefix}`
+          : `:${snakeToCamel(cleanSuffix)}`;
+      }
+    )
+    .replace(
+      /\[\\?\{([^}]+)\}\]\([^)]+\)/g,
+      (_, raw: string) => `:${snakeToCamel(raw.replace(/\\_/g, `_`))}`
+    )
+    .replace(
+      /\\?\{([^.}]+)\.([^}]+)\}/g,
+      (_, prefix: string, suffix: string) => {
+        const cleanSuffix = suffix.replace(/\\_/g, `_`);
+        return cleanSuffix === `id`
+          ? `:${prefix}`
+          : `:${snakeToCamel(cleanSuffix)}`;
+      }
+    )
+    .replace(
+      /\\?\{([^}]+)\}/g,
+      (_, raw: string) => `:${snakeToCamel(raw.replace(/\\_/g, `_`))}`
+    );
 }
 
 function slugify(heading: string): string {
   return heading
     .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/[^a-z0-9\s-]/g, ``)
     .trim()
-    .replace(/\s+/g, "-");
+    .replace(/\s+/g, `-`);
 }
 
 function snakeToCamel(name: string): string {
@@ -816,35 +912,39 @@ function snakeToCamel(name: string): string {
 
 function extractVariantLabel(headingText: string): string {
   const m = /\(([^)]+)\)\s*$/.exec(headingText);
-  return m ? m[1].trim() : "";
+  return m ? m[1].trim() : ``;
 }
 
 function stripObjectSuffix(text: string): string {
-  return text.replace(/\s+Object$/i, "").replace(/\s+Structure$/i, "").trim();
+  return text
+    .replace(/\s+Object$/i, ``)
+    .replace(/\s+Structure$/i, ``)
+    .trim();
 }
 
 // ─── CLI ───────────────────────────────────────────────────────────────────
 
-const invokedDirectly =
-  process.argv[1]?.replace(/\\/g, "/").endsWith("scripts/docs/parse.ts");
+const invokedDirectly = process.argv[1]
+  ?.replace(/\\/g, `/`)
+  .endsWith(`scripts/docs/parse.ts`);
 
 if (invokedDirectly) {
   const args = process.argv.slice(2);
-  const jsonMode = args.includes("--json");
-  const target = args.find((a) => !a.startsWith("--"));
+  const jsonMode = args.includes(`--json`);
+  const target = args.find((a) => !a.startsWith(`--`));
   if (!target) {
     console.error(
-      "usage: node --experimental-strip-types scripts/docs/parse.ts [--json] <relative-path-under-.discord-docs>"
+      `usage: node --experimental-strip-types scripts/docs/parse.ts [--json] <relative-path-under-.discord-docs>`
     );
     process.exit(1);
   }
-  const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
-  const filePath = join(projectRoot, ".discord-docs", target);
+  const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), `../..`);
+  const filePath = join(projectRoot, `.discord-docs`, target);
   if (!existsSync(filePath)) {
     console.error(`not found: ${filePath}`);
     process.exit(1);
   }
-  const md = readFileSync(filePath, "utf8");
+  const md = readFileSync(filePath, `utf8`);
   const result = parseResource(md);
   if (jsonMode) {
     console.log(JSON.stringify(result, null, 2));
@@ -868,17 +968,23 @@ function summarize(r: DocResource): void {
   for (const ep of r.endpoints) {
     const params: string[] = [];
     if (ep.jsonParams.length) {
-      params.push(`json[${ep.jsonParams.reduce((s, g) => s + g.fields.length, 0)}]`);
+      params.push(
+        `json[${ep.jsonParams.reduce((s, g) => s + g.fields.length, 0)}]`
+      );
     }
     if (ep.queryParams.length) {
-      params.push(`query[${ep.queryParams.reduce((s, g) => s + g.fields.length, 0)}]`);
+      params.push(
+        `query[${ep.queryParams.reduce((s, g) => s + g.fields.length, 0)}]`
+      );
     }
     if (ep.formParams.length) {
-      params.push(`form[${ep.formParams.reduce((s, g) => s + g.fields.length, 0)}]`);
+      params.push(
+        `form[${ep.formParams.reduce((s, g) => s + g.fields.length, 0)}]`
+      );
     }
     console.log(
       `  - ${ep.method.padEnd(6)} ${ep.path.padEnd(50)} ${ep.name}${
-        params.length ? ` (${params.join(", ")})` : ""
+        params.length ? ` (${params.join(`, `)})` : ``
       }`
     );
   }

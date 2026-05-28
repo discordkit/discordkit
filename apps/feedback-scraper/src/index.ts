@@ -40,11 +40,9 @@ const fetchRecentThreads = async () => {
             thread.parentId === channel
         )
         .map(async (thread) =>
-          Promise.resolve(
-            Object.assign(thread, {
-              messages: await getChannelMessages({ channel: thread.id })
-            })
-          )
+          Object.assign(thread, {
+            messages: await getChannelMessages({ channel: thread.id })
+          })
         )
     )
   ).flat();

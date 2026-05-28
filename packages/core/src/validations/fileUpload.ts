@@ -114,7 +114,10 @@ const replaceAtPath = (
  */
 export const toMultipartBody = (
   body: unknown,
-  toSnakeKeys: (val: unknown) => unknown
+  // Loose enough to accept the real `toSnakeKeys` signature
+  // (`<T extends object>(o: T) => SnakeCasedPropertiesDeep<T>`).
+  // We cast at the call site since the payload is structurally an object.
+  toSnakeKeys: (val: object) => unknown
 ): FormData => {
   const uploads = collectFileUploads(body);
   if (uploads.length === 0) {
@@ -135,9 +138,12 @@ export const toMultipartBody = (
         : file.content;
     return [`files[${index}]`, blob, file.filename] as const;
   });
-  const payloadJson = new Blob([JSON.stringify(toSnakeKeys(payload))], {
-    type: `application/json`
-  });
+  // `payload` is `unknown` from the reduce; structurally it's always
+  // the same shape as `body`, which must be an object to contain uploads.
+  const payloadJson = new Blob(
+    [JSON.stringify(toSnakeKeys(payload as object))],
+    { type: `application/json` }
+  );
   // The single side-effect: append parts to the FormData sink.
   const form = new FormData();
   fileEntries.forEach(([name, blob, filename]) =>

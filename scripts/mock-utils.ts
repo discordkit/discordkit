@@ -261,10 +261,7 @@ export class MockUtils {
       return JSON.stringify(val);
     } catch (err) {
       console.error({ val });
-      throw new Error(`Failed to serliaze value`, {
-        ...err,
-        cause: val
-      });
+      throw new Error(`Failed to serialize value`, { cause: err });
     }
   };
 
@@ -293,13 +290,13 @@ export class MockUtils {
                 });
                 return response;
               } catch (err) {
-                throw new Error(`Failed to create Response!`, err);
+                throw new Error(`Failed to create Response!`, { cause: err });
               }
             }
           )
         );
       } catch (err) {
-        throw new Error(`Failed to mock request!`, err);
+        throw new Error(`Failed to mock request!`, { cause: err });
       }
 
       // oxlint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
