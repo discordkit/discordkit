@@ -13,7 +13,7 @@ export const createGuildFromTemplateSchema = v.object({
 });
 
 /**
- * ### [Create Guild from Guild Template](https://discord.com/developers/docs/resources/guild-template#create-guild-from-guild-template)
+ * ### Create Guild from Guild Template
  *
  * **POST** `/guilds/templates/:template`
  *
@@ -22,6 +22,11 @@ export const createGuildFromTemplateSchema = v.object({
  * > [!WARNING]
  * >
  * > This endpoint can be used only by bots in less than 10 guilds.
+ *
+ * @deprecated Discord removed this endpoint from the public docs. Calls
+ * may still succeed against the live API but the behavior is unsupported
+ * and may be removed at any time. This export will be deleted in a future
+ * major release.
  */
 export const createGuildFromTemplate: Fetcher<
   typeof createGuildFromTemplateSchema,
