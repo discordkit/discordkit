@@ -787,17 +787,19 @@ function normalizePath(rawPath: string): string {
   // becomes `:token`, `user.id` becomes `:user`), with a fallback to the
   // PREFIX when only a single placeholder uses that prefix.
   //
-  // Discord's most common shape is `{Object.id}` which we map to `:object`.
-  // Specialized fields like `{webhook.token}` → `:token`.
+  // Standalone placeholders like `{instance_id}` (no dot prefix) get
+  // converted to `:instanceId` (camelCase, matching repo convention).
   return rawPath
-    .replace(/\[\\?\{([^.}]+)\.([^}]+)\}\]\([^)]+\)/g, (_, prefix: string, suffix: string) =>
-      suffix === "id" ? `:${prefix}` : `:${suffix}`
-    )
-    .replace(/\[\\?\{([^}]+)\}\]\([^)]+\)/g, ":$1")
-    .replace(/\\?\{([^.}]+)\.([^}]+)\}/g, (_, prefix: string, suffix: string) =>
-      suffix === "id" ? `:${prefix}` : `:${suffix}`
-    )
-    .replace(/\\?\{([^}]+)\}/g, ":$1");
+    .replace(/\[\\?\{([^.}]+)\.([^}]+)\}\]\([^)]+\)/g, (_, prefix: string, suffix: string) => {
+      const cleanSuffix = suffix.replace(/\\_/g, "_");
+      return cleanSuffix === "id" ? `:${prefix}` : `:${snakeToCamel(cleanSuffix)}`;
+    })
+    .replace(/\[\\?\{([^}]+)\}\]\([^)]+\)/g, (_, raw: string) => `:${snakeToCamel(raw.replace(/\\_/g, "_"))}`)
+    .replace(/\\?\{([^.}]+)\.([^}]+)\}/g, (_, prefix: string, suffix: string) => {
+      const cleanSuffix = suffix.replace(/\\_/g, "_");
+      return cleanSuffix === "id" ? `:${prefix}` : `:${snakeToCamel(cleanSuffix)}`;
+    })
+    .replace(/\\?\{([^}]+)\}/g, (_, raw: string) => `:${snakeToCamel(raw.replace(/\\_/g, "_"))}`);
 }
 
 function slugify(heading: string): string {
