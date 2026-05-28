@@ -392,7 +392,11 @@ export default defineConfig({
       "import/no-named-as-default-member": "warn",
       "import/default": "error",
       "import/named": "error",
-      "import/namespace": "error",
+      // Disabled: false-positive on type-only namespace members (e.g. `v.InferOutput`
+      // from valibot). Tracking upstream at oxc-project/oxc#13258 — the rule reads
+      // the runtime JS bundle rather than the .d.ts, so pure-type re-exports are
+      // reported as missing. TypeScript already catches truly-missing members.
+      "import/namespace": "off",
       "import/no-absolute-path": "error",
       "import/no-cycle": "warn",
       "import/no-dynamic-require": "error",
