@@ -24,6 +24,7 @@ export const getOriginalInteractionResponseSchema = v.object({
  */
 export const getOriginalInteractionResponse: Fetcher<
   typeof getOriginalInteractionResponseSchema,
-  InteractionCallbackResponse
-> = async ({ application, token, params }) =>
-  get(`/webhooks/${application}/${token}/messages/@original`, params);
+  InteractionCallbackResponse,
+  { anonymous: true }
+> = async ({ application, token, params }, options) =>
+  get(`/webhooks/${application}/${token}/messages/@original`, params, options);

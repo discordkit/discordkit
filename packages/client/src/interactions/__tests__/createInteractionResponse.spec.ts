@@ -20,7 +20,7 @@ describe(`createInteractionResponse`, { repeats: 5 }, () => {
         createInteractionResponse,
         createInteractionResponseSchema,
         v.undefinedable(interactionCallbackResponseSchema)
-      )(config)
+      )(config, { anonymous: true })
     ).resolves.toStrictEqual(expected);
   });
 });

@@ -20,7 +20,7 @@ describe(`getOriginalInteractionResponse`, { repeats: 5 }, () => {
         getOriginalInteractionResponse,
         getOriginalInteractionResponseSchema,
         interactionCallbackResponseSchema
-      )(config)
+      )(config, { anonymous: true })
     ).resolves.toStrictEqual(expected);
   });
 });

@@ -20,7 +20,7 @@ describe(`editFollowupMessage`, { repeats: 5 }, () => {
         editFollowupMessage,
         editFollowupMessageSchema,
         messageSchema
-      )(config)
+      )(config, { anonymous: true })
     ).resolves.not.toThrow();
   });
 });

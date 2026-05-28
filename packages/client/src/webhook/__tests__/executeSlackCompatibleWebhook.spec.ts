@@ -17,7 +17,7 @@ describe(`executeSlackCompatibleWebhook`, { repeats: 5 }, () => {
       toValidated(
         executeSlackCompatibleWebhook,
         executeSlackCompatibleWebhookSchema
-      )(config)
+      )(config, { anonymous: true })
     ).resolves.not.toThrow();
   });
 });

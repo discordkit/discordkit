@@ -28,6 +28,7 @@ export const createInteractionResponseSchema = v.object({
  */
 export const createInteractionResponse: Fetcher<
   typeof createInteractionResponseSchema,
-  InteractionCallbackResponse | undefined
-> = async ({ interaction, token, body }) =>
-  post(`/interactions/${interaction}/${token}/callback`, body);
+  InteractionCallbackResponse | undefined,
+  { anonymous: true }
+> = async ({ interaction, token, body }, options) =>
+  post(`/interactions/${interaction}/${token}/callback`, body, options);

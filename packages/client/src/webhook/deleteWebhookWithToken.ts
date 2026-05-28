@@ -19,5 +19,8 @@ export const deleteWebhookWithTokenSchema = v.object({
  * Deletes a message that was created by the webhook. Returns a `204 No Content` response on success. Does not require authentication.
  */
 export const deleteWebhookWithToken: Fetcher<
-  typeof deleteWebhookWithTokenSchema
-> = async ({ webhook, token }) => remove(`/webhooks/${webhook}/${token}`);
+  typeof deleteWebhookWithTokenSchema,
+  void,
+  { anonymous: true }
+> = async ({ webhook, token }, options) =>
+  remove(`/webhooks/${webhook}/${token}`, options);

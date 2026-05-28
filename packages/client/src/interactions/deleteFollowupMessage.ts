@@ -15,6 +15,8 @@ export const deleteFollowupMessageSchema = v.object({
  * Deletes a followup message for an Interaction. Returns `204 No Content` on success.
  */
 export const deleteFollowupMessage: Fetcher<
-  typeof deleteFollowupMessageSchema
-> = async ({ application, token, message }) =>
-  remove(`/webhooks/${application}/${token}/messages/${message}`);
+  typeof deleteFollowupMessageSchema,
+  void,
+  { anonymous: true }
+> = async ({ application, token, message }, options) =>
+  remove(`/webhooks/${application}/${token}/messages/${message}`, options);

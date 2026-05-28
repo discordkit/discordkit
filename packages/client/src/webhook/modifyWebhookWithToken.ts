@@ -40,6 +40,7 @@ export const modifyWebhookWithTokenSchema = v.object({
  */
 export const modifyWebhookWithToken: Fetcher<
   typeof modifyWebhookWithTokenSchema,
-  Omit<Webhook, `user`>
-> = async ({ webhook, token, body }) =>
-  patch(`/webhooks/${webhook}/${token}`, body);
+  Omit<Webhook, `user`>,
+  { anonymous: true; auditLogReason: true }
+> = async ({ webhook, token, body }, options) =>
+  patch(`/webhooks/${webhook}/${token}`, body, options);

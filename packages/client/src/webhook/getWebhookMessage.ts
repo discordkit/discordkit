@@ -25,6 +25,7 @@ export const getWebhookMessageSchema = v.object({
  */
 export const getWebhookMessage: Fetcher<
   typeof getWebhookMessageSchema,
-  Message
-> = async ({ webhook, token, message, params }) =>
-  get(`/webhooks/${webhook}/${token}/messages/${message}`, params);
+  Message,
+  { anonymous: true }
+> = async ({ webhook, token, message, params }, options) =>
+  get(`/webhooks/${webhook}/${token}/messages/${message}`, params, options);

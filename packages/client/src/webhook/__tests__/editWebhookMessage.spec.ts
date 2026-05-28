@@ -20,7 +20,7 @@ describe(`editWebhookMessage`, { repeats: 5 }, () => {
         editWebhookMessage,
         editWebhookMessageSchema,
         messageSchema
-      )(config)
+      )(config, { anonymous: true })
     ).resolves.toEqual(expected);
   });
 });

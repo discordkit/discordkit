@@ -14,7 +14,10 @@ describe(`deleteWebhookWithToken`, { repeats: 5 }, () => {
 
   it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      toValidated(deleteWebhookWithToken, deleteWebhookWithTokenSchema)(config)
+      toValidated(deleteWebhookWithToken, deleteWebhookWithTokenSchema)(
+        config,
+        { anonymous: true }
+      )
     ).resolves.not.toThrow();
   });
 });

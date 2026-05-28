@@ -53,6 +53,7 @@ export const editFollowupMessageSchema = v.object({
  */
 export const editFollowupMessage: Fetcher<
   typeof editFollowupMessageSchema,
-  Message
-> = async ({ application, token, message, body }) =>
-  patch(`/webhooks/${application}/${token}/messages/${message}`, body);
+  Message,
+  { anonymous: true }
+> = async ({ application, token, message, body }, options) =>
+  patch(`/webhooks/${application}/${token}/messages/${message}`, body, options);

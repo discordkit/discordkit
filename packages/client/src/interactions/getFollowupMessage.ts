@@ -25,6 +25,7 @@ export const getFollowupMessageSchema = v.object({
  */
 export const getFollowupMessage: Fetcher<
   typeof getFollowupMessageSchema,
-  Message
-> = async ({ application, token, message, params }) =>
-  get(`/webhooks/${application}/${token}/messages/${message}`, params);
+  Message,
+  { anonymous: true }
+> = async ({ application, token, message, params }, options) =>
+  get(`/webhooks/${application}/${token}/messages/${message}`, params, options);

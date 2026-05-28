@@ -30,6 +30,12 @@ export const executeGitHubCompatibleWebhookSchema = v.object({
  * [Add a new webhook](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks)  to your GitHub repo (in the repo's settings), and use this endpoint as the "Payload URL." You can choose what events your Discord channel receives by choosing the "Let me select individual events" option and selecting individual events for the new webhook you're configuring. The supported events are `commit_comment`, `create`, `delete`, `fork`, `issue_comment`, `issues`, `member`, `public`, `pull_request`, `pull_request_review`, `pull_request_review_comment`, `push`, `release`, `watch`, `check_run`, `check_suite`, `discussion`, and `discussion_comment`.
  */
 export const executeGitHubCompatibleWebhook: Fetcher<
-  typeof executeGitHubCompatibleWebhookSchema
-> = async ({ webhook, token, params }) =>
-  post(buildURL(`/webhooks/${webhook}/${token}/github`, params).href);
+  typeof executeGitHubCompatibleWebhookSchema,
+  void,
+  { anonymous: true }
+> = async ({ webhook, token, params }, options) =>
+  post(
+    buildURL(`/webhooks/${webhook}/${token}/github`, params).href,
+    undefined,
+    options
+  );

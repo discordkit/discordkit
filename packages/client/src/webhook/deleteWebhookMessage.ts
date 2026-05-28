@@ -29,8 +29,11 @@ export const deleteWebhookMessageSchema = v.object({
  * Deletes a message that was created by the webhook. Returns a `204 No Content` response on success.
  */
 export const deleteWebhookMessage: Fetcher<
-  typeof deleteWebhookMessageSchema
-> = async ({ webhook, token, message, params }) =>
+  typeof deleteWebhookMessageSchema,
+  void,
+  { anonymous: true }
+> = async ({ webhook, token, message, params }, options) =>
   remove(
-    buildURL(`/webhooks/${webhook}/${token}/messages/${message}`, params).href
+    buildURL(`/webhooks/${webhook}/${token}/messages/${message}`, params).href,
+    options
   );

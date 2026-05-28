@@ -79,9 +79,11 @@ export const editWebhookMessageSchema = v.object({
  */
 export const editWebhookMessage: Fetcher<
   typeof editWebhookMessageSchema,
-  Message
-> = async ({ webhook, token, message, params, body }) =>
+  Message,
+  { anonymous: true }
+> = async ({ webhook, token, message, params, body }, options) =>
   patch(
     buildURL(`/webhooks/${webhook}/${token}/messages/${message}`, params).href,
-    body
+    body,
+    options
   );

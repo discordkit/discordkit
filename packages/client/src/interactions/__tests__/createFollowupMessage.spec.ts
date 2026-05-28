@@ -14,7 +14,9 @@ describe(`createFollowupMessage`, { repeats: 5 }, () => {
 
   it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      toValidated(createFollowupMessage, createFollowupMessageSchema)(config)
+      toValidated(createFollowupMessage, createFollowupMessageSchema)(config, {
+        anonymous: true
+      })
     ).resolves.not.toThrow();
   });
 });

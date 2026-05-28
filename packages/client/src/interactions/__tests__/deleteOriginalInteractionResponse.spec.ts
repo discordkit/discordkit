@@ -17,7 +17,7 @@ describe(`deleteOriginalInteractionResponse`, { repeats: 5 }, () => {
       toValidated(
         deleteOriginalInteractionResponse,
         deleteOriginalInteractionResponseSchema
-      )(config)
+      )(config, { anonymous: true })
     ).resolves.not.toThrow();
   });
 });

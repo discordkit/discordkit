@@ -16,5 +16,7 @@ export const getWebhookWithTokenSchema = v.object({
  */
 export const getWebhookWithToken: Fetcher<
   typeof getWebhookWithTokenSchema,
-  Omit<Webhook, `user`>
-> = async ({ webhook, token }) => get(`/webhooks/${webhook}/${token}`);
+  Omit<Webhook, `user`>,
+  { anonymous: true }
+> = async ({ webhook, token }, options) =>
+  get(`/webhooks/${webhook}/${token}`, undefined, options);

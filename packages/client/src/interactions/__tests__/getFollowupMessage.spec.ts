@@ -20,7 +20,7 @@ describe(`getFollowupMessage`, { repeats: 5 }, () => {
         getFollowupMessage,
         getFollowupMessageSchema,
         messageSchema
-      )(config)
+      )(config, { anonymous: true })
     ).resolves.not.toThrow();
   });
 });

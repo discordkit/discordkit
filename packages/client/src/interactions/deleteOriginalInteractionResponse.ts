@@ -22,9 +22,12 @@ export const deleteOriginalInteractionResponseSchema = v.object({
  * Deletes the initial Interaction response. Returns `204 No Content` on success.
  */
 export const deleteOriginalInteractionResponse: Fetcher<
-  typeof deleteOriginalInteractionResponseSchema
-> = async ({ application, token, params }) =>
+  typeof deleteOriginalInteractionResponseSchema,
+  void,
+  { anonymous: true }
+> = async ({ application, token, params }, options) =>
   remove(
     buildURL(`/webhooks/${application}/${token}/messages/@original}`, params)
-      .href
+      .href,
+    options
   );

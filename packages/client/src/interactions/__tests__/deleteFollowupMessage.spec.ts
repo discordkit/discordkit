@@ -14,7 +14,9 @@ describe(`deleteFollowupMessage`, { repeats: 5 }, () => {
 
   it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      toValidated(deleteFollowupMessage, deleteFollowupMessageSchema)(config)
+      toValidated(deleteFollowupMessage, deleteFollowupMessageSchema)(config, {
+        anonymous: true
+      })
     ).resolves.not.toThrow();
   });
 });

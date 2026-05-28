@@ -64,6 +64,8 @@ export const createFollowupMessageSchema = v.object({
  * When using this endpoint directly after responding to an interaction with `DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE`, this endpoint will function as Edit Original Interaction Response for backwards compatibility. In this case, no new message will be created, and the loading message will be edited instead. The ephemeral flag will be ignored, and the value you provided in the initial defer response will be preserved, as an existing message's ephemeral state cannot be changed. This behavior is deprecated, and you should use the Edit Original Interaction Response endpoint in this case instead.
  */
 export const createFollowupMessage: Fetcher<
-  typeof createFollowupMessageSchema
-> = async ({ application, token, body }) =>
-  post(`/webhooks/${application}/${token}`, body);
+  typeof createFollowupMessageSchema,
+  void,
+  { anonymous: true }
+> = async ({ application, token, body }, options) =>
+  post(`/webhooks/${application}/${token}`, body, options);

@@ -20,7 +20,7 @@ describe(`getWebhookWithToken`, { repeats: 5 }, () => {
         getWebhookWithToken,
         getWebhookWithTokenSchema,
         v.omit(webhookSchema, [`user`])
-      )(config)
+      )(config, { anonymous: true })
     ).resolves.toEqual(expected);
   });
 });

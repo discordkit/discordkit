@@ -20,7 +20,7 @@ describe(`getWebhookMessage`, { repeats: 5 }, () => {
         getWebhookMessage,
         getWebhookMessageSchema,
         messageSchema
-      )(config)
+      )(config, { anonymous: true })
     ).resolves.toEqual(expected);
   });
 });

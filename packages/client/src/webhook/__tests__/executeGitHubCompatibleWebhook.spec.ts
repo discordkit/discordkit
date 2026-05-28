@@ -17,7 +17,7 @@ describe(`executeGitHubCompatibleWebhook`, { repeats: 5 }, () => {
       toValidated(
         executeGitHubCompatibleWebhook,
         executeGitHubCompatibleWebhookSchema
-      )(config)
+      )(config, { anonymous: true })
     ).resolves.not.toThrow();
   });
 });

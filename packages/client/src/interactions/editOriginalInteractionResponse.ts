@@ -61,10 +61,12 @@ export const editOriginalInteractionResponseSchema = v.object({
  */
 export const editOriginalInteractionResponse: Fetcher<
   typeof editOriginalInteractionResponseSchema,
-  InteractionCallbackResponse
-> = async ({ application, token, params, body }) =>
+  InteractionCallbackResponse,
+  { anonymous: true }
+> = async ({ application, token, params, body }, options) =>
   patch(
     buildURL(`/webhooks/${application}/${token}/messages/@original`, params)
       .href,
-    body
+    body,
+    options
   );
