@@ -9,5 +9,6 @@ export const moderationActionSchema = v.object({
   metadata: v.exactOptional(moderationActionMetaSchema)
 });
 
-export interface ModerationAction
-  extends v.InferOutput<typeof moderationActionSchema> {}
+export interface ModerationAction extends v.InferOutput<
+  typeof moderationActionSchema
+> {}

@@ -14,11 +14,7 @@ describe(`getCurrentUserConnections`, { repeats: 5 }, () => {
 
   it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      toValidated(
-        getCurrentUserConnections,
-        null,
-        v.array(connectionSchema)
-      )()
+      toValidated(getCurrentUserConnections, null, v.array(connectionSchema))()
     ).resolves.toEqual(expected);
   });
 });

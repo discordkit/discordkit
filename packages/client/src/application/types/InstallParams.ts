@@ -13,5 +13,6 @@ export const installParamsSchema = v.object({
   permissions: asDigits(permissionFlag)
 });
 
-export interface InstallParams
-  extends v.InferOutput<typeof installParamsSchema> {}
+export interface InstallParams extends v.InferOutput<
+  typeof installParamsSchema
+> {}

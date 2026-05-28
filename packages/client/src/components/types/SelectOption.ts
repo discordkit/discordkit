@@ -21,5 +21,6 @@ export const selectOptionSchema = v.object({
   default: v.exactOptional(v.boolean())
 });
 
-export interface SelectOption
-  extends v.InferOutput<typeof selectOptionSchema> {}
+export interface SelectOption extends v.InferOutput<
+  typeof selectOptionSchema
+> {}

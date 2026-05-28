@@ -39,5 +39,6 @@ export const optionalAuditEntryInfoSchema = v.partial(
   })
 );
 
-export interface OptionalAuditEntryInfo
-  extends v.InferOutput<typeof optionalAuditEntryInfoSchema> {}
+export interface OptionalAuditEntryInfo extends v.InferOutput<
+  typeof optionalAuditEntryInfoSchema
+> {}

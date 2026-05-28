@@ -11,5 +11,6 @@ export const archivedThreadsSchema = v.object({
   hasMore: v.boolean()
 });
 
-export interface ArchivedThreads
-  extends v.InferOutput<typeof archivedThreadsSchema> {}
+export interface ArchivedThreads extends v.InferOutput<
+  typeof archivedThreadsSchema
+> {}

@@ -11,5 +11,6 @@ export const activityAssetsSchema = v.object({
   smallText: v.optional(v.string())
 });
 
-export interface ActivityAssets
-  extends v.InferOutput<typeof activityAssetsSchema> {}
+export interface ActivityAssets extends v.InferOutput<
+  typeof activityAssetsSchema
+> {}

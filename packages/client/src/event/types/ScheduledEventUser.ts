@@ -12,5 +12,6 @@ export const scheduledEventUserSchema = v.object({
   member: v.exactOptional(memberSchema)
 });
 
-export interface ScheduledEventUser
-  extends v.InferOutput<typeof scheduledEventUserSchema> {}
+export interface ScheduledEventUser extends v.InferOutput<
+  typeof scheduledEventUserSchema
+> {}

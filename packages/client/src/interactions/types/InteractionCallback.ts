@@ -17,5 +17,6 @@ export const interactionCallbackSchema = v.object({
   responseMessageEphemeral: v.exactOptional(v.boolean())
 });
 
-export interface InteractionCallback
-  extends v.InferOutput<typeof interactionCallbackSchema> {}
+export interface InteractionCallback extends v.InferOutput<
+  typeof interactionCallbackSchema
+> {}

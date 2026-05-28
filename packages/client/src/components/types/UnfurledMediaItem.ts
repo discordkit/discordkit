@@ -21,5 +21,6 @@ export const unfurledMediaItemSchema = v.object({
   attachmentId: snowflake
 });
 
-export interface UnfurledMediaItem
-  extends v.InferOutput<typeof unfurledMediaItemSchema> {}
+export interface UnfurledMediaItem extends v.InferOutput<
+  typeof unfurledMediaItemSchema
+> {}

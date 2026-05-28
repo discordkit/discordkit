@@ -16,5 +16,6 @@ export const inviteMetadataSchema = v.object({
   createdAt: timestamp
 });
 
-export interface InviteMetadata
-  extends v.InferOutput<typeof inviteMetadataSchema> {}
+export interface InviteMetadata extends v.InferOutput<
+  typeof inviteMetadataSchema
+> {}

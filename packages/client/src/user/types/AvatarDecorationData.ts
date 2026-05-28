@@ -8,5 +8,6 @@ export const avatarDecorationDataSchema = v.object({
   skuId: snowflake
 });
 
-export interface AvatarDecorationData
-  extends v.InferOutput<typeof avatarDecorationDataSchema> {}
+export interface AvatarDecorationData extends v.InferOutput<
+  typeof avatarDecorationDataSchema
+> {}

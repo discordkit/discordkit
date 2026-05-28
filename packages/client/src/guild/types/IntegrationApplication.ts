@@ -15,5 +15,6 @@ export const integrationApplicationSchema = v.object({
   bot: v.exactOptional<v.GenericSchema<User>>(userSchema)
 });
 
-export interface IntegrationApplication
-  extends v.InferOutput<typeof integrationApplicationSchema> {}
+export interface IntegrationApplication extends v.InferOutput<
+  typeof integrationApplicationSchema
+> {}

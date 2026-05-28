@@ -30,5 +30,6 @@ export const subscriptionSchema = v.object({
   country: v.exactOptional(v.pipe(v.string(), v.nonEmpty()))
 });
 
-export interface Subscription
-  extends v.InferOutput<typeof subscriptionSchema> {}
+export interface Subscription extends v.InferOutput<
+  typeof subscriptionSchema
+> {}

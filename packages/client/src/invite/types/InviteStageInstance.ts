@@ -13,5 +13,6 @@ export const inviteStageInstanceSchema = v.object({
   topic: boundedString({ max: 120 })
 });
 
-export interface InviteStageInstance
-  extends v.InferOutput<typeof inviteStageInstanceSchema> {}
+export interface InviteStageInstance extends v.InferOutput<
+  typeof inviteStageInstanceSchema
+> {}

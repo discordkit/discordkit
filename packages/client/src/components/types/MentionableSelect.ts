@@ -29,5 +29,6 @@ export const mentionableSelectSchema = v.object({
   disabled: v.exactOptional(v.boolean())
 });
 
-export interface MentionableSelect
-  extends v.InferOutput<typeof mentionableSelectSchema> {}
+export interface MentionableSelect extends v.InferOutput<
+  typeof mentionableSelectSchema
+> {}

@@ -78,5 +78,6 @@ export const resolvedDataSchema = v.object({
   )
 });
 
-export interface ResolvedData
-  extends v.InferOutput<typeof resolvedDataSchema> {}
+export interface ResolvedData extends v.InferOutput<
+  typeof resolvedDataSchema
+> {}

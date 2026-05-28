@@ -23,5 +23,6 @@ export const applicationRoleConnectionMetadataSchema = v.object({
   descriptionLocalizations: v.nullish(v.record(localesSchema, v.string()))
 });
 
-export interface ApplicationRoleConnectionMetadata
-  extends v.InferOutput<typeof applicationRoleConnectionMetadataSchema> {}
+export interface ApplicationRoleConnectionMetadata extends v.InferOutput<
+  typeof applicationRoleConnectionMetadataSchema
+> {}

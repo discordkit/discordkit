@@ -19,19 +19,18 @@ import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import ts from "typescript";
 
-const HELPER_NAMES = new Set(["toValidated", "toProcedure", "toQuery"]);
-const CORE_MODULE = "@discordkit/core";
+const HELPER_NAMES = new Set([`toValidated`, `toProcedure`, `toQuery`]);
+const CORE_MODULE = `@discordkit/core`;
 
-const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
+const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), `../..`);
 
-const allCandidates = globSync("packages/client/src/**/*.ts", {
+const allCandidates = globSync(`packages/client/src/**/*.ts`, {
   cwd: projectRoot
 }) as string[];
 
 const targetFiles = allCandidates
   .filter(
-    (p) =>
-      !/[\\/]__tests__[\\/]|[\\/]__mocks__[\\/]|[\\/]types[\\/]/.test(p)
+    (p) => !/[\\/]__tests__[\\/]|[\\/]__mocks__[\\/]|[\\/]types[\\/]/.test(p)
   )
   .filter((p) => !/[\\/]index\.ts$|\.spec\.ts$|\.mock\.ts$/.test(p))
   .map((p) => resolve(projectRoot, p));
@@ -46,14 +45,14 @@ let changed = 0;
 let skipped = 0;
 
 for (const file of targetFiles) {
-  const source = readFileSync(file, "utf8");
+  const source = readFileSync(file, `utf8`);
   const edits = computeEdits(file, source);
   if (edits.length === 0) {
     skipped++;
     continue;
   }
   const next = applyEdits(source, edits);
-  writeFileSync(file, next, "utf8");
+  writeFileSync(file, next, `utf8`);
   changed++;
 }
 
@@ -116,14 +115,14 @@ function collectImportEdit(
 
   // Reproduce the original style: detect if multi-line.
   const original = source.slice(openBrace, closeBrace);
-  const isMultiline = original.includes("\n");
+  const isMultiline = original.includes(`\n`);
 
   const renderedNames = kept.map((el) => el.getText());
   let rendered: string;
   if (isMultiline) {
-    rendered = "{\n  " + renderedNames.join(",\n  ") + "\n}";
+    rendered = `{\n  ` + renderedNames.join(`,\n  `) + `\n}`;
   } else {
-    rendered = "{ " + renderedNames.join(", ") + " }";
+    rendered = `{ ` + renderedNames.join(`, `) + ` }`;
   }
 
   edits.push({ start: openBrace, end: closeBrace, replacement: rendered });
@@ -161,7 +160,7 @@ function extendToTrailingNewline(
   // statement's end. We do NOT eat a trailing newline — that creates
   // overlapping-edit hazards when multiple consecutive exports are dropped.
   // The post-process formatter (vp fmt) will collapse any blank-line runs.
-  return { start, end: _end, replacement: "" };
+  return { start, end: _end, replacement: `` };
 }
 
 function applyEdits(source: string, edits: Edit[]): string {

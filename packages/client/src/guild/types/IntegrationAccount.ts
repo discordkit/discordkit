@@ -7,5 +7,6 @@ export const integrationAccountSchema = v.object({
   name: v.string()
 });
 
-export interface IntegrationAccount
-  extends v.InferOutput<typeof integrationAccountSchema> {}
+export interface IntegrationAccount extends v.InferOutput<
+  typeof integrationAccountSchema
+> {}

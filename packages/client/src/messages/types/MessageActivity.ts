@@ -9,5 +9,6 @@ export const messageActivitySchema = v.object({
   partyId: v.exactOptional(boundedString())
 });
 
-export interface MessageActivity
-  extends v.InferOutput<typeof messageActivitySchema> {}
+export interface MessageActivity extends v.InferOutput<
+  typeof messageActivitySchema
+> {}

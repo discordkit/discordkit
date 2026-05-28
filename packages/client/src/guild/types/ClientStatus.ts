@@ -11,5 +11,6 @@ export const clientStatusSchema = v.object({
   web: v.optional(v.string())
 });
 
-export interface ClientStatus
-  extends v.InferOutput<typeof clientStatusSchema> {}
+export interface ClientStatus extends v.InferOutput<
+  typeof clientStatusSchema
+> {}

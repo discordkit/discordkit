@@ -21,5 +21,6 @@ export const soundboardSoundSchema = v.object({
   user: v.exactOptional(userSchema)
 });
 
-export interface SoundboardSound
-  extends v.InferOutput<typeof soundboardSoundSchema> {}
+export interface SoundboardSound extends v.InferOutput<
+  typeof soundboardSoundSchema
+> {}

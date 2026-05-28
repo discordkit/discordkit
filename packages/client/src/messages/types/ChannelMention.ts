@@ -13,5 +13,6 @@ export const channelMentionSchema = v.object({
   name: v.string()
 });
 
-export interface ChannelMention
-  extends v.InferOutput<typeof channelMentionSchema> {}
+export interface ChannelMention extends v.InferOutput<
+  typeof channelMentionSchema
+> {}

@@ -16,5 +16,6 @@ export const guildOnboardingSchema = v.object({
   mode: onboardingModeSchema
 });
 
-export interface GuildOnboarding
-  extends v.InferOutput<typeof guildOnboardingSchema> {}
+export interface GuildOnboarding extends v.InferOutput<
+  typeof guildOnboardingSchema
+> {}

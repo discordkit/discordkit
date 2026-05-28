@@ -37,10 +37,7 @@ describe(`toValidated`, () => {
   describe(`with only an input schema`, () => {
     const input = pipe(string(), minLength(3));
     const wrap = (i: string) =>
-      toValidated(
-        async (_: string) => Promise.resolve(undefined),
-        input
-      )(i);
+      toValidated(async (_: string) => Promise.resolve(undefined), input)(i);
 
     it(`resolves when input satisfies its schema`, async () => {
       await expect(wrap(`abc`)).resolves.toBeUndefined();
@@ -54,11 +51,7 @@ describe(`toValidated`, () => {
   describe(`with only an output schema`, () => {
     const output = pipe(number(), minValue(0));
     const wrap = (o: unknown) =>
-      toValidated(
-        async () => Promise.resolve(o),
-        null,
-        output
-      )();
+      toValidated(async () => Promise.resolve(o), null, output)();
 
     it(`resolves when output satisfies its schema`, async () => {
       await expect(wrap(42)).resolves.toBe(42);

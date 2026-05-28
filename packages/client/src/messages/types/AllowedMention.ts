@@ -14,5 +14,6 @@ export const allowedMentionSchema = v.partial(
   })
 );
 
-export interface AllowedMention
-  extends v.InferOutput<typeof allowedMentionSchema> {}
+export interface AllowedMention extends v.InferOutput<
+  typeof allowedMentionSchema
+> {}

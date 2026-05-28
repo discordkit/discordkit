@@ -9,5 +9,6 @@ export const modalSubmitData = v.object({
   components: v.array(messageComponentSchema)
 });
 
-export interface ModalSubmitData
-  extends v.InferOutput<typeof modalSubmitData> {}
+export interface ModalSubmitData extends v.InferOutput<
+  typeof modalSubmitData
+> {}

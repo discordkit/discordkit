@@ -23,27 +23,27 @@ import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import ts from "typescript";
 
-const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
+const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), `../..`);
 
 const specs = (
-  globSync("packages/client/src/**/__tests__/*.spec.ts", {
+  globSync(`packages/client/src/**/__tests__/*.spec.ts`, {
     cwd: projectRoot
   }) as string[]
 ).map((p) => resolve(projectRoot, p));
 
 const DROPPED_TEST_HELPERS = new Set([
-  "runProcedure",
-  "runMutation",
-  "runQuery"
+  `runProcedure`,
+  `runMutation`,
+  `runQuery`
 ]);
 
 const REDUNDANT_TEST_LABELS = new Set([
-  "is tRPC compatible",
-  "is react-query compatible"
+  `is tRPC compatible`,
+  `is react-query compatible`
 ]);
 
-const STANDALONE_LABEL = "can be used standalone";
-const NEW_TEST_LABEL = "validates input, fetches, and validates output";
+const STANDALONE_LABEL = `can be used standalone`;
+const NEW_TEST_LABEL = `validates input, fetches, and validates output`;
 
 interface Edit {
   start: number;
@@ -60,17 +60,19 @@ interface Stats {
 const stats: Stats = { rewritten: 0, skipped: 0, notMatching: [] };
 
 for (const file of specs) {
-  const source = readFileSync(file, "utf8");
+  const source = readFileSync(file, `utf8`);
   const result = rewriteSpec(file, source);
-  if (result.kind === "skip") {
+  if (result.kind === `skip`) {
     stats.skipped++;
     continue;
   }
-  if (result.kind === "no-match") {
-    stats.notMatching.push(file.replace(projectRoot + "\\", "").replace(/\\/g, "/"));
+  if (result.kind === `no-match`) {
+    stats.notMatching.push(
+      file.replace(projectRoot + `\\`, ``).replace(/\\/g, `/`)
+    );
     continue;
   }
-  writeFileSync(file, result.next, "utf8");
+  writeFileSync(file, result.next, `utf8`);
   stats.rewritten++;
 }
 
@@ -78,15 +80,16 @@ console.log(
   `rewrite-endpoint-specs: ${stats.rewritten} rewritten, ${stats.skipped} skipped (already clean), ${stats.notMatching.length} not matching expected shape`
 );
 if (stats.notMatching.length > 0) {
-  console.log("\nFiles that didn't match expected shape (need manual review):");
+  console.log(`\nFiles that didn't match expected shape (need manual review):`);
   for (const f of stats.notMatching.slice(0, 25)) console.log(`  - ${f}`);
-  if (stats.notMatching.length > 25) console.log(`  ... and ${stats.notMatching.length - 25} more`);
+  if (stats.notMatching.length > 25)
+    console.log(`  ... and ${stats.notMatching.length - 25} more`);
 }
 
 type RewriteResult =
-  | { kind: "rewritten"; next: string }
-  | { kind: "skip" }
-  | { kind: "no-match"; reason: string };
+  | { kind: `rewritten`; next: string }
+  | { kind: `skip` }
+  | { kind: `no-match`; reason: string };
 
 function rewriteSpec(filePath: string, source: string): RewriteResult {
   const sf = ts.createSourceFile(
@@ -99,15 +102,16 @@ function rewriteSpec(filePath: string, source: string): RewriteResult {
 
   // Find the describe(...) call.
   const describeCall = findDescribeCall(sf);
-  if (!describeCall) return { kind: "no-match", reason: "no describe()" };
+  if (!describeCall) return { kind: `no-match`, reason: `no describe()` };
 
   const describeBody = getDescribeBody(describeCall);
-  if (!describeBody) return { kind: "no-match", reason: "describe body not a block" };
+  if (!describeBody)
+    return { kind: `no-match`, reason: `describe body not a block` };
 
   // Find mockUtils.request.METHOD(url, ...) call to extract schemas.
   const mockCall = findMockRequestCall(describeBody);
   if (!mockCall)
-    return { kind: "no-match", reason: "no mockUtils.request.METHOD() call" };
+    return { kind: `no-match`, reason: `no mockUtils.request.METHOD() call` };
   const schemas = extractSchemas(mockCall);
 
   // Find the it() blocks.
@@ -121,9 +125,9 @@ function rewriteSpec(filePath: string, source: string): RewriteResult {
   // Already clean: standalone gone, no redundant. Skip.
   const newLabel = itBlocks.find((it) => getLabel(it) === NEW_TEST_LABEL);
   if (!standalone && redundant.length === 0 && newLabel) {
-    return { kind: "skip" };
+    return { kind: `skip` };
   }
-  if (!standalone) return { kind: "no-match", reason: "no standalone it()" };
+  if (!standalone) return { kind: `no-match`, reason: `no standalone it()` };
 
   const edits: Edit[] = [];
 
@@ -132,7 +136,7 @@ function rewriteSpec(filePath: string, source: string): RewriteResult {
     edits.push({
       start: it.getFullStart(),
       end: it.end + skipTrailingSemicolon(it.end, source),
-      replacement: ""
+      replacement: ``
     });
   }
 
@@ -143,7 +147,8 @@ function rewriteSpec(filePath: string, source: string): RewriteResult {
     source,
     sf
   );
-  if (!standaloneRewrite) return { kind: "no-match", reason: "standalone rewrite failed" };
+  if (!standaloneRewrite)
+    return { kind: `no-match`, reason: `standalone rewrite failed` };
   edits.push(standaloneRewrite);
 
   // Edit 3: clean imports — drop dropped names, add toValidated.
@@ -151,7 +156,7 @@ function rewriteSpec(filePath: string, source: string): RewriteResult {
   edits.push(...importEdits);
 
   const next = applyEdits(source, edits);
-  return { kind: "rewritten", next };
+  return { kind: `rewritten`, next };
 }
 
 function findDescribeCall(sf: ts.SourceFile): ts.CallExpression | undefined {
@@ -161,7 +166,10 @@ function findDescribeCall(sf: ts.SourceFile): ts.CallExpression | undefined {
       ts.isCallExpression(stmt.expression)
     ) {
       const call = stmt.expression;
-      if (ts.isIdentifier(call.expression) && call.expression.text === "describe") {
+      if (
+        ts.isIdentifier(call.expression) &&
+        call.expression.text === `describe`
+      ) {
         return call;
       }
     }
@@ -188,8 +196,8 @@ function findMockRequestCall(block: ts.Block): ts.CallExpression | undefined {
       ts.isPropertyAccessExpression(node.expression) &&
       ts.isPropertyAccessExpression(node.expression.expression) &&
       ts.isIdentifier(node.expression.expression.expression) &&
-      node.expression.expression.expression.text === "mockUtils" &&
-      node.expression.expression.name.text === "request"
+      node.expression.expression.expression.text === `mockUtils` &&
+      node.expression.expression.name.text === `request`
     ) {
       found = node;
       return;
@@ -222,7 +230,7 @@ function findItCalls(block: ts.Block): ts.CallExpression[] {
       ts.isExpressionStatement(stmt) &&
       ts.isCallExpression(stmt.expression) &&
       ts.isIdentifier(stmt.expression.expression) &&
-      stmt.expression.expression.text === "it"
+      stmt.expression.expression.text === `it`
     ) {
       results.push(stmt.expression);
     }
@@ -240,7 +248,7 @@ function getLabel(itCall: ts.CallExpression): string | null {
 }
 
 function skipTrailingSemicolon(pos: number, source: string): number {
-  return source[pos] === ";" ? 1 : 0;
+  return source[pos] === `;` ? 1 : 0;
 }
 
 /**
@@ -270,7 +278,7 @@ function buildStandaloneReplacement(
     if (
       ts.isCallExpression(node) &&
       ts.isIdentifier(node.expression) &&
-      node.expression.text.endsWith("Safe")
+      node.expression.text.endsWith(`Safe`)
     ) {
       safeCall = node;
       safeIdentifier = node.expression.text;
@@ -282,20 +290,20 @@ function buildStandaloneReplacement(
 
   if (!safeCall || !safeIdentifier) return undefined;
 
-  const fetcherName = safeIdentifier.slice(0, -"Safe".length);
-  const argsText = safeCall.arguments.map((a) => a.getText()).join(", ");
+  const fetcherName = safeIdentifier.slice(0, -`Safe`.length);
+  const argsText = safeCall.arguments.map((a) => a.getText()).join(`, `);
 
   // Build the toValidated args. Always pass (fn, inputSchema, outputSchema)
   // with `null` for any missing one — but trim trailing nulls for readability.
   const validatedArgs: string[] = [fetcherName];
   if (schemas.input !== null || schemas.output !== null) {
-    validatedArgs.push(schemas.input ?? "null");
+    validatedArgs.push(schemas.input ?? `null`);
   }
   if (schemas.output !== null) {
     validatedArgs.push(schemas.output);
   }
 
-  const newCall = `toValidated(${validatedArgs.join(", ")})(${argsText})`;
+  const newCall = `toValidated(${validatedArgs.join(`, `)})(${argsText})`;
 
   // Replace just the *Safe(...) call expression, not the whole it() block.
   const safeCallStart = safeCall.getStart(sf, false);
@@ -362,10 +370,10 @@ function computeImportEdits(sf: ts.SourceFile, source: string): Edit[] {
 
     const elements = ic.namedBindings.elements;
 
-    if (moduleName === "@discordkit/core") {
+    if (moduleName === `@discordkit/core`) {
       coreImport = stmt;
       for (const el of elements) {
-        if (el.name.text === "toValidated") hasToValidated = true;
+        if (el.name.text === `toValidated`) hasToValidated = true;
       }
     }
 
@@ -373,21 +381,21 @@ function computeImportEdits(sf: ts.SourceFile, source: string): Edit[] {
     // ending in .js). Also drop runProcedure/runMutation/runQuery from
     // #test-utils and waitFor from @testing-library/*.
     const isEndpointImport =
-      moduleName.startsWith("../") || moduleName.startsWith("./");
+      moduleName.startsWith(`../`) || moduleName.startsWith(`./`);
     const droppedNames: string[] = [];
     const kept = elements.filter((el) => {
       const n = el.name.text;
       if (
         isEndpointImport &&
-        (n.endsWith("Safe") || n.endsWith("Procedure") || n.endsWith("Query"))
+        (n.endsWith(`Safe`) || n.endsWith(`Procedure`) || n.endsWith(`Query`))
       ) {
         droppedNames.push(n);
         return false;
       }
-      if (moduleName === "#test-utils" && DROPPED_TEST_HELPERS.has(n)) {
+      if (moduleName === `#test-utils` && DROPPED_TEST_HELPERS.has(n)) {
         return false;
       }
-      if (moduleName.startsWith("@testing-library/") && n === "waitFor") {
+      if (moduleName.startsWith(`@testing-library/`) && n === `waitFor`) {
         return false;
       }
       return true;
@@ -398,12 +406,12 @@ function computeImportEdits(sf: ts.SourceFile, source: string): Edit[] {
     // is in the kept list so the spec can still reference it.
     if (isEndpointImport && droppedNames.length > 0) {
       // Derive Fetcher name from any dropped specifier.
-      const safeName = droppedNames.find((n) => n.endsWith("Safe"));
+      const safeName = droppedNames.find((n) => n.endsWith(`Safe`));
       const fetcherName = safeName
-        ? safeName.slice(0, -"Safe".length)
-        : droppedNames[0].endsWith("Procedure")
-          ? droppedNames[0].slice(0, -"Procedure".length)
-          : droppedNames[0].slice(0, -"Query".length);
+        ? safeName.slice(0, -`Safe`.length)
+        : droppedNames[0].endsWith(`Procedure`)
+          ? droppedNames[0].slice(0, -`Procedure`.length)
+          : droppedNames[0].slice(0, -`Query`.length);
 
       const alreadyImported = kept.some((el) => el.name.text === fetcherName);
       if (!alreadyImported) {
@@ -423,7 +431,7 @@ function computeImportEdits(sf: ts.SourceFile, source: string): Edit[] {
       edits.push({
         start: stmt.getFullStart(),
         end: stmt.end,
-        replacement: ""
+        replacement: ``
       });
       continue;
     }
@@ -431,14 +439,14 @@ function computeImportEdits(sf: ts.SourceFile, source: string): Edit[] {
     const openBrace = ic.namedBindings.getStart(sf, false);
     const closeBrace = ic.namedBindings.end;
     const original = source.slice(openBrace, closeBrace);
-    const isMultiline = original.includes("\n");
+    const isMultiline = original.includes(`\n`);
     const renderedNames = kept.map((el) =>
       // Synthetic specifiers don't have positions; use the identifier text directly.
       el.pos === -1 ? el.name.text : el.getText()
     );
     const rendered = isMultiline
-      ? "{\n  " + renderedNames.join(",\n  ") + "\n}"
-      : "{ " + renderedNames.join(", ") + " }";
+      ? `{\n  ` + renderedNames.join(`,\n  `) + `\n}`
+      : `{ ` + renderedNames.join(`, `) + ` }`;
     edits.push({ start: openBrace, end: closeBrace, replacement: rendered });
   }
 
@@ -464,20 +472,20 @@ function computeImportEdits(sf: ts.SourceFile, source: string): Edit[] {
           .filter((el) => {
             const n = el.name.text;
             return !(
-              n.endsWith("Safe") ||
-              n.endsWith("Procedure") ||
-              n.endsWith("Query")
+              n.endsWith(`Safe`) ||
+              n.endsWith(`Procedure`) ||
+              n.endsWith(`Query`)
             );
           })
           .map((el) => el.getText());
-        if (!namesAfterDrops.some((n) => n === "toValidated"))
-          namesAfterDrops.push("toValidated");
+        if (!namesAfterDrops.some((n) => n === `toValidated`))
+          namesAfterDrops.push(`toValidated`);
 
         const original = source.slice(openBrace, closeBrace);
-        const isMultiline = original.includes("\n");
+        const isMultiline = original.includes(`\n`);
         const rendered = isMultiline
-          ? "{\n  " + namesAfterDrops.join(",\n  ") + "\n}"
-          : "{ " + namesAfterDrops.join(", ") + " }";
+          ? `{\n  ` + namesAfterDrops.join(`,\n  `) + `\n}`
+          : `{ ` + namesAfterDrops.join(`, `) + ` }`;
 
         // Remove any previously-queued edit covering this range, then add ours.
         const filteredEdits = edits.filter(

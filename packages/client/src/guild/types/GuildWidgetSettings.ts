@@ -8,5 +8,6 @@ export const guildWidgetSettingsSchema = v.object({
   channelId: v.nullable(snowflake)
 });
 
-export interface GuildWidgetSettings
-  extends v.InferOutput<typeof guildWidgetSettingsSchema> {}
+export interface GuildWidgetSettings extends v.InferOutput<
+  typeof guildWidgetSettingsSchema
+> {}

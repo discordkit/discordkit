@@ -29,5 +29,6 @@ export const guildPreviewSchema = v.object({
   stickers: v.array(stickerSchema)
 });
 
-export interface GuildPreview
-  extends v.InferOutput<typeof guildPreviewSchema> {}
+export interface GuildPreview extends v.InferOutput<
+  typeof guildPreviewSchema
+> {}

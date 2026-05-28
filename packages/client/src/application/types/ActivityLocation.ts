@@ -18,5 +18,6 @@ export const activityLocationSchema = v.object({
   guildId: v.nullish(snowflake)
 });
 
-export interface ActivityLocation
-  extends v.InferOutput<typeof activityLocationSchema> {}
+export interface ActivityLocation extends v.InferOutput<
+  typeof activityLocationSchema
+> {}

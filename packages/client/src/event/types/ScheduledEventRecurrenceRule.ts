@@ -37,5 +37,6 @@ export const scheduledEventRecurrenceRuleSchema = v.object({
   count: v.nullable(v.pipe(v.number(), v.integer(), v.minValue(1)))
 });
 
-export interface ScheduledEventRecurrenceRule
-  extends v.InferOutput<typeof scheduledEventRecurrenceRuleSchema> {}
+export interface ScheduledEventRecurrenceRule extends v.InferOutput<
+  typeof scheduledEventRecurrenceRuleSchema
+> {}

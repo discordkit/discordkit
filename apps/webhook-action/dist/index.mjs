@@ -1,3 +1,4019 @@
-import*as e from"valibot";import{custom as t,isOfKind as n,nonEmpty as r,object as i,pipe as a,safeParse as o,safeParseAsync as ee,string as te,summarize as s,title as ne,transform as re}from"valibot";const c=async e=>new Promise(t=>setTimeout(t,Math.max(0,e))),ie=`https://discord.com/api/v10/`,ae=new class{endpoint=ie;maxRetries=5;#e=null;#t=new Map;#n=0;#r=[];#i=!1;#a=50;#o=1e3;#s=[];#c={count:0,windowStart:Date.now()};#l=1e4;#u=600*1e3;get ready(){return!!this.#e}constructor(e){e&&this.setToken(e)}setToken=e=>{if(this.#e=null,e.length===0)throw Error(`Must provide a non-empty string to set Auth Token`);if(!e.startsWith(`Bot `)&&!e.startsWith(`Bearer `))throw Error(`Token must begin with either "Bot " or "Bearer ", received: ${e}`);return this.#e=e,this};clearSession=()=>(this.#e=null,this.#t.clear(),this.#n=0,this.#r=[],this.#s=[],this.#c={count:0,windowStart:Date.now()},this);getSession=()=>{let e=this.#e;if(!e)throw Error(`Auth Token must be set before requests can be made.`);return e};queueRequest=async(e,t,n)=>new Promise((r,i)=>{this.#r.push({resource:e,method:t,body:n,resolve:r,reject:i}),this.#d()});#d=async()=>{if(!this.#i){for(this.#i=!0;this.#r.length>0;){let e=Date.now();if(this.#g()){let t=this.#u-(e-this.#c.windowStart);console.warn(`Temporarily banned from Discord API. Waiting ${Math.ceil(t/1e3)}s`),await c(t),this.#_()}if(await this.#m(),this.#n>e/1e3){await c((this.#n-e/1e3)*1e3);continue}let t=this.#r[0];if(t===void 0)break;let n=this.#t.get(`${t.method}:${t.resource}`);if(n?.remaining===0){let t=n.reset*1e3;t>e&&await c(t-e)}this.#r.shift();try{let e=await this.#f(t);t.resolve(e)}catch(e){e instanceof Error&&t.reject(e)}}this.#i=!1,this.#r.length>0&&this.#d()}};#f=async(e,t=0)=>{let n=this.getSession(),r=Date.now();this.#s.push(r);let i={Authorization:n};e.body&&(i[`Content-Type`]=`application/json`);let a=await fetch(e.resource.toString(),{method:e.method,body:e.body,headers:i});if(this.#p(a),a.status===429){if(t>=this.maxRetries)return console.error(`Max retries (${this.maxRetries}) exceeded for ${e.resource}`),a;let n=a.headers.get(`Retry-After`)??`1`,i=a.headers.get(`X-RateLimit-Global`)===`true`,o=a.headers.get(`X-RateLimit-Scope`);return(i||o===`global`)&&(console.warn(`Hit global rate limit`),this.#n=r/1e3+parseFloat(n)),await c(parseFloat(n)*1e3),this.#f(e,t+1)}return([401,403].includes(a.status)||a.status===429&&a.headers.get(`X-RateLimit-Scope`)!==`shared`)&&this.#h(),a};#p=e=>{let t=e.headers.get(`X-RateLimit-Bucket`),n=e.headers.get(`X-RateLimit-Limit`),r=e.headers.get(`X-RateLimit-Remaining`),i=e.headers.get(`X-RateLimit-Reset`),a=e.headers.get(`X-RateLimit-Reset-After`);t&&n&&r&&i&&a&&this.#t.set(t,{limit:parseInt(n,10),remaining:parseInt(r,10),reset:parseFloat(i),resetAfter:parseFloat(a)})};#m=async()=>{let e=Date.now();if(this.#s=this.#s.filter(t=>e-t<this.#o),this.#s.length>=this.#a){let t=this.#s[0],n=this.#o-(e-t);n>0&&await c(n)}};#h=()=>{Date.now()-this.#c.windowStart>=this.#u&&this.#_(),this.#c.count++,this.#c.count>=this.#l&&console.error(`Approaching invalid request limit! Bot may be temporarily banned.`)};#g=()=>Date.now()-this.#c.windowStart<this.#u?this.#c.count>=this.#l:!1;#_=()=>{this.#c={count:0,windowStart:Date.now()}};getQueueSize=()=>this.#r.length},oe=e=>e!=null,se=e=>e.replace(/[A-Z]/g,e=>`_${e.toLowerCase()}`).substring(+!!e.slice(0,1).match(/(?<char>[A-Z])/g)),ce=(e,t)=>{for(let[n,r]of Object.entries(t))oe(r)&&e.searchParams.set(se(n),r.toString());return e},le=(e,t,n)=>ce(new URL(e.replace(/^\//,``),n??ie),t??{}),ue=e=>!!e&&typeof e==`object`&&!Array.isArray(e),de=e=>e.replace(/_(?<char>[a-zA-Z])/g,e=>e[1].toUpperCase()),fe=e=>Array.isArray(e)?e.map(fe):ue(e)?Object.entries(e).reduce((e,[t,n])=>(e[de(t)]=fe(n),e),{}):e,l=e=>Array.isArray(e)?e.map(l):ue(e)?Object.entries(e).reduce((e,[t,n])=>(e[se(t)]=l(n),e),{}):e,pe=async(e,t=`GET`,n)=>{if(!ae.getSession())throw Error(`Auth Token must be set before requests can be made.`);let r=await ae.queueRequest(e,t,(()=>{try{return n&&JSON.stringify(l(n))}catch(e){throw console.error(`Received malformed request body:
+import * as e from "valibot";
+import {
+  custom as t,
+  isOfKind as n,
+  nonEmpty as r,
+  object as i,
+  pipe as a,
+  safeParse as o,
+  safeParseAsync as ee,
+  string as te,
+  summarize as s,
+  title as ne,
+  transform as re
+} from "valibot";
+const c = async (e) => new Promise((t) => setTimeout(t, Math.max(0, e))),
+  ie = `https://discord.com/api/v10/`,
+  ae = new (class {
+    endpoint = ie;
+    maxRetries = 5;
+    #e = null;
+    #t = new Map();
+    #n = 0;
+    #r = [];
+    #i = !1;
+    #a = 50;
+    #o = 1e3;
+    #s = [];
+    #c = { count: 0, windowStart: Date.now() };
+    #l = 1e4;
+    #u = 600 * 1e3;
+    get ready() {
+      return !!this.#e;
+    }
+    constructor(e) {
+      e && this.setToken(e);
+    }
+    setToken = (e) => {
+      if (((this.#e = null), e.length === 0))
+        throw Error(`Must provide a non-empty string to set Auth Token`);
+      if (!e.startsWith(`Bot `) && !e.startsWith(`Bearer `))
+        throw Error(
+          `Token must begin with either "Bot " or "Bearer ", received: ${e}`
+        );
+      return ((this.#e = e), this);
+    };
+    clearSession = () => (
+      (this.#e = null),
+      this.#t.clear(),
+      (this.#n = 0),
+      (this.#r = []),
+      (this.#s = []),
+      (this.#c = { count: 0, windowStart: Date.now() }),
+      this
+    );
+    getSession = () => {
+      let e = this.#e;
+      if (!e)
+        throw Error(`Auth Token must be set before requests can be made.`);
+      return e;
+    };
+    queueRequest = async (e, t, n) =>
+      new Promise((r, i) => {
+        (this.#r.push({
+          resource: e,
+          method: t,
+          body: n,
+          resolve: r,
+          reject: i
+        }),
+          this.#d());
+      });
+    #d = async () => {
+      if (!this.#i) {
+        for (this.#i = !0; this.#r.length > 0; ) {
+          let e = Date.now();
+          if (this.#g()) {
+            let t = this.#u - (e - this.#c.windowStart);
+            (console.warn(
+              `Temporarily banned from Discord API. Waiting ${Math.ceil(t / 1e3)}s`
+            ),
+              await c(t),
+              this.#_());
+          }
+          if ((await this.#m(), this.#n > e / 1e3)) {
+            await c((this.#n - e / 1e3) * 1e3);
+            continue;
+          }
+          let t = this.#r[0];
+          if (t === void 0) break;
+          let n = this.#t.get(`${t.method}:${t.resource}`);
+          if (n?.remaining === 0) {
+            let t = n.reset * 1e3;
+            t > e && (await c(t - e));
+          }
+          this.#r.shift();
+          try {
+            let e = await this.#f(t);
+            t.resolve(e);
+          } catch (e) {
+            e instanceof Error && t.reject(e);
+          }
+        }
+        ((this.#i = !1), this.#r.length > 0 && this.#d());
+      }
+    };
+    #f = async (e, t = 0) => {
+      let n = this.getSession(),
+        r = Date.now();
+      this.#s.push(r);
+      let i = { Authorization: n };
+      e.body && (i[`Content-Type`] = `application/json`);
+      let a = await fetch(e.resource.toString(), {
+        method: e.method,
+        body: e.body,
+        headers: i
+      });
+      if ((this.#p(a), a.status === 429)) {
+        if (t >= this.maxRetries)
+          return (
+            console.error(
+              `Max retries (${this.maxRetries}) exceeded for ${e.resource}`
+            ),
+            a
+          );
+        let n = a.headers.get(`Retry-After`) ?? `1`,
+          i = a.headers.get(`X-RateLimit-Global`) === `true`,
+          o = a.headers.get(`X-RateLimit-Scope`);
+        return (
+          (i || o === `global`) &&
+            (console.warn(`Hit global rate limit`),
+            (this.#n = r / 1e3 + parseFloat(n))),
+          await c(parseFloat(n) * 1e3),
+          this.#f(e, t + 1)
+        );
+      }
+      return (
+        ([401, 403].includes(a.status) ||
+          (a.status === 429 &&
+            a.headers.get(`X-RateLimit-Scope`) !== `shared`)) &&
+          this.#h(),
+        a
+      );
+    };
+    #p = (e) => {
+      let t = e.headers.get(`X-RateLimit-Bucket`),
+        n = e.headers.get(`X-RateLimit-Limit`),
+        r = e.headers.get(`X-RateLimit-Remaining`),
+        i = e.headers.get(`X-RateLimit-Reset`),
+        a = e.headers.get(`X-RateLimit-Reset-After`);
+      t &&
+        n &&
+        r &&
+        i &&
+        a &&
+        this.#t.set(t, {
+          limit: parseInt(n, 10),
+          remaining: parseInt(r, 10),
+          reset: parseFloat(i),
+          resetAfter: parseFloat(a)
+        });
+    };
+    #m = async () => {
+      let e = Date.now();
+      if (
+        ((this.#s = this.#s.filter((t) => e - t < this.#o)),
+        this.#s.length >= this.#a)
+      ) {
+        let t = this.#s[0],
+          n = this.#o - (e - t);
+        n > 0 && (await c(n));
+      }
+    };
+    #h = () => {
+      (Date.now() - this.#c.windowStart >= this.#u && this.#_(),
+        this.#c.count++,
+        this.#c.count >= this.#l &&
+          console.error(
+            `Approaching invalid request limit! Bot may be temporarily banned.`
+          ));
+    };
+    #g = () =>
+      Date.now() - this.#c.windowStart < this.#u
+        ? this.#c.count >= this.#l
+        : !1;
+    #_ = () => {
+      this.#c = { count: 0, windowStart: Date.now() };
+    };
+    getQueueSize = () => this.#r.length;
+  })(),
+  oe = (e) => e != null,
+  se = (e) =>
+    e
+      .replace(/[A-Z]/g, (e) => `_${e.toLowerCase()}`)
+      .substring(+!!e.slice(0, 1).match(/(?<char>[A-Z])/g)),
+  ce = (e, t) => {
+    for (let [n, r] of Object.entries(t))
+      oe(r) && e.searchParams.set(se(n), r.toString());
+    return e;
+  },
+  le = (e, t, n) => ce(new URL(e.replace(/^\//, ``), n ?? ie), t ?? {}),
+  ue = (e) => !!e && typeof e == `object` && !Array.isArray(e),
+  de = (e) => e.replace(/_(?<char>[a-zA-Z])/g, (e) => e[1].toUpperCase()),
+  fe = (e) =>
+    Array.isArray(e)
+      ? e.map(fe)
+      : ue(e)
+        ? Object.entries(e).reduce((e, [t, n]) => ((e[de(t)] = fe(n)), e), {})
+        : e,
+  l = (e) =>
+    Array.isArray(e)
+      ? e.map(l)
+      : ue(e)
+        ? Object.entries(e).reduce((e, [t, n]) => ((e[se(t)] = l(n)), e), {})
+        : e,
+  pe = async (e, t = `GET`, n) => {
+    if (!ae.getSession())
+      throw Error(`Auth Token must be set before requests can be made.`);
+    let r = await ae.queueRequest(
+      e,
+      t,
+      (() => {
+        try {
+          return n && JSON.stringify(l(n));
+        } catch (e) {
+          throw (
+            console.error(
+              `Received malformed request body:
 
-`,{body:n}),Error(`Failed to stringify request body!`,{cause:e})}})());if(!r.ok)throw Error(`Request to resource '${e.toString()}' failed:\n\n${r.statusText}`);if(r.status!==204)return fe(await r.json())},me=async(e,t)=>pe(le(e),`POST`,t),he=(e,t,r)=>new Proxy(e,{async apply(e,i,[a]){if(t&&n(`schema`,t)){let{issues:e}=await ee(t,a);if(e)throw Error(`Failed to parse input schema: ${t.reference.name}\n\n${s(e)}`)}let o=await e(a);if(r&&n(`schema`,r)){let{issues:e}=await ee(r,o);if(e)throw Error(`Failed to parse input schema: ${r.reference.name}\n\n${s(e)}`)}return o}});(()=>{if(globalThis.crypto!==void 0)return globalThis.crypto.subtle;if(typeof global<`u`&&global.crypto?.subtle)return global.crypto.subtle;if(typeof window<`u`&&window.crypto?.subtle)return window.crypto.subtle;throw Error(`SubtleCrypto is not available in this environment`)})();const u=t=>e.pipe(t,e.transform(e=>e.toString()),e.digits()),d=t=>e.pipe(t,e.transform(e=>parseInt(e.toString(),10)),e.integer()),ge=e=>typeof e==`string`&&/^\d+$/.test(e),f=(e,n,r=`Invalid Bitfield`)=>{let i=Object.values(n).filter(e=>!isNaN(Number(e)));if(!i.every(e=>typeof e==typeof i[0]))throw Error(`Provided Flags enum must contain values of the same type`);let o=i.reduce((e,t)=>e|BigInt(t),0n);return a(t(e=>oe(e)&&(typeof e==`number`||typeof e==`bigint`||ge(e))?(BigInt(e)&o)===BigInt(e):!1,r),ne(e))},p=(t,n={})=>e.message(typeof n==`number`?e.pipe(e.array(t),e.length(n)):typeof n.max==`number`?e.pipe(e.array(t),e.minLength(n.min??1),e.maxLength(n.max)):e.pipe(e.array(t),e.minLength(n.min??1)),e=>`Expected an array with a legnth ${typeof n==`number`?n:`>= ${n.min??0}${n.max?`&& <= ${n.max}`:``}`}, received has length: ${e.received.length}`),m=(t={})=>e.message(typeof t==`number`?e.pipe(e.number(),e.integer(),e.value(t)):typeof t.max==`number`?e.pipe(e.number(),e.integer(),e.minValue(t.min??0),e.maxValue(t.max)):e.pipe(e.number(),e.integer(),e.minValue(t.min??0)),e=>`Expected an integer with a value ${typeof t==`number`?`of ${t}`:`>= ${t.min??0}${t.max?`&& <= ${t.max}`:``}`}, received has value: ${e.received.length}`),h=(t={})=>e.message(typeof t==`number`?e.pipe(e.string(),e.length(t)):typeof t.max==`number`?e.pipe(e.string(),e.minLength(t.min??1),e.maxLength(t.max)):e.pipe(e.string(),e.minLength(t.min??1)),e=>`Expected a string with a legnth ${typeof t==`number`?t:`>= ${t.min??0}${t.max?`&& <= ${t.max}`:``}`}, received has length: ${e.received.length}`),_e=/^data:((?<mediaType>(?<mimeType>[a-z]+\/[a-z0-9-+.]+)(?<params>;[a-z0-9-.!#$%*+.{}|~`]+=[a-z0-9-.!#$%*+.{}()_|~`]+)*))?(?<encoding>;base64)?,(?<data>[a-z0-9!$&',()*+;=\-._~:@\/?%\s<>]*?)$/i,ve=e=>_e.exec(e)?.groups??{},ye=e=>typeof Buffer<`u`?Buffer.from(e,`base64`).toString():atob(btoa(String.fromCharCode(...new TextEncoder().encode(e))).replace(/\+/g,`-`).replace(/\//g,`_`).replace(/=/g,``)),g=e.pipe(e.custom(e=>typeof e==`string`&&e.length>0&&_e.test(e),`Invalid Data URI`),e.title(`datauri`));re(e=>{let{mimeType:t,data:n}=ve(e);if(t===void 0||n===void 0)throw Error(`Received badly formatted Data URI`);let r=ye(n),i=new ArrayBuffer(r.length),a=new Uint8Array(i);for(let e=0;e<r.length;e++)a[e]=r.charCodeAt(e);return new Blob([i],{type:t})});const be=(e,t=1420070400000n)=>new Date(Number((BigInt(e)>>22n)+t)),_=e.pipe(e.custom(e=>oe(e)&&(typeof e==`bigint`||typeof e==`number`||ge(e))&&be(e).getTime()>=1420070400000n,`Invalid Snowflake`),e.title(`snowflake`)),v=e.message(e.pipe(e.string(),e.isoTimestamp()),e=>`Expected a valid timestamp, received: ${e.received}`),y=e.message(e.pipe(e.string(),e.url()),e=>`Expected a valid URL, received: ${e.received}`),xe=`id.da.de.en-GB.en-US.es-ES.fr.hr.it.lt.hu.nl.no.pl.pt-BR.ro.fi.sv-SE.vi.tr.cs.el.bg.ru.uk.hi.th.zh-CN.ja.zh-TW.ko`.split(`.`),b=e.picklist(xe);let Se=function(e){return e[e.GUILD_TEXT=0]=`GUILD_TEXT`,e[e.DM=1]=`DM`,e[e.GUILD_VOICE=2]=`GUILD_VOICE`,e[e.GROUP_DM=3]=`GROUP_DM`,e[e.GUILD_CATEGORY=4]=`GUILD_CATEGORY`,e[e.GUILD_ANNOUNCEMENT=5]=`GUILD_ANNOUNCEMENT`,e[e.ANNOUNCEMENT_THREAD=10]=`ANNOUNCEMENT_THREAD`,e[e.PUBLIC_THREAD=11]=`PUBLIC_THREAD`,e[e.PRIVATE_THREAD=12]=`PRIVATE_THREAD`,e[e.GUILD_STAGE_VOICE=13]=`GUILD_STAGE_VOICE`,e[e.GUILD_DIRECTORY=14]=`GUILD_DIRECTORY`,e[e.GUILD_FORUM=15]=`GUILD_FORUM`,e[e.GUILD_MEDIA=16]=`GUILD_MEDIA`,e}({});const x=e.enum_(Se),S={SUB_COMMAND:1,SUB_COMMAND_GROUP:2,STRING:3,INTEGER:4,BOOLEAN:5,USER:6,CHANNEL:7,ROLE:8,MENTIONABLE:9,NUMBER:10,ATTACHMENT:11},Ce=e.enum_(S),we=e.object({name:h({max:100}),nameLocalizations:e.nullish(e.record(b,h({max:100}))),value:e.union([h({max:100}),m(),e.number()])}),C=e.intersect([e.object({name:h({max:32}),nameLocalizations:e.nullish(e.record(b,h({max:32}))),description:h({max:100}),descriptionLocalizations:e.nullish(e.record(b,h({max:100}))),required:e.nullish(e.boolean()),choices:e.nullish(p(we,{max:25})),channelTypes:e.nullish(e.array(x)),autocomplete:e.nullish(e.boolean())}),e.union([e.object({type:Ce}),e.variant(`type`,[e.object({type:e.union([e.literal(S.SUB_COMMAND),e.literal(S.SUB_COMMAND_GROUP)]),options:e.lazy(()=>e.nullish(e.array(C)))}),e.object({type:e.literal(S.STRING),minLength:e.nullable(m({max:6e3})),maxLength:e.nullable(m({max:6e3}))}),e.object({type:e.literal(S.INTEGER),minValue:e.nullable(m()),maxValue:e.nullable(m())}),e.object({type:e.literal(S.NUMBER),minValue:e.nullable(e.number()),maxValue:e.nullable(e.number())})])])]),w={CHAT_INPUT:1,USER:2,MESSAGE:3,PRIMARY_ENTRY_POINT:4},T=e.enum_(w),Te={CREATE_INSTANT_INVITE:1,KICK_MEMBERS:2,BAN_MEMBERS:4,ADMINISTRATOR:8,MANAGE_CHANNELS:16,MANAGE_GUILD:32,ADD_REACTIONS:64,VIEW_AUDIT_LOG:128,PRIORITY_SPEAKER:256,STREAM:512,VIEW_CHANNEL:1024,SEND_MESSAGES:2048,SEND_TTS_MESSAGES:4096,MANAGE_MESSAGES:8192,EMBED_LINKS:16384,ATTACH_FILES:32768,READ_MESSAGE_HISTORY:65536,MENTION_EVERYONE:131072,USE_EXTERNAL_EMOJIS:262144,VIEW_GUILD_INSIGHTS:524288,CONNECT:1048576,SPEAK:2097152,MUTE_MEMBERS:4194304,DEAFEN_MEMBERS:8388608,MOVE_MEMBERS:16777216,USE_VAD:33554432,CHANGE_NICKNAME:67108864,MANAGE_NICKNAMES:134217728,MANAGE_ROLES:268435456,MANAGE_WEBHOOKS:536870912,MANAGE_GUILD_EXPRESSIONS:1073741824,USE_APPLICATION_COMMANDS:2147483648,REQUEST_TO_SPEAK:4294967296,MANAGE_EVENTS:8589934592,MANAGE_THREADS:17179869184,CREATE_PUBLIC_THREADS:34359738368,CREATE_PRIVATE_THREADS:68719476736,USE_EXTERNAL_STICKERS:137438953472,SEND_MESSAGES_IN_THREADS:274877906944,USE_EMBEDDED_ACTIVITIES:549755813888,MODERATE_MEMBERS:1099511627776,VIEW_CREATOR_MONETIZATION_ANALYTICS:2199023255552,USE_SOUNDBOARD:4398046511104,CREATE_GUILD_EXPRESSIONS:8796093022208,CREATE_EVENTS:17592186044416,USE_EXTERNAL_SOUNDS:35184372088832,SEND_VOICE_MESSAGES:70368744177664,SEND_POLLS:562949953421312,USE_EXTERNAL_APPS:0x4000000000000};e.enum_(Te);const E=f(`permissionFlag`,Te,`Invalid Permissions Flag`),Ee=e.intersect([e.object({id:_,applicationId:_,guildId:e.exactOptional(_),name:h({max:32}),nameLocalizations:e.nullish(e.record(b,h({max:32}))),description:e.exactOptional(h({min:0,max:100})),descriptionLocalizations:e.nullish(e.record(b,h({min:0,max:100}))),defaultMemberPermissions:e.nullable(u(E)),dmPermission:e.exactOptional(e.boolean()),defaultPermission:e.exactOptional(e.boolean()),nsfw:e.exactOptional(e.boolean()),version:_}),e.union([e.object({type:e.exactOptional(T)}),e.variant(`type`,[e.object({type:e.literal(w.CHAT_INPUT),options:e.exactOptional(p(C,{max:25}))}),e.object({type:e.literal(w.PRIMARY_ENTRY_POINT)})])])]);e.object({application:_,body:e.pipe(e.array(Ee),e.maxLength(25))}),e.object({application:_,guild:_,body:e.pipe(e.array(e.object({id:e.nullish(_),name:h({max:32}),nameLocalizations:e.nullish(e.record(b,h({max:32}))),description:h({max:100}),descriptionLocalizations:e.nullish(e.record(b,h({max:100}))),options:e.nullish(e.array(C)),defaultMemberPermissions:e.nullish(u(E)),dmPermission:e.nullish(e.boolean()),defaultPermission:e.nullish(e.boolean()),type:e.nullish(T,w.CHAT_INPUT),nsfw:e.nullish(e.boolean())})),e.maxLength(25))}),e.object({application:_,body:e.object({name:h({max:32}),nameLocalizations:e.nullish(e.record(b,h({max:32}))),description:e.nullish(h({max:100})),descriptionLocalizations:e.nullish(e.record(b,h({max:100}))),options:e.nullish(e.array(C)),defaultMemberPermissions:e.nullish(u(E)),dmPermission:e.nullish(e.boolean()),defaultPermission:e.nullish(e.boolean(),!0),type:e.nullish(T,w.CHAT_INPUT),nsfw:e.nullish(e.boolean())})}),e.object({application:_,guild:_,body:e.object({name:h({max:32}),nameLocalizations:e.nullish(e.record(b,h({max:32}))),description:e.nullish(h({max:100})),descriptionLocalizations:e.nullish(e.record(b,h({max:100}))),options:e.nullish(e.array(C)),defaultMemberPermissions:e.nullish(u(E)),dmPermission:e.nullish(e.boolean()),defaultPermission:e.nullish(e.boolean(),!0),type:e.nullish(T,w.CHAT_INPUT),nsfw:e.nullish(e.boolean())})}),e.object({application:_,command:_}),e.object({application:_,guild:_,command:_});const De=e.enum_({ROLE:1,USER:2,CHANNEL:3}),Oe=e.object({id:_,type:De,permission:e.boolean()});e.object({application:_,guild:_,command:_,body:e.object({permissions:p(Oe,{max:100})})}),e.object({application:_,command:_,body:e.partial(e.object({name:e.nullish(h({max:32})),nameLocalizations:e.nullish(e.record(b,h({max:32}))),description:e.nullish(h({max:100})),descriptionLocalizations:e.nullish(e.record(b,h({max:100}))),options:e.nullish(e.array(C)),defaultMemberPermissions:e.nullish(u(E)),dmPermission:e.nullish(e.boolean()),defaultPermission:e.nullish(e.boolean()),nsfw:e.nullish(e.boolean())}))}),e.object({application:_,guild:_,command:_,body:e.partial(e.object({name:e.nullish(h({max:32})),nameLocalizations:e.nullish(e.record(b,h({max:32}))),description:e.nullish(h({max:100})),descriptionLocalizations:e.nullish(e.record(b,h({max:100}))),options:e.nullish(e.array(C)),defaultMemberPermissions:e.nullish(u(E)),dmPermission:e.nullish(e.boolean()),defaultPermission:e.nullish(e.boolean()),nsfw:e.nullish(e.boolean())}))}),e.object({application:_,guild:_,command:_}),e.object({application:_,command:_}),e.object({application:_,params:e.exactOptional(e.object({withLocalizations:e.nullish(e.boolean())}))}),e.object({application:_,guild:_,command:_}),e.object({application:_,guild:_}),e.object({application:_,guild:_,params:e.exactOptional(e.object({withLocalizations:e.nullish(e.boolean())}))});let ke=function(e){return e[e.None=0]=`None`,e[e.NitroClassic=1]=`NitroClassic`,e[e.Nitro=2]=`Nitro`,e[e.NitroBasic=3]=`NitroBasic`,e}({});const Ae=e.enum_(ke);let je=function(e){return e[e.STAFF=1]=`STAFF`,e[e.PARTNER=2]=`PARTNER`,e[e.HYPESQUAD=4]=`HYPESQUAD`,e[e.BUG_HUNTER_LEVEL_1=8]=`BUG_HUNTER_LEVEL_1`,e[e.HYPESQUAD_ONLINE_HOUSE_1=64]=`HYPESQUAD_ONLINE_HOUSE_1`,e[e.HYPESQUAD_ONLINE_HOUSE_2=128]=`HYPESQUAD_ONLINE_HOUSE_2`,e[e.HYPESQUAD_ONLINE_HOUSE_3=256]=`HYPESQUAD_ONLINE_HOUSE_3`,e[e.PREMIUM_EARLY_SUPPORTER=512]=`PREMIUM_EARLY_SUPPORTER`,e[e.TEAM_PSEUDO_USER=1024]=`TEAM_PSEUDO_USER`,e[e.BUG_HUNTER_LEVEL_2=16384]=`BUG_HUNTER_LEVEL_2`,e[e.VERIFIED_BOT=65536]=`VERIFIED_BOT`,e[e.VERIFIED_DEVELOPER=131072]=`VERIFIED_DEVELOPER`,e[e.CERTIFIED_MODERATOR=262144]=`CERTIFIED_MODERATOR`,e[e.BOT_HTTP_INTERACTIONS=524288]=`BOT_HTTP_INTERACTIONS`,e[e.ACTIVE_DEVELOPER=4194304]=`ACTIVE_DEVELOPER`,e}({});e.enum_(je);const Me=f(`userFlag`,je,`Invalid User Flag`),D=e.object({id:_,username:h(),discriminator:e.union([h(4),e.literal(`0`)]),globalName:e.nullable(h()),avatar:e.nullable(h()),bot:e.exactOptional(e.boolean()),system:e.exactOptional(e.boolean()),mfaEnabled:e.exactOptional(e.boolean()),banner:e.nullish(h()),accentColor:e.nullish(m()),locale:e.exactOptional(b),verified:e.exactOptional(e.boolean()),email:e.nullish(e.pipe(e.string(),e.email())),flags:e.exactOptional(d(Me)),premiumType:e.exactOptional(Ae),publicFlags:e.exactOptional(d(Me)),avatarDecoration:e.nullish(e.string())}),Ne=e.enum_({INVITED:1,ACCEPTED:2}),Pe=e.enum_({Admin:`admin`,Developer:`developer`,ReadOnly:`read_only`}),Fe=e.object({membershipState:Ne,teamId:e.string(),user:e.partial(D),role:Pe}),Ie=e.object({icon:e.exactOptional(e.string()),id:e.string(),members:e.array(Fe),name:e.string(),ownerUserId:e.string()}),O=e.object({id:e.nullable(_),name:e.nullable(h()),roles:e.exactOptional(e.array(_)),user:e.exactOptional(D),requireColons:e.exactOptional(e.boolean()),managed:e.exactOptional(e.boolean()),animated:e.exactOptional(e.boolean()),available:e.exactOptional(e.boolean())});let Le=function(e){return e[e.PNG=1]=`PNG`,e[e.APNG=2]=`APNG`,e[e.LOTTIE=3]=`LOTTIE`,e[e.GIF=4]=`GIF`,e}({});const Re=e.enum_(Le);let ze=function(e){return e[e.STANDARD=1]=`STANDARD`,e[e.GUILD=2]=`GUILD`,e}({});const Be=e.enum_(ze),k=e.object({id:_,packId:e.exactOptional(_),name:h({min:2,max:30}),description:h({min:2,max:100}),tags:h({max:200}),type:Be,formatType:Re,available:e.exactOptional(e.boolean()),guildId:e.exactOptional(_),user:e.exactOptional(D),sortValue:e.exactOptional(m())}),Ve=e.object({botId:e.exactOptional(_),integrationId:e.exactOptional(_),premiumSubscriber:e.exactOptional(e.null_()),subscriptionListingId:e.exactOptional(_),availableForPurchase:e.exactOptional(e.null_()),guildConnections:e.exactOptional(e.null_())}),He={IN_PROMPT:1};e.enum_(He);const Ue=f(`roleFlag`,He,`Invalid Role Flag`),We=e.object({id:_,name:h(),color:m(),hoist:e.boolean(),icon:e.nullish(h()),unicodeEmoji:e.nullish(h()),position:m(),permissions:u(E),managed:e.boolean(),mentionable:e.boolean(),tags:e.exactOptional(e.array(Ve)),flags:d(Ue)}),Ge=e.object({channelId:_,description:e.pipe(e.string(),e.nonEmpty()),emojiId:e.nullable(_),emojiName:e.nullable(e.pipe(e.string(),e.nonEmpty()))}),Ke=e.object({description:e.nullable(e.string()),welcomeChannels:e.pipe(e.array(Ge),e.maxLength(5))});let qe=function(e){return e[e.NONE=0]=`NONE`,e[e.TIER_1=1]=`TIER_1`,e[e.TIER_2=2]=`TIER_2`,e[e.TIER_3=3]=`TIER_3`,e}({});const Je=e.enum_(qe);let Ye=function(e){return e[e.DEFAULT=0]=`DEFAULT`,e[e.EXPLICIT=1]=`EXPLICIT`,e[e.SAFE=2]=`SAFE`,e[e.AGE_RESTRICTED=3]=`AGE_RESTRICTED`,e}({});const Xe=e.enum_(Ye);let Ze=function(e){return e[e.NONE=0]=`NONE`,e[e.LOW=1]=`LOW`,e[e.MEDIUM=2]=`MEDIUM`,e[e.HIGH=3]=`HIGH`,e[e.VERY_HIGH=4]=`VERY_HIGH`,e}({});const Qe=e.enum_(Ze);let $e=function(e){return e[e.NONE=0]=`NONE`,e[e.ELEVATED=1]=`ELEVATED`,e}({});const et=e.enum_($e);let tt=function(e){return e[e.DISABLED=0]=`DISABLED`,e[e.MEMBERS_WITHOUT_ROLES=1]=`MEMBERS_WITHOUT_ROLES`,e[e.ALL_MEMBERS=2]=`ALL_MEMBERS`,e}({});const nt=e.enum_(tt);let rt=function(e){return e[e.ALL_MESSAGES=0]=`ALL_MESSAGES`,e[e.ONLY_MENTIONS=1]=`ONLY_MENTIONS`,e}({});const it=e.enum_(rt);let at=function(e){return e.ANIMATED_BANNER=`ANIMATED_BANNER`,e.ANIMATED_ICON=`ANIMATED_ICON`,e.APPLICATION_COMMAND_PERMISSIONS_V2=`APPLICATION_COMMAND_PERMISSIONS_V2`,e.AUTO_MODERATION=`AUTO_MODERATION`,e.BANNER=`BANNER`,e.COMMUNITY=`COMMUNITY`,e.CREATOR_MONETIZABLE_PROVISIONAL=`CREATOR_MONETIZABLE_PROVISIONAL`,e.CREATOR_STORE_PAGE=`CREATOR_STORE_PAGE`,e.DEVELOPER_SUPPORT_SERVER=`DEVELOPER_SUPPORT_SERVER`,e.DISCOVERABLE=`DISCOVERABLE`,e.FEATURABLE=`FEATURABLE`,e.INVITES_DISABLED=`INVITES_DISABLED`,e.INVITE_SPLASH=`INVITE_SPLASH`,e.MEMBER_VERIFICATION_GATE_ENABLED=`MEMBER_VERIFICATION_GATE_ENABLED`,e.MORE_SOUNDBOARD=`MORE_SOUNDBOARD`,e.MORE_STICKERS=`MORE_STICKERS`,e.NEWS=`NEWS`,e.PARTNERED=`PARTNERED`,e.PREVIEW_ENABLED=`PREVIEW_ENABLED`,e.RAID_ALERTS_DISABLED=`RAID_ALERTS_DISABLED`,e.ROLE_ICONS=`ROLE_ICONS`,e.ROLE_SUBSCRIPTIONS_AVAILABLE_FOR_PURCHASE=`ROLE_SUBSCRIPTIONS_AVAILABLE_FOR_PURCHASE`,e.ROLE_SUBSCRIPTIONS_ENABLED=`ROLE_SUBSCRIPTIONS_ENABLED`,e.TICKETED_EVENTS_ENABLED=`TICKETED_EVENTS_ENABLED`,e.VANITY_URL=`VANITY_URL`,e.VERIFIED=`VERIFIED`,e.VIP_REGIONS=`VIP_REGIONS`,e.WELCOME_SCREEN_ENABLED=`WELCOME_SCREEN_ENABLED`,e.ENHANCED_ROLE_COLORS=`ENHANCED_ROLE_COLORS`,e}({});const ot=e.enum_(at);let st=function(e){return e[e.SUPPRESS_JOIN_NOTIFICATIONS=1]=`SUPPRESS_JOIN_NOTIFICATIONS`,e[e.SUPPRESS_PREMIUM_SUBSCRIPTIONS=2]=`SUPPRESS_PREMIUM_SUBSCRIPTIONS`,e[e.SUPPRESS_GUILD_REMINDER_NOTIFICATIONS=4]=`SUPPRESS_GUILD_REMINDER_NOTIFICATIONS`,e[e.SUPPRESS_JOIN_NOTIFICATION_REPLIES=8]=`SUPPRESS_JOIN_NOTIFICATION_REPLIES`,e[e.SUPPRESS_ROLE_SUBSCRIPTION_PURCHASE_NOTIFICATIONS=16]=`SUPPRESS_ROLE_SUBSCRIPTION_PURCHASE_NOTIFICATIONS`,e[e.SUPPRESS_ROLE_SUBSCRIPTION_PURCHASE_NOTIFICATION_REPLIES=32]=`SUPPRESS_ROLE_SUBSCRIPTION_PURCHASE_NOTIFICATION_REPLIES`,e}({});e.enum_(st);const ct=f(`systemChannelFlag`,st,`Invalid System Channel Flag`),lt=e.object({invitesDisabledUntil:e.nullable(v),dmsDisabledUntil:e.nullable(v),dmSpamDetectedAt:e.nullish(v),raidDetectedAt:e.nullish(v)}),A=e.object({id:_,name:h({max:100}),icon:e.nullable(h()),iconHash:e.nullish(h()),splash:e.nullable(h()),discoverySplash:e.nullable(h()),owner:e.exactOptional(e.boolean()),ownerId:_,permissions:e.exactOptional(u(E)),region:e.nullish(h()),afkChannelId:e.nullable(_),afkTimeout:m(),widgetEnabled:e.exactOptional(e.boolean()),widgetChannelId:e.nullish(_),verificationLevel:Qe,defaultMessageNotifications:it,explicitContentFilter:nt,roles:e.array(We),emojis:e.array(O),features:e.array(ot),mfaLevel:et,applicationId:e.nullable(_),systemChannelId:e.nullable(_),systemChannelFlags:d(ct),rulesChannelId:e.nullable(_),maxPresences:e.nullish(m()),maxMembers:e.exactOptional(m()),vanityUrlCode:e.nullable(h()),description:e.nullable(e.string()),banner:e.nullable(h()),premiumTier:Je,premiumSubscriptionCount:e.exactOptional(m()),preferredLocale:b,publicUpdatesChannelId:e.nullable(_),maxVideoChannelUsers:e.exactOptional(m()),maxStageVideoChannelUsers:e.exactOptional(m()),approximateMemberCount:e.exactOptional(m()),approximatePresenceCount:e.exactOptional(m()),welcomeScreen:e.exactOptional(Ke),nsfwLevel:Xe,stickers:e.exactOptional(e.array(k)),premiumProgressBarEnabled:e.boolean(),safetyAlertsChannelId:e.nullable(_),incidentsData:e.exactOptional(lt)}),ut={APPLICATION_AUTO_MODERATION_RULE_CREATE_BADGE:64,GATEWAY_PRESENCE:4096,GATEWAY_PRESENCE_LIMITED:8192,GATEWAY_GUILD_MEMBERS:16384,GATEWAY_GUILD_MEMBERS_LIMITED:32768,VERIFICATION_PENDING_GUILD_LIMIT:65536,EMBEDDED:1<<17,GATEWAY_MESSAGE_CONTENT:1<<18,GATEWAY_MESSAGE_CONTENT_LIMITED:1<<19,APPLICATION_COMMAND_BADGE:1<<23};e.enum_(ut);const dt=f(`applicationFlag`,ut,`Invalid Application Flag`),ft=e.enum_({DISABLED:1,ENABLED:2,DISABLED_BY_DISCORD:3}),pt=`activities.read,activities.write,applications.builds.read,applications.builds.upload,applications.commands,applications.commands.update,applications.commands.permissions.update,applications.entitlements,applications.store.update,bot,connections,dm_channels.read,email,gdm.join,guilds,guilds.join,guilds.members.read,identify,messages.read,relationships.read,role_connections.write,rpc,rpc.activities.write,rpc.notifications.read,rpc.voice.read,rpc.voice.write,voice,webhook.incoming`.split(`,`),mt=e.picklist(pt),ht=e.object({scopes:e.array(mt),permissions:u(E)}),gt={GUILD_INSTALL:0,USER_INSTALL:1};e.enum_(gt);const _t=e.object({oauth2InstallParams:e.exactOptional(ht)}),vt=e.object({id:_,name:e.string(),icon:e.nullable(h()),description:e.string(),rpcOrigins:e.exactOptional(e.array(y)),botPublic:e.boolean(),botRequireCodeGrant:e.boolean(),bot:e.exactOptional(e.partial(D)),termsOfServiceUrl:e.exactOptional(y),privacyPolicyUrl:e.exactOptional(y),owner:e.exactOptional(e.partial(D)),verifyKey:e.string(),team:e.nullable(Ie),guildId:e.exactOptional(e.string()),guild:e.exactOptional(e.partial(A)),primarySkuId:e.exactOptional(e.string()),slug:e.exactOptional(e.string()),coverImage:e.exactOptional(e.string()),flags:e.exactOptional(d(dt)),approximateGuildCount:e.exactOptional(m()),approximateUserInstallCount:e.exactOptional(m()),approximateUserAuthorizationCount:e.exactOptional(m()),redirectUris:e.nullish(e.array(y)),interactionsEndpointUrl:e.nullish(y),roleConnectionsVerificationUrl:e.nullish(y),eventWebhooksUrl:e.nullish(y),eventWebhooksStatus:e.exactOptional(ft),eventWebhooksTypes:e.exactOptional(e.array(h())),tags:e.exactOptional(p(h(),{max:5})),installParams:e.exactOptional(ht),integrationTypesConfig:e.exactOptional(e.partial(e.object(e.entriesFromList(Object.values(gt),_t)))),customInstallUrl:e.exactOptional(y)});e.object({id:_,applicationId:_,guildId:_,permissions:p(Oe,{max:100})}),e.object({application:_});const yt=e.enum_({INTEGER_LESS_THAN_OR_EQUAL:1,INTEGER_GREATER_THAN_OR_EQUAL:2,INTEGER_EQUAL:3,INTEGER_NOT_EQUAL:4,DATETIME_LESS_THAN_OR_EQUAL:5,DATETIME_GREATER_THAN_OR_EQUAL:6,BOOLEAN_EQUAL:7,BOOLEAN_NOT_EQUAL:8}),bt=e.object({type:yt,key:e.pipe(e.string(),e.nonEmpty(),e.maxLength(50),e.regex(/^[a-z0-9_]*$/)),name:h({max:100}),nameLocalizations:e.nullish(e.record(b,e.string())),description:h({max:200}),descriptionLocalizations:e.nullish(e.record(b,e.string()))});e.object({application:_,body:e.object({records:e.array(bt)})});let xt=function(e){return e[e.GUILD_UPDATE=1]=`GUILD_UPDATE`,e[e.CHANNEL_CREATE=10]=`CHANNEL_CREATE`,e[e.CHANNEL_UPDATE=11]=`CHANNEL_UPDATE`,e[e.CHANNEL_DELETE=12]=`CHANNEL_DELETE`,e[e.CHANNEL_OVERWRITE_CREATE=13]=`CHANNEL_OVERWRITE_CREATE`,e[e.CHANNEL_OVERWRITE_UPDATE=14]=`CHANNEL_OVERWRITE_UPDATE`,e[e.CHANNEL_OVERWRITE_DELETE=15]=`CHANNEL_OVERWRITE_DELETE`,e[e.MEMBER_KICK=20]=`MEMBER_KICK`,e[e.MEMBER_PRUNE=21]=`MEMBER_PRUNE`,e[e.MEMBER_BAN_ADD=22]=`MEMBER_BAN_ADD`,e[e.MEMBER_BAN_REMOVE=23]=`MEMBER_BAN_REMOVE`,e[e.MEMBER_UPDATE=24]=`MEMBER_UPDATE`,e[e.MEMBER_ROLE_UPDATE=25]=`MEMBER_ROLE_UPDATE`,e[e.MEMBER_MOVE=26]=`MEMBER_MOVE`,e[e.MEMBER_DISCONNECT=27]=`MEMBER_DISCONNECT`,e[e.BOT_ADD=28]=`BOT_ADD`,e[e.ROLE_CREATE=30]=`ROLE_CREATE`,e[e.ROLE_UPDATE=31]=`ROLE_UPDATE`,e[e.ROLE_DELETE=32]=`ROLE_DELETE`,e[e.INVITE_CREATE=40]=`INVITE_CREATE`,e[e.INVITE_UPDATE=41]=`INVITE_UPDATE`,e[e.INVITE_DELETE=42]=`INVITE_DELETE`,e[e.WEBHOOK_CREATE=50]=`WEBHOOK_CREATE`,e[e.WEBHOOK_UPDATE=51]=`WEBHOOK_UPDATE`,e[e.WEBHOOK_DELETE=52]=`WEBHOOK_DELETE`,e[e.EMOJI_CREATE=60]=`EMOJI_CREATE`,e[e.EMOJI_UPDATE=61]=`EMOJI_UPDATE`,e[e.EMOJI_DELETE=62]=`EMOJI_DELETE`,e[e.MESSAGE_DELETE=72]=`MESSAGE_DELETE`,e[e.MESSAGE_BULK_DELETE=73]=`MESSAGE_BULK_DELETE`,e[e.MESSAGE_PIN=74]=`MESSAGE_PIN`,e[e.MESSAGE_UNPIN=75]=`MESSAGE_UNPIN`,e[e.INTEGRATION_CREATE=80]=`INTEGRATION_CREATE`,e[e.INTEGRATION_UPDATE=81]=`INTEGRATION_UPDATE`,e[e.INTEGRATION_DELETE=82]=`INTEGRATION_DELETE`,e[e.STAGE_INSTANCE_CREATE=83]=`STAGE_INSTANCE_CREATE`,e[e.STAGE_INSTANCE_UPDATE=84]=`STAGE_INSTANCE_UPDATE`,e[e.STAGE_INSTANCE_DELETE=85]=`STAGE_INSTANCE_DELETE`,e[e.STICKER_CREATE=90]=`STICKER_CREATE`,e[e.STICKER_UPDATE=91]=`STICKER_UPDATE`,e[e.STICKER_DELETE=92]=`STICKER_DELETE`,e[e.GUILD_SCHEDULED_EVENT_CREATE=100]=`GUILD_SCHEDULED_EVENT_CREATE`,e[e.GUILD_SCHEDULED_EVENT_UPDATE=101]=`GUILD_SCHEDULED_EVENT_UPDATE`,e[e.GUILD_SCHEDULED_EVENT_DELETE=102]=`GUILD_SCHEDULED_EVENT_DELETE`,e[e.THREAD_CREATE=110]=`THREAD_CREATE`,e[e.THREAD_UPDATE=111]=`THREAD_UPDATE`,e[e.THREAD_DELETE=112]=`THREAD_DELETE`,e[e.APPLICATION_COMMAND_PERMISSION_UPDATE=121]=`APPLICATION_COMMAND_PERMISSION_UPDATE`,e[e.SOUNDBOARD_SOUND_CREATE=130]=`SOUNDBOARD_SOUND_CREATE`,e[e.SOUNDBOARD_SOUND_UPDATE=131]=`SOUNDBOARD_SOUND_UPDATE`,e[e.SOUNDBOARD_SOUND_DELETE=132]=`SOUNDBOARD_SOUND_DELETE`,e[e.AUTO_MODERATION_RULE_CREATE=140]=`AUTO_MODERATION_RULE_CREATE`,e[e.AUTO_MODERATION_RULE_UPDATE=141]=`AUTO_MODERATION_RULE_UPDATE`,e[e.AUTO_MODERATION_RULE_DELETE=142]=`AUTO_MODERATION_RULE_DELETE`,e[e.AUTO_MODERATION_BLOCK_MESSAGE=143]=`AUTO_MODERATION_BLOCK_MESSAGE`,e[e.AUTO_MODERATION_FLAG_TO_CHANNEL=144]=`AUTO_MODERATION_FLAG_TO_CHANNEL`,e[e.AUTO_MODERATION_USER_COMMUNICATION_DISABLED=145]=`AUTO_MODERATION_USER_COMMUNICATION_DISABLED`,e[e.CREATOR_MONETIZATION_REQUEST_CREATED=150]=`CREATOR_MONETIZATION_REQUEST_CREATED`,e[e.CREATOR_MONETIZATION_TERMS_ACCEPTED=151]=`CREATOR_MONETIZATION_TERMS_ACCEPTED`,e[e.ONBOARDING_PROMPT_CREATE=163]=`ONBOARDING_PROMPT_CREATE`,e[e.ONBOARDING_PROMPT_UPDATE=164]=`ONBOARDING_PROMPT_UPDATE`,e[e.ONBOARDING_PROMPT_DELETE=165]=`ONBOARDING_PROMPT_DELETE`,e[e.ONBOARDING_CREATE=166]=`ONBOARDING_CREATE`,e[e.ONBOARDING_UPDATE=167]=`ONBOARDING_UPDATE`,e[e.HOME_SETTINGS_CREATE=190]=`HOME_SETTINGS_CREATE`,e[e.HOME_SETTINGS_UPDATE=191]=`HOME_SETTINGS_UPDATE`,e}({});const St=e.enum_(xt);e.object({guild:_,params:e.exactOptional(e.partial(e.object({userId:_,actionType:St,before:_,after:_,limit:e.pipe(e.number(),e.integer(),e.minValue(1),e.maxValue(100))})))});const j=e.picklist([60,1440,4320,10080]),Ct=e.object({id:_,type:e.picklist([0,1]),allow:u(E),deny:u(E)}),wt=e.object({archived:e.boolean(),autoArchiveDuration:j,archiveTimestamp:v,locked:e.boolean(),invitable:e.exactOptional(e.boolean()),createTimestamp:e.nullish(v)});let Tt=function(e){return e[e.DID_REJOIN=1]=`DID_REJOIN`,e[e.COMPLETED_ONBOARDING=2]=`COMPLETED_ONBOARDING`,e[e.BYPASSES_VERIFICATION=4]=`BYPASSES_VERIFICATION`,e[e.STARTED_ONBOARDING=8]=`STARTED_ONBOARDING`,e[e.IS_GUEST=16]=`IS_GUEST`,e[e.STARTED_HOME_ACTIONS=32]=`STARTED_HOME_ACTIONS`,e[e.COMPLETED_HOME_ACTIONS=64]=`COMPLETED_HOME_ACTIONS`,e[e.AUTOMOD_QUARANTINED_USERNAME=128]=`AUTOMOD_QUARANTINED_USERNAME`,e[e.DM_SETTINGS_UPSELL_ACKNOWLEDGED=512]=`DM_SETTINGS_UPSELL_ACKNOWLEDGED`,e}({});e.enum_(Tt);const Et=f(`guildMemberFlag`,Tt,`Invalid Guild Member Flag`),Dt=e.object({asset:h(),skuId:_}),M=e.object({user:e.exactOptional(D),nick:e.nullish(h()),avatar:e.nullish(h()),banner:e.nullish(h()),roles:e.array(_),joinedAt:v,premiumSince:e.nullish(v),deaf:e.boolean(),mute:e.boolean(),flags:d(Et),pending:e.exactOptional(e.boolean()),permissions:e.exactOptional(u(E)),communicationDisabledUntil:e.nullish(v),avatarDecorationData:e.nullish(Dt)});let Ot=function(e){return e[e.PINNED=2]=`PINNED`,e[e.REQUIRE_TAG=16]=`REQUIRE_TAG`,e[e.HIDE_MEDIA_DOWNLOAD_OPTIONS=32768]=`HIDE_MEDIA_DOWNLOAD_OPTIONS`,e}({});e.enum_(Ot);const N=f(`channelFlag`,Ot,`Invalid Channel Flag`),kt=e.object({id:e.exactOptional(_),userId:e.exactOptional(_),joinTimestamp:v,flags:d(N),member:e.exactOptional(M)});let At=function(e){return e[e.AUTO=1]=`AUTO`,e[e.FULL=2]=`FULL`,e}({});const jt=e.enum_(At),P=e.object({id:_,name:h({min:0,max:20}),moderated:e.boolean(),emojiId:e.nullable(_),emojiName:e.nullable(h())}),F=e.object({emojiId:e.nullable(_),emojiName:e.nullable(h())});let Mt=function(e){return e[e.LATEST_ACTIVITY=0]=`LATEST_ACTIVITY`,e[e.CREATION_DATE=1]=`CREATION_DATE`,e}({});const I=e.enum_(Mt);let Nt=function(e){return e[e.NOT_SET=0]=`NOT_SET`,e[e.LIST_VIEW=1]=`LIST_VIEW`,e[e.GALLERY_VIEW=2]=`GALLERY_VIEW`,e}({});const L=e.enum_(Nt),R=e.object({id:_,type:x,permissionOverwrites:e.exactOptional(e.array(Ct)),name:e.nullish(h({max:100})),topic:e.nullish(h({max:1024})),nsfw:e.exactOptional(e.boolean()),lastMessageId:e.nullish(_),rateLimitPerUser:e.exactOptional(m({max:21600})),lastPinTimestamp:e.nullish(v),permissions:e.exactOptional(u(E)),flags:e.exactOptional(d(N))}),Pt=e.object({...R.entries,type:e.picklist([4,14]),guildId:e.exactOptional(_),position:e.exactOptional(m())}),z=e.object({...R.entries,type:e.picklist([5,0]),guildId:e.exactOptional(_),parentId:e.nullish(_),position:e.exactOptional(m())}),B=e.object({...R.entries,type:e.picklist([13,2]),guildId:e.exactOptional(_),parentId:e.nullish(_),position:e.exactOptional(m()),bitrate:e.exactOptional(m()),userLimit:e.exactOptional(m()),rtcRegion:e.nullish(h()),videoQualityMode:e.exactOptional(jt)}),Ft=e.object({...R.entries,type:e.picklist([15,16]),guildId:e.exactOptional(_),parentId:e.nullish(_),position:e.exactOptional(m()),topic:e.nullish(h({max:4096})),availableTags:e.exactOptional(e.array(P)),defaultReactionEmoji:e.nullish(F),defaultSortOrder:e.nullish(I),defaultForumLayout:e.exactOptional(L)}),V=e.object({...R.entries,type:e.picklist([10,12,11]),guildId:e.exactOptional(_),parentId:e.nullish(_),ownerId:e.exactOptional(_),position:e.exactOptional(m()),messageCount:e.exactOptional(m({max:50})),memberCount:e.exactOptional(m({max:50})),threadMetadata:e.exactOptional(wt),appliedTags:e.exactOptional(e.array(_)),member:e.exactOptional(kt),defaultAutoArchiveDuration:e.exactOptional(j),totalMessageSent:e.exactOptional(m()),defaultThreadRateLimitPerUser:e.exactOptional(m())}),It=e.object({...R.entries,type:e.literal(1),recipients:e.exactOptional(e.array(D))}),Lt=e.object({...R.entries,type:e.literal(3),recipients:e.exactOptional(e.array(D)),icon:e.nullish(h()),ownerId:e.exactOptional(_),applicationId:e.exactOptional(_),managed:e.exactOptional(e.boolean())}),H=e.union([Pt,z,B,Ft,V,It,Lt]),Rt=e.union([e.required(e.partial(Pt),[`type`]),e.required(e.partial(z),[`type`]),e.required(e.partial(B),[`type`]),e.required(e.partial(Ft),[`type`]),e.required(e.partial(V),[`type`]),e.required(e.partial(It),[`type`]),e.required(e.partial(Lt),[`type`])]);let zt=function(e){return e[e.STAGE_INSTANCE=1]=`STAGE_INSTANCE`,e[e.VOICE=2]=`VOICE`,e[e.EXTERNAL=3]=`EXTERNAL`,e}({});const Bt=e.enum_(zt);let Vt=function(e){return e[e.GUILD_ONLY=2]=`GUILD_ONLY`,e}({});const Ht=e.enum_(Vt);let Ut=function(e){return e[e.SCHEDULED=1]=`SCHEDULED`,e[e.ACTIVE=2]=`ACTIVE`,e[e.COMPLETED=3]=`COMPLETED`,e[e.CANCELED=4]=`CANCELED`,e}({});const Wt=e.enum_(Ut),Gt=e.object({location:e.pipe(e.string(),e.minLength(1),e.maxLength(100))});let Kt=function(e){return e[e.YEARLY=0]=`YEARLY`,e[e.MONTHLY=1]=`MONTHLY`,e[e.WEEKLY=2]=`WEEKLY`,e[e.DAILY=3]=`DAILY`,e}({});const qt=e.enum_(Kt);let Jt=function(e){return e[e.MONDAY=1]=`MONDAY`,e[e.TUESDAY=2]=`TUESDAY`,e[e.WEDNESDAY=3]=`WEDNESDAY`,e[e.THURSDAY=4]=`THURSDAY`,e[e.FRIDAY=5]=`FRIDAY`,e[e.SATURDAY=6]=`SATURDAY`,e[e.SUNDAY=7]=`SUNDAY`,e}({});const Yt=e.enum_(Jt),Xt=e.object({n:e.picklist([1,2,3,4,5]),day:Yt});let Zt=function(e){return e[e.JANUARY=1]=`JANUARY`,e[e.FEBRUARY=2]=`FEBRUARY`,e[e.MARCH=3]=`MARCH`,e[e.APRIL=4]=`APRIL`,e[e.MAY=5]=`MAY`,e[e.JUNE=6]=`JUNE`,e[e.JULY=7]=`JULY`,e[e.AUGUST=8]=`AUGUST`,e[e.SEPTEMBER=9]=`SEPTEMBER`,e[e.OCTOBER=10]=`OCTOBER`,e[e.NOVEMBER=11]=`NOVEMBER`,e[e.DECEMBER=12]=`DECEMBER`,e}({});const Qt=e.enum_(Zt),$t=e.object({start:v,end:e.nullable(v),frequency:qt,interval:e.pipe(e.number(),e.integer(),e.minValue(1)),byWeekday:e.nullable(e.array(Yt)),byNWeekday:e.nullable(e.array(Xt)),byMonth:e.nullable(e.array(Qt)),byMonthDay:e.nullable(e.array(e.pipe(e.number(),e.integer(),e.minValue(1),e.maxValue(31)))),byYearDay:e.nullable(e.array(e.pipe(e.number(),e.integer(),e.minValue(1),e.maxValue(364)))),count:e.nullable(e.pipe(e.number(),e.integer(),e.minValue(1)))}),en=e.intersect([e.object({id:_,guildId:_,creatorId:e.nullish(_),name:e.pipe(e.string(),e.nonEmpty(),e.maxLength(100)),description:e.nullish(e.pipe(e.string(),e.nonEmpty(),e.maxLength(1e3))),scheduledStartTime:v,scheduledEndTime:e.nullable(v),privacyLevel:Ht,status:Wt,entityId:e.nullable(_),creator:e.exactOptional(D),userCount:e.exactOptional(e.pipe(e.number(),e.integer(),e.minValue(0))),image:e.nullish(e.pipe(e.string(),e.nonEmpty())),recurrenceRule:e.nullable($t)}),e.variant(`entityType`,[e.object({entityType:e.literal(1),channelId:_,entityMetadata:e.null_()}),e.object({entityType:e.literal(2),channelId:_,entityMetadata:e.null_()}),e.object({entityType:e.literal(3),channelId:e.null_(),scheduledEndTime:v,entityMetadata:Gt})])]),tn=e.object({id:_,name:h(),icon:e.nullable(h()),description:e.string(),bot:e.exactOptional(D)}),nn=e.object({id:e.string(),name:e.string()});let rn=function(e){return e[e.REMOVE_ROLE=0]=`REMOVE_ROLE`,e[e.KICK=1]=`KICK`,e}({});const an=e.enum_(rn),on=e.object({id:_,name:h(),type:e.string(),enabled:e.boolean(),syncing:e.exactOptional(e.boolean()),roleId:e.exactOptional(_),enableEmoticons:e.exactOptional(e.boolean()),expireBehavior:e.exactOptional(an),expireGracePeriod:e.exactOptional(m()),user:e.exactOptional(D),account:nn,syncedAt:e.exactOptional(v),subscriberCount:e.exactOptional(m()),revoked:e.exactOptional(e.boolean()),application:e.exactOptional(tn),scopes:e.exactOptional(e.array(mt))}),sn=e.union([e.object({channelId:e.exactOptional(_)}),e.object({durationSeconds:m({max:2419200})}),e.object({customMessage:e.nullish(h({max:150}))})]);let cn=function(e){return e[e.BLOCK_MESSAGE=1]=`BLOCK_MESSAGE`,e[e.SEND_ALERT_MESSAGE=2]=`SEND_ALERT_MESSAGE`,e[e.TIMEOUT=3]=`TIMEOUT`,e[e.BLOCK_MEMBER_INTERACTION=4]=`BLOCK_MEMBER_INTERACTION`,e}({});const ln=e.enum_(cn),U=e.object({type:ln,metadata:e.exactOptional(sn)});let un=function(e){return e[e.MESSAGE_SEND=1]=`MESSAGE_SEND`,e[e.MEMBER_UPDATE=2]=`MEMBER_UPDATE`,e}({});const dn=e.enum_(un);let fn=function(e){return e[e.KEYWORD=1]=`KEYWORD`,e[e.SPAM=3]=`SPAM`,e[e.KEYWORD_PRESET=4]=`KEYWORD_PRESET`,e[e.MENTION_SPAM=5]=`MENTION_SPAM`,e[e.MEMBER_PROFILE=6]=`MEMBER_PROFILE`,e}({});const pn=e.enum_(fn);let mn=function(e){return e[e.PROFANITY=1]=`PROFANITY`,e[e.SEXUAL_CONTENT=2]=`SEXUAL_CONTENT`,e[e.SLURS=3]=`SLURS`,e}({});const hn=e.enum_(mn),gn=e.object({keywordFilter:p(e.string(),{max:1e3}),regexPatterns:p(e.string(),{max:10}),presets:e.array(hn),allowList:p(e.string(),{max:1e3}),mentionTotalLimit:m({max:50}),mentionRaidProtectionEnabled:e.boolean()}),_n=e.object({id:_,guildId:_,name:h(),creatorId:_,eventType:dn,triggerType:pn,triggerMetadata:gn,actions:e.array(U),enabled:e.boolean(),exemptRoles:p(_,{max:20}),exemptChannels:p(_,{max:50})});let vn=function(e){return e[e.INCOMING=1]=`INCOMING`,e[e.CHANNEL_FOLLOWER=2]=`CHANNEL_FOLLOWER`,e[e.APPLICATION=3]=`APPLICATION`,e}({});const yn=e.enum_(vn),bn=e.object({id:_,type:yn,guildId:e.nullish(_),channelId:e.nullable(_),user:e.exactOptional(D),name:e.nullable(h()),avatar:e.nullable(h()),token:e.exactOptional(h()),applicationId:e.nullable(_),sourceGuild:e.exactOptional(e.partial(A)),sourceChannel:e.exactOptional(Rt),url:e.exactOptional(y)}),xn=e.object({newValue:e.exactOptional(e.unknown()),oldValue:e.exactOptional(e.unknown()),key:h()}),Sn=e.partial(e.object({applicationId:_,autoModerationRuleName:e.pipe(e.string(),e.nonEmpty()),autoModerationRuleTriggerType:e.pipe(e.string(),e.nonEmpty()),channelId:_,count:e.pipe(e.string(),e.nonEmpty()),deleteMemberDays:e.pipe(e.string(),e.nonEmpty()),id:_,membersRemoved:e.pipe(e.string(),e.nonEmpty()),messageId:_,roleName:e.picklist([`0`,`1`]),type:e.picklist([`0`,`1`]),integrationType:e.pipe(e.string(),e.nonEmpty())})),Cn=e.object({targetId:e.nullable(h()),changes:e.exactOptional(e.array(xn)),userId:e.nullable(_),id:_,actionType:St,options:e.exactOptional(Sn),reason:e.exactOptional(h({max:512}))});e.object({applicationCommands:e.array(Ee),auditLogEntries:e.array(Cn),autoModerationRules:e.array(_n),guildScheduledEvents:e.array(en),integrations:e.array(e.partial(on)),threads:e.array(H),users:e.array(D),webhooks:e.array(bn)}),e.object({guild:_,body:e.object({name:h(),eventType:dn,triggerType:pn,triggerMetadata:e.exactOptional(gn),actions:e.array(U),enabled:e.exactOptional(e.boolean()),exemptRoles:e.exactOptional(p(_,{max:20})),exemptChannels:e.exactOptional(p(_,{max:50}))})}),e.object({guild:_,rule:_}),e.object({guild:_,rule:_}),e.object({guild:_}),e.object({guild:_,rule:_,body:e.partial(e.object({name:h(),eventType:dn,triggerMetadata:e.exactOptional(gn),actions:e.array(U),enabled:e.boolean(),exemptRoles:p(_,{max:20}),exemptChannels:p(_,{max:50})}))}),e.object({channel:_,user:_});let wn=function(e){return e[e.STREAM=1]=`STREAM`,e[e.EMBEDDED_APPLICATION=2]=`EMBEDDED_APPLICATION`,e}({});const Tn=e.enum_(wn);e.object({channel:_,body:e.exactOptional(e.partial(e.object({maxAge:e.pipe(e.number(),e.integer(),e.minValue(0),e.maxValue(604800)),maxUses:e.pipe(e.number(),e.integer(),e.minValue(0),e.maxValue(100)),temporary:e.boolean(),unique:e.boolean(),targetType:Tn,targetUserId:_,targetApplicationId:_})))}),e.object({channel:_}),e.object({channel:_,overwrite:_}),e.object({channel:_,overwrite:_,body:e.object({allow:e.nullish(u(E)),deny:e.nullish(u(E)),type:e.picklist([0,1])})}),e.object({channel:_,body:e.object({webhookChannelId:_})}),e.object({channel:_}),e.object({channel:_}),e.object({channel:_,user:_,params:e.exactOptional(e.partial(e.object({withMember:e.nullish(e.boolean())})))}),e.object({channel:_,user:_,body:e.object({accessToken:e.pipe(e.string(),e.minLength(1)),nick:e.pipe(e.string(),e.minLength(1))})}),e.object({channel:_,user:_}),e.object({channel:_}),e.object({channel:_}),e.object({channel:_,params:e.exactOptional(e.partial(e.object({before:v,limit:e.pipe(e.number(),e.integer(),e.minValue(0))})))}),e.object({channel:_,params:e.exactOptional(e.partial(e.object({before:v,limit:e.pipe(e.number(),e.integer(),e.minValue(0))})))}),e.object({channel:_,params:e.exactOptional(e.partial(e.object({before:v,limit:e.pipe(e.number(),e.integer(),e.minValue(0))})))}),e.object({channel:_,params:e.exactOptional(e.partial(e.object({withMember:e.boolean(),after:_,limit:e.pipe(e.number(),e.integer(),e.minValue(1),e.maxValue(100))})))});const En=e.partial(e.object({name:e.pipe(e.string(),e.nonEmpty(),e.maxLength(100)),icon:e.pipe(e.string(),e.base64())})),Dn=e.partial(e.object({type:e.picklist([5,0]),name:e.pipe(e.string(),e.nonEmpty(),e.maxLength(100)),position:e.nullable(e.pipe(e.number(),e.integer())),topic:e.nullable(e.pipe(e.string(),e.minLength(0),e.maxLength(1024))),nsfw:e.nullable(e.boolean()),rateLimitPerUser:e.nullable(e.pipe(e.number(),e.minValue(0),e.maxValue(21600))),bitrate:e.nullable(e.pipe(e.number(),e.minValue(8e3))),userLimit:e.nullable(e.pipe(e.number(),e.minValue(0),e.maxValue(1e4))),permissionOverwrites:e.nullable(e.array(e.partial(Ct))),parentId:e.nullable(_),rtcRegion:e.nullable(e.pipe(e.string(),e.nonEmpty())),videoQualityMode:e.nullable(jt),defaultAutoArchiveDuration:e.nullable(j),flags:d(N),availableTags:e.pipe(e.array(P),e.maxLength(20)),defaultReactionEmoji:e.nullable(F),defaultThreadRateLimitPerUser:e.pipe(e.number(),e.minValue(0),e.maxValue(21600)),defaultSortOrder:e.nullable(I),defaultForumLayout:L})),On=e.partial(e.object({name:e.pipe(e.string(),e.nonEmpty(),e.maxLength(100)),archived:e.boolean(),autoArchiveDuration:j,locked:e.boolean(),invitable:e.boolean(),rateLimitPerUser:e.nullable(e.pipe(e.number(),e.minValue(0),e.maxValue(21600))),flags:e.exactOptional(d(N)),appliedTags:e.exactOptional(e.pipe(e.array(_),e.maxLength(5)))}));e.object({channel:_,body:e.union([En,Dn,On])}),e.object({channel:_,user:_}),e.object({channel:_,message:_,body:e.object({name:e.pipe(e.string(),e.nonEmpty(),e.maxLength(100)),autoArchiveDuration:e.exactOptional(j),rateLimitPerUser:e.nullish(e.pipe(e.number(),e.integer(),e.minValue(0),e.maxValue(21600)))})});let kn=function(e){return e.RICH=`rich`,e.IMAGE=`image`,e.VIDEO=`video`,e.GIF=`gifv`,e.ARTICLE=`article`,e.LINK=`link`,e.POLL_RESULT=`poll_result`,e}({});const An=e.enum_(kn),W=e.partial(e.object({title:h({max:256}),type:An,description:h({max:4096}),url:y,timestamp:v,color:m({min:0,max:16777215}),footer:e.object({text:h({max:2048}),iconUrl:y,proxyIconUrl:y}),image:e.object({url:y,proxyUrl:y,height:m(),width:m()}),thumbnail:e.object({url:y,proxyUrl:y,height:m(),width:m()}),video:e.partial(e.object({url:y,proxyUrl:y,height:m(),width:m()})),provider:e.partial(e.object({name:h(),url:y})),author:e.object({name:h({max:256}),url:y,iconUrl:y,proxyIconUrl:y}),fields:p(e.object({name:h({max:256}),value:h({max:1024}),inline:e.exactOptional(e.boolean())}),{max:25})})),G=e.partial(e.object({parse:e.array(e.picklist([`role`,`users`,`everyone`])),roles:p(_,{max:100}),users:p(_,{max:100}),repliedUser:e.boolean()}));let jn=function(e){return e[e.IS_REMIX=4]=`IS_REMIX`,e}({});e.enum_(jn);const Mn=f(`attachmentFlag`,jn,`Invalid Attachment Flag`),K=e.object({id:_,filename:h(),title:e.exactOptional(h()),description:e.exactOptional(h()),contentType:e.exactOptional(h()),size:m(),url:y,proxyUrl:y,height:e.nullish(m()),width:e.nullish(m()),ephemeral:e.exactOptional(e.boolean()),durationSecs:e.exactOptional(m()),waveform:e.exactOptional(e.pipe(e.string(),e.base64())),flags:e.exactOptional(d(Mn))});let Nn=function(e){return e[e.ActionRow=1]=`ActionRow`,e[e.Button=2]=`Button`,e[e.StringSelect=3]=`StringSelect`,e[e.TextInput=4]=`TextInput`,e[e.UserSelect=5]=`UserSelect`,e[e.RoleSelect=6]=`RoleSelect`,e[e.MentionableSelect=7]=`MentionableSelect`,e[e.ChannelSelect=8]=`ChannelSelect`,e[e.Section=9]=`Section`,e[e.TextDisplay=10]=`TextDisplay`,e[e.Thumbnail=11]=`Thumbnail`,e[e.MediaGallery=12]=`MediaGallery`,e[e.File=13]=`File`,e[e.Separator=14]=`Separator`,e[e.Container=17]=`Container`,e}({});const Pn=e.enum_(Nn);let Fn=function(e){return e[e.Primary=1]=`Primary`,e[e.Secondary=2]=`Secondary`,e[e.Success=3]=`Success`,e[e.Danger=4]=`Danger`,e[e.Link=5]=`Link`,e[e.Premium=6]=`Premium`,e}({});const In=e.enum_(Fn),Ln=e.object({type:e.literal(2),id:e.exactOptional(m()),style:In,label:e.exactOptional(h({max:80})),emoji:e.exactOptional(e.object({id:O.entries.id,name:O.entries.name,animated:O.entries.animated})),customId:e.exactOptional(h({max:100})),skuId:e.exactOptional(_),url:e.exactOptional(y),disabled:e.exactOptional(e.boolean())});let Rn=function(e){return e[e.Short=1]=`Short`,e[e.Paragraph=2]=`Paragraph`,e}({});const zn=e.enum_(Rn),Bn=e.object({type:e.literal(4),id:e.exactOptional(m()),customId:h({max:100}),style:zn,label:h({max:45}),minLength:e.exactOptional(h({min:0,max:4e3})),maxLength:e.exactOptional(h({max:4e3})),required:e.exactOptional(e.boolean()),value:e.exactOptional(h({max:4e3})),placeholder:e.exactOptional(h({max:100}))}),Vn=e.object({label:h({max:100}),value:h({max:100}),description:e.exactOptional(h({max:100})),emoji:e.exactOptional(e.object({id:O.entries.id,name:O.entries.name,animated:O.entries.animated})),default:e.exactOptional(e.boolean())}),Hn=e.object({type:e.literal(3),id:e.exactOptional(m()),customId:h({max:100}),options:p(Vn,{max:25}),placeholder:e.exactOptional(h({max:150})),minValues:e.exactOptional(m({max:25})),maxValues:e.exactOptional(m({min:1,max:25})),disabled:e.exactOptional(e.boolean())}),q=e.object({id:_,type:e.union([e.literal(`user`),e.literal(`role`),e.literal(`channel`)])}),Un=e.object({type:e.literal(5),id:e.exactOptional(m()),customId:h({max:100}),placeholder:e.exactOptional(h({max:150})),defaultValues:e.exactOptional(e.array(q)),minValues:e.exactOptional(m({max:25})),maxValues:e.exactOptional(h({min:1,max:25})),disabled:e.exactOptional(e.boolean())}),Wn=e.object({type:e.literal(6),id:e.exactOptional(m()),customId:h({max:100}),placeholder:e.exactOptional(h({max:150})),defaultValues:e.exactOptional(e.array(q)),minValues:e.exactOptional(m({max:25})),maxValues:e.exactOptional(m({min:1,max:25})),disabled:e.exactOptional(e.boolean())}),Gn=e.object({type:e.literal(7),id:e.exactOptional(m()),customId:h({max:100}),placeholder:e.exactOptional(h({max:150})),defaultValues:e.exactOptional(e.array(q)),minValues:e.exactOptional(m({max:25})),maxValues:e.exactOptional(m({min:1,max:25})),disabled:e.exactOptional(e.boolean())}),Kn=e.object({type:e.literal(8),id:e.exactOptional(m()),customId:e.pipe(h({max:100})),channelTypes:e.exactOptional(e.array(x)),placeholder:e.exactOptional(h({max:150})),defaultValues:e.exactOptional(e.array(q)),minValues:e.exactOptional(m({max:25})),maxValues:e.exactOptional(m({min:1,max:25})),disabled:e.exactOptional(e.boolean())}),qn=e.variant(`type`,[Hn,Un,Wn,Gn,Kn]),Jn=e.object({type:e.literal(1),id:e.exactOptional(m()),components:e.union([p(Ln,{max:5}),Bn,qn])}),J=p(Jn,{max:5}),Yn=e.object({burst:m(),normal:m()}),Xn=e.object({count:e.number(),countDetails:Yn,me:e.boolean(),meBurst:e.boolean(),emoji:e.partial(O),burstColors:e.array(e.string())});let Zn=function(e){return e[e.JOIN=1]=`JOIN`,e[e.SPECTATE=2]=`SPECTATE`,e[e.LISTEN=3]=`LISTEN`,e[e.JOIN_REQUEST=5]=`JOIN_REQUEST`,e}({});const Qn=e.enum_(Zn),$n=e.object({type:Qn,partyId:e.exactOptional(h())}),er=e.object({id:_,guildId:_,type:x,name:e.string()});let tr=function(e){return e[e.DEFAULT=0]=`DEFAULT`,e[e.FORWARD=1]=`FORWARD`,e}({});const nr=e.enum_(tr),rr=e.partial(e.object({type:nr,messageId:_,channelId:_,guildId:_,failIfNotExists:e.boolean()}));let ir=function(e){return e[e.DEFAULT=0]=`DEFAULT`,e[e.RECIPIENT_ADD=1]=`RECIPIENT_ADD`,e[e.RECIPIENT_REMOVE=2]=`RECIPIENT_REMOVE`,e[e.CALL=3]=`CALL`,e[e.CHANNEL_NAME_CHANGE=4]=`CHANNEL_NAME_CHANGE`,e[e.CHANNEL_ICON_CHANGE=5]=`CHANNEL_ICON_CHANGE`,e[e.CHANNEL_PINNED_MESSAGE=6]=`CHANNEL_PINNED_MESSAGE`,e[e.USER_JOIN=7]=`USER_JOIN`,e[e.GUILD_BOOST=8]=`GUILD_BOOST`,e[e.GUILD_BOOST_TIER_1=9]=`GUILD_BOOST_TIER_1`,e[e.GUILD_BOOST_TIER_2=10]=`GUILD_BOOST_TIER_2`,e[e.GUILD_BOOST_TIER_3=11]=`GUILD_BOOST_TIER_3`,e[e.CHANNEL_FOLLOW_ADD=12]=`CHANNEL_FOLLOW_ADD`,e[e.GUILD_DISCOVERY_DISQUALIFIED=14]=`GUILD_DISCOVERY_DISQUALIFIED`,e[e.GUILD_DISCOVERY_REQUALIFIED=15]=`GUILD_DISCOVERY_REQUALIFIED`,e[e.GUILD_DISCOVERY_GRACE_PERIOD_INITIAL_WARNING=16]=`GUILD_DISCOVERY_GRACE_PERIOD_INITIAL_WARNING`,e[e.GUILD_DISCOVERY_GRACE_PERIOD_FINAL_WARNING=17]=`GUILD_DISCOVERY_GRACE_PERIOD_FINAL_WARNING`,e[e.THREAD_CREATED=18]=`THREAD_CREATED`,e[e.REPLY=19]=`REPLY`,e[e.CHAT_INPUT_COMMAND=20]=`CHAT_INPUT_COMMAND`,e[e.THREAD_STARTER_MESSAGE=21]=`THREAD_STARTER_MESSAGE`,e[e.GUILD_INVITE_REMINDER=22]=`GUILD_INVITE_REMINDER`,e[e.CONTEXT_MENU_COMMAND=23]=`CONTEXT_MENU_COMMAND`,e[e.AUTO_MODERATION_ACTION=24]=`AUTO_MODERATION_ACTION`,e[e.ROLE_SUBSCRIPTION_PURCHASE=25]=`ROLE_SUBSCRIPTION_PURCHASE`,e[e.INTERACTION_PREMIUM_UPSELL=26]=`INTERACTION_PREMIUM_UPSELL`,e[e.STAGE_START=27]=`STAGE_START`,e[e.STAGE_END=28]=`STAGE_END`,e[e.STAGE_SPEAKER=29]=`STAGE_SPEAKER`,e[e.STAGE_TOPIC=31]=`STAGE_TOPIC`,e[e.GUILD_APPLICATION_PREMIUM_SUBSCRIPTION=32]=`GUILD_APPLICATION_PREMIUM_SUBSCRIPTION`,e[e.GUILD_INCIDENT_ALERT_MODE_ENABLED=36]=`GUILD_INCIDENT_ALERT_MODE_ENABLED`,e[e.GUILD_INCIDENT_ALERT_MODE_DISABLED=37]=`GUILD_INCIDENT_ALERT_MODE_DISABLED`,e[e.GUILD_INCIDENT_REPORT_RAID=38]=`GUILD_INCIDENT_REPORT_RAID`,e[e.GUILD_INCIDENT_REPORT_FALSE_ALARM=39]=`GUILD_INCIDENT_REPORT_FALSE_ALARM`,e[e.PURCHASE_NOTIFICATION=44]=`PURCHASE_NOTIFICATION`,e[e.POLL_RESULT=46]=`POLL_RESULT`,e}({});const ar=e.enum_(ir),Y=e.enum_({PING:1,APPLICATION_COMMAND:2,MESSAGE_COMPONENT:3,APPLICATION_COMMAND_AUTOCOMPLETE:4,MODAL_SUBMIT:5}),or=e.object({id:_,type:Y,name:h({max:32}),user:D,member:e.exactOptional(e.partial(M))}),sr=e.object({roleSubscriptionListingId:_,tierName:h(),totalMonthsSubscribed:m(),isRenewal:e.boolean()});let cr=function(e){return e[e.CROSSPOSTED=1]=`CROSSPOSTED`,e[e.IS_CROSSPOST=2]=`IS_CROSSPOST`,e[e.SUPPRESS_EMBEDS=4]=`SUPPRESS_EMBEDS`,e[e.SOURCE_MESSAGE_DELETED=8]=`SOURCE_MESSAGE_DELETED`,e[e.URGENT=16]=`URGENT`,e[e.HAS_THREAD=32]=`HAS_THREAD`,e[e.EPHEMERAL=64]=`EPHEMERAL`,e[e.LOADING=128]=`LOADING`,e[e.FAILED_TO_MENTION_SOME_ROLES_IN_THREAD=256]=`FAILED_TO_MENTION_SOME_ROLES_IN_THREAD`,e[e.SUPPRESS_NOTIFICATIONS=4096]=`SUPPRESS_NOTIFICATIONS`,e[e.IS_VOICE_MESSAGE=8192]=`IS_VOICE_MESSAGE`,e[e.HAS_SNAPSHOT=16384]=`HAS_SNAPSHOT`,e[e.IS_COMPONENTS_V2=32768]=`IS_COMPONENTS_V2`,e}({});e.enum_(cr);const X=f(`messageFlag`,cr,`Invalid Message Flag`),lr=e.object({text:e.exactOptional(e.pipe(e.string(),e.nonEmpty())),answers:e.exactOptional(e.partial(O))}),ur=e.object({answerId:e.pipe(e.number(),e.integer(),e.minValue(0)),pollMedia:lr}),dr=e.enum_({DEFAULT:1}),fr=e.object({id:e.pipe(e.number(),e.integer(),e.minValue(0)),count:e.pipe(e.number(),e.integer(),e.minValue(0)),meVoted:e.boolean()}),pr=e.object({isFinalized:e.boolean(),answerCounts:e.array(fr)}),mr=e.object({question:lr,answers:e.pipe(e.array(ur),e.maxLength(10)),expiry:e.nullable(v),allowMultiselect:e.boolean(),layoutType:dr,results:e.exactOptional(pr)}),hr=e.object({message:e.object({type:ar,content:e.string(),embeds:e.array(W),attachments:e.array(K),timestamp:v,editedTimestamp:e.nullable(v),flags:d(X),mentions:e.array(D),mentionRoles:e.array(_),stickers:e.exactOptional(e.array(k)),stickerItems:e.exactOptional(e.array(k)),components:e.exactOptional(e.array(J))})}),gr=e.object({id:_,type:Y,user:D,authoringIntegrationOwners:e.record(e.picklist([`GUILD_INSTALL`,`USER_INSTALL`]),e.union([_,e.literal(0)])),originalResponseMessageId:e.exactOptional(_),targetUser:e.exactOptional(D),targetMessageId:e.exactOptional(_)}),_r=e.object({participants:e.array(_),endedTimestamp:e.nullish(v)}),Z=e.object({id:_,channelId:_,author:D,content:e.string(),timestamp:v,editedTimestamp:e.nullable(v),tts:e.boolean(),mentionEveryone:e.boolean(),mentions:e.array(D),mentionRoles:e.array(_),mentionChannels:e.nullish(e.array(er)),attachments:e.array(K),embeds:e.array(W),reactions:e.exactOptional(e.array(Xn)),nonce:e.exactOptional(e.union([e.number(),e.string()])),pinned:e.boolean(),webhookId:e.exactOptional(_),type:ar,activity:e.exactOptional($n),application:e.exactOptional(e.lazy(()=>e.partial(vt))),applicationId:e.exactOptional(_),flags:d(X),messageReference:e.exactOptional(rr),messageSnapshots:e.exactOptional(e.array(hr)),referencedMessage:e.nullish(e.lazy(()=>Z)),interactionMetadata:e.exactOptional(gr),interaction:e.exactOptional(or),thread:e.exactOptional(H),components:e.exactOptional(e.array(J)),stickerItems:e.exactOptional(e.array(k)),stickers:e.exactOptional(e.array(k)),position:e.exactOptional(m()),roleSubscriptionData:e.exactOptional(sr),resolved:e.exactOptional(e.unknown()),poll:e.exactOptional(mr),call:e.exactOptional(_r)});e.object({channel:_,body:e.object({messages:p(_,{min:2,max:100})})}),e.object({channel:_,body:e.partial(e.object({content:h({max:2e4}),tts:e.boolean(),embeds:e.array(W),allowedMentions:G,messageReference:rr,components:J,stickerIds:p(e.string(),{max:3}),files:e.unknown(),payloadJson:e.string(),attachments:e.array(e.partial(K)),flags:d(X)}))}),e.object({channel:_,message:_,emoji:_}),e.object({channel:_,message:_}),e.object({channel:_,message:_}),e.object({channel:_,message:_,emoji:_}),e.object({channel:_,message:_}),e.object({channel:_,message:_,emoji:_}),e.object({channel:_,message:_,emoji:_,user:_}),e.object({channel:_,message:_,body:e.partial(e.object({content:h({max:2e3}),embeds:p(W,{max:10}),flags:d(X),allowedMentions:G,components:J,files:e.array(e.unknown()),attachments:e.array(K)}))}),e.object({channel:_,message:_}),e.object({channel:_,params:e.exactOptional(e.partial(e.object({around:e.nullish(_),before:e.nullish(_),after:e.nullish(_),limit:e.nullish(m({min:1,max:100}))})))}),e.object({channel:_,params:e.exactOptional(e.partial(e.object({before:e.nullish(_),limit:e.nullish(m({min:1,max:100}))})))}),e.object({channel:_,message:_,emoji:_,params:e.exactOptional(e.partial(e.object({after:e.nullish(_),limit:e.nullish(m({min:1,max:100}))})))}),e.object({channel:_,message:_}),e.object({channel:_,message:_});const vr=e.object({id:_,type:Y,user:D,authoringIntegrationOwners:e.record(e.picklist([`GUILD_INSTALL`,`USER_INSTALL`]),e.union([_,e.literal(0)])),originalResponseMessageId:e.exactOptional(_),interactedMessageId:e.exactOptional(_)});e.object({pinnedAt:v,message:Z}),e.object({id:_,type:Y,user:D,authoringIntegrationOwners:e.record(e.picklist([`GUILD_INSTALL`,`USER_INSTALL`]),e.union([_,e.literal(0)])),originalResponseMessageId:e.exactOptional(_),triggeringInteractionMetadata:e.union([gr,vr])}),e.object({channel:_,body:e.object({name:e.pipe(e.string(),e.minLength(1),e.maxLength(100)),autoArchiveDuration:e.exactOptional(j),rateLimitPerUser:e.exactOptional(e.pipe(e.number(),e.integer(),e.minValue(0),e.maxValue(21600))),message:e.partial(e.object({content:e.pipe(e.string(),e.minLength(1),e.maxLength(2e3)),embeds:e.array(W),allowedMentions:G,components:J,stickerIds:e.pipe(e.array(e.string()),e.maxLength(3)),attachments:e.array(e.partial(K)),flags:d(X)})),appliedTags:e.exactOptional(e.array(_)),files:e.exactOptional(e.unknown()),payloadJson:e.exactOptional(e.unknown())})}),e.object({...V.entries,message:Z}),e.object({channel:_,body:e.object({name:e.pipe(e.string(),e.minLength(1),e.maxLength(100)),autoArchiveDuration:e.exactOptional(j),type:e.exactOptional(x),invitable:e.exactOptional(e.boolean()),rateLimitPerUser:e.nullish(e.pipe(e.number(),e.integer(),e.minValue(0),e.maxValue(21600)))})}),e.object({channel:_}),e.object({threads:e.array(V),members:e.array(kt),hasMore:e.boolean()}),e.object({channelId:_,webhookId:_});const yr=e.object({type:e.literal(10),id:e.exactOptional(m()),content:e.string()}),br=e.object({url:y,proxyUrl:e.exactOptional(y),height:e.nullish(m()),width:e.nullish(m()),contentType:e.exactOptional(h()),attachmentId:_}),xr=e.object({type:e.literal(11),id:e.exactOptional(m()),media:br,description:e.exactOptional(h({max:1024})),spoiler:e.exactOptional(e.boolean())}),Sr=e.object({type:e.literal(9),id:e.exactOptional(m()),components:p(yr,{max:3}),accessroy:e.union([xr,Ln])}),Cr=e.object({media:br,description:e.exactOptional(h({max:1024})),spoiler:e.exactOptional(e.boolean())}),wr=e.object({type:e.literal(12),id:e.exactOptional(m()),items:p(Cr,{max:10})}),Tr=e.object({type:e.literal(13),id:e.exactOptional(m()),file:br,spoiler:e.exactOptional(e.boolean()),name:h(),size:m()}),Er=e.object({type:e.literal(14),id:e.exactOptional(m()),divider:e.exactOptional(e.boolean()),spacing:e.exactOptional(e.picklist([1,2]))}),Dr=e.object({type:e.literal(17),id:e.exactOptional(m()),components:e.array(e.union([Jn,yr,Sr,wr,Er,Tr])),accentColor:e.nullish(m({min:0,max:16777215})),spoiler:e.exactOptional(e.boolean())}),Or=e.union([Jn,Ln,Hn,Bn,Un,Wn,Gn,Kn,Sr,yr,xr,wr,Tr,Er,Dr]);e.object({application:_,body:e.object({name:h(),image:g})}),e.object({guild:_,body:e.object({name:h(),image:g,roles:e.array(_)})}),e.object({application:_,emoji:_}),e.object({guild:_,emoji:_}),e.object({application:_,emoji:_}),e.object({guild:_,emoji:_}),e.object({application:_}),e.object({guild:_}),e.object({application:_,emoji:_,body:e.partial(e.object({name:h()}))}),e.object({guild:_,emoji:_,body:e.partial(e.object({name:h(),roles:e.nullable(e.array(_))}))}),e.object({application:_,entitlement:_}),e.object({application:_,params:e.exactOptional(e.partial(e.object({skuId:_,ownerId:_,ownerType:e.picklist([1,2])})))}),e.object({application:_,entitlement:_}),e.object({application:_,entitlement:_}),e.object({application:_,params:e.exactOptional(e.partial(e.object({userId:_,skuIds:e.pipe(e.string(),e.nonEmpty()),before:_,after:_,limit:e.pipe(e.number(),e.integer(),e.minValue(1),e.maxValue(100)),guildId:_,excludeEnded:e.boolean(),excludeDeleted:e.boolean()})))});const kr=e.enum_({PURCHASE:1,PREMIUM_SUBSCRIPTION:2,DEVELOPER_GIFT:3,TEST_MODE_PURCHASE:4,FREE_PURCHASE:5,USER_GIFT:6,PREMIUM_PURCHASE:7,APPLICATION_SUBSCRIPTION:8}),Ar=e.object({id:_,skuId:_,applicationId:_,userId:e.exactOptional(_),type:kr,deleted:e.boolean(),startsAt:e.nullable(v),endsAt:e.nullable(v),guildId:e.exactOptional(_),consumed:e.exactOptional(e.boolean())});e.object({guild:_,body:e.object({channelId:e.exactOptional(_),entityMetadata:e.exactOptional(Gt),name:e.pipe(e.string(),e.nonEmpty()),privacyLevel:Ht,scheduledStartTime:v,scheduledEndTime:e.exactOptional(v),description:e.exactOptional(e.pipe(e.string(),e.nonEmpty())),entityType:Bt,image:e.exactOptional(g),recurrenceRule:e.exactOptional($t)})}),e.object({guild:_,event:_}),e.object({guild:_,event:_,params:e.exactOptional(e.partial(e.object({withUserCount:e.boolean()})))}),e.object({guild:_,event:_,params:e.exactOptional(e.partial(e.object({limit:e.pipe(e.number(),e.minValue(1),e.maxValue(100)),withMember:e.boolean(),before:_,after:_})))}),e.object({guild:_,params:e.exactOptional(e.partial(e.object({withUserCount:e.boolean()})))}),e.object({guild:_,event:_,body:e.object({channelId:e.nullish(_),entityMetadata:e.nullish(Gt),name:e.exactOptional(e.pipe(e.string(),e.nonEmpty())),privacyLevel:e.exactOptional(Ht),scheduledStartTime:e.exactOptional(v),scheduledEndTime:e.exactOptional(v),description:e.nullish(e.pipe(e.string(),e.nonEmpty())),entityType:e.exactOptional(Bt),status:e.exactOptional(Wt),image:e.exactOptional(g),recurrenceRule:e.exactOptional($t)})}),e.object({guildScheduledEventId:_,user:D,member:e.exactOptional(M)}),e.object({guild:_,user:_,body:e.object({accessToken:e.pipe(e.string(),e.nonEmpty()),nick:e.exactOptional(e.pipe(e.string(),e.nonEmpty())),roles:e.exactOptional(e.array(_)),mute:e.exactOptional(e.boolean()),deaf:e.exactOptional(e.boolean())})}),e.object({guild:_,user:_,role:_}),e.object({guild:_,body:e.object({days:e.pipe(e.number(),e.minValue(1),e.maxValue(30)),computePruneCount:e.boolean(),includeRoles:e.array(_),reason:e.exactOptional(e.pipe(e.string(),e.nonEmpty()))})}),e.object({pruned:e.nullable(e.pipe(e.number(),e.integer(),e.minValue(0)))}),e.object({guild:_,body:e.object({userIds:e.pipe(e.array(_),e.nonEmpty(),e.maxLength(200)),deleteMessageSeconds:e.pipe(e.number(),e.integer(),e.minValue(0),e.maxValue(604800))})}),e.object({body:e.object({name:e.pipe(e.string(),e.minLength(2),e.maxLength(100)),region:e.nullish(e.pipe(e.string(),e.nonEmpty())),icon:e.exactOptional(g),verificationLevel:e.exactOptional(Qe),defaultMessageNotifications:e.exactOptional(it),explicitContentFilter:e.exactOptional(nt),roles:e.exactOptional(e.array(We)),channels:e.exactOptional(e.array(H)),afkChannelId:e.exactOptional(_),afkTimeout:e.exactOptional(e.pipe(e.number(),e.integer(),e.minValue(0))),systemChannelId:e.exactOptional(_),systemChannelFlags:e.exactOptional(d(ct))})}),e.object({guild:_,user:_,body:e.exactOptional(e.partial(e.object({deleteMessageDays:e.pipe(e.number(),e.integer(),e.minValue(1),e.maxValue(7)),deleteMessageSeconds:e.pipe(e.number(),e.integer(),e.minValue(1),e.maxValue(7))})))}),e.object({guild:_,body:e.object({name:e.pipe(e.string(),e.nonEmpty()),type:e.nullish(x),topic:e.nullish(e.pipe(e.string(),e.minLength(0),e.maxLength(1024))),bitrate:e.nullish(e.pipe(e.number(),e.minValue(8e3))),userLimit:e.nullish(e.pipe(e.number(),e.integer(),e.minValue(0))),rateLimitPerYser:e.nullish(e.pipe(e.number(),e.integer(),e.minValue(0),e.maxValue(21600))),position:e.nullish(e.pipe(e.number(),e.integer(),e.minValue(0))),permissionOverwrites:e.nullish(e.array(e.partial(Ct))),parentId:e.nullish(_),nsfw:e.nullish(e.boolean()),rtcRegion:e.nullish(e.pipe(e.string(),e.nonEmpty())),videoQualityMode:e.nullish(jt),defaultAutoArchiveDuration:e.nullish(j),defaultReactionEmoji:e.nullish(F),availableTags:e.nullish(e.array(P)),defaultSortOrder:e.nullish(I),defaultForumLayout:e.nullish(L),defaultThreadRateLimitPerUser:e.nullish(e.pipe(e.number(),e.integer(),e.minValue(0),e.maxValue(21600)))})});const jr=e.object({primaryColor:m({min:0,max:16777215}),secondaryColor:e.nullable(m({min:0,max:16777215})),tertiaryColor:e.nullable(m({min:0,max:16777215}))});e.object({guild:_,body:e.partial(e.object({name:e.pipe(e.string(),e.nonEmpty()),permissions:u(E),color:e.pipe(e.number(),e.integer(),e.minValue(0),e.maxValue(16777215)),colors:jr,hoist:e.boolean(),icon:e.nullable(g),unicodeEmoji:e.nullable(e.pipe(e.string(),e.nonEmpty())),mentionable:e.boolean()}))}),e.object({guild:_}),e.object({guild:_,integration:_}),e.object({guild:_,role:_}),e.object({id:_,params:e.exactOptional(e.partial(e.object({withCounts:e.boolean()})))}),e.object({guild:_,user:_}),e.object({guild:_,params:e.exactOptional(e.partial(e.object({limit:e.pipe(e.number(),e.integer(),e.minValue(1),e.maxValue(1e3)),before:_,after:_})))}),e.object({guild:_}),e.object({guild:_}),e.object({guild:_}),e.object({guild:_,user:_}),e.object({guild:_}),e.object({guild:_}),e.object({guild:_,params:e.exactOptional(e.partial(e.object({days:e.exactOptional(e.pipe(e.number(),e.integer(),e.minValue(1),e.maxValue(30)),7),includeRoles:e.pipe(e.string(),e.nonEmpty())})))}),e.object({pruned:e.pipe(e.number(),e.integer(),e.minValue(0))}),e.object({guild:_,role:_}),e.object({guild:_}),e.object({guild:_}),e.object({guild:_}),e.object({guild:_}),e.object({guild:_}),e.object({guild:_,params:e.exactOptional(e.partial(e.object({style:e.picklist([`shield`,`banner1`,`banner2`,`banner3`,`banner4`])})))}),e.object({guild:_}),e.object({guild:_}),e.object({threads:e.array(V),members:e.array(kt)}),e.object({guild:_,params:e.exactOptional(e.partial(e.object({limit:e.pipe(e.number(),e.integer(),e.minValue(1),e.maxValue(1e3)),after:_})))}),e.object({guild:_,body:e.object({nick:e.nullish(e.pipe(e.string(),e.nonEmpty()))})}),e.object({guild:_,body:e.partial(e.object({name:e.pipe(e.string(),e.nonEmpty()),region:e.nullable(e.pipe(e.string(),e.nonEmpty())),verificationLevel:e.nullable(Qe),defaultMessageNotifications:e.nullable(it),explicitContentFilter:e.nullable(nt),afkChannelId:e.nullable(_),afkTimeout:e.pipe(e.number(),e.integer(),e.minValue(0)),icon:e.nullable(g),ownerId:_,splash:e.nullable(g),discoverySplash:e.nullable(g),banner:e.nullable(g),systemChannelId:e.nullable(_),systemChannelFlags:d(ct),rulesChannelId:e.nullable(_),publicUpdatesChannelId:e.nullable(_),preferredLocale:e.nullable(b),features:e.array(ot),description:e.nullable(e.pipe(e.string(),e.nonEmpty())),premiumProgressBarEnabled:e.boolean(),safetyAlertsChannelId:e.nullable(_)}))}),e.object({guild:_,body:e.array(e.object({id:_,position:e.nullish(e.pipe(e.number(),e.integer(),e.minValue(0))),lockPermissions:e.nullish(e.boolean()),parentId:e.nullish(_)}))}),e.object({guild:_,body:e.object({level:et})});const Mr=e.object({id:_,channelIds:e.array(_),roleIds:e.array(_),emoji:e.exactOptional(O),emojiId:e.exactOptional(_),emojiName:e.exactOptional(e.pipe(e.string(),e.nonEmpty())),emojiAnimated:e.exactOptional(e.boolean()),title:e.pipe(e.string(),e.nonEmpty()),description:e.nullable(e.string())});let Nr=function(e){return e[e.MULTIPLE_CHOICE=0]=`MULTIPLE_CHOICE`,e[e.DROPDOWN=1]=`DROPDOWN`,e}({});const Pr=e.enum_(Nr),Fr=e.object({id:_,type:Pr,options:e.array(Mr),title:e.string(),singleSelect:e.boolean(),required:e.boolean(),inOnboarding:e.boolean()});let Ir=function(e){return e[e.ONBOARDING_DEFAULT=0]=`ONBOARDING_DEFAULT`,e[e.ONBOARDING_ADVANCED=1]=`ONBOARDING_ADVANCED`,e}({});const Lr=e.enum_(Ir);e.object({guild:_,body:e.object({prompts:e.array(Fr),defaultChannelIds:e.array(_),enabled:e.boolean(),mode:Lr})}),e.object({guild:_,body:e.object({invitesDisabledUntil:e.nullish(v),dmsDisabledUntil:e.nullish(v)})}),e.object({guild:_,user:_,body:e.partial(e.object({nick:e.nullish(e.pipe(e.string(),e.nonEmpty())),roles:e.nullish(e.array(_)),mute:e.nullish(e.boolean()),deaf:e.nullish(e.boolean()),channelId:e.nullish(_),communicationDisabledUntil:e.nullish(v),flags:e.nullish(d(Et))}))}),e.object({guild:_,role:_,body:e.partial(e.object({name:e.nullish(e.pipe(e.string(),e.nonEmpty())),permissions:e.nullish(u(E)),color:e.pipe(e.number(),e.integer(),e.minValue(0),e.maxValue(16777215)),colors:jr,hoist:e.nullish(e.boolean()),icon:e.nullish(g),unicodeEmoji:e.nullish(e.pipe(e.string(),e.nonEmpty())),mentionable:e.nullish(e.boolean())}))}),e.object({guild:_,body:e.array(e.object({id:_,position:e.nullish(e.pipe(e.number(),e.integer(),e.minValue(0)))}))}),e.object({guild:_,body:e.partial(e.object({enabled:e.nullish(e.boolean()),welcomeChannels:e.nullish(e.array(Ge)),description:e.nullish(e.pipe(e.string(),e.nonEmpty()))}))});const Rr=e.object({enabled:e.boolean(),channelId:e.nullable(_)});e.object({guild:_,body:e.partial(Rr)}),e.object({guild:_,user:_}),e.object({guild:_,user:_}),e.object({guild:_,user:_,role:_}),e.object({guild:_,params:e.object({query:e.pipe(e.string(),e.nonEmpty()),limit:e.exactOptional(e.pipe(e.number(),e.integer(),e.minValue(1),e.maxValue(1e3)))})});const zr=e.object({label:e.string(),url:e.string()}),Br=e.object({join:e.optional(e.string()),spectate:e.optional(e.string()),match:e.optional(e.string())}),Vr=e.object({largeImage:e.optional(e.string()),largeText:e.optional(e.string()),smallImage:e.optional(e.string()),smallText:e.optional(e.string())}),Hr=e.object({id:_,size:e.optional(e.tuple([e.number(),e.number()]))}),Ur=e.object({name:e.string(),id:e.optional(_),animated:e.optional(e.boolean())}),Wr=e.object({start:e.exactOptional(e.number()),end:e.exactOptional(e.number())}),Gr=e.object({name:e.string(),type:e.number(),url:e.optional(e.string()),createdAt:v,timestamps:e.optional(Wr),applicationId:e.optional(_),details:e.optional(e.string()),state:e.optional(e.string()),emoji:e.optional(Ur),party:e.optional(Hr),assets:e.optional(Vr),secrets:e.optional(Br),instance:e.optional(e.boolean()),flags:e.optional(e.pipe(e.number(),e.integer())),buttons:e.optional(e.array(zr))}),Kr={INSTANCE:1,JOIN:2,SPECTATE:4,JOIN_REQUEST:8,SYNC:16,PLAY:32,PARTY_PRIVACY_FRIENDS:64,PARTY_PRIVACY_VOICE_CHANNEL:128,EMBEDDED:256};e.enum_(Kr),f(`activityFlag`,Kr,`Invalid Activity Flag`),e.object({reason:e.nullable(e.string()),user:D});const qr=e.object({desktop:e.optional(e.string()),mobile:e.optional(e.string()),web:e.optional(e.string())});e.object({guildId:_,prompts:e.array(Fr),defaultChannelIds:e.array(_),enabled:e.boolean(),mode:Lr}),e.object({id:_,name:e.string(),icon:e.exactOptional(e.string()),splash:e.exactOptional(e.string()),discoverySplash:e.exactOptional(e.string()),emojis:e.array(O),features:e.array(ot),approximateMemberCount:m(),approximatePresenceCount:m(),description:e.exactOptional(e.string()),stickers:e.array(k)}),e.object({id:_,name:h({max:100}),instantInvite:e.nullable(h()),channels:e.array(B),members:p(e.partial(D),{max:100}),presenceCount:m()}),e.object({user:D,guildId:_,status:e.union([e.literal(`idle`),e.literal(`dnd`),e.literal(`online`),e.literal(`offline`)]),activities:e.array(Gr),clientStatus:qr});const Q=e.picklist([16,32,64,128,256,512,1024,2048,4096]);e.object({application:_,achievement:_,icon:h(),format:e.exactOptional(e.picklist([`png`,`jpg`,`webp`])),params:e.exactOptional(e.object({size:Q}))}),e.object({application:_,asset:_,format:e.exactOptional(e.picklist([`png`,`jpg`,`webp`])),params:e.exactOptional(e.object({size:Q}))}),e.object({application:_,cover:h(),format:e.exactOptional(e.picklist([`png`,`jpg`,`webp`])),params:e.exactOptional(e.object({size:Q}))}),e.object({application:_,icon:h(),format:e.exactOptional(e.picklist([`png`,`jpg`,`webp`])),params:e.exactOptional(e.object({size:Q}))}),e.object({asset:_,params:e.exactOptional(e.object({size:Q}))}),e.object({emoji:_,format:e.exactOptional(e.picklist([`png`,`jpg`,`webp`,`gif`])),params:e.exactOptional(e.object({size:Q}))}),e.object({index:h()}),e.object({guild:_,banner:h(),format:e.exactOptional(e.picklist([`png`,`jpg`,`webp`,`gif`])),params:e.exactOptional(e.object({size:Q}))}),e.object({guild:_,splash:h(),format:e.exactOptional(e.picklist([`png`,`jpg`,`webp`])),params:e.exactOptional(e.object({size:Q}))}),e.object({guild:_,icon:h(),format:e.exactOptional(e.picklist([`png`,`jpg`,`webp`,`gif`])),params:e.exactOptional(e.object({size:Q}))}),e.object({guild:_,user:_,avatar:h(),format:e.exactOptional(e.picklist([`png`,`jpg`,`webp`,`gif`])),params:e.exactOptional(e.object({size:Q}))}),e.object({guild:_,user:_,banner:h(),format:e.exactOptional(e.picklist([`png`,`jpg`,`webp`,`gif`])),params:e.exactOptional(e.object({size:Q}))}),e.object({event:_,cover:h(),format:e.exactOptional(e.picklist([`png`,`jpg`,`webp`])),params:e.exactOptional(e.object({size:Q}))}),e.object({guild:_,splash:h(),format:e.exactOptional(e.picklist([`png`,`jpg`,`webp`])),params:e.exactOptional(e.object({size:Q}))}),e.object({role:_,icon:h(),format:e.exactOptional(e.picklist([`png`,`jpg`,`webp`])),params:e.exactOptional(e.object({size:Q}))}),e.object({sticker:_,format:e.exactOptional(e.picklist([`png`,`json`,`gif`]))}),e.object({banner:_,format:e.exactOptional(e.picklist([`png`,`jpg`,`webp`])),params:e.exactOptional(e.object({size:Q}))}),e.object({application:_,asset:_,format:e.exactOptional(e.picklist([`png`,`jpg`,`webp`])),params:e.exactOptional(e.object({size:Q}))}),e.object({team:_,icon:h(),format:e.exactOptional(e.picklist([`png`,`jpg`,`webp`])),params:e.exactOptional(e.object({size:Q}))}),e.object({user:_,avatar:h(),format:e.exactOptional(e.picklist([`png`,`jpg`,`webp`,`gif`])),params:e.exactOptional(e.object({size:Q}))}),e.object({user:_,decoration:h(),params:e.exactOptional(e.object({size:Q}))}),e.object({user:_,banner:h(),format:e.exactOptional(e.picklist([`png`,`jpg`,`webp`,`gif`])),params:e.exactOptional(e.object({size:Q}))}),e.object({application:_,token:h(),body:e.partial(e.object({content:h({max:2e3}),tts:e.boolean(),embeds:p(e.object({...W.entries,type:e.literal(`rich`)}),{max:10}),allowedMentions:G,components:e.array(J),files:e.array(e.unknown()),attachments:e.array(e.partial(K)),flags:d(X),threadName:h()}))});const Jr=e.object({id:_,type:Y,activityInstanceId:e.exactOptional(h()),responseMessageId:e.exactOptional(_),responseMessageLoading:e.exactOptional(e.boolean()),responseMessageEphemeral:e.exactOptional(e.boolean())});let Yr=function(e){return e[e.PONG=1]=`PONG`,e[e.CHANNEL_MESSAGE_WITH_SOURCE=4]=`CHANNEL_MESSAGE_WITH_SOURCE`,e[e.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE=5]=`DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE`,e[e.DEFERRED_UPDATE_MESSAGE=6]=`DEFERRED_UPDATE_MESSAGE`,e[e.UPDATE_MESSAGE=7]=`UPDATE_MESSAGE`,e[e.APPLICATION_COMMAND_AUTOCOMPLETE_RESULT=8]=`APPLICATION_COMMAND_AUTOCOMPLETE_RESULT`,e[e.MODAL=9]=`MODAL`,e[e.PREMIUM_REQUIRED=10]=`PREMIUM_REQUIRED`,e[e.LAUNCH_ACTIVITY=12]=`LAUNCH_ACTIVITY`,e}({});const Xr=e.enum_(Yr),Zr=e.object({id:h()}),Qr=e.object({type:Xr,activityInstance:e.exactOptional(Zr),message:e.exactOptional(Z)}),$r=e.object({interaction:Jr,resource:e.exactOptional(Qr)});e.object({interaction:_,token:e.pipe(e.string(),e.nonEmpty()),body:$r,params:e.exactOptional(e.partial(e.object({withResponse:e.boolean()})))}),e.object({application:_,token:e.pipe(e.string(),e.nonEmpty()),message:_}),e.object({application:_,token:e.pipe(e.string(),e.nonEmpty()),params:e.exactOptional(e.partial(e.object({threadId:_})))}),e.object({application:_,token:e.pipe(e.string(),e.nonEmpty()),message:_,body:e.partial(e.object({content:h({max:2e3}),embeds:p(e.object({...W.entries,type:e.literal(`rich`)}),{max:10}),allowedMentions:G,components:e.array(J),files:e.array(e.unknown()),attachments:e.array(e.partial(K))}))}),e.object({application:_,token:h(),params:e.exactOptional(e.partial(e.object({threadId:_}))),body:e.partial(e.object({content:h({max:2e3}),embeds:p(e.object({...W.entries,type:e.literal(`rich`)}),{max:10}),allowedMentions:G,components:e.array(J),files:e.array(e.unknown()),attachments:e.array(e.partial(K))}))}),e.object({application:_,token:h(),message:_,params:e.exactOptional(e.partial(e.object({threadId:_})))}),e.object({application:_,token:h(),params:e.exactOptional(e.partial(e.object({threadId:_})))});const ei=e.object({users:e.exactOptional(e.record(_,D)),members:e.exactOptional(e.record(_,e.partial(e.omit(M,[`user`,`deaf`,`mute`])))),roles:e.exactOptional(e.record(_,We)),channels:e.exactOptional(e.record(_,e.intersect([e.object({id:_,type:x,name:e.nullish(h({max:100})),permissions:u(E)}),e.variant(`type`,[e.object({type:e.picklist([10,12,11]),parentId:e.nullish(h({max:50})),threadMetadata:e.exactOptional(wt)}),e.object({type:x})])]))),messages:e.exactOptional(e.record(_,e.lazy(()=>e.partial(Z)))),attachments:e.exactOptional(e.record(_,K))}),ti=e.object({name:e.pipe(e.string(),e.nonEmpty()),type:Ce,value:e.exactOptional(e.union([e.string(),e.pipe(e.number(),e.integer()),e.number(),e.boolean()])),focused:e.exactOptional(e.boolean())}),ni=e.object({...ti.entries,options:e.exactOptional(e.lazy(()=>e.array(ti)))}),ri=e.object({id:_,name:e.pipe(e.string(),e.nonEmpty()),type:T,resolved:e.exactOptional(ei),options:e.exactOptional(e.array(ni)),guildId:e.exactOptional(_),targetId:e.exactOptional(_)}),ii=e.enum_({GUILD:1,BOT_DM:2,PRIVATE_CHANNEL:3});e.object({id:_,applicationId:_,type:Y,data:e.exactOptional(ri),guild:e.exactOptional(e.partial(A)),guildId:e.exactOptional(_),channel:e.exactOptional(H),channelId:e.exactOptional(_),member:e.exactOptional(M),user:e.exactOptional(e.lazy(()=>D)),token:h(),version:e.literal(1),message:e.exactOptional(e.lazy(()=>Z)),appPermissions:u(E),locale:e.exactOptional(b),guildLocale:e.exactOptional(b),entitlements:e.array(Ar),authorizingIntegrationOwners:e.object(e.entriesFromList(Object.values(gt),_t)),context:e.exactOptional(ii),attachmentSizeLimit:m()});const ai=e.object({question:lr,answers:e.pipe(e.array(ur),e.maxLength(10)),duration:e.exactOptional(e.pipe(e.number(),e.integer(),e.minValue(1),e.maxValue(768))),allowMultiselect:e.exactOptional(e.boolean()),layoutType:dr});e.union([e.object({tts:e.exactOptional(e.boolean()),content:e.exactOptional(h()),embeds:e.exactOptional(p(W,{max:10})),allowedMentions:e.exactOptional(G),flags:e.exactOptional(m()),components:e.exactOptional(J),attachments:e.exactOptional(e.array(e.partial(K))),poll:e.exactOptional(ai)}),e.object({choices:p(we,{max:25})}),e.object({customId:h({max:100}),title:h({max:45}),components:p(Or,{max:5})})]),e.object({customId:h({max:100}),componentType:Pn,values:e.exactOptional(e.array(Vn)),resolved:e.exactOptional(ei)}),e.object({customId:h({max:100}),components:e.array(J)}),e.object({code:h()}),e.object({code:h(),params:e.exactOptional(e.partial(e.object({withCounts:e.boolean(),withExpiration:e.boolean(),guildScheduledEventId:_})))});const oi=e.object({members:e.array(e.partial(M)),participantCount:m(),speakerCount:m(),topic:h({max:120})}),si=e.enum_({GUILD:0,GROUP_DM:1,FRIEND:2}),ci=e.object({type:si,code:e.string(),guild:e.exactOptional(e.partial(A)),channel:e.nullable(H),inviter:e.exactOptional(D),targetType:e.exactOptional(Tn),targetUser:e.exactOptional(D),targetApplication:e.exactOptional(e.lazy(()=>e.partial(vt))),approximatePresenceCount:e.exactOptional(m()),approximateMemberCount:e.exactOptional(m()),expiresAt:e.nullish(v),stageInstance:e.exactOptional(oi),guildScheduledEvent:e.exactOptional(en)});e.object({...ci.entries,uses:m(),maxUses:m(),maxAge:m(),temporary:e.boolean(),createdAt:v});let li=function(e){return e[e.CanLinkLobby=1]=`CanLinkLobby`,e}({});e.enum_(li);const $=f(`lobbyMemberFlag`,li);e.object({lobby:_,user:_,body:e.exactOptional(e.partial(e.object({metadata:e.nullish(e.pipe(e.record(e.string(),e.string()),e.maxEntries(1e3))),flags:d($)})))}),e.object({body:e.partial(e.object({metadata:e.nullish(e.pipe(e.record(e.string(),e.string()),e.maxEntries(1e3))),members:e.pipe(e.array(e.object({id:_,metadata:e.nullish(e.pipe(e.record(e.string(),e.string()),e.maxEntries(1e3))),flags:e.exactOptional(d($))})),e.maxLength(25)),idleTimeoutSeconds:e.pipe(e.number(),e.integer(),e.minValue(5),e.maxValue(604800))}))}),e.object({lobby:_}),e.object({lobby:_}),e.object({lobby:_}),e.object({lobby:_,body:e.partial(e.object({channelId:_}))}),e.object({lobby:_,body:e.partial(e.object({metadata:e.nullish(e.pipe(e.record(e.string(),e.string()),e.maxEntries(1e3))),members:e.pipe(e.array(e.object({id:_,metadata:e.nullish(e.pipe(e.record(e.string(),e.string()),e.maxEntries(1e3))),flags:e.exactOptional(d($))})),e.maxLength(25)),idleTimeoutSeconds:e.pipe(e.number(),e.integer(),e.minValue(5),e.maxValue(604800))}))}),e.object({lobby:_,user:_}),e.object({lobby:_});const ui=e.object({id:_,metaday:e.nullish(e.pipe(e.record(e.string(),e.string()),e.maxEntries(1e3))),flags:e.exactOptional(d($))});e.object({id:_,applicationId:_,metadata:e.nullable(e.pipe(e.record(e.string(),e.string()),e.maxEntries(1e3))),members:e.array(ui),linkedChannel:e.exactOptional(e.object({...z.entries,type:e.literal(0),nsfw:e.literal(!1)}))}),e.object({channel:_,message:_}),e.object({channel:_,message:_,answer:e.pipe(e.number(),e.integer(),e.minValue(0)),params:e.exactOptional(e.partial(e.object({after:_,limit:e.pipe(e.number(),e.integer(),e.minValue(1),e.maxValue(100))})))}),e.object({application:_});const di=e.enum_({DURABLE:2,CONSUMABLE:3,SUBSCRIPTION:5,SUBSCRIPTION_GROUP:6});let fi=function(e){return e[e.AVAILABLE=4]=`AVAILABLE`,e[e.GUILD_SUBSCRIPTION=128]=`GUILD_SUBSCRIPTION`,e[e.USER_SUBSCRIPTION=256]=`USER_SUBSCRIPTION`,e}({});e.enum_(fi);const pi=f(`skuFlag`,fi);e.object({id:_,type:di,applicationId:_,name:h(),slug:y,flags:d(pi)}),e.object({guild:_,body:e.object({name:h({min:2,max:32}),sound:g,volumn:e.nullish(e.pipe(e.number(),e.minValue(0),e.maxValue(1))),emojiId:e.nullish(_),emojiName:e.nullish(h())})}),e.object({guild:_,sound:_}),e.object({guild:_,sound:_}),e.object({guild:_}),e.object({guild:_,sound:_,body:e.partial(e.object({name:h({min:2,max:32}),volumn:e.nullable(e.pipe(e.number(),e.minValue(0),e.maxValue(1))),emojiId:e.nullable(_),emojiName:e.nullable(h())}))}),e.object({channel:_,body:e.object({soundId:_,sourceGuildId:e.exactOptional(_)})}),e.object({name:h(),soundId:_,volume:e.pipe(e.number(),e.minValue(0),e.maxValue(1)),emojiId:e.nullable(_),emojiName:e.nullable(h()),guildId:e.exactOptional(_),available:e.boolean(),user:e.exactOptional(D)});const mi=e.enum_({PUBLIC:1,GUILD_ONLY:2});e.object({body:e.object({channelId:_,topic:h({max:120}),privacyLevel:e.exactOptional(mi),sendStartNotification:e.exactOptional(e.boolean())})}),e.object({channel:_}),e.object({channel:_}),e.object({channel:_,body:e.partial(e.object({topic:h({max:120}),privacyLevel:mi}))}),e.object({id:_,guildId:_,channelId:_,topic:h(),privacyLevel:mi,discoverableDisabled:e.boolean(),guildScheduledEventId:e.nullable(_)}),e.object({guild:_,body:e.object({name:h({min:2,max:30}),description:h({min:2,max:100}),tags:h({max:200}),file:e.unknown()})}),e.object({guild:_,sticker:_}),e.object({guild:_,sticker:_}),e.object({sticker:_}),e.object({guild:_});const hi=e.object({id:_,stickers:e.array(k),name:h(),skuId:_,coverStickerId:e.exactOptional(_),description:h(),bannerAssetId:e.exactOptional(_)});e.object({stickerPacks:e.array(hi)}),e.object({guild:_,sticker:_,body:e.partial(e.object({name:h({min:2,max:30}),description:h({min:2,max:100}),tags:h({max:200})}))}),e.object({id:_,name:h({min:2,max:30}),formatType:Re}),e.object({sku:_,subscription:_}),e.object({sku:_,params:e.exactOptional(e.partial(e.object({before:_,after:_,limit:e.pipe(e.number(),e.integer(),e.minValue(1),e.maxValue(100)),userId:_})))});const gi=e.enum_({ACTIVE:0,ENDING:1,INACTIVE:2});e.object({id:_,userId:_,skuIds:e.array(_),entitlementIds:e.array(_),renewalSkuIds:e.nullable(e.array(_)),currentPeriodStart:v,currentPeriodEnd:v,status:gi,canceledAt:e.nullable(v),country:e.exactOptional(e.pipe(e.string(),e.nonEmpty()))}),e.object({template:_,body:e.object({name:e.pipe(e.string(),e.minLength(2),e.maxLength(100)),icon:e.nullish(g)})}),e.object({guild:_,body:e.object({name:e.pipe(e.string(),e.minLength(1),e.maxLength(100)),description:e.nullish(e.pipe(e.string(),e.minLength(0),e.maxLength(120)))})}),e.object({guild:_,template:_}),e.object({template:_}),e.object({guild:_}),e.object({guild:_,template:_,body:e.partial(e.object({name:e.pipe(e.string(),e.minLength(1),e.maxLength(100)),description:e.nullish(e.pipe(e.string(),e.minLength(1),e.maxLength(120)))}))}),e.object({guild:_,template:_}),e.object({code:h(),name:h(),description:e.nullable(e.string()),usageCount:m(),creatorId:_,creator:D,createdAt:v,updatedAt:v,sourceGuildId:_,serializedSourceGuild:e.partial(A),isDirty:e.nullable(e.boolean())}),e.object({body:e.object({recipientId:_})}),e.object({body:e.object({accessTokens:e.array(e.string()),nicks:e.record(e.pipe(e.string(),e.minLength(1)),e.string())})}),e.object({application:_}),e.object({guild:_}),e.object({params:e.exactOptional(e.partial(e.object({before:_,after:_,limit:e.pipe(e.number(),e.integer(),e.minValue(1),e.maxValue(200)),withCounts:e.boolean()})))}),e.object({user:_}),e.object({guild:_}),e.object({body:e.partial(e.object({username:e.pipe(e.string(),e.nonEmpty()),avatar:e.nullable(g),banner:e.nullable(g)}))}),e.object({application:_,body:e.partial(e.object({platformName:e.nullish(e.string()),platformUsername:e.nullish(e.string()),metadata:e.record(e.pipe(e.string(),e.minLength(1),e.maxLength(50),e.regex(/[a-z0-9_]/)),e.nullish(e.pipe(e.string(),e.maxLength(100))))}))}),e.object({platformName:e.nullable(e.string()),platformUsername:e.nullable(e.string()),metadata:e.record(e.pipe(h({max:50}),e.regex(/[a-z0-9_]/)),h({max:100}))});let _i=function(e){return e[e.NONE=0]=`NONE`,e[e.EVERYONE=1]=`EVERYONE`,e}({});const vi=e.enum_(_i),yi=`amazon-music.battlenet.bungie.bluesky.crunchyroll.domain.ebay.epicgames.facebook.github.instagram.leagueoflegends.mastodon.paypal.playstation.reddit.riotgames.roblox.spotify.skype.steam.tiktok.twitch.twitter.xbox.youtube`.split(`.`),bi=e.picklist(yi);e.object({id:h(),name:h(),type:bi,revoked:e.exactOptional(e.boolean()),integrations:e.exactOptional(e.array(on)),verified:e.boolean(),friendSync:e.boolean(),showActivity:e.boolean(),twoWayLink:e.boolean(),visibility:vi}),e.object({guild:_}),e.object({guild:_,user:_}),e.object({guild:_,body:e.partial(e.object({channelId:_,suppress:e.boolean(),requestToSpeakTimestamp:v}))}),e.object({guild:_,user:_,body:e.object({channelId:_,suppress:e.exactOptional(e.boolean())})}),e.object({id:e.string(),name:e.string(),optimal:e.boolean(),deprecated:e.boolean(),custom:e.boolean()}),e.object({guildId:e.exactOptional(_),channelId:e.nullable(_),userId:_,member:e.exactOptional(M),sessionId:h(),deaf:e.boolean(),mute:e.boolean(),selfDeaf:e.boolean(),selfMute:e.boolean(),selfStream:e.exactOptional(e.boolean()),selfVideo:e.boolean(),suppress:e.boolean(),requestToSpeakTimestamp:e.nullable(v)}),e.object({channel:_,body:e.object({name:h({max:80}),avatar:y})}),e.object({webhook:_}),e.object({webhook:_,token:h(),message:_,params:e.exactOptional(e.partial(e.object({threadId:_})))}),e.object({webhook:_,token:h()}),e.object({webhook:_,token:h(),message:_,params:e.exactOptional(e.partial(e.object({threadId:_,withComponents:e.boolean()}))),body:e.partial(e.object({content:h({max:2e3}),embeds:p(e.object({...W.entries,type:e.literal(`rich`)}),{max:10}),allowedMentions:G,components:e.array(J),files:e.array(e.unknown()),payloadJson:e.string(),attachments:e.array(e.partial(K)),poll:mr}))}),e.object({webhook:_,token:h(),params:e.exactOptional(e.partial(e.object({threadId:_,wait:e.exactOptional(e.boolean())})))}),e.object({webhook:_,token:h(),params:e.exactOptional(e.partial(e.object({threadId:_,wait:e.exactOptional(e.boolean())})))});const xi=e.object({webhook:_,token:h(),params:e.exactOptional(e.partial(e.object({wait:e.exactOptional(e.boolean()),threadId:_,withComponents:e.boolean()}))),body:e.partial(e.object({content:h({max:2e3}),username:h(),avatarUrl:y,tts:e.boolean(),embeds:p(e.object({...W.entries,type:e.literal(`rich`)}),{max:10}),allowedMentions:G,components:e.array(J),files:e.array(e.unknown()),payloadJson:e.string(),attachments:e.array(e.partial(K)),flags:d(X),threadName:h(),appliedTags:e.array(_),poll:mr}))}),Si=async({webhook:e,token:t,params:n,body:r})=>me(le(`/webhooks/${e}/${t}`,n).href,r);e.object({channel:_}),e.object({guild:_}),e.object({webhook:_}),e.object({webhook:_,token:h(),message:_,params:e.exactOptional(e.partial(e.object({threadId:_})))}),e.object({webhook:_,token:h()}),e.object({webhook:_,body:e.exactOptional(e.partial(e.object({name:h(),avatar:y,channelId:_})))}),e.object({webhook:_,token:h(),body:e.exactOptional(e.partial(e.object({name:h(),avatar:y})))});const Ci=he(Si,xi),wi=`must be a string`,Ti=`must not be empty`,Ei=o(i({INPUT_WEBHOOK:a(te(wi),r(Ti)),INPUT_TOKEN:a(te(wi),r(Ti)),INPUT_CONTENT:a(te(wi),r(Ti))},e=>`Required environment variable ${e.expected} is missing!`),process.env);if(Ei.issues)throw Error(s(Ei.issues));const{INPUT_WEBHOOK:Di,INPUT_TOKEN:Oi,INPUT_CONTENT:ki}=Ei.output;try{console.info(`Running discord webhook action...`),await Ci({webhook:Di,token:Oi,body:{content:ki}})}catch(e){e instanceof Error&&console.error(e.message),process.exit(1)}export{};
+`,
+              { body: n }
+            ),
+            Error(`Failed to stringify request body!`, { cause: e })
+          );
+        }
+      })()
+    );
+    if (!r.ok)
+      throw Error(
+        `Request to resource '${e.toString()}' failed:\n\n${r.statusText}`
+      );
+    if (r.status !== 204) return fe(await r.json());
+  },
+  me = async (e, t) => pe(le(e), `POST`, t),
+  he = (e, t, r) =>
+    new Proxy(e, {
+      async apply(e, i, [a]) {
+        if (t && n(`schema`, t)) {
+          let { issues: e } = await ee(t, a);
+          if (e)
+            throw Error(
+              `Failed to parse input schema: ${t.reference.name}\n\n${s(e)}`
+            );
+        }
+        let o = await e(a);
+        if (r && n(`schema`, r)) {
+          let { issues: e } = await ee(r, o);
+          if (e)
+            throw Error(
+              `Failed to parse input schema: ${r.reference.name}\n\n${s(e)}`
+            );
+        }
+        return o;
+      }
+    });
+(() => {
+  if (globalThis.crypto !== void 0) return globalThis.crypto.subtle;
+  if (typeof global < `u` && global.crypto?.subtle) return global.crypto.subtle;
+  if (typeof window < `u` && window.crypto?.subtle) return window.crypto.subtle;
+  throw Error(`SubtleCrypto is not available in this environment`);
+})();
+const u = (t) =>
+    e.pipe(
+      t,
+      e.transform((e) => e.toString()),
+      e.digits()
+    ),
+  d = (t) =>
+    e.pipe(
+      t,
+      e.transform((e) => parseInt(e.toString(), 10)),
+      e.integer()
+    ),
+  ge = (e) => typeof e == `string` && /^\d+$/.test(e),
+  f = (e, n, r = `Invalid Bitfield`) => {
+    let i = Object.values(n).filter((e) => !isNaN(Number(e)));
+    if (!i.every((e) => typeof e == typeof i[0]))
+      throw Error(`Provided Flags enum must contain values of the same type`);
+    let o = i.reduce((e, t) => e | BigInt(t), 0n);
+    return a(
+      t(
+        (e) =>
+          oe(e) && (typeof e == `number` || typeof e == `bigint` || ge(e))
+            ? (BigInt(e) & o) === BigInt(e)
+            : !1,
+        r
+      ),
+      ne(e)
+    );
+  },
+  p = (t, n = {}) =>
+    e.message(
+      typeof n == `number`
+        ? e.pipe(e.array(t), e.length(n))
+        : typeof n.max == `number`
+          ? e.pipe(e.array(t), e.minLength(n.min ?? 1), e.maxLength(n.max))
+          : e.pipe(e.array(t), e.minLength(n.min ?? 1)),
+      (e) =>
+        `Expected an array with a legnth ${typeof n == `number` ? n : `>= ${n.min ?? 0}${n.max ? `&& <= ${n.max}` : ``}`}, received has length: ${e.received.length}`
+    ),
+  m = (t = {}) =>
+    e.message(
+      typeof t == `number`
+        ? e.pipe(e.number(), e.integer(), e.value(t))
+        : typeof t.max == `number`
+          ? e.pipe(
+              e.number(),
+              e.integer(),
+              e.minValue(t.min ?? 0),
+              e.maxValue(t.max)
+            )
+          : e.pipe(e.number(), e.integer(), e.minValue(t.min ?? 0)),
+      (e) =>
+        `Expected an integer with a value ${typeof t == `number` ? `of ${t}` : `>= ${t.min ?? 0}${t.max ? `&& <= ${t.max}` : ``}`}, received has value: ${e.received.length}`
+    ),
+  h = (t = {}) =>
+    e.message(
+      typeof t == `number`
+        ? e.pipe(e.string(), e.length(t))
+        : typeof t.max == `number`
+          ? e.pipe(e.string(), e.minLength(t.min ?? 1), e.maxLength(t.max))
+          : e.pipe(e.string(), e.minLength(t.min ?? 1)),
+      (e) =>
+        `Expected a string with a legnth ${typeof t == `number` ? t : `>= ${t.min ?? 0}${t.max ? `&& <= ${t.max}` : ``}`}, received has length: ${e.received.length}`
+    ),
+  _e =
+    /^data:((?<mediaType>(?<mimeType>[a-z]+\/[a-z0-9-+.]+)(?<params>;[a-z0-9-.!#$%*+.{}|~`]+=[a-z0-9-.!#$%*+.{}()_|~`]+)*))?(?<encoding>;base64)?,(?<data>[a-z0-9!$&',()*+;=\-._~:@\/?%\s<>]*?)$/i,
+  ve = (e) => _e.exec(e)?.groups ?? {},
+  ye = (e) =>
+    typeof Buffer < `u`
+      ? Buffer.from(e, `base64`).toString()
+      : atob(
+          btoa(String.fromCharCode(...new TextEncoder().encode(e)))
+            .replace(/\+/g, `-`)
+            .replace(/\//g, `_`)
+            .replace(/=/g, ``)
+        ),
+  g = e.pipe(
+    e.custom(
+      (e) => typeof e == `string` && e.length > 0 && _e.test(e),
+      `Invalid Data URI`
+    ),
+    e.title(`datauri`)
+  );
+re((e) => {
+  let { mimeType: t, data: n } = ve(e);
+  if (t === void 0 || n === void 0)
+    throw Error(`Received badly formatted Data URI`);
+  let r = ye(n),
+    i = new ArrayBuffer(r.length),
+    a = new Uint8Array(i);
+  for (let e = 0; e < r.length; e++) a[e] = r.charCodeAt(e);
+  return new Blob([i], { type: t });
+});
+const be = (e, t = 1420070400000n) => new Date(Number((BigInt(e) >> 22n) + t)),
+  _ = e.pipe(
+    e.custom(
+      (e) =>
+        oe(e) &&
+        (typeof e == `bigint` || typeof e == `number` || ge(e)) &&
+        be(e).getTime() >= 1420070400000n,
+      `Invalid Snowflake`
+    ),
+    e.title(`snowflake`)
+  ),
+  v = e.message(
+    e.pipe(e.string(), e.isoTimestamp()),
+    (e) => `Expected a valid timestamp, received: ${e.received}`
+  ),
+  y = e.message(
+    e.pipe(e.string(), e.url()),
+    (e) => `Expected a valid URL, received: ${e.received}`
+  ),
+  xe =
+    `id.da.de.en-GB.en-US.es-ES.fr.hr.it.lt.hu.nl.no.pl.pt-BR.ro.fi.sv-SE.vi.tr.cs.el.bg.ru.uk.hi.th.zh-CN.ja.zh-TW.ko`.split(
+      `.`
+    ),
+  b = e.picklist(xe);
+let Se = (function (e) {
+  return (
+    (e[(e.GUILD_TEXT = 0)] = `GUILD_TEXT`),
+    (e[(e.DM = 1)] = `DM`),
+    (e[(e.GUILD_VOICE = 2)] = `GUILD_VOICE`),
+    (e[(e.GROUP_DM = 3)] = `GROUP_DM`),
+    (e[(e.GUILD_CATEGORY = 4)] = `GUILD_CATEGORY`),
+    (e[(e.GUILD_ANNOUNCEMENT = 5)] = `GUILD_ANNOUNCEMENT`),
+    (e[(e.ANNOUNCEMENT_THREAD = 10)] = `ANNOUNCEMENT_THREAD`),
+    (e[(e.PUBLIC_THREAD = 11)] = `PUBLIC_THREAD`),
+    (e[(e.PRIVATE_THREAD = 12)] = `PRIVATE_THREAD`),
+    (e[(e.GUILD_STAGE_VOICE = 13)] = `GUILD_STAGE_VOICE`),
+    (e[(e.GUILD_DIRECTORY = 14)] = `GUILD_DIRECTORY`),
+    (e[(e.GUILD_FORUM = 15)] = `GUILD_FORUM`),
+    (e[(e.GUILD_MEDIA = 16)] = `GUILD_MEDIA`),
+    e
+  );
+})({});
+const x = e.enum_(Se),
+  S = {
+    SUB_COMMAND: 1,
+    SUB_COMMAND_GROUP: 2,
+    STRING: 3,
+    INTEGER: 4,
+    BOOLEAN: 5,
+    USER: 6,
+    CHANNEL: 7,
+    ROLE: 8,
+    MENTIONABLE: 9,
+    NUMBER: 10,
+    ATTACHMENT: 11
+  },
+  Ce = e.enum_(S),
+  we = e.object({
+    name: h({ max: 100 }),
+    nameLocalizations: e.nullish(e.record(b, h({ max: 100 }))),
+    value: e.union([h({ max: 100 }), m(), e.number()])
+  }),
+  C = e.intersect([
+    e.object({
+      name: h({ max: 32 }),
+      nameLocalizations: e.nullish(e.record(b, h({ max: 32 }))),
+      description: h({ max: 100 }),
+      descriptionLocalizations: e.nullish(e.record(b, h({ max: 100 }))),
+      required: e.nullish(e.boolean()),
+      choices: e.nullish(p(we, { max: 25 })),
+      channelTypes: e.nullish(e.array(x)),
+      autocomplete: e.nullish(e.boolean())
+    }),
+    e.union([
+      e.object({ type: Ce }),
+      e.variant(`type`, [
+        e.object({
+          type: e.union([
+            e.literal(S.SUB_COMMAND),
+            e.literal(S.SUB_COMMAND_GROUP)
+          ]),
+          options: e.lazy(() => e.nullish(e.array(C)))
+        }),
+        e.object({
+          type: e.literal(S.STRING),
+          minLength: e.nullable(m({ max: 6e3 })),
+          maxLength: e.nullable(m({ max: 6e3 }))
+        }),
+        e.object({
+          type: e.literal(S.INTEGER),
+          minValue: e.nullable(m()),
+          maxValue: e.nullable(m())
+        }),
+        e.object({
+          type: e.literal(S.NUMBER),
+          minValue: e.nullable(e.number()),
+          maxValue: e.nullable(e.number())
+        })
+      ])
+    ])
+  ]),
+  w = { CHAT_INPUT: 1, USER: 2, MESSAGE: 3, PRIMARY_ENTRY_POINT: 4 },
+  T = e.enum_(w),
+  Te = {
+    CREATE_INSTANT_INVITE: 1,
+    KICK_MEMBERS: 2,
+    BAN_MEMBERS: 4,
+    ADMINISTRATOR: 8,
+    MANAGE_CHANNELS: 16,
+    MANAGE_GUILD: 32,
+    ADD_REACTIONS: 64,
+    VIEW_AUDIT_LOG: 128,
+    PRIORITY_SPEAKER: 256,
+    STREAM: 512,
+    VIEW_CHANNEL: 1024,
+    SEND_MESSAGES: 2048,
+    SEND_TTS_MESSAGES: 4096,
+    MANAGE_MESSAGES: 8192,
+    EMBED_LINKS: 16384,
+    ATTACH_FILES: 32768,
+    READ_MESSAGE_HISTORY: 65536,
+    MENTION_EVERYONE: 131072,
+    USE_EXTERNAL_EMOJIS: 262144,
+    VIEW_GUILD_INSIGHTS: 524288,
+    CONNECT: 1048576,
+    SPEAK: 2097152,
+    MUTE_MEMBERS: 4194304,
+    DEAFEN_MEMBERS: 8388608,
+    MOVE_MEMBERS: 16777216,
+    USE_VAD: 33554432,
+    CHANGE_NICKNAME: 67108864,
+    MANAGE_NICKNAMES: 134217728,
+    MANAGE_ROLES: 268435456,
+    MANAGE_WEBHOOKS: 536870912,
+    MANAGE_GUILD_EXPRESSIONS: 1073741824,
+    USE_APPLICATION_COMMANDS: 2147483648,
+    REQUEST_TO_SPEAK: 4294967296,
+    MANAGE_EVENTS: 8589934592,
+    MANAGE_THREADS: 17179869184,
+    CREATE_PUBLIC_THREADS: 34359738368,
+    CREATE_PRIVATE_THREADS: 68719476736,
+    USE_EXTERNAL_STICKERS: 137438953472,
+    SEND_MESSAGES_IN_THREADS: 274877906944,
+    USE_EMBEDDED_ACTIVITIES: 549755813888,
+    MODERATE_MEMBERS: 1099511627776,
+    VIEW_CREATOR_MONETIZATION_ANALYTICS: 2199023255552,
+    USE_SOUNDBOARD: 4398046511104,
+    CREATE_GUILD_EXPRESSIONS: 8796093022208,
+    CREATE_EVENTS: 17592186044416,
+    USE_EXTERNAL_SOUNDS: 35184372088832,
+    SEND_VOICE_MESSAGES: 70368744177664,
+    SEND_POLLS: 562949953421312,
+    USE_EXTERNAL_APPS: 0x4000000000000
+  };
+e.enum_(Te);
+const E = f(`permissionFlag`, Te, `Invalid Permissions Flag`),
+  Ee = e.intersect([
+    e.object({
+      id: _,
+      applicationId: _,
+      guildId: e.exactOptional(_),
+      name: h({ max: 32 }),
+      nameLocalizations: e.nullish(e.record(b, h({ max: 32 }))),
+      description: e.exactOptional(h({ min: 0, max: 100 })),
+      descriptionLocalizations: e.nullish(e.record(b, h({ min: 0, max: 100 }))),
+      defaultMemberPermissions: e.nullable(u(E)),
+      dmPermission: e.exactOptional(e.boolean()),
+      defaultPermission: e.exactOptional(e.boolean()),
+      nsfw: e.exactOptional(e.boolean()),
+      version: _
+    }),
+    e.union([
+      e.object({ type: e.exactOptional(T) }),
+      e.variant(`type`, [
+        e.object({
+          type: e.literal(w.CHAT_INPUT),
+          options: e.exactOptional(p(C, { max: 25 }))
+        }),
+        e.object({ type: e.literal(w.PRIMARY_ENTRY_POINT) })
+      ])
+    ])
+  ]);
+(e.object({ application: _, body: e.pipe(e.array(Ee), e.maxLength(25)) }),
+  e.object({
+    application: _,
+    guild: _,
+    body: e.pipe(
+      e.array(
+        e.object({
+          id: e.nullish(_),
+          name: h({ max: 32 }),
+          nameLocalizations: e.nullish(e.record(b, h({ max: 32 }))),
+          description: h({ max: 100 }),
+          descriptionLocalizations: e.nullish(e.record(b, h({ max: 100 }))),
+          options: e.nullish(e.array(C)),
+          defaultMemberPermissions: e.nullish(u(E)),
+          dmPermission: e.nullish(e.boolean()),
+          defaultPermission: e.nullish(e.boolean()),
+          type: e.nullish(T, w.CHAT_INPUT),
+          nsfw: e.nullish(e.boolean())
+        })
+      ),
+      e.maxLength(25)
+    )
+  }),
+  e.object({
+    application: _,
+    body: e.object({
+      name: h({ max: 32 }),
+      nameLocalizations: e.nullish(e.record(b, h({ max: 32 }))),
+      description: e.nullish(h({ max: 100 })),
+      descriptionLocalizations: e.nullish(e.record(b, h({ max: 100 }))),
+      options: e.nullish(e.array(C)),
+      defaultMemberPermissions: e.nullish(u(E)),
+      dmPermission: e.nullish(e.boolean()),
+      defaultPermission: e.nullish(e.boolean(), !0),
+      type: e.nullish(T, w.CHAT_INPUT),
+      nsfw: e.nullish(e.boolean())
+    })
+  }),
+  e.object({
+    application: _,
+    guild: _,
+    body: e.object({
+      name: h({ max: 32 }),
+      nameLocalizations: e.nullish(e.record(b, h({ max: 32 }))),
+      description: e.nullish(h({ max: 100 })),
+      descriptionLocalizations: e.nullish(e.record(b, h({ max: 100 }))),
+      options: e.nullish(e.array(C)),
+      defaultMemberPermissions: e.nullish(u(E)),
+      dmPermission: e.nullish(e.boolean()),
+      defaultPermission: e.nullish(e.boolean(), !0),
+      type: e.nullish(T, w.CHAT_INPUT),
+      nsfw: e.nullish(e.boolean())
+    })
+  }),
+  e.object({ application: _, command: _ }),
+  e.object({ application: _, guild: _, command: _ }));
+const De = e.enum_({ ROLE: 1, USER: 2, CHANNEL: 3 }),
+  Oe = e.object({ id: _, type: De, permission: e.boolean() });
+(e.object({
+  application: _,
+  guild: _,
+  command: _,
+  body: e.object({ permissions: p(Oe, { max: 100 }) })
+}),
+  e.object({
+    application: _,
+    command: _,
+    body: e.partial(
+      e.object({
+        name: e.nullish(h({ max: 32 })),
+        nameLocalizations: e.nullish(e.record(b, h({ max: 32 }))),
+        description: e.nullish(h({ max: 100 })),
+        descriptionLocalizations: e.nullish(e.record(b, h({ max: 100 }))),
+        options: e.nullish(e.array(C)),
+        defaultMemberPermissions: e.nullish(u(E)),
+        dmPermission: e.nullish(e.boolean()),
+        defaultPermission: e.nullish(e.boolean()),
+        nsfw: e.nullish(e.boolean())
+      })
+    )
+  }),
+  e.object({
+    application: _,
+    guild: _,
+    command: _,
+    body: e.partial(
+      e.object({
+        name: e.nullish(h({ max: 32 })),
+        nameLocalizations: e.nullish(e.record(b, h({ max: 32 }))),
+        description: e.nullish(h({ max: 100 })),
+        descriptionLocalizations: e.nullish(e.record(b, h({ max: 100 }))),
+        options: e.nullish(e.array(C)),
+        defaultMemberPermissions: e.nullish(u(E)),
+        dmPermission: e.nullish(e.boolean()),
+        defaultPermission: e.nullish(e.boolean()),
+        nsfw: e.nullish(e.boolean())
+      })
+    )
+  }),
+  e.object({ application: _, guild: _, command: _ }),
+  e.object({ application: _, command: _ }),
+  e.object({
+    application: _,
+    params: e.exactOptional(
+      e.object({ withLocalizations: e.nullish(e.boolean()) })
+    )
+  }),
+  e.object({ application: _, guild: _, command: _ }),
+  e.object({ application: _, guild: _ }),
+  e.object({
+    application: _,
+    guild: _,
+    params: e.exactOptional(
+      e.object({ withLocalizations: e.nullish(e.boolean()) })
+    )
+  }));
+let ke = (function (e) {
+  return (
+    (e[(e.None = 0)] = `None`),
+    (e[(e.NitroClassic = 1)] = `NitroClassic`),
+    (e[(e.Nitro = 2)] = `Nitro`),
+    (e[(e.NitroBasic = 3)] = `NitroBasic`),
+    e
+  );
+})({});
+const Ae = e.enum_(ke);
+let je = (function (e) {
+  return (
+    (e[(e.STAFF = 1)] = `STAFF`),
+    (e[(e.PARTNER = 2)] = `PARTNER`),
+    (e[(e.HYPESQUAD = 4)] = `HYPESQUAD`),
+    (e[(e.BUG_HUNTER_LEVEL_1 = 8)] = `BUG_HUNTER_LEVEL_1`),
+    (e[(e.HYPESQUAD_ONLINE_HOUSE_1 = 64)] = `HYPESQUAD_ONLINE_HOUSE_1`),
+    (e[(e.HYPESQUAD_ONLINE_HOUSE_2 = 128)] = `HYPESQUAD_ONLINE_HOUSE_2`),
+    (e[(e.HYPESQUAD_ONLINE_HOUSE_3 = 256)] = `HYPESQUAD_ONLINE_HOUSE_3`),
+    (e[(e.PREMIUM_EARLY_SUPPORTER = 512)] = `PREMIUM_EARLY_SUPPORTER`),
+    (e[(e.TEAM_PSEUDO_USER = 1024)] = `TEAM_PSEUDO_USER`),
+    (e[(e.BUG_HUNTER_LEVEL_2 = 16384)] = `BUG_HUNTER_LEVEL_2`),
+    (e[(e.VERIFIED_BOT = 65536)] = `VERIFIED_BOT`),
+    (e[(e.VERIFIED_DEVELOPER = 131072)] = `VERIFIED_DEVELOPER`),
+    (e[(e.CERTIFIED_MODERATOR = 262144)] = `CERTIFIED_MODERATOR`),
+    (e[(e.BOT_HTTP_INTERACTIONS = 524288)] = `BOT_HTTP_INTERACTIONS`),
+    (e[(e.ACTIVE_DEVELOPER = 4194304)] = `ACTIVE_DEVELOPER`),
+    e
+  );
+})({});
+e.enum_(je);
+const Me = f(`userFlag`, je, `Invalid User Flag`),
+  D = e.object({
+    id: _,
+    username: h(),
+    discriminator: e.union([h(4), e.literal(`0`)]),
+    globalName: e.nullable(h()),
+    avatar: e.nullable(h()),
+    bot: e.exactOptional(e.boolean()),
+    system: e.exactOptional(e.boolean()),
+    mfaEnabled: e.exactOptional(e.boolean()),
+    banner: e.nullish(h()),
+    accentColor: e.nullish(m()),
+    locale: e.exactOptional(b),
+    verified: e.exactOptional(e.boolean()),
+    email: e.nullish(e.pipe(e.string(), e.email())),
+    flags: e.exactOptional(d(Me)),
+    premiumType: e.exactOptional(Ae),
+    publicFlags: e.exactOptional(d(Me)),
+    avatarDecoration: e.nullish(e.string())
+  }),
+  Ne = e.enum_({ INVITED: 1, ACCEPTED: 2 }),
+  Pe = e.enum_({
+    Admin: `admin`,
+    Developer: `developer`,
+    ReadOnly: `read_only`
+  }),
+  Fe = e.object({
+    membershipState: Ne,
+    teamId: e.string(),
+    user: e.partial(D),
+    role: Pe
+  }),
+  Ie = e.object({
+    icon: e.exactOptional(e.string()),
+    id: e.string(),
+    members: e.array(Fe),
+    name: e.string(),
+    ownerUserId: e.string()
+  }),
+  O = e.object({
+    id: e.nullable(_),
+    name: e.nullable(h()),
+    roles: e.exactOptional(e.array(_)),
+    user: e.exactOptional(D),
+    requireColons: e.exactOptional(e.boolean()),
+    managed: e.exactOptional(e.boolean()),
+    animated: e.exactOptional(e.boolean()),
+    available: e.exactOptional(e.boolean())
+  });
+let Le = (function (e) {
+  return (
+    (e[(e.PNG = 1)] = `PNG`),
+    (e[(e.APNG = 2)] = `APNG`),
+    (e[(e.LOTTIE = 3)] = `LOTTIE`),
+    (e[(e.GIF = 4)] = `GIF`),
+    e
+  );
+})({});
+const Re = e.enum_(Le);
+let ze = (function (e) {
+  return ((e[(e.STANDARD = 1)] = `STANDARD`), (e[(e.GUILD = 2)] = `GUILD`), e);
+})({});
+const Be = e.enum_(ze),
+  k = e.object({
+    id: _,
+    packId: e.exactOptional(_),
+    name: h({ min: 2, max: 30 }),
+    description: h({ min: 2, max: 100 }),
+    tags: h({ max: 200 }),
+    type: Be,
+    formatType: Re,
+    available: e.exactOptional(e.boolean()),
+    guildId: e.exactOptional(_),
+    user: e.exactOptional(D),
+    sortValue: e.exactOptional(m())
+  }),
+  Ve = e.object({
+    botId: e.exactOptional(_),
+    integrationId: e.exactOptional(_),
+    premiumSubscriber: e.exactOptional(e.null_()),
+    subscriptionListingId: e.exactOptional(_),
+    availableForPurchase: e.exactOptional(e.null_()),
+    guildConnections: e.exactOptional(e.null_())
+  }),
+  He = { IN_PROMPT: 1 };
+e.enum_(He);
+const Ue = f(`roleFlag`, He, `Invalid Role Flag`),
+  We = e.object({
+    id: _,
+    name: h(),
+    color: m(),
+    hoist: e.boolean(),
+    icon: e.nullish(h()),
+    unicodeEmoji: e.nullish(h()),
+    position: m(),
+    permissions: u(E),
+    managed: e.boolean(),
+    mentionable: e.boolean(),
+    tags: e.exactOptional(e.array(Ve)),
+    flags: d(Ue)
+  }),
+  Ge = e.object({
+    channelId: _,
+    description: e.pipe(e.string(), e.nonEmpty()),
+    emojiId: e.nullable(_),
+    emojiName: e.nullable(e.pipe(e.string(), e.nonEmpty()))
+  }),
+  Ke = e.object({
+    description: e.nullable(e.string()),
+    welcomeChannels: e.pipe(e.array(Ge), e.maxLength(5))
+  });
+let qe = (function (e) {
+  return (
+    (e[(e.NONE = 0)] = `NONE`),
+    (e[(e.TIER_1 = 1)] = `TIER_1`),
+    (e[(e.TIER_2 = 2)] = `TIER_2`),
+    (e[(e.TIER_3 = 3)] = `TIER_3`),
+    e
+  );
+})({});
+const Je = e.enum_(qe);
+let Ye = (function (e) {
+  return (
+    (e[(e.DEFAULT = 0)] = `DEFAULT`),
+    (e[(e.EXPLICIT = 1)] = `EXPLICIT`),
+    (e[(e.SAFE = 2)] = `SAFE`),
+    (e[(e.AGE_RESTRICTED = 3)] = `AGE_RESTRICTED`),
+    e
+  );
+})({});
+const Xe = e.enum_(Ye);
+let Ze = (function (e) {
+  return (
+    (e[(e.NONE = 0)] = `NONE`),
+    (e[(e.LOW = 1)] = `LOW`),
+    (e[(e.MEDIUM = 2)] = `MEDIUM`),
+    (e[(e.HIGH = 3)] = `HIGH`),
+    (e[(e.VERY_HIGH = 4)] = `VERY_HIGH`),
+    e
+  );
+})({});
+const Qe = e.enum_(Ze);
+let $e = (function (e) {
+  return ((e[(e.NONE = 0)] = `NONE`), (e[(e.ELEVATED = 1)] = `ELEVATED`), e);
+})({});
+const et = e.enum_($e);
+let tt = (function (e) {
+  return (
+    (e[(e.DISABLED = 0)] = `DISABLED`),
+    (e[(e.MEMBERS_WITHOUT_ROLES = 1)] = `MEMBERS_WITHOUT_ROLES`),
+    (e[(e.ALL_MEMBERS = 2)] = `ALL_MEMBERS`),
+    e
+  );
+})({});
+const nt = e.enum_(tt);
+let rt = (function (e) {
+  return (
+    (e[(e.ALL_MESSAGES = 0)] = `ALL_MESSAGES`),
+    (e[(e.ONLY_MENTIONS = 1)] = `ONLY_MENTIONS`),
+    e
+  );
+})({});
+const it = e.enum_(rt);
+let at = (function (e) {
+  return (
+    (e.ANIMATED_BANNER = `ANIMATED_BANNER`),
+    (e.ANIMATED_ICON = `ANIMATED_ICON`),
+    (e.APPLICATION_COMMAND_PERMISSIONS_V2 = `APPLICATION_COMMAND_PERMISSIONS_V2`),
+    (e.AUTO_MODERATION = `AUTO_MODERATION`),
+    (e.BANNER = `BANNER`),
+    (e.COMMUNITY = `COMMUNITY`),
+    (e.CREATOR_MONETIZABLE_PROVISIONAL = `CREATOR_MONETIZABLE_PROVISIONAL`),
+    (e.CREATOR_STORE_PAGE = `CREATOR_STORE_PAGE`),
+    (e.DEVELOPER_SUPPORT_SERVER = `DEVELOPER_SUPPORT_SERVER`),
+    (e.DISCOVERABLE = `DISCOVERABLE`),
+    (e.FEATURABLE = `FEATURABLE`),
+    (e.INVITES_DISABLED = `INVITES_DISABLED`),
+    (e.INVITE_SPLASH = `INVITE_SPLASH`),
+    (e.MEMBER_VERIFICATION_GATE_ENABLED = `MEMBER_VERIFICATION_GATE_ENABLED`),
+    (e.MORE_SOUNDBOARD = `MORE_SOUNDBOARD`),
+    (e.MORE_STICKERS = `MORE_STICKERS`),
+    (e.NEWS = `NEWS`),
+    (e.PARTNERED = `PARTNERED`),
+    (e.PREVIEW_ENABLED = `PREVIEW_ENABLED`),
+    (e.RAID_ALERTS_DISABLED = `RAID_ALERTS_DISABLED`),
+    (e.ROLE_ICONS = `ROLE_ICONS`),
+    (e.ROLE_SUBSCRIPTIONS_AVAILABLE_FOR_PURCHASE = `ROLE_SUBSCRIPTIONS_AVAILABLE_FOR_PURCHASE`),
+    (e.ROLE_SUBSCRIPTIONS_ENABLED = `ROLE_SUBSCRIPTIONS_ENABLED`),
+    (e.TICKETED_EVENTS_ENABLED = `TICKETED_EVENTS_ENABLED`),
+    (e.VANITY_URL = `VANITY_URL`),
+    (e.VERIFIED = `VERIFIED`),
+    (e.VIP_REGIONS = `VIP_REGIONS`),
+    (e.WELCOME_SCREEN_ENABLED = `WELCOME_SCREEN_ENABLED`),
+    (e.ENHANCED_ROLE_COLORS = `ENHANCED_ROLE_COLORS`),
+    e
+  );
+})({});
+const ot = e.enum_(at);
+let st = (function (e) {
+  return (
+    (e[(e.SUPPRESS_JOIN_NOTIFICATIONS = 1)] = `SUPPRESS_JOIN_NOTIFICATIONS`),
+    (e[(e.SUPPRESS_PREMIUM_SUBSCRIPTIONS = 2)] =
+      `SUPPRESS_PREMIUM_SUBSCRIPTIONS`),
+    (e[(e.SUPPRESS_GUILD_REMINDER_NOTIFICATIONS = 4)] =
+      `SUPPRESS_GUILD_REMINDER_NOTIFICATIONS`),
+    (e[(e.SUPPRESS_JOIN_NOTIFICATION_REPLIES = 8)] =
+      `SUPPRESS_JOIN_NOTIFICATION_REPLIES`),
+    (e[(e.SUPPRESS_ROLE_SUBSCRIPTION_PURCHASE_NOTIFICATIONS = 16)] =
+      `SUPPRESS_ROLE_SUBSCRIPTION_PURCHASE_NOTIFICATIONS`),
+    (e[(e.SUPPRESS_ROLE_SUBSCRIPTION_PURCHASE_NOTIFICATION_REPLIES = 32)] =
+      `SUPPRESS_ROLE_SUBSCRIPTION_PURCHASE_NOTIFICATION_REPLIES`),
+    e
+  );
+})({});
+e.enum_(st);
+const ct = f(`systemChannelFlag`, st, `Invalid System Channel Flag`),
+  lt = e.object({
+    invitesDisabledUntil: e.nullable(v),
+    dmsDisabledUntil: e.nullable(v),
+    dmSpamDetectedAt: e.nullish(v),
+    raidDetectedAt: e.nullish(v)
+  }),
+  A = e.object({
+    id: _,
+    name: h({ max: 100 }),
+    icon: e.nullable(h()),
+    iconHash: e.nullish(h()),
+    splash: e.nullable(h()),
+    discoverySplash: e.nullable(h()),
+    owner: e.exactOptional(e.boolean()),
+    ownerId: _,
+    permissions: e.exactOptional(u(E)),
+    region: e.nullish(h()),
+    afkChannelId: e.nullable(_),
+    afkTimeout: m(),
+    widgetEnabled: e.exactOptional(e.boolean()),
+    widgetChannelId: e.nullish(_),
+    verificationLevel: Qe,
+    defaultMessageNotifications: it,
+    explicitContentFilter: nt,
+    roles: e.array(We),
+    emojis: e.array(O),
+    features: e.array(ot),
+    mfaLevel: et,
+    applicationId: e.nullable(_),
+    systemChannelId: e.nullable(_),
+    systemChannelFlags: d(ct),
+    rulesChannelId: e.nullable(_),
+    maxPresences: e.nullish(m()),
+    maxMembers: e.exactOptional(m()),
+    vanityUrlCode: e.nullable(h()),
+    description: e.nullable(e.string()),
+    banner: e.nullable(h()),
+    premiumTier: Je,
+    premiumSubscriptionCount: e.exactOptional(m()),
+    preferredLocale: b,
+    publicUpdatesChannelId: e.nullable(_),
+    maxVideoChannelUsers: e.exactOptional(m()),
+    maxStageVideoChannelUsers: e.exactOptional(m()),
+    approximateMemberCount: e.exactOptional(m()),
+    approximatePresenceCount: e.exactOptional(m()),
+    welcomeScreen: e.exactOptional(Ke),
+    nsfwLevel: Xe,
+    stickers: e.exactOptional(e.array(k)),
+    premiumProgressBarEnabled: e.boolean(),
+    safetyAlertsChannelId: e.nullable(_),
+    incidentsData: e.exactOptional(lt)
+  }),
+  ut = {
+    APPLICATION_AUTO_MODERATION_RULE_CREATE_BADGE: 64,
+    GATEWAY_PRESENCE: 4096,
+    GATEWAY_PRESENCE_LIMITED: 8192,
+    GATEWAY_GUILD_MEMBERS: 16384,
+    GATEWAY_GUILD_MEMBERS_LIMITED: 32768,
+    VERIFICATION_PENDING_GUILD_LIMIT: 65536,
+    EMBEDDED: 1 << 17,
+    GATEWAY_MESSAGE_CONTENT: 1 << 18,
+    GATEWAY_MESSAGE_CONTENT_LIMITED: 1 << 19,
+    APPLICATION_COMMAND_BADGE: 1 << 23
+  };
+e.enum_(ut);
+const dt = f(`applicationFlag`, ut, `Invalid Application Flag`),
+  ft = e.enum_({ DISABLED: 1, ENABLED: 2, DISABLED_BY_DISCORD: 3 }),
+  pt =
+    `activities.read,activities.write,applications.builds.read,applications.builds.upload,applications.commands,applications.commands.update,applications.commands.permissions.update,applications.entitlements,applications.store.update,bot,connections,dm_channels.read,email,gdm.join,guilds,guilds.join,guilds.members.read,identify,messages.read,relationships.read,role_connections.write,rpc,rpc.activities.write,rpc.notifications.read,rpc.voice.read,rpc.voice.write,voice,webhook.incoming`.split(
+      `,`
+    ),
+  mt = e.picklist(pt),
+  ht = e.object({ scopes: e.array(mt), permissions: u(E) }),
+  gt = { GUILD_INSTALL: 0, USER_INSTALL: 1 };
+e.enum_(gt);
+const _t = e.object({ oauth2InstallParams: e.exactOptional(ht) }),
+  vt = e.object({
+    id: _,
+    name: e.string(),
+    icon: e.nullable(h()),
+    description: e.string(),
+    rpcOrigins: e.exactOptional(e.array(y)),
+    botPublic: e.boolean(),
+    botRequireCodeGrant: e.boolean(),
+    bot: e.exactOptional(e.partial(D)),
+    termsOfServiceUrl: e.exactOptional(y),
+    privacyPolicyUrl: e.exactOptional(y),
+    owner: e.exactOptional(e.partial(D)),
+    verifyKey: e.string(),
+    team: e.nullable(Ie),
+    guildId: e.exactOptional(e.string()),
+    guild: e.exactOptional(e.partial(A)),
+    primarySkuId: e.exactOptional(e.string()),
+    slug: e.exactOptional(e.string()),
+    coverImage: e.exactOptional(e.string()),
+    flags: e.exactOptional(d(dt)),
+    approximateGuildCount: e.exactOptional(m()),
+    approximateUserInstallCount: e.exactOptional(m()),
+    approximateUserAuthorizationCount: e.exactOptional(m()),
+    redirectUris: e.nullish(e.array(y)),
+    interactionsEndpointUrl: e.nullish(y),
+    roleConnectionsVerificationUrl: e.nullish(y),
+    eventWebhooksUrl: e.nullish(y),
+    eventWebhooksStatus: e.exactOptional(ft),
+    eventWebhooksTypes: e.exactOptional(e.array(h())),
+    tags: e.exactOptional(p(h(), { max: 5 })),
+    installParams: e.exactOptional(ht),
+    integrationTypesConfig: e.exactOptional(
+      e.partial(e.object(e.entriesFromList(Object.values(gt), _t)))
+    ),
+    customInstallUrl: e.exactOptional(y)
+  });
+(e.object({
+  id: _,
+  applicationId: _,
+  guildId: _,
+  permissions: p(Oe, { max: 100 })
+}),
+  e.object({ application: _ }));
+const yt = e.enum_({
+    INTEGER_LESS_THAN_OR_EQUAL: 1,
+    INTEGER_GREATER_THAN_OR_EQUAL: 2,
+    INTEGER_EQUAL: 3,
+    INTEGER_NOT_EQUAL: 4,
+    DATETIME_LESS_THAN_OR_EQUAL: 5,
+    DATETIME_GREATER_THAN_OR_EQUAL: 6,
+    BOOLEAN_EQUAL: 7,
+    BOOLEAN_NOT_EQUAL: 8
+  }),
+  bt = e.object({
+    type: yt,
+    key: e.pipe(
+      e.string(),
+      e.nonEmpty(),
+      e.maxLength(50),
+      e.regex(/^[a-z0-9_]*$/)
+    ),
+    name: h({ max: 100 }),
+    nameLocalizations: e.nullish(e.record(b, e.string())),
+    description: h({ max: 200 }),
+    descriptionLocalizations: e.nullish(e.record(b, e.string()))
+  });
+e.object({ application: _, body: e.object({ records: e.array(bt) }) });
+let xt = (function (e) {
+  return (
+    (e[(e.GUILD_UPDATE = 1)] = `GUILD_UPDATE`),
+    (e[(e.CHANNEL_CREATE = 10)] = `CHANNEL_CREATE`),
+    (e[(e.CHANNEL_UPDATE = 11)] = `CHANNEL_UPDATE`),
+    (e[(e.CHANNEL_DELETE = 12)] = `CHANNEL_DELETE`),
+    (e[(e.CHANNEL_OVERWRITE_CREATE = 13)] = `CHANNEL_OVERWRITE_CREATE`),
+    (e[(e.CHANNEL_OVERWRITE_UPDATE = 14)] = `CHANNEL_OVERWRITE_UPDATE`),
+    (e[(e.CHANNEL_OVERWRITE_DELETE = 15)] = `CHANNEL_OVERWRITE_DELETE`),
+    (e[(e.MEMBER_KICK = 20)] = `MEMBER_KICK`),
+    (e[(e.MEMBER_PRUNE = 21)] = `MEMBER_PRUNE`),
+    (e[(e.MEMBER_BAN_ADD = 22)] = `MEMBER_BAN_ADD`),
+    (e[(e.MEMBER_BAN_REMOVE = 23)] = `MEMBER_BAN_REMOVE`),
+    (e[(e.MEMBER_UPDATE = 24)] = `MEMBER_UPDATE`),
+    (e[(e.MEMBER_ROLE_UPDATE = 25)] = `MEMBER_ROLE_UPDATE`),
+    (e[(e.MEMBER_MOVE = 26)] = `MEMBER_MOVE`),
+    (e[(e.MEMBER_DISCONNECT = 27)] = `MEMBER_DISCONNECT`),
+    (e[(e.BOT_ADD = 28)] = `BOT_ADD`),
+    (e[(e.ROLE_CREATE = 30)] = `ROLE_CREATE`),
+    (e[(e.ROLE_UPDATE = 31)] = `ROLE_UPDATE`),
+    (e[(e.ROLE_DELETE = 32)] = `ROLE_DELETE`),
+    (e[(e.INVITE_CREATE = 40)] = `INVITE_CREATE`),
+    (e[(e.INVITE_UPDATE = 41)] = `INVITE_UPDATE`),
+    (e[(e.INVITE_DELETE = 42)] = `INVITE_DELETE`),
+    (e[(e.WEBHOOK_CREATE = 50)] = `WEBHOOK_CREATE`),
+    (e[(e.WEBHOOK_UPDATE = 51)] = `WEBHOOK_UPDATE`),
+    (e[(e.WEBHOOK_DELETE = 52)] = `WEBHOOK_DELETE`),
+    (e[(e.EMOJI_CREATE = 60)] = `EMOJI_CREATE`),
+    (e[(e.EMOJI_UPDATE = 61)] = `EMOJI_UPDATE`),
+    (e[(e.EMOJI_DELETE = 62)] = `EMOJI_DELETE`),
+    (e[(e.MESSAGE_DELETE = 72)] = `MESSAGE_DELETE`),
+    (e[(e.MESSAGE_BULK_DELETE = 73)] = `MESSAGE_BULK_DELETE`),
+    (e[(e.MESSAGE_PIN = 74)] = `MESSAGE_PIN`),
+    (e[(e.MESSAGE_UNPIN = 75)] = `MESSAGE_UNPIN`),
+    (e[(e.INTEGRATION_CREATE = 80)] = `INTEGRATION_CREATE`),
+    (e[(e.INTEGRATION_UPDATE = 81)] = `INTEGRATION_UPDATE`),
+    (e[(e.INTEGRATION_DELETE = 82)] = `INTEGRATION_DELETE`),
+    (e[(e.STAGE_INSTANCE_CREATE = 83)] = `STAGE_INSTANCE_CREATE`),
+    (e[(e.STAGE_INSTANCE_UPDATE = 84)] = `STAGE_INSTANCE_UPDATE`),
+    (e[(e.STAGE_INSTANCE_DELETE = 85)] = `STAGE_INSTANCE_DELETE`),
+    (e[(e.STICKER_CREATE = 90)] = `STICKER_CREATE`),
+    (e[(e.STICKER_UPDATE = 91)] = `STICKER_UPDATE`),
+    (e[(e.STICKER_DELETE = 92)] = `STICKER_DELETE`),
+    (e[(e.GUILD_SCHEDULED_EVENT_CREATE = 100)] =
+      `GUILD_SCHEDULED_EVENT_CREATE`),
+    (e[(e.GUILD_SCHEDULED_EVENT_UPDATE = 101)] =
+      `GUILD_SCHEDULED_EVENT_UPDATE`),
+    (e[(e.GUILD_SCHEDULED_EVENT_DELETE = 102)] =
+      `GUILD_SCHEDULED_EVENT_DELETE`),
+    (e[(e.THREAD_CREATE = 110)] = `THREAD_CREATE`),
+    (e[(e.THREAD_UPDATE = 111)] = `THREAD_UPDATE`),
+    (e[(e.THREAD_DELETE = 112)] = `THREAD_DELETE`),
+    (e[(e.APPLICATION_COMMAND_PERMISSION_UPDATE = 121)] =
+      `APPLICATION_COMMAND_PERMISSION_UPDATE`),
+    (e[(e.SOUNDBOARD_SOUND_CREATE = 130)] = `SOUNDBOARD_SOUND_CREATE`),
+    (e[(e.SOUNDBOARD_SOUND_UPDATE = 131)] = `SOUNDBOARD_SOUND_UPDATE`),
+    (e[(e.SOUNDBOARD_SOUND_DELETE = 132)] = `SOUNDBOARD_SOUND_DELETE`),
+    (e[(e.AUTO_MODERATION_RULE_CREATE = 140)] = `AUTO_MODERATION_RULE_CREATE`),
+    (e[(e.AUTO_MODERATION_RULE_UPDATE = 141)] = `AUTO_MODERATION_RULE_UPDATE`),
+    (e[(e.AUTO_MODERATION_RULE_DELETE = 142)] = `AUTO_MODERATION_RULE_DELETE`),
+    (e[(e.AUTO_MODERATION_BLOCK_MESSAGE = 143)] =
+      `AUTO_MODERATION_BLOCK_MESSAGE`),
+    (e[(e.AUTO_MODERATION_FLAG_TO_CHANNEL = 144)] =
+      `AUTO_MODERATION_FLAG_TO_CHANNEL`),
+    (e[(e.AUTO_MODERATION_USER_COMMUNICATION_DISABLED = 145)] =
+      `AUTO_MODERATION_USER_COMMUNICATION_DISABLED`),
+    (e[(e.CREATOR_MONETIZATION_REQUEST_CREATED = 150)] =
+      `CREATOR_MONETIZATION_REQUEST_CREATED`),
+    (e[(e.CREATOR_MONETIZATION_TERMS_ACCEPTED = 151)] =
+      `CREATOR_MONETIZATION_TERMS_ACCEPTED`),
+    (e[(e.ONBOARDING_PROMPT_CREATE = 163)] = `ONBOARDING_PROMPT_CREATE`),
+    (e[(e.ONBOARDING_PROMPT_UPDATE = 164)] = `ONBOARDING_PROMPT_UPDATE`),
+    (e[(e.ONBOARDING_PROMPT_DELETE = 165)] = `ONBOARDING_PROMPT_DELETE`),
+    (e[(e.ONBOARDING_CREATE = 166)] = `ONBOARDING_CREATE`),
+    (e[(e.ONBOARDING_UPDATE = 167)] = `ONBOARDING_UPDATE`),
+    (e[(e.HOME_SETTINGS_CREATE = 190)] = `HOME_SETTINGS_CREATE`),
+    (e[(e.HOME_SETTINGS_UPDATE = 191)] = `HOME_SETTINGS_UPDATE`),
+    e
+  );
+})({});
+const St = e.enum_(xt);
+e.object({
+  guild: _,
+  params: e.exactOptional(
+    e.partial(
+      e.object({
+        userId: _,
+        actionType: St,
+        before: _,
+        after: _,
+        limit: e.pipe(e.number(), e.integer(), e.minValue(1), e.maxValue(100))
+      })
+    )
+  )
+});
+const j = e.picklist([60, 1440, 4320, 10080]),
+  Ct = e.object({ id: _, type: e.picklist([0, 1]), allow: u(E), deny: u(E) }),
+  wt = e.object({
+    archived: e.boolean(),
+    autoArchiveDuration: j,
+    archiveTimestamp: v,
+    locked: e.boolean(),
+    invitable: e.exactOptional(e.boolean()),
+    createTimestamp: e.nullish(v)
+  });
+let Tt = (function (e) {
+  return (
+    (e[(e.DID_REJOIN = 1)] = `DID_REJOIN`),
+    (e[(e.COMPLETED_ONBOARDING = 2)] = `COMPLETED_ONBOARDING`),
+    (e[(e.BYPASSES_VERIFICATION = 4)] = `BYPASSES_VERIFICATION`),
+    (e[(e.STARTED_ONBOARDING = 8)] = `STARTED_ONBOARDING`),
+    (e[(e.IS_GUEST = 16)] = `IS_GUEST`),
+    (e[(e.STARTED_HOME_ACTIONS = 32)] = `STARTED_HOME_ACTIONS`),
+    (e[(e.COMPLETED_HOME_ACTIONS = 64)] = `COMPLETED_HOME_ACTIONS`),
+    (e[(e.AUTOMOD_QUARANTINED_USERNAME = 128)] =
+      `AUTOMOD_QUARANTINED_USERNAME`),
+    (e[(e.DM_SETTINGS_UPSELL_ACKNOWLEDGED = 512)] =
+      `DM_SETTINGS_UPSELL_ACKNOWLEDGED`),
+    e
+  );
+})({});
+e.enum_(Tt);
+const Et = f(`guildMemberFlag`, Tt, `Invalid Guild Member Flag`),
+  Dt = e.object({ asset: h(), skuId: _ }),
+  M = e.object({
+    user: e.exactOptional(D),
+    nick: e.nullish(h()),
+    avatar: e.nullish(h()),
+    banner: e.nullish(h()),
+    roles: e.array(_),
+    joinedAt: v,
+    premiumSince: e.nullish(v),
+    deaf: e.boolean(),
+    mute: e.boolean(),
+    flags: d(Et),
+    pending: e.exactOptional(e.boolean()),
+    permissions: e.exactOptional(u(E)),
+    communicationDisabledUntil: e.nullish(v),
+    avatarDecorationData: e.nullish(Dt)
+  });
+let Ot = (function (e) {
+  return (
+    (e[(e.PINNED = 2)] = `PINNED`),
+    (e[(e.REQUIRE_TAG = 16)] = `REQUIRE_TAG`),
+    (e[(e.HIDE_MEDIA_DOWNLOAD_OPTIONS = 32768)] =
+      `HIDE_MEDIA_DOWNLOAD_OPTIONS`),
+    e
+  );
+})({});
+e.enum_(Ot);
+const N = f(`channelFlag`, Ot, `Invalid Channel Flag`),
+  kt = e.object({
+    id: e.exactOptional(_),
+    userId: e.exactOptional(_),
+    joinTimestamp: v,
+    flags: d(N),
+    member: e.exactOptional(M)
+  });
+let At = (function (e) {
+  return ((e[(e.AUTO = 1)] = `AUTO`), (e[(e.FULL = 2)] = `FULL`), e);
+})({});
+const jt = e.enum_(At),
+  P = e.object({
+    id: _,
+    name: h({ min: 0, max: 20 }),
+    moderated: e.boolean(),
+    emojiId: e.nullable(_),
+    emojiName: e.nullable(h())
+  }),
+  F = e.object({ emojiId: e.nullable(_), emojiName: e.nullable(h()) });
+let Mt = (function (e) {
+  return (
+    (e[(e.LATEST_ACTIVITY = 0)] = `LATEST_ACTIVITY`),
+    (e[(e.CREATION_DATE = 1)] = `CREATION_DATE`),
+    e
+  );
+})({});
+const I = e.enum_(Mt);
+let Nt = (function (e) {
+  return (
+    (e[(e.NOT_SET = 0)] = `NOT_SET`),
+    (e[(e.LIST_VIEW = 1)] = `LIST_VIEW`),
+    (e[(e.GALLERY_VIEW = 2)] = `GALLERY_VIEW`),
+    e
+  );
+})({});
+const L = e.enum_(Nt),
+  R = e.object({
+    id: _,
+    type: x,
+    permissionOverwrites: e.exactOptional(e.array(Ct)),
+    name: e.nullish(h({ max: 100 })),
+    topic: e.nullish(h({ max: 1024 })),
+    nsfw: e.exactOptional(e.boolean()),
+    lastMessageId: e.nullish(_),
+    rateLimitPerUser: e.exactOptional(m({ max: 21600 })),
+    lastPinTimestamp: e.nullish(v),
+    permissions: e.exactOptional(u(E)),
+    flags: e.exactOptional(d(N))
+  }),
+  Pt = e.object({
+    ...R.entries,
+    type: e.picklist([4, 14]),
+    guildId: e.exactOptional(_),
+    position: e.exactOptional(m())
+  }),
+  z = e.object({
+    ...R.entries,
+    type: e.picklist([5, 0]),
+    guildId: e.exactOptional(_),
+    parentId: e.nullish(_),
+    position: e.exactOptional(m())
+  }),
+  B = e.object({
+    ...R.entries,
+    type: e.picklist([13, 2]),
+    guildId: e.exactOptional(_),
+    parentId: e.nullish(_),
+    position: e.exactOptional(m()),
+    bitrate: e.exactOptional(m()),
+    userLimit: e.exactOptional(m()),
+    rtcRegion: e.nullish(h()),
+    videoQualityMode: e.exactOptional(jt)
+  }),
+  Ft = e.object({
+    ...R.entries,
+    type: e.picklist([15, 16]),
+    guildId: e.exactOptional(_),
+    parentId: e.nullish(_),
+    position: e.exactOptional(m()),
+    topic: e.nullish(h({ max: 4096 })),
+    availableTags: e.exactOptional(e.array(P)),
+    defaultReactionEmoji: e.nullish(F),
+    defaultSortOrder: e.nullish(I),
+    defaultForumLayout: e.exactOptional(L)
+  }),
+  V = e.object({
+    ...R.entries,
+    type: e.picklist([10, 12, 11]),
+    guildId: e.exactOptional(_),
+    parentId: e.nullish(_),
+    ownerId: e.exactOptional(_),
+    position: e.exactOptional(m()),
+    messageCount: e.exactOptional(m({ max: 50 })),
+    memberCount: e.exactOptional(m({ max: 50 })),
+    threadMetadata: e.exactOptional(wt),
+    appliedTags: e.exactOptional(e.array(_)),
+    member: e.exactOptional(kt),
+    defaultAutoArchiveDuration: e.exactOptional(j),
+    totalMessageSent: e.exactOptional(m()),
+    defaultThreadRateLimitPerUser: e.exactOptional(m())
+  }),
+  It = e.object({
+    ...R.entries,
+    type: e.literal(1),
+    recipients: e.exactOptional(e.array(D))
+  }),
+  Lt = e.object({
+    ...R.entries,
+    type: e.literal(3),
+    recipients: e.exactOptional(e.array(D)),
+    icon: e.nullish(h()),
+    ownerId: e.exactOptional(_),
+    applicationId: e.exactOptional(_),
+    managed: e.exactOptional(e.boolean())
+  }),
+  H = e.union([Pt, z, B, Ft, V, It, Lt]),
+  Rt = e.union([
+    e.required(e.partial(Pt), [`type`]),
+    e.required(e.partial(z), [`type`]),
+    e.required(e.partial(B), [`type`]),
+    e.required(e.partial(Ft), [`type`]),
+    e.required(e.partial(V), [`type`]),
+    e.required(e.partial(It), [`type`]),
+    e.required(e.partial(Lt), [`type`])
+  ]);
+let zt = (function (e) {
+  return (
+    (e[(e.STAGE_INSTANCE = 1)] = `STAGE_INSTANCE`),
+    (e[(e.VOICE = 2)] = `VOICE`),
+    (e[(e.EXTERNAL = 3)] = `EXTERNAL`),
+    e
+  );
+})({});
+const Bt = e.enum_(zt);
+let Vt = (function (e) {
+  return ((e[(e.GUILD_ONLY = 2)] = `GUILD_ONLY`), e);
+})({});
+const Ht = e.enum_(Vt);
+let Ut = (function (e) {
+  return (
+    (e[(e.SCHEDULED = 1)] = `SCHEDULED`),
+    (e[(e.ACTIVE = 2)] = `ACTIVE`),
+    (e[(e.COMPLETED = 3)] = `COMPLETED`),
+    (e[(e.CANCELED = 4)] = `CANCELED`),
+    e
+  );
+})({});
+const Wt = e.enum_(Ut),
+  Gt = e.object({
+    location: e.pipe(e.string(), e.minLength(1), e.maxLength(100))
+  });
+let Kt = (function (e) {
+  return (
+    (e[(e.YEARLY = 0)] = `YEARLY`),
+    (e[(e.MONTHLY = 1)] = `MONTHLY`),
+    (e[(e.WEEKLY = 2)] = `WEEKLY`),
+    (e[(e.DAILY = 3)] = `DAILY`),
+    e
+  );
+})({});
+const qt = e.enum_(Kt);
+let Jt = (function (e) {
+  return (
+    (e[(e.MONDAY = 1)] = `MONDAY`),
+    (e[(e.TUESDAY = 2)] = `TUESDAY`),
+    (e[(e.WEDNESDAY = 3)] = `WEDNESDAY`),
+    (e[(e.THURSDAY = 4)] = `THURSDAY`),
+    (e[(e.FRIDAY = 5)] = `FRIDAY`),
+    (e[(e.SATURDAY = 6)] = `SATURDAY`),
+    (e[(e.SUNDAY = 7)] = `SUNDAY`),
+    e
+  );
+})({});
+const Yt = e.enum_(Jt),
+  Xt = e.object({ n: e.picklist([1, 2, 3, 4, 5]), day: Yt });
+let Zt = (function (e) {
+  return (
+    (e[(e.JANUARY = 1)] = `JANUARY`),
+    (e[(e.FEBRUARY = 2)] = `FEBRUARY`),
+    (e[(e.MARCH = 3)] = `MARCH`),
+    (e[(e.APRIL = 4)] = `APRIL`),
+    (e[(e.MAY = 5)] = `MAY`),
+    (e[(e.JUNE = 6)] = `JUNE`),
+    (e[(e.JULY = 7)] = `JULY`),
+    (e[(e.AUGUST = 8)] = `AUGUST`),
+    (e[(e.SEPTEMBER = 9)] = `SEPTEMBER`),
+    (e[(e.OCTOBER = 10)] = `OCTOBER`),
+    (e[(e.NOVEMBER = 11)] = `NOVEMBER`),
+    (e[(e.DECEMBER = 12)] = `DECEMBER`),
+    e
+  );
+})({});
+const Qt = e.enum_(Zt),
+  $t = e.object({
+    start: v,
+    end: e.nullable(v),
+    frequency: qt,
+    interval: e.pipe(e.number(), e.integer(), e.minValue(1)),
+    byWeekday: e.nullable(e.array(Yt)),
+    byNWeekday: e.nullable(e.array(Xt)),
+    byMonth: e.nullable(e.array(Qt)),
+    byMonthDay: e.nullable(
+      e.array(e.pipe(e.number(), e.integer(), e.minValue(1), e.maxValue(31)))
+    ),
+    byYearDay: e.nullable(
+      e.array(e.pipe(e.number(), e.integer(), e.minValue(1), e.maxValue(364)))
+    ),
+    count: e.nullable(e.pipe(e.number(), e.integer(), e.minValue(1)))
+  }),
+  en = e.intersect([
+    e.object({
+      id: _,
+      guildId: _,
+      creatorId: e.nullish(_),
+      name: e.pipe(e.string(), e.nonEmpty(), e.maxLength(100)),
+      description: e.nullish(
+        e.pipe(e.string(), e.nonEmpty(), e.maxLength(1e3))
+      ),
+      scheduledStartTime: v,
+      scheduledEndTime: e.nullable(v),
+      privacyLevel: Ht,
+      status: Wt,
+      entityId: e.nullable(_),
+      creator: e.exactOptional(D),
+      userCount: e.exactOptional(
+        e.pipe(e.number(), e.integer(), e.minValue(0))
+      ),
+      image: e.nullish(e.pipe(e.string(), e.nonEmpty())),
+      recurrenceRule: e.nullable($t)
+    }),
+    e.variant(`entityType`, [
+      e.object({
+        entityType: e.literal(1),
+        channelId: _,
+        entityMetadata: e.null_()
+      }),
+      e.object({
+        entityType: e.literal(2),
+        channelId: _,
+        entityMetadata: e.null_()
+      }),
+      e.object({
+        entityType: e.literal(3),
+        channelId: e.null_(),
+        scheduledEndTime: v,
+        entityMetadata: Gt
+      })
+    ])
+  ]),
+  tn = e.object({
+    id: _,
+    name: h(),
+    icon: e.nullable(h()),
+    description: e.string(),
+    bot: e.exactOptional(D)
+  }),
+  nn = e.object({ id: e.string(), name: e.string() });
+let rn = (function (e) {
+  return (
+    (e[(e.REMOVE_ROLE = 0)] = `REMOVE_ROLE`), (e[(e.KICK = 1)] = `KICK`), e
+  );
+})({});
+const an = e.enum_(rn),
+  on = e.object({
+    id: _,
+    name: h(),
+    type: e.string(),
+    enabled: e.boolean(),
+    syncing: e.exactOptional(e.boolean()),
+    roleId: e.exactOptional(_),
+    enableEmoticons: e.exactOptional(e.boolean()),
+    expireBehavior: e.exactOptional(an),
+    expireGracePeriod: e.exactOptional(m()),
+    user: e.exactOptional(D),
+    account: nn,
+    syncedAt: e.exactOptional(v),
+    subscriberCount: e.exactOptional(m()),
+    revoked: e.exactOptional(e.boolean()),
+    application: e.exactOptional(tn),
+    scopes: e.exactOptional(e.array(mt))
+  }),
+  sn = e.union([
+    e.object({ channelId: e.exactOptional(_) }),
+    e.object({ durationSeconds: m({ max: 2419200 }) }),
+    e.object({ customMessage: e.nullish(h({ max: 150 })) })
+  ]);
+let cn = (function (e) {
+  return (
+    (e[(e.BLOCK_MESSAGE = 1)] = `BLOCK_MESSAGE`),
+    (e[(e.SEND_ALERT_MESSAGE = 2)] = `SEND_ALERT_MESSAGE`),
+    (e[(e.TIMEOUT = 3)] = `TIMEOUT`),
+    (e[(e.BLOCK_MEMBER_INTERACTION = 4)] = `BLOCK_MEMBER_INTERACTION`),
+    e
+  );
+})({});
+const ln = e.enum_(cn),
+  U = e.object({ type: ln, metadata: e.exactOptional(sn) });
+let un = (function (e) {
+  return (
+    (e[(e.MESSAGE_SEND = 1)] = `MESSAGE_SEND`),
+    (e[(e.MEMBER_UPDATE = 2)] = `MEMBER_UPDATE`),
+    e
+  );
+})({});
+const dn = e.enum_(un);
+let fn = (function (e) {
+  return (
+    (e[(e.KEYWORD = 1)] = `KEYWORD`),
+    (e[(e.SPAM = 3)] = `SPAM`),
+    (e[(e.KEYWORD_PRESET = 4)] = `KEYWORD_PRESET`),
+    (e[(e.MENTION_SPAM = 5)] = `MENTION_SPAM`),
+    (e[(e.MEMBER_PROFILE = 6)] = `MEMBER_PROFILE`),
+    e
+  );
+})({});
+const pn = e.enum_(fn);
+let mn = (function (e) {
+  return (
+    (e[(e.PROFANITY = 1)] = `PROFANITY`),
+    (e[(e.SEXUAL_CONTENT = 2)] = `SEXUAL_CONTENT`),
+    (e[(e.SLURS = 3)] = `SLURS`),
+    e
+  );
+})({});
+const hn = e.enum_(mn),
+  gn = e.object({
+    keywordFilter: p(e.string(), { max: 1e3 }),
+    regexPatterns: p(e.string(), { max: 10 }),
+    presets: e.array(hn),
+    allowList: p(e.string(), { max: 1e3 }),
+    mentionTotalLimit: m({ max: 50 }),
+    mentionRaidProtectionEnabled: e.boolean()
+  }),
+  _n = e.object({
+    id: _,
+    guildId: _,
+    name: h(),
+    creatorId: _,
+    eventType: dn,
+    triggerType: pn,
+    triggerMetadata: gn,
+    actions: e.array(U),
+    enabled: e.boolean(),
+    exemptRoles: p(_, { max: 20 }),
+    exemptChannels: p(_, { max: 50 })
+  });
+let vn = (function (e) {
+  return (
+    (e[(e.INCOMING = 1)] = `INCOMING`),
+    (e[(e.CHANNEL_FOLLOWER = 2)] = `CHANNEL_FOLLOWER`),
+    (e[(e.APPLICATION = 3)] = `APPLICATION`),
+    e
+  );
+})({});
+const yn = e.enum_(vn),
+  bn = e.object({
+    id: _,
+    type: yn,
+    guildId: e.nullish(_),
+    channelId: e.nullable(_),
+    user: e.exactOptional(D),
+    name: e.nullable(h()),
+    avatar: e.nullable(h()),
+    token: e.exactOptional(h()),
+    applicationId: e.nullable(_),
+    sourceGuild: e.exactOptional(e.partial(A)),
+    sourceChannel: e.exactOptional(Rt),
+    url: e.exactOptional(y)
+  }),
+  xn = e.object({
+    newValue: e.exactOptional(e.unknown()),
+    oldValue: e.exactOptional(e.unknown()),
+    key: h()
+  }),
+  Sn = e.partial(
+    e.object({
+      applicationId: _,
+      autoModerationRuleName: e.pipe(e.string(), e.nonEmpty()),
+      autoModerationRuleTriggerType: e.pipe(e.string(), e.nonEmpty()),
+      channelId: _,
+      count: e.pipe(e.string(), e.nonEmpty()),
+      deleteMemberDays: e.pipe(e.string(), e.nonEmpty()),
+      id: _,
+      membersRemoved: e.pipe(e.string(), e.nonEmpty()),
+      messageId: _,
+      roleName: e.picklist([`0`, `1`]),
+      type: e.picklist([`0`, `1`]),
+      integrationType: e.pipe(e.string(), e.nonEmpty())
+    })
+  ),
+  Cn = e.object({
+    targetId: e.nullable(h()),
+    changes: e.exactOptional(e.array(xn)),
+    userId: e.nullable(_),
+    id: _,
+    actionType: St,
+    options: e.exactOptional(Sn),
+    reason: e.exactOptional(h({ max: 512 }))
+  });
+(e.object({
+  applicationCommands: e.array(Ee),
+  auditLogEntries: e.array(Cn),
+  autoModerationRules: e.array(_n),
+  guildScheduledEvents: e.array(en),
+  integrations: e.array(e.partial(on)),
+  threads: e.array(H),
+  users: e.array(D),
+  webhooks: e.array(bn)
+}),
+  e.object({
+    guild: _,
+    body: e.object({
+      name: h(),
+      eventType: dn,
+      triggerType: pn,
+      triggerMetadata: e.exactOptional(gn),
+      actions: e.array(U),
+      enabled: e.exactOptional(e.boolean()),
+      exemptRoles: e.exactOptional(p(_, { max: 20 })),
+      exemptChannels: e.exactOptional(p(_, { max: 50 }))
+    })
+  }),
+  e.object({ guild: _, rule: _ }),
+  e.object({ guild: _, rule: _ }),
+  e.object({ guild: _ }),
+  e.object({
+    guild: _,
+    rule: _,
+    body: e.partial(
+      e.object({
+        name: h(),
+        eventType: dn,
+        triggerMetadata: e.exactOptional(gn),
+        actions: e.array(U),
+        enabled: e.boolean(),
+        exemptRoles: p(_, { max: 20 }),
+        exemptChannels: p(_, { max: 50 })
+      })
+    )
+  }),
+  e.object({ channel: _, user: _ }));
+let wn = (function (e) {
+  return (
+    (e[(e.STREAM = 1)] = `STREAM`),
+    (e[(e.EMBEDDED_APPLICATION = 2)] = `EMBEDDED_APPLICATION`),
+    e
+  );
+})({});
+const Tn = e.enum_(wn);
+(e.object({
+  channel: _,
+  body: e.exactOptional(
+    e.partial(
+      e.object({
+        maxAge: e.pipe(
+          e.number(),
+          e.integer(),
+          e.minValue(0),
+          e.maxValue(604800)
+        ),
+        maxUses: e.pipe(
+          e.number(),
+          e.integer(),
+          e.minValue(0),
+          e.maxValue(100)
+        ),
+        temporary: e.boolean(),
+        unique: e.boolean(),
+        targetType: Tn,
+        targetUserId: _,
+        targetApplicationId: _
+      })
+    )
+  )
+}),
+  e.object({ channel: _ }),
+  e.object({ channel: _, overwrite: _ }),
+  e.object({
+    channel: _,
+    overwrite: _,
+    body: e.object({
+      allow: e.nullish(u(E)),
+      deny: e.nullish(u(E)),
+      type: e.picklist([0, 1])
+    })
+  }),
+  e.object({ channel: _, body: e.object({ webhookChannelId: _ }) }),
+  e.object({ channel: _ }),
+  e.object({ channel: _ }),
+  e.object({
+    channel: _,
+    user: _,
+    params: e.exactOptional(
+      e.partial(e.object({ withMember: e.nullish(e.boolean()) }))
+    )
+  }),
+  e.object({
+    channel: _,
+    user: _,
+    body: e.object({
+      accessToken: e.pipe(e.string(), e.minLength(1)),
+      nick: e.pipe(e.string(), e.minLength(1))
+    })
+  }),
+  e.object({ channel: _, user: _ }),
+  e.object({ channel: _ }),
+  e.object({ channel: _ }),
+  e.object({
+    channel: _,
+    params: e.exactOptional(
+      e.partial(
+        e.object({
+          before: v,
+          limit: e.pipe(e.number(), e.integer(), e.minValue(0))
+        })
+      )
+    )
+  }),
+  e.object({
+    channel: _,
+    params: e.exactOptional(
+      e.partial(
+        e.object({
+          before: v,
+          limit: e.pipe(e.number(), e.integer(), e.minValue(0))
+        })
+      )
+    )
+  }),
+  e.object({
+    channel: _,
+    params: e.exactOptional(
+      e.partial(
+        e.object({
+          before: v,
+          limit: e.pipe(e.number(), e.integer(), e.minValue(0))
+        })
+      )
+    )
+  }),
+  e.object({
+    channel: _,
+    params: e.exactOptional(
+      e.partial(
+        e.object({
+          withMember: e.boolean(),
+          after: _,
+          limit: e.pipe(e.number(), e.integer(), e.minValue(1), e.maxValue(100))
+        })
+      )
+    )
+  }));
+const En = e.partial(
+    e.object({
+      name: e.pipe(e.string(), e.nonEmpty(), e.maxLength(100)),
+      icon: e.pipe(e.string(), e.base64())
+    })
+  ),
+  Dn = e.partial(
+    e.object({
+      type: e.picklist([5, 0]),
+      name: e.pipe(e.string(), e.nonEmpty(), e.maxLength(100)),
+      position: e.nullable(e.pipe(e.number(), e.integer())),
+      topic: e.nullable(e.pipe(e.string(), e.minLength(0), e.maxLength(1024))),
+      nsfw: e.nullable(e.boolean()),
+      rateLimitPerUser: e.nullable(
+        e.pipe(e.number(), e.minValue(0), e.maxValue(21600))
+      ),
+      bitrate: e.nullable(e.pipe(e.number(), e.minValue(8e3))),
+      userLimit: e.nullable(e.pipe(e.number(), e.minValue(0), e.maxValue(1e4))),
+      permissionOverwrites: e.nullable(e.array(e.partial(Ct))),
+      parentId: e.nullable(_),
+      rtcRegion: e.nullable(e.pipe(e.string(), e.nonEmpty())),
+      videoQualityMode: e.nullable(jt),
+      defaultAutoArchiveDuration: e.nullable(j),
+      flags: d(N),
+      availableTags: e.pipe(e.array(P), e.maxLength(20)),
+      defaultReactionEmoji: e.nullable(F),
+      defaultThreadRateLimitPerUser: e.pipe(
+        e.number(),
+        e.minValue(0),
+        e.maxValue(21600)
+      ),
+      defaultSortOrder: e.nullable(I),
+      defaultForumLayout: L
+    })
+  ),
+  On = e.partial(
+    e.object({
+      name: e.pipe(e.string(), e.nonEmpty(), e.maxLength(100)),
+      archived: e.boolean(),
+      autoArchiveDuration: j,
+      locked: e.boolean(),
+      invitable: e.boolean(),
+      rateLimitPerUser: e.nullable(
+        e.pipe(e.number(), e.minValue(0), e.maxValue(21600))
+      ),
+      flags: e.exactOptional(d(N)),
+      appliedTags: e.exactOptional(e.pipe(e.array(_), e.maxLength(5)))
+    })
+  );
+(e.object({ channel: _, body: e.union([En, Dn, On]) }),
+  e.object({ channel: _, user: _ }),
+  e.object({
+    channel: _,
+    message: _,
+    body: e.object({
+      name: e.pipe(e.string(), e.nonEmpty(), e.maxLength(100)),
+      autoArchiveDuration: e.exactOptional(j),
+      rateLimitPerUser: e.nullish(
+        e.pipe(e.number(), e.integer(), e.minValue(0), e.maxValue(21600))
+      )
+    })
+  }));
+let kn = (function (e) {
+  return (
+    (e.RICH = `rich`),
+    (e.IMAGE = `image`),
+    (e.VIDEO = `video`),
+    (e.GIF = `gifv`),
+    (e.ARTICLE = `article`),
+    (e.LINK = `link`),
+    (e.POLL_RESULT = `poll_result`),
+    e
+  );
+})({});
+const An = e.enum_(kn),
+  W = e.partial(
+    e.object({
+      title: h({ max: 256 }),
+      type: An,
+      description: h({ max: 4096 }),
+      url: y,
+      timestamp: v,
+      color: m({ min: 0, max: 16777215 }),
+      footer: e.object({ text: h({ max: 2048 }), iconUrl: y, proxyIconUrl: y }),
+      image: e.object({ url: y, proxyUrl: y, height: m(), width: m() }),
+      thumbnail: e.object({ url: y, proxyUrl: y, height: m(), width: m() }),
+      video: e.partial(
+        e.object({ url: y, proxyUrl: y, height: m(), width: m() })
+      ),
+      provider: e.partial(e.object({ name: h(), url: y })),
+      author: e.object({
+        name: h({ max: 256 }),
+        url: y,
+        iconUrl: y,
+        proxyIconUrl: y
+      }),
+      fields: p(
+        e.object({
+          name: h({ max: 256 }),
+          value: h({ max: 1024 }),
+          inline: e.exactOptional(e.boolean())
+        }),
+        { max: 25 }
+      )
+    })
+  ),
+  G = e.partial(
+    e.object({
+      parse: e.array(e.picklist([`role`, `users`, `everyone`])),
+      roles: p(_, { max: 100 }),
+      users: p(_, { max: 100 }),
+      repliedUser: e.boolean()
+    })
+  );
+let jn = (function (e) {
+  return ((e[(e.IS_REMIX = 4)] = `IS_REMIX`), e);
+})({});
+e.enum_(jn);
+const Mn = f(`attachmentFlag`, jn, `Invalid Attachment Flag`),
+  K = e.object({
+    id: _,
+    filename: h(),
+    title: e.exactOptional(h()),
+    description: e.exactOptional(h()),
+    contentType: e.exactOptional(h()),
+    size: m(),
+    url: y,
+    proxyUrl: y,
+    height: e.nullish(m()),
+    width: e.nullish(m()),
+    ephemeral: e.exactOptional(e.boolean()),
+    durationSecs: e.exactOptional(m()),
+    waveform: e.exactOptional(e.pipe(e.string(), e.base64())),
+    flags: e.exactOptional(d(Mn))
+  });
+let Nn = (function (e) {
+  return (
+    (e[(e.ActionRow = 1)] = `ActionRow`),
+    (e[(e.Button = 2)] = `Button`),
+    (e[(e.StringSelect = 3)] = `StringSelect`),
+    (e[(e.TextInput = 4)] = `TextInput`),
+    (e[(e.UserSelect = 5)] = `UserSelect`),
+    (e[(e.RoleSelect = 6)] = `RoleSelect`),
+    (e[(e.MentionableSelect = 7)] = `MentionableSelect`),
+    (e[(e.ChannelSelect = 8)] = `ChannelSelect`),
+    (e[(e.Section = 9)] = `Section`),
+    (e[(e.TextDisplay = 10)] = `TextDisplay`),
+    (e[(e.Thumbnail = 11)] = `Thumbnail`),
+    (e[(e.MediaGallery = 12)] = `MediaGallery`),
+    (e[(e.File = 13)] = `File`),
+    (e[(e.Separator = 14)] = `Separator`),
+    (e[(e.Container = 17)] = `Container`),
+    e
+  );
+})({});
+const Pn = e.enum_(Nn);
+let Fn = (function (e) {
+  return (
+    (e[(e.Primary = 1)] = `Primary`),
+    (e[(e.Secondary = 2)] = `Secondary`),
+    (e[(e.Success = 3)] = `Success`),
+    (e[(e.Danger = 4)] = `Danger`),
+    (e[(e.Link = 5)] = `Link`),
+    (e[(e.Premium = 6)] = `Premium`),
+    e
+  );
+})({});
+const In = e.enum_(Fn),
+  Ln = e.object({
+    type: e.literal(2),
+    id: e.exactOptional(m()),
+    style: In,
+    label: e.exactOptional(h({ max: 80 })),
+    emoji: e.exactOptional(
+      e.object({
+        id: O.entries.id,
+        name: O.entries.name,
+        animated: O.entries.animated
+      })
+    ),
+    customId: e.exactOptional(h({ max: 100 })),
+    skuId: e.exactOptional(_),
+    url: e.exactOptional(y),
+    disabled: e.exactOptional(e.boolean())
+  });
+let Rn = (function (e) {
+  return (
+    (e[(e.Short = 1)] = `Short`), (e[(e.Paragraph = 2)] = `Paragraph`), e
+  );
+})({});
+const zn = e.enum_(Rn),
+  Bn = e.object({
+    type: e.literal(4),
+    id: e.exactOptional(m()),
+    customId: h({ max: 100 }),
+    style: zn,
+    label: h({ max: 45 }),
+    minLength: e.exactOptional(h({ min: 0, max: 4e3 })),
+    maxLength: e.exactOptional(h({ max: 4e3 })),
+    required: e.exactOptional(e.boolean()),
+    value: e.exactOptional(h({ max: 4e3 })),
+    placeholder: e.exactOptional(h({ max: 100 }))
+  }),
+  Vn = e.object({
+    label: h({ max: 100 }),
+    value: h({ max: 100 }),
+    description: e.exactOptional(h({ max: 100 })),
+    emoji: e.exactOptional(
+      e.object({
+        id: O.entries.id,
+        name: O.entries.name,
+        animated: O.entries.animated
+      })
+    ),
+    default: e.exactOptional(e.boolean())
+  }),
+  Hn = e.object({
+    type: e.literal(3),
+    id: e.exactOptional(m()),
+    customId: h({ max: 100 }),
+    options: p(Vn, { max: 25 }),
+    placeholder: e.exactOptional(h({ max: 150 })),
+    minValues: e.exactOptional(m({ max: 25 })),
+    maxValues: e.exactOptional(m({ min: 1, max: 25 })),
+    disabled: e.exactOptional(e.boolean())
+  }),
+  q = e.object({
+    id: _,
+    type: e.union([e.literal(`user`), e.literal(`role`), e.literal(`channel`)])
+  }),
+  Un = e.object({
+    type: e.literal(5),
+    id: e.exactOptional(m()),
+    customId: h({ max: 100 }),
+    placeholder: e.exactOptional(h({ max: 150 })),
+    defaultValues: e.exactOptional(e.array(q)),
+    minValues: e.exactOptional(m({ max: 25 })),
+    maxValues: e.exactOptional(h({ min: 1, max: 25 })),
+    disabled: e.exactOptional(e.boolean())
+  }),
+  Wn = e.object({
+    type: e.literal(6),
+    id: e.exactOptional(m()),
+    customId: h({ max: 100 }),
+    placeholder: e.exactOptional(h({ max: 150 })),
+    defaultValues: e.exactOptional(e.array(q)),
+    minValues: e.exactOptional(m({ max: 25 })),
+    maxValues: e.exactOptional(m({ min: 1, max: 25 })),
+    disabled: e.exactOptional(e.boolean())
+  }),
+  Gn = e.object({
+    type: e.literal(7),
+    id: e.exactOptional(m()),
+    customId: h({ max: 100 }),
+    placeholder: e.exactOptional(h({ max: 150 })),
+    defaultValues: e.exactOptional(e.array(q)),
+    minValues: e.exactOptional(m({ max: 25 })),
+    maxValues: e.exactOptional(m({ min: 1, max: 25 })),
+    disabled: e.exactOptional(e.boolean())
+  }),
+  Kn = e.object({
+    type: e.literal(8),
+    id: e.exactOptional(m()),
+    customId: e.pipe(h({ max: 100 })),
+    channelTypes: e.exactOptional(e.array(x)),
+    placeholder: e.exactOptional(h({ max: 150 })),
+    defaultValues: e.exactOptional(e.array(q)),
+    minValues: e.exactOptional(m({ max: 25 })),
+    maxValues: e.exactOptional(m({ min: 1, max: 25 })),
+    disabled: e.exactOptional(e.boolean())
+  }),
+  qn = e.variant(`type`, [Hn, Un, Wn, Gn, Kn]),
+  Jn = e.object({
+    type: e.literal(1),
+    id: e.exactOptional(m()),
+    components: e.union([p(Ln, { max: 5 }), Bn, qn])
+  }),
+  J = p(Jn, { max: 5 }),
+  Yn = e.object({ burst: m(), normal: m() }),
+  Xn = e.object({
+    count: e.number(),
+    countDetails: Yn,
+    me: e.boolean(),
+    meBurst: e.boolean(),
+    emoji: e.partial(O),
+    burstColors: e.array(e.string())
+  });
+let Zn = (function (e) {
+  return (
+    (e[(e.JOIN = 1)] = `JOIN`),
+    (e[(e.SPECTATE = 2)] = `SPECTATE`),
+    (e[(e.LISTEN = 3)] = `LISTEN`),
+    (e[(e.JOIN_REQUEST = 5)] = `JOIN_REQUEST`),
+    e
+  );
+})({});
+const Qn = e.enum_(Zn),
+  $n = e.object({ type: Qn, partyId: e.exactOptional(h()) }),
+  er = e.object({ id: _, guildId: _, type: x, name: e.string() });
+let tr = (function (e) {
+  return (
+    (e[(e.DEFAULT = 0)] = `DEFAULT`), (e[(e.FORWARD = 1)] = `FORWARD`), e
+  );
+})({});
+const nr = e.enum_(tr),
+  rr = e.partial(
+    e.object({
+      type: nr,
+      messageId: _,
+      channelId: _,
+      guildId: _,
+      failIfNotExists: e.boolean()
+    })
+  );
+let ir = (function (e) {
+  return (
+    (e[(e.DEFAULT = 0)] = `DEFAULT`),
+    (e[(e.RECIPIENT_ADD = 1)] = `RECIPIENT_ADD`),
+    (e[(e.RECIPIENT_REMOVE = 2)] = `RECIPIENT_REMOVE`),
+    (e[(e.CALL = 3)] = `CALL`),
+    (e[(e.CHANNEL_NAME_CHANGE = 4)] = `CHANNEL_NAME_CHANGE`),
+    (e[(e.CHANNEL_ICON_CHANGE = 5)] = `CHANNEL_ICON_CHANGE`),
+    (e[(e.CHANNEL_PINNED_MESSAGE = 6)] = `CHANNEL_PINNED_MESSAGE`),
+    (e[(e.USER_JOIN = 7)] = `USER_JOIN`),
+    (e[(e.GUILD_BOOST = 8)] = `GUILD_BOOST`),
+    (e[(e.GUILD_BOOST_TIER_1 = 9)] = `GUILD_BOOST_TIER_1`),
+    (e[(e.GUILD_BOOST_TIER_2 = 10)] = `GUILD_BOOST_TIER_2`),
+    (e[(e.GUILD_BOOST_TIER_3 = 11)] = `GUILD_BOOST_TIER_3`),
+    (e[(e.CHANNEL_FOLLOW_ADD = 12)] = `CHANNEL_FOLLOW_ADD`),
+    (e[(e.GUILD_DISCOVERY_DISQUALIFIED = 14)] = `GUILD_DISCOVERY_DISQUALIFIED`),
+    (e[(e.GUILD_DISCOVERY_REQUALIFIED = 15)] = `GUILD_DISCOVERY_REQUALIFIED`),
+    (e[(e.GUILD_DISCOVERY_GRACE_PERIOD_INITIAL_WARNING = 16)] =
+      `GUILD_DISCOVERY_GRACE_PERIOD_INITIAL_WARNING`),
+    (e[(e.GUILD_DISCOVERY_GRACE_PERIOD_FINAL_WARNING = 17)] =
+      `GUILD_DISCOVERY_GRACE_PERIOD_FINAL_WARNING`),
+    (e[(e.THREAD_CREATED = 18)] = `THREAD_CREATED`),
+    (e[(e.REPLY = 19)] = `REPLY`),
+    (e[(e.CHAT_INPUT_COMMAND = 20)] = `CHAT_INPUT_COMMAND`),
+    (e[(e.THREAD_STARTER_MESSAGE = 21)] = `THREAD_STARTER_MESSAGE`),
+    (e[(e.GUILD_INVITE_REMINDER = 22)] = `GUILD_INVITE_REMINDER`),
+    (e[(e.CONTEXT_MENU_COMMAND = 23)] = `CONTEXT_MENU_COMMAND`),
+    (e[(e.AUTO_MODERATION_ACTION = 24)] = `AUTO_MODERATION_ACTION`),
+    (e[(e.ROLE_SUBSCRIPTION_PURCHASE = 25)] = `ROLE_SUBSCRIPTION_PURCHASE`),
+    (e[(e.INTERACTION_PREMIUM_UPSELL = 26)] = `INTERACTION_PREMIUM_UPSELL`),
+    (e[(e.STAGE_START = 27)] = `STAGE_START`),
+    (e[(e.STAGE_END = 28)] = `STAGE_END`),
+    (e[(e.STAGE_SPEAKER = 29)] = `STAGE_SPEAKER`),
+    (e[(e.STAGE_TOPIC = 31)] = `STAGE_TOPIC`),
+    (e[(e.GUILD_APPLICATION_PREMIUM_SUBSCRIPTION = 32)] =
+      `GUILD_APPLICATION_PREMIUM_SUBSCRIPTION`),
+    (e[(e.GUILD_INCIDENT_ALERT_MODE_ENABLED = 36)] =
+      `GUILD_INCIDENT_ALERT_MODE_ENABLED`),
+    (e[(e.GUILD_INCIDENT_ALERT_MODE_DISABLED = 37)] =
+      `GUILD_INCIDENT_ALERT_MODE_DISABLED`),
+    (e[(e.GUILD_INCIDENT_REPORT_RAID = 38)] = `GUILD_INCIDENT_REPORT_RAID`),
+    (e[(e.GUILD_INCIDENT_REPORT_FALSE_ALARM = 39)] =
+      `GUILD_INCIDENT_REPORT_FALSE_ALARM`),
+    (e[(e.PURCHASE_NOTIFICATION = 44)] = `PURCHASE_NOTIFICATION`),
+    (e[(e.POLL_RESULT = 46)] = `POLL_RESULT`),
+    e
+  );
+})({});
+const ar = e.enum_(ir),
+  Y = e.enum_({
+    PING: 1,
+    APPLICATION_COMMAND: 2,
+    MESSAGE_COMPONENT: 3,
+    APPLICATION_COMMAND_AUTOCOMPLETE: 4,
+    MODAL_SUBMIT: 5
+  }),
+  or = e.object({
+    id: _,
+    type: Y,
+    name: h({ max: 32 }),
+    user: D,
+    member: e.exactOptional(e.partial(M))
+  }),
+  sr = e.object({
+    roleSubscriptionListingId: _,
+    tierName: h(),
+    totalMonthsSubscribed: m(),
+    isRenewal: e.boolean()
+  });
+let cr = (function (e) {
+  return (
+    (e[(e.CROSSPOSTED = 1)] = `CROSSPOSTED`),
+    (e[(e.IS_CROSSPOST = 2)] = `IS_CROSSPOST`),
+    (e[(e.SUPPRESS_EMBEDS = 4)] = `SUPPRESS_EMBEDS`),
+    (e[(e.SOURCE_MESSAGE_DELETED = 8)] = `SOURCE_MESSAGE_DELETED`),
+    (e[(e.URGENT = 16)] = `URGENT`),
+    (e[(e.HAS_THREAD = 32)] = `HAS_THREAD`),
+    (e[(e.EPHEMERAL = 64)] = `EPHEMERAL`),
+    (e[(e.LOADING = 128)] = `LOADING`),
+    (e[(e.FAILED_TO_MENTION_SOME_ROLES_IN_THREAD = 256)] =
+      `FAILED_TO_MENTION_SOME_ROLES_IN_THREAD`),
+    (e[(e.SUPPRESS_NOTIFICATIONS = 4096)] = `SUPPRESS_NOTIFICATIONS`),
+    (e[(e.IS_VOICE_MESSAGE = 8192)] = `IS_VOICE_MESSAGE`),
+    (e[(e.HAS_SNAPSHOT = 16384)] = `HAS_SNAPSHOT`),
+    (e[(e.IS_COMPONENTS_V2 = 32768)] = `IS_COMPONENTS_V2`),
+    e
+  );
+})({});
+e.enum_(cr);
+const X = f(`messageFlag`, cr, `Invalid Message Flag`),
+  lr = e.object({
+    text: e.exactOptional(e.pipe(e.string(), e.nonEmpty())),
+    answers: e.exactOptional(e.partial(O))
+  }),
+  ur = e.object({
+    answerId: e.pipe(e.number(), e.integer(), e.minValue(0)),
+    pollMedia: lr
+  }),
+  dr = e.enum_({ DEFAULT: 1 }),
+  fr = e.object({
+    id: e.pipe(e.number(), e.integer(), e.minValue(0)),
+    count: e.pipe(e.number(), e.integer(), e.minValue(0)),
+    meVoted: e.boolean()
+  }),
+  pr = e.object({ isFinalized: e.boolean(), answerCounts: e.array(fr) }),
+  mr = e.object({
+    question: lr,
+    answers: e.pipe(e.array(ur), e.maxLength(10)),
+    expiry: e.nullable(v),
+    allowMultiselect: e.boolean(),
+    layoutType: dr,
+    results: e.exactOptional(pr)
+  }),
+  hr = e.object({
+    message: e.object({
+      type: ar,
+      content: e.string(),
+      embeds: e.array(W),
+      attachments: e.array(K),
+      timestamp: v,
+      editedTimestamp: e.nullable(v),
+      flags: d(X),
+      mentions: e.array(D),
+      mentionRoles: e.array(_),
+      stickers: e.exactOptional(e.array(k)),
+      stickerItems: e.exactOptional(e.array(k)),
+      components: e.exactOptional(e.array(J))
+    })
+  }),
+  gr = e.object({
+    id: _,
+    type: Y,
+    user: D,
+    authoringIntegrationOwners: e.record(
+      e.picklist([`GUILD_INSTALL`, `USER_INSTALL`]),
+      e.union([_, e.literal(0)])
+    ),
+    originalResponseMessageId: e.exactOptional(_),
+    targetUser: e.exactOptional(D),
+    targetMessageId: e.exactOptional(_)
+  }),
+  _r = e.object({ participants: e.array(_), endedTimestamp: e.nullish(v) }),
+  Z = e.object({
+    id: _,
+    channelId: _,
+    author: D,
+    content: e.string(),
+    timestamp: v,
+    editedTimestamp: e.nullable(v),
+    tts: e.boolean(),
+    mentionEveryone: e.boolean(),
+    mentions: e.array(D),
+    mentionRoles: e.array(_),
+    mentionChannels: e.nullish(e.array(er)),
+    attachments: e.array(K),
+    embeds: e.array(W),
+    reactions: e.exactOptional(e.array(Xn)),
+    nonce: e.exactOptional(e.union([e.number(), e.string()])),
+    pinned: e.boolean(),
+    webhookId: e.exactOptional(_),
+    type: ar,
+    activity: e.exactOptional($n),
+    application: e.exactOptional(e.lazy(() => e.partial(vt))),
+    applicationId: e.exactOptional(_),
+    flags: d(X),
+    messageReference: e.exactOptional(rr),
+    messageSnapshots: e.exactOptional(e.array(hr)),
+    referencedMessage: e.nullish(e.lazy(() => Z)),
+    interactionMetadata: e.exactOptional(gr),
+    interaction: e.exactOptional(or),
+    thread: e.exactOptional(H),
+    components: e.exactOptional(e.array(J)),
+    stickerItems: e.exactOptional(e.array(k)),
+    stickers: e.exactOptional(e.array(k)),
+    position: e.exactOptional(m()),
+    roleSubscriptionData: e.exactOptional(sr),
+    resolved: e.exactOptional(e.unknown()),
+    poll: e.exactOptional(mr),
+    call: e.exactOptional(_r)
+  });
+(e.object({
+  channel: _,
+  body: e.object({ messages: p(_, { min: 2, max: 100 }) })
+}),
+  e.object({
+    channel: _,
+    body: e.partial(
+      e.object({
+        content: h({ max: 2e4 }),
+        tts: e.boolean(),
+        embeds: e.array(W),
+        allowedMentions: G,
+        messageReference: rr,
+        components: J,
+        stickerIds: p(e.string(), { max: 3 }),
+        files: e.unknown(),
+        payloadJson: e.string(),
+        attachments: e.array(e.partial(K)),
+        flags: d(X)
+      })
+    )
+  }),
+  e.object({ channel: _, message: _, emoji: _ }),
+  e.object({ channel: _, message: _ }),
+  e.object({ channel: _, message: _ }),
+  e.object({ channel: _, message: _, emoji: _ }),
+  e.object({ channel: _, message: _ }),
+  e.object({ channel: _, message: _, emoji: _ }),
+  e.object({ channel: _, message: _, emoji: _, user: _ }),
+  e.object({
+    channel: _,
+    message: _,
+    body: e.partial(
+      e.object({
+        content: h({ max: 2e3 }),
+        embeds: p(W, { max: 10 }),
+        flags: d(X),
+        allowedMentions: G,
+        components: J,
+        files: e.array(e.unknown()),
+        attachments: e.array(K)
+      })
+    )
+  }),
+  e.object({ channel: _, message: _ }),
+  e.object({
+    channel: _,
+    params: e.exactOptional(
+      e.partial(
+        e.object({
+          around: e.nullish(_),
+          before: e.nullish(_),
+          after: e.nullish(_),
+          limit: e.nullish(m({ min: 1, max: 100 }))
+        })
+      )
+    )
+  }),
+  e.object({
+    channel: _,
+    params: e.exactOptional(
+      e.partial(
+        e.object({
+          before: e.nullish(_),
+          limit: e.nullish(m({ min: 1, max: 100 }))
+        })
+      )
+    )
+  }),
+  e.object({
+    channel: _,
+    message: _,
+    emoji: _,
+    params: e.exactOptional(
+      e.partial(
+        e.object({
+          after: e.nullish(_),
+          limit: e.nullish(m({ min: 1, max: 100 }))
+        })
+      )
+    )
+  }),
+  e.object({ channel: _, message: _ }),
+  e.object({ channel: _, message: _ }));
+const vr = e.object({
+  id: _,
+  type: Y,
+  user: D,
+  authoringIntegrationOwners: e.record(
+    e.picklist([`GUILD_INSTALL`, `USER_INSTALL`]),
+    e.union([_, e.literal(0)])
+  ),
+  originalResponseMessageId: e.exactOptional(_),
+  interactedMessageId: e.exactOptional(_)
+});
+(e.object({ pinnedAt: v, message: Z }),
+  e.object({
+    id: _,
+    type: Y,
+    user: D,
+    authoringIntegrationOwners: e.record(
+      e.picklist([`GUILD_INSTALL`, `USER_INSTALL`]),
+      e.union([_, e.literal(0)])
+    ),
+    originalResponseMessageId: e.exactOptional(_),
+    triggeringInteractionMetadata: e.union([gr, vr])
+  }),
+  e.object({
+    channel: _,
+    body: e.object({
+      name: e.pipe(e.string(), e.minLength(1), e.maxLength(100)),
+      autoArchiveDuration: e.exactOptional(j),
+      rateLimitPerUser: e.exactOptional(
+        e.pipe(e.number(), e.integer(), e.minValue(0), e.maxValue(21600))
+      ),
+      message: e.partial(
+        e.object({
+          content: e.pipe(e.string(), e.minLength(1), e.maxLength(2e3)),
+          embeds: e.array(W),
+          allowedMentions: G,
+          components: J,
+          stickerIds: e.pipe(e.array(e.string()), e.maxLength(3)),
+          attachments: e.array(e.partial(K)),
+          flags: d(X)
+        })
+      ),
+      appliedTags: e.exactOptional(e.array(_)),
+      files: e.exactOptional(e.unknown()),
+      payloadJson: e.exactOptional(e.unknown())
+    })
+  }),
+  e.object({ ...V.entries, message: Z }),
+  e.object({
+    channel: _,
+    body: e.object({
+      name: e.pipe(e.string(), e.minLength(1), e.maxLength(100)),
+      autoArchiveDuration: e.exactOptional(j),
+      type: e.exactOptional(x),
+      invitable: e.exactOptional(e.boolean()),
+      rateLimitPerUser: e.nullish(
+        e.pipe(e.number(), e.integer(), e.minValue(0), e.maxValue(21600))
+      )
+    })
+  }),
+  e.object({ channel: _ }),
+  e.object({ threads: e.array(V), members: e.array(kt), hasMore: e.boolean() }),
+  e.object({ channelId: _, webhookId: _ }));
+const yr = e.object({
+    type: e.literal(10),
+    id: e.exactOptional(m()),
+    content: e.string()
+  }),
+  br = e.object({
+    url: y,
+    proxyUrl: e.exactOptional(y),
+    height: e.nullish(m()),
+    width: e.nullish(m()),
+    contentType: e.exactOptional(h()),
+    attachmentId: _
+  }),
+  xr = e.object({
+    type: e.literal(11),
+    id: e.exactOptional(m()),
+    media: br,
+    description: e.exactOptional(h({ max: 1024 })),
+    spoiler: e.exactOptional(e.boolean())
+  }),
+  Sr = e.object({
+    type: e.literal(9),
+    id: e.exactOptional(m()),
+    components: p(yr, { max: 3 }),
+    accessroy: e.union([xr, Ln])
+  }),
+  Cr = e.object({
+    media: br,
+    description: e.exactOptional(h({ max: 1024 })),
+    spoiler: e.exactOptional(e.boolean())
+  }),
+  wr = e.object({
+    type: e.literal(12),
+    id: e.exactOptional(m()),
+    items: p(Cr, { max: 10 })
+  }),
+  Tr = e.object({
+    type: e.literal(13),
+    id: e.exactOptional(m()),
+    file: br,
+    spoiler: e.exactOptional(e.boolean()),
+    name: h(),
+    size: m()
+  }),
+  Er = e.object({
+    type: e.literal(14),
+    id: e.exactOptional(m()),
+    divider: e.exactOptional(e.boolean()),
+    spacing: e.exactOptional(e.picklist([1, 2]))
+  }),
+  Dr = e.object({
+    type: e.literal(17),
+    id: e.exactOptional(m()),
+    components: e.array(e.union([Jn, yr, Sr, wr, Er, Tr])),
+    accentColor: e.nullish(m({ min: 0, max: 16777215 })),
+    spoiler: e.exactOptional(e.boolean())
+  }),
+  Or = e.union([Jn, Ln, Hn, Bn, Un, Wn, Gn, Kn, Sr, yr, xr, wr, Tr, Er, Dr]);
+(e.object({ application: _, body: e.object({ name: h(), image: g }) }),
+  e.object({
+    guild: _,
+    body: e.object({ name: h(), image: g, roles: e.array(_) })
+  }),
+  e.object({ application: _, emoji: _ }),
+  e.object({ guild: _, emoji: _ }),
+  e.object({ application: _, emoji: _ }),
+  e.object({ guild: _, emoji: _ }),
+  e.object({ application: _ }),
+  e.object({ guild: _ }),
+  e.object({
+    application: _,
+    emoji: _,
+    body: e.partial(e.object({ name: h() }))
+  }),
+  e.object({
+    guild: _,
+    emoji: _,
+    body: e.partial(e.object({ name: h(), roles: e.nullable(e.array(_)) }))
+  }),
+  e.object({ application: _, entitlement: _ }),
+  e.object({
+    application: _,
+    params: e.exactOptional(
+      e.partial(
+        e.object({ skuId: _, ownerId: _, ownerType: e.picklist([1, 2]) })
+      )
+    )
+  }),
+  e.object({ application: _, entitlement: _ }),
+  e.object({ application: _, entitlement: _ }),
+  e.object({
+    application: _,
+    params: e.exactOptional(
+      e.partial(
+        e.object({
+          userId: _,
+          skuIds: e.pipe(e.string(), e.nonEmpty()),
+          before: _,
+          after: _,
+          limit: e.pipe(
+            e.number(),
+            e.integer(),
+            e.minValue(1),
+            e.maxValue(100)
+          ),
+          guildId: _,
+          excludeEnded: e.boolean(),
+          excludeDeleted: e.boolean()
+        })
+      )
+    )
+  }));
+const kr = e.enum_({
+    PURCHASE: 1,
+    PREMIUM_SUBSCRIPTION: 2,
+    DEVELOPER_GIFT: 3,
+    TEST_MODE_PURCHASE: 4,
+    FREE_PURCHASE: 5,
+    USER_GIFT: 6,
+    PREMIUM_PURCHASE: 7,
+    APPLICATION_SUBSCRIPTION: 8
+  }),
+  Ar = e.object({
+    id: _,
+    skuId: _,
+    applicationId: _,
+    userId: e.exactOptional(_),
+    type: kr,
+    deleted: e.boolean(),
+    startsAt: e.nullable(v),
+    endsAt: e.nullable(v),
+    guildId: e.exactOptional(_),
+    consumed: e.exactOptional(e.boolean())
+  });
+(e.object({
+  guild: _,
+  body: e.object({
+    channelId: e.exactOptional(_),
+    entityMetadata: e.exactOptional(Gt),
+    name: e.pipe(e.string(), e.nonEmpty()),
+    privacyLevel: Ht,
+    scheduledStartTime: v,
+    scheduledEndTime: e.exactOptional(v),
+    description: e.exactOptional(e.pipe(e.string(), e.nonEmpty())),
+    entityType: Bt,
+    image: e.exactOptional(g),
+    recurrenceRule: e.exactOptional($t)
+  })
+}),
+  e.object({ guild: _, event: _ }),
+  e.object({
+    guild: _,
+    event: _,
+    params: e.exactOptional(e.partial(e.object({ withUserCount: e.boolean() })))
+  }),
+  e.object({
+    guild: _,
+    event: _,
+    params: e.exactOptional(
+      e.partial(
+        e.object({
+          limit: e.pipe(e.number(), e.minValue(1), e.maxValue(100)),
+          withMember: e.boolean(),
+          before: _,
+          after: _
+        })
+      )
+    )
+  }),
+  e.object({
+    guild: _,
+    params: e.exactOptional(e.partial(e.object({ withUserCount: e.boolean() })))
+  }),
+  e.object({
+    guild: _,
+    event: _,
+    body: e.object({
+      channelId: e.nullish(_),
+      entityMetadata: e.nullish(Gt),
+      name: e.exactOptional(e.pipe(e.string(), e.nonEmpty())),
+      privacyLevel: e.exactOptional(Ht),
+      scheduledStartTime: e.exactOptional(v),
+      scheduledEndTime: e.exactOptional(v),
+      description: e.nullish(e.pipe(e.string(), e.nonEmpty())),
+      entityType: e.exactOptional(Bt),
+      status: e.exactOptional(Wt),
+      image: e.exactOptional(g),
+      recurrenceRule: e.exactOptional($t)
+    })
+  }),
+  e.object({ guildScheduledEventId: _, user: D, member: e.exactOptional(M) }),
+  e.object({
+    guild: _,
+    user: _,
+    body: e.object({
+      accessToken: e.pipe(e.string(), e.nonEmpty()),
+      nick: e.exactOptional(e.pipe(e.string(), e.nonEmpty())),
+      roles: e.exactOptional(e.array(_)),
+      mute: e.exactOptional(e.boolean()),
+      deaf: e.exactOptional(e.boolean())
+    })
+  }),
+  e.object({ guild: _, user: _, role: _ }),
+  e.object({
+    guild: _,
+    body: e.object({
+      days: e.pipe(e.number(), e.minValue(1), e.maxValue(30)),
+      computePruneCount: e.boolean(),
+      includeRoles: e.array(_),
+      reason: e.exactOptional(e.pipe(e.string(), e.nonEmpty()))
+    })
+  }),
+  e.object({
+    pruned: e.nullable(e.pipe(e.number(), e.integer(), e.minValue(0)))
+  }),
+  e.object({
+    guild: _,
+    body: e.object({
+      userIds: e.pipe(e.array(_), e.nonEmpty(), e.maxLength(200)),
+      deleteMessageSeconds: e.pipe(
+        e.number(),
+        e.integer(),
+        e.minValue(0),
+        e.maxValue(604800)
+      )
+    })
+  }),
+  e.object({
+    body: e.object({
+      name: e.pipe(e.string(), e.minLength(2), e.maxLength(100)),
+      region: e.nullish(e.pipe(e.string(), e.nonEmpty())),
+      icon: e.exactOptional(g),
+      verificationLevel: e.exactOptional(Qe),
+      defaultMessageNotifications: e.exactOptional(it),
+      explicitContentFilter: e.exactOptional(nt),
+      roles: e.exactOptional(e.array(We)),
+      channels: e.exactOptional(e.array(H)),
+      afkChannelId: e.exactOptional(_),
+      afkTimeout: e.exactOptional(
+        e.pipe(e.number(), e.integer(), e.minValue(0))
+      ),
+      systemChannelId: e.exactOptional(_),
+      systemChannelFlags: e.exactOptional(d(ct))
+    })
+  }),
+  e.object({
+    guild: _,
+    user: _,
+    body: e.exactOptional(
+      e.partial(
+        e.object({
+          deleteMessageDays: e.pipe(
+            e.number(),
+            e.integer(),
+            e.minValue(1),
+            e.maxValue(7)
+          ),
+          deleteMessageSeconds: e.pipe(
+            e.number(),
+            e.integer(),
+            e.minValue(1),
+            e.maxValue(7)
+          )
+        })
+      )
+    )
+  }),
+  e.object({
+    guild: _,
+    body: e.object({
+      name: e.pipe(e.string(), e.nonEmpty()),
+      type: e.nullish(x),
+      topic: e.nullish(e.pipe(e.string(), e.minLength(0), e.maxLength(1024))),
+      bitrate: e.nullish(e.pipe(e.number(), e.minValue(8e3))),
+      userLimit: e.nullish(e.pipe(e.number(), e.integer(), e.minValue(0))),
+      rateLimitPerYser: e.nullish(
+        e.pipe(e.number(), e.integer(), e.minValue(0), e.maxValue(21600))
+      ),
+      position: e.nullish(e.pipe(e.number(), e.integer(), e.minValue(0))),
+      permissionOverwrites: e.nullish(e.array(e.partial(Ct))),
+      parentId: e.nullish(_),
+      nsfw: e.nullish(e.boolean()),
+      rtcRegion: e.nullish(e.pipe(e.string(), e.nonEmpty())),
+      videoQualityMode: e.nullish(jt),
+      defaultAutoArchiveDuration: e.nullish(j),
+      defaultReactionEmoji: e.nullish(F),
+      availableTags: e.nullish(e.array(P)),
+      defaultSortOrder: e.nullish(I),
+      defaultForumLayout: e.nullish(L),
+      defaultThreadRateLimitPerUser: e.nullish(
+        e.pipe(e.number(), e.integer(), e.minValue(0), e.maxValue(21600))
+      )
+    })
+  }));
+const jr = e.object({
+  primaryColor: m({ min: 0, max: 16777215 }),
+  secondaryColor: e.nullable(m({ min: 0, max: 16777215 })),
+  tertiaryColor: e.nullable(m({ min: 0, max: 16777215 }))
+});
+(e.object({
+  guild: _,
+  body: e.partial(
+    e.object({
+      name: e.pipe(e.string(), e.nonEmpty()),
+      permissions: u(E),
+      color: e.pipe(
+        e.number(),
+        e.integer(),
+        e.minValue(0),
+        e.maxValue(16777215)
+      ),
+      colors: jr,
+      hoist: e.boolean(),
+      icon: e.nullable(g),
+      unicodeEmoji: e.nullable(e.pipe(e.string(), e.nonEmpty())),
+      mentionable: e.boolean()
+    })
+  )
+}),
+  e.object({ guild: _ }),
+  e.object({ guild: _, integration: _ }),
+  e.object({ guild: _, role: _ }),
+  e.object({
+    id: _,
+    params: e.exactOptional(e.partial(e.object({ withCounts: e.boolean() })))
+  }),
+  e.object({ guild: _, user: _ }),
+  e.object({
+    guild: _,
+    params: e.exactOptional(
+      e.partial(
+        e.object({
+          limit: e.pipe(
+            e.number(),
+            e.integer(),
+            e.minValue(1),
+            e.maxValue(1e3)
+          ),
+          before: _,
+          after: _
+        })
+      )
+    )
+  }),
+  e.object({ guild: _ }),
+  e.object({ guild: _ }),
+  e.object({ guild: _ }),
+  e.object({ guild: _, user: _ }),
+  e.object({ guild: _ }),
+  e.object({ guild: _ }),
+  e.object({
+    guild: _,
+    params: e.exactOptional(
+      e.partial(
+        e.object({
+          days: e.exactOptional(
+            e.pipe(e.number(), e.integer(), e.minValue(1), e.maxValue(30)),
+            7
+          ),
+          includeRoles: e.pipe(e.string(), e.nonEmpty())
+        })
+      )
+    )
+  }),
+  e.object({ pruned: e.pipe(e.number(), e.integer(), e.minValue(0)) }),
+  e.object({ guild: _, role: _ }),
+  e.object({ guild: _ }),
+  e.object({ guild: _ }),
+  e.object({ guild: _ }),
+  e.object({ guild: _ }),
+  e.object({ guild: _ }),
+  e.object({
+    guild: _,
+    params: e.exactOptional(
+      e.partial(
+        e.object({
+          style: e.picklist([
+            `shield`,
+            `banner1`,
+            `banner2`,
+            `banner3`,
+            `banner4`
+          ])
+        })
+      )
+    )
+  }),
+  e.object({ guild: _ }),
+  e.object({ guild: _ }),
+  e.object({ threads: e.array(V), members: e.array(kt) }),
+  e.object({
+    guild: _,
+    params: e.exactOptional(
+      e.partial(
+        e.object({
+          limit: e.pipe(
+            e.number(),
+            e.integer(),
+            e.minValue(1),
+            e.maxValue(1e3)
+          ),
+          after: _
+        })
+      )
+    )
+  }),
+  e.object({
+    guild: _,
+    body: e.object({ nick: e.nullish(e.pipe(e.string(), e.nonEmpty())) })
+  }),
+  e.object({
+    guild: _,
+    body: e.partial(
+      e.object({
+        name: e.pipe(e.string(), e.nonEmpty()),
+        region: e.nullable(e.pipe(e.string(), e.nonEmpty())),
+        verificationLevel: e.nullable(Qe),
+        defaultMessageNotifications: e.nullable(it),
+        explicitContentFilter: e.nullable(nt),
+        afkChannelId: e.nullable(_),
+        afkTimeout: e.pipe(e.number(), e.integer(), e.minValue(0)),
+        icon: e.nullable(g),
+        ownerId: _,
+        splash: e.nullable(g),
+        discoverySplash: e.nullable(g),
+        banner: e.nullable(g),
+        systemChannelId: e.nullable(_),
+        systemChannelFlags: d(ct),
+        rulesChannelId: e.nullable(_),
+        publicUpdatesChannelId: e.nullable(_),
+        preferredLocale: e.nullable(b),
+        features: e.array(ot),
+        description: e.nullable(e.pipe(e.string(), e.nonEmpty())),
+        premiumProgressBarEnabled: e.boolean(),
+        safetyAlertsChannelId: e.nullable(_)
+      })
+    )
+  }),
+  e.object({
+    guild: _,
+    body: e.array(
+      e.object({
+        id: _,
+        position: e.nullish(e.pipe(e.number(), e.integer(), e.minValue(0))),
+        lockPermissions: e.nullish(e.boolean()),
+        parentId: e.nullish(_)
+      })
+    )
+  }),
+  e.object({ guild: _, body: e.object({ level: et }) }));
+const Mr = e.object({
+  id: _,
+  channelIds: e.array(_),
+  roleIds: e.array(_),
+  emoji: e.exactOptional(O),
+  emojiId: e.exactOptional(_),
+  emojiName: e.exactOptional(e.pipe(e.string(), e.nonEmpty())),
+  emojiAnimated: e.exactOptional(e.boolean()),
+  title: e.pipe(e.string(), e.nonEmpty()),
+  description: e.nullable(e.string())
+});
+let Nr = (function (e) {
+  return (
+    (e[(e.MULTIPLE_CHOICE = 0)] = `MULTIPLE_CHOICE`),
+    (e[(e.DROPDOWN = 1)] = `DROPDOWN`),
+    e
+  );
+})({});
+const Pr = e.enum_(Nr),
+  Fr = e.object({
+    id: _,
+    type: Pr,
+    options: e.array(Mr),
+    title: e.string(),
+    singleSelect: e.boolean(),
+    required: e.boolean(),
+    inOnboarding: e.boolean()
+  });
+let Ir = (function (e) {
+  return (
+    (e[(e.ONBOARDING_DEFAULT = 0)] = `ONBOARDING_DEFAULT`),
+    (e[(e.ONBOARDING_ADVANCED = 1)] = `ONBOARDING_ADVANCED`),
+    e
+  );
+})({});
+const Lr = e.enum_(Ir);
+(e.object({
+  guild: _,
+  body: e.object({
+    prompts: e.array(Fr),
+    defaultChannelIds: e.array(_),
+    enabled: e.boolean(),
+    mode: Lr
+  })
+}),
+  e.object({
+    guild: _,
+    body: e.object({
+      invitesDisabledUntil: e.nullish(v),
+      dmsDisabledUntil: e.nullish(v)
+    })
+  }),
+  e.object({
+    guild: _,
+    user: _,
+    body: e.partial(
+      e.object({
+        nick: e.nullish(e.pipe(e.string(), e.nonEmpty())),
+        roles: e.nullish(e.array(_)),
+        mute: e.nullish(e.boolean()),
+        deaf: e.nullish(e.boolean()),
+        channelId: e.nullish(_),
+        communicationDisabledUntil: e.nullish(v),
+        flags: e.nullish(d(Et))
+      })
+    )
+  }),
+  e.object({
+    guild: _,
+    role: _,
+    body: e.partial(
+      e.object({
+        name: e.nullish(e.pipe(e.string(), e.nonEmpty())),
+        permissions: e.nullish(u(E)),
+        color: e.pipe(
+          e.number(),
+          e.integer(),
+          e.minValue(0),
+          e.maxValue(16777215)
+        ),
+        colors: jr,
+        hoist: e.nullish(e.boolean()),
+        icon: e.nullish(g),
+        unicodeEmoji: e.nullish(e.pipe(e.string(), e.nonEmpty())),
+        mentionable: e.nullish(e.boolean())
+      })
+    )
+  }),
+  e.object({
+    guild: _,
+    body: e.array(
+      e.object({
+        id: _,
+        position: e.nullish(e.pipe(e.number(), e.integer(), e.minValue(0)))
+      })
+    )
+  }),
+  e.object({
+    guild: _,
+    body: e.partial(
+      e.object({
+        enabled: e.nullish(e.boolean()),
+        welcomeChannels: e.nullish(e.array(Ge)),
+        description: e.nullish(e.pipe(e.string(), e.nonEmpty()))
+      })
+    )
+  }));
+const Rr = e.object({ enabled: e.boolean(), channelId: e.nullable(_) });
+(e.object({ guild: _, body: e.partial(Rr) }),
+  e.object({ guild: _, user: _ }),
+  e.object({ guild: _, user: _ }),
+  e.object({ guild: _, user: _, role: _ }),
+  e.object({
+    guild: _,
+    params: e.object({
+      query: e.pipe(e.string(), e.nonEmpty()),
+      limit: e.exactOptional(
+        e.pipe(e.number(), e.integer(), e.minValue(1), e.maxValue(1e3))
+      )
+    })
+  }));
+const zr = e.object({ label: e.string(), url: e.string() }),
+  Br = e.object({
+    join: e.optional(e.string()),
+    spectate: e.optional(e.string()),
+    match: e.optional(e.string())
+  }),
+  Vr = e.object({
+    largeImage: e.optional(e.string()),
+    largeText: e.optional(e.string()),
+    smallImage: e.optional(e.string()),
+    smallText: e.optional(e.string())
+  }),
+  Hr = e.object({ id: _, size: e.optional(e.tuple([e.number(), e.number()])) }),
+  Ur = e.object({
+    name: e.string(),
+    id: e.optional(_),
+    animated: e.optional(e.boolean())
+  }),
+  Wr = e.object({
+    start: e.exactOptional(e.number()),
+    end: e.exactOptional(e.number())
+  }),
+  Gr = e.object({
+    name: e.string(),
+    type: e.number(),
+    url: e.optional(e.string()),
+    createdAt: v,
+    timestamps: e.optional(Wr),
+    applicationId: e.optional(_),
+    details: e.optional(e.string()),
+    state: e.optional(e.string()),
+    emoji: e.optional(Ur),
+    party: e.optional(Hr),
+    assets: e.optional(Vr),
+    secrets: e.optional(Br),
+    instance: e.optional(e.boolean()),
+    flags: e.optional(e.pipe(e.number(), e.integer())),
+    buttons: e.optional(e.array(zr))
+  }),
+  Kr = {
+    INSTANCE: 1,
+    JOIN: 2,
+    SPECTATE: 4,
+    JOIN_REQUEST: 8,
+    SYNC: 16,
+    PLAY: 32,
+    PARTY_PRIVACY_FRIENDS: 64,
+    PARTY_PRIVACY_VOICE_CHANNEL: 128,
+    EMBEDDED: 256
+  };
+(e.enum_(Kr),
+  f(`activityFlag`, Kr, `Invalid Activity Flag`),
+  e.object({ reason: e.nullable(e.string()), user: D }));
+const qr = e.object({
+  desktop: e.optional(e.string()),
+  mobile: e.optional(e.string()),
+  web: e.optional(e.string())
+});
+(e.object({
+  guildId: _,
+  prompts: e.array(Fr),
+  defaultChannelIds: e.array(_),
+  enabled: e.boolean(),
+  mode: Lr
+}),
+  e.object({
+    id: _,
+    name: e.string(),
+    icon: e.exactOptional(e.string()),
+    splash: e.exactOptional(e.string()),
+    discoverySplash: e.exactOptional(e.string()),
+    emojis: e.array(O),
+    features: e.array(ot),
+    approximateMemberCount: m(),
+    approximatePresenceCount: m(),
+    description: e.exactOptional(e.string()),
+    stickers: e.array(k)
+  }),
+  e.object({
+    id: _,
+    name: h({ max: 100 }),
+    instantInvite: e.nullable(h()),
+    channels: e.array(B),
+    members: p(e.partial(D), { max: 100 }),
+    presenceCount: m()
+  }),
+  e.object({
+    user: D,
+    guildId: _,
+    status: e.union([
+      e.literal(`idle`),
+      e.literal(`dnd`),
+      e.literal(`online`),
+      e.literal(`offline`)
+    ]),
+    activities: e.array(Gr),
+    clientStatus: qr
+  }));
+const Q = e.picklist([16, 32, 64, 128, 256, 512, 1024, 2048, 4096]);
+(e.object({
+  application: _,
+  achievement: _,
+  icon: h(),
+  format: e.exactOptional(e.picklist([`png`, `jpg`, `webp`])),
+  params: e.exactOptional(e.object({ size: Q }))
+}),
+  e.object({
+    application: _,
+    asset: _,
+    format: e.exactOptional(e.picklist([`png`, `jpg`, `webp`])),
+    params: e.exactOptional(e.object({ size: Q }))
+  }),
+  e.object({
+    application: _,
+    cover: h(),
+    format: e.exactOptional(e.picklist([`png`, `jpg`, `webp`])),
+    params: e.exactOptional(e.object({ size: Q }))
+  }),
+  e.object({
+    application: _,
+    icon: h(),
+    format: e.exactOptional(e.picklist([`png`, `jpg`, `webp`])),
+    params: e.exactOptional(e.object({ size: Q }))
+  }),
+  e.object({ asset: _, params: e.exactOptional(e.object({ size: Q })) }),
+  e.object({
+    emoji: _,
+    format: e.exactOptional(e.picklist([`png`, `jpg`, `webp`, `gif`])),
+    params: e.exactOptional(e.object({ size: Q }))
+  }),
+  e.object({ index: h() }),
+  e.object({
+    guild: _,
+    banner: h(),
+    format: e.exactOptional(e.picklist([`png`, `jpg`, `webp`, `gif`])),
+    params: e.exactOptional(e.object({ size: Q }))
+  }),
+  e.object({
+    guild: _,
+    splash: h(),
+    format: e.exactOptional(e.picklist([`png`, `jpg`, `webp`])),
+    params: e.exactOptional(e.object({ size: Q }))
+  }),
+  e.object({
+    guild: _,
+    icon: h(),
+    format: e.exactOptional(e.picklist([`png`, `jpg`, `webp`, `gif`])),
+    params: e.exactOptional(e.object({ size: Q }))
+  }),
+  e.object({
+    guild: _,
+    user: _,
+    avatar: h(),
+    format: e.exactOptional(e.picklist([`png`, `jpg`, `webp`, `gif`])),
+    params: e.exactOptional(e.object({ size: Q }))
+  }),
+  e.object({
+    guild: _,
+    user: _,
+    banner: h(),
+    format: e.exactOptional(e.picklist([`png`, `jpg`, `webp`, `gif`])),
+    params: e.exactOptional(e.object({ size: Q }))
+  }),
+  e.object({
+    event: _,
+    cover: h(),
+    format: e.exactOptional(e.picklist([`png`, `jpg`, `webp`])),
+    params: e.exactOptional(e.object({ size: Q }))
+  }),
+  e.object({
+    guild: _,
+    splash: h(),
+    format: e.exactOptional(e.picklist([`png`, `jpg`, `webp`])),
+    params: e.exactOptional(e.object({ size: Q }))
+  }),
+  e.object({
+    role: _,
+    icon: h(),
+    format: e.exactOptional(e.picklist([`png`, `jpg`, `webp`])),
+    params: e.exactOptional(e.object({ size: Q }))
+  }),
+  e.object({
+    sticker: _,
+    format: e.exactOptional(e.picklist([`png`, `json`, `gif`]))
+  }),
+  e.object({
+    banner: _,
+    format: e.exactOptional(e.picklist([`png`, `jpg`, `webp`])),
+    params: e.exactOptional(e.object({ size: Q }))
+  }),
+  e.object({
+    application: _,
+    asset: _,
+    format: e.exactOptional(e.picklist([`png`, `jpg`, `webp`])),
+    params: e.exactOptional(e.object({ size: Q }))
+  }),
+  e.object({
+    team: _,
+    icon: h(),
+    format: e.exactOptional(e.picklist([`png`, `jpg`, `webp`])),
+    params: e.exactOptional(e.object({ size: Q }))
+  }),
+  e.object({
+    user: _,
+    avatar: h(),
+    format: e.exactOptional(e.picklist([`png`, `jpg`, `webp`, `gif`])),
+    params: e.exactOptional(e.object({ size: Q }))
+  }),
+  e.object({
+    user: _,
+    decoration: h(),
+    params: e.exactOptional(e.object({ size: Q }))
+  }),
+  e.object({
+    user: _,
+    banner: h(),
+    format: e.exactOptional(e.picklist([`png`, `jpg`, `webp`, `gif`])),
+    params: e.exactOptional(e.object({ size: Q }))
+  }),
+  e.object({
+    application: _,
+    token: h(),
+    body: e.partial(
+      e.object({
+        content: h({ max: 2e3 }),
+        tts: e.boolean(),
+        embeds: p(e.object({ ...W.entries, type: e.literal(`rich`) }), {
+          max: 10
+        }),
+        allowedMentions: G,
+        components: e.array(J),
+        files: e.array(e.unknown()),
+        attachments: e.array(e.partial(K)),
+        flags: d(X),
+        threadName: h()
+      })
+    )
+  }));
+const Jr = e.object({
+  id: _,
+  type: Y,
+  activityInstanceId: e.exactOptional(h()),
+  responseMessageId: e.exactOptional(_),
+  responseMessageLoading: e.exactOptional(e.boolean()),
+  responseMessageEphemeral: e.exactOptional(e.boolean())
+});
+let Yr = (function (e) {
+  return (
+    (e[(e.PONG = 1)] = `PONG`),
+    (e[(e.CHANNEL_MESSAGE_WITH_SOURCE = 4)] = `CHANNEL_MESSAGE_WITH_SOURCE`),
+    (e[(e.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE = 5)] =
+      `DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE`),
+    (e[(e.DEFERRED_UPDATE_MESSAGE = 6)] = `DEFERRED_UPDATE_MESSAGE`),
+    (e[(e.UPDATE_MESSAGE = 7)] = `UPDATE_MESSAGE`),
+    (e[(e.APPLICATION_COMMAND_AUTOCOMPLETE_RESULT = 8)] =
+      `APPLICATION_COMMAND_AUTOCOMPLETE_RESULT`),
+    (e[(e.MODAL = 9)] = `MODAL`),
+    (e[(e.PREMIUM_REQUIRED = 10)] = `PREMIUM_REQUIRED`),
+    (e[(e.LAUNCH_ACTIVITY = 12)] = `LAUNCH_ACTIVITY`),
+    e
+  );
+})({});
+const Xr = e.enum_(Yr),
+  Zr = e.object({ id: h() }),
+  Qr = e.object({
+    type: Xr,
+    activityInstance: e.exactOptional(Zr),
+    message: e.exactOptional(Z)
+  }),
+  $r = e.object({ interaction: Jr, resource: e.exactOptional(Qr) });
+(e.object({
+  interaction: _,
+  token: e.pipe(e.string(), e.nonEmpty()),
+  body: $r,
+  params: e.exactOptional(e.partial(e.object({ withResponse: e.boolean() })))
+}),
+  e.object({
+    application: _,
+    token: e.pipe(e.string(), e.nonEmpty()),
+    message: _
+  }),
+  e.object({
+    application: _,
+    token: e.pipe(e.string(), e.nonEmpty()),
+    params: e.exactOptional(e.partial(e.object({ threadId: _ })))
+  }),
+  e.object({
+    application: _,
+    token: e.pipe(e.string(), e.nonEmpty()),
+    message: _,
+    body: e.partial(
+      e.object({
+        content: h({ max: 2e3 }),
+        embeds: p(e.object({ ...W.entries, type: e.literal(`rich`) }), {
+          max: 10
+        }),
+        allowedMentions: G,
+        components: e.array(J),
+        files: e.array(e.unknown()),
+        attachments: e.array(e.partial(K))
+      })
+    )
+  }),
+  e.object({
+    application: _,
+    token: h(),
+    params: e.exactOptional(e.partial(e.object({ threadId: _ }))),
+    body: e.partial(
+      e.object({
+        content: h({ max: 2e3 }),
+        embeds: p(e.object({ ...W.entries, type: e.literal(`rich`) }), {
+          max: 10
+        }),
+        allowedMentions: G,
+        components: e.array(J),
+        files: e.array(e.unknown()),
+        attachments: e.array(e.partial(K))
+      })
+    )
+  }),
+  e.object({
+    application: _,
+    token: h(),
+    message: _,
+    params: e.exactOptional(e.partial(e.object({ threadId: _ })))
+  }),
+  e.object({
+    application: _,
+    token: h(),
+    params: e.exactOptional(e.partial(e.object({ threadId: _ })))
+  }));
+const ei = e.object({
+    users: e.exactOptional(e.record(_, D)),
+    members: e.exactOptional(
+      e.record(_, e.partial(e.omit(M, [`user`, `deaf`, `mute`])))
+    ),
+    roles: e.exactOptional(e.record(_, We)),
+    channels: e.exactOptional(
+      e.record(
+        _,
+        e.intersect([
+          e.object({
+            id: _,
+            type: x,
+            name: e.nullish(h({ max: 100 })),
+            permissions: u(E)
+          }),
+          e.variant(`type`, [
+            e.object({
+              type: e.picklist([10, 12, 11]),
+              parentId: e.nullish(h({ max: 50 })),
+              threadMetadata: e.exactOptional(wt)
+            }),
+            e.object({ type: x })
+          ])
+        ])
+      )
+    ),
+    messages: e.exactOptional(
+      e.record(
+        _,
+        e.lazy(() => e.partial(Z))
+      )
+    ),
+    attachments: e.exactOptional(e.record(_, K))
+  }),
+  ti = e.object({
+    name: e.pipe(e.string(), e.nonEmpty()),
+    type: Ce,
+    value: e.exactOptional(
+      e.union([
+        e.string(),
+        e.pipe(e.number(), e.integer()),
+        e.number(),
+        e.boolean()
+      ])
+    ),
+    focused: e.exactOptional(e.boolean())
+  }),
+  ni = e.object({
+    ...ti.entries,
+    options: e.exactOptional(e.lazy(() => e.array(ti)))
+  }),
+  ri = e.object({
+    id: _,
+    name: e.pipe(e.string(), e.nonEmpty()),
+    type: T,
+    resolved: e.exactOptional(ei),
+    options: e.exactOptional(e.array(ni)),
+    guildId: e.exactOptional(_),
+    targetId: e.exactOptional(_)
+  }),
+  ii = e.enum_({ GUILD: 1, BOT_DM: 2, PRIVATE_CHANNEL: 3 });
+e.object({
+  id: _,
+  applicationId: _,
+  type: Y,
+  data: e.exactOptional(ri),
+  guild: e.exactOptional(e.partial(A)),
+  guildId: e.exactOptional(_),
+  channel: e.exactOptional(H),
+  channelId: e.exactOptional(_),
+  member: e.exactOptional(M),
+  user: e.exactOptional(e.lazy(() => D)),
+  token: h(),
+  version: e.literal(1),
+  message: e.exactOptional(e.lazy(() => Z)),
+  appPermissions: u(E),
+  locale: e.exactOptional(b),
+  guildLocale: e.exactOptional(b),
+  entitlements: e.array(Ar),
+  authorizingIntegrationOwners: e.object(
+    e.entriesFromList(Object.values(gt), _t)
+  ),
+  context: e.exactOptional(ii),
+  attachmentSizeLimit: m()
+});
+const ai = e.object({
+  question: lr,
+  answers: e.pipe(e.array(ur), e.maxLength(10)),
+  duration: e.exactOptional(
+    e.pipe(e.number(), e.integer(), e.minValue(1), e.maxValue(768))
+  ),
+  allowMultiselect: e.exactOptional(e.boolean()),
+  layoutType: dr
+});
+(e.union([
+  e.object({
+    tts: e.exactOptional(e.boolean()),
+    content: e.exactOptional(h()),
+    embeds: e.exactOptional(p(W, { max: 10 })),
+    allowedMentions: e.exactOptional(G),
+    flags: e.exactOptional(m()),
+    components: e.exactOptional(J),
+    attachments: e.exactOptional(e.array(e.partial(K))),
+    poll: e.exactOptional(ai)
+  }),
+  e.object({ choices: p(we, { max: 25 }) }),
+  e.object({
+    customId: h({ max: 100 }),
+    title: h({ max: 45 }),
+    components: p(Or, { max: 5 })
+  })
+]),
+  e.object({
+    customId: h({ max: 100 }),
+    componentType: Pn,
+    values: e.exactOptional(e.array(Vn)),
+    resolved: e.exactOptional(ei)
+  }),
+  e.object({ customId: h({ max: 100 }), components: e.array(J) }),
+  e.object({ code: h() }),
+  e.object({
+    code: h(),
+    params: e.exactOptional(
+      e.partial(
+        e.object({
+          withCounts: e.boolean(),
+          withExpiration: e.boolean(),
+          guildScheduledEventId: _
+        })
+      )
+    )
+  }));
+const oi = e.object({
+    members: e.array(e.partial(M)),
+    participantCount: m(),
+    speakerCount: m(),
+    topic: h({ max: 120 })
+  }),
+  si = e.enum_({ GUILD: 0, GROUP_DM: 1, FRIEND: 2 }),
+  ci = e.object({
+    type: si,
+    code: e.string(),
+    guild: e.exactOptional(e.partial(A)),
+    channel: e.nullable(H),
+    inviter: e.exactOptional(D),
+    targetType: e.exactOptional(Tn),
+    targetUser: e.exactOptional(D),
+    targetApplication: e.exactOptional(e.lazy(() => e.partial(vt))),
+    approximatePresenceCount: e.exactOptional(m()),
+    approximateMemberCount: e.exactOptional(m()),
+    expiresAt: e.nullish(v),
+    stageInstance: e.exactOptional(oi),
+    guildScheduledEvent: e.exactOptional(en)
+  });
+e.object({
+  ...ci.entries,
+  uses: m(),
+  maxUses: m(),
+  maxAge: m(),
+  temporary: e.boolean(),
+  createdAt: v
+});
+let li = (function (e) {
+  return ((e[(e.CanLinkLobby = 1)] = `CanLinkLobby`), e);
+})({});
+e.enum_(li);
+const $ = f(`lobbyMemberFlag`, li);
+(e.object({
+  lobby: _,
+  user: _,
+  body: e.exactOptional(
+    e.partial(
+      e.object({
+        metadata: e.nullish(
+          e.pipe(e.record(e.string(), e.string()), e.maxEntries(1e3))
+        ),
+        flags: d($)
+      })
+    )
+  )
+}),
+  e.object({
+    body: e.partial(
+      e.object({
+        metadata: e.nullish(
+          e.pipe(e.record(e.string(), e.string()), e.maxEntries(1e3))
+        ),
+        members: e.pipe(
+          e.array(
+            e.object({
+              id: _,
+              metadata: e.nullish(
+                e.pipe(e.record(e.string(), e.string()), e.maxEntries(1e3))
+              ),
+              flags: e.exactOptional(d($))
+            })
+          ),
+          e.maxLength(25)
+        ),
+        idleTimeoutSeconds: e.pipe(
+          e.number(),
+          e.integer(),
+          e.minValue(5),
+          e.maxValue(604800)
+        )
+      })
+    )
+  }),
+  e.object({ lobby: _ }),
+  e.object({ lobby: _ }),
+  e.object({ lobby: _ }),
+  e.object({ lobby: _, body: e.partial(e.object({ channelId: _ })) }),
+  e.object({
+    lobby: _,
+    body: e.partial(
+      e.object({
+        metadata: e.nullish(
+          e.pipe(e.record(e.string(), e.string()), e.maxEntries(1e3))
+        ),
+        members: e.pipe(
+          e.array(
+            e.object({
+              id: _,
+              metadata: e.nullish(
+                e.pipe(e.record(e.string(), e.string()), e.maxEntries(1e3))
+              ),
+              flags: e.exactOptional(d($))
+            })
+          ),
+          e.maxLength(25)
+        ),
+        idleTimeoutSeconds: e.pipe(
+          e.number(),
+          e.integer(),
+          e.minValue(5),
+          e.maxValue(604800)
+        )
+      })
+    )
+  }),
+  e.object({ lobby: _, user: _ }),
+  e.object({ lobby: _ }));
+const ui = e.object({
+  id: _,
+  metaday: e.nullish(
+    e.pipe(e.record(e.string(), e.string()), e.maxEntries(1e3))
+  ),
+  flags: e.exactOptional(d($))
+});
+(e.object({
+  id: _,
+  applicationId: _,
+  metadata: e.nullable(
+    e.pipe(e.record(e.string(), e.string()), e.maxEntries(1e3))
+  ),
+  members: e.array(ui),
+  linkedChannel: e.exactOptional(
+    e.object({ ...z.entries, type: e.literal(0), nsfw: e.literal(!1) })
+  )
+}),
+  e.object({ channel: _, message: _ }),
+  e.object({
+    channel: _,
+    message: _,
+    answer: e.pipe(e.number(), e.integer(), e.minValue(0)),
+    params: e.exactOptional(
+      e.partial(
+        e.object({
+          after: _,
+          limit: e.pipe(e.number(), e.integer(), e.minValue(1), e.maxValue(100))
+        })
+      )
+    )
+  }),
+  e.object({ application: _ }));
+const di = e.enum_({
+  DURABLE: 2,
+  CONSUMABLE: 3,
+  SUBSCRIPTION: 5,
+  SUBSCRIPTION_GROUP: 6
+});
+let fi = (function (e) {
+  return (
+    (e[(e.AVAILABLE = 4)] = `AVAILABLE`),
+    (e[(e.GUILD_SUBSCRIPTION = 128)] = `GUILD_SUBSCRIPTION`),
+    (e[(e.USER_SUBSCRIPTION = 256)] = `USER_SUBSCRIPTION`),
+    e
+  );
+})({});
+e.enum_(fi);
+const pi = f(`skuFlag`, fi);
+(e.object({
+  id: _,
+  type: di,
+  applicationId: _,
+  name: h(),
+  slug: y,
+  flags: d(pi)
+}),
+  e.object({
+    guild: _,
+    body: e.object({
+      name: h({ min: 2, max: 32 }),
+      sound: g,
+      volumn: e.nullish(e.pipe(e.number(), e.minValue(0), e.maxValue(1))),
+      emojiId: e.nullish(_),
+      emojiName: e.nullish(h())
+    })
+  }),
+  e.object({ guild: _, sound: _ }),
+  e.object({ guild: _, sound: _ }),
+  e.object({ guild: _ }),
+  e.object({
+    guild: _,
+    sound: _,
+    body: e.partial(
+      e.object({
+        name: h({ min: 2, max: 32 }),
+        volumn: e.nullable(e.pipe(e.number(), e.minValue(0), e.maxValue(1))),
+        emojiId: e.nullable(_),
+        emojiName: e.nullable(h())
+      })
+    )
+  }),
+  e.object({
+    channel: _,
+    body: e.object({ soundId: _, sourceGuildId: e.exactOptional(_) })
+  }),
+  e.object({
+    name: h(),
+    soundId: _,
+    volume: e.pipe(e.number(), e.minValue(0), e.maxValue(1)),
+    emojiId: e.nullable(_),
+    emojiName: e.nullable(h()),
+    guildId: e.exactOptional(_),
+    available: e.boolean(),
+    user: e.exactOptional(D)
+  }));
+const mi = e.enum_({ PUBLIC: 1, GUILD_ONLY: 2 });
+(e.object({
+  body: e.object({
+    channelId: _,
+    topic: h({ max: 120 }),
+    privacyLevel: e.exactOptional(mi),
+    sendStartNotification: e.exactOptional(e.boolean())
+  })
+}),
+  e.object({ channel: _ }),
+  e.object({ channel: _ }),
+  e.object({
+    channel: _,
+    body: e.partial(e.object({ topic: h({ max: 120 }), privacyLevel: mi }))
+  }),
+  e.object({
+    id: _,
+    guildId: _,
+    channelId: _,
+    topic: h(),
+    privacyLevel: mi,
+    discoverableDisabled: e.boolean(),
+    guildScheduledEventId: e.nullable(_)
+  }),
+  e.object({
+    guild: _,
+    body: e.object({
+      name: h({ min: 2, max: 30 }),
+      description: h({ min: 2, max: 100 }),
+      tags: h({ max: 200 }),
+      file: e.unknown()
+    })
+  }),
+  e.object({ guild: _, sticker: _ }),
+  e.object({ guild: _, sticker: _ }),
+  e.object({ sticker: _ }),
+  e.object({ guild: _ }));
+const hi = e.object({
+  id: _,
+  stickers: e.array(k),
+  name: h(),
+  skuId: _,
+  coverStickerId: e.exactOptional(_),
+  description: h(),
+  bannerAssetId: e.exactOptional(_)
+});
+(e.object({ stickerPacks: e.array(hi) }),
+  e.object({
+    guild: _,
+    sticker: _,
+    body: e.partial(
+      e.object({
+        name: h({ min: 2, max: 30 }),
+        description: h({ min: 2, max: 100 }),
+        tags: h({ max: 200 })
+      })
+    )
+  }),
+  e.object({ id: _, name: h({ min: 2, max: 30 }), formatType: Re }),
+  e.object({ sku: _, subscription: _ }),
+  e.object({
+    sku: _,
+    params: e.exactOptional(
+      e.partial(
+        e.object({
+          before: _,
+          after: _,
+          limit: e.pipe(
+            e.number(),
+            e.integer(),
+            e.minValue(1),
+            e.maxValue(100)
+          ),
+          userId: _
+        })
+      )
+    )
+  }));
+const gi = e.enum_({ ACTIVE: 0, ENDING: 1, INACTIVE: 2 });
+(e.object({
+  id: _,
+  userId: _,
+  skuIds: e.array(_),
+  entitlementIds: e.array(_),
+  renewalSkuIds: e.nullable(e.array(_)),
+  currentPeriodStart: v,
+  currentPeriodEnd: v,
+  status: gi,
+  canceledAt: e.nullable(v),
+  country: e.exactOptional(e.pipe(e.string(), e.nonEmpty()))
+}),
+  e.object({
+    template: _,
+    body: e.object({
+      name: e.pipe(e.string(), e.minLength(2), e.maxLength(100)),
+      icon: e.nullish(g)
+    })
+  }),
+  e.object({
+    guild: _,
+    body: e.object({
+      name: e.pipe(e.string(), e.minLength(1), e.maxLength(100)),
+      description: e.nullish(
+        e.pipe(e.string(), e.minLength(0), e.maxLength(120))
+      )
+    })
+  }),
+  e.object({ guild: _, template: _ }),
+  e.object({ template: _ }),
+  e.object({ guild: _ }),
+  e.object({
+    guild: _,
+    template: _,
+    body: e.partial(
+      e.object({
+        name: e.pipe(e.string(), e.minLength(1), e.maxLength(100)),
+        description: e.nullish(
+          e.pipe(e.string(), e.minLength(1), e.maxLength(120))
+        )
+      })
+    )
+  }),
+  e.object({ guild: _, template: _ }),
+  e.object({
+    code: h(),
+    name: h(),
+    description: e.nullable(e.string()),
+    usageCount: m(),
+    creatorId: _,
+    creator: D,
+    createdAt: v,
+    updatedAt: v,
+    sourceGuildId: _,
+    serializedSourceGuild: e.partial(A),
+    isDirty: e.nullable(e.boolean())
+  }),
+  e.object({ body: e.object({ recipientId: _ }) }),
+  e.object({
+    body: e.object({
+      accessTokens: e.array(e.string()),
+      nicks: e.record(e.pipe(e.string(), e.minLength(1)), e.string())
+    })
+  }),
+  e.object({ application: _ }),
+  e.object({ guild: _ }),
+  e.object({
+    params: e.exactOptional(
+      e.partial(
+        e.object({
+          before: _,
+          after: _,
+          limit: e.pipe(
+            e.number(),
+            e.integer(),
+            e.minValue(1),
+            e.maxValue(200)
+          ),
+          withCounts: e.boolean()
+        })
+      )
+    )
+  }),
+  e.object({ user: _ }),
+  e.object({ guild: _ }),
+  e.object({
+    body: e.partial(
+      e.object({
+        username: e.pipe(e.string(), e.nonEmpty()),
+        avatar: e.nullable(g),
+        banner: e.nullable(g)
+      })
+    )
+  }),
+  e.object({
+    application: _,
+    body: e.partial(
+      e.object({
+        platformName: e.nullish(e.string()),
+        platformUsername: e.nullish(e.string()),
+        metadata: e.record(
+          e.pipe(
+            e.string(),
+            e.minLength(1),
+            e.maxLength(50),
+            e.regex(/[a-z0-9_]/)
+          ),
+          e.nullish(e.pipe(e.string(), e.maxLength(100)))
+        )
+      })
+    )
+  }),
+  e.object({
+    platformName: e.nullable(e.string()),
+    platformUsername: e.nullable(e.string()),
+    metadata: e.record(
+      e.pipe(h({ max: 50 }), e.regex(/[a-z0-9_]/)),
+      h({ max: 100 })
+    )
+  }));
+let _i = (function (e) {
+  return ((e[(e.NONE = 0)] = `NONE`), (e[(e.EVERYONE = 1)] = `EVERYONE`), e);
+})({});
+const vi = e.enum_(_i),
+  yi =
+    `amazon-music.battlenet.bungie.bluesky.crunchyroll.domain.ebay.epicgames.facebook.github.instagram.leagueoflegends.mastodon.paypal.playstation.reddit.riotgames.roblox.spotify.skype.steam.tiktok.twitch.twitter.xbox.youtube`.split(
+      `.`
+    ),
+  bi = e.picklist(yi);
+(e.object({
+  id: h(),
+  name: h(),
+  type: bi,
+  revoked: e.exactOptional(e.boolean()),
+  integrations: e.exactOptional(e.array(on)),
+  verified: e.boolean(),
+  friendSync: e.boolean(),
+  showActivity: e.boolean(),
+  twoWayLink: e.boolean(),
+  visibility: vi
+}),
+  e.object({ guild: _ }),
+  e.object({ guild: _, user: _ }),
+  e.object({
+    guild: _,
+    body: e.partial(
+      e.object({
+        channelId: _,
+        suppress: e.boolean(),
+        requestToSpeakTimestamp: v
+      })
+    )
+  }),
+  e.object({
+    guild: _,
+    user: _,
+    body: e.object({ channelId: _, suppress: e.exactOptional(e.boolean()) })
+  }),
+  e.object({
+    id: e.string(),
+    name: e.string(),
+    optimal: e.boolean(),
+    deprecated: e.boolean(),
+    custom: e.boolean()
+  }),
+  e.object({
+    guildId: e.exactOptional(_),
+    channelId: e.nullable(_),
+    userId: _,
+    member: e.exactOptional(M),
+    sessionId: h(),
+    deaf: e.boolean(),
+    mute: e.boolean(),
+    selfDeaf: e.boolean(),
+    selfMute: e.boolean(),
+    selfStream: e.exactOptional(e.boolean()),
+    selfVideo: e.boolean(),
+    suppress: e.boolean(),
+    requestToSpeakTimestamp: e.nullable(v)
+  }),
+  e.object({ channel: _, body: e.object({ name: h({ max: 80 }), avatar: y }) }),
+  e.object({ webhook: _ }),
+  e.object({
+    webhook: _,
+    token: h(),
+    message: _,
+    params: e.exactOptional(e.partial(e.object({ threadId: _ })))
+  }),
+  e.object({ webhook: _, token: h() }),
+  e.object({
+    webhook: _,
+    token: h(),
+    message: _,
+    params: e.exactOptional(
+      e.partial(e.object({ threadId: _, withComponents: e.boolean() }))
+    ),
+    body: e.partial(
+      e.object({
+        content: h({ max: 2e3 }),
+        embeds: p(e.object({ ...W.entries, type: e.literal(`rich`) }), {
+          max: 10
+        }),
+        allowedMentions: G,
+        components: e.array(J),
+        files: e.array(e.unknown()),
+        payloadJson: e.string(),
+        attachments: e.array(e.partial(K)),
+        poll: mr
+      })
+    )
+  }),
+  e.object({
+    webhook: _,
+    token: h(),
+    params: e.exactOptional(
+      e.partial(e.object({ threadId: _, wait: e.exactOptional(e.boolean()) }))
+    )
+  }),
+  e.object({
+    webhook: _,
+    token: h(),
+    params: e.exactOptional(
+      e.partial(e.object({ threadId: _, wait: e.exactOptional(e.boolean()) }))
+    )
+  }));
+const xi = e.object({
+    webhook: _,
+    token: h(),
+    params: e.exactOptional(
+      e.partial(
+        e.object({
+          wait: e.exactOptional(e.boolean()),
+          threadId: _,
+          withComponents: e.boolean()
+        })
+      )
+    ),
+    body: e.partial(
+      e.object({
+        content: h({ max: 2e3 }),
+        username: h(),
+        avatarUrl: y,
+        tts: e.boolean(),
+        embeds: p(e.object({ ...W.entries, type: e.literal(`rich`) }), {
+          max: 10
+        }),
+        allowedMentions: G,
+        components: e.array(J),
+        files: e.array(e.unknown()),
+        payloadJson: e.string(),
+        attachments: e.array(e.partial(K)),
+        flags: d(X),
+        threadName: h(),
+        appliedTags: e.array(_),
+        poll: mr
+      })
+    )
+  }),
+  Si = async ({ webhook: e, token: t, params: n, body: r }) =>
+    me(le(`/webhooks/${e}/${t}`, n).href, r);
+(e.object({ channel: _ }),
+  e.object({ guild: _ }),
+  e.object({ webhook: _ }),
+  e.object({
+    webhook: _,
+    token: h(),
+    message: _,
+    params: e.exactOptional(e.partial(e.object({ threadId: _ })))
+  }),
+  e.object({ webhook: _, token: h() }),
+  e.object({
+    webhook: _,
+    body: e.exactOptional(
+      e.partial(e.object({ name: h(), avatar: y, channelId: _ }))
+    )
+  }),
+  e.object({
+    webhook: _,
+    token: h(),
+    body: e.exactOptional(e.partial(e.object({ name: h(), avatar: y })))
+  }));
+const Ci = he(Si, xi),
+  wi = `must be a string`,
+  Ti = `must not be empty`,
+  Ei = o(
+    i(
+      {
+        INPUT_WEBHOOK: a(te(wi), r(Ti)),
+        INPUT_TOKEN: a(te(wi), r(Ti)),
+        INPUT_CONTENT: a(te(wi), r(Ti))
+      },
+      (e) => `Required environment variable ${e.expected} is missing!`
+    ),
+    process.env
+  );
+if (Ei.issues) throw Error(s(Ei.issues));
+const { INPUT_WEBHOOK: Di, INPUT_TOKEN: Oi, INPUT_CONTENT: ki } = Ei.output;
+try {
+  (console.info(`Running discord webhook action...`),
+    await Ci({ webhook: Di, token: Oi, body: { content: ki } }));
+} catch (e) {
+  (e instanceof Error && console.error(e.message), process.exit(1));
+}
+export {};

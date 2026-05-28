@@ -8,5 +8,6 @@ export const activityButtonSchema = v.object({
   url: v.string()
 });
 
-export interface ActivityButton
-  extends v.InferOutput<typeof activityButtonSchema> {}
+export interface ActivityButton extends v.InferOutput<
+  typeof activityButtonSchema
+> {}

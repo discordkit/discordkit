@@ -12,5 +12,6 @@ export const incidentsDataSchema = v.object({
   raidDetectedAt: v.nullish(timestamp)
 });
 
-export interface IncidentsData
-  extends v.InferOutput<typeof incidentsDataSchema> {}
+export interface IncidentsData extends v.InferOutput<
+  typeof incidentsDataSchema
+> {}

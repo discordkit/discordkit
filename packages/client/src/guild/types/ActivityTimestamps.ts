@@ -7,5 +7,6 @@ export const activityTimestampsSchema = v.object({
   end: v.exactOptional(v.number())
 });
 
-export interface ActivityTimestamps
-  extends v.InferOutput<typeof activityTimestampsSchema> {}
+export interface ActivityTimestamps extends v.InferOutput<
+  typeof activityTimestampsSchema
+> {}

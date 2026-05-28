@@ -16,5 +16,6 @@ export const applicationCommandOptionChoiceSchema = v.object({
   value: v.union([boundedString({ max: 100 }), boundedInteger(), v.number()])
 });
 
-export interface ApplicationCommandOptionChoice
-  extends v.InferOutput<typeof applicationCommandOptionChoiceSchema> {}
+export interface ApplicationCommandOptionChoice extends v.InferOutput<
+  typeof applicationCommandOptionChoiceSchema
+> {}

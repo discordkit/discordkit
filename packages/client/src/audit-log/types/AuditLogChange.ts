@@ -10,5 +10,6 @@ export const auditLogChangeSchema = v.object({
   key: boundedString()
 });
 
-export interface AuditLogChange
-  extends v.InferOutput<typeof auditLogChangeSchema> {}
+export interface AuditLogChange extends v.InferOutput<
+  typeof auditLogChangeSchema
+> {}

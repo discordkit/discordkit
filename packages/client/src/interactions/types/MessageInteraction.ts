@@ -17,5 +17,6 @@ export const messageInteractionSchema = v.object({
   member: v.exactOptional(v.partial(memberSchema))
 });
 
-export interface MessageInteraction
-  extends v.InferOutput<typeof messageInteractionSchema> {}
+export interface MessageInteraction extends v.InferOutput<
+  typeof messageInteractionSchema
+> {}

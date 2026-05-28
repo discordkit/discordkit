@@ -27,5 +27,6 @@ export const modalSubmitInteractionMetadataSchema = v.object({
   ])
 });
 
-export interface ModalSubmitInteractionMetadata
-  extends v.InferOutput<typeof modalSubmitInteractionMetadataSchema> {}
+export interface ModalSubmitInteractionMetadata extends v.InferOutput<
+  typeof modalSubmitInteractionMetadataSchema
+> {}

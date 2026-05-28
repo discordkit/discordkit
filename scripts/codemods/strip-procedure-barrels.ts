@@ -12,10 +12,10 @@ import { readFileSync, writeFileSync, rmSync, globSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
+const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), `../..`);
 
 const proceduresFiles = (
-  globSync("packages/client/src/**/procedures.ts", {
+  globSync(`packages/client/src/**/procedures.ts`, {
     cwd: projectRoot
   }) as string[]
 ).map((p) => resolve(projectRoot, p));
@@ -27,7 +27,7 @@ for (const file of proceduresFiles) {
 }
 
 const barrelFiles = (
-  globSync("packages/client/src/**/index.ts", {
+  globSync(`packages/client/src/**/index.ts`, {
     cwd: projectRoot
   }) as string[]
 ).map((p) => resolve(projectRoot, p));
@@ -39,15 +39,15 @@ let changedBarrels = 0;
 let unchangedBarrels = 0;
 
 for (const file of barrelFiles) {
-  const original = readFileSync(file, "utf8");
-  const next = original.replace(reExportRegex, "");
+  const original = readFileSync(file, `utf8`);
+  const next = original.replace(reExportRegex, ``);
   if (next === original) {
     unchangedBarrels++;
     continue;
   }
   // Collapse any leftover blank-line runs (3+ newlines → 2).
-  const collapsed = next.replace(/\n{3,}/g, "\n\n");
-  writeFileSync(file, collapsed, "utf8");
+  const collapsed = next.replace(/\n{3,}/g, `\n\n`);
+  writeFileSync(file, collapsed, `utf8`);
   changedBarrels++;
 }
 

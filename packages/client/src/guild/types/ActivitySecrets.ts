@@ -9,5 +9,6 @@ export const activitySecretsSchema = v.object({
   match: v.optional(v.string())
 });
 
-export interface ActivitySecrets
-  extends v.InferOutput<typeof activitySecretsSchema> {}
+export interface ActivitySecrets extends v.InferOutput<
+  typeof activitySecretsSchema
+> {}

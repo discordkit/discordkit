@@ -20,5 +20,6 @@ export const onboardingPromptSchema = v.object({
   inOnboarding: v.boolean()
 });
 
-export interface OnboardingPrompt
-  extends v.InferOutput<typeof onboardingPromptSchema> {}
+export interface OnboardingPrompt extends v.InferOutput<
+  typeof onboardingPromptSchema
+> {}

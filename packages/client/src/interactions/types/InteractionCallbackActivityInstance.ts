@@ -6,5 +6,6 @@ export const interactionCallbackActivityInstanceSchema = v.object({
   id: boundedString()
 });
 
-export interface InteractionCallbackActivityInstance
-  extends v.InferOutput<typeof interactionCallbackActivityInstanceSchema> {}
+export interface InteractionCallbackActivityInstance extends v.InferOutput<
+  typeof interactionCallbackActivityInstanceSchema
+> {}

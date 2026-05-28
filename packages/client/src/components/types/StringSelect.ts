@@ -29,5 +29,6 @@ export const stringSelectSchema = v.object({
   disabled: v.exactOptional(v.boolean())
 });
 
-export interface StringSelect
-  extends v.InferOutput<typeof stringSelectSchema> {}
+export interface StringSelect extends v.InferOutput<
+  typeof stringSelectSchema
+> {}

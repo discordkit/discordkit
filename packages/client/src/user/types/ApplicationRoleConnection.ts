@@ -13,5 +13,6 @@ export const applicationRoleConnectionSchema = v.object({
   )
 });
 
-export interface ApplicationRoleConnection
-  extends v.InferOutput<typeof applicationRoleConnectionSchema> {}
+export interface ApplicationRoleConnection extends v.InferOutput<
+  typeof applicationRoleConnectionSchema
+> {}

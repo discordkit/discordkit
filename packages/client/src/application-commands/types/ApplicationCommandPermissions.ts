@@ -11,5 +11,6 @@ export const applicationCommandPermissionsSchema = v.object({
   permission: v.boolean()
 });
 
-export interface ApplicationCommandPermissions
-  extends v.InferOutput<typeof applicationCommandPermissionsSchema> {}
+export interface ApplicationCommandPermissions extends v.InferOutput<
+  typeof applicationCommandPermissionsSchema
+> {}

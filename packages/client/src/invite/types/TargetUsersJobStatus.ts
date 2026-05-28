@@ -38,5 +38,6 @@ export const targetUsersJobStatusSchema = v.object({
   errorMessage: v.nullable(v.string())
 });
 
-export interface TargetUsersJobStatus
-  extends v.InferOutput<typeof targetUsersJobStatusSchema> {}
+export interface TargetUsersJobStatus extends v.InferOutput<
+  typeof targetUsersJobStatusSchema
+> {}

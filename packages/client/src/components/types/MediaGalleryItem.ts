@@ -11,5 +11,6 @@ export const mediaGalleryItemSchema = v.object({
   spoiler: v.exactOptional(v.boolean())
 });
 
-export interface MediaGalleryItem
-  extends v.InferOutput<typeof mediaGalleryItemSchema> {}
+export interface MediaGalleryItem extends v.InferOutput<
+  typeof mediaGalleryItemSchema
+> {}

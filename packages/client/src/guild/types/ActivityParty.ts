@@ -15,5 +15,6 @@ export const activityPartySchema = v.object({
   )
 });
 
-export interface ActivityParty
-  extends v.InferOutput<typeof activityPartySchema> {}
+export interface ActivityParty extends v.InferOutput<
+  typeof activityPartySchema
+> {}

@@ -13,5 +13,6 @@ export const guildApplicationCommandPermissionsSchema = v.object({
   permissions: boundedArray(applicationCommandPermissionsSchema, { max: 100 })
 });
 
-export interface GuildApplicationCommandPermissions
-  extends v.InferOutput<typeof guildApplicationCommandPermissionsSchema> {}
+export interface GuildApplicationCommandPermissions extends v.InferOutput<
+  typeof guildApplicationCommandPermissionsSchema
+> {}

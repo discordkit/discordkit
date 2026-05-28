@@ -21,5 +21,6 @@ export const mediaGallerySchema = v.object({
   items: boundedArray(mediaGalleryItemSchema, { max: 10 })
 });
 
-export interface MediaGallery
-  extends v.InferOutput<typeof mediaGallerySchema> {}
+export interface MediaGallery extends v.InferOutput<
+  typeof mediaGallerySchema
+> {}

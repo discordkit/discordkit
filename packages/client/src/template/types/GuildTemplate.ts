@@ -34,5 +34,6 @@ export const guildTemplateSchema = v.object({
   isDirty: v.nullable(v.boolean())
 });
 
-export interface GuildTemplate
-  extends v.InferOutput<typeof guildTemplateSchema> {}
+export interface GuildTemplate extends v.InferOutput<
+  typeof guildTemplateSchema
+> {}

@@ -32,5 +32,6 @@ export const channelSelectSchema = v.object({
   disabled: v.exactOptional(v.boolean())
 });
 
-export interface ChannelSelect
-  extends v.InferOutput<typeof channelSelectSchema> {}
+export interface ChannelSelect extends v.InferOutput<
+  typeof channelSelectSchema
+> {}

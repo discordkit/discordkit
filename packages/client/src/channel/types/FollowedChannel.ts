@@ -8,5 +8,6 @@ export const followedChannelSchema = v.object({
   webhookId: snowflake
 });
 
-export interface FollowedChannel
-  extends v.InferOutput<typeof followedChannelSchema> {}
+export interface FollowedChannel extends v.InferOutput<
+  typeof followedChannelSchema
+> {}

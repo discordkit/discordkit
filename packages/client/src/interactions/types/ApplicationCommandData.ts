@@ -23,5 +23,6 @@ export const applicationCommandDataSchema = v.object({
   targetId: v.exactOptional(snowflake)
 });
 
-export interface ApplicationCommandDataSchema
-  extends v.InferOutput<typeof applicationCommandDataSchema> {}
+export interface ApplicationCommandDataSchema extends v.InferOutput<
+  typeof applicationCommandDataSchema
+> {}

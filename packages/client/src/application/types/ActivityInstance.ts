@@ -20,5 +20,6 @@ export const activityInstanceSchema = v.object({
   users: v.array(snowflake)
 });
 
-export interface ActivityInstance
-  extends v.InferOutput<typeof activityInstanceSchema> {}
+export interface ActivityInstance extends v.InferOutput<
+  typeof activityInstanceSchema
+> {}

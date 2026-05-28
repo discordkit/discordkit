@@ -16,5 +16,6 @@ export const threadMemberSchema = v.object({
   member: v.exactOptional(memberSchema)
 });
 
-export interface ThreadMember
-  extends v.InferOutput<typeof threadMemberSchema> {}
+export interface ThreadMember extends v.InferOutput<
+  typeof threadMemberSchema
+> {}

@@ -1,6 +1,12 @@
 {
   "include": ["./**/*.{j,t}s?(x)", "./**/*.spec.ts"],
-  "exclude": ["node_modules", ".yarn", ".claude", "./**/.next/**/*.*", "./**/dist"],
+  "exclude": [
+    "node_modules",
+    ".yarn",
+    ".claude",
+    "./**/.next/**/*.*",
+    "./**/dist"
+  ],
   "compilerOptions": {
     "noImplicitAny": true,
     "noEmit": true,

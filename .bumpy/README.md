@@ -30,7 +30,7 @@ Create a `.md` file in this directory with YAML frontmatter mapping package name
 
 ```markdown
 ---
-'package-name': minor
+"package-name": minor
 ---
 
 Added a new feature.

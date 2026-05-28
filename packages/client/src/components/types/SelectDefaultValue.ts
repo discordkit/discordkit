@@ -8,5 +8,6 @@ export const selectDefaultValueSchema = v.object({
   type: v.union([v.literal(`user`), v.literal(`role`), v.literal(`channel`)])
 });
 
-export interface SelectDefaultValue
-  extends v.InferOutput<typeof selectDefaultValueSchema> {}
+export interface SelectDefaultValue extends v.InferOutput<
+  typeof selectDefaultValueSchema
+> {}

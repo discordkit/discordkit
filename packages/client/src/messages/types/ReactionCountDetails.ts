@@ -8,5 +8,6 @@ export const reactionCountDetailsSchema = v.object({
   normal: boundedInteger()
 });
 
-export interface ReactionCountDetails
-  extends v.InferOutput<typeof reactionCountDetailsSchema> {}
+export interface ReactionCountDetails extends v.InferOutput<
+  typeof reactionCountDetailsSchema
+> {}

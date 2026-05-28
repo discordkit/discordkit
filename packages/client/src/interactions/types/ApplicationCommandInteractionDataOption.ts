@@ -25,5 +25,6 @@ export const applicationCommandInteractionDataOptionSchema = v.object({
   options: v.exactOptional(v.lazy(() => v.array(base)))
 });
 
-export interface ApplicationCommandInteractionDataOption
-  extends v.InferOutput<typeof applicationCommandInteractionDataOptionSchema> {}
+export interface ApplicationCommandInteractionDataOption extends v.InferOutput<
+  typeof applicationCommandInteractionDataOptionSchema
+> {}

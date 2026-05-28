@@ -15,5 +15,6 @@ export const messageComponentData = v.object({
   resolved: v.exactOptional(resolvedDataSchema)
 });
 
-export interface MessageComponentData
-  extends v.InferOutput<typeof messageComponentData> {}
+export interface MessageComponentData extends v.InferOutput<
+  typeof messageComponentData
+> {}

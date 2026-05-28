@@ -21,5 +21,6 @@ export const pollCreateRequestSchema = v.object({
   layoutType: pollLayoutTypeSchema
 });
 
-export interface PollCreateRequest
-  extends v.InferOutput<typeof pollCreateRequestSchema> {}
+export interface PollCreateRequest extends v.InferOutput<
+  typeof pollCreateRequestSchema
+> {}

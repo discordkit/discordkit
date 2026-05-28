@@ -21,5 +21,6 @@ export const auditLogEntrySchema = v.object({
   reason: v.exactOptional(boundedString({ max: 512 }))
 });
 
-export interface AuditLogEntry
-  extends v.InferOutput<typeof auditLogEntrySchema> {}
+export interface AuditLogEntry extends v.InferOutput<
+  typeof auditLogEntrySchema
+> {}

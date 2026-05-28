@@ -17,5 +17,6 @@ export const threadMetadataSchema = v.object({
   createTimestamp: v.nullish(timestamp)
 });
 
-export interface ThreadMetadata
-  extends v.InferOutput<typeof threadMetadataSchema> {}
+export interface ThreadMetadata extends v.InferOutput<
+  typeof threadMetadataSchema
+> {}

@@ -12,5 +12,6 @@ export const interactionCallbackResourceSchema = v.object({
   message: v.exactOptional(messageSchema)
 });
 
-export interface InteractionCallbackResource
-  extends v.InferOutput<typeof interactionCallbackResourceSchema> {}
+export interface InteractionCallbackResource extends v.InferOutput<
+  typeof interactionCallbackResourceSchema
+> {}

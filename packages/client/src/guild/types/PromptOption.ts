@@ -23,5 +23,6 @@ export const promptOptionSchema = v.object({
   description: v.nullable(v.string())
 });
 
-export interface PromptOption
-  extends v.InferOutput<typeof promptOptionSchema> {}
+export interface PromptOption extends v.InferOutput<
+  typeof promptOptionSchema
+> {}

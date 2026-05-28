@@ -8,5 +8,6 @@ export const defaultReactionSchema = v.object({
   emojiName: v.nullable(boundedString())
 });
 
-export interface DefaultReaction
-  extends v.InferOutput<typeof defaultReactionSchema> {}
+export interface DefaultReaction extends v.InferOutput<
+  typeof defaultReactionSchema
+> {}

@@ -12,5 +12,6 @@ export const welcomeChannelSchema = v.object({
   emojiName: v.nullable(v.pipe(v.string(), v.nonEmpty()))
 });
 
-export interface WelcomeChannel
-  extends v.InferOutput<typeof welcomeChannelSchema> {}
+export interface WelcomeChannel extends v.InferOutput<
+  typeof welcomeChannelSchema
+> {}

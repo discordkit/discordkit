@@ -8,5 +8,6 @@ export const welcomeScreenSchema = v.object({
   welcomeChannels: v.pipe(v.array(welcomeChannelSchema), v.maxLength(5))
 });
 
-export interface WelcomeScreen
-  extends v.InferOutput<typeof welcomeScreenSchema> {}
+export interface WelcomeScreen extends v.InferOutput<
+  typeof welcomeScreenSchema
+> {}

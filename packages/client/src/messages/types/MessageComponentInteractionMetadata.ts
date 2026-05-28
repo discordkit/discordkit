@@ -21,5 +21,6 @@ export const messageComponentInteractionMetadataSchema = v.object({
   interactedMessageId: v.exactOptional(snowflake)
 });
 
-export interface MessageComponentInteractionMetadata
-  extends v.InferOutput<typeof messageComponentInteractionMetadataSchema> {}
+export interface MessageComponentInteractionMetadata extends v.InferOutput<
+  typeof messageComponentInteractionMetadataSchema
+> {}

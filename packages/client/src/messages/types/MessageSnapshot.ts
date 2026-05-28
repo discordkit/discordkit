@@ -37,5 +37,6 @@ export const messageSnapshotSchema = v.object({
   })
 });
 
-export interface MessageSnapshot
-  extends v.InferOutput<typeof messageSnapshotSchema> {}
+export interface MessageSnapshot extends v.InferOutput<
+  typeof messageSnapshotSchema
+> {}

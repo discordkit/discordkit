@@ -25,36 +25,36 @@ All v4 work — including this audit — continues on the `v4` branch. We bump t
 
 ## Folder ↔ Discord docs URL mapping
 
-| Repo folder | Discord docs page | Notes |
-| --- | --- | --- |
-| `application` | `/developers/resources/application` | direct |
-| `application-commands` | `/developers/interactions/application-commands` | types-only; endpoints live in `application/` |
-| `application-role-connection` | `/developers/resources/application-role-connection-metadata` | name truncated in repo |
-| `audit-log` | `/developers/resources/audit-log` | direct |
-| `auto-moderation` | `/developers/resources/auto-moderation` | direct |
-| `channel` | `/developers/resources/channel` | direct |
-| `components` | `/developers/components/reference` | types-only |
-| `emoji` | `/developers/resources/emoji` | direct |
-| `entitlements` | `/developers/resources/entitlement` | plural in repo |
-| `event` | `/developers/resources/guild-scheduled-event` | shortened |
-| `guild` | `/developers/resources/guild` | direct |
-| `images` | `/developers/reference#image-formatting` | URL builders, not REST endpoints |
-| `interactions` | `/developers/interactions/receiving-and-responding` | callback endpoints + interaction types |
-| `invite` | `/developers/resources/invite` | direct |
-| `lobby` | `/developers/resources/lobby` | direct |
-| `messages` | `/developers/resources/message` | plural in repo |
-| `permissions` | `/developers/topics/permissions` (and bits of `resources/guild`) | role + permission types |
-| `poll` | `/developers/resources/poll` | direct |
-| `sku` | `/developers/resources/sku` | direct |
-| `soundboard` | `/developers/resources/soundboard` | direct |
-| `stage` | `/developers/resources/stage-instance` | shortened |
-| `sticker` | `/developers/resources/sticker` | direct |
-| `subscription` | `/developers/resources/subscription` | direct |
-| `teams` | (needs confirmation — historically `topics/teams`) | types-only; verify in current docs |
-| `template` | `/developers/resources/guild-template` | shortened |
-| `user` | `/developers/resources/user` | direct |
-| `voice` | `/developers/resources/voice` | direct |
-| `webhook` | `/developers/resources/webhook` | direct |
+| Repo folder                   | Discord docs page                                                | Notes                                        |
+| ----------------------------- | ---------------------------------------------------------------- | -------------------------------------------- |
+| `application`                 | `/developers/resources/application`                              | direct                                       |
+| `application-commands`        | `/developers/interactions/application-commands`                  | types-only; endpoints live in `application/` |
+| `application-role-connection` | `/developers/resources/application-role-connection-metadata`     | name truncated in repo                       |
+| `audit-log`                   | `/developers/resources/audit-log`                                | direct                                       |
+| `auto-moderation`             | `/developers/resources/auto-moderation`                          | direct                                       |
+| `channel`                     | `/developers/resources/channel`                                  | direct                                       |
+| `components`                  | `/developers/components/reference`                               | types-only                                   |
+| `emoji`                       | `/developers/resources/emoji`                                    | direct                                       |
+| `entitlements`                | `/developers/resources/entitlement`                              | plural in repo                               |
+| `event`                       | `/developers/resources/guild-scheduled-event`                    | shortened                                    |
+| `guild`                       | `/developers/resources/guild`                                    | direct                                       |
+| `images`                      | `/developers/reference#image-formatting`                         | URL builders, not REST endpoints             |
+| `interactions`                | `/developers/interactions/receiving-and-responding`              | callback endpoints + interaction types       |
+| `invite`                      | `/developers/resources/invite`                                   | direct                                       |
+| `lobby`                       | `/developers/resources/lobby`                                    | direct                                       |
+| `messages`                    | `/developers/resources/message`                                  | plural in repo                               |
+| `permissions`                 | `/developers/topics/permissions` (and bits of `resources/guild`) | role + permission types                      |
+| `poll`                        | `/developers/resources/poll`                                     | direct                                       |
+| `sku`                         | `/developers/resources/sku`                                      | direct                                       |
+| `soundboard`                  | `/developers/resources/soundboard`                               | direct                                       |
+| `stage`                       | `/developers/resources/stage-instance`                           | shortened                                    |
+| `sticker`                     | `/developers/resources/sticker`                                  | direct                                       |
+| `subscription`                | `/developers/resources/subscription`                             | direct                                       |
+| `teams`                       | (needs confirmation — historically `topics/teams`)               | types-only; verify in current docs           |
+| `template`                    | `/developers/resources/guild-template`                           | shortened                                    |
+| `user`                        | `/developers/resources/user`                                     | direct                                       |
+| `voice`                       | `/developers/resources/voice`                                    | direct                                       |
+| `webhook`                     | `/developers/resources/webhook`                                  | direct                                       |
 
 ### Known exceptions / cross-folder relationships
 
@@ -62,7 +62,7 @@ All v4 work — including this audit — continues on the `v4` branch. We bump t
 2. **`permissions/`** — split across `topics/permissions` and `resources/guild` (role object). `Role.ts`, `RoleColors.ts`, `RoleFlags.ts`, `RoleTag.ts` are arguably guild-resource types. Decide during audit whether to relocate or keep current grouping.
 3. **`teams/`** — types-only. Confirm whether the team object now lives inline under `resources/application` in the reorganized docs.
 4. **`components/`** — types-only, lives under `components/reference`, not `resources/`.
-5. **`application-commands/`** — types-only; the *endpoint* files (`createGlobalApplicationCommand.ts`, etc.) live in `application/`. Intentional but worth flagging in audit reports.
+5. **`application-commands/`** — types-only; the _endpoint_ files (`createGlobalApplicationCommand.ts`, etc.) live in `application/`. Intentional but worth flagging in audit reports.
 6. **`interactions/`** — has both types and endpoints. Endpoints are the callback/response handlers (`createInteractionResponse`, `editOriginalInteractionResponse`, etc.).
 
 ---
@@ -96,17 +96,17 @@ A sitemap is available at `https://docs.discord.com/sitemap.xml` for URL discove
 
 ### Mapping to valibot
 
-| Doc notation | Valibot |
-| --- | --- |
-| `field` (no suffix) | required entry |
-| `field?` | `v.exactOptional(...)` |
-| `?type` | `v.nullable(...)` |
-| `field?` + `?type` | `v.nullish(...)` |
-| `snowflake` | `snowflake` from `@discordkit/core` |
-| `string` | `v.string()` or `boundedString(...)` if length constraints noted |
-| `integer` | `v.pipe(v.number(), v.integer())` or `boundedInteger(...)` |
-| `array of <type>` | `v.array(<typeSchema>)` |
-| `[name](url)` cross-ref | imported `<name>Schema` |
+| Doc notation            | Valibot                                                          |
+| ----------------------- | ---------------------------------------------------------------- |
+| `field` (no suffix)     | required entry                                                   |
+| `field?`                | `v.exactOptional(...)`                                           |
+| `?type`                 | `v.nullable(...)`                                                |
+| `field?` + `?type`      | `v.nullish(...)`                                                 |
+| `snowflake`             | `snowflake` from `@discordkit/core`                              |
+| `string`                | `v.string()` or `boundedString(...)` if length constraints noted |
+| `integer`               | `v.pipe(v.number(), v.integer())` or `boundedInteger(...)`       |
+| `array of <type>`       | `v.array(<typeSchema>)`                                          |
+| `[name](url)` cross-ref | imported `<name>Schema`                                          |
 
 ### HTTP API changelog
 
@@ -215,12 +215,12 @@ For each folder, work the audit report top-to-bottom:
 
 Rough triage; revise once audit reports are generated.
 
-| Tier | Resources |
-| --- | --- |
-| **Easy wins** (1–2 ADDs, minimal drift) | `user`, `sticker`, `sku`, `subscription`, `voice`, `audit-log`, `invite`, `entitlements`, `application-role-connection` |
-| **Medium** (3–10 ADDs or some drift) | `application`, `auto-moderation`, `emoji`, `event`, `interactions`, `poll`, `soundboard`, `stage`, `template`, `webhook`, `lobby` |
-| **Hard** (significant ADDs or structural drift) | `guild`, `channel`, `messages`, `components` |
-| **Special** (manual review only) | `images`, `permissions`, `teams` |
+| Tier                                            | Resources                                                                                                                         |
+| ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| **Easy wins** (1–2 ADDs, minimal drift)         | `user`, `sticker`, `sku`, `subscription`, `voice`, `audit-log`, `invite`, `entitlements`, `application-role-connection`           |
+| **Medium** (3–10 ADDs or some drift)            | `application`, `auto-moderation`, `emoji`, `event`, `interactions`, `poll`, `soundboard`, `stage`, `template`, `webhook`, `lobby` |
+| **Hard** (significant ADDs or structural drift) | `guild`, `channel`, `messages`, `components`                                                                                      |
+| **Special** (manual review only)                | `images`, `permissions`, `teams`                                                                                                  |
 
 ### Per-folder commit cadence
 
@@ -256,6 +256,7 @@ Given a `DocEndpoint` or `DocObject`, produce the canonical JSDoc block followin
 ```
 
 For object fields:
+
 ```ts
 /** <description from docs> */
 ```
@@ -278,13 +279,13 @@ Pass 2 is one or two large commits — easier to review when isolated from code 
 
 Track resolved questions here. (Add entries as we go; don't backfill from chat.)
 
-| Date | Decision | Reasoning |
-| --- | --- | --- |
-| 2026-05-27 | Doc cache lives at `.discord-docs/` (gitignored) | Lean repo; re-fetch on demand. |
-| 2026-05-27 | Audit reports at `audit/*.md` (gitignored) | Local per-run output. |
-| 2026-05-27 | Drive-by fixes (typos, etc.) bundled with their folder's audit commit | Atomic per-folder progress. |
-| 2026-05-27 | Build T1 first, validate parser on `user.md`, then T3 | Cheap iteration on a known sample. |
-| 2026-05-27 | Pass 2 (JSDoc rewrite) deferred until all of Pass 1 is complete | Settle code shape before doc polish. |
+| Date       | Decision                                                                                              | Reasoning                                      |
+| ---------- | ----------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| 2026-05-27 | Doc cache lives at `.discord-docs/` (gitignored)                                                      | Lean repo; re-fetch on demand.                 |
+| 2026-05-27 | Audit reports at `audit/*.md` (gitignored)                                                            | Local per-run output.                          |
+| 2026-05-27 | Drive-by fixes (typos, etc.) bundled with their folder's audit commit                                 | Atomic per-folder progress.                    |
+| 2026-05-27 | Build T1 first, validate parser on `user.md`, then T3                                                 | Cheap iteration on a known sample.             |
+| 2026-05-27 | Pass 2 (JSDoc rewrite) deferred until all of Pass 1 is complete                                       | Settle code shape before doc polish.           |
 | 2026-05-27 | Internal planning docs live at `docs/` root for now; can relocate once docs-site (Astro-based) exists | Docs site won't interfere with planning files. |
 
 ## Open questions
@@ -321,15 +322,15 @@ After the v4 audit-tooling refinements (mixed-case `PRESERVE_CASE` fix,
 response-shape filtering, JSDoc-typo cleanup, types-only folder exclusion),
 the genuinely-actionable findings are:
 
-| Folder | ADD | REVIEW | RENAME | TYPES (noisy) |
-| --- | ---:| ---:| ---:| ---:|
-| application | 3 | 0 | 0 | 7 |
-| channel | 1 | 0 | 1 | 0 |
-| guild | 2 | 3 | 0 | 4 |
-| invite | 3 | 0 | 0 | 3 |
-| lobby | 2 | 0 | 2 | 2 |
-| messages | 4 | 0 | 0 | 9 |
-| **TOTAL ADD** | **15** | **3** | **3** | — |
+| Folder        |    ADD | REVIEW | RENAME | TYPES (noisy) |
+| ------------- | -----: | -----: | -----: | ------------: |
+| application   |      3 |      0 |      0 |             7 |
+| channel       |      1 |      0 |      1 |             0 |
+| guild         |      2 |      3 |      0 |             4 |
+| invite        |      3 |      0 |      0 |             3 |
+| lobby         |      2 |      0 |      2 |             2 |
+| messages      |      4 |      0 |      0 |             9 |
+| **TOTAL ADD** | **15** |  **3** |  **3** |             — |
 
 Clean (no work needed): `application-role-connection`, `audit-log`,
 `auto-moderation`, `components`, `emoji`, `entitlements` (done), `event`,

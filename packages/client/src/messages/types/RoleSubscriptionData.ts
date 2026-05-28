@@ -12,5 +12,6 @@ export const roleSubscriptionDataSchema = v.object({
   isRenewal: v.boolean()
 });
 
-export interface RoleSubscriptionData
-  extends v.InferOutput<typeof roleSubscriptionDataSchema> {}
+export interface RoleSubscriptionData extends v.InferOutput<
+  typeof roleSubscriptionDataSchema
+> {}

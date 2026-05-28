@@ -30,5 +30,6 @@ export const moderationRuleSchema = v.object({
   exemptChannels: boundedArray(snowflake, { max: 50 })
 });
 
-export interface ModerationRule
-  extends v.InferOutput<typeof moderationRuleSchema> {}
+export interface ModerationRule extends v.InferOutput<
+  typeof moderationRuleSchema
+> {}

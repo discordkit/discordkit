@@ -2,10 +2,7 @@ import * as v from "valibot";
 import { toValidated } from "@discordkit/core";
 
 import { mockUtils } from "#mocks";
-import {
-  getTargetUsers,
-  getTargetUsersSchema
-} from "../getTargetUsers.js";
+import { getTargetUsers, getTargetUsersSchema } from "../getTargetUsers.js";
 
 describe(`getTargetUsers`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.get(
