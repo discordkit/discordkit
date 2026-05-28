@@ -9,7 +9,7 @@ export const getGuildPreviewSchema = v.object({
 /**
  * ### [Get Guild Preview](https://discord.com/developers/docs/resources/guild#get-guild-preview)
  *
- * **GET* `/guilds/:guild/preview`
+ * **GET** `/guilds/:guild/preview`
  *
  * Returns the {@link GuildPreview | guild preview object} for the given id. If the user is not in the guild, then the guild must be discoverable.
  */

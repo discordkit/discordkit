@@ -45,7 +45,7 @@ export const editGlobalApplicationCommandSchema = v.object({
 /**
  * ### [Edit Global Application Command](https://discord.com/developers/docs/interactions/application-commands#edit-global-application-command)
  *
- * **PATCH* `/applications/:application/commands/:command`
+ * **PATCH** `/applications/:application/commands/:command`
  *
  * > [!NOTE]
  * >

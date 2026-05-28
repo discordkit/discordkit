@@ -23,7 +23,7 @@ export const modifyGuildEmojiSchema = v.object({
 /**
  * ### [Modify Guild Emoji](https://discord.com/developers/docs/resources/emoji#modify-guild-emoji)
  *
- * **PATCH* `/guilds/:guild/emojis/:emoji`
+ * **PATCH** `/guilds/:guild/emojis/:emoji`
  *
  * Modify the given emoji. Requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns the updated {@link Emoji | emoji object} on success. Fires a Guild Emojis Update Gateway event.
  *

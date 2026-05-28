@@ -8,7 +8,7 @@ export const deleteStageInstanceSchema = v.object({
 /**
  * ### [Delete Stage Instance](https://discord.com/developers/docs/resources/stage-instance#delete-stage-instance)
  *
- * **DELETE* `/stage-instances/:channel`
+ * **DELETE** `/stage-instances/:channel`
  *
  * Deletes the Stage instance. Returns `204 No Content`. Fires a Stage Instance Delete Gateway event.
  *

@@ -16,7 +16,7 @@ export const editApplicationCommandPermissionsSchema = v.object({
 /**
  * ### [Edit Application Command Permissions](https://discord.com/developers/docs/interactions/application-commands#edit-application-command-permissions)
  *
- * **PUT* `/applications/:application/guilds/:guild/commands/:command/permissions`
+ * **PUT** `/applications/:application/guilds/:guild/commands/:command/permissions`
  *
  * > [!CAUTION]
  * >

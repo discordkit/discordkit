@@ -29,7 +29,7 @@ export const createGuildBanSchema = v.object({
 /**
  * ### [Create Guild Ban](https://discord.com/developers/docs/resources/guild#create-guild-ban)
  *
- * **PUT* `/guilds/:guild/bans/:user`
+ * **PUT** `/guilds/:guild/bans/:user`
  *
  * Create a guild ban, and optionally delete previous messages sent by the banned user. Requires the `BAN_MEMBERS` permission. Returns a `204 empty` response on success. Fires a Guild Ban Add Gateway event.
  *

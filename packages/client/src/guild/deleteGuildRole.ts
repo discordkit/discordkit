@@ -9,7 +9,7 @@ export const deleteGuildRoleSchema = v.object({
 /**
  * ### [Delete Guild Role](https://discord.com/developers/docs/resources/guild#delete-guild-role)
  *
- * **DELETE* `/guilds/:guild/roles/:role`
+ * **DELETE** `/guilds/:guild/roles/:role`
  *
  * Delete a guild role. Requires the `MANAGE_ROLES` permission. Returns a `204 empty` response on success. Fires a Guild Role Delete Gateway event.
  *

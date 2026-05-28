@@ -21,7 +21,7 @@ export const modifyApplicationEmojiSchema = v.object({
 /**
  * ### [Modify Application Emoji](https://discord.com/developers/docs/resources/emoji#modify-application-emoji)
  *
- * **PATCH* `/applications/:application/emojis/:emoji`
+ * **PATCH** `/applications/:application/emojis/:emoji`
  *
  * Modify the given emoji. Returns the updated emoji object on success.
  */

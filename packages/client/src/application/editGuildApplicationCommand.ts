@@ -46,7 +46,7 @@ export const editGuildApplicationCommandSchema = v.object({
 /**
  * ### [Edit Guild Application Command](https://discord.com/developers/docs/interactions/application-commands#edit-guild-application-command)
  *
- * **PATCH* `/applications/:application/guilds/:guild/commands/:command`
+ * **PATCH** `/applications/:application/guilds/:guild/commands/:command`
  *
  * > [!NOTE]
  * >
