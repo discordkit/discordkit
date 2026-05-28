@@ -1,10 +1,17 @@
 import * as v from "valibot";
-import { post, type Fetcher, snowflake, boundedString } from "@discordkit/core";
+import {
+  post,
+  type Fetcher,
+  snowflake,
+  boundedString,
+  multipart,
+  fileUpload
+} from "@discordkit/core";
 import { type Sticker } from "./types/Sticker.js";
 
 export const createGuildStickerSchema = v.object({
   guild: snowflake,
-  body: v.object({
+  body: multipart({
     /** name of the sticker (2-30 characters) */
     name: boundedString({ min: 2, max: 30 }),
     /** description of the sticker (empty or 2-100 characters) */
@@ -12,7 +19,7 @@ export const createGuildStickerSchema = v.object({
     /** autocomplete/suggestion tags for the sticker (max 200 characters) */
     tags: boundedString({ max: 200 }),
     /** the sticker file to upload, must be a PNG, APNG, or Lottie JSON file, max 500 KB */
-    file: v.unknown()
+    file: fileUpload
   })
 });
 

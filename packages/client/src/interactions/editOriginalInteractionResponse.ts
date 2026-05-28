@@ -5,7 +5,9 @@ import {
   type Fetcher,
   snowflake,
   boundedString,
-  boundedArray
+  boundedArray,
+  multipart,
+  fileUpload
 } from "@discordkit/core";
 import { embedSchema } from "../messages/types/Embed.js";
 import { allowedMentionSchema } from "../messages/types/AllowedMention.js";
@@ -25,8 +27,8 @@ export const editOriginalInteractionResponseSchema = v.object({
       })
     )
   ),
-  body: v.partial(
-    v.object({
+  body: multipart(
+    {
       /** the message contents (up to 2000 characters) */
       content: boundedString({ max: 2000 }),
       /** embedded `rich` content */
@@ -42,10 +44,11 @@ export const editOriginalInteractionResponseSchema = v.object({
       /** the components to include with the message */
       components: v.array(messageComponentSchema),
       /** the contents of the file being sent */
-      files: v.array(v.unknown()),
+      files: v.array(fileUpload),
       /** attachment objects with filename and description */
       attachments: v.array(v.partial(attachmentSchema))
-    })
+    },
+    { partial: true }
   )
 });
 

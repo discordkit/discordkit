@@ -5,7 +5,9 @@ import {
   snowflake,
   asInteger,
   boundedArray,
-  boundedString
+  boundedString,
+  multipart,
+  fileUpload
 } from "@discordkit/core";
 import { type Message } from "./types/Message.js";
 import { embedSchema } from "./types/Embed.js";
@@ -17,8 +19,8 @@ import { messageFlag } from "./types/MessageFlag.js";
 export const editMessageSchema = v.object({
   channel: snowflake,
   message: snowflake,
-  body: v.partial(
-    v.object({
+  body: multipart(
+    {
       /** Message contents (up to 2000 characters) */
       content: boundedString({ max: 2000 }),
       /** Up to 10 rich embeds (up to 6000 characters) */
@@ -30,10 +32,11 @@ export const editMessageSchema = v.object({
       /** Components to include with the message */
       components: messageComponentSchema,
       /** Contents of the file being sent/edited. See Uploading Files */
-      files: v.array(v.unknown()),
+      files: v.array(fileUpload),
       /** Attached files to keep and possible descriptions for new files. See Uploading Files */
       attachments: v.array(attachmentSchema)
-    })
+    },
+    { partial: true }
   )
 });
 

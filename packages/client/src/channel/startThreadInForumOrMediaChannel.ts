@@ -1,5 +1,12 @@
 import * as v from "valibot";
-import { post, type Fetcher, snowflake, asInteger } from "@discordkit/core";
+import {
+  post,
+  type Fetcher,
+  snowflake,
+  asInteger,
+  multipart,
+  fileUpload
+} from "@discordkit/core";
 import { threadChannelSchema } from "./types/Channel.js";
 import { autoArchiveDurationSchema } from "./types/AutoArchiveDuration.js";
 import { embedSchema } from "../messages/types/Embed.js";
@@ -11,7 +18,7 @@ import { messageFlag } from "../messages/index.js";
 
 export const startThreadInForumOrMediaChannelSchema = v.object({
   channel: snowflake,
-  body: v.object({
+  body: multipart({
     /** 1-100 character channel name */
     name: v.pipe(v.string(), v.minLength(1), v.maxLength(100)),
     /** duration in minutes to automatically archive the thread after recent activity, can be set to: 60, 1440, 4320, 10080 */
@@ -41,10 +48,8 @@ export const startThreadInForumOrMediaChannelSchema = v.object({
     ),
     /** the IDs of the set of tags that have been applied to a thread in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */
     appliedTags: v.exactOptional(v.array(snowflake)),
-    /** 	Contents of the file being sent. See Uploading Files */
-    files: v.exactOptional(v.unknown()),
-    /** JSON-encoded body of non-file params, only for `multipart/form-data` requests. See Uploading Files */
-    payloadJson: v.exactOptional(v.unknown())
+    /** Contents of the file being sent. See Uploading Files */
+    files: v.exactOptional(v.array(fileUpload))
   })
 });
 

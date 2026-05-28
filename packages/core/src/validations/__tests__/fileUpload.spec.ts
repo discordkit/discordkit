@@ -96,9 +96,9 @@ describe(`fileUpload`, () => {
     });
 
     it(`throws if there are no uploads`, () => {
-      expect(() =>
-        toMultipartBody({ content: `hello` }, toSnakeKeys)
-      ).toThrow(/no FileUploads/);
+      expect(() => toMultipartBody({ content: `hello` }, toSnakeKeys)).toThrow(
+        /no FileUploads/
+      );
     });
   });
 
@@ -133,6 +133,38 @@ describe(`fileUpload`, () => {
         files: [{ filename: `a.png`, content: new Blob() }]
       });
       expect(shouldSerializeAsMultipart(parsed)).toBe(true);
+    });
+
+    describe(`{ partial: true }`, () => {
+      const partialSchema = multipart(
+        {
+          content: v.string(),
+          files: v.array(fileUpload)
+        },
+        { partial: true }
+      );
+
+      it(`accepts an empty body`, () => {
+        expect(v.parse(partialSchema, {})).toEqual({});
+      });
+
+      it(`accepts a body with only the non-file field`, () => {
+        expect(v.parse(partialSchema, { content: `hi` })).toEqual({
+          content: `hi`
+        });
+      });
+
+      it(`stamps the marker when files are present`, () => {
+        const parsed = v.parse(partialSchema, {
+          files: [{ filename: `a.png`, content: new Blob() }]
+        });
+        expect(shouldSerializeAsMultipart(parsed)).toBe(true);
+      });
+
+      it(`does not stamp the marker when files are absent`, () => {
+        const parsed = v.parse(partialSchema, { content: `no files` });
+        expect(shouldSerializeAsMultipart(parsed)).toBe(false);
+      });
     });
   });
 

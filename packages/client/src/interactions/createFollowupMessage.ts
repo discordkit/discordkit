@@ -5,7 +5,9 @@ import {
   snowflake,
   asInteger,
   boundedString,
-  boundedArray
+  boundedArray,
+  multipart,
+  fileUpload
 } from "@discordkit/core";
 import { embedSchema } from "../messages/types/Embed.js";
 import { allowedMentionSchema } from "../messages/types/AllowedMention.js";
@@ -17,8 +19,8 @@ import { messageFlag } from "../messages/types/MessageFlag.js";
 export const createFollowupMessageSchema = v.object({
   application: snowflake,
   token: boundedString(),
-  body: v.partial(
-    v.object({
+  body: multipart(
+    {
       /** the message contents (up to 2000 characters) */
       content: boundedString({ max: 2000 }),
       /** true if this is a TTS message */
@@ -36,14 +38,15 @@ export const createFollowupMessageSchema = v.object({
       /** the components to include with the message */
       components: v.array(messageComponentSchema),
       /** the contents of the file being sent */
-      files: v.array(v.unknown()),
+      files: v.array(fileUpload),
       /** attachment objects with filename and description */
       attachments: v.array(v.partial(attachmentSchema)),
       /** message flags combined as a bitfield */
       flags: asInteger(messageFlag),
       /** name of thread to create (requires the webhook channel to be a forum channel) */
       threadName: boundedString()
-    })
+    },
+    { partial: true }
   )
 });
 

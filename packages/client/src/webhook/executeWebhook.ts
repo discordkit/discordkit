@@ -7,7 +7,9 @@ import {
   asInteger,
   boundedArray,
   boundedString,
-  url
+  url,
+  multipart,
+  fileUpload
 } from "@discordkit/core";
 import { embedSchema } from "../messages/types/Embed.js";
 import { allowedMentionSchema } from "../messages/types/AllowedMention.js";
@@ -32,8 +34,8 @@ export const executeWebhookSchema = v.object({
       })
     )
   ),
-  body: v.partial(
-    v.object({
+  body: multipart(
+    {
       /** the message contents (up to 2000 characters) */
       content: boundedString({ max: 2000 }),
       /** override the default username of the webhook */
@@ -55,9 +57,7 @@ export const executeWebhookSchema = v.object({
       /** the components to include with the message */
       components: v.array(messageComponentSchema),
       /** the contents of the file being sent */
-      files: v.array(v.unknown()),
-      /** JSON encoded body of non-file params */
-      payloadJson: v.string(),
+      files: v.array(fileUpload),
       /** attachment objects with filename and description */
       attachments: v.array(v.partial(attachmentSchema)),
       /** message flags combined as a bitfield (only SUPPRESS_EMBEDS can be set) */
@@ -68,7 +68,8 @@ export const executeWebhookSchema = v.object({
       appliedTags: v.array(snowflake),
       /** A poll! */
       poll: pollSchema
-    })
+    },
+    { partial: true }
   )
 });
 

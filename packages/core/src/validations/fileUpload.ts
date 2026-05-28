@@ -193,6 +193,11 @@ export const shouldSerializeAsMultipart = (body: unknown): boolean => {
  * `multipart/form-data` (marker present) and `application/json`
  * (marker absent).
  *
+ * Pass `{ partial: true }` for endpoints where every field is optional —
+ * the wrapper applies `v.partial(...)` to the inner object before piping
+ * the transform. `v.partial` itself can't wrap the piped result (it only
+ * accepts plain object schemas), so the option lives here.
+ *
  * @example
  * ```ts
  * import { multipart, fileUpload } from "@discordkit/core";
@@ -204,12 +209,33 @@ export const shouldSerializeAsMultipart = (body: unknown): boolean => {
  *     bio: v.exactOptional(v.string())
  *   })
  * });
+ *
+ * // Every field optional:
+ * export const editMessageSchema = v.object({
+ *   body: multipart(
+ *     { content: v.string(), files: v.array(fileUpload) },
+ *     { partial: true }
+ *   )
+ * });
  * ```
  */
-export const multipart = <TEntries extends v.ObjectEntries>(
+export function multipart<TEntries extends v.ObjectEntries>(
   entries: TEntries
-): v.GenericSchema<v.InferOutput<v.ObjectSchema<TEntries, undefined>>> => {
-  const inner = v.object(entries);
+): v.GenericSchema<v.InferOutput<v.ObjectSchema<TEntries, undefined>>>;
+export function multipart<TEntries extends v.ObjectEntries>(
+  entries: TEntries,
+  options: { partial: true }
+): v.GenericSchema<
+  v.InferOutput<
+    v.SchemaWithPartial<v.ObjectSchema<TEntries, undefined>, undefined>
+  >
+>;
+export function multipart<TEntries extends v.ObjectEntries>(
+  entries: TEntries,
+  options?: { partial?: boolean }
+): v.GenericSchema<unknown> {
+  const base = v.object(entries);
+  const inner = options?.partial ? v.partial(base) : base;
   // Wrap with a transform that stamps the marker if any FileUploads are present.
   return v.pipe(
     inner,
@@ -224,4 +250,4 @@ export const multipart = <TEntries extends v.ObjectEntries>(
       });
     })
   );
-};
+}

@@ -5,7 +5,9 @@ import {
   snowflake,
   asInteger,
   boundedArray,
-  boundedString
+  boundedString,
+  multipart,
+  fileUpload
 } from "@discordkit/core";
 import { type Message } from "./types/Message.js";
 import { embedSchema } from "./types/Embed.js";
@@ -17,8 +19,8 @@ import { messageFlag } from "./types/MessageFlag.js";
 
 export const createMessageSchema = v.object({
   channel: snowflake,
-  body: v.partial(
-    v.object({
+  body: multipart(
+    {
       /** Message contents (up to 2000 characters) */
       content: boundedString({ max: 20000 }),
       /** true if this is a TTS message */
@@ -34,14 +36,13 @@ export const createMessageSchema = v.object({
       /** IDs of up to 3 stickers in the server to send in the message */
       stickerIds: boundedArray(v.string(), { max: 3 }),
       /** Contents of the file being sent. See Uploading Files */
-      files: v.unknown(),
-      /** JSON-encoded body of non-file params, only for multipart/form-data requests. See Uploading Files */
-      payloadJson: v.string(),
+      files: v.array(fileUpload),
       /** Attachment objects with filename and description. See Uploading Files */
       attachments: v.array(v.partial(attachmentSchema)),
       /** Message flags combined as a bitfield (only SUPPRESS_EMBEDS can be set) */
       flags: asInteger(messageFlag)
-    })
+    },
+    { partial: true }
   )
 });
 

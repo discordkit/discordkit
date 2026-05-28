@@ -4,7 +4,9 @@ import {
   type Fetcher,
   snowflake,
   boundedString,
-  boundedArray
+  boundedArray,
+  multipart,
+  fileUpload
 } from "@discordkit/core";
 import { type Message } from "../messages/types/Message.js";
 import { embedSchema } from "../messages/types/Embed.js";
@@ -17,8 +19,8 @@ export const editFollowupMessageSchema = v.object({
   application: snowflake,
   token: v.pipe(v.string(), v.nonEmpty()),
   message: snowflake,
-  body: v.partial(
-    v.object({
+  body: multipart(
+    {
       /** the message contents (up to 2000 characters) */
       content: boundedString({ max: 2000 }),
       /** embedded `rich` content */
@@ -34,10 +36,11 @@ export const editFollowupMessageSchema = v.object({
       /** the components to include with the message */
       components: v.array(messageComponentSchema),
       /** the contents of the file being sent */
-      files: v.array(v.unknown()),
+      files: v.array(fileUpload),
       /** attachment objects with filename and description */
       attachments: v.array(v.partial(attachmentSchema))
-    })
+    },
+    { partial: true }
   )
 });
 
