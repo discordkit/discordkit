@@ -782,10 +782,21 @@ function nodesToText(nodes: RootContent[]): string {
 }
 
 function normalizePath(rawPath: string): string {
+  // Discord placeholders look like `[\{webhook.id}](url)` or `[\{user.id}](url)`.
+  // The repo convention uses the SUFFIX as the param name (so `webhook.token`
+  // becomes `:token`, `user.id` becomes `:user`), with a fallback to the
+  // PREFIX when only a single placeholder uses that prefix.
+  //
+  // Discord's most common shape is `{Object.id}` which we map to `:object`.
+  // Specialized fields like `{webhook.token}` → `:token`.
   return rawPath
-    .replace(/\[\\?\{([^.}]+)\.[^}]+\}\]\([^)]+\)/g, ":$1")
+    .replace(/\[\\?\{([^.}]+)\.([^}]+)\}\]\([^)]+\)/g, (_, prefix: string, suffix: string) =>
+      suffix === "id" ? `:${prefix}` : `:${suffix}`
+    )
     .replace(/\[\\?\{([^}]+)\}\]\([^)]+\)/g, ":$1")
-    .replace(/\\?\{([^.}]+)\.[^}]+\}/g, ":$1")
+    .replace(/\\?\{([^.}]+)\.([^}]+)\}/g, (_, prefix: string, suffix: string) =>
+      suffix === "id" ? `:${prefix}` : `:${suffix}`
+    )
     .replace(/\\?\{([^}]+)\}/g, ":$1");
 }
 
