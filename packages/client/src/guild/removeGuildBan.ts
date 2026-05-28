@@ -17,7 +17,9 @@ export const removeGuildBanSchema = v.object({
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
-export const removeGuildBan: Fetcher<typeof removeGuildBanSchema> = async ({
-  guild,
-  user
-}) => remove(`/guilds/${guild}/bans/${user}`);
+export const removeGuildBan: Fetcher<
+  typeof removeGuildBanSchema,
+  void,
+  { auditLogReason: true }
+> = async ({ guild, user }, options) =>
+  remove(`/guilds/${guild}/bans/${user}`, options);

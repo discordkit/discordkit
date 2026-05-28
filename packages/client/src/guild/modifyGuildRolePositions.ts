@@ -27,5 +27,7 @@ export const modifyGuildRolePositionsSchema = v.object({
  */
 export const modifyGuildRolePositions: Fetcher<
   typeof modifyGuildRolePositionsSchema,
-  Role[]
-> = async ({ guild, body }) => patch(`/guilds/${guild}/roles`, body);
+  Role[],
+  { auditLogReason: true }
+> = async ({ guild, body }, options) =>
+  patch(`/guilds/${guild}/roles`, body, options);

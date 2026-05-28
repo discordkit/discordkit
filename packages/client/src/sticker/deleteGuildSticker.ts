@@ -18,6 +18,8 @@ export const deleteGuildStickerSchema = v.object({
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const deleteGuildSticker: Fetcher<
-  typeof deleteGuildStickerSchema
-> = async ({ guild, sticker }) =>
-  remove(`/guilds/${guild}/stickers/${sticker}`);
+  typeof deleteGuildStickerSchema,
+  void,
+  { auditLogReason: true }
+> = async ({ guild, sticker }, options) =>
+  remove(`/guilds/${guild}/stickers/${sticker}`, options);

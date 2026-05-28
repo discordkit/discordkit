@@ -17,7 +17,9 @@ export const deleteMessageSchema = v.object({
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
-export const deleteMessage: Fetcher<typeof deleteMessageSchema> = async ({
-  channel,
-  message
-}) => remove(`/channels/${channel}/messages/${message}`);
+export const deleteMessage: Fetcher<
+  typeof deleteMessageSchema,
+  void,
+  { auditLogReason: true }
+> = async ({ channel, message }, options) =>
+  remove(`/channels/${channel}/messages/${message}`, options);

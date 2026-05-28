@@ -21,6 +21,8 @@ export const setVoiceChannelStatusSchema = v.object({
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const setVoiceChannelStatus: Fetcher<
-  typeof setVoiceChannelStatusSchema
-> = async ({ channel, body }) =>
-  put(`/channels/${channel}/voice-status`, body);
+  typeof setVoiceChannelStatusSchema,
+  void,
+  { auditLogReason: true }
+> = async ({ channel, body }, options) =>
+  put(`/channels/${channel}/voice-status`, body, options);

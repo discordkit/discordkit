@@ -37,5 +37,7 @@ export const createGuildEmojiSchema = v.object({
  */
 export const createGuildEmoji: Fetcher<
   typeof createGuildEmojiSchema,
-  Emoji
-> = async ({ guild, body }) => post(`/guilds/${guild}/emojis`, body);
+  Emoji,
+  { auditLogReason: true }
+> = async ({ guild, body }, options) =>
+  post(`/guilds/${guild}/emojis`, body, options);

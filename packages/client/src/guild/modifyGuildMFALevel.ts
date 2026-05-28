@@ -28,5 +28,7 @@ export const modifyGuildMFALevelSchema = v.object({
  */
 export const modifyGuildMFALevel: Fetcher<
   typeof modifyGuildMFALevelSchema,
-  MFALevel
-> = async ({ guild, body }) => post(`/guilds/${guild}/mfa`, body);
+  MFALevel,
+  { auditLogReason: true }
+> = async ({ guild, body }, options) =>
+  post(`/guilds/${guild}/mfa`, body, options);

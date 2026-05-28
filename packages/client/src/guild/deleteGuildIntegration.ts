@@ -18,6 +18,8 @@ export const deleteGuildIntegrationSchema = v.object({
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const deleteGuildIntegration: Fetcher<
-  typeof deleteGuildIntegrationSchema
-> = async ({ guild, integration }) =>
-  remove(`/guilds/${guild}/integrations/${integration}`);
+  typeof deleteGuildIntegrationSchema,
+  void,
+  { auditLogReason: true }
+> = async ({ guild, integration }, options) =>
+  remove(`/guilds/${guild}/integrations/${integration}`, options);

@@ -19,5 +19,8 @@ export const deleteStageInstanceSchema = v.object({
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const deleteStageInstance: Fetcher<
-  typeof deleteStageInstanceSchema
-> = async ({ channel }) => remove(`/stage-instances/${channel}`);
+  typeof deleteStageInstanceSchema,
+  void,
+  { auditLogReason: true }
+> = async ({ channel }, options) =>
+  remove(`/stage-instances/${channel}`, options);

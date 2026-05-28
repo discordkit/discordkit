@@ -35,5 +35,7 @@ export const startThreadWithoutMessageSchema = v.object({
  */
 export const startThreadWithoutMessage: Fetcher<
   typeof startThreadWithoutMessageSchema,
-  Channel
-> = async ({ channel, body }) => post(`/channels/${channel}/threads`, body);
+  Channel,
+  { auditLogReason: true }
+> = async ({ channel, body }, options) =>
+  post(`/channels/${channel}/threads`, body, options);

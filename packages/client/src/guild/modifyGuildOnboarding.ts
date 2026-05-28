@@ -35,5 +35,7 @@ export const modifyGuildOnboardingSchema = v.object({
  */
 export const modifyGuildOnboarding: Fetcher<
   typeof modifyGuildOnboardingSchema,
-  GuildOnboarding
-> = async ({ guild, body }) => put(`/guilds/${guild}/onboarding`, body);
+  GuildOnboarding,
+  { auditLogReason: true }
+> = async ({ guild, body }, options) =>
+  put(`/guilds/${guild}/onboarding`, body, options);

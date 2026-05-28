@@ -27,6 +27,8 @@ export const bulkDeleteMessagesSchema = v.object({
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const bulkDeleteMessages: Fetcher<
-  typeof bulkDeleteMessagesSchema
-> = async ({ channel, body }) =>
-  post(`/channels/${channel}/messages/bulk-delete`, body);
+  typeof bulkDeleteMessagesSchema,
+  void,
+  { auditLogReason: true }
+> = async ({ channel, body }, options) =>
+  post(`/channels/${channel}/messages/bulk-delete`, body, options);

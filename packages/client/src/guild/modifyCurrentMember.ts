@@ -23,5 +23,7 @@ export const modifyCurrentMemberSchema = v.object({
  */
 export const modifyCurrentMember: Fetcher<
   typeof modifyCurrentMemberSchema,
-  Member
-> = async ({ guild, body }) => patch(`/guilds/${guild}/members/@me`, body);
+  Member,
+  { auditLogReason: true }
+> = async ({ guild, body }, options) =>
+  patch(`/guilds/${guild}/members/@me`, body, options);

@@ -23,5 +23,7 @@ export const modifyGuildWidgetSchema = v.object({
  */
 export const modifyGuildWidget: Fetcher<
   typeof modifyGuildWidgetSchema,
-  GuildWidgetSettings
-> = async ({ guild, body }) => patch(`/guilds/${guild}/widget`, body);
+  GuildWidgetSettings,
+  { auditLogReason: true }
+> = async ({ guild, body }, options) =>
+  patch(`/guilds/${guild}/widget`, body, options);

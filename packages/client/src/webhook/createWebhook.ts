@@ -36,5 +36,7 @@ export const createWebhookSchema = v.object({
  */
 export const createWebhook: Fetcher<
   typeof createWebhookSchema,
-  Webhook
-> = async ({ channel, body }) => post(`/channels/${channel}/webhooks`, body);
+  Webhook,
+  { auditLogReason: true }
+> = async ({ channel, body }, options) =>
+  post(`/channels/${channel}/webhooks`, body, options);

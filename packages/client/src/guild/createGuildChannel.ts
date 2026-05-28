@@ -73,5 +73,7 @@ export const createGuildChannelSchema = v.object({
  */
 export const createGuildChannel: Fetcher<
   typeof createGuildChannelSchema,
-  Channel
-> = async ({ guild, body }) => post(`/guilds/${guild}/channels`, body);
+  Channel,
+  { auditLogReason: true }
+> = async ({ guild, body }, options) =>
+  post(`/guilds/${guild}/channels`, body, options);

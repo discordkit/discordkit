@@ -22,6 +22,8 @@ export const deleteAutoModerationRuleSchema = v.object({
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const deleteAutoModerationRule: Fetcher<
-  typeof deleteAutoModerationRuleSchema
-> = async ({ guild, rule }) =>
-  remove(`/guilds/${guild}/auto-moderation/rules/${rule}`);
+  typeof deleteAutoModerationRuleSchema,
+  void,
+  { auditLogReason: true }
+> = async ({ guild, rule }, options) =>
+  remove(`/guilds/${guild}/auto-moderation/rules/${rule}`, options);

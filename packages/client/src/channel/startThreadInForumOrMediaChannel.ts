@@ -88,5 +88,7 @@ export interface ThreadInForumOrMediaChannelResponse extends v.InferOutput<
  */
 export const startThreadInForumOrMediaChannel: Fetcher<
   typeof startThreadInForumOrMediaChannelSchema,
-  ThreadInForumOrMediaChannelResponse
-> = async ({ channel, body }) => post(`/channels/${channel}/threads`, body);
+  ThreadInForumOrMediaChannelResponse,
+  { auditLogReason: true }
+> = async ({ channel, body }, options) =>
+  post(`/channels/${channel}/threads`, body, options);

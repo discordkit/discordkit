@@ -111,5 +111,7 @@ export const modifyChannelSchema = v.object({
  */
 export const modifyChannel: Fetcher<
   typeof modifyChannelSchema,
-  Channel
-> = async ({ channel, body }) => patch(`/channels/${channel}`, body);
+  Channel,
+  { auditLogReason: true }
+> = async ({ channel, body }, options) =>
+  patch(`/channels/${channel}`, body, options);

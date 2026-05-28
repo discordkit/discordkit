@@ -34,5 +34,7 @@ export const modifyGuildWelcomeScreenSchema = v.object({
  */
 export const modifyGuildWelcomeScreen: Fetcher<
   typeof modifyGuildWelcomeScreenSchema,
-  WelcomeScreen
-> = async ({ guild, body }) => patch(`/guilds/${guild}/welcome-screen`, body);
+  WelcomeScreen,
+  { auditLogReason: true }
+> = async ({ guild, body }, options) =>
+  patch(`/guilds/${guild}/welcome-screen`, body, options);

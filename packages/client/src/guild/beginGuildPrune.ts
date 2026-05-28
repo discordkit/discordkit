@@ -34,5 +34,7 @@ export const guildPruneResultSchema = v.object({
  */
 export const beginGuildPrune: Fetcher<
   typeof beginGuildPruneSchema,
-  v.InferOutput<typeof guildPruneResultSchema>
-> = async ({ guild, body }) => post(`/guilds/${guild}/prune`, body);
+  v.InferOutput<typeof guildPruneResultSchema>,
+  { auditLogReason: true }
+> = async ({ guild, body }, options) =>
+  post(`/guilds/${guild}/prune`, body, options);

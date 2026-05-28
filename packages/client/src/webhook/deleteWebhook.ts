@@ -16,6 +16,8 @@ export const deleteWebhookSchema = v.object({
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
-export const deleteWebhook: Fetcher<typeof deleteWebhookSchema> = async ({
-  webhook
-}) => remove(`/webhooks/${webhook}`);
+export const deleteWebhook: Fetcher<
+  typeof deleteWebhookSchema,
+  void,
+  { auditLogReason: true }
+> = async ({ webhook }, options) => remove(`/webhooks/${webhook}`, options);

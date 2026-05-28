@@ -19,6 +19,8 @@ export const addGuildMemberRoleSchema = v.object({
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const addGuildMemberRole: Fetcher<
-  typeof addGuildMemberRoleSchema
-> = async ({ guild, user, role }) =>
-  put(`/guilds/${guild}/members/${user}/roles/${role}`);
+  typeof addGuildMemberRoleSchema,
+  void,
+  { auditLogReason: true }
+> = async ({ guild, user, role }, options) =>
+  put(`/guilds/${guild}/members/${user}/roles/${role}`, undefined, options);

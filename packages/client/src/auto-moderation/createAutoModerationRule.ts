@@ -51,6 +51,7 @@ export const createAutoModerationRuleSchema = v.object({
  */
 export const createAutoModerationRule: Fetcher<
   typeof createAutoModerationRuleSchema,
-  ModerationRule
-> = async ({ guild, body }) =>
-  post(`/guilds/${guild}/auto-moderation/rules`, body);
+  ModerationRule,
+  { auditLogReason: true }
+> = async ({ guild, body }, options) =>
+  post(`/guilds/${guild}/auto-moderation/rules`, body, options);

@@ -41,5 +41,7 @@ export const createGuildSoundboardSoundSchema = v.object({
  */
 export const createGuildSoundboardSound: Fetcher<
   typeof createGuildSoundboardSoundSchema,
-  SoundboardSound
-> = async ({ guild, body }) => post(`/guilds/${guild}/soundboard-sounds`, body);
+  SoundboardSound,
+  { auditLogReason: true }
+> = async ({ guild, body }, options) =>
+  post(`/guilds/${guild}/soundboard-sounds`, body, options);

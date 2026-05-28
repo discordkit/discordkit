@@ -37,8 +37,9 @@ export const createGuildBanSchema = v.object({
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
-export const createGuildBan: Fetcher<typeof createGuildBanSchema> = async ({
-  guild,
-  user,
-  body
-}) => put(`/guilds/${guild}/bans/${user}`, body);
+export const createGuildBan: Fetcher<
+  typeof createGuildBanSchema,
+  void,
+  { auditLogReason: true }
+> = async ({ guild, user, body }, options) =>
+  put(`/guilds/${guild}/bans/${user}`, body, options);

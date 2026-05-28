@@ -63,6 +63,7 @@ export const modifyGuildScheduledEventSchema = v.object({
  */
 export const modifyGuildScheduledEvent: Fetcher<
   typeof modifyGuildScheduledEventSchema,
-  ScheduledEvent
-> = async ({ guild, event, body }) =>
-  patch(`/guilds/${guild}/scheduled-events/${event}`, body);
+  ScheduledEvent,
+  { auditLogReason: true }
+> = async ({ guild, event, body }, options) =>
+  patch(`/guilds/${guild}/scheduled-events/${event}`, body, options);

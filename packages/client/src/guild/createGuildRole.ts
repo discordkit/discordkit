@@ -52,5 +52,7 @@ export const createGuildRoleSchema = v.object({
  */
 export const createGuildRole: Fetcher<
   typeof createGuildRoleSchema,
-  Role
-> = async ({ guild, body }) => post(`/guilds/${guild}/roles`, body);
+  Role,
+  { auditLogReason: true }
+> = async ({ guild, body }, options) =>
+  post(`/guilds/${guild}/roles`, body, options);

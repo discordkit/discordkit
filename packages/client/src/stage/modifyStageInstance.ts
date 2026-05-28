@@ -35,5 +35,7 @@ export const modifyStageInstanceSchema = v.object({
  */
 export const modifyStageInstance: Fetcher<
   typeof modifyStageInstanceSchema,
-  Stage
-> = async ({ channel, body }) => patch(`/stage-instances/${channel}`, body);
+  Stage,
+  { auditLogReason: true }
+> = async ({ channel, body }, options) =>
+  patch(`/stage-instances/${channel}`, body, options);

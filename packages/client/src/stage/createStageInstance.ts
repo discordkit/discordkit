@@ -31,5 +31,6 @@ export const createStageInstanceSchema = v.object({
  */
 export const createStageInstance: Fetcher<
   typeof createStageInstanceSchema,
-  Stage
-> = async ({ body }) => post(`/stage-instances`, body);
+  Stage,
+  { auditLogReason: true }
+> = async ({ body }, options) => post(`/stage-instances`, body, options);

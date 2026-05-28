@@ -16,6 +16,8 @@ export const deleteInviteSchema = v.object({
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
-export const deleteInvite: Fetcher<typeof deleteInviteSchema, Invite> = async ({
-  code
-}) => remove(`/invites/${code}`);
+export const deleteInvite: Fetcher<
+  typeof deleteInviteSchema,
+  Invite,
+  { auditLogReason: true }
+> = async ({ code }, options) => remove(`/invites/${code}`, options);

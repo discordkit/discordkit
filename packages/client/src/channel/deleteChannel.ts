@@ -27,5 +27,6 @@ export const deleteChannelSchema = v.object({
  */
 export const deleteChannel: Fetcher<
   typeof deleteChannelSchema,
-  Channel
-> = async ({ channel }) => remove(`/channels/${channel}`);
+  Channel,
+  { auditLogReason: true }
+> = async ({ channel }, options) => remove(`/channels/${channel}`, options);

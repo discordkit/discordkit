@@ -37,6 +37,7 @@ export const modifyGuildEmojiSchema = v.object({
  */
 export const modifyGuildEmoji: Fetcher<
   typeof modifyGuildEmojiSchema,
-  Emoji
-> = async ({ guild, emoji, body }) =>
-  patch(`/guilds/${guild}/emojis/${emoji}`, body);
+  Emoji,
+  { auditLogReason: true }
+> = async ({ guild, emoji, body }, options) =>
+  patch(`/guilds/${guild}/emojis/${emoji}`, body, options);

@@ -27,6 +27,7 @@ export const modifyCurrentUserNickSchema = v.object({
  */
 export const modifyCurrentUserNick: Fetcher<
   typeof modifyCurrentUserNickSchema,
-  { nick: string | null }
-> = async ({ guild, body }) =>
-  patch(`/guilds/${guild}/members/@me/nick`, body);
+  { nick: string | null },
+  { auditLogReason: true }
+> = async ({ guild, body }, options) =>
+  patch(`/guilds/${guild}/members/@me/nick`, body, options);

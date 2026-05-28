@@ -17,7 +17,9 @@ export const unpinMessageSchema = v.object({
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
-export const unpinMessage: Fetcher<typeof unpinMessageSchema> = async ({
-  channel,
-  message
-}) => remove(`/channels/${channel}/messages/pins/${message}`);
+export const unpinMessage: Fetcher<
+  typeof unpinMessageSchema,
+  void,
+  { auditLogReason: true }
+> = async ({ channel, message }, options) =>
+  remove(`/channels/${channel}/messages/pins/${message}`, options);

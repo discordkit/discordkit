@@ -87,7 +87,9 @@ export const modifyGuildSchema = v.object({
  * >
  * > Attempting to add or remove the `COMMUNITY` guild feature requires the `ADMINISTRATOR` permission.
  */
-export const modifyGuild: Fetcher<typeof modifyGuildSchema, Guild> = async ({
-  guild,
-  body
-}) => patch(`/guilds/${guild}`, body);
+export const modifyGuild: Fetcher<
+  typeof modifyGuildSchema,
+  Guild,
+  { auditLogReason: true }
+> = async ({ guild, body }, options) =>
+  patch(`/guilds/${guild}`, body, options);

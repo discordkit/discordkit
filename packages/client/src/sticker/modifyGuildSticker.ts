@@ -39,6 +39,7 @@ export const modifyGuildStickerSchema = v.object({
  */
 export const modifyGuildSticker: Fetcher<
   typeof modifyGuildStickerSchema,
-  Sticker
-> = async ({ guild, sticker, body }) =>
-  patch(`/guilds/${guild}/stickers/${sticker}`, body);
+  Sticker,
+  { auditLogReason: true }
+> = async ({ guild, sticker, body }, options) =>
+  patch(`/guilds/${guild}/stickers/${sticker}`, body, options);

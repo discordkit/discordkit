@@ -33,6 +33,7 @@ export const startThreadFromMessageSchema = v.object({
  */
 export const startThreadFromMessage: Fetcher<
   typeof startThreadFromMessageSchema,
-  v.InferOutput<typeof threadChannelSchema>
-> = async ({ channel, message, body }) =>
-  post(`/channels/${channel}/messages/${message}/threads`, body);
+  v.InferOutput<typeof threadChannelSchema>,
+  { auditLogReason: true }
+> = async ({ channel, message, body }, options) =>
+  post(`/channels/${channel}/messages/${message}/threads`, body, options);

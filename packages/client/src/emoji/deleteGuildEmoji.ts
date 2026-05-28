@@ -17,7 +17,9 @@ export const deleteGuildEmojiSchema = v.object({
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
-export const deleteGuildEmoji: Fetcher<typeof deleteGuildEmojiSchema> = async ({
-  guild,
-  emoji
-}) => remove(`/guilds/${guild}/emojis/${emoji}`);
+export const deleteGuildEmoji: Fetcher<
+  typeof deleteGuildEmojiSchema,
+  void,
+  { auditLogReason: true }
+> = async ({ guild, emoji }, options) =>
+  remove(`/guilds/${guild}/emojis/${emoji}`, options);

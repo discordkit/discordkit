@@ -17,7 +17,9 @@ export const deleteGuildRoleSchema = v.object({
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
-export const deleteGuildRole: Fetcher<typeof deleteGuildRoleSchema> = async ({
-  guild,
-  role
-}) => remove(`/guilds/${guild}/roles/${role}`);
+export const deleteGuildRole: Fetcher<
+  typeof deleteGuildRoleSchema,
+  void,
+  { auditLogReason: true }
+> = async ({ guild, role }, options) =>
+  remove(`/guilds/${guild}/roles/${role}`, options);

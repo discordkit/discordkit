@@ -55,5 +55,7 @@ export const createGuildScheduledEventSchema = v.object({
  */
 export const createGuildScheduledEvent: Fetcher<
   typeof createGuildScheduledEventSchema,
-  ScheduledEvent
-> = async ({ guild, body }) => post(`/guilds/${guild}/scheduled-events`, body);
+  ScheduledEvent,
+  { auditLogReason: true }
+> = async ({ guild, body }, options) =>
+  post(`/guilds/${guild}/scheduled-events`, body, options);

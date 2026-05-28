@@ -50,5 +50,7 @@ export const createChannelInviteSchema = v.object({
  */
 export const createChannelInvite: Fetcher<
   typeof createChannelInviteSchema,
-  Invite
-> = async ({ channel, body }) => post(`/channels/${channel}/invites`, body);
+  Invite,
+  { auditLogReason: true }
+> = async ({ channel, body }, options) =>
+  post(`/channels/${channel}/invites`, body, options);

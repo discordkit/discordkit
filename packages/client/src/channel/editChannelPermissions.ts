@@ -27,6 +27,8 @@ export const editChannelPermissionsSchema = v.object({
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const editChannelPermissions: Fetcher<
-  typeof editChannelPermissionsSchema
-> = async ({ channel, overwrite, body }) =>
-  put(`/channels/${channel}/permissions/${overwrite}`, body);
+  typeof editChannelPermissionsSchema,
+  void,
+  { auditLogReason: true }
+> = async ({ channel, overwrite, body }, options) =>
+  put(`/channels/${channel}/permissions/${overwrite}`, body, options);

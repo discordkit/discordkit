@@ -29,5 +29,7 @@ export const bulkGuildBanSchema = v.object({
  */
 export const bulkGuildBan: Fetcher<
   typeof bulkGuildBanSchema,
-  { bannedUsers: string[]; failedUsers: string[] }
-> = async ({ guild, body }) => post(`/guilds/${guild}/bulk-ban`, body);
+  { bannedUsers: string[]; failedUsers: string[] },
+  { auditLogReason: true }
+> = async ({ guild, body }, options) =>
+  post(`/guilds/${guild}/bulk-ban`, body, options);

@@ -46,5 +46,7 @@ export const createGuildStickerSchema = v.object({
  */
 export const createGuildSticker: Fetcher<
   typeof createGuildStickerSchema,
-  Sticker
-> = async ({ guild, body }) => post(`/guilds/${guild}/stickers`, body);
+  Sticker,
+  { auditLogReason: true }
+> = async ({ guild, body }, options) =>
+  post(`/guilds/${guild}/stickers`, body, options);

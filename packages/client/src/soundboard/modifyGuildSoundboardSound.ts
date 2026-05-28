@@ -41,6 +41,7 @@ export const modifyGuildSoundboardSoundSchema = v.object({
  */
 export const modifyGuildSoundboardSound: Fetcher<
   typeof modifyGuildSoundboardSoundSchema,
-  SoundboardSound
-> = async ({ guild, sound, body }) =>
-  patch(`/guilds/${guild}/soundboard-sounds/${sound}`, body);
+  SoundboardSound,
+  { auditLogReason: true }
+> = async ({ guild, sound, body }, options) =>
+  patch(`/guilds/${guild}/soundboard-sounds/${sound}`, body, options);

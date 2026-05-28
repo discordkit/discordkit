@@ -21,7 +21,9 @@ export const pinMessageSchema = v.object({
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
-export const pinMessage: Fetcher<typeof pinMessageSchema> = async ({
-  channel,
-  message
-}) => put(`/channels/${channel}/messages/pins/${message}`);
+export const pinMessage: Fetcher<
+  typeof pinMessageSchema,
+  void,
+  { auditLogReason: true }
+> = async ({ channel, message }, options) =>
+  put(`/channels/${channel}/messages/pins/${message}`, undefined, options);

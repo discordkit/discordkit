@@ -41,5 +41,7 @@ export const modifyWebhookSchema = v.object({
  */
 export const modifyWebhook: Fetcher<
   typeof modifyWebhookSchema,
-  Webhook
-> = async ({ webhook, body }) => patch(`/webhooks/${webhook}`, body);
+  Webhook,
+  { auditLogReason: true }
+> = async ({ webhook, body }, options) =>
+  patch(`/webhooks/${webhook}`, body, options);

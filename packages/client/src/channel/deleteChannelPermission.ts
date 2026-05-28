@@ -18,6 +18,8 @@ export const deleteChannelPermissionSchema = v.object({
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const deleteChannelPermission: Fetcher<
-  typeof deleteChannelPermissionSchema
-> = async ({ channel, overwrite }) =>
-  remove(`/channels/${channel}/permissions/${overwrite}`);
+  typeof deleteChannelPermissionSchema,
+  void,
+  { auditLogReason: true }
+> = async ({ channel, overwrite }, options) =>
+  remove(`/channels/${channel}/permissions/${overwrite}`, options);
