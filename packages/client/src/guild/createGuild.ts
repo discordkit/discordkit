@@ -48,7 +48,7 @@ export const createGuildSchema = v.object({
 });
 
 /**
- * ### [Create Guild](https://discord.com/developers/docs/resources/guild#create-guild)
+ * ### Create Guild
  *
  * **POST** `/guilds`
  *
@@ -57,6 +57,12 @@ export const createGuildSchema = v.object({
  * > [!WARNING]
  * >
  * > This endpoint can be used only by bots in less than 10 guilds.
+ *
+ * @deprecated Discord removed this endpoint on July 15, 2025 — see
+ * [Guild Create Deprecation](https://discord.com/developers/docs/change-log#guild-create-deprecation).
+ * Apps can no longer create guilds. This export is retained for
+ * backwards compatibility but calls will fail; it will be removed in a
+ * future major release.
  */
 export const createGuild: Fetcher<typeof createGuildSchema, Guild> = async ({
   body

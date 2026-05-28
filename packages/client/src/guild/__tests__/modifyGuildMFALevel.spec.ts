@@ -8,7 +8,7 @@ import {
 import { mfaLevelSchema } from "../types/MFALevel.js";
 
 describe(`modifyGuildMFALevel`, { repeats: 5 }, () => {
-  const { config, expected } = mockUtils.request.patch(
+  const { config, expected } = mockUtils.request.post(
     `/guilds/:guild/mfa`,
     modifyGuildMFALevelSchema,
     mfaLevelSchema

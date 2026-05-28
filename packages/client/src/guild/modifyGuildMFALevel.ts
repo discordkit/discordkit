@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { patch, type Fetcher, snowflake } from "@discordkit/core";
+import { post, type Fetcher, snowflake } from "@discordkit/core";
 import { mfaLevelSchema, type MFALevel } from "./types/MFALevel.js";
 
 export const modifyGuildMFALevelSchema = v.object({
@@ -11,7 +11,7 @@ export const modifyGuildMFALevelSchema = v.object({
 });
 
 /**
- * ### [Modify Guild MFA Level](https://discord.com/developers/docs/resources/guild#modify-guild-mfa-level)
+ * ### Modify Guild MFA Level
  *
  * **POST** `/guilds/:guild/mfa`
  *
@@ -20,8 +20,13 @@ export const modifyGuildMFALevelSchema = v.object({
  * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
+ *
+ * @deprecated Discord removed this endpoint from the public docs. Calls
+ * may still succeed against the live API but the behavior is unsupported
+ * and may be removed at any time. This export will be deleted in a future
+ * major release.
  */
 export const modifyGuildMFALevel: Fetcher<
   typeof modifyGuildMFALevelSchema,
   MFALevel
-> = async ({ guild, body }) => patch(`/guilds/${guild}/mfa`, body);
+> = async ({ guild, body }) => post(`/guilds/${guild}/mfa`, body);
