@@ -1,11 +1,17 @@
 import * as v from "valibot";
-import { put, type Fetcher, boundedString } from "@discordkit/core";
+import {
+  put,
+  type Fetcher,
+  boundedString,
+  fileUpload,
+  multipart
+} from "@discordkit/core";
 
 export const updateTargetUsersSchema = v.object({
   code: boundedString(),
-  body: v.object({
+  body: multipart({
     /** a CSV file with a single column of user IDs for all the users able to accept this invite */
-    targetUsersFile: v.unknown()
+    targetUsersFile: fileUpload
   })
 });
 

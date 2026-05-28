@@ -5,6 +5,7 @@ export * from "./boundedArray.js";
 export * from "./boundedInteger.js";
 export * from "./boundedString.js";
 export * from "./datauri.js";
+export * from "./fileUpload.js";
 export * from "./hasMimeType.js";
 export * from "./toBlob.js";
 export * from "./snowflake.js";
