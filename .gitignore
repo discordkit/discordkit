@@ -75,6 +75,8 @@ storybook-static/
 .cache/
 .vite-hooks/
 .claude/settings.local.json
+.discord-docs/
+audit/
 **/dist/
 coverage/
 **/public/workbox-*.js*
