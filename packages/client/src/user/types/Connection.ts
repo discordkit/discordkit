@@ -1,7 +1,7 @@
 import * as v from "valibot";
 import { boundedString } from "@discordkit/core";
 import { integrationSchema } from "../../guild/types/Integration.js";
-import { connectionVisibiltySchema } from "./ConnectionVisibilty.js";
+import { connectionVisibilitySchema } from "./ConnectionVisibility.js";
 import { servicesSchema } from "./Services.js";
 
 export const connectionSchema = v.object({
@@ -24,7 +24,7 @@ export const connectionSchema = v.object({
   /** whether this connection has a corresponding third party OAuth2 token */
   twoWayLink: v.boolean(),
   /** visibility of this connection */
-  visibility: connectionVisibiltySchema
+  visibility: connectionVisibilitySchema
 });
 
 export interface Connection extends v.InferOutput<typeof connectionSchema> {}
