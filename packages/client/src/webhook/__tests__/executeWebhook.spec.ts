@@ -11,7 +11,9 @@ describe(`executeWebhook`, { repeats: 5 }, () => {
 
   it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      toValidated(executeWebhook, executeWebhookSchema)(config)
+      toValidated(executeWebhook, executeWebhookSchema)(config, {
+        anonymous: true
+      })
     ).resolves.not.toThrow();
   });
 });

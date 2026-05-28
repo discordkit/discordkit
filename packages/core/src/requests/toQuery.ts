@@ -38,6 +38,10 @@ export type QueryFunction<
  * Given a {@link Fetcher | Fetcher} function, transforms it into a curried function
  * which can then be used with React-Query as a query function without
  * the need for any additional boilerplate.
+ *
+ * Capability-free fetchers only — endpoints that require `{ anonymous: true }`
+ * or accept `{ reason: string }` cannot currently be wrapped via this helper,
+ * because react-query has no natural channel for those per-call options.
  */
 export const toQuery =
   <S extends GenericSchema | null, R, T extends Fetcher<S, R>>(
@@ -47,5 +51,10 @@ export const toQuery =
     : (config: Parameters<T>[0]) => QueryFunction<Awaited<ReturnType<T>>> =>
   // @ts-expect-error
   (...config: [unknown]) =>
-  async () =>
-    fn(...config);
+  async () => {
+    // oxlint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
+    const call = fn as unknown as (
+      ...args: unknown[]
+    ) => Promise<Awaited<ReturnType<T>>>;
+    return call(...config);
+  };

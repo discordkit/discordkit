@@ -92,9 +92,9 @@ export const executeWebhookSchema = v.object({
  * >
  * > Discord may strip certain characters from message content, like invalid unicode characters or characters which cause unexpected message formatting. If you are passing user-generated strings into message content, consider sanitizing the data to prevent unexpected behavior and using `allowed_mentions` to prevent unexpected mentions.
  */
-export const executeWebhook: Fetcher<typeof executeWebhookSchema> = async ({
-  webhook,
-  token,
-  params,
-  body
-}) => post(buildURL(`/webhooks/${webhook}/${token}`, params).href, body);
+export const executeWebhook: Fetcher<
+  typeof executeWebhookSchema,
+  void,
+  { anonymous: true }
+> = async ({ webhook, token, params, body }, options) =>
+  post(buildURL(`/webhooks/${webhook}/${token}`, params).href, body, options);

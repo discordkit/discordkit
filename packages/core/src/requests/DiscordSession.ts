@@ -1,4 +1,5 @@
 import { sleep } from "../utils/sleep.js";
+import type { RequestOptions } from "./request.js";
 
 export const endpoint = `https://discord.com/api/v10/`;
 
@@ -6,6 +7,7 @@ interface QueuedRequest {
   resource: URL;
   method: string;
   body?: string | FormData | null;
+  options?: RequestOptions;
   resolve: (value: Response) => void;
   reject: (error: Error) => void;
   retryCount?: number; // Optional retry tracking
@@ -106,13 +108,15 @@ export class DiscordSession {
   queueRequest = async (
     resource: URL,
     method: string,
-    body?: string | FormData | null
+    body?: string | FormData | null,
+    options?: RequestOptions
   ): Promise<Response> => {
     return new Promise((resolve, reject) => {
       this.#requestQueue.push({
         resource,
         method,
         body,
+        options,
         resolve,
         reject
       });
@@ -192,15 +196,27 @@ export class DiscordSession {
     request: QueuedRequest,
     retryCount = 0
   ): Promise<Response> => {
-    const token = this.getSession();
     const now = Date.now();
 
     // Track this request for global rate limiting
     this.#globalRequestTimestamps.push(now);
 
-    const headers: HeadersInit = {
-      Authorization: token
-    };
+    const headers: HeadersInit = {};
+
+    // Anonymous endpoints (webhook/interaction tokens in the URL) must NOT
+    // send an Authorization header — Discord rejects requests that present
+    // both forms of auth.
+    if (!request.options?.anonymous) {
+      headers.Authorization = this.getSession();
+    }
+
+    // Audit-log reason. URL-encode so non-ASCII characters survive the
+    // single-line HTTP header field.
+    if (request.options?.reason) {
+      headers[`X-Audit-Log-Reason`] = encodeURIComponent(
+        request.options.reason
+      );
+    }
 
     // FormData bodies (file uploads) must NOT have a manual Content-Type
     // header — fetch sets it to `multipart/form-data; boundary=...`

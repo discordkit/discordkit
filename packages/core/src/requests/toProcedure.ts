@@ -49,6 +49,10 @@ type BaseProcedure<
  * output Zod schemas, this produces a function which accepts a tRPC procedure
  * builder of the given procedure type. This can then be used in a tRPC router
  * to scaffold an API route to forward a request to Discord's API.
+ *
+ * Capability-free fetchers only — endpoints that require `{ anonymous: true }`
+ * or accept `{ reason: string }` cannot currently be wrapped via this helper,
+ * because tRPC has no natural channel for those per-call options.
  */
 export const toProcedure =
   <
@@ -71,18 +75,26 @@ export const toProcedure =
         return procedure
           .input(input)
           .output(output)
-          [type](async (opts: { input: unknown }) => fn(opts.input));
+          [type](
+            // oxlint-disable-next-line @typescript-eslint/no-unsafe-argument
+            async (opts: { input: unknown }) => fn(opts.input as never)
+          );
       }
       if (isNonNullable(input) && !isNonNullable(output)) {
         // @ts-expect-error
-        return procedure.input(input)[type](async (opts) => fn(opts.input));
+        return procedure.input(input)[type](
+          // oxlint-disable-next-line @typescript-eslint/no-unsafe-argument
+          async (opts: { input: unknown }) => fn(opts.input as never)
+        );
       }
       if (!isNonNullable(input) && isNonNullable(output)) {
         // @ts-expect-error
-        return procedure.output(output)[type](async () => fn());
+        return procedure
+          .output(output)
+          [type](async () => (fn as () => Promise<Result<O>>)());
       }
       // @ts-expect-error
-      return procedure[type](async () => fn());
+      return procedure[type](async () => (fn as () => Promise<Result<O>>)());
     } catch (error: unknown) {
       if (typeof errorHandler === `function`) {
         errorHandler(error);
