@@ -29,20 +29,16 @@ yarn add -D @discordkit/client valibot
 
 ## 🔧 Usage
 
-Out of the box Discordkit supports vanilla JavaScript/Typescript, [react-query](https://tanstack.com/query/latest), and [tRPC](https://trpc.io/). For each of Discord's API endpoints, Discordkit exports a basic request handler function, a pre-wired `tRPC` procedure builder, and for `GET` requests, a `react-query` query function. Additionally, each endpoint also exports a `valibot` schema object to validate the input for a request handler.
+Discordkit ships a Fetcher (`async (input) => Promise<output>`) and a `valibot` schema for every Discord REST endpoint. Use them directly, or compose them with the helpers in `@discordkit/core` to layer on runtime validation, tRPC procedures, or react-query.
 
-Here is an example of the available exports and their naming patterns:
+Each endpoint exports two symbols:
 
 ```ts
 import {
   // Input validation schema
   getGuildSchema,
-  // Request handler
-  getGuild,
-  // tRPC procedure builder
-  getGuildProcedure,
-  // react-query query function
-  getGuildQuery
+  // Request handler — calls Discord's REST API
+  getGuild
 } from "@discordkit/client";
 ```
 
@@ -54,17 +50,43 @@ import { discord } from "@discordkit/client";
 discord.setToken(`Bearer <access-token>`, true);
 ```
 
+#### Direct use:
+
+```ts
+import { getGuild } from "@discordkit/client";
+
+const guild = await getGuild({ guild: `123456789012345678` });
+```
+
+#### With runtime validation:
+
+`@discordkit/core` exports `toValidated`, a Proxy wrapper that validates the input and output of any Fetcher at runtime. It's framework-agnostic — useful any time you want strong guarantees when accepting external input.
+
+```ts
+import { toValidated } from "@discordkit/core";
+import { getGuild, getGuildSchema } from "@discordkit/client";
+import { guildSchema } from "@discordkit/client";
+
+const getGuildSafe = toValidated(getGuild, getGuildSchema, guildSchema);
+
+const guild = await getGuildSafe({ guild: `123456789012345678` });
+// throws if input doesn't match getGuildSchema, or the response doesn't match guildSchema
+```
+
 #### With [react-query](https://tanstack.com/query/latest):
 
-Using the supplied query functions, you can quickly scaffold your query functions with strong guarantees on input and response validation.
+For `GET` endpoints, use `toQuery` from `@discordkit/core` to produce a queryFn compatible with [`useQuery`](https://tanstack.com/query/latest/docs/react/reference/useQuery):
 
 ```ts
 import { useQuery } from "@tanstack/react-query";
-import { getUserQuery } from "@discordkit/client";
+import { toQuery } from "@discordkit/core";
+import { getUser } from "@discordkit/client";
+
+const getUserQuery = toQuery(getUser);
 
 export const UserProfile = ({ user }) => {
   const { isLoading, isError, data, error } = useQuery({
-    queryKey: [user.username],
+    queryKey: [`user`, user.id],
     queryFn: getUserQuery({ id: user.id })
   });
 
@@ -72,29 +94,31 @@ export const UserProfile = ({ user }) => {
 };
 ```
 
+For mutations, pass the Fetcher straight to [`useMutation`](https://tanstack.com/query/latest/docs/react/reference/useMutation) — schemas can validate input in `onMutate`:
+
 ```ts
 import { useMutation } from "@tanstack/react-query";
 import { modifyGuild, modifyGuildSchema } from "@discordkit/client";
 
 export const RenameGuild = ({ guild }) => {
-  const [name, setName] = useState(guild.name)
-  const { isLoading, isError, data, error } = useMutation({
+  const [name, setName] = useState(guild.name);
+  const mutation = useMutation({
     mutationFn: modifyGuild,
     onMutate: (variables) => {
       // Will throw if invalid input is given
-      modifyGuildSchema.parse(variables)
+      modifyGuildSchema.parse(variables);
     }
   });
 
   const onSubmit = (e) => {
-    e.preventDefault()
-    mutation.mutate({ guild: guild.id, body: { name } })
-  }
+    e.preventDefault();
+    mutation.mutate({ guild: guild.id, body: { name } });
+  };
 
   return (
     <form onSubmit={onSubmit}>
       {mutation.error && (
-        <h5 onClick={() => mutation.reset()}>{mutation.error}</h5>
+        <h5 onClick={() => mutation.reset()}>{mutation.error.message}</h5>
       )}
       <input
         type="text"
@@ -104,19 +128,25 @@ export const RenameGuild = ({ guild }) => {
       <br />
       <button type="submit">Rename Guild</button>
     </form>
-  )
+  );
 };
 ```
 
 #### With [tRPC](https://trpc.io/):
 
+Use `toProcedure` from `@discordkit/core` to wrap a Fetcher + schemas into a tRPC procedure builder. You assemble each procedure where you need it — no per-endpoint imports of pre-wired procedures.
+
 ```ts
 import { initTRPC } from "@trpc/server";
 import { createHTTPServer } from "@trpc/server/adapters/standalone";
+import { toProcedure } from "@discordkit/core";
 import {
-    discord,
-    getCurrentApplicationProcedure,
-    getGuildProcedure
+  discord,
+  getCurrentApplication,
+  applicationSchema,
+  getGuild,
+  getGuildSchema,
+  guildSchema
 } from "@discordkit/client";
 
 const botToken = process.env.DISCORD_BOT_AUTH_TOKEN;
@@ -128,15 +158,29 @@ const t = initTRPC.context<{ user: string | null }>().create();
 const baseProcedure = t.procedure;
 
 // Create a reusable procedure to use a User's auth token when available
-const authorizedProcedure = baseProcedure.use(({ ctx }) => {
-  if (ctx.user) {
-    discord.setToken(`Bearer ${ctx.user}`);
+const authorizedProcedure = baseProcedure.use((opts) => {
+  if (opts.ctx.user) {
+    discord.setToken(`Bearer ${opts.ctx.user}`);
   } else {
     discord.setToken(`Bot ${botToken}`);
   }
 
   return opts.next();
 });
+
+const getCurrentApplicationProcedure = toProcedure(
+  `query`,
+  getCurrentApplication,
+  null,
+  applicationSchema
+);
+
+const getGuildProcedure = toProcedure(
+  `query`,
+  getGuild,
+  getGuildSchema,
+  guildSchema
+);
 
 const router = t.router({
   getCurrentApplication: getCurrentApplicationProcedure(baseProcedure),
@@ -150,7 +194,7 @@ createHTTPServer({
     async function getUserTokenFromHeader() {
       if (req.headers.authorization) {
         const user = await decodeAndVerifyJwtToken(
-          req.headers.authorization.split(" ")[1]
+          req.headers.authorization.split(` `)[1]
         );
         return user;
       }
@@ -158,7 +202,7 @@ createHTTPServer({
     }
 
     return {
-      user: await getUserTokenFromHeader();
+      user: await getUserTokenFromHeader()
     };
   }
 }).listen(1337);
