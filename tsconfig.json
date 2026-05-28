@@ -13,8 +13,7 @@
     "moduleResolution": "Bundler",
     "customConditions": ["development"],
     "paths": {
-      "#mock-utils": ["./scripts/mock-utils.ts"],
-      "#test-utils": ["./scripts/test-utils.ts"]
+      "#mock-utils": ["./scripts/mock-utils.ts"]
     },
     "isolatedModules": true,
     "allowJs": true,

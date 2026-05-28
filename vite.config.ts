@@ -20,8 +20,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "mock-utils": `./scripts/mock-utils.ts`,
-      "test-utils": `./scripts/test-utils.ts`
+      "mock-utils": `./scripts/mock-utils.ts`
     }
   },
   test: {
