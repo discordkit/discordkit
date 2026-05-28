@@ -44,7 +44,9 @@ const PRESERVE_CASE = new Set([
   "SKU",
   "GIF",
   "NSFW",
-  "API"
+  "API",
+  "GitHub",
+  "JSON"
 ]);
 
 /**
@@ -155,10 +157,16 @@ function writeFolderReport(folder: string, docPages: string[]): void {
   const filteredDocEndpoints =
     docPages.length > 1 ? filterEndpointsForFolder(folder, docEndpoints) : docEndpoints;
 
+  // Filter out doc "objects" that are actually endpoint response-shape
+  // descriptors. They share their name with an endpoint heading and don't
+  // need a separate type file.
+  const endpointNames = new Set(filteredDocEndpoints.map((e) => e.name));
+  const filteredObjects = docObjects.filter((o) => !endpointNames.has(o.name));
+
   const repoEndpoints = listRepoEndpoints(folder);
   const repoTypes = listRepoTypes(folder);
 
-  const findings = compare(filteredDocEndpoints, docObjects, docEnums, repoEndpoints, repoTypes);
+  const findings = compare(filteredDocEndpoints, filteredObjects, docEnums, repoEndpoints, repoTypes);
 
   const lines: string[] = [];
   lines.push(`# Audit: \`packages/client/src/${folder}\``);
@@ -484,18 +492,15 @@ function toCamelCase(heading: string): string {
 }
 
 function matchPreserved(word: string): string | null {
-  // Direct match (case-insensitive).
+  // Direct match (case-insensitive against the canonical preserve-case entry).
   const upper = word.toUpperCase();
-  if (PRESERVE_CASE.has(upper)) {
-    return [...PRESERVE_CASE].find((p) => p.toUpperCase() === upper) ?? upper;
-  }
+  const direct = [...PRESERVE_CASE].find((p) => p.toUpperCase() === upper);
+  if (direct) return direct;
   // Trailing `s` plural — e.g. "SKUs" → preserve "SKU" + "s".
   if (word.length > 1 && word.endsWith("s")) {
     const stem = word.slice(0, -1).toUpperCase();
-    if (PRESERVE_CASE.has(stem)) {
-      const match = [...PRESERVE_CASE].find((p) => p.toUpperCase() === stem) ?? stem;
-      return `${match}s`;
-    }
+    const stemMatch = [...PRESERVE_CASE].find((p) => p.toUpperCase() === stem);
+    if (stemMatch) return `${stemMatch}s`;
   }
   return null;
 }

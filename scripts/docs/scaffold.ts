@@ -102,7 +102,9 @@ const PRESERVE_CASE = new Set([
   "SKU",
   "GIF",
   "NSFW",
-  "API"
+  "API",
+  "GitHub",
+  "JSON"
 ]);
 
 // ─── CLI ──────────────────────────────────────────────────────────────────
@@ -491,15 +493,12 @@ function pascalCase(text: string): string {
 
 function matchPreserved(word: string): string | null {
   const upper = word.toUpperCase();
-  if (PRESERVE_CASE.has(upper)) {
-    return [...PRESERVE_CASE].find((p) => p.toUpperCase() === upper) ?? upper;
-  }
+  const direct = [...PRESERVE_CASE].find((p) => p.toUpperCase() === upper);
+  if (direct) return direct;
   if (word.length > 1 && word.endsWith("s")) {
     const stem = word.slice(0, -1).toUpperCase();
-    if (PRESERVE_CASE.has(stem)) {
-      const match = [...PRESERVE_CASE].find((p) => p.toUpperCase() === stem) ?? stem;
-      return `${match}s`;
-    }
+    const stemMatch = [...PRESERVE_CASE].find((p) => p.toUpperCase() === stem);
+    if (stemMatch) return `${stemMatch}s`;
   }
   return null;
 }
