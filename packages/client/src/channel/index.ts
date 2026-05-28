@@ -17,6 +17,7 @@ export * from "./listPublicArchivedThreads.js";
 export * from "./listThreadMembers.js";
 export * from "./modifyChannel.js";
 export * from "./removeThreadMember.js";
+export * from "./setVoiceChannelStatus.js";
 export * from "./startThreadFromMessage.js";
 export * from "./startThreadInForumOrMediaChannel.js";
 export * from "./startThreadWithoutMessage.js";
