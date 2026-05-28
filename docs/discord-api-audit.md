@@ -303,12 +303,49 @@ Track resolved questions here. (Add entries as we go; don't backfill from chat.)
 - [x] Establish folder ↔ doc URL mapping with exceptions flagged
 - [x] Confirm Mintlify `.md` export is parseable and reliable
 - [x] Write this spec
-- [ ] Build T1: docs fetcher
-- [ ] Validate parser assumptions on `user.md`
-- [ ] Build T2: docs parser (final)
-- [ ] Build T3: audit reporter
+- [x] Build T1: docs fetcher — `scripts/docs/fetch.ts`
+- [x] Validate parser assumptions on `user.md`
+- [x] Build T2: docs parser (final) — `scripts/docs/parse.ts` (unified + remark-mdx, bottom-up classifier)
+- [x] Build T3: audit reporter — `scripts/docs/audit.ts` (writes per-folder reports to `audit/`)
 - [ ] Pass 1 — tier 1 (easy wins)
 - [ ] Pass 1 — tier 2 (medium)
 - [ ] Pass 1 — tier 3 (hard)
 - [ ] Pass 1 — special folders (`images`, `permissions`, `teams`)
 - [ ] Pass 2 — JSDoc rewrite
+
+## Current audit snapshot
+
+Run `node --experimental-strip-types scripts/docs/audit.ts` to refresh. Last sweep:
+
+| Folder | ADD | REVIEW | RENAME | TYPES |
+| --- | ---:| ---:| ---:| ---:|
+| application | 6 | 0 | 0 | 8 |
+| application-commands | 16 | 0 | 0 | 3 |
+| application-role-connection | 0 | 0 | 0 | 0 |
+| audit-log | 0 | 0 | 0 | 1 |
+| auto-moderation | 0 | 0 | 0 | 11 |
+| channel | 2 | 0 | 1 | 4 |
+| components | 0 | 0 | 0 | 12 |
+| emoji | 2 | 0 | 0 | 0 |
+| entitlements | 0 | 0 | 1 | 0 |
+| event | 0 | 0 | 0 | 10 |
+| guild | 5 | 3 | 0 | 6 |
+| interactions | 0 | 0 | 0 | 2 |
+| invite | 3 | 0 | 0 | 3 |
+| lobby | 2 | 0 | 2 | 2 |
+| messages | 4 | 0 | 0 | 11 |
+| poll | 0 | 0 | 0 | 2 |
+| sku | 0 | 0 | 0 | 0 |
+| soundboard | 0 | 0 | 0 | 1 |
+| stage | 1 | 0 | 0 | 2 |
+| sticker | 0 | 0 | 0 | 1 |
+| subscription | 0 | 0 | 0 | 0 |
+| template | 0 | 1 | 0 | 0 |
+| user | 1 | 0 | 1 | 2 |
+| voice | 0 | 0 | 0 | 0 |
+| webhook | 0 | 0 | 1 | 0 |
+| **TOTAL** | **42** | **4** | **6** | **81** |
+
+Folders flagged for manual review: `images`, `permissions`, `teams`.
+
+The `TYPES` count is currently noisy — many "missing" types are actually present under slightly different filenames or split across multiple files. Pass 1 will need to manually verify each `TYPE_ADD` finding before adding files. (Field-level drift detection is not yet implemented; that would catch the "rename" cases more accurately.)
