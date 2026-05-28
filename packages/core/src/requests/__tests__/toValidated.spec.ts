@@ -16,7 +16,6 @@ describe(`toValidated`, () => {
     const output = pipe(number(), minValue(1), maxValue(5));
     const wrap = (i: string, o: unknown) =>
       toValidated(
-        // @ts-expect-error – generic fetcher mocked for test
         async (_: InferOutput<typeof input>) => Promise.resolve(o),
         input,
         output
@@ -39,7 +38,6 @@ describe(`toValidated`, () => {
     const input = pipe(string(), minLength(3));
     const wrap = (i: string) =>
       toValidated(
-        // @ts-expect-error – generic fetcher mocked for test
         async (_: string) => Promise.resolve(undefined),
         input
       )(i);
@@ -57,7 +55,6 @@ describe(`toValidated`, () => {
     const output = pipe(number(), minValue(0));
     const wrap = (o: unknown) =>
       toValidated(
-        // @ts-expect-error – generic fetcher mocked for test
         async () => Promise.resolve(o),
         null,
         output
