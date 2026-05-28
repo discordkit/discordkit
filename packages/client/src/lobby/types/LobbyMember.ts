@@ -7,7 +7,7 @@ export const lobbyMemberSchema = v.object({
   /** the id of the user */
   id: snowflake,
   /** dictionary of string key/value pairs. The max total length is 1000. */
-  metaday: v.nullish(
+  metadata: v.nullish(
     v.pipe(v.record(v.string(), v.string()), v.maxEntries(1000))
   ),
   /** lobby member flags combined as a bitfield */

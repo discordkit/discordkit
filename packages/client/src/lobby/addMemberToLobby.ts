@@ -30,4 +30,5 @@ export const addMemberToLobbySchema = v.object({
 export const addMemberToLobby: Fetcher<
   typeof addMemberToLobbySchema,
   LobbyMember
-> = async ({ lobby, user }) => put(`/lobbies/${lobby}/members/${user}`);
+> = async ({ lobby, user, body }) =>
+  put(`/lobbies/${lobby}/members/${user}`, body);
