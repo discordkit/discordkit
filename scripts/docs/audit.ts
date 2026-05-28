@@ -56,7 +56,8 @@ const PRESERVE_CASE = new Set([
  */
 const FOLDER_MAP: Record<string, string[]> = {
   application: ["resources/application.md", "interactions/application-commands.md"],
-  "application-commands": ["interactions/application-commands.md"],
+  // application-commands/ is a types-only folder; its endpoint files live in
+  // application/. Handled via SPECIAL_FOLDERS below.
   "application-role-connection": ["resources/application-role-connection-metadata.md"],
   "audit-log": ["resources/audit-log.md"],
   "auto-moderation": ["resources/auto-moderation.md"],
@@ -89,7 +90,12 @@ const FOLDER_MAP: Record<string, string[]> = {
  * Folders that don't follow the standard endpoint-per-file pattern.
  * They get a minimal report that just notes they need manual review.
  */
-const SPECIAL_FOLDERS = new Set(["images", "permissions", "teams"]);
+const SPECIAL_FOLDERS = new Set([
+  "images",
+  "permissions",
+  "teams",
+  "application-commands"
+]);
 
 interface RepoEndpoint {
   filename: string;
