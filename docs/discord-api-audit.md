@@ -315,37 +315,55 @@ Track resolved questions here. (Add entries as we go; don't backfill from chat.)
 
 ## Current audit snapshot
 
-Run `node --experimental-strip-types scripts/docs/audit.ts` to refresh. Last sweep:
+Run `node --experimental-strip-types scripts/docs/audit.ts` to refresh.
 
-| Folder | ADD | REVIEW | RENAME | TYPES |
+After the v4 audit-tooling refinements (mixed-case `PRESERVE_CASE` fix,
+response-shape filtering, JSDoc-typo cleanup, types-only folder exclusion),
+the genuinely-actionable findings are:
+
+| Folder | ADD | REVIEW | RENAME | TYPES (noisy) |
 | --- | ---:| ---:| ---:| ---:|
-| application | 6 | 0 | 0 | 8 |
-| application-commands | 16 | 0 | 0 | 3 |
-| application-role-connection | 0 | 0 | 0 | 0 |
-| audit-log | 0 | 0 | 0 | 1 |
-| auto-moderation | 0 | 0 | 0 | 11 |
-| channel | 2 | 0 | 1 | 4 |
-| components | 0 | 0 | 0 | 12 |
-| emoji | 2 | 0 | 0 | 0 |
-| entitlements | 0 | 0 | 1 | 0 |
-| event | 0 | 0 | 0 | 10 |
-| guild | 5 | 3 | 0 | 6 |
-| interactions | 0 | 0 | 0 | 2 |
+| application | 3 | 0 | 0 | 7 |
+| channel | 1 | 0 | 1 | 0 |
+| guild | 2 | 3 | 0 | 4 |
 | invite | 3 | 0 | 0 | 3 |
 | lobby | 2 | 0 | 2 | 2 |
-| messages | 4 | 0 | 0 | 11 |
-| poll | 0 | 0 | 0 | 2 |
-| sku | 0 | 0 | 0 | 0 |
-| soundboard | 0 | 0 | 0 | 1 |
-| stage | 1 | 0 | 0 | 2 |
-| sticker | 0 | 0 | 0 | 1 |
-| subscription | 0 | 0 | 0 | 0 |
-| template | 0 | 1 | 0 | 0 |
-| user | 1 | 0 | 1 | 2 |
-| voice | 0 | 0 | 0 | 0 |
-| webhook | 0 | 0 | 1 | 0 |
-| **TOTAL** | **42** | **4** | **6** | **81** |
+| messages | 4 | 0 | 0 | 9 |
+| **TOTAL ADD** | **15** | **3** | **3** | — |
 
-Folders flagged for manual review: `images`, `permissions`, `teams`.
+Clean (no work needed): `application-role-connection`, `audit-log`,
+`auto-moderation`, `components`, `emoji`, `entitlements` (done), `event`,
+`interactions`, `poll`, `sku`, `soundboard`, `stage`, `sticker`,
+`subscription`, `template` (done), `user` (done), `voice`, `webhook`.
 
-The `TYPES` count is currently noisy — many "missing" types are actually present under slightly different filenames or split across multiple files. Pass 1 will need to manually verify each `TYPE_ADD` finding before adding files. (Field-level drift detection is not yet implemented; that would catch the "rename" cases more accurately.)
+Folders flagged for manual review (types-only or non-REST):
+`application-commands`, `images`, `permissions`, `teams`.
+
+### Known false-positive patterns in TYPES findings
+
+The `TYPES` count is still noisy — the audit reports a type as missing when:
+
+1. Repo uses a longer, more-specific name (e.g., `ConnectionVisibility.ts`
+   vs the doc heading `Visibility Types`, or `StagePrivacyLevel.ts` vs the
+   doc heading `Privacy Level`). The matcher doesn't handle prefix-based
+   disambiguation.
+2. Doc "objects" are actually documentation tables, not exportable types
+   (e.g., `Audit Log Change Exceptions` in audit-log.md is a footnote
+   table, not a type).
+3. Doc objects with `Structure` in the heading (e.g.,
+   `Radio Group Structure`) belong to a parent type that the audit
+   doesn't roll them up under.
+
+These are tractable but lower-priority improvements. Pass 1 work is
+dominated by the 15 real ADD findings.
+
+### Field-level drift (out of scope for this audit pass)
+
+The T3 reporter does **not** yet detect field-level drift inside object
+schemas. Known examples discovered manually:
+
+- `user/types/User.ts` is missing `collectibles`, `primary_guild`, and
+  `avatar_decoration_data` was changed from a string hash to an object.
+- New types referenced by drifted fields aren't being created either.
+
+A future pass should add field-level diffing to T3.
