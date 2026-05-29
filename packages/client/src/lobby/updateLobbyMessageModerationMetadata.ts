@@ -22,14 +22,11 @@ export const updateLobbyMessageModerationMetadataSchema = v.object({
  *
  * **PUT** `/lobbies/:lobby/messages/:message/moderation-metadata`
  *
- * Sets the moderation metadata for a lobby message. The metadata is
- * app-scoped and delivered to active game clients via the Social SDK as
- * a realtime message update. See Integrate Moderation for the full
- * moderation flow.
+ * Sets the moderation metadata for a lobby message. The metadata is app-scoped and delivered to active game clients via the Social SDK as a realtime message update. See [Integrate Moderation](https://discord.com/developers/docs/discord-social-sdk/how-to/integrate-moderation#server-side-chat-moderation) for the full moderation flow.
  *
  * Uses `Bot` token for authorization.
  *
- * Returns `204 No Content` on success.
+ * Returns `HTTP 204: No Content` on success.
  */
 export const updateLobbyMessageModerationMetadata: Fetcher<
   typeof updateLobbyMessageModerationMetadataSchema

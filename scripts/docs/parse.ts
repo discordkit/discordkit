@@ -570,10 +570,12 @@ function nodeAsAdmonition(node: RootContent): AdmonitionBlock | null {
   if (!ADMONITION_NAMES.has(el.name as AdmonitionBlock[`kind`])) return null;
   // Preserve markdown inside the admonition (backticks, bold, etc.) using
   // the same JSDoc-aware stringifier we use for description paragraphs.
+  // Collapse all whitespace (including newlines from hard-wrapped source MDX)
+  // to single spaces so the admonition body renders as one logical line.
   const content = el.children
     .map((c) => nodeToMarkdown(c))
     .join(` `)
-    .replace(/[ \t]+/g, ` `)
+    .replace(/\s+/g, ` `)
     .trim();
   return { kind: el.name as AdmonitionBlock[`kind`], content };
 }
@@ -988,7 +990,14 @@ function nodesToText(nodes: RootContent[]): string {
 function nodeToMarkdown(node: RootContent): string {
   switch (node.type) {
     case `paragraph`:
-      return node.children.map(phrasingForJsDoc).join(``);
+      // Collapse soft line breaks (hard-wrapped MDX source) to single spaces
+      // so each paragraph renders as one logical line. Hard breaks (markdown
+      // `\` + newline) are emitted as `\n` by `phrasingForJsDoc` for the
+      // `break` node, but those are rare in Discord's docs.
+      return node.children
+        .map(phrasingForJsDoc)
+        .join(``)
+        .replace(/[ \t]*\n[ \t]*/g, ` `);
     case `list`: {
       const marker = node.ordered ? `1.` : `-`;
       return node.children

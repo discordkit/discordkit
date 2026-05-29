@@ -40,21 +40,13 @@ export const bulkUpdateLobbyMembersSchema = v.object({
  *
  * **POST** `/lobbies/:lobby/members/bulk`
  *
- * Adds, updates, or removes up to 25 members from the specified lobby in
- * a single request. Members with `removeMember: false` (the default) are
- * upserted — added if not present, or updated with the provided metadata
- * and flags if already a member. Members with `removeMember: true` are
- * removed.
+ * Adds, updates, or removes up to 25 members from the specified lobby in a single request. Members with `removeMember: false` (the default) are upserted — added if not present, or updated with the provided metadata and flags if already a member. Members with `removeMember: true` are removed.
  *
- * Returns an array of {@link LobbyMember | lobby member objects} for the
- * upserted members. Removed members are not included in the response.
+ * Returns an array of {@link LobbyMember | lobby member objects} for the upserted members. Removed members are not included in the response.
  *
  * > [!NOTE]
  * >
- * > Users unknown to Discord will return a `404 UNKNOWN_USER` error. Users
- * > that fail permission checks or who have already reached the maximum
- * > number of lobbies per application (and are not already a member of
- * > this lobby) are silently dropped from the upsert set.
+ * > Users unknown to Discord will return a `404 UNKNOWN_USER` error. Users that fail permission checks or who have already reached the maximum number of lobbies per application (and are not already a member of this lobby) are silently dropped from the upsert set.
  */
 export const bulkUpdateLobbyMembers: Fetcher<
   typeof bulkUpdateLobbyMembersSchema,
