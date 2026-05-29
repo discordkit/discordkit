@@ -122,6 +122,13 @@ function main(): void {
     // The renderer can't fabricate these on its own — it doesn't know which
     // local types exist — so we preserve them verbatim from the old prose.
     const newBodyLinked = preserveCrossRefs(oldBlock.text, newBody);
+    // Realign the rendered URL placeholders with whatever names the
+    // existing JSDoc block used. The JSDoc URL string is informational
+    // only; it should track the schema field names the fetcher actually
+    // destructures, not the docs' verbatim placeholder text (which may
+    // differ — e.g. `:guild_scheduled_event` from docs vs `:event` in
+    // the schema).
+    const newBodyAligned = preserveUrlPlaceholders(oldBlock.text, newBodyLinked);
     // Carry forward any trailing curated JSDoc directives (`@example`,
     // `@deprecated`, `@see`, `@remarks`) that the old block had but the
     // renderer didn't produce. The docs themselves never emit these tags.
@@ -130,7 +137,7 @@ function main(): void {
     // docs don't name the response type).
     const newBodyComplete = appendCuratedDirectives(
       oldBlock.text,
-      newBodyLinked
+      newBodyAligned
     );
     const newBlock = formatBlock(newBodyComplete);
     if (oldBlock.text.trim() === newBlock.trim()) continue;
@@ -327,6 +334,42 @@ function preserveCrossRefs(oldBlock: string, newBody: string): string {
     out = out.replace(re, `{@link ${name} | ${display}}`);
   }
   return out;
+}
+
+// ─── URL placeholder preservation ──────────────────────────────────────────
+
+/**
+ * Pull the `**METHOD** \`/path\`` line out of the existing JSDoc block,
+ * walk its placeholders (`:foo`), and substitute them positionally into
+ * the freshly-rendered URL. Preserves the codebase's convention that the
+ * JSDoc URL placeholder name matches the schema field the fetcher
+ * destructures (which may differ from the docs verbatim — e.g. our
+ * `event` field maps to the doc's `:guild_scheduled_event`).
+ *
+ * If the placeholder counts differ between old and new (e.g. the docs
+ * added or removed a path segment), the rendered URL wins so the diff
+ * makes the structural change visible.
+ */
+function preserveUrlPlaceholders(oldBlock: string, newBody: string): string {
+  const oldLine = /\*\*[A-Z]+\*\*\s+`([^`]+)`/.exec(oldBlock);
+  const newLine = /\*\*[A-Z]+\*\*\s+`([^`]+)`/.exec(newBody);
+  if (!oldLine || !newLine) return newBody;
+
+  const oldNames = [...oldLine[1].matchAll(/:([a-zA-Z_][a-zA-Z0-9_]*)/g)].map(
+    (m) => m[1]
+  );
+  const newPath = newLine[1];
+  const newNames = [...newPath.matchAll(/:([a-zA-Z_][a-zA-Z0-9_]*)/g)].map(
+    (m) => m[1]
+  );
+  if (oldNames.length !== newNames.length) return newBody;
+
+  let i = 0;
+  const rewrittenPath = newPath.replace(
+    /:([a-zA-Z_][a-zA-Z0-9_]*)/g,
+    () => `:${oldNames[i++]}`
+  );
+  return newBody.replace(newLine[0], newLine[0].replace(newPath, rewrittenPath));
 }
 
 // ─── curated-directive preservation ────────────────────────────────────────

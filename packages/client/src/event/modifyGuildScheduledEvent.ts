@@ -60,6 +60,10 @@ export const modifyGuildScheduledEventSchema = v.object({
  * > [!NOTE]
  * >
  * > This endpoint silently discards `entity_metadata` for non-`EXTERNAL` events.
+ *
+ * > [!NOTE]
+ * >
+ * > All parameters to this endpoint are optional.
  */
 export const modifyGuildScheduledEvent: Fetcher<
   typeof modifyGuildScheduledEventSchema,

@@ -26,7 +26,7 @@ export const getGuildScheduledEventUsersSchema = v.object({
  *
  * **GET** `/guilds/:guild/scheduled-events/:event/users`
  *
- * Get a list of guild scheduled event users subscribed to a guild scheduled event. Returns a list of {@link ScheduledEventUser | guild scheduled event user objects} on success. Guild member data, if it exists, is included if the `withMember` query parameter is set.
+ * Get a list of guild scheduled event users subscribed to a guild scheduled event. Returns a list of {@link ScheduledEventUser | guild scheduled event user objects} on success. Guild member data, if it exists, is included if the `with_member` query parameter is set.
  */
 export const getGuildScheduledEventUsers: Fetcher<
   typeof getGuildScheduledEventUsersSchema,
