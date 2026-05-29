@@ -27,7 +27,7 @@
  * other sources.
  */
 
-import type { AdmonitionBlock, DocEndpoint } from "./parse.ts";
+import type { AdmonitionBlock, DocEndpoint, DocExample } from "./parse.ts";
 
 export interface RenderOptions {
   /** Base URL for the docs page that contains this endpoint. Used as the prefix of the heading link. */
@@ -67,6 +67,13 @@ export function renderEndpointJsDoc(
   for (const note of endpoint.notes) {
     lines.push(``);
     lines.push(...renderAdmonition(note));
+  }
+
+  // Example blocks (code snippets nested under headings like
+  // `###### Example Partial Guild`).
+  for (const example of endpoint.examples) {
+    lines.push(``);
+    lines.push(...renderExample(example));
   }
 
   return lines.join(`\n`);
@@ -115,5 +122,32 @@ function renderAdmonition(note: AdmonitionBlock): string[] {
       lines.push(`> ${line.trimEnd()}`);
     }
   }
+  return lines;
+}
+
+/**
+ * Render an inline code-block example inside JSDoc as:
+ *
+ *     **<heading text>**
+ *
+ *     ```<lang>
+ *     <body>
+ *     ```
+ *
+ * The heading is bolded (rather than emitted as a markdown header) because
+ * JSDoc consumers like TSDoc render `#` lines as IDE outline anchors rather
+ * than inline text. Bold reads consistently across hover-help, generated
+ * type-doc, and the IDE preview.
+ */
+function renderExample(example: DocExample): string[] {
+  const lines: string[] = [];
+  if (example.headingText) {
+    lines.push(`**${example.headingText}**`, ``);
+  }
+  lines.push(`\`\`\`${example.lang}`);
+  for (const line of example.value.split(`\n`)) {
+    lines.push(line);
+  }
+  lines.push(`\`\`\``);
   return lines;
 }

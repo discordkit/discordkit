@@ -96,6 +96,21 @@ export interface DocEndpoint {
   jsonParams: DocFieldGroup[];
   queryParams: DocFieldGroup[];
   formParams: DocFieldGroup[];
+  /**
+   * Code-block examples that appear *under* the endpoint heading,
+   * typically nested below an H6 sub-heading like `Example Partial Guild`
+   * or `Example Response`. Captured in document order.
+   */
+  examples: DocExample[];
+}
+
+export interface DocExample {
+  /** The closest sub-heading the example sits under (e.g. `Example Partial Guild`), or `null` if none. */
+  headingText: string | null;
+  /** The fenced language tag — `json`, `python`, `text`, etc. May be empty. */
+  lang: string;
+  /** The code-block contents, with trailing whitespace stripped. */
+  value: string;
 }
 
 export interface AdmonitionBlock {
@@ -218,6 +233,7 @@ export function parseResource(markdown: string): DocResource {
     path: string;
     descriptionNodes: RootContent[];
     notes: AdmonitionBlock[];
+    examples: DocExample[];
     /** Param groups by kind, keyed by variant label. */
     paramTables: {
       kind: `json` | `query` | `form`;
@@ -255,6 +271,7 @@ export function parseResource(markdown: string): DocResource {
       path: normalizePath(rawPath),
       descriptionNodes: [],
       notes: [],
+      examples: [],
       paramTables: []
     };
     endpointSeeds.push(seed);
@@ -314,6 +331,24 @@ export function parseResource(markdown: string): DocResource {
       continue;
     }
 
+    // Code blocks under an endpoint. These typically nest below an H6
+    // "Example …" / "Example Response" sub-heading, or sit directly at H2
+    // for endpoints whose description includes a snippet. Skip when the
+    // closest sub-heading is a known params/structure heading — those are
+    // already represented as `jsonParams`/`queryParams`/`formParams`.
+    if (node.type === `code` && endpointSeed) {
+      const codeNode = node;
+      const subHeading = closestSubHeading(stack, endpointSeed.headingDepth);
+      if (!subHeading || !isStructuralHeading(subHeading)) {
+        endpointSeed.examples.push({
+          headingText: subHeading,
+          lang: codeNode.lang ?? ``,
+          value: (codeNode.value ?? ``).replace(/\s+$/, ``)
+        });
+      }
+      continue;
+    }
+
     // If under an endpoint and before any sub-heading, treat as description prose.
     if (
       endpointSeed &&
@@ -361,7 +396,8 @@ export function parseResource(markdown: string): DocResource {
       notes: seed.notes,
       jsonParams,
       queryParams,
-      formParams
+      formParams,
+      examples: seed.examples
     };
   });
 
@@ -525,6 +561,44 @@ function nodeAsAdmonition(node: RootContent): AdmonitionBlock | null {
 
 function nodeContainsRoute(node: RootContent): boolean {
   return findRouteMdx(node) !== null;
+}
+
+/**
+ * Headings that introduce structured content already captured elsewhere on
+ * the endpoint (parameter tables, response shape). Code blocks sitting
+ * under these are skipped to avoid duplicating data we already encode as
+ * `jsonParams`/`queryParams`/`formParams`.
+ *
+ * Match is case-insensitive and tolerant to minor wording shifts ("JSON
+ * Params" vs. "JSON/Form Params"). Anything else — `Example Response`,
+ * `Example Partial Guild`, etc. — falls through and is captured as a
+ * {@link DocExample}.
+ */
+const STRUCTURAL_HEADING_PATTERNS: RegExp[] = [
+  /\b(json|form|query(?:\s*string)?|url)\s*params?\b/i,
+  /\bresponse\s*(?:body|structure)\b/i,
+  /\bheaders?\b/i,
+  /\bparameters?\b/i
+];
+
+function isStructuralHeading(heading: string): boolean {
+  return STRUCTURAL_HEADING_PATTERNS.some((re) => re.test(heading));
+}
+
+/**
+ * Given the heading stack for a node and the depth of the owning endpoint,
+ * return the text of the deepest sub-heading strictly *below* the endpoint
+ * (or `null` if the node sits directly under the endpoint heading).
+ */
+function closestSubHeading(
+  stack: (string | null)[],
+  endpointDepth: number
+): string | null {
+  for (let d = 6; d > endpointDepth; d--) {
+    const t = stack[d];
+    if (t) return t;
+  }
+  return null;
 }
 
 function findRouteMdx(node: RootContent): MdxJsxElement | null {

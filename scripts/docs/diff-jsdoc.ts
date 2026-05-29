@@ -238,30 +238,57 @@ function extractTopJsDoc(source: string): ExistingBlock | null {
  * Pull every `{@link Name | display text}` and `{@link Name}` reference out
  * of the existing JSDoc block and re-apply them onto a freshly-rendered
  * body. Match purely by display text — exact, case-sensitive substring
- * replacement. Multi-word display texts (e.g. `application command object`)
- * are checked before single-word ones so we don't munge nested matches.
+ * replacement.
+ *
+ * If the same `Name | display` reference appeared N times in the old
+ * block, we re-link the first N occurrences in the new body. This handles
+ * the common pattern where a long description mentions the same type in
+ * multiple paragraphs (e.g. "Returns a {@link Message | message object} …
+ * the {@link Message | message object} contains …").
+ *
+ * Multi-word display texts (e.g. `application command object`) are
+ * checked before single-word ones so we don't munge nested matches.
  */
 function preserveCrossRefs(oldBlock: string, newBody: string): string {
   // Capture: link-with-display `{@link Name | display}` (group1=Name, group2=display)
   //          link-bare        `{@link Name}` (group3=Name)
-  const refs: { name: string; display: string }[] = [];
+  const counts = new Map<string, { name: string; count: number }>();
   const re = /\{@link\s+([^\s|}]+)(?:\s*\|\s*([^}]+))?\}/g;
   let m: RegExpExecArray | null;
   while ((m = re.exec(oldBlock)) !== null) {
     const name = m[1];
     const display = (m[2] ?? name).trim();
-    refs.push({ name, display });
+    const key = `${name}|${display}`;
+    const entry = counts.get(key);
+    if (entry) entry.count++;
+    else counts.set(key, { name, count: 1 });
   }
-  if (refs.length === 0) return newBody;
+  if (counts.size === 0) return newBody;
 
-  // Apply longest-first so substrings don't shadow longer matches.
-  refs.sort((a, b) => b.display.length - a.display.length);
+  // Apply longest-first so substrings don't shadow longer matches
+  // (`message object` before `object`, `application command` before
+  // `command`, etc.).
+  const refs = [...counts.entries()]
+    .map(([key, { name, count }]) => {
+      const display = key.slice(name.length + 1);
+      return { name, display, count };
+    })
+    .sort((a, b) => b.display.length - a.display.length);
   let out = newBody;
   for (const { name, display } of refs) {
-    // Replace only the FIRST occurrence — avoids over-linking when the same
-    // word appears in multiple paragraphs.
+    // Replace ALL occurrences of the display text. The risk of over-linking
+    // (the old block linked "message object" once but the new body mentions
+    // it twice) is minor — IDE hover-help and TSDoc still render correctly,
+    // and consumers benefit from extra clickable links. Under-linking
+    // (e.g. the canonical "Returns a {@link Message | message object}"
+    // line dropping its link) would be more annoying.
+    //
+    // To avoid re-wrapping our own output we use a negative lookbehind
+    // for `| ` and a negative lookahead for `}` — i.e., skip text that's
+    // already inside a `{@link …}` block.
     const literal = display.replace(/[.*+?^${}()|[\]\\]/g, `\\$&`);
-    out = out.replace(new RegExp(literal), `{@link ${name} | ${display}}`);
+    const re = new RegExp(`(?<!\\| )${literal}(?!\\})`, `g`);
+    out = out.replace(re, `{@link ${name} | ${display}}`);
   }
   return out;
 }
