@@ -11,7 +11,7 @@ export const deleteTestEntitlementSchema = v.object({
  *
  * **DELETE** `/applications/:application/entitlements/:entitlement`
  *
- * Deletes a currently-active test entitlement. Discord will act as though that user or guild no longer has entitlement to your premium offering.
+ * Deletes a currently-active test entitlement. Discord will act as though that user or guild *no longer has* entitlement to your premium offering.
  *
  * Returns `204 No Content` on success.
  */
