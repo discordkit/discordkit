@@ -9,7 +9,7 @@ import { guildTemplateSchema } from "../types/GuildTemplate.js";
 
 describe(`deleteGuildTemplate`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.delete(
-    `/guilds/:guild/templates/:template`,
+    `/guilds/:guild/templates/:code`,
     deleteGuildTemplateSchema,
     guildTemplateSchema
   );

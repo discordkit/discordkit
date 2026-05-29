@@ -9,7 +9,7 @@ import { guildTemplateSchema } from "../types/GuildTemplate.js";
 
 describe(`syncGuildTemplate`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.put(
-    `/guilds/:guild/templates/:template`,
+    `/guilds/:guild/templates/:code`,
     syncGuildTemplateSchema,
     guildTemplateSchema
   );

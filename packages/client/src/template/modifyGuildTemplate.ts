@@ -4,7 +4,7 @@ import { type GuildTemplate } from "./types/GuildTemplate.js";
 
 export const modifyGuildTemplateSchema = v.object({
   guild: snowflake,
-  template: snowflake,
+  code: snowflake,
   body: v.partial(
     v.object({
       /** name of the template (1-100 characters) */
@@ -20,12 +20,12 @@ export const modifyGuildTemplateSchema = v.object({
 /**
  * ### [Modify Guild Template](https://discord.com/developers/docs/resources/guild-template#modify-guild-template)
  *
- * **PATCH** `/guilds/:guild/templates/:template`
+ * **PATCH** `/guilds/:guild/templates/:code`
  *
  * Modifies the template's metadata. Requires the `MANAGE_GUILD` permission. Returns the {@link GuildTemplate | guild template object} on success.
  */
 export const modifyGuildTemplate: Fetcher<
   typeof modifyGuildTemplateSchema,
   GuildTemplate
-> = async ({ guild, template, body }) =>
-  patch(`/guilds/${guild}/templates/${template}`, body);
+> = async ({ guild, code, body }) =>
+  patch(`/guilds/${guild}/templates/${code}`, body);
