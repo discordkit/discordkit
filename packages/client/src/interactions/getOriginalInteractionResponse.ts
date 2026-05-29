@@ -20,7 +20,7 @@ export const getOriginalInteractionResponseSchema = v.object({
  *
  * **GET** `/webhooks/:application/:token/messages/@original`
  *
- * Returns the initial {@link InteractionCallbackResponse Interaction response}. Functions the same as Get Webhook Message.
+ * Returns the initial {@link InteractionCallbackResponse | Interaction response}. Functions the same as Get Webhook Message.
  */
 export const getOriginalInteractionResponse: Fetcher<
   typeof getOriginalInteractionResponseSchema,

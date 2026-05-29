@@ -51,17 +51,17 @@ export const createFollowupMessageSchema = v.object({
 });
 
 /**
- * ### [Create Followup Message](https://discord.com/developers/docs/interactions/receiving-and-responding#delete-followup-message)
+ * ### [Create Followup Message](https://discord.com/developers/docs/interactions/receiving-and-responding#create-followup-message)
  *
  * **POST** `/webhooks/:application/:token`
+ *
+ * Create a followup message for an Interaction. Functions the same as Execute Webhook, but `wait` is always true. The `threadId`, `avatarUrl`, and `username` parameters are not supported when using this endpoint for interaction followups. You can use the `EPHEMERAL` message flag `1 << 6` (64) to send a message that only the user can see. You can also use the `IS_COMPONENTS_V2` message flag `1 << 15` (32768) to send a component-based message.
+ *
+ * When using this endpoint directly after responding to an interaction with `DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE`, this endpoint will function as Edit Original Interaction Response for backwards compatibility. In this case, no new message will be created, and the loading message will be edited instead. The ephemeral flag will be ignored, and the value you provided in the initial defer response will be preserved, as an existing message's ephemeral state cannot be changed. This behavior is deprecated, and you should use the Edit Original Interaction Response endpoint in this case instead.
  *
  * > [!NOTE]
  * >
  * > Apps are limited to 5 followup messages per interaction if it was initiated from a user-installed app and isn't installed in the server (meaning the authorizing integration owners object only contains `USER_INSTALL`)
- *
- * Create a followup message for an Interaction. Functions the same as Execute Webhook, but wait is always true. The `threadId`, `avatarUrl`, and `username` parameters are not supported when using this endpoint for interaction followups. You can use the `EPHEMERAL` message flag `1 << 6` (64) to send a message that only the user can see. You can also use the `IS_COMPONENTS_V2` message flag `1 << 15` (32768) to send a component-based message.
- *
- * When using this endpoint directly after responding to an interaction with `DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE`, this endpoint will function as Edit Original Interaction Response for backwards compatibility. In this case, no new message will be created, and the loading message will be edited instead. The ephemeral flag will be ignored, and the value you provided in the initial defer response will be preserved, as an existing message's ephemeral state cannot be changed. This behavior is deprecated, and you should use the Edit Original Interaction Response endpoint in this case instead.
  */
 export const createFollowupMessage: Fetcher<
   typeof createFollowupMessageSchema,

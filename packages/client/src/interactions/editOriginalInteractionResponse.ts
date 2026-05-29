@@ -57,7 +57,7 @@ export const editOriginalInteractionResponseSchema = v.object({
  *
  * **PATCH** `/webhooks/:application/:token/messages/@original`
  *
- * Edits the initial {@link InteractionCallbackReponse Interaction response}.. Functions the same as Edit Webhook Message.
+ * Edits the initial {@link InteractionCallbackResponse | Interaction response}. Functions the same as Edit Webhook Message.
  */
 export const editOriginalInteractionResponse: Fetcher<
   typeof editOriginalInteractionResponseSchema,
