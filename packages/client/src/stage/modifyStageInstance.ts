@@ -25,7 +25,7 @@ export const modifyStageInstanceSchema = v.object({
  *
  * **PATCH** `/stage-instances/:channel`
  *
- * Updates fields of an existing Stage instance. Returns the updated {@link Stage | Stage instance}. Fires a Stage Instance Update Gateway event.
+ * Updates fields of an existing {@link Stage | Stage instance}. Returns the updated {@link Stage | Stage instance}. Fires a Stage Instance Update Gateway event.
  *
  * Requires the user to be a moderator of the Stage channel.
  *

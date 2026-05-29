@@ -21,7 +21,7 @@ export const createStageInstanceSchema = v.object({
  *
  * **POST** `/stage-instances`
  *
- * Creates a new Stage instance associated to a Stage channel. Returns that {@link Stage | Stage instance}. Fires a Stage Instance Create Gateway event.
+ * Creates a new {@link Stage | Stage instance} associated to a Stage channel. Returns that {@link Stage | Stage instance}. Fires a Stage Instance Create Gateway event.
  *
  * Requires the user to be a moderator of the Stage channel.
  *
