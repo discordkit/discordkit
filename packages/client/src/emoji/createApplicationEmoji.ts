@@ -25,7 +25,7 @@ export const createApplicationEmojiSchema = v.object({
  *
  * Create a new emoji for the application. Returns the new emoji object on success.
  *
- * > [!WARN]
+ * > [!WARNING]
  * >
  * > Emojis and animated emojis have a maximum file size of 256 KiB. Attempting to upload an emoji larger than this limit will fail and return 400 Bad Request and an error message, but not a JSON status code.
  *

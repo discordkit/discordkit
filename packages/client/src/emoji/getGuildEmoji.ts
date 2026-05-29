@@ -12,7 +12,7 @@ export const getGuildEmojiSchema = v.object({
  *
  * **GET** `/guilds/:guild/emojis/:emoji`
  *
- * Returns an {@link Emoji | emoji object} for the given guild and emoji IDs.
+ * Returns an {@link Emoji | emoji object} for the given guild and emoji IDs. Includes the `user` field if the bot has the `MANAGE_GUILD_EXPRESSIONS` permission, or if the bot created the emoji and has the `CREATE_GUILD_EXPRESSIONS` permission.
  */
 export const getGuildEmoji: Fetcher<
   typeof getGuildEmojiSchema,

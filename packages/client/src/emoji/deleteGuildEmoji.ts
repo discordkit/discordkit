@@ -11,7 +11,7 @@ export const deleteGuildEmojiSchema = v.object({
  *
  * **DELETE** `/guilds/:guild/emojis/:emoji`
  *
- * Delete the given emoji. Requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns `204 No Content` on success. Fires a Guild Emojis Update Gateway event.
+ * Delete the given emoji. For emojis created by the current user, requires either the `CREATE_GUILD_EXPRESSIONS` or `MANAGE_GUILD_EXPRESSIONS` permission. For other emojis, requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns `204 No Content` on success. Fires a Guild Emojis Update Gateway event.
  *
  * > [!NOTE]
  * >
