@@ -11,7 +11,7 @@ export const listGuildStickersSchema = v.object({
  *
  * **GET** `/guilds/:guild/stickers`
  *
- * Returns an array of {@link Sticker | sticker objects} for the given guild. Includes `user` fields if the bot has the `MANAGE_GUILD_EXPRESSIONS` permission.
+ * Returns an array of {@link Sticker | sticker objects} for the given guild. Includes `user` fields if the bot has the `CREATE_GUILD_EXPRESSIONS` or `MANAGE_GUILD_EXPRESSIONS` permission.
  */
 export const listGuildStickers: Fetcher<
   typeof listGuildStickersSchema,

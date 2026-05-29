@@ -11,7 +11,7 @@ export const deleteGuildStickerSchema = v.object({
  *
  * **DELETE** `/guilds/:guild/stickers/:sticker`
  *
- * Delete the given sticker. Requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns `204 No Content` on success. Fires a Guild Stickers Update Gateway event.
+ * Delete the given sticker. For stickers created by the current user, requires either the `CREATE_GUILD_EXPRESSIONS` or `MANAGE_GUILD_EXPRESSIONS` permission. For other stickers, requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns `204 No Content` on success. Fires a Guild Stickers Update Gateway event.
  *
  * > [!NOTE]
  * >
