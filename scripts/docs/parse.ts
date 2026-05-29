@@ -513,10 +513,12 @@ function nodeAsAdmonition(node: RootContent): AdmonitionBlock | null {
   const el = node as unknown as MdxJsxElement;
   if (!el.name) return null;
   if (!ADMONITION_NAMES.has(el.name as AdmonitionBlock[`kind`])) return null;
+  // Preserve markdown inside the admonition (backticks, bold, etc.) using
+  // the same JSDoc-aware stringifier we use for description paragraphs.
   const content = el.children
-    .map((c) => mdToString(c))
+    .map((c) => nodeToMarkdown(c))
     .join(` `)
-    .replace(/\s+/g, ` `)
+    .replace(/[ \t]+/g, ` `)
     .trim();
   return { kind: el.name as AdmonitionBlock[`kind`], content };
 }
@@ -856,9 +858,65 @@ function nodesToText(nodes: RootContent[]): string {
       (n) =>
         n.type !== `html` || !(n as { value: string }).value.startsWith(`<!--`)
     )
-    .map((n) => mdToString(n))
+    .map((n) => nodeToMarkdown(n))
     .join(`\n\n`)
     .replace(/\n{3,}/g, `\n\n`);
+}
+
+/**
+ * Markdown-preserving stringifier for top-level nodes (paragraphs, lists,
+ * etc.). Unlike `mdToString` from `mdast-util-to-string` — which strips all
+ * markdown to plain text — this keeps `` `code` ``, `**bold**`, `*italics*`,
+ * and *external* `[text](url)` links intact. Discord-internal cross-doc
+ * links (e.g. `/developers/resources/channel#channel-object`) are flattened
+ * to their display text so a downstream pass can re-link them as
+ * `{@link Name | display}` references against the local type registry.
+ *
+ * Other block types fall back to plain text.
+ */
+function nodeToMarkdown(node: RootContent): string {
+  switch (node.type) {
+    case `paragraph`:
+      return node.children.map(phrasingForJsDoc).join(``);
+    case `list`: {
+      const marker = node.ordered ? `1.` : `-`;
+      return node.children
+        .map((item) => {
+          const text = (item.children as RootContent[])
+            .map((c) => nodeToMarkdown(c))
+            .join(`\n\n`);
+          return `${marker} ${text}`;
+        })
+        .join(`\n`);
+    }
+    default:
+      return mdToString(node);
+  }
+}
+
+/**
+ * Like {@link phrasingToMarkdown}, but tailored for JSDoc prose:
+ * Discord-internal links (`/developers/...`) are flattened to their display
+ * text. External links are preserved as full markdown so the JSDoc can show
+ * a clickable URL.
+ */
+function phrasingForJsDoc(node: PhrasingContent): string {
+  if (node.type === `link`) {
+    const display = node.children.map(phrasingForJsDoc).join(``);
+    if (node.url.startsWith(`/developers/`)) return display;
+    return `[${display}](${node.url})`;
+  }
+  if (node.type === `text`) return node.value;
+  if (node.type === `inlineCode`) return `\`${node.value}\``;
+  if (node.type === `strong`)
+    return `**${node.children.map(phrasingForJsDoc).join(``)}**`;
+  if (node.type === `emphasis`)
+    return `*${node.children.map(phrasingForJsDoc).join(``)}*`;
+  if (node.type === `html`) return node.value;
+  if (node.type === `break`) return `\n`;
+  const maybeChildren = (node as { children?: PhrasingContent[] }).children;
+  if (maybeChildren) return maybeChildren.map(phrasingForJsDoc).join(``);
+  return mdToString(node as unknown as PhrasingContent);
 }
 
 function normalizePath(rawPath: string): string {
