@@ -6,7 +6,7 @@ import { messageComponentSchema } from "../../messages/types/MessageComponent.js
 import { attachmentSchema } from "../../messages/types/Attachment.js";
 import { pollCreateRequestSchema } from "../../poll/types/PollCreateRequest.js";
 import { applicationCommandOptionChoiceSchema } from "../../application-commands/types/ApplicationCommandOptionChoice.js";
-import { componenetSchema } from "../../components/types/Component.js";
+import { componentSchema } from "../../components/types/Component.js";
 
 export const interactionCallbackDataSchema = v.union([
   /** Messages */
@@ -40,7 +40,7 @@ export const interactionCallbackDataSchema = v.union([
     /** Title of the popup modal, max 45 characters */
     title: boundedString({ max: 45 }),
     /** Between 1 and 5 (inclusive) components that make up the modal */
-    components: boundedArray(componenetSchema, { max: 5 })
+    components: boundedArray(componentSchema, { max: 5 })
   })
 ]);
 

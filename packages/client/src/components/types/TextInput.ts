@@ -22,9 +22,9 @@ export const textInputSchema = v.object({
   /** Label for this component; max 45 characters */
   label: boundedString({ max: 45 }),
   /** Minimum input length for a text input; min 0, max 4000 */
-  minLength: v.exactOptional(boundedString({ min: 0, max: 4000 })),
+  minLength: v.exactOptional(boundedInteger({ min: 0, max: 4000 })),
   /** Maximum input length for a text input; min 1, max 4000 */
-  maxLength: v.exactOptional(boundedString({ max: 4000 })),
+  maxLength: v.exactOptional(boundedInteger({ min: 1, max: 4000 })),
   /** Whether this component is required to be filled (defaults to true) */
   required: v.exactOptional(v.boolean()),
   /** Pre-filled value for this component; max 4000 characters */

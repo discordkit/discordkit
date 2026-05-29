@@ -14,8 +14,13 @@ import { mediaGallerySchema } from "./MediaGallery.js";
 import { fileSchema } from "./File.js";
 import { separatorSchema } from "./Separator.js";
 import { containerSchema } from "./Container.js";
+import { labelSchema } from "./Label.js";
+import { fileUploadSchema } from "./FileUpload.js";
+import { radioGroupSchema } from "./RadioGroup.js";
+import { checkboxGroupSchema } from "./CheckboxGroup.js";
+import { checkboxSchema } from "./Checkbox.js";
 
-export const componenetSchema = v.union([
+export const componentSchema = v.variant(`type`, [
   actionRowSchema,
   buttonSchema,
   stringSelectSchema,
@@ -30,7 +35,19 @@ export const componenetSchema = v.union([
   mediaGallerySchema,
   fileSchema,
   separatorSchema,
-  containerSchema
+  containerSchema,
+  labelSchema,
+  fileUploadSchema,
+  radioGroupSchema,
+  checkboxGroupSchema,
+  checkboxSchema
 ]);
 
-export type Component = v.InferOutput<typeof componenetSchema>;
+export type Component = v.InferOutput<typeof componentSchema>;
+
+/**
+ * @deprecated Use {@link componentSchema} instead. This alias preserves the
+ * old misspelled export name (`componenetSchema`) for one release so
+ * existing imports keep working. It will be removed in a future major.
+ */
+export const componenetSchema = componentSchema;
