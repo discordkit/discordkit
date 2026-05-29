@@ -15,6 +15,8 @@ import {
   applicationCommandTypeSchema
 } from "../application-commands/types/ApplicationCommandType.js";
 import { permissionFlag } from "../permissions/Permissions.js";
+import { applicationIntegrationTypesSchema } from "./types/ApplicationIntegrationTypes.js";
+import { interactionContextSchema } from "../interactions/types/InteractionContextType.js";
 
 export const bulkOverwriteGuildApplicationCommandsSchema = v.object({
   application: snowflake,
@@ -46,10 +48,19 @@ export const bulkOverwriteGuildApplicationCommandsSchema = v.object({
         options: v.nullish(v.array(applicationCommandOptionSchema)),
         /** Set of permissions represented as a bit set */
         defaultMemberPermissions: v.nullish(asDigits(permissionFlag)),
-        /** Indicates whether the command is available in DMs with the app, only for globally-scoped commands. By default, commands are visible. */
+        /**
+         * Indicates whether the command is available in DMs with the app,
+         * only for globally-scoped commands. By default, commands are visible.
+         *
+         * @deprecated Use `contexts` instead.
+         */
         dmPermission: v.nullish(v.boolean()),
         /** Replaced by `defaultMemberPermissions` and will be deprecated in the future. Indicates whether the command is enabled by default when the app is added to a guild. Defaults to `true` */
         defaultPermission: v.nullish(v.boolean()),
+        /** Installation context(s) where the command is available. Defaults to `[GUILD_INSTALL]`. */
+        integrationTypes: v.nullish(v.array(applicationIntegrationTypesSchema)),
+        /** Interaction context(s) where the command can be used. Defaults to all contexts. */
+        contexts: v.nullish(v.array(interactionContextSchema)),
         /** Type of command, defaults `1` if not set */
         type: v.nullish(
           applicationCommandTypeSchema,

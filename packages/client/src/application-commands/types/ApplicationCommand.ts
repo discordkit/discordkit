@@ -13,6 +13,9 @@ import {
   applicationCommandTypeSchema
 } from "./ApplicationCommandType.js";
 import { permissionFlag } from "../../permissions/Permissions.js";
+import { applicationIntegrationTypesSchema } from "../../application/types/ApplicationIntegrationTypes.js";
+import { interactionContextSchema } from "../../interactions/types/InteractionContextType.js";
+import { entryPointCommandHandlerTypeSchema } from "./EntryPointCommandHandlerType.js";
 
 export const applicationCommandSchema = v.intersect([
   v.object({
@@ -38,14 +41,23 @@ export const applicationCommandSchema = v.intersect([
     ),
     /** Set of permissions represented as a bit set */
     defaultMemberPermissions: v.nullable(asDigits(permissionFlag)),
-    /** Indicates whether the command is available in DMs with the app, only for globally-scoped commands. By default, commands are visible. */
+    /**
+     * Indicates whether the command is available in DMs with the app, only
+     * for globally-scoped commands. By default, commands are visible.
+     *
+     * @deprecated Discord recommends `contexts` instead.
+     */
     dmPermission: v.exactOptional(v.boolean()),
     /** Not recommended for use as field will soon be deprecated. Indicates whether the command is enabled by default when the app is added to a guild, defaults to true */
     defaultPermission: v.exactOptional(v.boolean()),
     /** Indicates whether the command is age-restricted, defaults to false */
     nsfw: v.exactOptional(v.boolean()),
-    // TODO: integrationTypes
-    // TODO: contexts
+    /** Installation context(s) where the command is available */
+    integrationTypes: v.exactOptional(
+      v.array(applicationIntegrationTypesSchema)
+    ),
+    /** Interaction context(s) where the command can be used */
+    contexts: v.nullish(v.array(interactionContextSchema)),
     /** Autoincrementing version identifier updated during substantial record changes */
     version: snowflake
   }),
@@ -66,8 +78,14 @@ export const applicationCommandSchema = v.intersect([
       }),
       // Properties unique to PRIMARY_ENTRY_POINT
       v.object({
-        type: v.literal(ApplicationCommandType.PRIMARY_ENTRY_POINT)
-        // TODO: handler
+        type: v.literal(ApplicationCommandType.PRIMARY_ENTRY_POINT),
+        /**
+         * Determines whether the interaction is handled by the app's
+         * interactions handler or by Discord. Can only be set for
+         * `PRIMARY_ENTRY_POINT` commands belonging to applications with
+         * the `EMBEDDED` flag (i.e. apps with an Activity).
+         */
+        handler: v.exactOptional(entryPointCommandHandlerTypeSchema)
       })
     ])
   ])

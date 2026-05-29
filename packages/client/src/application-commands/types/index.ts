@@ -5,4 +5,5 @@ export * from "./ApplicationCommandOptionType.js";
 export * from "./ApplicationCommandPermissionType.js";
 export * from "./ApplicationCommandPermissions.js";
 export * from "./ApplicationCommandType.js";
+export * from "./EntryPointCommandHandlerType.js";
 export * from "./GuildApplicationCommandPermissions.js";

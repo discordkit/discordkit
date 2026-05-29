@@ -33,8 +33,6 @@ export const editGuildApplicationCommandSchema = v.object({
       options: v.nullish(v.array(applicationCommandOptionSchema)),
       /** Set of permissions represented as a bit set */
       defaultMemberPermissions: v.nullish(asDigits(permissionFlag)),
-      /** Indicates whether the command is available in DMs with the app, only for globally-scoped commands. By default, commands are visible. */
-      dmPermission: v.nullish(v.boolean()),
       /** Replaced by default_member_permissions and will be deprecated in the future. Indicates whether the command is enabled by default when the app is added to a guild. Defaults to true */
       defaultPermission: v.nullish(v.boolean()),
       /** Indicates whether the command is age-restricted */
