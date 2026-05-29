@@ -22,12 +22,8 @@ export const updateTargetUsersSchema = v.object({
  *
  * Updates the users allowed to see and accept this invite. Uploading a file with invalid user IDs will result in a 400 with the invalid IDs described. Requires the caller to be the inviter or have the `MANAGE_GUILD` permission.
  *
- * Processing target users from a CSV is done asynchronously — poll
- * {@link getTargetUsersJobStatus | Get Target Users Job Status} to
- * monitor completion.
+ * **Example Error Response**
  *
- * @example
- * Example error response when invalid user IDs are submitted:
  * ```json
  * {
  *   "target_users_file": [

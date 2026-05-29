@@ -8,6 +8,7 @@ export const deleteInviteSchema = v.object({
 
 /**
  * ### [Delete Invite](https://discord.com/developers/docs/resources/invite#delete-invite)
+ *
  * **DELETE** `/invites/:code`
  *
  * Delete an invite. Requires the `MANAGE_CHANNELS` permission on the channel this invite belongs to, or `MANAGE_GUILD` to remove any invite across the guild. Returns an {@link Invite | invite object} on success. Fires an Invite Delete Gateway event.
