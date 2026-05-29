@@ -10,7 +10,7 @@ export const leaveGuildSchema = v.object({
  *
  * **DELETE** `/users/@me/guilds/:guild`
  *
- * Leave a guild. Returns a `204 empty` response on success. Fires a Guild Delete Gateway event and a Guild Member Remove Gateway event.
+ * Leave a guild. Returns a 204 empty response on success. Fires a Guild Delete Gateway event and a Guild Member Remove Gateway event.
  */
 export const leaveGuild: Fetcher<typeof leaveGuildSchema> = async ({ guild }) =>
   remove(`/users/@me/guilds/${guild}`);

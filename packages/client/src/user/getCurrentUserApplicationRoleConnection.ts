@@ -11,7 +11,7 @@ export const getCurrentUserApplicationRoleConnectionSchema = v.object({
  *
  * **GET** `/users/@me/applications/:application/role-connection`
  *
- * Returns the {@link ApplicationRoleConnection | application role connection} for the user. Requires an OAuth2 access token with role_connections.write scope for the application specified in the path.
+ * Returns the {@link ApplicationRoleConnection | application role connection} for the user. Requires an OAuth2 access token with `role_connections.write` scope for the application specified in the path.
  */
 export const getCurrentUserApplicationRoleConnection: Fetcher<
   typeof getCurrentUserApplicationRoleConnectionSchema,
