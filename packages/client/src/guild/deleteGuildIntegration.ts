@@ -11,7 +11,7 @@ export const deleteGuildIntegrationSchema = v.object({
  *
  * **DELETE** `/guilds/:guild/integrations/:integration`
  *
- * Delete the attached integration object for the guild. Deletes any associated webhooks and kicks the associated bot if there is one. Requires the `MANAGE_GUILD` permission. Returns a `204 empty` response on success. Fires Guild Integrations Update and Integration Delete Gateway events.
+ * Delete the attached integration object for the guild. Deletes any associated webhooks and kicks the associated bot if there is one. Requires the `MANAGE_GUILD` permission. Returns a 204 empty response on success. Fires Guild Integrations Update and Integration Delete Gateway events.
  *
  * > [!NOTE]
  * >

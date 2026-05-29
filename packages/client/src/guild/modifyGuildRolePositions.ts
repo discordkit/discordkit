@@ -19,7 +19,9 @@ export const modifyGuildRolePositionsSchema = v.object({
  *
  * **PATCH** `/guilds/:guild/roles`
  *
- * Modify the positions of a set of role objects for the guild. Requires the `MANAGE_ROLES` permission. Returns a list of all of the guild's {@link Role | role objects} on success. Fires multiple Guild Role Update Gateway events.
+ * Modify the positions of a set of {@link Role | role objects} for the guild. Requires the `MANAGE_ROLES` permission. Returns a list of all of the guild's {@link Role | role objects} on success. Fires multiple Guild Role Update Gateway events.
+ *
+ * This endpoint takes a JSON array of parameters in the following format:
  *
  * > [!NOTE]
  * >

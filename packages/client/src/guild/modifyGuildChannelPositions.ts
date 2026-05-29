@@ -22,7 +22,9 @@ export const modifyGuildChannelPositionsSchema = v.object({
  *
  * **PATCH** `/guilds/:guild/channels`
  *
- * Modify the positions of a set of channel objects for the guild. Requires `MANAGE_CHANNELS` permission. Returns a `204 empty` response on success. Fires multiple Channel Update Gateway events.
+ * Modify the positions of a set of channel objects for the guild. Requires `MANAGE_CHANNELS` permission. Returns a 204 empty response on success. Fires multiple Channel Update Gateway events.
+ *
+ * This endpoint takes a JSON array of parameters in the following format:
  *
  * > [!NOTE]
  * >

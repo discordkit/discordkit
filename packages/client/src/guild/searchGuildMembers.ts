@@ -23,7 +23,7 @@ export const searchGuildMembersSchema = v.object({
  *
  * > [!NOTE]
  * >
- * > All parameters to this endpoint except for query are optional
+ * > All parameters to this endpoint except for `query` are optional
  */
 export const searchGuildMembers: Fetcher<
   typeof searchGuildMembersSchema,

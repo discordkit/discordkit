@@ -10,7 +10,17 @@ export const getGuildRoleMemberCountsSchema = v.object({
  *
  * **GET** `/guilds/:guild/roles/member-counts`
  *
- * Returns a map of role IDs to the number of members with the role. Does not include the `@everyone` role.
+ * Returns a map of role IDs to the number of members with the role. Does not include the @everyone role.
+ *
+ * **Example Response**
+ *
+ * ```json
+ * {
+ *   "613425648685547541": 1337,
+ *   "1409696176629878905": 2,
+ *   "697138785317814292": 67
+ * }
+ * ```
  *
  * @example
  * ```json

@@ -25,11 +25,11 @@ export const listGuildMembersSchema = v.object({
  *
  * > [!WARNING]
  * >
- * > This endpoint is restricted according to whether the `GUILD_MEMBERS` Privileged Intent is enabled for your application.
+ * > This endpoint requires the `GUILD_MEMBERS` Privileged Intent.
  *
  * > [!NOTE]
  * >
- * > All parameters to this endpoint are optional
+ * > All parameters to this endpoint are optional.
  */
 export const listGuildMembers: Fetcher<
   typeof listGuildMembersSchema,

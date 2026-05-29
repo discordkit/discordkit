@@ -11,7 +11,7 @@ export const deleteGuildRoleSchema = v.object({
  *
  * **DELETE** `/guilds/:guild/roles/:role`
  *
- * Delete a guild role. Requires the `MANAGE_ROLES` permission. Returns a `204 empty` response on success. Fires a Guild Role Delete Gateway event.
+ * Delete a guild role. Requires the `MANAGE_ROLES` permission. Returns a 204 empty response on success. Fires a Guild Role Delete Gateway event.
  *
  * > [!NOTE]
  * >

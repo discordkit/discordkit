@@ -47,7 +47,7 @@ export const modifyGuildRoleSchema = v.object({
  *
  * **PATCH** `/guilds/:guild/roles/:role`
  *
- * Modify a guild role. Requires the `MANAGE_ROLES` permission. Returns the updated {@link Role | role} on success. Fires a Guild Role Update Gateway event.
+ * Modify a guild {@link Role | role}. Requires the `MANAGE_ROLES` permission. Returns the updated {@link Role | role} on success. Fires a Guild Role Update Gateway event.
  *
  * > [!NOTE]
  * >

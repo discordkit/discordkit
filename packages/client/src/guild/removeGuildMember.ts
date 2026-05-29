@@ -11,7 +11,7 @@ export const removeGuildMemberSchema = v.object({
  *
  * **DELETE** `/guilds/:guild/members/:user`
  *
- * Remove a member from a guild. Requires `KICK_MEMBERS` permission. Returns a `204 empty` response on success. Fires a Guild Member Remove Gateway event.
+ * Remove a member from a guild. Requires `KICK_MEMBERS` permission. Returns a 204 empty response on success. Fires a Guild Member Remove Gateway event.
  *
  * > [!NOTE]
  * >

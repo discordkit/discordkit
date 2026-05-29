@@ -8,6 +8,7 @@ export const getGuildWelcomeScreenSchema = v.object({
 
 /**
  * ### [Get Guild Welcome Screen](https://discord.com/developers/docs/resources/guild#get-guild-welcome-screen)
+ *
  * **GET** `/guilds/:guild/welcome-screen`
  *
  * Returns the {@link WelcomeScreen | Welcome Screen object} for the guild. If the welcome screen is not enabled, the `MANAGE_GUILD` permission is required.

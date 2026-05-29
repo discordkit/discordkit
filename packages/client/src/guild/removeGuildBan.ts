@@ -11,7 +11,7 @@ export const removeGuildBanSchema = v.object({
  *
  * **DELETE** `/guilds/:guild/bans/:user`
  *
- * Remove the ban for a user. Requires the BAN_MEMBERS permissions. Returns a `204 empty` response on success. Fires a Guild Ban Remove Gateway event.
+ * Remove the ban for a user. Requires the `BAN_MEMBERS` permissions. Returns a 204 empty response on success. Fires a Guild Ban Remove Gateway event.
  *
  * > [!NOTE]
  * >

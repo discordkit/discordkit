@@ -23,7 +23,7 @@ export const modifyGuildOnboardingSchema = v.object({
  *
  * **PUT** `/guilds/:guild/onboarding`
  *
- * Modifies the onboarding configuration of the guild. Returns a `200` with the {@link GuildOnboarding | Onboarding object} for the guild. Requires the `MANAGE_GUILD` and `MANAGE_ROLES` permissions.
+ * Modifies the onboarding configuration of the guild. Returns a 200 with the {@link GuildOnboarding | Onboarding object} for the guild. Requires the `MANAGE_GUILD` and `MANAGE_ROLES` permissions.
  *
  * > [!NOTE]
  * >
@@ -32,6 +32,10 @@ export const modifyGuildOnboardingSchema = v.object({
  * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
+ *
+ * > [!NOTE]
+ * >
+ * > All parameters to this endpoint are optional.
  */
 export const modifyGuildOnboarding: Fetcher<
   typeof modifyGuildOnboardingSchema,

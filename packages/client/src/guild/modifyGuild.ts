@@ -77,7 +77,7 @@ export const modifyGuildSchema = v.object({
  *
  * > [!NOTE]
  * >
- * > All parameters to this endpoint are optional
+ * > All parameters to this endpoint are optional.
  *
  * > [!NOTE]
  * >

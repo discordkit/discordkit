@@ -15,7 +15,7 @@ export const modifyGuildWidgetSchema = v.object({
  *
  * **PATCH** `/guilds/:guild/widget`
  *
- * Modify a guild widget settings object for the guild. All attributes may be passed in with JSON and modified. Requires the `MANAGE_GUILD` permission. Returns the updated {@link GuildWidgetSettings | guild widget settings object}.
+ * Modify a {@link GuildWidgetSettings | guild widget settings object} for the guild. All attributes may be passed in with JSON and modified. Requires the `MANAGE_GUILD` permission. Returns the updated {@link GuildWidgetSettings | guild widget settings object}. Fires a Guild Update Gateway event.
  *
  * > [!NOTE]
  * >

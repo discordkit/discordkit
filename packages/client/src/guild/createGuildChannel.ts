@@ -61,11 +61,11 @@ export const createGuildChannelSchema = v.object({
  *
  * **POST** `/guilds/:guild/channels`
  *
- * Create a new {@link Channel | channel object} for the guild. Requires the `MANAGE_CHANNELS` permission. If setting permission overwrites, only permissions your bot has in the guild can be allowed/denied. Setting `MANAGE_ROLES` permission in channels is only possible for guild administrators. Returns the new channel object on success. Fires a Channel Create Gateway event.
+ * Create a new {@link Channel | channel object} for the guild. Requires the `MANAGE_CHANNELS` permission. If setting permission overwrites, only permissions your bot has in the guild can be allowed/denied. Setting `MANAGE_ROLES` permission in channels is only possible for guild administrators. Returns the new {@link Channel | channel object} on success. Fires a Channel Create Gateway event.
  *
  * > [!NOTE]
  * >
- * > All parameters to this endpoint are optional and nullable excluding `name`
+ * > All parameters to this endpoint are optional and nullable excluding `name`.
  *
  * > [!NOTE]
  * >

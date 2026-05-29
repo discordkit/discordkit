@@ -26,7 +26,7 @@ export const modifyGuildWelcomeScreenSchema = v.object({
  *
  * > [!NOTE]
  * >
- * > All parameters to this endpoint are optional and nullable
+ * > All parameters to this endpoint are optional and nullable.
  *
  * > [!NOTE]
  * >

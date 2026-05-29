@@ -11,7 +11,7 @@ export const getGuildInvitesSchema = v.object({
  *
  * **GET** `/guilds/:guild/invites`
  *
- * Returns a list of {@link InviteMetadata | invite objects} (with invite metadata) for the guild. Requires the `MANAGE_GUILD` permission.
+ * Returns a list of {@link InviteMetadata | invite objects}. Requires the `MANAGE_GUILD` or `VIEW_AUDIT_LOG` permission. Invite Metadata is included with the `MANAGE_GUILD` permission.
  */
 export const getGuildInvites: Fetcher<
   typeof getGuildInvitesSchema,

@@ -26,6 +26,10 @@ export const bulkGuildBanSchema = v.object({
  * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
+ *
+ * > [!NOTE]
+ * >
+ * > If none of the users could be banned, an error response code `500000: Failed to ban users` is returned instead.
  */
 export const bulkGuildBan: Fetcher<
   typeof bulkGuildBanSchema,

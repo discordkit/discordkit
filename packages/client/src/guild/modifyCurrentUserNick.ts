@@ -14,7 +14,11 @@ export const modifyCurrentUserNickSchema = v.object({
  *
  * **PATCH** `/guilds/:guild/members/@me/nick`
  *
- * Modifies the nickname of the current user in a guild. Returns a `200` with the nickname on success. Fires a Guild Member Update Gateway event.
+ * Modifies the nickname of the current user in a guild. Returns a 200 with the nickname on success. Fires a Guild Member Update Gateway event.
+ *
+ * > [!WARNING]
+ * >
+ * > Deprecated in favor of {@link modifyCurrentMember | Modify Current Member}.
  *
  * > [!NOTE]
  * >

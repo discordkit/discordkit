@@ -15,7 +15,7 @@ export const modifyCurrentMemberSchema = v.object({
  *
  * **PATCH** `/guilds/:guild/members/@me`
  *
- * Modifies the current member in a guild. Returns a `200` with the updated {@link Member | member object} on success. Fires a Guild Member Update Gateway event.
+ * Modifies the current member in a guild. Returns a 200 with the updated {@link Member | member object} on success. Fires a Guild Member Update Gateway event.
  *
  * > [!NOTE]
  * >

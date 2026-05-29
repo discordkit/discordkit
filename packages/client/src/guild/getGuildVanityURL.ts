@@ -11,7 +11,20 @@ export const getGuildVanityURLSchema = v.object({
  *
  * **GET** `/guilds/:guild/vanity-url`
  *
- * Returns a partial {@link Invite | invite object} for guilds with that feature enabled. Requires the `MANAGE_GUILD` permission. code will be `null` if a vanity url for the guild is not set.
+ * Returns a partial {@link Invite | invite object} for guilds with that feature enabled. Requires the `MANAGE_GUILD` permission. `code` will be null if a vanity url for the guild is not set.
+ *
+ * > [!NOTE]
+ * >
+ * > This endpoint is required to get the usage count of the vanity invite, but the invite code can be accessed as `vanityUrlCode` in the guild object without having the `MANAGE_GUILD` permission.
+ *
+ * **Example Partial Invite Object**
+ *
+ * ```json
+ * {
+ *   "code": "abc",
+ *   "uses": 12
+ * }
+ * ```
  */
 export const getGuildVanityURL: Fetcher<
   typeof getGuildVanityURLSchema,
