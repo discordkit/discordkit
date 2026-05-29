@@ -9,6 +9,7 @@ import {
 import { roleTagSchema } from "./RoleTag.js";
 import { permissionFlag } from "./Permissions.js";
 import { roleFlag } from "./RoleFlags.js";
+import { roleColorsSchema } from "./RoleColors.js";
 
 /**
  * Roles represent a set of permissions attached to a group of users. Roles have names, colors, and can be "pinned" to the side bar, causing their members to be listed separately. Roles can have separate permission profiles for the global context (guild) and channel context. The `@everyone` role has the same ID as the guild it belongs to.
@@ -18,8 +19,15 @@ export const roleSchema = v.object({
   id: snowflake,
   /** role name */
   name: boundedString(),
-  /** integer representation of hexadecimal color code */
+  /**
+   * Integer representation of hexadecimal color code.
+   *
+   * @deprecated The API still returns this field, but `colors` is the
+   * preferred source of truth — `color` only carries the primary value.
+   */
   color: boundedInteger(),
+  /** the role's colors */
+  colors: roleColorsSchema,
   /** if this role is pinned in the user listing */
   hoist: v.boolean(),
   /** role icon hash */
