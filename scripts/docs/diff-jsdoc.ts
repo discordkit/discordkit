@@ -15,7 +15,12 @@
  *   node --experimental-strip-types scripts/docs/diff-jsdoc.ts <folder>
  */
 
-import { readFileSync, readdirSync, existsSync } from "node:fs";
+import {
+  readFileSync,
+  readdirSync,
+  existsSync,
+  writeFileSync
+} from "node:fs";
 import { dirname, resolve, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseResource, type DocEndpoint } from "./parse.ts";
@@ -65,9 +70,10 @@ const FOLDER_MAP: Record<string, string[]> = {
 
 const args = process.argv.slice(2);
 const folderArg = args.find((a) => !a.startsWith(`--`));
+const writeMode = args.includes(`--write`);
 
 if (!folderArg) {
-  console.error(`Usage: diff-jsdoc <folder>`);
+  console.error(`Usage: diff-jsdoc <folder> [--write]`);
   process.exit(1);
 }
 
@@ -125,20 +131,44 @@ function main(): void {
     );
     const newBlock = formatBlock(newBodyComplete);
     if (oldBlock.text.trim() === newBlock.trim()) continue;
-    const diff = unifiedDiff(
-      `packages/client/src/${folder}/${file}`,
-      oldBlock.text,
-      newBlock,
-      oldBlock.startLine
-    );
-    process.stdout.write(diff);
-    process.stdout.write(`\n`);
+
+    if (writeMode) {
+      writeFileSync(path, spliceBlock(source, oldBlock, newBlock), `utf8`);
+    } else {
+      const diff = unifiedDiff(
+        `packages/client/src/${folder}/${file}`,
+        oldBlock.text,
+        newBlock,
+        oldBlock.startLine
+      );
+      process.stdout.write(diff);
+      process.stdout.write(`\n`);
+    }
     diffed++;
   }
 
+  const verb = writeMode ? `changed` : `would change`;
   console.error(
-    `\n${diffed} file(s) would change; ${skipped} skipped (no JSDoc / no doc match).`
+    `\n${diffed} file(s) ${verb}; ${skipped} skipped (no JSDoc / no doc match).`
   );
+}
+
+/**
+ * Replace the old JSDoc block (delimited by `oldBlock.startLine` and
+ * `oldBlock.lineCount`) with `newBlock`, preserving the file's existing
+ * newline convention (LF vs CRLF). Returns the full file source.
+ */
+function spliceBlock(
+  source: string,
+  oldBlock: ExistingBlock,
+  newBlock: string
+): string {
+  const nl = source.includes(`\r\n`) ? `\r\n` : `\n`;
+  const lines = source.split(/\r?\n/);
+  const before = lines.slice(0, oldBlock.startLine - 1);
+  const after = lines.slice(oldBlock.startLine - 1 + oldBlock.lineCount);
+  const newLines = newBlock.split(`\n`);
+  return [...before, ...newLines, ...after].join(nl);
 }
 
 // ─── loaders ───────────────────────────────────────────────────────────────
@@ -175,6 +205,8 @@ interface ExistingBlock {
   text: string;
   /** 1-based line number where the block starts. */
   startLine: number;
+  /** Inclusive number of source lines the block occupies. */
+  lineCount: number;
 }
 
 function extractTopJsDoc(source: string): ExistingBlock | null {
@@ -200,7 +232,8 @@ function extractTopJsDoc(source: string): ExistingBlock | null {
       if (/^export\b/.test(next)) {
         lastBlock = {
           text: block.join(`\n`),
-          startLine: blockStartIdx + 1
+          startLine: blockStartIdx + 1,
+          lineCount: block.length
         };
       }
       return;
