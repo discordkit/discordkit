@@ -48,6 +48,10 @@ export const createAutoModerationRuleSchema = v.object({
  * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
+ *
+ * > [!NOTE]
+ * >
+ * > See Trigger Types for limits on how many rules of each trigger type can be created per guild.
  */
 export const createAutoModerationRule: Fetcher<
   typeof createAutoModerationRuleSchema,

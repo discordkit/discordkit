@@ -36,6 +36,7 @@ export const modifyAutoModerationRuleSchema = v.object({
 
 /**
  * ### [Modify Auto Moderation Rule](https://discord.com/developers/docs/resources/auto-moderation#modify-auto-moderation-rule)
+ *
  * **PATCH** `/guilds/:guild/auto-moderation/rules/:rule`
  *
  * Modify an existing rule. Returns an {@link ModerationRule | auto moderation rule} on success. Fires an Auto Moderation Rule Update Gateway event.
