@@ -7,11 +7,11 @@ export const unpinMessageSchema = v.object({
 });
 
 /**
- * ### [Unpin Message](https://discord.com/developers/docs/resources/channel#unpin-message)
+ * ### [Unpin Message](https://discord.com/developers/docs/resources/message#unpin-message)
  *
  * **DELETE** `/channels/:channel/messages/pins/:message`
  *
- * Unpin a message in a channel. Requires the `MANAGE_MESSAGES` permission. Returns a `204 empty` response on success. Fires a Channel Pins Update Gateway event.
+ * Unpin a message in a channel. Requires the `PIN_MESSAGES` permission. Returns a 204 empty response on success. Fires a Channel Pins Update Gateway event.
  *
  * > [!NOTE]
  * >

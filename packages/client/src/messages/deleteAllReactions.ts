@@ -7,7 +7,7 @@ export const deleteAllReactionsSchema = v.object({
 });
 
 /**
- * ### [Delete All Reactions](https://discord.com/developers/docs/resources/channel#delete-all-reactions)
+ * ### [Delete All Reactions](https://discord.com/developers/docs/resources/message#delete-all-reactions)
  *
  * **DELETE** `/channels/:channel/messages/:message/reactions`
  *

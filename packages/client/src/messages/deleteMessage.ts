@@ -7,11 +7,11 @@ export const deleteMessageSchema = v.object({
 });
 
 /**
- * ### [Delete Message](https://discord.com/developers/docs/resources/channel#delete-message)
+ * ### [Delete Message](https://discord.com/developers/docs/resources/message#delete-message)
  *
  * **DELETE** `/channels/:channel/messages/:message`
  *
- * Delete a message. If operating on a guild channel and trying to delete a message that was not sent by the current user, this endpoint requires the `MANAGE_MESSAGES` permission. Returns a `204 empty` response on success. Fires a Message Delete Gateway event.
+ * Delete a message. If operating on a guild channel and trying to delete a message that was not sent by the current user, this endpoint requires the `MANAGE_MESSAGES` permission. Returns a 204 empty response on success. Fires a Message Delete Gateway event.
  *
  * > [!NOTE]
  * >

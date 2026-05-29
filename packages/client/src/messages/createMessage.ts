@@ -47,28 +47,40 @@ export const createMessageSchema = v.object({
 });
 
 /**
- * ### [Create Message](https://discord.com/developers/docs/resources/channel#create-message)
+ * ### [Create Message](https://discord.com/developers/docs/resources/message#create-message)
  *
  * **POST** `/channels/:channel/messages`
+ *
+ * Post a message to a guild text or DM channel. Returns a {@link Message | message object}. Fires a Message Create Gateway event. See message formatting for more information on how to properly format messages.
+ *
+ * To create a message as a reply or forward of another message, apps can include a `messageReference`. Refer to the documentation for required fields.
+ *
+ * Files must be attached using a `multipart/form-data` body as described in Uploading Files.
+ *
+ * **Limitations**
+ *
+ * - When operating on a guild channel, the current user must have the `SEND_MESSAGES` permission.
+ * - When sending a message with `tts` (text-to-speech) set to `true`, the current user must have the `SEND_TTS_MESSAGES` permission.
+ * - When creating a message as a reply to another message, the current user must have the `READ_MESSAGE_HISTORY` permission. The referenced message must exist and cannot be a system message.
+ * - The maximum request size when sending a message is **25 MiB**
+ * - For the embed object, you can set every field except `type` (it will be `rich` regardless of if you try to set it), `provider`, `video`, and any `height`, `width`, or `proxyUrl` values for images.
  *
  * > [!WARNING]
  * >
  * > Discord may strip certain characters from message content, like invalid unicode characters or characters which cause unexpected message formatting. If you are passing user-generated strings into message content, consider sanitizing the data to prevent unexpected behavior and using `allowedMentions` to prevent unexpected mentions.
  *
- * Post a message to a guild text or DM channel. Returns a {@link Message | message object}. Fires a Message Create Gateway event. See message formatting for more information on how to properly format messages.
+ * **Example Request Body (application/json)**
  *
- * To create a message as a reply to another message, apps can include a `messageReference` with a `message_id`. The `channelId` and `guildId` in the `messageReference` are optional, but will be validated if provided.
- *
- * Files must be attached using a `multipart/form-data` body as described in Uploading Files.
- *
- * Limitations
- *
- * - When operating on a guild channel, the current user must have the `SEND_MESSAGES` permission.
- * - When sending a message with `tts` (text-to-speech) set to `true`, the current user must have the `SEND_TTS_MESSAGES` permission.
- * - When creating a message as a reply to another message, the current user must have the `READ_MESSAGE_HISTORY` permission.
- *    - The referenced message must exist and cannot be a system message.
- * - The maximum request size when sending a message is **25 MiB**
- * - For the embed object, you can set every field except `type` (it will be `rich` regardless of if you try to set it), `provider`, `video`, and any `height`, `width`, or `proxyUrl` values for images.
+ * ```json
+ * {
+ *   "content": "Hello, World!",
+ *   "tts": false,
+ *   "embeds": [{
+ *     "title": "Hello, Embed!",
+ *     "description": "This is an embedded message."
+ *   }]
+ * }
+ * ```
  */
 export const createMessage: Fetcher<
   typeof createMessageSchema,

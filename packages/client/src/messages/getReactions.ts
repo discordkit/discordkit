@@ -19,11 +19,11 @@ export const getReactionsSchema = v.object({
 });
 
 /**
- * ### [Get Reactions](https://discord.com/developers/docs/resources/channel#get-reactions)
+ * ### [Get Reactions](https://discord.com/developers/docs/resources/message#get-reactions)
  *
  * **GET** `/channels/:channel/messages/:message/reactions/:emoji`
  *
- * Get a list of users that reacted with this emoji. Returns an array of {@link User | user objects} on success. The `emoji` must be URL Encoded or the request will fail with `10014: Unknown Emoji`. To use custom emoji, you must encode it in the format `name:id` with the emoji name and emoji id.
+ * Get a list of users that reacted with this emoji. Returns an array of {@link User | user objects} on success. The `emoji` must be [URL Encoded](https://en.wikipedia.org/wiki/Percent-encoding) or the request will fail with `10014: Unknown Emoji`. To use custom emoji, you must encode it in the format `name:id` with the emoji name and emoji id.
  */
 export const getReactions: Fetcher<typeof getReactionsSchema, User[]> = async ({
   channel,

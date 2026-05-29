@@ -8,7 +8,7 @@ export const crosspostMessageSchema = v.object({
 });
 
 /**
- * ### [Crosspost Message](https://discord.com/developers/docs/resources/channel#crosspost-message)
+ * ### [Crosspost Message](https://discord.com/developers/docs/resources/message#crosspost-message)
  *
  * **POST** `/channels/:channel/messages/:message/crosspost`
  *

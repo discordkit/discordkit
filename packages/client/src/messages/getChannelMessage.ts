@@ -8,13 +8,13 @@ export const getChannelMessageSchema = v.object({
 });
 
 /**
- * ### [Get Channel Message](https://discord.com/developers/docs/resources/channel#get-channel-message)
+ * ### [Get Channel Message](https://discord.com/developers/docs/resources/message#get-channel-message)
  *
  * **GET** `/channels/:channel/messages/:message`
  *
  * Retrieves a specific message in the channel. Returns a {@link Message | message object} on success.
  *
- * If operating on a guild channel, this endpoint requires the current user to have the `VIEW_CHANNEL` and `READ_MESSAGE_HISTORY` permissions. If the channel is a voice channel, they must also have the `CONNECT` permission.
+ * If operating on a guild channel, this endpoint requires the current user to have the `VIEW_CHANNEL` and `READ_MESSAGE_HISTORY` permissions. If the channel is a voice channel, they must *also* have the `CONNECT` permission.
  */
 export const getChannelMessage: Fetcher<
   typeof getChannelMessageSchema,

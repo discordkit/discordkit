@@ -17,11 +17,15 @@ export const getChannelPinsSchema = v.object({
 });
 
 /**
- * ### [Get Channel Messages](https://discord.com/developers/docs/resources/channel#get-channel-messages)
+ * ### [Get Channel Pins](https://discord.com/developers/docs/resources/message#get-channel-pins)
  *
  * **GET** `/channels/:channel/messages/pins`
  *
  * Retrieves the list of pins in a channel. Requires the `VIEW_CHANNEL` permission. If the user is missing the `READ_MESSAGE_HISTORY` permission in the channel, then no pins will be returned.
+ *
+ * **Example**
+ *
+ * If you want to get 100 pins you'd send these two requests: `GET /channels/:id/messages/pins?limit=50` `GET /channels/:id/messages/pins?limit=50&before={pins[pins.len() - 1].pinned_at}`
  */
 export const getChannelPins: Fetcher<
   typeof getChannelPinsSchema,

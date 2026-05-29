@@ -440,12 +440,56 @@ function matchEndpoint(
   oldBlockText: string,
   candidates: DocEndpoint[]
 ): DocEndpoint | null {
-  // The existing block always carries the heading link as the first line
-  // of body: `### [<Title>](<URL>)`. Pull the title out and match by name.
-  const m = /\*\s+###\s+\[([^\]]+)\]/.exec(oldBlockText);
-  if (!m) return null;
-  const title = m[1].trim();
-  return candidates.find((ep) => ep.name === title) ?? null;
+  // The existing block always carries:
+  //   ### [<Title>](<URL>)
+  //   **<METHOD>** `<path>`
+  //
+  // Match on title first. If the title matches but the (method, path) of
+  // the candidate doesn't match what's in the existing block, the existing
+  // JSDoc was probably hand-written with a copy-pasted heading from a
+  // similar endpoint (e.g. getChannelPins.ts carrying "Get Channel
+  // Messages" as its title). Refuse to refresh in that case — better to
+  // skip and let a human fix the mismatch than silently replace the file
+  // with content for the wrong endpoint.
+  const titleMatch = /\*\s+###\s+\[([^\]]+)\]/.exec(oldBlockText);
+  if (!titleMatch) return null;
+  const title = titleMatch[1].trim();
+  const byTitle = candidates.find((ep) => ep.name === title);
+  if (!byTitle) return null;
+
+  const methodPathMatch =
+    /\*\s+\*\*([A-Z]+)\*\*\s+`([^`]+)`/.exec(oldBlockText);
+  if (methodPathMatch) {
+    const [, method, oldPath] = methodPathMatch;
+    if (
+      byTitle.method !== method ||
+      !pathsAreCompatible(oldPath, byTitle.path)
+    ) {
+      console.warn(
+        `WARN: title "${title}" matched, but ${method} ${oldPath} != ${byTitle.method} ${byTitle.path} — skipping (likely a stale or copy-pasted heading)`
+      );
+      return null;
+    }
+  }
+  return byTitle;
+}
+
+/**
+ * Compare two route paths ignoring the specific param names (so `:event`
+ * matches `:guild_scheduled_event`). Both sides are split on `/`, each
+ * segment starting with `:` is treated as a wildcard.
+ */
+function pathsAreCompatible(oldPath: string, newPath: string): boolean {
+  const oldParts = oldPath.split(`/`);
+  const newParts = newPath.split(`/`);
+  if (oldParts.length !== newParts.length) return false;
+  for (let i = 0; i < oldParts.length; i++) {
+    const o = oldParts[i];
+    const n = newParts[i];
+    if (o.startsWith(`:`) && n.startsWith(`:`)) continue;
+    if (o !== n) return false;
+  }
+  return true;
 }
 
 // ─── unified diff (minimal implementation) ─────────────────────────────────

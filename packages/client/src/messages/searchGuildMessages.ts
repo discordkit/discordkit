@@ -158,28 +158,21 @@ export type { Channel, Message, ThreadMember };
  *
  * **GET** `/guilds/:guild/messages/search`
  *
- * Returns a list of messages without the `reactions` key that match a
- * search query in the guild. Requires the `READ_MESSAGE_HISTORY` permission.
+ * Returns a list of messages without the `reactions` key that match a search query in the guild. Requires the `READ_MESSAGE_HISTORY` permission.
+ *
+ * Author types and "has" types can be negated by prefixing them with `-`, which means results will not include messages that match the type. Embed types do not correspond 1:1 to actual embed types and encompass a wider range of actual types.
  *
  * > [!WARNING]
  * >
- * > This endpoint is restricted according to whether the `MESSAGE_CONTENT`
- * > Privileged Intent is enabled for your application.
+ * > This endpoint is restricted according to whether the `MESSAGE_CONTENT` Privileged Intent is enabled for your application.
  *
  * > [!WARNING]
  * >
- * > If the entity you are searching is not yet indexed, the endpoint will
- * > return a `202 Accepted` response with a body resembling an error
- * > (`{ message, code: 110000, documents_indexed, retry_after }`) and no
- * > search results. Retry after the timeframe in `retryAfter`.
+ * > If the entity you are searching is not yet indexed, the endpoint will return a 202 accepted response. The response body will not contain any search results, and will look similar to an error response: `{ message: "Index not yet available. Try again later", code: 110000, documentsIndexed: 0, retryAfter: 2 }`. You should retry the request after the timeframe specified in the `retryAfter` field. If the `retryAfter` field is `0`, you should retry the request after a short delay.
  *
  * > [!NOTE]
  * >
- * > Due to speed optimizations, search may return slightly fewer results
- * > than the limit specified when messages have not been accessed for a
- * > long time. Clients should not rely on the length of the `messages`
- * > array to paginate results. When messages are being created or deleted,
- * > `totalResults` may not be accurate.
+ * > Due to speed optimizations, search may return slightly fewer results than the limit specified when messages have not been accessed for a long time. Clients should not rely on the length of the `messages` array to paginate results. Additionally, when messages are actively being created or deleted, the `totalResults` field may not be accurate.
  */
 export const searchGuildMessages: Fetcher<
   typeof searchGuildMessagesSchema,
