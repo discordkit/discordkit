@@ -12,7 +12,7 @@ export const getWebhookWithTokenSchema = v.object({
  *
  * **GET** `/webhooks/:webhook/:token`
  *
- * Returns the new {@link Webhook | webhook object} for the given id, except this call does not require authentication and returns no user in the webhook object.
+ * Returns the {@link Webhook | webhook object} for the given id. Same as Get Webhook, except this call does not require authentication and returns no user in the {@link Webhook | webhook object}.
  */
 export const getWebhookWithToken: Fetcher<
   typeof getWebhookWithTokenSchema,

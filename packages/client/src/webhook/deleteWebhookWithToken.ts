@@ -16,7 +16,7 @@ export const deleteWebhookWithTokenSchema = v.object({
  *
  * **DELETE** `/webhooks/:webhook/:token`
  *
- * Deletes a message that was created by the webhook. Returns a `204 No Content` response on success. Does not require authentication.
+ * Delete a webhook permanently. Returns a `204 No Content` response on success. Fires a Webhooks Update Gateway event. Same as Delete Webhook, except this call does not require authentication.
  */
 export const deleteWebhookWithToken: Fetcher<
   typeof deleteWebhookWithTokenSchema,

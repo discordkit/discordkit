@@ -23,11 +23,11 @@ export const executeGitHubCompatibleWebhookSchema = v.object({
 });
 
 /**
- * ### [Execute GitHub-Compatible Webhook](https://discord.com/developers/docs/resources/webhook#execute-githubcompatible-webhook)
+ * ### [Execute GitHub-Compatible Webhook](https://discord.com/developers/docs/resources/webhook#execute-github-compatible-webhook)
  *
  * **POST** `/webhooks/:webhook/:token/github`
  *
- * [Add a new webhook](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks)  to your GitHub repo (in the repo's settings), and use this endpoint as the "Payload URL." You can choose what events your Discord channel receives by choosing the "Let me select individual events" option and selecting individual events for the new webhook you're configuring. The supported events are `commit_comment`, `create`, `delete`, `fork`, `issue_comment`, `issues`, `member`, `public`, `pull_request`, `pull_request_review`, `pull_request_review_comment`, `push`, `release`, `watch`, `check_run`, `check_suite`, `discussion`, and `discussion_comment`.
+ * [Add a new webhook](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks) to your GitHub repo (in the repo's settings), and use this endpoint as the "Payload URL." You can choose what events your Discord channel receives by choosing the "Let me select individual events" option and selecting individual events for the new webhook you're configuring. The supported [events](https://docs.github.com/en/webhooks/webhook-events-and-payloads) are `commit_comment`, `create`, `delete`, `fork`, `issue_comment`, `issues`, `member`, `public`, `pull_request`, `pull_request_review`, `pull_request_review_comment`, `push`, `release`, `watch`, `check_run`, `check_suite`, `discussion`, and `discussion_comment`.
  */
 export const executeGitHubCompatibleWebhook: Fetcher<
   typeof executeGitHubCompatibleWebhookSchema,

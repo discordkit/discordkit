@@ -23,7 +23,7 @@ export const executeSlackCompatibleWebhookSchema = v.object({
 });
 
 /**
- * ### [Execute Slack-Compatible Webhook](https://discord.com/developers/docs/resources/webhook#execute-slackcompatible-webhook)
+ * ### [Execute Slack-Compatible Webhook](https://discord.com/developers/docs/resources/webhook#execute-slack-compatible-webhook)
  *
  * **POST** `/webhooks/:webhook/:token/slack`
  *

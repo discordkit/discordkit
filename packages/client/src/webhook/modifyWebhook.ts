@@ -33,11 +33,11 @@ export const modifyWebhookSchema = v.object({
  *
  * > [!NOTE]
  * >
- * > All parameters to this endpoint are optional
+ * > All parameters to this endpoint are optional.
  *
  * > [!NOTE]
  * >
- * > This endpoint supports the `X-Audit-Log-Reason `header.
+ * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const modifyWebhook: Fetcher<
   typeof modifyWebhookSchema,

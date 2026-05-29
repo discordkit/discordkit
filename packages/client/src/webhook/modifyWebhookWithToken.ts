@@ -28,15 +28,7 @@ export const modifyWebhookWithTokenSchema = v.object({
  *
  * **PATCH** `/webhooks/:webhook/:token`
  *
- * Modify a webhook. Requires the `MANAGE_WEBHOOKS` permission. Returns the updated {@link Webhook | webhook object} on success. Fires a Webhooks Update Gateway event. This call does not require authentication and does not return a user in the webhook object.
- *
- * > [!NOTE]
- * >
- * > All parameters to this endpoint are optional
- *
- * > [!NOTE]
- * >
- * > This endpoint supports the `X-Audit-Log-Reason `header.
+ * Modify a webhook. Returns the updated {@link Webhook | webhook object} on success. Fires a Webhooks Update Gateway event. Same as Modify Webhook, except this call does not require authentication, does not accept a `channelId` parameter in the body, and does not return a user in the {@link Webhook | webhook object}.
  */
 export const modifyWebhookWithToken: Fetcher<
   typeof modifyWebhookWithTokenSchema,

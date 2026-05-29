@@ -82,15 +82,19 @@ export const executeWebhookSchema = v.object({
  *
  * > [!NOTE]
  * >
- * > Note that when sending a message, you must provide a value for at least one of `content`, `embeds`, `components`, or `file`.
+ * > Note that when sending a message, you must provide a value for at **least one of** `content`, `embeds`, `components`, `file`, or `poll`.
  *
  * > [!NOTE]
  * >
- * > If the webhook channel is a forum channel, you must provide either `threadId` in the query string params, or `threadName` in the JSON/form params. If `threadId` is provided, the message will send in that thread. If `threadName` is provided, a thread with that name will be created in the forum channel.
+ * > If the webhook channel is a forum or media channel, you must provide either `thread_id` in the query string params, or `thread_name` in the JSON/form params. If `thread_id` is provided, the message will send in that thread. If `thread_name` is provided, a thread with that name will be created in the channel.
  *
  * > [!WARNING]
  * >
  * > Discord may strip certain characters from message content, like invalid unicode characters or characters which cause unexpected message formatting. If you are passing user-generated strings into message content, consider sanitizing the data to prevent unexpected behavior and using `allowed_mentions` to prevent unexpected mentions.
+ *
+ * > [!NOTE]
+ * >
+ * > For the webhook embed objects, you can set every field except `type` (it will be `rich` regardless of if you try to set it), `provider`, `video`, and any `height`, `width`, or `proxy_url` values for images.
  */
 export const executeWebhook: Fetcher<
   typeof executeWebhookSchema,
