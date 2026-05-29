@@ -18,17 +18,13 @@ export const editApplicationCommandPermissionsSchema = v.object({
  *
  * **PUT** `/applications/:application/guilds/:guild/commands/:command/permissions`
  *
- * > [!CAUTION]
- * >
- * > Apps that use this endpoint may be affected by upcoming breaking changes around permission configuration behavior starting on December 16, 2022. Read the changelog for details.
+ * Edits command permissions for a specific command for your application in a guild and returns a guild application command permissions object. Fires an Application Command Permissions Update Gateway event.
+ *
+ * You can add up to 100 permission overwrites for a command.
  *
  * > [!WARNING]
  * >
  * > This endpoint will overwrite existing permissions for the command in that guild
- *
- * Edits command permissions for a specific command for your application in a guild and returns a guild application command permissions object. Fires an Application Command Permissions Update Gateway event.
- *
- * You can add up to 100 permission overwrites for a command.
  *
  * > [!NOTE]
  * >

@@ -52,11 +52,11 @@ export const createGuildApplicationCommandSchema = v.object({
  *
  * **POST** `/applications/:application/guilds/:guild/commands`
  *
- * > [!CAUTION]
+ * Create a new guild command. New guild commands will be available in the guild immediately. Returns `201` if a command with the same name does not already exist, or a `200` if it does (in which case the previous command will be overwritten). Both responses include an {@link ApplicationCommand | application command object}.
+ *
+ * > [!WARNING]
  * >
  * > Creating a command with the same name as an existing command for your application will overwrite the old command.
- *
- * Create a new guild command. New guild commands will be available in the guild immediately. Returns `201` if a command with the same name does not already exist, or a `200` if it does (in which case the previous command will be overwritten). Both responses include an {@link ApplicationCommand | application command object}.
  */
 export const createGuildApplicationCommand: Fetcher<
   typeof createGuildApplicationCommandSchema,

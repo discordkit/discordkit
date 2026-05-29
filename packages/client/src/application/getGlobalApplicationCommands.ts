@@ -17,11 +17,11 @@ export const getGlobalApplicationCommandsSchema = v.object({
  *
  * **GET** `/applications/:application/commands`
  *
+ * Fetch all of the global commands for your application. Returns an array of {@link ApplicationCommand | application command objects}.
+ *
  * > [!WARNING]
  * >
  * > The objects returned by this endpoint may be augmented with additional fields if localization is active.
- *
- * Fetch all of the global commands for your application. Returns an array of {@link ApplicationCommand|application command objects}.
  */
 export const getGlobalApplicationCommands: Fetcher<
   typeof getGlobalApplicationCommandsSchema,

@@ -18,11 +18,11 @@ export const getGuildApplicationCommandsSchema = v.object({
  *
  * **GET** `/applications/:application/guilds/:guild/commands`
  *
+ * Fetch all of the guild commands for your application for a specific guild. Returns an array of {@link ApplicationCommand | application command objects}.
+ *
  * > [!WARNING]
  * >
  * > The objects returned by this endpoint may be augmented with additional fields if localization is active.
- *
- * Fetch all of the guild commands for your application for a specific guild. Returns an array of {@link ApplicationCommand|application command objects}.
  */
 export const getGuildApplicationCommands: Fetcher<
   typeof getGuildApplicationCommandsSchema,

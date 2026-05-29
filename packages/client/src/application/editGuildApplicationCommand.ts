@@ -46,11 +46,11 @@ export const editGuildApplicationCommandSchema = v.object({
  *
  * **PATCH** `/applications/:application/guilds/:guild/commands/:command`
  *
+ * Edit a guild command. Updates for guild commands will be available immediately. Returns `200` and an {@link ApplicationCommand | application command object}. All fields are optional, but any fields provided will entirely overwrite the existing values of those fields.
+ *
  * > [!NOTE]
  * >
  * > All parameters for this endpoint are optional.
- *
- * Edit a guild command. Updates for guild commands will be available immediately. Returns `200` and an {@link ApplicationCommand | application command object}. All fields are optional, but any fields provided will entirely overwrite the existing values of those fields.
  */
 export const editGuildApplicationCommand: Fetcher<
   typeof editGuildApplicationCommandSchema,

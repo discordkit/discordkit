@@ -81,9 +81,9 @@ export const bulkOverwriteGuildApplicationCommandsSchema = v.object({
  *
  * Takes a list of application commands, overwriting the existing command list for this application for the targeted guild. Returns `200` and a list of {@link ApplicationCommand | application command objects}.
  *
- * > [!CAUTION]
+ * > [!WARNING]
  * >
- * > This will overwrite all types of application commands: slash commands, user commands, and message commands.
+ * > This will overwrite **all** types of application commands: slash commands, user commands, and message commands.
  */
 export const bulkOverwriteGuildApplicationCommands: Fetcher<
   typeof bulkOverwriteGuildApplicationCommandsSchema,
