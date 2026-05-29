@@ -16,6 +16,10 @@ export const followAnnouncementChannelSchema = v.object({
  * **POST** `/channels/:channel/followers`
  *
  * Follow an Announcement Channel to send messages to a target channel. Requires the `MANAGE_WEBHOOKS` permission in the target channel. Returns a {@link FollowedChannel | followed channel object}. Fires a Webhooks Update Gateway event for the target channel.
+ *
+ * > [!NOTE]
+ * >
+ * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const followAnnouncementChannel: Fetcher<
   typeof followAnnouncementChannelSchema,

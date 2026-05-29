@@ -23,13 +23,13 @@ export const listThreadMembersSchema = v.object({
  *
  * **GET** `/channels/:channel/thread-members`
  *
- * > [!WARNING]
- * >
- * > Starting in API v11, this endpoint will always return paginated results. Paginated results can be enabled before API v11 by setting `withMember` to `true`. Read the changelog for details.
- *
  * Returns array of {@link ThreadMember | thread members objects} that are members of the thread.
  *
  * When `withMember` is set to `true`, the results will be paginated and each thread member object will include a `member` field containing a guild member object.
+ *
+ * > [!WARNING]
+ * >
+ * > Starting in API v11, this endpoint will always return paginated results. Paginated results can be enabled before API v11 by setting `withMember` to `true`. Read the changelog for details.
  *
  * > [!WARNING]
  * >

@@ -317,23 +317,50 @@ function preserveCrossRefs(oldBlock: string, newBody: string): string {
       return { name, display, count };
     })
     .sort((a, b) => b.display.length - a.display.length);
-  let out = newBody;
-  for (const { name, display } of refs) {
-    // Replace ALL occurrences of the display text. The risk of over-linking
-    // (the old block linked "message object" once but the new body mentions
-    // it twice) is minor — IDE hover-help and TSDoc still render correctly,
-    // and consumers benefit from extra clickable links. Under-linking
-    // (e.g. the canonical "Returns a {@link Message | message object}"
-    // line dropping its link) would be more annoying.
-    //
-    // To avoid re-wrapping our own output we use a negative lookbehind
-    // for `| ` and a negative lookahead for `}` — i.e., skip text that's
-    // already inside a `{@link …}` block.
-    const literal = display.replace(/[.*+?^${}()|[\]\\]/g, `\\$&`);
-    const re = new RegExp(`(?<!\\| )${literal}(?!\\})`, `g`);
-    out = out.replace(re, `{@link ${name} | ${display}}`);
+
+  // Split the body into "safe" segments (where we substitute display text
+  // with `{@link …}`) and "protected" segments (URLs, inline code, existing
+  // `{@link …}` blocks). Protected segments are passed through verbatim so
+  // a short display word like `channel` doesn't leak into paths like
+  // `/channels/:channel/...` or anchors like `#start-thread-from-channel`.
+  //
+  // Protection rules:
+  //   - markdown link URLs:        `[text](url)` — only the `(url)` part
+  //   - inline code spans:         `` `…` ``
+  //   - existing JSDoc references: `{@link …}`
+  //   - heading-link target:       the URL inside `### [Title](URL)`
+  const protectedRe = /\{@link[^}]*\}|`[^`]*`|\]\([^)]+\)/g;
+  const segments: { text: string; protect: boolean }[] = [];
+  let lastIdx = 0;
+  let pm: RegExpExecArray | null;
+  while ((pm = protectedRe.exec(newBody)) !== null) {
+    if (pm.index > lastIdx) {
+      segments.push({ text: newBody.slice(lastIdx, pm.index), protect: false });
+    }
+    segments.push({ text: pm[0], protect: true });
+    lastIdx = pm.index + pm[0].length;
   }
-  return out;
+  if (lastIdx < newBody.length) {
+    segments.push({ text: newBody.slice(lastIdx), protect: false });
+  }
+
+  for (let i = 0; i < segments.length; i++) {
+    const seg = segments[i];
+    if (seg.protect) continue;
+    let text = seg.text;
+    for (const { name, display } of refs) {
+      // Replace ALL occurrences of the display text in the unprotected
+      // segment. Under-linking would be more annoying than the rare
+      // over-link, and the segment-split above keeps us out of URLs and
+      // code spans where the display word might be plain English (e.g.
+      // `channel` inside `/channels/:channel`).
+      const literal = display.replace(/[.*+?^${}()|[\]\\]/g, `\\$&`);
+      const re = new RegExp(literal, `g`);
+      text = text.replace(re, `{@link ${name} | ${display}}`);
+    }
+    seg.text = text;
+  }
+  return segments.map((s) => s.text).join(``);
 }
 
 // ─── URL placeholder preservation ──────────────────────────────────────────

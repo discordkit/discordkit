@@ -23,9 +23,9 @@ export const startThreadFromMessageSchema = v.object({
  *
  * **POST** `/channels/:channel/messages/:message/threads`
  *
- * Creates a new thread from an existing message. Returns a {@link Channel | channel} on success, and a `400 BAD REQUEST` on invalid parameters. Fires a Thread Create and a Message Update Gateway event.
+ * Creates a new thread from an existing message. Returns a {@link Channel | channel} on success, and a 400 BAD REQUEST on invalid parameters. Fires a Thread Create and a Message Update Gateway event.
  *
- * When called on a `GUILD_TEXT` channel, creates a `PUBLIC_THREAD`. When called on a `GUILD_ANNOUNCEMENT` channel, creates a `ANNOUNCEMENT_THREAD`. Does not work on a `GUILD_FORUM` or a `GUILD_MEDIA` channel. The id of the created thread will be the same as the id of the source message, and as such a message can only have a single thread created from it.
+ * When called on a `GUILD_TEXT` {@link Channel | channel}, creates a `PUBLIC_THREAD`. When called on a `GUILD_ANNOUNCEMENT` {@link Channel | channel}, creates a `ANNOUNCEMENT_THREAD`. Does not work on a `GUILD_FORUM` or a `GUILD_MEDIA` {@link Channel | channel}. The id of the created thread will be the same as the id of the source message, and as such a message can only have a single thread created from it.
  *
  * > [!NOTE]
  * >

@@ -103,7 +103,11 @@ export const modifyChannelSchema = v.object({
  *
  * **PATCH** `/channels/:channel`
  *
- * Update a channel's settings. Returns a channel on success, and a `400 BAD REQUEST` on invalid parameters. All JSON parameters are optional.
+ * Update a channel's settings. Returns a channel on success, and a 400 BAD REQUEST on invalid parameters.
+ *
+ * > [!NOTE]
+ * >
+ * > All parameters to this endpoint are optional.
  *
  * > [!NOTE]
  * >

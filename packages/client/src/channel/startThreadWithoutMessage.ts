@@ -27,7 +27,7 @@ export const startThreadWithoutMessageSchema = v.object({
  *
  * **POST** `/channels/:channel/threads`
  *
- * Creates a new thread that is not connected to an existing message. Returns a {@link Channel | channel} on success, and a `400 BAD REQUEST` on invalid parameters. Fires a Thread Create Gateway event.
+ * Creates a new thread that is not connected to an existing message. Returns a {@link Channel | channel} on success, and a 400 BAD REQUEST on invalid parameters. Fires a Thread Create Gateway event.
  *
  * > [!NOTE]
  * >

@@ -20,7 +20,7 @@ export const editChannelPermissionsSchema = v.object({
  *
  * **PUT** `/channels/:channel/permissions/:overwrite`
  *
- * Edit the channel permission overwrites for a user or role in a channel. Only usable for guild channels. Requires the `MANAGE_ROLES` permission. Only permissions your bot has in the guild or parent channel (if applicable) can be allowed/denied (unless your bot has a `MANAGE_ROLES` overwrite in the channel). Returns a `204 empty` response on success. Fires a Channel Update Gateway event. For more information about permissions, see permissions.
+ * Edit the channel permission overwrites for a user or role in a channel. Only usable for guild channels. Requires the `MANAGE_ROLES` permission. Only permissions your bot has in the guild or parent channel (if applicable) can be allowed/denied (unless your bot has a `MANAGE_ROLES` overwrite in the channel). Returns a 204 empty response on success. Fires a Channel Update Gateway event. For more information about permissions, see permissions.
  *
  * > [!NOTE]
  * >

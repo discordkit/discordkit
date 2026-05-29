@@ -10,7 +10,7 @@ export const joinThreadSchema = v.object({
  *
  * **PUT** `/channels/:channel/thread-members/@me`
  *
- * Adds the current user to a thread. Also requires the thread is not archived. Returns a `204 empty` response on success. Fires a Thread Members Update and a Thread Create Gateway event.
+ * Adds the current user to a thread. Also requires the thread is not archived. Returns a 204 empty response on success. Fires a Thread Members Update and a Thread Create Gateway event.
  */
 export const joinThread: Fetcher<typeof joinThreadSchema> = async ({
   channel

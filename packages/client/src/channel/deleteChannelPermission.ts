@@ -11,7 +11,7 @@ export const deleteChannelPermissionSchema = v.object({
  *
  * **DELETE** `/channels/:channel/permissions/:overwrite`
  *
- * Delete a channel permission overwrite for a user or role in a channel. Only usable for guild channels. Requires the `MANAGE_ROLES` permission. Returns a `204 empty` response on success. Fires a Channel Update Gateway event. For more information about permissions, see permissions
+ * Delete a channel permission overwrite for a user or role in a channel. Only usable for guild channels. Requires the `MANAGE_ROLES` permission. Returns a 204 empty response on success. Fires a Channel Update Gateway event. For more information about permissions, see permissions
  *
  * > [!NOTE]
  * >

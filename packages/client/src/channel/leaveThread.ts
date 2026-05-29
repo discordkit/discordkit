@@ -10,7 +10,7 @@ export const leaveThreadSchema = v.object({
  *
  * **DELETE** `/channels/:channel/thread-members/@me`
  *
- * Removes the current user from a thread. Also requires the thread is not archived. Returns a `204 empty` response on success. Fires a Thread Members Update Gateway event.
+ * Removes the current user from a thread. Also requires the thread is not archived. Returns a 204 empty response on success. Fires a Thread Members Update Gateway event.
  */
 export const leaveThread: Fetcher<typeof leaveThreadSchema> = async ({
   channel

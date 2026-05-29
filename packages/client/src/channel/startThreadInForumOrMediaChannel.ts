@@ -67,16 +67,20 @@ export interface ThreadInForumOrMediaChannelResponse extends v.InferOutput<
  *
  * **POST** `/channels/:channel/threads`
  *
- * Creates a new thread in a forum or a media channel, and sends a message within the created thread. Returns a {@link Channel | channel}, with a nested message object, on success, and a `400 BAD REQUEST` on invalid parameters. Fires a Thread Create and Message Create Gateway event.
+ * Creates a new thread in a forum or a media {@link Channel | channel}, and sends a message within the created thread. Returns a {@link Channel | channel}, with a nested message object, on success, and a 400 BAD REQUEST on invalid parameters. Fires a Thread Create and Message Create Gateway event.
  *
  * - The type of the created thread is `PUBLIC_THREAD`.
  * - See message formatting for more information on how to properly format messages.
  * - The current user must have the `SEND_MESSAGES` permission (`CREATE_PUBLIC_THREADS` is ignored).
  * - The maximum request size when sending a message is **25 MiB**.
- * - For the embed object, you can set every field except `type` (it will be rich regardless of if you try to set it), `provider`, `video`, and any `height`, `width`, or `proxyUrl` values for images.
+ * - For the embed object, you can set every field except `type` (it will be `rich` regardless of if you try to set it), `provider`, `video`, and any `height`, `width`, or `proxyUrl` values for images.
  * - Examples for file uploads are available in Uploading Files.
  * - Files must be attached using a `multipart/form-data` body as described in Uploading Files.
- * - Note that when sending a message, you must provide a value for at least one of `content`, `embeds`, `stickerIds`, `components`, or `files`.
+ * - Note that when sending a message, you must provide a value for at **least one of** `content`, `embeds`, `stickerIds`, `components`, or `files`.
+ *
+ * **Forum and Media Thread Message Params Object**
+ *
+ * * At least one of `content`, `embeds`, `stickerIds`, `components`, or `files` is required.
  *
  * > [!WARNING]
  * >

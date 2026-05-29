@@ -20,9 +20,9 @@ export const getThreadMemberSchema = v.object({
  *
  * **GET** `/channels/:channel/thread-members/:user`
  *
- * Returns a {@link ThreadMember | thread member object} for the specified user if they are a member of the thread, returns a `404 response` otherwise.
+ * Returns a {@link ThreadMember | thread member object} for the specified user if they are a member of the thread, returns a 404 response otherwise.
  *
- * When `withMember` is set to `true`, the thread member object will include a member field containing a guild member object.
+ * When `withMember` is set to `true`, the {@link ThreadMember | thread member object} will include a `member` field containing a guild member object.
  */
 export const getThreadMember: Fetcher<
   typeof getThreadMemberSchema,
