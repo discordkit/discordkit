@@ -232,6 +232,8 @@ export function parseResource(markdown: string): DocResource {
     rawPath: string;
     path: string;
     descriptionNodes: RootContent[];
+    /** Set of non-structural sub-heading texts we've already injected into description. */
+    seenSubHeadings: Set<string>;
     notes: AdmonitionBlock[];
     examples: DocExample[];
     /** Param groups by kind, keyed by variant label. */
@@ -270,6 +272,7 @@ export function parseResource(markdown: string): DocResource {
       rawPath,
       path: normalizePath(rawPath),
       descriptionNodes: [],
+      seenSubHeadings: new Set(),
       notes: [],
       examples: [],
       paramTables: []
@@ -349,24 +352,40 @@ export function parseResource(markdown: string): DocResource {
       continue;
     }
 
-    // If under an endpoint and before any sub-heading, treat as description prose.
-    if (
-      endpointSeed &&
-      stack[6] === null &&
-      stack[5] === null &&
-      stack[4] === null
-    ) {
-      // Only include nodes that sit directly under the endpoint's heading
-      // (i.e., the deepest non-null heading equals the endpoint's heading).
+    // Description prose. Content sits either directly under the endpoint
+    // heading OR under a non-structural sub-heading (e.g. ###### Caveats,
+    // ###### Limitations). Structural sub-headings like "JSON Params" or
+    // "Response Body" are already captured as params tables and skipped.
+    //
+    // When entering a new non-structural sub-section for the first time,
+    // inject a synthetic bolded heading node so the section title renders
+    // alongside its content.
+    if (endpointSeed) {
       const deepestNonNull = entry.deepestHeading;
-      if (
-        deepestNonNull &&
-        deepestNonNull.depth === endpointSeed.headingDepth &&
-        deepestNonNull.text === endpointSeed.headingText
-      ) {
-        // Exclude the Route line itself.
-        if (!nodeContainsRoute(node)) {
-          endpointSeed.descriptionNodes.push(node);
+      if (deepestNonNull) {
+        const underEndpointDirectly =
+          deepestNonNull.depth === endpointSeed.headingDepth &&
+          deepestNonNull.text === endpointSeed.headingText;
+
+        const underSubHeading =
+          deepestNonNull.depth > endpointSeed.headingDepth &&
+          !isStructuralHeading(deepestNonNull.text);
+
+        if (underEndpointDirectly || underSubHeading) {
+          // Inject sub-heading title once per section.
+          if (
+            underSubHeading &&
+            !endpointSeed.seenSubHeadings.has(deepestNonNull.text)
+          ) {
+            endpointSeed.seenSubHeadings.add(deepestNonNull.text);
+            endpointSeed.descriptionNodes.push(
+              synthBoldParagraph(deepestNonNull.text)
+            );
+          }
+          // Exclude the Route line itself.
+          if (!nodeContainsRoute(node)) {
+            endpointSeed.descriptionNodes.push(node);
+          }
         }
       }
     }
@@ -599,6 +618,24 @@ function closestSubHeading(
     if (t) return t;
   }
   return null;
+}
+
+/**
+ * Build a synthetic mdast `paragraph` node containing a single `strong`
+ * child holding the supplied text. Used to inject sub-section titles
+ * (e.g. "Caveats", "Limitations") into the description stream so they
+ * render as `**Caveats**` when the description is stringified.
+ */
+function synthBoldParagraph(text: string): RootContent {
+  return {
+    type: `paragraph`,
+    children: [
+      {
+        type: `strong`,
+        children: [{ type: `text`, value: text }]
+      }
+    ]
+  } as unknown as RootContent;
 }
 
 function findRouteMdx(node: RootContent): MdxJsxElement | null {

@@ -23,17 +23,15 @@ export const modifyCurrentUserVoiceStateSchema = v.object({
  *
  * Updates the current user's voice state. Returns `204 No Content` on success. Fires a Voice State Update Gateway event.
  *
- * > [!NOTE]
- * >
- * > **Caveats**
- * >
- * > There are currently several caveats for this endpoint:
- * >
- * > - `channelId` must currently point to a stage channel.
- * > - current user must already have joined `channelId`.
- * > - You must have the `MUTE_MEMBERS` permission to unsuppress yourself. You can always suppress yourself.
- * > - You must have the `REQUEST_TO_SPEAK` permission to request to speak. You can always clear your own request to speak.
- * > - You are able to set `requestToSpeakTimestamp` to any present or future time.
+ * **Caveats**
+ *
+ * There are currently several caveats for this endpoint:
+ *
+ * - `channel_id` must currently point to a stage channel.
+ * - current user must already have joined `channel_id`.
+ * - You must have the `MUTE_MEMBERS` permission to unsuppress yourself. You can always suppress yourself.
+ * - You must have the `REQUEST_TO_SPEAK` permission to request to speak. You can always clear your own request to speak.
+ * - You are able to set `request_to_speak_timestamp` to any present or future time.
  */
 export const modifyCurrentUserVoiceState: Fetcher<
   typeof modifyCurrentUserVoiceStateSchema,

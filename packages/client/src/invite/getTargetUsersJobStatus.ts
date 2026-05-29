@@ -13,8 +13,6 @@ export const getTargetUsersJobStatusSchema = v.object({
  *
  * Processing target users from a CSV when creating or updating an invite is done asynchronously. This endpoint allows you to check the status of that job. Requires the caller to be the inviter, or have `MANAGE_GUILD` permission, or have `VIEW_AUDIT_LOG` permission.
  *
- * Returns a {@link TargetUsersJobStatus | TargetUsersJobStatus} object describing the current job state.
- *
  * **Example Response**
  *
  * ```json
@@ -27,6 +25,9 @@ export const getTargetUsersJobStatusSchema = v.object({
  *   "error_message": "Failed to parse CSV file"
  * }
  * ```
+ *
+ * @remarks
+ * Returns a {@link TargetUsersJobStatus | TargetUsersJobStatus} object describing the current job state.
  */
 export const getTargetUsersJobStatus: Fetcher<
   typeof getTargetUsersJobStatusSchema,

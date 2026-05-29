@@ -123,8 +123,11 @@ function main(): void {
     // local types exist — so we preserve them verbatim from the old prose.
     const newBodyLinked = preserveCrossRefs(oldBlock.text, newBody);
     // Carry forward any trailing curated JSDoc directives (`@example`,
-    // `@deprecated`, `@see`) that the old block had but the renderer didn't
-    // produce. The docs themselves never emit these tags.
+    // `@deprecated`, `@see`, `@remarks`) that the old block had but the
+    // renderer didn't produce. The docs themselves never emit these tags.
+    // `@remarks` is the recommended carrier for hand-added prose that
+    // augments doc-derived content (e.g. "Returns a {@link Foo}" when the
+    // docs don't name the response type).
     const newBodyComplete = appendCuratedDirectives(
       oldBlock.text,
       newBodyLinked
@@ -343,12 +346,12 @@ function appendCuratedDirectives(oldBlock: string, newBody: string): string {
     .map((l) => l.replace(/^\s*\*\s?/, ``));
 
   // Find ranges of directive blocks. A directive starts on a line that
-  // begins with `@example`, `@deprecated`, or `@see`, and continues until
-  // the next directive or the end of the block.
+  // begins with `@example`, `@deprecated`, `@see`, or `@remarks`, and
+  // continues until the next directive or the end of the block.
   const directives: string[] = [];
   let current: string[] | null = null;
   for (const line of rawLines) {
-    if (/^(@example|@deprecated|@see)\b/.test(line)) {
+    if (/^(@example|@deprecated|@see|@remarks)\b/.test(line)) {
       if (current) directives.push(current.join(`\n`).trimEnd());
       current = [line];
     } else if (current) {
