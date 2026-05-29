@@ -17,7 +17,11 @@ export const updateApplicationRoleConnectionMetadataRecordsSchema = v.object({
  *
  * **PUT** `/applications/:application/role-connections/metadata`
  *
- * Updates and returns a list of {@link ApplicationRoleConnectionMetadata | application role connection metadata objects }for the given application.
+ * Updates and returns a list of {@link ApplicationRoleConnectionMetadata | application role connection metadata objects} for the given application.
+ *
+ * > [!NOTE]
+ * >
+ * > An application can have a maximum of 5 metadata records.
  */
 export const updateApplicationRoleConnectionMetadataRecords: Fetcher<
   typeof updateApplicationRoleConnectionMetadataRecordsSchema,
