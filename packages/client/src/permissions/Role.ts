@@ -12,6 +12,8 @@ import { roleFlag } from "./RoleFlags.js";
 import { roleColorsSchema } from "./RoleColors.js";
 
 /**
+ * ### [Role](https://discord.com/developers/docs/topics/permissions#role-object)
+ *
  * Roles represent a set of permissions attached to a group of users. Roles have names, colors, and can be "pinned" to the side bar, causing their members to be listed separately. Roles can have separate permission profiles for the global context (guild) and channel context. The `@everyone` role has the same ID as the guild it belongs to.
  */
 export const roleSchema = v.object({
@@ -34,7 +36,7 @@ export const roleSchema = v.object({
   icon: v.nullish(boundedString()),
   /** role unicode emoji */
   unicodeEmoji: v.nullish(boundedString()),
-  /** position of this role */
+  /** position of this role (roles with the same position are sorted by id) */
   position: boundedInteger(),
   /** permission bit set */
   permissions: asDigits(permissionFlag),

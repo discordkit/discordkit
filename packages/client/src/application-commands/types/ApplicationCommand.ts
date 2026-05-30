@@ -17,6 +17,9 @@ import { applicationIntegrationTypesSchema } from "../../application/types/Appli
 import { interactionContextSchema } from "../../interactions/types/InteractionContextType.js";
 import { entryPointCommandHandlerTypeSchema } from "./EntryPointCommandHandlerType.js";
 
+/**
+ * ### [Application Command](https://discord.com/developers/docs/interactions/application-commands#application-command-object)
+ */
 export const applicationCommandSchema = v.intersect([
   v.object({
     /** Unique ID of command */

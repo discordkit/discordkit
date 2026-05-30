@@ -14,6 +14,9 @@ export const EntryPointCommandHandlerType = {
   DISCORD_LAUNCH_ACTIVITY: 2
 } as const;
 
+/**
+ * ### [Entry Point Command Handler Type](https://discord.com/developers/docs/interactions/application-commands#application-command-object-entry-point-command-handler-types)
+ */
 export const entryPointCommandHandlerTypeSchema = v.enum_(
   EntryPointCommandHandlerType
 );

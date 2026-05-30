@@ -19,6 +19,9 @@ export const ApplicationCommandOptionType = {
   ATTACHMENT: 11
 } as const;
 
+/**
+ * ### [Application Command Option Type](https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-type)
+ */
 export const applicationCommandOptionTypeSchema = v.enum_(
   ApplicationCommandOptionType
 );

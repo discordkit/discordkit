@@ -11,4 +11,7 @@ export const ApplicationCommandType = {
   PRIMARY_ENTRY_POINT: 4
 } as const;
 
+/**
+ * ### [Application Command Type](https://discord.com/developers/docs/interactions/application-commands#application-command-object)
+ */
 export const applicationCommandTypeSchema = v.enum_(ApplicationCommandType);
