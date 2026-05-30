@@ -2143,13 +2143,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv@npm:^17.4.2":
-  version: 17.4.2
-  resolution: "dotenv@npm:17.4.2"
-  checksum: 10/ca1b6f54d58e39914901e1518958e86083aca8deb5aa2e7f2a51acd53291d97852479b0ab26ed949b6a45a0e9adcc7b0d1c3c72375e8ea670f7005e341c6daba
-  languageName: node
-  linkType: hard
-
 "drange@npm:^1.0.2":
   version: 1.1.1
   resolution: "drange@npm:1.1.1"
@@ -2361,17 +2354,6 @@ __metadata:
   checksum: 10/14ca1c9f0a0e8f4f2e9bf4e8551065a164a09545dae548c12a18d238b72e51e5a7b39bd8e5494b56463a0877672d0a6c1ef62c6fa0677db1b0c847773be939b1
   languageName: node
   linkType: hard
-
-"feedback-scraper@workspace:apps/feedback-scraper":
-  version: 0.0.0-use.local
-  resolution: "feedback-scraper@workspace:apps/feedback-scraper"
-  dependencies:
-    "@discordkit/client": "workspace:^"
-    dotenv: "npm:^17.4.2"
-    valibot: "npm:^1.4.0"
-    vite-plus: "catalog:"
-  languageName: unknown
-  linkType: soft
 
 "foreground-child@npm:^3.1.0":
   version: 3.1.1
