@@ -8,6 +8,9 @@ import {
 } from "@discordkit/core";
 import { embedTypeSchema } from "./EmbedType.js";
 
+/**
+ * ### [Embed](https://discord.com/developers/docs/resources/message#embed-object)
+ */
 export const embedSchema = v.partial(
   v.object({
     /** title of embed */
@@ -86,7 +89,7 @@ export const embedSchema = v.partial(
       /** a proxied url of author icon */
       proxyIconUrl: url
     }),
-    /** fields information */
+    /** fields information, max of 25 */
     fields: boundedArray(
       v.object({
         /** name of the field */

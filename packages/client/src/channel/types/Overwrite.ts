@@ -2,6 +2,11 @@ import * as v from "valibot";
 import { asDigits, snowflake } from "@discordkit/core";
 import { permissionFlag } from "../../permissions/Permissions.js";
 
+/**
+ * ### [Overwrite](https://discord.com/developers/docs/resources/channel#overwrite-object)
+ *
+ * See permissions for more information about the `allow` and `deny` fields.
+ */
 export const overwriteSchema = v.object({
   /** role or user id */
   id: snowflake,

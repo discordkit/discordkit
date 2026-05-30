@@ -33,6 +33,11 @@ import {
 import { applicationCommandInteractionMetadataSchea } from "./ApplicationCommandInteractionMetadata.js";
 import { type MessageCall, messageCallSchema } from "./MessageCall.js";
 
+/**
+ * ### [Message](https://discord.com/developers/docs/resources/message#message-object)
+ *
+ * Represents a message sent in a channel within Discord.
+ */
 export const messageSchema = v.object({
   /** id of the message */
   id: snowflake,

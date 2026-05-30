@@ -8,6 +8,9 @@ import {
 import { guildVoiceChannelSchema } from "../../channel/types/Channel.js";
 import { type User, userSchema } from "../../user/types/User.js";
 
+/**
+ * ### [Guild Widget](https://discord.com/developers/docs/resources/guild#guild-widget-object)
+ */
 export const guildWidgetSchema = v.object({
   /** guild id */
   id: snowflake,

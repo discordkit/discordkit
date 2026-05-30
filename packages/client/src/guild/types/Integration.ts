@@ -11,12 +11,15 @@ import { integrationApplicationSchema } from "./IntegrationApplication.js";
 import { integrationAccountSchema } from "./IntegrationAccount.js";
 import { integrationExpireBehaviorSchema } from "./IntegrationExpireBehavior.js";
 
+/**
+ * ### [Integration](https://discord.com/developers/docs/resources/guild#integration-object)
+ */
 export const integrationSchema = v.object({
   /** integration id */
   id: snowflake,
   /** integration name */
   name: boundedString(),
-  /** integration type (twitch, youtube, or discord) */
+  /** integration type (twitch, youtube, discord, or guild_subscription) */
   type: v.string(),
   /** is this integration enabled */
   enabled: v.boolean(),

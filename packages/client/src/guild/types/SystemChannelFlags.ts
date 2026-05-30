@@ -2,6 +2,9 @@
 import * as v from "valibot";
 import { bitfield } from "@discordkit/core";
 
+/**
+ * ### [System Channel Flags](https://discord.com/developers/docs/resources/guild#guild-object-system-channel-flags)
+ */
 export enum SystemChannelFlags {
   /** Suppress member join notifications */
   SUPPRESS_JOIN_NOTIFICATIONS = 1 << 0,

@@ -4,6 +4,9 @@ import { emojiSchema } from "../../emoji/types/Emoji.js";
 import { stickerSchema } from "../../sticker/types/Sticker.js";
 import { guildFeaturesSchema } from "./GuildFeatures.js";
 
+/**
+ * ### [Guild Preview](https://discord.com/developers/docs/resources/guild#guild-preview-object)
+ */
 export const guildPreviewSchema = v.object({
   /** guild id */
   id: snowflake,

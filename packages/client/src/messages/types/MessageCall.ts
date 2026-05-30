@@ -2,6 +2,8 @@ import * as v from "valibot";
 import { snowflake, timestamp } from "@discordkit/core";
 
 /**
+ * ### [Message Call](https://discord.com/developers/docs/resources/message#message-call-object)
+ *
  * Information about the call in a private channel.
  */
 export const messageCallSchema = v.object({

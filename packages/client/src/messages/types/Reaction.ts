@@ -2,6 +2,9 @@ import * as v from "valibot";
 import { emojiSchema } from "../../emoji/types/Emoji.js";
 import { reactionCountDetailsSchema } from "./ReactionCountDetails.js";
 
+/**
+ * ### [Reaction](https://discord.com/developers/docs/resources/message#reaction-object)
+ */
 export const reactionSchema = v.object({
   /** times this emoji has been used to react */
   count: v.number(),

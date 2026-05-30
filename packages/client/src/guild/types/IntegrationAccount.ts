@@ -1,5 +1,8 @@
 import * as v from "valibot";
 
+/**
+ * ### [Integration Account](https://discord.com/developers/docs/resources/guild#integration-account-object)
+ */
 export const integrationAccountSchema = v.object({
   /** id of the account */
   id: v.string(),

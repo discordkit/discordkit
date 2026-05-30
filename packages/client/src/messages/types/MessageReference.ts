@@ -2,6 +2,9 @@ import * as v from "valibot";
 import { snowflake } from "@discordkit/core";
 import { messageReferenceTypeSchema } from "./MessageRefrenceType.js";
 
+/**
+ * ### [Message Reference](https://discord.com/developers/docs/resources/message#message-reference-object)
+ */
 export const messageReferenceSchema = v.partial(
   v.object({
     /** type of reference. */

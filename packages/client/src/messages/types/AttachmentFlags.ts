@@ -2,8 +2,11 @@
 import * as v from "valibot";
 import { bitfield } from "@discordkit/core";
 
+/**
+ * ### [Attachment Flags](https://discord.com/developers/docs/resources/message#attachment-object-attachment-flags)
+ */
 export enum AttachmentFlags {
-  /** this attachment has been edited using the remix feature on mobile */
+  /** @deprecated this attachment has been edited using the remix feature on mobile */
   IS_REMIX = 1 << 2
 }
 

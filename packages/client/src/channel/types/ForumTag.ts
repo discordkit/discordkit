@@ -1,6 +1,11 @@
 import * as v from "valibot";
 import { snowflake, boundedString } from "@discordkit/core";
 
+/**
+ * ### [Forum Tag](https://discord.com/developers/docs/resources/channel#forum-tag-object)
+ *
+ * An object that represents a tag that is able to be applied to a thread in a `GUILD_FORUM` or `GUILD_MEDIA` channel.
+ */
 export const forumTagSchema = v.object({
   /** the id of the tag */
   id: snowflake,

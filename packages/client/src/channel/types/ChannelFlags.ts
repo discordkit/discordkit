@@ -2,6 +2,9 @@
 import * as v from "valibot";
 import { bitfield } from "@discordkit/core";
 
+/**
+ * ### [Channel Flags](https://discord.com/developers/docs/resources/channel#channel-object-channel-flags)
+ */
 export enum ChannelFlags {
   /** this thread is pinned to the top of its parent `GUILD_FORUM` or `GUILD_MEDIA` channel */
   PINNED = 1 << 1,

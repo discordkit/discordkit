@@ -1,6 +1,9 @@
 import * as v from "valibot";
 import { snowflake, boundedInteger, boundedString } from "@discordkit/core";
 
+/**
+ * ### [Role Subscription Data](https://discord.com/developers/docs/resources/message#role-subscription-data-object)
+ */
 export const roleSubscriptionDataSchema = v.object({
   /** the id of the sku and listing that the user is subscribed to */
   roleSubscriptionListingId: snowflake,

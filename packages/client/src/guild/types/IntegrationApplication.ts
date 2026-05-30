@@ -2,6 +2,9 @@ import * as v from "valibot";
 import { snowflake, boundedString } from "@discordkit/core";
 import { type User, userSchema } from "../../user/types/User.js";
 
+/**
+ * ### [Integration Application](https://discord.com/developers/docs/resources/guild#integration-application-object)
+ */
 export const integrationApplicationSchema = v.object({
   /** the id of the app */
   id: snowflake,

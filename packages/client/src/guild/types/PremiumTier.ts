@@ -1,5 +1,8 @@
 import * as v from "valibot";
 
+/**
+ * ### [Premium Tier](https://discord.com/developers/docs/resources/guild#guild-object-premium-tier)
+ */
 export enum PremiumTier {
   /** guild has not unlocked any Server Boost perks */
   NONE = 0,

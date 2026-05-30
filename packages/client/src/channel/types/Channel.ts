@@ -191,7 +191,11 @@ export type Channel =
   | DirectMessageChannel
   | GroupDirectMessageChannel;
 
-// https://discord.com/developers/docs/resources/channel#channel-object-channel-structure
+/**
+ * ### [Channel](https://discord.com/developers/docs/resources/channel#channel-object)
+ *
+ * Represents a guild or DM channel within Discord.
+ */
 export const channelSchema = v.union([
   guildOrganizationChannelSchema,
   guildTextChannelSchema,

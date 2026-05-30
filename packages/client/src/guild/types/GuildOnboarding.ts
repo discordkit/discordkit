@@ -3,6 +3,11 @@ import { snowflake } from "@discordkit/core";
 import { onboardingPromptSchema } from "./OnboardingPrompt.js";
 import { onboardingModeSchema } from "./OnboardingMode.js";
 
+/**
+ * ### [Guild Onboarding](https://discord.com/developers/docs/resources/guild#guild-onboarding-object)
+ *
+ * Represents the [onboarding](https://support.discord.com/hc/en-us/articles/11074987197975-Community-Onboarding-FAQ) flow for a guild.
+ */
 export const guildOnboardingSchema = v.object({
   /** ID of the guild this onboarding is part of */
   guildId: snowflake,

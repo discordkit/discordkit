@@ -22,6 +22,9 @@ import { systemChannelFlag } from "./SystemChannelFlags.js";
 import { permissionFlag } from "../../permissions/Permissions.js";
 import { incidentsDataSchema } from "./IncidentsData.js";
 
+/**
+ * ### [Guild](https://discord.com/developers/docs/resources/guild#guild-object)
+ */
 export const guildSchema = v.object({
   /** guild id */
   id: snowflake,
@@ -101,7 +104,7 @@ export const guildSchema = v.object({
     v.exactOptional(boundedInteger()),
   /** the welcome screen of a Community guild, shown to new members, returned in an Invite's guild object */
   welcomeScreen: v.exactOptional(welcomeScreenSchema),
-  /** guild NSFW level */
+  /** guild age-restriction level */
   nsfwLevel: guildNSFWLevelSchema,
   /** custom guild stickers */
   stickers: v.exactOptional(v.array(stickerSchema)),

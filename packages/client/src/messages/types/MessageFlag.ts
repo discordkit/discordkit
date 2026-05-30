@@ -2,6 +2,9 @@
 import * as v from "valibot";
 import { bitfield } from "@discordkit/core";
 
+/**
+ * ### [Message Flag](https://discord.com/developers/docs/resources/message#message-object-message-flags)
+ */
 export enum MessageFlag {
   /** this message has been published to subscribed channels (via Channel Following) */
   CROSSPOSTED = 1 << 0,

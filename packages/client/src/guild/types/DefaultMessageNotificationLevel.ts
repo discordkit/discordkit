@@ -1,5 +1,8 @@
 import * as v from "valibot";
 
+/**
+ * ### [Default Message Notification Level](https://discord.com/developers/docs/resources/guild#guild-object-default-message-notification-level)
+ */
 export enum DefaultMessageNotificationLevel {
   /** members will receive notifications for all messages by default */
   ALL_MESSAGES = 0,

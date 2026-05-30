@@ -2,6 +2,11 @@ import * as v from "valibot";
 import { timestamp } from "@discordkit/core";
 import { autoArchiveDurationSchema } from "./AutoArchiveDuration.js";
 
+/**
+ * ### [Thread Metadata](https://discord.com/developers/docs/resources/channel#thread-metadata-object)
+ *
+ * The thread metadata object contains a number of thread-specific channel fields that are not needed by other channel types.
+ */
 export const threadMetadataSchema = v.object({
   /** whether the thread is archived */
   archived: v.boolean(),

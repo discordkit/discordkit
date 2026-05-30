@@ -1,5 +1,8 @@
 import * as v from "valibot";
 
+/**
+ * ### [Embed Type](https://discord.com/developers/docs/resources/message#embed-object)
+ */
 export enum EmbedType {
   /** generic embed rendered from embed attributes */
   RICH = `rich`,

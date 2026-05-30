@@ -3,6 +3,11 @@ import { asInteger, snowflake, timestamp } from "@discordkit/core";
 import { memberSchema } from "../../guild/types/Member.js";
 import { channelFlag } from "./ChannelFlags.js";
 
+/**
+ * ### [Thread Member](https://discord.com/developers/docs/resources/channel#thread-member-object)
+ *
+ * A thread member object contains information about a user that has joined a thread.
+ */
 export const threadMemberSchema = v.object({
   /** the id of the thread */
   id: v.exactOptional(snowflake),

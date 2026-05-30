@@ -2,6 +2,9 @@ import * as v from "valibot";
 import { snowflake } from "@discordkit/core";
 import { channelTypeSchema } from "../../channel/types/ChannelType.js";
 
+/**
+ * ### [Channel Mention](https://discord.com/developers/docs/resources/message#channel-mention-object)
+ */
 export const channelMentionSchema = v.object({
   /** id of the channel */
   id: snowflake,

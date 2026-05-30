@@ -2,6 +2,9 @@
 import * as v from "valibot";
 import { bitfield } from "@discordkit/core";
 
+/**
+ * ### [Guild Member Flags](https://discord.com/developers/docs/resources/guild#guild-member-object-guild-member-flags)
+ */
 export enum GuildMemberFlags {
   /** Member has left and rejoined the guild */
   DID_REJOIN = 1 << 0,

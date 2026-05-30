@@ -8,6 +8,9 @@ import { messageComponentSchema } from "./MessageComponent.js";
 import { messageFlag } from "./MessageFlag.js";
 import { messageTypeSchema } from "./MessageType.js";
 
+/**
+ * ### [Message Snapshot](https://discord.com/developers/docs/resources/message#message-snapshot-object)
+ */
 export const messageSnapshotSchema = v.object({
   message: v.object({
     /** type of message */
