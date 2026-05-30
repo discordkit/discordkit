@@ -26,6 +26,9 @@ export const ApplicationFlags = {
   APPLICATION_COMMAND_BADGE: 1 << 23
 } as const;
 
+/**
+ * ### [Application Flags](https://discord.com/developers/docs/resources/application#application-object-application-flags)
+ */
 export const applicationFlagsSchema = v.enum_(ApplicationFlags);
 export const applicationFlag = bitfield(
   `applicationFlag`,

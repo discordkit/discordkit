@@ -21,6 +21,9 @@ import { ApplicationIntegrationTypes } from "../../application/types/Application
 import { applicationIntegrationTypeConfigurationSchema } from "../../application/types/ApplicationIntegrationTypeConfiguration.js";
 import { interactionContextSchema } from "./InteractionContextType.js";
 
+/**
+ * ### [Interaction](https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object)
+ */
 export const interactionSchema = v.object({
   /** ID of the interaction */
   id: snowflake,
@@ -56,6 +59,9 @@ export const interactionSchema = v.object({
   guildLocale: v.exactOptional<v.GenericSchema<Locales>>(localesSchema),
   /** For monetized apps, any entitlements for the invoking user, representing access to premium SKUs */
   entitlements: v.array(entitlementSchema),
+  /**
+   * Mapping of installation contexts that the interaction was authorized for to related user or guild IDs. See Authorizing Integration Owners Object for details
+   */
   authorizingIntegrationOwners: v.object(
     v.entriesFromList(
       Object.values(ApplicationIntegrationTypes),

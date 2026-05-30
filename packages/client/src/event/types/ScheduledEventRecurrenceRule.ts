@@ -8,7 +8,9 @@ import {
 import { scheduledEventRecurrenceRuleMonthSchema } from "./ScheduledEventRecurrenceRuleMonth.js";
 
 /**
- * Discord's recurrence rule is a subset of the behaviors [defined in the iCalendar RFC](https://datatracker.ietf.org/doc/html/rfc5545) and implemented by [python's dateutil rule](https://dateutil.readthedocs.io/en/stable/rrule.html)
+ * ### [Scheduled Event Recurrence Rule](https://discord.com/developers/docs/resources/guild-scheduled-event#guild-scheduled-event-recurrence-rule-object)
+ *
+ * Discord's recurrence rule is a subset of the behaviors [defined in the iCalendar RFC](https://datatracker.ietf.org/doc/html/rfc5545) and implemented by [python's dateutil rrule](https://dateutil.readthedocs.io/en/stable/rrule.html)
  */
 export const scheduledEventRecurrenceRuleSchema = v.object({
   /** Starting time of the recurrence interval */

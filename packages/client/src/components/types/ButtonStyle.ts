@@ -1,5 +1,8 @@
 import * as v from "valibot";
 
+/**
+ * ### [Button Style](https://discord.com/developers/docs/components/reference#button-button-styles)
+ */
 export enum ButtonStyle {
   /** The most important or recommended action in a group of options (Required Field: `customId`) */
   Primary = 1,

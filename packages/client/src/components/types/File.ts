@@ -4,6 +4,8 @@ import { unfurledMediaItemSchema } from "./UnfurledMediaItem.js";
 import { ComponentType } from "./ComponentType.js";
 
 /**
+ * ### [File](https://discord.com/developers/docs/components/reference#file)
+ *
  * A File is a top-level component that allows you to display an uploaded file as an attachment to the message and reference it in the component. Each file component can only display 1 attached file, but you can upload multiple files and add them to different file components within your payload.
  *
  * Files are only available in messages.

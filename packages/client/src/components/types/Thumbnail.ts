@@ -4,6 +4,8 @@ import { ComponentType } from "./ComponentType.js";
 import { unfurledMediaItemSchema } from "./UnfurledMediaItem.js";
 
 /**
+ * ### [Thumbnail](https://discord.com/developers/docs/components/reference#thumbnail)
+ *
  * A Thumbnail is a content component that is a small image only usable as an accessory in a section. The preview comes from an url or attachment through the unfurled media item structure.
  *
  * Thumbnails are only available in messages as an accessory in a section.

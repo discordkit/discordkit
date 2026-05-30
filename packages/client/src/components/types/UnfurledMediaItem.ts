@@ -6,6 +6,11 @@ import {
   snowflake
 } from "@discordkit/core";
 
+/**
+ * ### [Unfurled Media Item](https://discord.com/developers/docs/components/reference#unfurled-media-item)
+ *
+ * An Unfurled Media Item is a piece of media, represented by a URL, that is used within a component. It can be constructed via either uploading media to Discord, or by referencing external media via **a direct link** to the asset.
+ */
 export const unfurledMediaItemSchema = v.object({
   /** Supports arbitrary urls and `attachment://<filename>` references */
   url: url,

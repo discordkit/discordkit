@@ -4,11 +4,9 @@ import { ComponentType } from "./ComponentType.js";
 import { selectDefaultValueSchema } from "./SelectDefaultValue.js";
 
 /**
- * A Mentionable Select is an interactive component that allows users to select one or more mentionables in a message. Options are automatically populated based on available mentionables in the server.
+ * ### [Mentionable Select](https://discord.com/developers/docs/components/reference#mentionable-select)
  *
- * Mentionable Selects can be configured for both single-select and multi-select behavior. When a user finishes making their choice(s), your app receives an interaction.
- *
- * Mentionable Selects must be placed inside an Action Row and are only available in messages. An Action Row can contain only one select menu and cannot contain buttons if it has a select menu.
+ * A Mentionable Select is an interactive component that allows users to select one or more mentionables in a message or modal. Options are automatically populated based on available mentionables in the server. Mentionable Selects can be configured for both single-select and multi-select behavior. When a user finishes making their choice(s), your app receives an interaction. Mentionable Selects are available in messages and modals. They must be placed inside an Action Row in messages and a Label in modals.
  */
 export const mentionableSelectSchema = v.object({
   /** `7` for mentionable select */

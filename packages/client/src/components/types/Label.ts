@@ -13,16 +13,16 @@ import { checkboxGroupSchema } from "./CheckboxGroup.js";
 import { checkboxSchema } from "./Checkbox.js";
 
 /**
- * A Label is a top-level layout component. Labels wrap modal components
- * with text as a label and optional description.
+ * ### [Label](https://discord.com/developers/docs/components/reference#label)
+ *
+ * A Label is a top-level layout component. Labels wrap modal components with text as a label and optional description.
  *
  * > [!NOTE]
  * >
  * > The `description` may display above or below the `component` depending
  * > on the platform.
  *
- * Discord recommends using Label over an Action Row in modals. Action Row
- * with Text Inputs in modals are deprecated.
+ * Discord recommends using Label over an Action Row in modals. Action Row with Text Inputs in modals are deprecated.
  */
 export const labelSchema = v.object({
   /** `18` for a label */

@@ -3,9 +3,9 @@ import { boundedInteger, boundedString } from "@discordkit/core";
 import { ComponentType } from "./ComponentType.js";
 
 /**
- * A Checkbox is a single interactive component for simple yes/no style
- * questions. Checkboxes are available in modals and must be placed inside
- * a {@link Label}.
+ * ### [Checkbox](https://discord.com/developers/docs/components/reference#checkbox-structure)
+ *
+ * A Checkbox is a single interactive component for simple yes/no style questions. Checkboxes are available in modals and must be placed inside a {@link Label}.
  *
  * > [!TIP]
  * >

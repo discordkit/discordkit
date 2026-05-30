@@ -5,6 +5,11 @@ import { guildSchema } from "../../guild/types/Guild.js";
 import { userSchema } from "../../user/types/User.js";
 import { webhookTypeSchema } from "./WebhookType.js";
 
+/**
+ * ### [Webhook](https://discord.com/developers/docs/resources/webhook#webhook-object)
+ *
+ * Used to represent a webhook.
+ */
 export const webhookSchema = v.object({
   /** the id of the webhook */
   id: snowflake,

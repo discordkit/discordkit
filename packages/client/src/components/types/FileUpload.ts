@@ -3,14 +3,11 @@ import { boundedInteger, boundedString } from "@discordkit/core";
 import { ComponentType } from "./ComponentType.js";
 
 /**
- * File Upload is an interactive component that allows users to upload files
- * in modals. File Uploads can be configured to have a minimum and maximum
- * number of files between 0 and 10, along with `required` for if the upload
- * is required to submit the modal. The max file size a user can upload is
- * based on the user's upload limit in that channel.
+ * ### [File Upload](https://discord.com/developers/docs/components/reference#file-upload)
  *
- * File Uploads are available on modals. They must be placed inside a
- * {@link Label}.
+ * File Upload is an interactive component that allows users to upload files in modals. File Uploads can be configured to have a minimum and maximum number of files between 0 and 10, along with `required` for if the upload is required to submit the modal. The max file size a user can upload is based on the user's upload limit in that channel.
+ *
+ * File Uploads are available on modals. They must be placed inside a {@link Label}.
  *
  * > [!NOTE]
  * >

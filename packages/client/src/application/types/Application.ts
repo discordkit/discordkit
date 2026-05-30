@@ -17,8 +17,9 @@ import { installParamsSchema } from "./InstallParams.js";
 import { ApplicationIntegrationTypes } from "./ApplicationIntegrationTypes.js";
 import { applicationIntegrationTypeConfigurationSchema } from "./ApplicationIntegrationTypeConfiguration.js";
 
-// https://discord.com/developers/docs/resources/application#application-object-application-structure
-
+/**
+ * ### [Application](https://discord.com/developers/docs/resources/application#application-object)
+ */
 export const applicationSchema = v.object({
   /** ID of the app */
   id: snowflake,

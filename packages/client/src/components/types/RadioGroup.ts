@@ -4,9 +4,9 @@ import { ComponentType } from "./ComponentType.js";
 import { radioGroupOptionSchema } from "./RadioGroupOption.js";
 
 /**
- * A Radio Group is an interactive component for selecting exactly one
- * option from a defined list. Radio Groups are available in modals and
- * must be placed inside a {@link Label}.
+ * ### [Radio Group](https://discord.com/developers/docs/components/reference#radio-group-structure)
+ *
+ * A Radio Group is an interactive component for selecting exactly one option from a defined list. Radio Groups are available in modals and must be placed inside a {@link Label}.
  */
 export const radioGroupSchema = v.object({
   /** `21` for radio group */

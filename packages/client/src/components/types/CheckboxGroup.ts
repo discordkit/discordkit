@@ -4,9 +4,9 @@ import { ComponentType } from "./ComponentType.js";
 import { checkboxGroupOptionSchema } from "./CheckboxGroupOption.js";
 
 /**
- * A Checkbox Group is an interactive component for selecting one or many
- * options via checkboxes. Checkbox Groups are available in modals and
- * must be placed inside a {@link Label}.
+ * ### [Checkbox Group](https://discord.com/developers/docs/components/reference#checkbox-group-structure)
+ *
+ * A Checkbox Group is an interactive component for selecting one or many options via checkboxes. Checkbox Groups are available in modals and must be placed inside a {@link Label}.
  *
  * > [!NOTE]
  * >

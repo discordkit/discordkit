@@ -4,6 +4,11 @@ import { userSchema } from "../../user/types/User.js";
 import { stickerFormatTypeSchema } from "./StickerFormatType.js";
 import { stickerTypeSchema } from "./StickerType.js";
 
+/**
+ * ### [Sticker](https://discord.com/developers/docs/resources/sticker#sticker-object)
+ *
+ * Represents a sticker that can be sent in messages.
+ */
 export const stickerSchema = v.object({
   /** id of the sticker */
   id: snowflake,

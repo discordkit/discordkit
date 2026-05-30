@@ -20,6 +20,9 @@ import { radioGroupSchema } from "./RadioGroup.js";
 import { checkboxGroupSchema } from "./CheckboxGroup.js";
 import { checkboxSchema } from "./Checkbox.js";
 
+/**
+ * ### [Component](https://discord.com/developers/docs/components/reference#component-object-component-types)
+ */
 export const componentSchema = v.variant(`type`, [
   actionRowSchema,
   buttonSchema,

@@ -10,6 +10,9 @@ export const ApplicationEventWebhookStatus = {
   DISABLED_BY_DISCORD: 3
 } as const;
 
+/**
+ * ### [Application Event Webhook Status](https://discord.com/developers/docs/resources/application#application-object-application-event-webhook-status)
+ */
 export const applicationEventWebhookStatusSchema = v.enum_(
   ApplicationEventWebhookStatus
 );

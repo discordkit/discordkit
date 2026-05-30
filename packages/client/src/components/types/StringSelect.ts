@@ -4,18 +4,16 @@ import { ComponentType } from "./ComponentType.js";
 import { selectOptionSchema } from "./SelectOption.js";
 
 /**
- * A String Select is an interactive component that allows users to select one or more provided `options` in a message.
+ * ### [String Select](https://discord.com/developers/docs/components/reference#string-select)
  *
- * String Selects can be configured for both single-select and multi-select behavior. When a user finishes making their choice(s) your app receives an interaction.
- *
- * String Selects must be placed inside an Action Row and are only available in messages. An Action Row can contain only one select menu and cannot contain buttons if it has a select menu.
+ * A String Select is an interactive component that allows users to select one or more provided `options`. String Selects can be configured for both single-select and multi-select behavior. When a user finishes making their choice(s) your app receives an interaction. String Selects are available in messages and modals. They must be placed inside an Action Row in messages and a Label in modals.
  */
 export const stringSelectSchema = v.object({
   /** `3` for string select */
   type: v.literal(ComponentType.StringSelect),
   /** Optional identifier for component */
   id: v.exactOptional(boundedInteger()),
-  /** ID for the select menu; max 100 characters */
+  /** ID for the select menu; 1-100 characters */
   customId: boundedString({ max: 100 }),
   /** Specified choices in a select menu; max 25 */
   options: boundedArray(selectOptionSchema, { max: 25 }),

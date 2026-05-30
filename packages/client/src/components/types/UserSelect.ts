@@ -4,11 +4,9 @@ import { ComponentType } from "./ComponentType.js";
 import { selectDefaultValueSchema } from "./SelectDefaultValue.js";
 
 /**
- * A User Select is an interactive component that allows users to select one or more users in a message. Options are automatically populated based on the server's available users.
+ * ### [User Select](https://discord.com/developers/docs/components/reference#user-select)
  *
- * User Selects can be configured for both single-select and multi-select behavior. When a user finishes making their choice(s) your app receives an interaction.
- *
- * User Selects must be placed inside an Action Row and are only available in messages. An Action Row can contain only one select menu and cannot contain buttons if it has a select menu.
+ * A User Select is an interactive component that allows users to select one or more users in a message or modal. Options are automatically populated based on the server's available users. User Selects can be configured for both single-select and multi-select behavior. When a user finishes making their choice(s) your app receives an interaction. User Selects are available in messages and modals. They must be placed inside an Action Row in messages and a Label in modals.
  */
 export const userSelectSchema = v.object({
   /** `5` for user select */

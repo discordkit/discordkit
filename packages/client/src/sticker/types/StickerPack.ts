@@ -2,6 +2,11 @@ import * as v from "valibot";
 import { snowflake, boundedString } from "@discordkit/core";
 import { stickerSchema } from "./Sticker.js";
 
+/**
+ * ### [Sticker Pack](https://discord.com/developers/docs/resources/sticker#sticker-pack-object)
+ *
+ * Represents a pack of standard stickers.
+ */
 export const stickerPackSchema = v.object({
   /** id of the sticker pack */
   id: snowflake,

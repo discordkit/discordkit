@@ -1,5 +1,8 @@
 import * as v from "valibot";
 
+/**
+ * ### [Component Type](https://discord.com/developers/docs/components/reference#component-object-component-types)
+ */
 export enum ComponentType {
   /** Container to display a row of interactive components (Style: `Layout`, Usage: `Message`) */
   ActionRow = 1,

@@ -1,7 +1,12 @@
 import * as v from "valibot";
 
+/**
+ * ### [Moderation Action Type](https://discord.com/developers/docs/resources/auto-moderation#auto-moderation-action-object)
+ *
+ * An action which will execute whenever a rule is triggered.
+ */
 export enum ModerationActionType {
-  /** blocks the content of a message according to the rule */
+  /** blocks a member's message and prevents it from being posted. A custom explanation can be specified and shown to members whenever their message is blocked. */
   BLOCK_MESSAGE = 1,
   /** logs user content to a specified channel */
   SEND_ALERT_MESSAGE = 2,

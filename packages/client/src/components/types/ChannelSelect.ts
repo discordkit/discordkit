@@ -5,11 +5,9 @@ import { selectDefaultValueSchema } from "./SelectDefaultValue.js";
 import { channelTypeSchema } from "../../channel/types/ChannelType.js";
 
 /**
- * A Channel Select is an interactive component that allows users to select one or more channels in a message. Options are automatically populated based on available channels in the server and can be filtered by channel types.
+ * ### [Channel Select](https://discord.com/developers/docs/components/reference#channel-select)
  *
- * Channel Selects can be configured for both single-select and multi-select behavior. When a user finishes making their choice(s) your app receives an interaction.
- *
- * Channel Selects must be placed inside an Action Row and are only available in messages. An Action Row can contain only one select menu and cannot contain buttons if it has a select menu.
+ * A Channel Select is an interactive component that allows users to select one or more channels in a message or modal. Options are automatically populated based on available channels in the server and can be filtered by channel types. Channel Selects can be configured for both single-select and multi-select behavior. When a user finishes making their choice(s) your app receives an interaction. Channel Selects are available in messages and modals. They must be placed inside an Action Row in messages and a Label in modals.
  */
 export const channelSelectSchema = v.object({
   /** `8` for channel select */
@@ -18,7 +16,7 @@ export const channelSelectSchema = v.object({
   id: v.exactOptional(boundedInteger()),
   /** Developer-defined identifier for the input; max 100 characters */
   customId: v.pipe(boundedString({ max: 100 })),
-  /** */
+  /** List of channel types to include in the channel select component */
   channelTypes: v.exactOptional(v.array(channelTypeSchema)),
   /** Placeholder text if nothing is selected; max 150 characters */
   placeholder: v.exactOptional(boundedString({ max: 150 })),

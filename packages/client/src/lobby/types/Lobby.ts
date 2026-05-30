@@ -4,7 +4,11 @@ import { guildTextChannelSchema } from "../../channel/types/Channel.js";
 import { ChannelType } from "../../channel/types/ChannelType.js";
 import { lobbyMemberSchema } from "./LobbyMember.js";
 
-/** Represents a lobby within Discord. See [Managing Lobbies](https://discord.com/developers/docs/discord-social-sdk/development-guides/managing-lobbies) for more information. */
+/**
+ * ### [Lobby](https://discord.com/developers/docs/resources/lobby#lobby-object)
+ *
+ * Represents a lobby within Discord. See Managing Lobbies for more information.
+ */
 export const lobbySchema = v.object({
   /** the id of this channel */
   id: snowflake,

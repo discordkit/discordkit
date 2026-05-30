@@ -59,18 +59,24 @@ export function renderObjectJsDoc(
   const lines: string[] = [];
   lines.push(`### [${name}](${url})`);
   // Decide what description to keep, prioritized as:
-  //   1. existingDescription if it's a superset of the docs description
-  //      (i.e. ours adds extra paragraphs of useful context)
-  //   2. docs description otherwise
-  //   3. existing description if docs is empty
+  //   1. existing if docs is empty
+  //   2. existing if it's a superset of docs (adds paragraphs/context)
+  //   3. existing if it carries GFM admonitions (>[!NOTE]/[!WARNING]
+  //      etc.) — those are hand-curated and the renderer can't
+  //      reconstruct them from the parsed docs description
+  //   4. docs description otherwise
   const docsDesc = object.description.trim();
   const existingDesc = (opts.existingDescription ?? ``).trim();
   let description = docsDesc;
   if (existingDesc) {
     const normExisting = existingDesc.toLowerCase().replace(/\s+/g, ` `);
     const normDocs = docsDesc.toLowerCase().replace(/\s+/g, ` `);
+    const hasAdmonition = />\s*\[!(NOTE|WARNING|TIP|CAUTION|IMPORTANT)\]/i.test(
+      existingDesc
+    );
     if (!docsDesc) description = existingDesc;
     else if (normExisting.includes(normDocs)) description = existingDesc;
+    else if (hasAdmonition) description = existingDesc;
   }
   if (description) {
     // Preserve paragraph structure: "\n\n" separates paragraphs.

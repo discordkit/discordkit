@@ -4,7 +4,11 @@ import type { Scopes } from "./Scopes.js";
 import { scopesSchema } from "./Scopes.js";
 import { permissionFlag } from "../../permissions/Permissions.js";
 
-// https://discord.com/developers/docs/resources/application#install-params-object-install-params-structure
+/**
+ * ### [Install Params](https://discord.com/developers/docs/resources/application#install-params-object)
+ *
+ * // https://discord.com/developers/docs/resources/application#install-params-object-install-params-structure
+ */
 
 export const installParamsSchema = v.object({
   /** Scopes to add the application to the server with */

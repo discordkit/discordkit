@@ -2,11 +2,11 @@ import * as v from "valibot";
 import { boundedString } from "@discordkit/core";
 
 /**
+ * ### [Radio Group Option](https://discord.com/developers/docs/components/reference#radio-group-option-structure)
+ *
  * Option shape for {@link RadioGroup} components.
  *
- * Radio group and {@link CheckboxGroupOption | checkbox group} options
- * share the same field layout. We model them separately so that future
- * Discord changes to one shape don't have to ripple to the other.
+ * Radio group and {@link CheckboxGroupOption | checkbox group} options share the same field layout. We model them separately so that future Discord changes to one shape don't have to ripple to the other.
  */
 export const radioGroupOptionSchema = v.object({
   /** Dev-defined value of the option; max 100 characters */

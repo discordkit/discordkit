@@ -3,6 +3,8 @@ import { boundedInteger } from "@discordkit/core";
 import { ComponentType } from "./ComponentType.js";
 
 /**
+ * ### [Separator](https://discord.com/developers/docs/components/reference#separator)
+ *
  * A Separator is a top-level layout component that adds vertical padding and visual division between other components.
  *
  * Separators are only available in messages.

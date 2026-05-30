@@ -2,6 +2,9 @@ import * as v from "valibot";
 import { snowflake, boundedString } from "@discordkit/core";
 import { userSchema } from "../../user/types/User.js";
 
+/**
+ * ### [Emoji](https://discord.com/developers/docs/resources/emoji#emoji-object)
+ */
 export const emojiSchema = v.object({
   /** emoji id */
   id: v.nullable(snowflake),

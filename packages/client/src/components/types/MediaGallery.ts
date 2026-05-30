@@ -4,6 +4,8 @@ import { ComponentType } from "./ComponentType.js";
 import { mediaGalleryItemSchema } from "./MediaGalleryItem.js";
 
 /**
+ * ### [Media Gallery](https://discord.com/developers/docs/components/reference#media-gallery)
+ *
  * A Media Gallery is a top-level content component that allows you to display 1-10 media attachments in an organized gallery format. Each item can have optional descriptions and can be marked as spoilers.
  *
  * Media Galleries are only available in messages.

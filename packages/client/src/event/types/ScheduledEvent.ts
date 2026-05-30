@@ -7,6 +7,9 @@ import { scheduledEventStatusSchema } from "./ScheduledEventStatus.js";
 import { entityMetadataSchema } from "./EntityMetadata.js";
 import { scheduledEventRecurrenceRuleSchema } from "./ScheduledEventRecurrenceRule.js";
 
+/**
+ * ### [Scheduled Event](https://discord.com/developers/docs/resources/guild-scheduled-event#guild-scheduled-event-object)
+ */
 export const scheduledEventSchema = v.intersect([
   v.object({
     /** the id of the scheduled event */

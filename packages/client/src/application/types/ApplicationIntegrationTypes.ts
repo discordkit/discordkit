@@ -8,6 +8,9 @@ export const ApplicationIntegrationTypes = {
   USER_INSTALL: 1
 } as const;
 
+/**
+ * ### [Application Integration Types](https://discord.com/developers/docs/resources/application#application-object-application-integration-types)
+ */
 export const applicationIntegrationTypesSchema = v.enum_(
   ApplicationIntegrationTypes
 );

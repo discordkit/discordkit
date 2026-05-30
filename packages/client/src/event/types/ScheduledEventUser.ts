@@ -3,6 +3,9 @@ import { snowflake } from "@discordkit/core";
 import { memberSchema } from "../../guild/types/Member.js";
 import { userSchema } from "../../user/types/User.js";
 
+/**
+ * ### [Scheduled Event User](https://discord.com/developers/docs/resources/guild-scheduled-event#guild-scheduled-event-user-object)
+ */
 export const scheduledEventUserSchema = v.object({
   /** the scheduled event id which the user subscribed to */
   guildScheduledEventId: snowflake,

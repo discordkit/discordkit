@@ -6,6 +6,8 @@ import { textDisplaySchema } from "./TextDisplay.js";
 import { thumbnailSchema } from "./Thumbnail.js";
 
 /**
+ * ### [Section](https://discord.com/developers/docs/components/reference#section)
+ *
  * A Section is a top-level layout component that allows you to join text contextually with an accessory.
  *
  * Sections are only available in messages.
@@ -23,7 +25,7 @@ export const sectionSchema = v.object({
   type: v.literal(ComponentType.Section),
   /** Optional identifier for component */
   id: v.exactOptional(boundedInteger()),
-  /** One to three text components */
+  /** One to three child components representing the content of the section that is contextually associated to the accessory */
   components: boundedArray(textDisplaySchema, { max: 3 }),
   /** A thumbnail or a button component, with a future possibility of adding more compatible components */
   accessroy: v.union([thumbnailSchema, buttonSchema])

@@ -1,5 +1,8 @@
 import * as v from "valibot";
 
+/**
+ * ### [Text Input Style](https://discord.com/developers/docs/components/reference#text-input-text-input-styles)
+ */
 export enum TextInputStyle {
   /** Single-line input */
   Short = 1,

@@ -5,6 +5,9 @@ import { moderationEventSchema } from "./ModerationEvent.js";
 import { moderationTriggerTypeSchema } from "./ModerationTriggerType.js";
 import { triggerMetaSchema } from "./TriggerMeta.js";
 
+/**
+ * ### [Moderation Rule](https://discord.com/developers/docs/resources/auto-moderation#auto-moderation-rule-object)
+ */
 export const moderationRuleSchema = v.object({
   /** the id of this rule */
   id: snowflake,

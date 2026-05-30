@@ -8,4 +8,7 @@ export const InteractionType = {
   MODAL_SUBMIT: 5
 } as const;
 
+/**
+ * ### [Interaction Type](https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object)
+ */
 export const interactionTypeSchema = v.enum_(InteractionType);

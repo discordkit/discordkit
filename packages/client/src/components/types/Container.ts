@@ -9,6 +9,8 @@ import { fileSchema } from "./File.js";
 import { ComponentType } from "./ComponentType.js";
 
 /**
+ * ### [Container](https://discord.com/developers/docs/components/reference#container)
+ *
  * A Container is a top-level layout component. Containers are visually distinct from surrounding components and have an optional customizable color bar.
  *
  * Containers are only available in messages.
@@ -22,7 +24,7 @@ export const containerSchema = v.object({
   type: v.literal(ComponentType.Container),
   /** Optional identifier for component */
   id: v.exactOptional(boundedInteger()),
-  /** Components of the type action row, text display, section, media gallery, separator, or file */
+  /** Child components that are encapsulated within the Container */
   components: v.array(
     v.union([
       actionRowSchema,

@@ -1,5 +1,10 @@
 import * as v from "valibot";
 
+/**
+ * ### [Webhook Type](https://discord.com/developers/docs/resources/webhook#webhook-object)
+ *
+ * Used to represent a webhook.
+ */
 export enum WebhookType {
   /** Incoming Webhooks can post messages to channels with a generated token */
   INCOMING = 1,

@@ -4,11 +4,9 @@ import { ComponentType } from "./ComponentType.js";
 import { selectDefaultValueSchema } from "./SelectDefaultValue.js";
 
 /**
- * A Role Select is an interactive component that allows users to select one or more roles in a message. Options are automatically populated based on the server's available roles.
+ * ### [Role Select](https://discord.com/developers/docs/components/reference#role-select)
  *
- * Role Selects can be configured for both single-select and multi-select behavior. When a user finishes making their choice(s) your app receives an interaction.
- *
- * Role Selects must be placed inside an Action Row and are only available in messages. An Action Row can contain only one select menu and cannot contain buttons if it has a select menu.
+ * A Role Select is an interactive component that allows users to select one or more roles in a message or modal. Options are automatically populated based on the server's available roles. Role Selects can be configured for both single-select and multi-select behavior. When a user finishes making their choice(s) your app receives an interaction. Role Selects are available in messages and modals. They must be placed inside an Action Row in messages and a Label in modals.
  */
 export const roleSelectSchema = v.object({
   /** `6` for role select */

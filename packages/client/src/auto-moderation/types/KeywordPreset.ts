@@ -1,5 +1,8 @@
 import * as v from "valibot";
 
+/**
+ * ### [Keyword Preset](https://discord.com/developers/docs/resources/auto-moderation#auto-moderation-rule-object-keyword-preset-types)
+ */
 export enum KeywordPreset {
   /** Words that may be considered forms of swearing or cursing */
   PROFANITY = 1,

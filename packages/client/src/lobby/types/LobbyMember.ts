@@ -2,7 +2,11 @@ import * as v from "valibot";
 import { snowflake, asInteger } from "@discordkit/core";
 import { lobbyMemberFlag } from "./LobbyMemberFlags.js";
 
-/** Represents a member of a lobby, including optional metadata and flags. */
+/**
+ * ### [Lobby Member](https://discord.com/developers/docs/resources/lobby#lobby-member-object)
+ *
+ * Represents a member of a lobby, including optional metadata and flags.
+ */
 export const lobbyMemberSchema = v.object({
   /** the id of the user */
   id: snowflake,

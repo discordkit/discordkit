@@ -681,6 +681,15 @@ function extractExistingBlockDescription(
     exp.blockStartLine,
     exp.blockStartLine + exp.blockLineCount
   );
+  // A single-line `// https://discord.com/...` URL comment carries no
+  // description content — it's just a pointer to the docs that the new
+  // block link supersedes. Skip extraction.
+  if (
+    blockLines.length === 1 &&
+    /^\s*\/\/\s*https?:\/\//.test(blockLines[0])
+  ) {
+    return ``;
+  }
   // Preserve paragraph breaks: a line of just ` *` is a paragraph separator.
   const stripped = blockLines.map((line) => {
     // Single-line block /** … */
@@ -696,15 +705,15 @@ function extractExistingBlockDescription(
   });
   const paragraphs: string[] = [];
   let current: string[] = [];
-  let inList = false;
+  let mode: `prose` | `list` | `quote` = `prose`;
   const flushCurrent = (): void => {
     if (current.length) {
-      // List blocks are joined with `\n` so each item renders on its
-      // own JSDoc line; prose paragraphs are joined with spaces.
-      const joiner = inList ? `\n` : ` `;
+      // List items and blockquote lines each render on their own JSDoc
+      // line; prose paragraphs collapse to a single line.
+      const joiner = mode === `prose` ? ` ` : `\n`;
       paragraphs.push(current.join(joiner));
       current = [];
-      inList = false;
+      mode = `prose`;
     }
   };
   for (const piece of stripped) {
@@ -714,11 +723,15 @@ function extractExistingBlockDescription(
       continue;
     }
     const isListItem = /^\s*[-*]\s+/.test(piece);
-    if (isListItem && !inList) {
+    const isBlockquote = /^\s*>/.test(piece);
+    const lineMode: typeof mode = isBlockquote
+      ? `quote`
+      : isListItem
+        ? `list`
+        : `prose`;
+    if (lineMode !== mode) {
       flushCurrent();
-      inList = true;
-    } else if (!isListItem && inList) {
-      flushCurrent();
+      mode = lineMode;
     }
     current.push(piece);
   }
