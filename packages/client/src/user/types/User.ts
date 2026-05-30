@@ -10,7 +10,9 @@ import { localesSchema } from "../../application/types/Locales.js";
 import { premiumTypeSchema } from "./PremiumType.js";
 import { userFlag } from "./UserFlags.js";
 
-// https://discord.com/developers/docs/resources/user#user-object-user-structure
+/**
+ * ### [User](https://discord.com/developers/docs/resources/user#user-object)
+ */
 export const userSchema = v.object({
   /** the user's id (scope: `identify`) */
   id: snowflake,

@@ -1,6 +1,11 @@
 import * as v from "valibot";
 import { boundedString } from "@discordkit/core";
 
+/**
+ * ### [Application Role Connection](https://discord.com/developers/docs/resources/user#application-role-connection-object)
+ *
+ * The role connection object that an application has attached to a user.
+ */
 export const applicationRoleConnectionSchema = v.object({
   /** the vanity name of the platform a bot has connected (max 50 characters) */
   platformName: v.nullable(v.string()),

@@ -4,6 +4,11 @@ import { integrationSchema } from "../../guild/types/Integration.js";
 import { connectionVisibilitySchema } from "./ConnectionVisibility.js";
 import { servicesSchema } from "./Services.js";
 
+/**
+ * ### [Connection](https://discord.com/developers/docs/resources/user#connection-object)
+ *
+ * The connection object that the user has attached.
+ */
 export const connectionSchema = v.object({
   /** id of the connection account */
   id: boundedString(),

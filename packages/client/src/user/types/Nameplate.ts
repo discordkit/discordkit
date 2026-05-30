@@ -2,6 +2,8 @@ import * as v from "valibot";
 import { snowflake, boundedString, url } from "@discordkit/core";
 
 /**
+ * ### [Nameplate](https://discord.com/developers/docs/resources/user#nameplate)
+ *
  * The nameplate the user has.
  */
 export const nameplateSchema = v.object({

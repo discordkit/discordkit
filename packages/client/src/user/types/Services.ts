@@ -31,4 +31,7 @@ export const services = [
 
 export type Services = (typeof services)[number];
 
+/**
+ * ### [Services](https://discord.com/developers/docs/resources/user#connection-object-services)
+ */
 export const servicesSchema = v.picklist(services) as v.GenericSchema<Services>;

@@ -473,6 +473,50 @@ export function parseResource(markdown: string): DocResource {
     byObjectHeading.set(key, arr);
   }
 
+  // Helper: collect description prose for an object — paragraphs and lists
+  // sitting at depth-2 or depth-3 under the object's heading, BEFORE its
+  // structure table. We stop scanning at the first table or at any node
+  // whose deepest heading is below the object heading but in a sub-
+  // heading that suggests we've left the description (e.g. "Example",
+  // sub-object definitions).
+  const extractObjectDescription = (
+    objHeadingDepth: number,
+    objHeadingText: string,
+    structureTable: Table
+  ): string => {
+    const parts: string[] = [];
+    for (const e of indexed) {
+      const { node } = e;
+      if (node === structureTable) break;
+      // Skip nodes outside the object's heading scope.
+      const stackAtDepth = e.stack[objHeadingDepth];
+      if (stackAtDepth !== objHeadingText) continue;
+      // Skip if a deeper heading is set — we only want prose directly
+      // under the object heading, not nested sub-sections like Example.
+      let underNestedHeading = false;
+      for (let d = objHeadingDepth + 1; d <= 6; d++) {
+        if (e.stack[d]) {
+          underNestedHeading = true;
+          break;
+        }
+      }
+      if (underNestedHeading) continue;
+      if (node.type === `heading`) continue;
+      if (node.type === `table`) continue;
+      if (node.type === `html`) continue;
+      if (node.type === `code`) continue;
+      if (nodeAsAdmonition(node)) continue;
+      if (isMdxElement(node, `ManualAnchor`)) continue;
+      if (node.type === `mdxjsEsm`) continue;
+      if (node.type === `thematicBreak`) continue;
+      // Skip the Route line for endpoint pages where this collides.
+      if (nodeContainsRoute(node)) continue;
+      const text = nodeToMarkdown(node).trim();
+      if (text) parts.push(text);
+    }
+    return parts.join(`\n\n`).trim();
+  };
+
   for (const [, ts] of byObjectHeading) {
     // Find the structure table for the object (Field+Type).
     const structureGroup = ts.find((t) => {
@@ -483,10 +527,18 @@ export function parseResource(markdown: string): DocResource {
       // It's an object. The structure may be under a sub-heading (Structure)
       // or directly under the object heading.
       const fields = parseFieldsTable(structureGroup.table);
-      const description = ``; // could be filled in by tracking prose between heading and table
+      // Capture the prose between the object's heading and its structure
+      // table: any paragraphs/lists whose deepest heading is the object
+      // heading (or a non-structural sub-heading like "Limits") and that
+      // come before the structure table itself.
+      const description = extractObjectDescription(
+        structureGroup.headingDepth,
+        structureGroup.headingText,
+        structureGroup.table
+      );
       objects.push({
         name: structureGroup.headingText,
-        anchor: null,
+        anchor: slugify(structureGroup.headingText),
         structureAnchor: null,
         description,
         fields
@@ -786,7 +838,13 @@ function tableAsEnum(group: {
   const name = group.deeperHeading
     ? group.deeperHeading.text
     : stripObjectSuffix(group.headingText);
-  return { name, anchor: null, rows };
+  // Discord nests enum tables inside their parent object's section.
+  // The anchor convention is `<parent slug>-<enum slug>` for nested enums
+  // and just `<slug>` for top-level enums. Mirror that.
+  const anchor = group.deeperHeading
+    ? `${slugify(group.headingText)}-${slugify(group.deeperHeading.text)}`
+    : slugify(name);
+  return { name, anchor, rows };
 }
 
 function parseTableHeader(table: Table): string[] | null {
