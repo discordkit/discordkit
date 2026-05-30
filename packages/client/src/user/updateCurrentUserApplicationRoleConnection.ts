@@ -10,7 +10,7 @@ export const updateCurrentUserApplicationRoleConnectionSchema = v.object({
       platformName: v.nullish(v.string()),
       /** the username on the platform a bot has connected (max 100 characters) */
       platformUsername: v.nullish(v.string()),
-      /** object mapping application role connection metadata keys to their string-ified value (max 100 characters) for the user on the platform a bot has connected */
+      /** object mapping {@link ApplicationRoleConnectionMetadata | application role connection metadata} keys to their string-ified value (max 100 characters) for the user on the platform a bot has connected */
       metadata: v.record(
         v.pipe(
           v.string(),

@@ -35,7 +35,7 @@ export const createGuildChannelSchema = v.object({
     parentId: v.nullish(snowflake),
     /** whether the channel is nsfw */
     nsfw: v.nullish(v.boolean()),
-    /** channel voice region id of the voice or stage channel, automatic when set to null */
+    /** channel {@link VoiceRegion | voice region} id of the voice or stage channel, automatic when set to null */
     rtcRegion: v.nullish(v.pipe(v.string(), v.nonEmpty())),
     /** the camera video quality mode of the voice channel */
     videoQualityMode: v.nullish(videoQualityModeSchema),

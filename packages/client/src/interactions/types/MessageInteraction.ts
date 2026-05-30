@@ -14,7 +14,7 @@ export const messageInteractionSchema = v.object({
   id: snowflake,
   /** the type of interaction */
   type: interactionTypeSchema,
-  /** the name of the application command */
+  /** the name of the {@link ApplicationCommand | application command} */
   name: boundedString({ max: 32 }),
   /** the user who invoked the interaction */
   user: userSchema,

@@ -47,7 +47,7 @@ export const modifyGuildScheduledEventSchema = v.object({
  *
  * **PATCH** `/guilds/:guild/scheduled-events/:event`
  *
- * Modify a guild scheduled event. Returns the modified {@link ScheduledEvent | guild scheduled event object} on success. Fires a Guild Scheduled Event Update Gateway event.
+ * Modify a {@link ScheduledEvent | guild scheduled event}. Returns the modified {@link ScheduledEvent | guild scheduled event object} on success. Fires a Guild Scheduled Event Update Gateway event.
  *
  * > [!NOTE]
  * >

@@ -3,7 +3,7 @@ import * as v from "valibot";
 /**
  * ### [Activity Location Kind Enum](https://discord.com/developers/docs/resources/application#get-application-activity-instance-activity-location-kind-enum)
  *
- * Describes the kind of location an activity instance is running in.
+ * Describes the kind of location an {@link ActivityInstance | activity instance} is running in.
  */
 export enum ActivityLocationKind {
   /** Location is a Guild Channel */

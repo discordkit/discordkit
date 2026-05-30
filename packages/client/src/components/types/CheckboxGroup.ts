@@ -6,7 +6,7 @@ import { checkboxGroupOptionSchema } from "./CheckboxGroupOption.js";
 /**
  * ### [Checkbox Group](https://discord.com/developers/docs/components/reference#checkbox-group-structure)
  *
- * A Checkbox Group is an interactive component for selecting one or many options via checkboxes. Checkbox Groups are available in modals and must be placed inside a {@link Label}.
+ * A {@link CheckboxGroupOption | Checkbox Group} is an interactive component for selecting one or many options via checkboxes. Checkbox Groups are available in modals and must be placed inside a {@link Label}.
  *
  * > [!NOTE]
  * >
@@ -14,7 +14,7 @@ import { checkboxGroupOptionSchema } from "./CheckboxGroupOption.js";
  * > omitted or `true`.
  */
 export const checkboxGroupSchema = v.object({
-  /** `22` for checkbox group */
+  /** `22` for {@link CheckboxGroupOption | checkbox group} */
   type: v.literal(ComponentType.CheckboxGroup),
   /** Optional identifier for component */
   id: v.exactOptional(boundedInteger()),

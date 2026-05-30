@@ -12,7 +12,7 @@ export const inviteStageInstanceSchema = v.object({
   participantCount: boundedInteger(),
   /** the number of users speaking in the Stage */
   speakerCount: boundedInteger(),
-  /** the topic of the Stage instance (1-120 characters) */
+  /** the topic of the {@link Stage | Stage instance} (1-120 characters) */
   topic: boundedString({ max: 120 })
 });
 

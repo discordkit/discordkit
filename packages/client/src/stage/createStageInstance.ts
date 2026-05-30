@@ -7,11 +7,11 @@ export const createStageInstanceSchema = v.object({
   body: v.object({
     /** The id of the Stage channel */
     channelId: snowflake,
-    /** The topic of the Stage instance (1-120 characters) */
+    /** The topic of the {@link Stage | Stage instance} (1-120 characters) */
     topic: boundedString({ max: 120 }),
-    /** The privacy level of the Stage instance (default GUILD_ONLY) */
+    /** The privacy level of the {@link Stage | Stage instance} (default GUILD_ONLY) */
     privacyLevel: v.exactOptional(stagePrivacyLevelSchema),
-    /** Notify @everyone that a Stage instance has started */
+    /** Notify @everyone that a {@link Stage | Stage instance} has started */
     sendStartNotification: v.exactOptional(v.boolean())
   })
 });

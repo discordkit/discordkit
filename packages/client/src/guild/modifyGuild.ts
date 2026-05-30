@@ -20,7 +20,7 @@ export const modifyGuildSchema = v.object({
     v.object({
       /** guild name */
       name: v.pipe(v.string(), v.nonEmpty()),
-      /** @deprecated guild voice region id */
+      /** @deprecated guild {@link VoiceRegion | voice region} id */
       region: v.nullable(v.pipe(v.string(), v.nonEmpty())),
       /** verification level */
       verificationLevel: v.nullable(verificationLevelSchema),

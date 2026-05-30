@@ -12,7 +12,7 @@ export const addGuildMemberRoleSchema = v.object({
  *
  * **PUT** `/guilds/:guild/members/:user/roles/:role`
  *
- * Adds a role to a guild member. Requires the `MANAGE_ROLES` permission. Returns a 204 empty response on success. Fires a Guild Member Update Gateway event.
+ * Adds a role to a {@link Member | guild member}. Requires the `MANAGE_ROLES` permission. Returns a 204 empty response on success. Fires a Guild Member Update Gateway event.
  *
  * > [!NOTE]
  * >

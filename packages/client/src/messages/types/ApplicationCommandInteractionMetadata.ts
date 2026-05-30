@@ -6,7 +6,7 @@ import { userSchema } from "../../user/types/User.js";
 /**
  * Metadata about the interaction, including the source of the interaction and relevant server and user IDs.
  *
- * One of Application Command Interaction Metadata, Message Component Interaction Metadata, or Modal Submit Interaction Metadata.
+ * One of {@link ApplicationCommand | Application Command} Interaction Metadata, Message Component Interaction Metadata, or Modal Submit Interaction Metadata.
  */
 export const applicationCommandInteractionMetadataSchea = v.object({
   /** ID of the interaction */

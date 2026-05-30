@@ -10,7 +10,7 @@ export const listActiveGuildThreadsSchema = v.object({
 export const activeGuildThreadsSchema = v.object({
   /** the active threads */
   threads: v.array(threadChannelSchema),
-  /** a thread member object for each returned thread the current user has joined */
+  /** a {@link ThreadMember | thread member object} for each returned thread the current user has joined */
   members: v.array(threadMemberSchema)
 });
 

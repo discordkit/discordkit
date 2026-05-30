@@ -8,7 +8,7 @@ export const getThreadMemberSchema = v.object({
   params: v.exactOptional(
     v.partial(
       v.object({
-        /** Whether to include a guild member object for the thread member */
+        /** Whether to include a {@link Member | guild member object} for the {@link ThreadMember | thread member} */
         withMember: v.nullish(v.boolean())
       })
     )
@@ -22,7 +22,7 @@ export const getThreadMemberSchema = v.object({
  *
  * Returns a {@link ThreadMember | thread member object} for the specified user if they are a member of the thread, returns a 404 response otherwise.
  *
- * When `withMember` is set to `true`, the {@link ThreadMember | thread member object} will include a `member` field containing a guild member object.
+ * When `withMember` is set to `true`, the {@link ThreadMember | thread member object} will include a `member` field containing a {@link Member | guild member object}.
  */
 export const getThreadMember: Fetcher<
   typeof getThreadMemberSchema,

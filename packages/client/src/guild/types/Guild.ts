@@ -44,7 +44,7 @@ export const guildSchema = v.object({
   ownerId: snowflake,
   /** total permissions for the user in the guild (excludes overwrites) */
   permissions: v.exactOptional(asDigits(permissionFlag)),
-  /** @deprecated voice region id for the guild */
+  /** @deprecated {@link VoiceRegion | voice region} id for the guild */
   region: v.nullish(boundedString()),
   /** id of afk channel */
   afkChannelId: v.nullable(snowflake),
@@ -102,7 +102,7 @@ export const guildSchema = v.object({
   approximateMemberCount: v.exactOptional(boundedInteger()),
   /** approximate number of non-offline members in this guild, returned from the **GET** `/guilds/:guild` endpoint when `withCounts` is `true` */ approximatePresenceCount:
     v.exactOptional(boundedInteger()),
-  /** the welcome screen of a Community guild, shown to new members, returned in an Invite's guild object */
+  /** the {@link WelcomeScreen | welcome screen} of a Community guild, shown to new members, returned in an Invite's guild object */
   welcomeScreen: v.exactOptional(welcomeScreenSchema),
   /** guild age-restriction level */
   nsfwLevel: guildNSFWLevelSchema,

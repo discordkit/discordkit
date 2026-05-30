@@ -11,7 +11,7 @@ export const getChannelSchema = v.object({
  *
  * **GET** `/channels/:channel`
  *
- * Get a channel by ID. Returns a {@link Channel | channel object}.  If the channel is a thread, a thread member object is included in the returned result.
+ * Get a channel by ID. Returns a {@link Channel | channel object}.  If the channel is a thread, a {@link ThreadMember | thread member object} is included in the returned result.
  */
 export const getChannel: Fetcher<typeof getChannelSchema, Channel> = async ({
   channel

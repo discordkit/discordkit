@@ -7,11 +7,11 @@ export const listThreadMembersSchema = v.object({
   params: v.exactOptional(
     v.partial(
       v.object({
-        /** Whether to include a guild member object for each thread member */
+        /** Whether to include a {@link Member | guild member object} for each {@link ThreadMember | thread member} */
         withMember: v.boolean(),
-        /** Get thread members after this user ID */
+        /** Get {@link ThreadMember | thread members} after this user ID */
         after: snowflake,
-        /** Max number of thread members to return (1-100). Defaults to 100. */
+        /** Max number of {@link ThreadMember | thread members} to return (1-100). Defaults to 100. */
         limit: v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(100))
       })
     )
@@ -25,7 +25,7 @@ export const listThreadMembersSchema = v.object({
  *
  * Returns array of {@link ThreadMember | thread members objects} that are members of the thread.
  *
- * When `withMember` is set to `true`, the results will be paginated and each thread member object will include a `member` field containing a guild member object.
+ * When `withMember` is set to `true`, the results will be paginated and each {@link ThreadMember | thread member object} will include a `member` field containing a {@link Member | guild member object}.
  *
  * > [!WARNING]
  * >

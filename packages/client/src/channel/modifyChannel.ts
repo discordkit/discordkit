@@ -45,7 +45,7 @@ const guildChannelOptions = v.partial(
     permissionOverwrites: v.nullable(v.array(v.partial(overwriteSchema))),
     /** id of the new parent category for a channel */
     parentId: v.nullable(snowflake),
-    /** channel voice region id, automatic when set to null */
+    /** channel {@link VoiceRegion | voice region} id, automatic when set to null */
     rtcRegion: v.nullable(v.pipe(v.string(), v.nonEmpty())),
     /** the camera video quality mode of the voice channel */
     videoQualityMode: v.nullable(videoQualityModeSchema),

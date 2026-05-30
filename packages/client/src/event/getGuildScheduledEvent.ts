@@ -20,7 +20,7 @@ export const getGuildScheduledEventSchema = v.object({
  *
  * **GET** `/guilds/:guild/scheduled-events/:event`
  *
- * Get a guild scheduled event. Returns a {@link ScheduledEvent | guild scheduled event object} on success.
+ * Get a {@link ScheduledEvent | guild scheduled event}. Returns a {@link ScheduledEvent | guild scheduled event object} on success.
  */
 export const getGuildScheduledEvent: Fetcher<
   typeof getGuildScheduledEventSchema,

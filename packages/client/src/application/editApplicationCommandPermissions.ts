@@ -18,7 +18,7 @@ export const editApplicationCommandPermissionsSchema = v.object({
  *
  * **PUT** `/applications/:application/guilds/:guild/commands/:command/permissions`
  *
- * Edits command permissions for a specific command for your application in a guild and returns a guild application command permissions object. Fires an Application Command Permissions Update Gateway event.
+ * Edits command permissions for a specific command for your application in a guild and returns a {@link GuildApplicationCommandPermissions | guild application command permissions object}. Fires an Application Command Permissions Update Gateway event.
  *
  * You can add up to 100 permission overwrites for a command.
  *
@@ -28,7 +28,7 @@ export const editApplicationCommandPermissionsSchema = v.object({
  *
  * > [!NOTE]
  * >
- * > This endpoint requires authentication with a Bearer token that has permission to manage the guild and its roles. For more information, read above about application command permissions.
+ * > This endpoint requires authentication with a Bearer token that has permission to manage the guild and its roles. For more information, read above about {@link GuildApplicationCommandPermissions | application command permissions}.
  *
  * > [!WARNING]
  * >

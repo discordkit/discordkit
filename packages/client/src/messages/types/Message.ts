@@ -105,7 +105,7 @@ export const messageSchema = v.object({
   ),
   /** **Deprecated in favor of `interaction_metadata`**; sent if the message is a response to an interaction */
   interaction: v.exactOptional(messageInteractionSchema),
-  /** the thread that was started from this message, includes thread member object */
+  /** the thread that was started from this message, includes {@link ThreadMember | thread member object} */
   thread: v.exactOptional<v.GenericSchema<Channel>>(channelSchema),
   /** sent if the message contains components like buttons, action rows, or other interactive components */
   components: v.exactOptional(v.array(messageComponentSchema)),

@@ -15,7 +15,7 @@ export const unlinkChannelFromLobbySchema = v.object({
  *
  * Send a request to this endpoint with an empty body to unlink any currently linked channels from the specified lobby.
  *
- * Uses `Bearer` token for authorization and user must be a lobby member with `CanLinkLobby` lobby member flag.
+ * Uses `Bearer` token for authorization and user must be a {@link LobbyMember | lobby member} with `CanLinkLobby` {@link LobbyMember | lobby member} flag.
  *
  * Returns a lobby object without a linked channel.
  */

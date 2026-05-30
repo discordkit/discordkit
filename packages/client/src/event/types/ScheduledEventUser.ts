@@ -11,7 +11,7 @@ export const scheduledEventUserSchema = v.object({
   guildScheduledEventId: snowflake,
   /** user which subscribed to an event */
   user: userSchema,
-  /** guild member data for this user for the guild which this event belongs to, if any */
+  /** {@link Member | guild member} data for this user for the guild which this event belongs to, if any */
   member: v.exactOptional(memberSchema)
 });
 

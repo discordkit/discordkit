@@ -4,7 +4,7 @@ import { applicationCommandOptionTypeSchema } from "../../application-commands/t
 const base = v.object({
   /** Name of the parameter */
   name: v.pipe(v.string(), v.nonEmpty()),
-  /** Value of application command option type */
+  /** Value of {@link ApplicationCommand | application command} option type */
   type: applicationCommandOptionTypeSchema,
   /** Value of the option resulting from user input */
   value: v.exactOptional(

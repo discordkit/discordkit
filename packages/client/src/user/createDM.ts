@@ -4,7 +4,7 @@ import { directMessageChannelSchema } from "../channel/types/Channel.js";
 
 export const createDMSchema = v.object({
   body: v.object({
-    /** the recipient to open a DM channel with */
+    /** the recipient to open a {@link Channel | DM channel} with */
     recipientId: snowflake
   })
 });
@@ -14,7 +14,7 @@ export const createDMSchema = v.object({
  *
  * **POST** `/users/@me/channels`
  *
- * Create a new DM channel with a user. Returns a {@link Channel | DM channel object} (if one already exists, it will be returned instead).
+ * Create a new {@link Channel | DM channel} with a user. Returns a {@link Channel | DM channel object} (if one already exists, it will be returned instead).
  *
  * > [!WARNING]
  * >

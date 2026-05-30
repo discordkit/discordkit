@@ -22,7 +22,7 @@ export const createInteractionResponseSchema = v.object({
  *
  * **POST** `/interactions/:interaction/:token/callback`
  *
- * Create a response to an Interaction. Body is an interaction response. Returns `204` unless `withResponse` is set to `true` which returns `200` with the body as interaction callback response.
+ * Create a response to an Interaction. Body is an {@link InteractionCallbackResponse | interaction response}. Returns `204` unless `withResponse` is set to `true` which returns `200` with the body as interaction callback response.
  *
  * This endpoint also supports file attachments similar to the webhook endpoints. Refer to Uploading Files for details on uploading files and `multipart/form-data` requests.
  */

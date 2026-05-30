@@ -11,7 +11,7 @@ export const getGuildWelcomeScreenSchema = v.object({
  *
  * **GET** `/guilds/:guild/welcome-screen`
  *
- * Returns the {@link WelcomeScreen | Welcome Screen object} for the guild. If the welcome screen is not enabled, the `MANAGE_GUILD` permission is required.
+ * Returns the {@link WelcomeScreen | Welcome Screen object} for the guild. If the {@link WelcomeScreen | welcome screen} is not enabled, the `MANAGE_GUILD` permission is required.
  */
 export const getGuildWelcomeScreen: Fetcher<
   typeof getGuildWelcomeScreenSchema,

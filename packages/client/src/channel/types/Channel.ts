@@ -86,7 +86,7 @@ export const guildVoiceChannelSchema = v.object({
   bitrate: v.exactOptional(boundedInteger()),
   /** the user limit of the voice channel */
   userLimit: v.exactOptional(boundedInteger()),
-  /** voice region id for the voice channel, automatic when set to null */
+  /** {@link VoiceRegion | voice region} id for the voice channel, automatic when set to null */
   rtcRegion: v.nullish(boundedString()),
   /** the camera video quality mode of the voice channel, 1 when not present */
   videoQualityMode: v.exactOptional(videoQualityModeSchema)
@@ -140,7 +140,7 @@ export const threadChannelSchema = v.object({
   threadMetadata: v.exactOptional(threadMetadataSchema),
   /** the IDs of the set of tags that have been applied to a thread in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */
   appliedTags: v.exactOptional<v.GenericSchema<string[]>>(v.array(snowflake)),
-  /** thread member object for the current user, if they have joined the thread, only included on certain API endpoints */
+  /** {@link ThreadMember | thread member object} for the current user, if they have joined the thread, only included on certain API endpoints */
   member: v.exactOptional(threadMemberSchema),
   /** default duration that the clients (not the API) will use for newly created threads, in minutes, to automatically archive the thread after recent activity, can be set to: 60, 1440, 4320, 10080 */
   defaultAutoArchiveDuration: v.exactOptional(autoArchiveDurationSchema),

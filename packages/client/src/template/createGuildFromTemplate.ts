@@ -13,7 +13,7 @@ export const createGuildFromTemplateSchema = v.object({
 });
 
 /**
- * ### Create Guild from Guild Template
+ * ### Create Guild from {@link GuildTemplate | Guild Template}
  *
  * **POST** `/guilds/templates/:template`
  *

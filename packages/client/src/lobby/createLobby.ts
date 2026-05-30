@@ -20,7 +20,7 @@ export const createLobbySchema = v.object({
             metadata: v.nullish(
               v.pipe(v.record(v.string(), v.string()), v.maxEntries(1000))
             ),
-            /** lobby member flags combined as a bitfield */
+            /** {@link LobbyMember | lobby member} flags combined as a bitfield */
             flags: v.exactOptional(
               asInteger(lobbyMemberFlag) as v.GenericSchema<number>
             )

@@ -19,7 +19,7 @@ export const deleteOriginalInteractionResponseSchema = v.object({
  *
  * **DELETE** `/webhooks/:application/:token/messages/@original`
  *
- * Deletes the initial Interaction response. Returns `204 No Content` on success.
+ * Deletes the initial {@link InteractionCallbackResponse | Interaction response}. Returns `204 No Content` on success.
  */
 export const deleteOriginalInteractionResponse: Fetcher<
   typeof deleteOriginalInteractionResponseSchema,

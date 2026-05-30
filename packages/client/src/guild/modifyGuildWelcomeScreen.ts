@@ -7,11 +7,11 @@ export const modifyGuildWelcomeScreenSchema = v.object({
   guild: snowflake,
   body: v.partial(
     v.object({
-      /** whether the welcome screen is enabled */
+      /** whether the {@link WelcomeScreen | welcome screen} is enabled */
       enabled: v.nullish(v.boolean()),
-      /** channels linked in the welcome screen and their display options */
+      /** channels linked in the {@link WelcomeScreen | welcome screen} and their display options */
       welcomeChannels: v.nullish(v.array(welcomeChannelSchema)),
-      /** the server description to show in the welcome screen */
+      /** the server description to show in the {@link WelcomeScreen | welcome screen} */
       description: v.nullish(v.pipe(v.string(), v.nonEmpty()))
     })
   )
@@ -22,7 +22,7 @@ export const modifyGuildWelcomeScreenSchema = v.object({
  *
  * **PATCH** `/guilds/:guild/welcome-screen`
  *
- * Modify the guild's Welcome Screen. Requires the `MANAGE_GUILD` permission. Returns the updated {@link WelcomeScreen | Welcome Screen object}. May fire a Guild Update Gateway event.
+ * Modify the guild's {@link WelcomeScreen | Welcome Screen}. Requires the `MANAGE_GUILD` permission. Returns the updated {@link WelcomeScreen | Welcome Screen object}. May fire a Guild Update Gateway event.
  *
  * > [!NOTE]
  * >

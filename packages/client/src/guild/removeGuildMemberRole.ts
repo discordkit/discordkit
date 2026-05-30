@@ -12,7 +12,7 @@ export const removeGuildMemberRoleSchema = v.object({
  *
  * **DELETE** `/guilds/:guild/members/:user/roles/:role`
  *
- * Removes a role from a guild member. Requires the `MANAGE_ROLES` permission. Returns a 204 empty response on success. Fires a Guild Member Update Gateway event.
+ * Removes a role from a {@link Member | guild member}. Requires the `MANAGE_ROLES` permission. Returns a 204 empty response on success. Fires a Guild Member Update Gateway event.
  *
  * > [!NOTE]
  * >

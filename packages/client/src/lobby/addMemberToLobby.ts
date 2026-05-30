@@ -25,7 +25,7 @@ export const addMemberToLobbySchema = v.object({
  *
  * Adds the provided user to the specified lobby. If called when the user is already a member of the lobby will update fields such as metadata on that user instead.
  *
- * Returns the lobby member object.
+ * Returns the {@link LobbyMember | lobby member object}.
  */
 export const addMemberToLobby: Fetcher<
   typeof addMemberToLobbySchema,

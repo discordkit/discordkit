@@ -41,7 +41,7 @@ export const interactionSchema = v.object({
   channel: v.exactOptional(channelSchema),
   /** Channel that the interaction was sent from */
   channelId: v.exactOptional(snowflake),
-  /** Guild member data for the invoking user, including permissions */
+  /** {@link Member | Guild member} data for the invoking user, including permissions */
   member: v.exactOptional(memberSchema),
   /** User object for the invoking user, if invoked in a DM */
   user: v.exactOptional(v.lazy<v.GenericSchema<User>>(() => userSchema)),

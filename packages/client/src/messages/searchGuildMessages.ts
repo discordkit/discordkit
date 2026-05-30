@@ -141,7 +141,7 @@ export const searchGuildMessagesResponseSchema = v.object({
   messages: v.array(v.array(messageSchema)),
   /** The threads that contain the returned messages */
   threads: v.exactOptional(v.array(channelSchema)),
-  /** A thread member object for each returned thread the current user has joined */
+  /** A {@link ThreadMember | thread member object} for each returned thread the current user has joined */
   members: v.exactOptional(v.array(threadMemberSchema))
 });
 

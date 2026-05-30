@@ -12,9 +12,9 @@ export const modifyStageInstanceSchema = v.object({
   channel: snowflake,
   body: v.partial(
     v.object({
-      /** The topic of the Stage instance (1-120 characters) */
+      /** The topic of the {@link Stage | Stage instance} (1-120 characters) */
       topic: boundedString({ max: 120 }),
-      /** The privacy level of the Stage instance */
+      /** The privacy level of the {@link Stage | Stage instance} */
       privacyLevel: stagePrivacyLevelSchema
     })
   )

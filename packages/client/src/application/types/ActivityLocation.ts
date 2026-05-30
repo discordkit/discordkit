@@ -5,7 +5,7 @@ import { activityLocationKindSchema } from "./ActivityLocationKind.js";
 /**
  * ### [Activity Location Object](https://discord.com/developers/docs/resources/application#get-application-activity-instance-activity-location-object)
  *
- * The Activity Location is an object that describes the location in which an activity instance is running.
+ * The Activity Location is an object that describes the location in which an {@link ActivityInstance | activity instance} is running.
  */
 export const activityLocationSchema = v.object({
   /** Unique identifier for the location */

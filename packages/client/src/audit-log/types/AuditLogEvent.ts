@@ -74,11 +74,11 @@ export enum AuditLogEvent {
   INTEGRATION_UPDATE = 81,
   /** App was removed from server */
   INTEGRATION_DELETE = 82,
-  /** Stage instance was created (stage channel becomes live) */
+  /** {@link Stage | Stage instance} was created (stage channel becomes live) */
   STAGE_INSTANCE_CREATE = 83,
-  /** Stage instance details were updated */
+  /** {@link Stage | Stage instance} details were updated */
   STAGE_INSTANCE_UPDATE = 84,
-  /** Stage instance was deleted (stage channel no longer live) */
+  /** {@link Stage | Stage instance} was deleted (stage channel no longer live) */
   STAGE_INSTANCE_DELETE = 85,
   /** Sticker was created */
   STICKER_CREATE = 90,
@@ -106,11 +106,11 @@ export enum AuditLogEvent {
   SOUNDBOARD_SOUND_UPDATE = 131,
   /** Soundboard sound was deleted */
   SOUNDBOARD_SOUND_DELETE = 132,
-  /** Auto Moderation rule was created */
+  /** {@link ModerationRule | Auto Moderation rule} was created */
   AUTO_MODERATION_RULE_CREATE = 140,
-  /** Auto Moderation rule was updated */
+  /** {@link ModerationRule | Auto Moderation rule} was updated */
   AUTO_MODERATION_RULE_UPDATE = 141,
-  /** Auto Moderation rule was deleted */
+  /** {@link ModerationRule | Auto Moderation rule} was deleted */
   AUTO_MODERATION_RULE_DELETE = 142,
   /** Message was blocked by AutoMod (according to a rule) */
   AUTO_MODERATION_BLOCK_MESSAGE = 143,

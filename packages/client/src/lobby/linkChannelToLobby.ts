@@ -19,7 +19,7 @@ export const linkChannelToLobbySchema = v.object({
  *
  * Links an existing text channel to a lobby. See [Linked Channels](https://discord.com/developers/docs/discord-social-sdk/development-guides/linked-channels) for more information.
  *
- * Uses `Bearer` token for authorization and user must be a lobby member with `CanLinkLobby` lobby member flag.
+ * Uses `Bearer` token for authorization and user must be a {@link LobbyMember | lobby member} with `CanLinkLobby` {@link LobbyMember | lobby member} flag.
  *
  * Returns a lobby object with a linked channel.
  */

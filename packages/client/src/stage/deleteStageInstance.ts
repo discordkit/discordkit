@@ -10,7 +10,7 @@ export const deleteStageInstanceSchema = v.object({
  *
  * **DELETE** `/stage-instances/:channel`
  *
- * Deletes the Stage instance. Returns `204 No Content`. Fires a Stage Instance Delete Gateway event.
+ * Deletes the {@link Stage | Stage instance}. Returns `204 No Content`. Fires a Stage Instance Delete Gateway event.
  *
  * Requires the user to be a moderator of the Stage channel.
  *

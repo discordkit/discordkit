@@ -11,7 +11,7 @@ export const deleteGuildScheduledEventSchema = v.object({
  *
  * **DELETE** `/guilds/:guild/scheduled-events/:event`
  *
- * Delete a guild scheduled event. Returns a `204` on success. Fires a Guild Scheduled Event Delete Gateway event.
+ * Delete a {@link ScheduledEvent | guild scheduled event}. Returns a `204` on success. Fires a Guild Scheduled Event Delete Gateway event.
  */
 export const deleteGuildScheduledEvent: Fetcher<
   typeof deleteGuildScheduledEventSchema

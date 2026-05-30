@@ -18,7 +18,7 @@ export const createGuildSchema = v.object({
   body: v.object({
     /** name of the guild (2-100 characters) */
     name: v.pipe(v.string(), v.minLength(2), v.maxLength(100)),
-    /** @deprecated voice region id */
+    /** @deprecated {@link VoiceRegion | voice region} id */
     region: v.nullish(v.pipe(v.string(), v.nonEmpty())),
     /** icon hash */
     icon: v.exactOptional(datauri),

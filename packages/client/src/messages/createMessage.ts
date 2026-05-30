@@ -51,7 +51,7 @@ export const createMessageSchema = v.object({
  *
  * **POST** `/channels/:channel/messages`
  *
- * Post a message to a guild text or DM channel. Returns a {@link Message | message object}. Fires a Message Create Gateway event. See message formatting for more information on how to properly format messages.
+ * Post a message to a guild text or {@link Channel | DM channel}. Returns a {@link Message | message object}. Fires a Message Create Gateway event. See message formatting for more information on how to properly format messages.
  *
  * To create a message as a reply or forward of another message, apps can include a `messageReference`. Refer to the documentation for required fields.
  *

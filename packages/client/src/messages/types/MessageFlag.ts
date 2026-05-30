@@ -20,7 +20,7 @@ export enum MessageFlag {
   HAS_THREAD = 1 << 5,
   /** this message is only visible to the user who invoked the Interaction */
   EPHEMERAL = 1 << 6,
-  /** this message is an Interaction Response and the bot is "thinking" */
+  /** this message is an {@link InteractionCallbackResponse | Interaction Response} and the bot is "thinking" */
   LOADING = 1 << 7,
   /** this message failed to mention some roles and add their members to the thread */
   FAILED_TO_MENTION_SOME_ROLES_IN_THREAD = 1 << 8,

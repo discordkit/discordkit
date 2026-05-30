@@ -12,7 +12,7 @@ import { inviteTypeSchema } from "./InviteType.js";
 /**
  * ### [Invite](https://discord.com/developers/docs/resources/invite#invite-object)
  *
- * Represents a code that when used, adds a user to a guild or group DM channel.
+ * Represents a code that when used, adds a user to a guild or group {@link Channel | DM channel}.
  */
 export const inviteSchema = v.object({
   /** the type of invite */
@@ -39,9 +39,9 @@ export const inviteSchema = v.object({
   approximateMemberCount: v.exactOptional(boundedInteger()),
   /** the expiration date of this invite, returned from the `GET /invites/<code>` endpoint when `withExpiration` is `true` */
   expiresAt: v.nullish(timestamp),
-  /** stage instance data if there is a public Stage instance in the Stage channel this invite is for (deprecated) */
+  /** {@link Stage | stage instance} data if there is a public {@link Stage | Stage instance} in the Stage channel this invite is for (deprecated) */
   stageInstance: v.exactOptional(inviteStageInstanceSchema),
-  /** guild scheduled event data, only included if `guildScheduledEventId` contains a valid guild scheduled event id */
+  /** {@link ScheduledEvent | guild scheduled event} data, only included if `guildScheduledEventId` contains a valid {@link ScheduledEvent | guild scheduled event} id */
   guildScheduledEvent: v.exactOptional(scheduledEventSchema)
 });
 

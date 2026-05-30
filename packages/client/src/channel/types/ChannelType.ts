@@ -3,7 +3,7 @@ import * as v from "valibot";
 /**
  * ### [Channel Type](https://discord.com/developers/docs/resources/channel#channel-object)
  *
- * Represents a guild or DM channel within Discord.
+ * Represents a guild or {@link Channel | DM channel} within Discord.
  */
 export enum ChannelType {
   /** a text channel within a server */

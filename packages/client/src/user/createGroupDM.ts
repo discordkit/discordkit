@@ -17,7 +17,7 @@ export const createGroupDMSchema = v.object({
  *
  * **POST** `/users/@me/channels`
  *
- * Create a new group DM channel with multiple users. Returns a {@link Channel | DM channel object}. This endpoint was intended to be used with the now-deprecated GameBridge SDK. Fires a Channel Create Gateway event.
+ * Create a new group {@link Channel | DM channel} with multiple users. Returns a {@link Channel | DM channel object}. This endpoint was intended to be used with the now-deprecated GameBridge SDK. Fires a Channel Create Gateway event.
  *
  * > [!WARNING]
  * >

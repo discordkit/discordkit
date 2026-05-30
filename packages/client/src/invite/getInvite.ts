@@ -11,7 +11,7 @@ export const getInviteSchema = v.object({
         withCounts: v.boolean(),
         /** whether the invite should contain the expiration date */
         withExpiration: v.boolean(),
-        /** the guild scheduled event to include with the invite */
+        /** the {@link ScheduledEvent | guild scheduled event} to include with the invite */
         guildScheduledEventId: snowflake
       })
     )

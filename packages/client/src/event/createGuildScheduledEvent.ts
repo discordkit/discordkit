@@ -43,7 +43,7 @@ export const createGuildScheduledEventSchema = v.object({
  *
  * **POST** `/guilds/:guild/scheduled-events`
  *
- * Create a guild scheduled event in the guild. Returns a {@link ScheduledEvent | guild scheduled event object} on success. Fires a Guild Scheduled Event Create Gateway event.
+ * Create a {@link ScheduledEvent | guild scheduled event} in the guild. Returns a {@link ScheduledEvent | guild scheduled event object} on success. Fires a Guild Scheduled Event Create Gateway event.
  *
  * > [!NOTE]
  * >

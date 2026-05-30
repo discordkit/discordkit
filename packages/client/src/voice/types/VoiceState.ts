@@ -15,7 +15,7 @@ export const voiceStateSchema = v.object({
   channelId: v.nullable(snowflake),
   /** the user id this voice state is for */
   userId: snowflake,
-  /** guild member object	the guild member this voice state is for */
+  /** {@link Member | guild member object}	the {@link Member | guild member} this voice state is for */
   member: v.exactOptional(memberSchema),
   /** the session id for this voice state */
   sessionId: boundedString(),
