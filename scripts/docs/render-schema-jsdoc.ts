@@ -53,9 +53,7 @@ export function renderObjectJsDoc(
   opts: SchemaRenderOptions
 ): string {
   const name = opts.displayName ?? stripSuffixes(object.name);
-  const url = object.anchor
-    ? `${opts.pageUrl}#${object.anchor}`
-    : opts.pageUrl;
+  const url = object.anchor ? `${opts.pageUrl}#${object.anchor}` : opts.pageUrl;
   const lines: string[] = [];
   lines.push(`### [${name}](${url})`);
   // Decide what description to keep, prioritized as:
@@ -125,7 +123,5 @@ export function renderEnumJsDoc(
  * `Activity Flags`.
  */
 function stripSuffixes(name: string): string {
-  return name
-    .replace(/\s+(Object|Structure|Enum)\s*$/i, ``)
-    .trim();
+  return name.replace(/\s+(Object|Structure|Enum)\s*$/i, ``).trim();
 }

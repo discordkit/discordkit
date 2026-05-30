@@ -52,9 +52,7 @@ function main(): void {
   // "guild member" / "member".
   const phrases = [...registry.keys()].sort((a, b) => b.length - a.length);
 
-  const scope = folderArg
-    ? join(CLIENT_SRC, folderArg)
-    : CLIENT_SRC;
+  const scope = folderArg ? join(CLIENT_SRC, folderArg) : CLIENT_SRC;
   const files = walkTsFiles(scope);
 
   let changed = 0;
@@ -179,7 +177,7 @@ function linkProseInFile(
     const line = lines[i];
     const trimmedStart = line.trimStart();
     if (!inJsDoc) {
-      if (/^\/\*\*/.test(trimmedStart)) {
+      if (trimmedStart.startsWith(`/**`)) {
         // Single-line block.
         if (/\*\//.test(trimmedStart.slice(3))) {
           const replaced = rewriteJsDocLine(line, registry, phrases, ownType);
@@ -237,7 +235,8 @@ function rewriteJsDocLine(
   //     a Thread Create Gateway event"), we protect everything from
   //     the FIRST Title-Case-Word back-to-back run up to "Gateway
   //     event" within a generous window.
-  const protectedRe = /\{@link[^}]*\}|`[^`]*`|\*\*[^*]+\*\*|\]\([^)]+\)|\[[^\]]+\]\([^)]+\)|(?:[A-Z][A-Za-z]+\s+){1,8}(?:[a-z]+\s+){0,4}(?:[A-Z][A-Za-z]+\s+){0,5}Gateway\s+events?/g;
+  const protectedRe =
+    /\{@link[^}]*\}|`[^`]*`|\*\*[^*]+\*\*|\]\([^)]+\)|\[[^\]]+\]\([^)]+\)|(?:[A-Z][A-Za-z]+\s+){1,8}(?:[a-z]+\s+){0,4}(?:[A-Z][A-Za-z]+\s+){0,5}Gateway\s+events?/g;
   const segments: { text: string; protect: boolean }[] = [];
   let lastIdx = 0;
   let pm: RegExpExecArray | null;
@@ -292,10 +291,7 @@ function rewriteSegment(
         if (lower.slice(i, i + phrase.length) !== phrase) continue;
         // Word boundary on the right.
         const nextIdx = i + phrase.length;
-        if (
-          nextIdx < text.length &&
-          /[A-Za-z0-9]/.test(text[nextIdx])
-        ) {
+        if (nextIdx < text.length && /[A-Za-z0-9]/.test(text[nextIdx])) {
           continue;
         }
         const name = registry.get(phrase)!;
@@ -357,7 +353,9 @@ function inferOwnType(file: string): string | null {
 }
 
 function reportDiff(file: string, oldText: string, newText: string): void {
-  const rel = file.replace(`${PROJECT_ROOT}\\`, ``).replace(`${PROJECT_ROOT}/`, ``);
+  const rel = file
+    .replace(`${PROJECT_ROOT}\\`, ``)
+    .replace(`${PROJECT_ROOT}/`, ``);
   const oldLines = oldText.split(/\r?\n/);
   const newLines = newText.split(/\r?\n/);
   process.stdout.write(`--- a/${rel}\n+++ b/${rel}\n`);

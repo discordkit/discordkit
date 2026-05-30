@@ -71,11 +71,11 @@ const DOCS_BASE_URL = `https://discord.com/developers/docs`;
  *   "Event Types" via the plural-tolerance rule.
  */
 const FOLDER_PREFIX: Record<string, string> = {
-  "auto-moderation": "Auto",
-  event: "Guild",
+  "auto-moderation": `Auto`,
+  event: `Guild`,
   // stage/ types are Stage / StagePrivacyLevel; docs say
   // "Stage Instance Object" / "Stage Instance Privacy Level".
-  stage: "",
+  stage: ``
 };
 
 /**
@@ -85,12 +85,12 @@ const FOLDER_PREFIX: Record<string, string> = {
  * after the FIRST identifier component.
  */
 const FOLDER_INFIX: Record<string, string> = {
-  stage: "Instance"
+  stage: `Instance`
 };
 
 const FOLDER_STRIP_IDENT: Record<string, string[]> = {
-  "auto-moderation": ["Moderation"],
-  stage: ["Stage"]
+  "auto-moderation": [`Moderation`],
+  stage: [`Stage`]
 };
 
 /**
@@ -216,7 +216,11 @@ function main(): void {
       }
       if (writeMode) writeFileSync(path, updated, `utf8`);
       else {
-        const diff = quickDiff(`packages/client/src/${folder}/${file}`, source, updated);
+        const diff = quickDiff(
+          `packages/client/src/${folder}/${file}`,
+          source,
+          updated
+        );
         process.stdout.write(diff);
         process.stdout.write(`\n`);
       }
@@ -259,10 +263,7 @@ function main(): void {
       // preserve it as a fallback when the docs side has empty
       // description (common for objects whose docs page only renders a
       // bare structure table).
-      const existingDescription = extractExistingBlockDescription(
-        updated,
-        exp
-      );
+      const existingDescription = extractExistingBlockDescription(updated, exp);
 
       const objMatch = findObjectByName(objects, docName, docPages);
       if (objMatch) {
@@ -319,12 +320,7 @@ function main(): void {
           objMatch?.object.fields ?? // (already computed above)
           undefined;
         if (docFields) {
-          updated = refreshSchemaFieldComments(
-            updated,
-            exp,
-            docFields,
-            file
-          );
+          updated = refreshSchemaFieldComments(updated, exp, docFields, file);
         }
       } else {
         const enumMatch = findEnumByName(enums, docName, docPages);
@@ -350,7 +346,11 @@ function main(): void {
       // Quick character-level diff: just show file header + new content
       // for the changed exports. The full inline-splice machinery from
       // diff-jsdoc.ts is overkill here.
-      const diff = quickDiff(`packages/client/src/${folder}/${file}`, source, updated);
+      const diff = quickDiff(
+        `packages/client/src/${folder}/${file}`,
+        source,
+        updated
+      );
       process.stdout.write(diff);
       process.stdout.write(`\n`);
     }
@@ -425,7 +425,9 @@ function findSchemaExports(source: string): SchemaExport[] {
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
-    const objMatch = /^export\s+const\s+([a-zA-Z_$][\w$]*Schema)\s*=/.exec(line);
+    const objMatch = /^export\s+const\s+([a-zA-Z_$][\w$]*Schema)\s*=/.exec(
+      line
+    );
     const enumMatch = /^export\s+enum\s+([A-Z][\w$]*)/.exec(line);
     if (!objMatch && !enumMatch) continue;
 
@@ -560,10 +562,17 @@ function nameVariants(name: string): string[] {
   if (noTypeSuffix !== name) seeds.add(noTypeSuffix);
   // Strip folder-specific identifier components ("Moderation" inside
   // auto-moderation, etc.) before the prefix step.
+  // The `[...seeds]` spread is intentional throughout this function: we
+  // mutate `seeds` inside each loop and need to iterate over a snapshot
+  // so additions aren't re-processed.
   const stripList = FOLDER_STRIP_IDENT[folder] ?? [];
+  /* oxlint-disable no-useless-spread */
   for (const s of [...seeds]) {
     for (const word of stripList) {
-      const stripped = s.replace(new RegExp(`\\b${word}\\b`, "g"), "").replace(/\s+/g, " ").trim();
+      const stripped = s
+        .replace(new RegExp(`\\b${word}\\b`, `g`), ``)
+        .replace(/\s+/g, ` `)
+        .trim();
       if (stripped && stripped !== s) seeds.add(stripped);
     }
   }
@@ -587,7 +596,7 @@ function nameVariants(name: string): string[] {
   }
   // "Meta" ↔ "Metadata" tolerance.
   for (const s of [...seeds]) {
-    if (/Meta$/.test(s)) seeds.add(s.replace(/Meta$/, `Metadata`));
+    if (s.endsWith(`Meta`)) seeds.add(s.replace(/Meta$/, `Metadata`));
   }
   // "Foo" → "Foo Types" / "Foo Type" — Discord's enum headings often
   // append a generic " Types" suffix that the codebase identifier
@@ -596,6 +605,7 @@ function nameVariants(name: string): string[] {
     seeds.add(`${s} Types`);
     seeds.add(`${s} Type`);
   }
+  /* oxlint-enable no-useless-spread */
 
   for (const seed of seeds) {
     const base = normalizeName(seed);
@@ -685,10 +695,7 @@ function extractExistingBlockDescription(
   // A single-line `// https://discord.com/...` URL comment carries no
   // description content — it's just a pointer to the docs that the new
   // block link supersedes. Skip extraction.
-  if (
-    blockLines.length === 1 &&
-    /^\s*\/\/\s*https?:\/\//.test(blockLines[0])
-  ) {
+  if (blockLines.length === 1 && /^\s*\/\/\s*https?:\/\//.test(blockLines[0])) {
     return ``;
   }
   // Preserve paragraph breaks: a line of just ` *` is a paragraph separator.
@@ -776,9 +783,11 @@ function refreshSchemaFieldComments(
   file: string
 ): string {
   const lines = source.split(/\r?\n/);
-  const nl = source.includes("\r\n") ? "\r\n" : "\n";
+  const nl = source.includes(`\r\n`) ? `\r\n` : `\n`;
   // Find the export line again (it may have shifted by the block splice).
-  const exportRe = new RegExp("^export\\s+const\\s+" + exp.identifier + "\\s*=");
+  const exportRe = new RegExp(
+    `^export\\s+const\\s+` + exp.identifier + `\\s*=`
+  );
   const exportLineIdx = lines.findIndex((l) => exportRe.test(l));
   if (exportLineIdx < 0) return source;
 
@@ -819,9 +828,8 @@ function refreshSchemaFieldComments(
     // A field declaration line at depth 1 looks like `  fieldName: ...`
     // or `  fieldName?: ...`. There may be inline `/** ... */` on the
     // same line preceding the field.
-    const inlineMatch = /^(\s*)(?:\/\*\*\s*(.*?)\s*\*\/\s*)?([a-zA-Z_$][\w$]*)\s*:/.exec(
-      line
-    );
+    const inlineMatch =
+      /^(\s*)(?:\/\*\*\s*(.*?)\s*\*\/\s*)?([a-zA-Z_$][\w$]*)\s*:/.exec(line);
     if (!inlineMatch) continue;
     const fieldName = inlineMatch[3];
     const docField = fieldByName.get(fieldName);
@@ -892,8 +900,7 @@ function refreshSchemaFieldComments(
   updates.sort((a, b) => b.line - a.line);
   let newLines = [...lines];
   for (const u of updates) {
-    const lineCount =
-      (u as { lineCount?: number }).lineCount ?? 0;
+    const lineCount = (u as { lineCount?: number }).lineCount ?? 0;
     const before = newLines.slice(0, u.line);
     const after = newLines.slice(u.line + lineCount);
     newLines = [...before, ...u.newComment, ...after];
@@ -917,8 +924,8 @@ function refreshEnumMemberComments(
   file: string
 ): string {
   const lines = source.split(/\r?\n/);
-  const nl = source.includes("\r\n") ? "\r\n" : "\n";
-  const exportRe = new RegExp("^export\\s+enum\\s+" + exp.identifier + "\\b");
+  const nl = source.includes(`\r\n`) ? `\r\n` : `\n`;
+  const exportRe = new RegExp(`^export\\s+enum\\s+` + exp.identifier + `\\b`);
   const exportLineIdx = lines.findIndex((l) => exportRe.test(l));
   if (exportLineIdx < 0) return source;
 
@@ -1053,7 +1060,9 @@ function transformDocDescription(input: string): string {
   // CamelCase snake_case identifiers inside backticks.
   out = out.replace(/`([a-z][a-z0-9_]+)`/g, (m, ident: string) => {
     if (!ident.includes(`_`)) return m;
-    const camel = ident.replace(/_([a-z0-9])/g, (_, c: string) => c.toUpperCase());
+    const camel = ident.replace(/_([a-z0-9])/g, (_, c: string) =>
+      c.toUpperCase()
+    );
     return `\`${camel}\``;
   });
   return out.replace(/\s+/g, ` `).trim();
@@ -1067,17 +1076,16 @@ type MergeDecision = { kind: `skip` | `conflict` | `replace` | `add` };
  * comments — we only rewrite when they're obviously stale (literally
  * empty) or when the docs version differs only cosmetically.
  */
-function decideMerge(
-  existing: string | null,
-  desired: string
-): MergeDecision {
+function decideMerge(existing: string | null, desired: string): MergeDecision {
   if (!existing) return { kind: `add` };
   const e = normalizeCompare(existing);
   const d = normalizeCompare(desired);
   if (e === d) return { kind: `skip` };
   // If existing carries JSDoc directives, don't touch it — that prose
   // was hand-curated.
-  if (/@(deprecated|see|example|remarks|default|param|returns)/i.test(existing)) {
+  if (
+    /@(deprecated|see|example|remarks|default|param|returns)/i.test(existing)
+  ) {
     return { kind: `skip` };
   }
   // If existing is a strict superset (contains the desired text), it was
@@ -1088,7 +1096,10 @@ function decideMerge(
 }
 
 function normalizeCompare(s: string): string {
-  return s.toLowerCase().replace(/[\s.,]+/g, ` `).trim();
+  return s
+    .toLowerCase()
+    .replace(/[\s.,]+/g, ` `)
+    .trim();
 }
 
 function normalizeEnumMember(name: string): string {
@@ -1132,9 +1143,7 @@ function refreshEndpointParamSchemas(
   // Identify the endpoint by the top JSDoc heading title (same trick as
   // diff-jsdoc.ts). We tolerate the case where there's no JSDoc match —
   // a file without a recognizable heading is left untouched.
-  const topHeadingMatch = source.match(
-    /\*\s+###\s+\[([^\]]+)\]/
-  );
+  const topHeadingMatch = source.match(/\*\s+###\s+\[([^\]]+)\]/);
   if (!topHeadingMatch) return source;
   const title = topHeadingMatch[1].trim();
   const endpoint = endpoints.find((ep) => ep.name === title);
@@ -1252,7 +1261,7 @@ function refreshNestedFieldComments(
   ctx: string
 ): string {
   const lines = source.split(/\r?\n/);
-  const nl = source.includes("\r\n") ? "\r\n" : "\n";
+  const nl = source.includes(`\r\n`) ? `\r\n` : `\n`;
 
   if (innerCloseLine < 0 || innerOpenLine < 0) return source;
 

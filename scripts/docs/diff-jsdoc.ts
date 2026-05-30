@@ -15,12 +15,7 @@
  *   node --experimental-strip-types scripts/docs/diff-jsdoc.ts <folder>
  */
 
-import {
-  readFileSync,
-  readdirSync,
-  existsSync,
-  writeFileSync
-} from "node:fs";
+import { readFileSync, readdirSync, existsSync, writeFileSync } from "node:fs";
 import { dirname, resolve, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseResource, type DocEndpoint } from "./parse.ts";
@@ -128,7 +123,10 @@ function main(): void {
     // destructures, not the docs' verbatim placeholder text (which may
     // differ — e.g. `:guild_scheduled_event` from docs vs `:event` in
     // the schema).
-    const newBodyAligned = preserveUrlPlaceholders(oldBlock.text, newBodyLinked);
+    const newBodyAligned = preserveUrlPlaceholders(
+      oldBlock.text,
+      newBodyLinked
+    );
     // Carry forward any trailing curated JSDoc directives (`@example`,
     // `@deprecated`, `@see`, `@remarks`) that the old block had but the
     // renderer didn't produce. The docs themselves never emit these tags.
@@ -318,11 +316,13 @@ function preserveCrossRefs(oldBlock: string, newBody: string): string {
     })
     .sort((a, b) => b.display.length - a.display.length);
 
-  // Split the body into "safe" segments (where we substitute display text
-  // with `{@link …}`) and "protected" segments (URLs, inline code, existing
-  // `{@link …}` blocks). Protected segments are passed through verbatim so
-  // a short display word like `channel` doesn't leak into paths like
-  // `/channels/:channel/...` or anchors like `#start-thread-from-channel`.
+  // For each phrase, walk the body looking for matches OUTSIDE protected
+  // regions (URLs, code spans, existing `{@link …}` blocks). The protected
+  // regions are recomputed for every phrase because earlier phrases turn
+  // plain text into new `{@link …}` blocks — a stale split would let a
+  // later short phrase like "DM channel" leak into a newly-created
+  // `{@link Channel | DM channel object}` and produce
+  // `{@link Channel | {@link Channel | DM channel} object}`.
   //
   // Protection rules:
   //   - markdown link URLs:        `[text](url)` — only the `(url)` part
@@ -330,37 +330,50 @@ function preserveCrossRefs(oldBlock: string, newBody: string): string {
   //   - existing JSDoc references: `{@link …}`
   //   - heading-link target:       the URL inside `### [Title](URL)`
   const protectedRe = /\{@link[^}]*\}|`[^`]*`|\]\([^)]+\)/g;
-  const segments: { text: string; protect: boolean }[] = [];
-  let lastIdx = 0;
-  let pm: RegExpExecArray | null;
-  while ((pm = protectedRe.exec(newBody)) !== null) {
-    if (pm.index > lastIdx) {
-      segments.push({ text: newBody.slice(lastIdx, pm.index), protect: false });
-    }
-    segments.push({ text: pm[0], protect: true });
-    lastIdx = pm.index + pm[0].length;
+  let body = newBody;
+  for (const { name, display } of refs) {
+    body = replaceOutsideProtected(body, protectedRe, display, name);
   }
-  if (lastIdx < newBody.length) {
-    segments.push({ text: newBody.slice(lastIdx), protect: false });
-  }
+  return body;
+}
 
-  for (let i = 0; i < segments.length; i++) {
-    const seg = segments[i];
-    if (seg.protect) continue;
-    let text = seg.text;
-    for (const { name, display } of refs) {
-      // Replace ALL occurrences of the display text in the unprotected
-      // segment. Under-linking would be more annoying than the rare
-      // over-link, and the segment-split above keeps us out of URLs and
-      // code spans where the display word might be plain English (e.g.
-      // `channel` inside `/channels/:channel`).
-      const literal = display.replace(/[.*+?^${}()|[\]\\]/g, `\\$&`);
-      const re = new RegExp(literal, `g`);
-      text = text.replace(re, `{@link ${name} | ${display}}`);
-    }
-    seg.text = text;
+/**
+ * Replace every occurrence of `display` (as a whole substring) in `text`
+ * with `{@link name | display}`, skipping any match that overlaps a
+ * region matched by `protectedRe`.
+ *
+ * Implemented as a single left-to-right scan so we don't have to redo the
+ * protection check after each substitution.
+ */
+function replaceOutsideProtected(
+  text: string,
+  protectedRe: RegExp,
+  display: string,
+  name: string
+): string {
+  // Compute the protected ranges once per phrase.
+  const ranges: [number, number][] = [];
+  let pm: RegExpExecArray | null;
+  const re = new RegExp(protectedRe.source, `g`);
+  while ((pm = re.exec(text)) !== null) {
+    ranges.push([pm.index, pm.index + pm[0].length]);
   }
-  return segments.map((s) => s.text).join(``);
+  const inProtected = (i: number): boolean =>
+    ranges.some(([s, e]) => i >= s && i < e);
+
+  const literal = display.replace(/[.*+?^${}()|[\]\\]/g, `\\$&`);
+  const matchRe = new RegExp(literal, `g`);
+  let out = ``;
+  let last = 0;
+  let mm: RegExpExecArray | null;
+  while ((mm = matchRe.exec(text)) !== null) {
+    if (inProtected(mm.index)) continue;
+    out += text.slice(last, mm.index);
+    out += `{@link ${name} | ${display}}`;
+    last = mm.index + mm[0].length;
+  }
+  out += text.slice(last);
+  return out;
 }
 
 // ─── URL placeholder preservation ──────────────────────────────────────────
@@ -396,7 +409,10 @@ function preserveUrlPlaceholders(oldBlock: string, newBody: string): string {
     /:([a-zA-Z_][a-zA-Z0-9_]*)/g,
     () => `:${oldNames[i++]}`
   );
-  return newBody.replace(newLine[0], newLine[0].replace(newPath, rewrittenPath));
+  return newBody.replace(
+    newLine[0],
+    newLine[0].replace(newPath, rewrittenPath)
+  );
 }
 
 // ─── curated-directive preservation ────────────────────────────────────────
@@ -457,8 +473,9 @@ function matchEndpoint(
   const byTitle = candidates.find((ep) => ep.name === title);
   if (!byTitle) return null;
 
-  const methodPathMatch =
-    /\*\s+\*\*([A-Z]+)\*\*\s+`([^`]+)`/.exec(oldBlockText);
+  const methodPathMatch = /\*\s+\*\*([A-Z]+)\*\*\s+`([^`]+)`/.exec(
+    oldBlockText
+  );
   if (methodPathMatch) {
     const [, method, oldPath] = methodPathMatch;
     if (
