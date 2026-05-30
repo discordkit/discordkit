@@ -21,15 +21,6 @@ export const getGuildRoleMemberCountsSchema = v.object({
  *   "697138785317814292": 67
  * }
  * ```
- *
- * @example
- * ```json
- * {
- *   "613425648685547541": 1337,
- *   "1409696176629878905": 2,
- *   "697138785317814292": 67
- * }
- * ```
  */
 export const getGuildRoleMemberCounts: Fetcher<
   typeof getGuildRoleMemberCountsSchema,

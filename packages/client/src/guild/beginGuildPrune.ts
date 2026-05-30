@@ -10,7 +10,7 @@ export const beginGuildPruneSchema = v.object({
     computePruneCount: v.boolean(),
     /** role(s) to include */
     includeRoles: v.array(snowflake),
-    /** @deprecated reason for the prune */
+    /** @deprecated Use the `X-Audit-Log-Reason` header instead. Reason for the prune. */
     reason: v.exactOptional(v.pipe(v.string(), v.nonEmpty()))
   })
 });

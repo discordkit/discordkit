@@ -51,7 +51,7 @@ export const applicationCommandSchema = v.intersect([
      * @deprecated Discord recommends `contexts` instead.
      */
     dmPermission: v.exactOptional(v.boolean()),
-    /** Not recommended for use as field will soon be deprecated. Indicates whether the command is enabled by default when the app is added to a guild, defaults to true */
+    /** @deprecated Indicates whether the command is enabled by default when the app is added to a guild, defaults to true. Not recommended for use; field will be removed in a future release. */
     defaultPermission: v.exactOptional(v.boolean()),
     /** Indicates whether the command is age-restricted, defaults to false */
     nsfw: v.exactOptional(v.boolean()),

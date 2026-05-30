@@ -103,7 +103,7 @@ export const messageSchema = v.object({
   interactionMetadata: v.exactOptional(
     applicationCommandInteractionMetadataSchea
   ),
-  /** **Deprecated in favor of `interaction_metadata`**; sent if the message is a response to an interaction */
+  /** @deprecated Use `interactionMetadata` instead; sent if the message is a response to an interaction */
   interaction: v.exactOptional(messageInteractionSchema),
   /** the thread that was started from this message, includes {@link ThreadMember | thread member object} */
   thread: v.exactOptional<v.GenericSchema<Channel>>(channelSchema),
@@ -111,7 +111,7 @@ export const messageSchema = v.object({
   components: v.exactOptional(v.array(messageComponentSchema)),
   /** sent if the message contains stickers */
   stickerItems: v.exactOptional(v.array(stickerSchema)),
-  /** @deprecated the stickers sent with the message */
+  /** @deprecated Use `stickerItems` instead. The stickers sent with the message. */
   stickers: v.exactOptional(v.array(stickerSchema)),
   /** A generally increasing integer (there may be gaps or duplicates) that represents the approximate position of the message in a thread, it can be used to estimate the relative position of the message in a thread in company with totalMessageSent on parent thread */
   position: v.exactOptional(boundedInteger()),
