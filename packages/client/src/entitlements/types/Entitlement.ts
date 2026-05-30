@@ -2,6 +2,9 @@ import * as v from "valibot";
 import { snowflake, timestamp } from "@discordkit/core";
 import { entitlementTypeSchema } from "./EntitlementType.js";
 
+/**
+ * ### [Entitlement](https://discord.com/developers/docs/resources/entitlement#entitlement-object)
+ */
 export const entitlementSchema = v.object({
   /** ID of the entitlement */
   id: snowflake,

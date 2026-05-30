@@ -2,6 +2,9 @@
 
 import * as v from "valibot";
 
+/**
+ * ### [Voice Region](https://discord.com/developers/docs/resources/voice#voice-region-object)
+ */
 export const voiceRegionSchema = v.object({
   /** unique ID for the region */
   id: v.string(),

@@ -3,6 +3,9 @@ import { boundedString } from "@discordkit/core";
 import { applicationRoleConnectionMetadataTypeSchema } from "./ApplicationRoleConnectionMetadataType.js";
 import { localesSchema } from "../../application/types/Locales.js";
 
+/**
+ * ### [Application Role Connection Metadata](https://discord.com/developers/docs/resources/application-role-connection-metadata#application-role-connection-metadata-object)
+ */
 export const applicationRoleConnectionMetadataSchema = v.object({
   /** type of metadata value */
   type: applicationRoleConnectionMetadataTypeSchema,

@@ -4,6 +4,8 @@ import { pollMediaSchema } from "./PollMedia.js";
 import { pollLayoutTypeSchema } from "./PollLayoutType.js";
 
 /**
+ * ### [Poll Create Request](https://discord.com/developers/docs/resources/poll#poll-create-request-object)
+ *
  * This is the request object used when creating a poll across the different endpoints. It is similar but not exactly identical to the main poll object. The main difference is that the request has `duration` which eventually becomes `expiry`.
  */
 export const pollCreateRequestSchema = v.object({

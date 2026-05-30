@@ -72,11 +72,25 @@ const DOCS_BASE_URL = `https://discord.com/developers/docs`;
  */
 const FOLDER_PREFIX: Record<string, string> = {
   "auto-moderation": "Auto",
-  event: "Guild"
+  event: "Guild",
+  // stage/ types are Stage / StagePrivacyLevel; docs say
+  // "Stage Instance Object" / "Stage Instance Privacy Level".
+  stage: "",
+};
+
+/**
+ * Words appended to a stripped identifier before searching. Example:
+ * for stage/, our `Stage` becomes `Stage Instance`. Different from
+ * FOLDER_PREFIX (a leading word) — this is a trailing word inserted
+ * after the FIRST identifier component.
+ */
+const FOLDER_INFIX: Record<string, string> = {
+  stage: "Instance"
 };
 
 const FOLDER_STRIP_IDENT: Record<string, string[]> = {
-  "auto-moderation": ["Moderation"]
+  "auto-moderation": ["Moderation"],
+  stage: ["Stage"]
 };
 
 /**
@@ -218,10 +232,13 @@ function main(): void {
     // emit a JSDoc block only on the FIRST occurrence (the enum, which
     // sits closer to the top of the file) — both refer to the same doc
     // anchor, so a second block on the schema is redundant noise.
+    // Compare case-insensitively because the codebase mixes acronym
+    // styles between the enum (`SKUFlags`) and the schema (`skuFlags`).
     const seenDisplayNames = new Set<string>();
     const exports = allExports.filter((e) => {
-      if (seenDisplayNames.has(e.displayName)) return false;
-      seenDisplayNames.add(e.displayName);
+      const key = e.displayName.toLowerCase().replace(/\s+/g, ` `);
+      if (seenDisplayNames.has(key)) return false;
+      seenDisplayNames.add(key);
       return true;
     });
     let updated = source;
@@ -237,20 +254,49 @@ function main(): void {
       // an enum (matches an enum). For `export enum`, only the enum
       // list is meaningful, but we still consult both so that custom
       // singular/plural fallbacks below get a chance.
+      // Pull any existing block comment's description prose so we can
+      // preserve it as a fallback when the docs side has empty
+      // description (common for objects whose docs page only renders a
+      // bare structure table).
+      const existingDescription = extractExistingBlockDescription(
+        updated,
+        exp
+      );
+
       const objMatch = findObjectByName(objects, docName, docPages);
       if (objMatch) {
         matchedPage = objMatch.page;
-        body = renderObjectJsDoc(objMatch.object, {
+        // Prefer the doc's display name when it preserves an acronym
+        // casing that the identifier-derived name would lose
+        // (`skuSchema` → "Sku" via the camelCase splitter, but docs
+        // heading is "SKU Object"). Trust the docs casing whenever it
+        // contains any UPPERCASE acronym we'd otherwise mangle.
+        const displayName =
+          preferDocsDisplayName(stripSuffixes(objMatch.object.name)) ??
+          exp.displayName;
+        // Run the same docs→codebase transforms on the block description
+        // (snake_case → camelCase inside backticks, internal markdown
+        // links flattened) that field comments already get.
+        const transformedObject = {
+          ...objMatch.object,
+          description: transformDocDescription(objMatch.object.description)
+        };
+        body = renderObjectJsDoc(transformedObject, {
           pageUrl: pageUrlFor(objMatch.page),
-          displayName: exp.displayName
+          displayName,
+          existingDescription
         });
       } else {
         const enumMatch = findEnumByName(enums, docName, docPages);
         if (enumMatch) {
           matchedPage = enumMatch.page;
+          const displayName =
+            preferDocsDisplayName(stripSuffixes(enumMatch.enum.name)) ??
+            exp.displayName;
           body = renderEnumJsDoc(enumMatch.enum, {
             pageUrl: pageUrlFor(enumMatch.page),
-            displayName: exp.displayName
+            displayName,
+            existingDescription
           });
         }
       }
@@ -526,6 +572,18 @@ function nameVariants(name: string): string[] {
       seeds.add(`${prefix} ${s}`);
     }
   }
+  const infix = FOLDER_INFIX[folder];
+  if (infix) {
+    // Insert the infix word after the FIRST word of each seed.
+    for (const s of [...seeds]) {
+      const parts = s.split(/\s+/);
+      if (parts.length === 1) {
+        seeds.add(`${parts[0]} ${infix}`);
+      } else {
+        seeds.add([parts[0], infix, ...parts.slice(1)].join(` `));
+      }
+    }
+  }
   // "Meta" ↔ "Metadata" tolerance.
   for (const s of [...seeds]) {
     if (/Meta$/.test(s)) seeds.add(s.replace(/Meta$/, `Metadata`));
@@ -568,6 +626,18 @@ function stripSuffixes(name: string): string {
   return name.replace(/\s+(Object|Structure|Enum)\s*$/i, ``).trim();
 }
 
+/**
+ * Return the supplied docs-derived name if it carries an acronym
+ * (any 2+-consecutive-uppercase-letter sequence) that the codebase
+ * identifier would have lost in PascalCase splitting (`skuSchema` →
+ * "Sku"). Otherwise return null so the caller falls back to the
+ * identifier-derived display name.
+ */
+function preferDocsDisplayName(docsName: string): string | null {
+  if (/[A-Z]{2,}/.test(docsName)) return docsName;
+  return null;
+}
+
 // ─── splice ────────────────────────────────────────────────────────────────
 
 function spliceSchemaBlock(
@@ -594,6 +664,69 @@ function spliceSchemaBlock(
   const before = lines.slice(0, insertAt);
   const after = lines.slice(insertAt);
   return [...before, ...newLines, ...after].join(nl);
+}
+
+/**
+ * Pull the prose description out of the existing block JSDoc above an
+ * export, if any. Skips an opening "### [Title](...)" heading and any
+ * blank separator. Returns "" if there's no usable description.
+ */
+function extractExistingBlockDescription(
+  source: string,
+  exp: SchemaExport
+): string {
+  if (exp.blockLineCount === 0) return ``;
+  const lines = source.split(/\r?\n/);
+  const blockLines = lines.slice(
+    exp.blockStartLine,
+    exp.blockStartLine + exp.blockLineCount
+  );
+  // Preserve paragraph breaks: a line of just ` *` is a paragraph separator.
+  const stripped = blockLines.map((line) => {
+    // Single-line block /** … */
+    const single = /\/\*\*\s*(.*?)\s*\*\//.exec(line);
+    if (single) return single[1];
+    // Opening /** or closing */
+    if (/^\s*\/\*\*\s*$/.test(line)) return null;
+    if (/^\s*\*\/\s*$/.test(line)) return null;
+    // Interior ` * text` or ` *` (blank)
+    const interior = /^\s*\*\s?(.*?)\s*$/.exec(line);
+    if (interior) return interior[1];
+    return line.trim();
+  });
+  const paragraphs: string[] = [];
+  let current: string[] = [];
+  let inList = false;
+  const flushCurrent = (): void => {
+    if (current.length) {
+      // List blocks are joined with `\n` so each item renders on its
+      // own JSDoc line; prose paragraphs are joined with spaces.
+      const joiner = inList ? `\n` : ` `;
+      paragraphs.push(current.join(joiner));
+      current = [];
+      inList = false;
+    }
+  };
+  for (const piece of stripped) {
+    if (piece === null) continue;
+    if (piece === ``) {
+      flushCurrent();
+      continue;
+    }
+    const isListItem = /^\s*[-*]\s+/.test(piece);
+    if (isListItem && !inList) {
+      flushCurrent();
+      inList = true;
+    } else if (!isListItem && inList) {
+      flushCurrent();
+    }
+    current.push(piece);
+  }
+  flushCurrent();
+  const joined = paragraphs.join(`\n\n`).trim();
+  if (!joined) return ``;
+  // Strip a leading "### [Title](url)" heading if present.
+  return joined.replace(/^###\s+\[[^\]]+\]\([^)]+\)\s*/, ``).trim();
 }
 
 // ─── field-level comment refresh ───────────────────────────────────────────

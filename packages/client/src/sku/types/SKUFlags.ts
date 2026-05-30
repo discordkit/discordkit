@@ -3,6 +3,8 @@ import * as v from "valibot";
 import { bitfield } from "@discordkit/core";
 
 /**
+ * ### [SKU Flags](https://discord.com/developers/docs/resources/sku#sku-object-sku-flags)
+ *
  * For subscriptions, there are two types of access levels you can offer to users:
  *
  * - **Guild Subscriptions**: A subscription purchased by a user and applied to a single server. Everyone in that server gets your premium benefits.

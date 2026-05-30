@@ -9,6 +9,11 @@ import { inviteStageInstanceSchema } from "./InviteStageInstance.js";
 import { inviteTargetSchema } from "./InviteTarget.js";
 import { inviteTypeSchema } from "./InviteType.js";
 
+/**
+ * ### [Invite](https://discord.com/developers/docs/resources/invite#invite-object)
+ *
+ * Represents a code that when used, adds a user to a guild or group DM channel.
+ */
 export const inviteSchema = v.object({
   /** the type of invite */
   type: inviteTypeSchema,
@@ -28,15 +33,15 @@ export const inviteSchema = v.object({
   targetApplication: v.exactOptional(
     v.lazy(() => v.partial(applicationSchema))
   ),
-  /** approximate count of online members, returned from the `GET /invites/<code>` endpoint when `with_counts` is true */
+  /** approximate count of online members, returned from the `GET /invites/<code>` endpoint when `withCounts` is `true` */
   approximatePresenceCount: v.exactOptional(boundedInteger()),
-  /** approximate count of total members, returned from the `GET /invites/<code>` endpoint when `with_counts` is true */
+  /** approximate count of total members, returned from the `GET /invites/<code>` endpoint when `withCounts` is `true` */
   approximateMemberCount: v.exactOptional(boundedInteger()),
-  /** the expiration date of this invite, returned from the `GET /invites/<code>` endpoint when `with_expiration` is true */
+  /** the expiration date of this invite, returned from the `GET /invites/<code>` endpoint when `withExpiration` is `true` */
   expiresAt: v.nullish(timestamp),
   /** stage instance data if there is a public Stage instance in the Stage channel this invite is for (deprecated) */
   stageInstance: v.exactOptional(inviteStageInstanceSchema),
-  /** guild scheduled event data, only included if `guild_scheduled_event_id` contains a valid guild scheduled event id */
+  /** guild scheduled event data, only included if `guildScheduledEventId` contains a valid guild scheduled event id */
   guildScheduledEvent: v.exactOptional(scheduledEventSchema)
 });
 

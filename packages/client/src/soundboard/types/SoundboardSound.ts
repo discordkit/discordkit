@@ -2,6 +2,9 @@ import * as v from "valibot";
 import { snowflake, boundedString } from "@discordkit/core";
 import { userSchema } from "../../user/types/User.js";
 
+/**
+ * ### [Soundboard Sound](https://discord.com/developers/docs/resources/soundboard#soundboard-sound-object)
+ */
 export const soundboardSoundSchema = v.object({
   /** the name of this sound */
   name: boundedString(),

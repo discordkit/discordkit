@@ -3,6 +3,8 @@ import { snowflake, timestamp } from "@discordkit/core";
 import { subscriptionStatusSchema } from "./SubscriptionStatuses.js";
 
 /**
+ * ### [Subscription](https://discord.com/developers/docs/resources/subscription#subscription-object)
+ *
  * The start of a subscription is determined by its ID. When the subscription renews, its current period is updated.
  *
  * If the user cancels the subscription, the subscription will enter the `ENDING` status and the `canceledAt` timestamp will reflect the time of the cancellation.

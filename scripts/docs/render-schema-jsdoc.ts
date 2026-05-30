@@ -35,6 +35,13 @@ export interface SchemaRenderOptions {
    * Discord's headings carry).
    */
   displayName?: string;
+  /**
+   * Description text already present on the schema before this refresh.
+   * Used as a fallback when the parsed docs description is empty so we
+   * don't clobber a hand-curated explanation just because the docs
+   * structure-only entry has no prose.
+   */
+  existingDescription?: string;
 }
 
 /**
@@ -51,10 +58,29 @@ export function renderObjectJsDoc(
     : opts.pageUrl;
   const lines: string[] = [];
   lines.push(`### [${name}](${url})`);
-  const description = object.description.trim();
+  // Decide what description to keep, prioritized as:
+  //   1. existingDescription if it's a superset of the docs description
+  //      (i.e. ours adds extra paragraphs of useful context)
+  //   2. docs description otherwise
+  //   3. existing description if docs is empty
+  const docsDesc = object.description.trim();
+  const existingDesc = (opts.existingDescription ?? ``).trim();
+  let description = docsDesc;
+  if (existingDesc) {
+    const normExisting = existingDesc.toLowerCase().replace(/\s+/g, ` `);
+    const normDocs = docsDesc.toLowerCase().replace(/\s+/g, ` `);
+    if (!docsDesc) description = existingDesc;
+    else if (normExisting.includes(normDocs)) description = existingDesc;
+  }
   if (description) {
-    lines.push(``);
-    lines.push(description);
+    // Preserve paragraph structure: "\n\n" separates paragraphs.
+    // Within a paragraph, "\n" preserves intra-block line breaks
+    // (e.g. list items).
+    const paragraphs = description.split(/\n\n+/);
+    for (const para of paragraphs) {
+      lines.push(``);
+      for (const sub of para.split(`\n`)) lines.push(sub);
+    }
   }
   return lines.join(`\n`);
 }
@@ -62,7 +88,9 @@ export function renderObjectJsDoc(
 /**
  * Render a `DocEnum` to a JSDoc body. Enums get the same heading shape
  * as objects; the per-member descriptions live on individual enum keys
- * and aren't reshaped here.
+ * and aren't reshaped here. Like objects, we preserve any existing
+ * block description as a fallback (docs typically don't have a prose
+ * description for enums).
  */
 export function renderEnumJsDoc(
   enumDef: DocEnum,
@@ -72,7 +100,16 @@ export function renderEnumJsDoc(
   const url = enumDef.anchor
     ? `${opts.pageUrl}#${enumDef.anchor}`
     : opts.pageUrl;
-  return `### [${name}](${url})`;
+  const lines: string[] = [`### [${name}](${url})`];
+  const existingDesc = (opts.existingDescription ?? ``).trim();
+  if (existingDesc) {
+    const paragraphs = existingDesc.split(/\n\n+/);
+    for (const para of paragraphs) {
+      lines.push(``);
+      for (const sub of para.split(`\n`)) lines.push(sub);
+    }
+  }
+  return lines.join(`\n`);
 }
 
 /**

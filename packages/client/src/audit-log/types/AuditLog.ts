@@ -8,6 +8,9 @@ import { webhookSchema } from "../../webhook/types/Webhook.js";
 import { applicationCommandSchema } from "../../application-commands/types/ApplicationCommand.js";
 import { auditLogEntrySchema } from "./AuditLogEntry.js";
 
+/**
+ * ### [Audit Log](https://discord.com/developers/docs/resources/audit-log#audit-log-object)
+ */
 export const auditLogSchema = v.object({
   /** List of application commands referenced in the audit log */
   applicationCommands: v.array(applicationCommandSchema),

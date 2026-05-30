@@ -19,6 +19,9 @@ export const ApplicationRoleConnectionMetadataType = {
   BOOLEAN_NOT_EQUAL: 8
 } as const;
 
+/**
+ * ### [Application Role Connection Metadata Type](https://discord.com/developers/docs/resources/application-role-connection-metadata#application-role-connection-metadata-object)
+ */
 export const applicationRoleConnectionMetadataTypeSchema = v.enum_(
   ApplicationRoleConnectionMetadataType
 );

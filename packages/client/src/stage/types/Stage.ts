@@ -2,6 +2,9 @@ import * as v from "valibot";
 import { snowflake, boundedString } from "@discordkit/core";
 import { stagePrivacyLevelSchema } from "./StagePrivacyLevel.js";
 
+/**
+ * ### [Stage](https://discord.com/developers/docs/resources/stage-instance#stage-instance-object)
+ */
 export const stageSchema = v.object({
   /** The id of this Stage instance */
   id: snowflake,

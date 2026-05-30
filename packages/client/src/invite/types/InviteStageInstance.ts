@@ -2,6 +2,9 @@ import * as v from "valibot";
 import { boundedInteger, boundedString } from "@discordkit/core";
 import { memberSchema } from "../../guild/types/Member.js";
 
+/**
+ * ### [Invite Stage Instance](https://discord.com/developers/docs/resources/invite#invite-stage-instance-object)
+ */
 export const inviteStageInstanceSchema = v.object({
   /** the members speaking in the Stage */
   members: v.array(v.partial(memberSchema)),

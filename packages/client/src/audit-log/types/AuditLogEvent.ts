@@ -1,5 +1,8 @@
 import * as v from "valibot";
 
+/**
+ * ### [Audit Log Event](https://discord.com/developers/docs/resources/audit-log#audit-log-entry-object-audit-log-events)
+ */
 export enum AuditLogEvent {
   /** Server settings were updated */
   GUILD_UPDATE = 1,

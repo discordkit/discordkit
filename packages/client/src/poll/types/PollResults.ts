@@ -2,6 +2,8 @@ import * as v from "valibot";
 import { pollAnswerCountSchema } from "./PollAnswerCount.js";
 
 /**
+ * ### [Poll Results](https://discord.com/developers/docs/resources/poll#poll-results-object)
+ *
  * In a nutshell, this contains the number of votes for each answer.
  *
  * The `results` field may be not present in certain responses where, as an implementation detail, we do not fetch the poll results in our backend. This should be treated as "unknown results", as opposed to "no results". You can keep using the results if you have previously received them through other means.

@@ -6,6 +6,8 @@ import { pollLayoutTypeSchema } from "./PollLayoutType.js";
 import { pollResultsSchema } from "./PollResults.js";
 
 /**
+ * ### [Poll](https://discord.com/developers/docs/resources/poll#poll-object)
+ *
  * The poll object has a lot of levels and nested structures. It was also designed to support future extensibility, so some fields may appear to be more complex than necessary.
  *
  * `expiry` is marked as nullable to support non-expiring polls in the future, but all polls have an expiry currently.

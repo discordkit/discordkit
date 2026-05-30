@@ -7,4 +7,7 @@ export const StagePrivacyLevel = {
   GUILD_ONLY: 2
 } as const;
 
+/**
+ * ### [Stage Privacy Level](https://discord.com/developers/docs/resources/stage-instance#stage-instance-object-privacy-level)
+ */
 export const stagePrivacyLevelSchema = v.enum_(StagePrivacyLevel);
