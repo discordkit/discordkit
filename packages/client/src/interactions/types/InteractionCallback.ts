@@ -1,6 +1,6 @@
 import * as v from "valibot";
 import { boundedString, snowflake } from "@discordkit/core";
-import { interactionTypeSchema } from "./InteractionType.js";
+import { interactionCallbackTypeSchema } from "./InteractionCallbackType.js";
 
 /**
  * ### [Interaction Callback](https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-callback)
@@ -10,8 +10,8 @@ import { interactionTypeSchema } from "./InteractionType.js";
 export const interactionCallbackSchema = v.object({
   /** ID of the interaction */
   id: snowflake,
-  /** Interaction type */
-  type: interactionTypeSchema,
+  /** Callback type */
+  type: interactionCallbackTypeSchema,
   /** Instance ID of the Activity if one was launched or joined */
   activityInstanceId: v.exactOptional(boundedString()),
   /** ID of the message that was created by the interaction */
