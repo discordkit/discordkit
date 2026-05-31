@@ -5,6 +5,7 @@ import {
   boundedInteger,
   boundedString,
   partial,
+  schema,
   snowflake,
   url
 } from "@discordkit/core";
@@ -17,10 +18,7 @@ import { installParamsSchema } from "./InstallParams.js";
 import { ApplicationIntegrationTypes } from "./ApplicationIntegrationTypes.js";
 import { applicationIntegrationTypeConfigurationSchema } from "./ApplicationIntegrationTypeConfiguration.js";
 
-/**
- * ### [Application](https://discord.com/developers/docs/resources/application#application-object)
- */
-export const applicationSchema = v.object({
+const _applicationSchema = v.object({
   /** ID of the app */
   id: snowflake,
   /** Name of the app */
@@ -50,7 +48,7 @@ export const applicationSchema = v.object({
   /** Guild associated with the app. For example, a developer support server. */
   guildId: v.exactOptional(v.string()),
   /** Partial object of the associated guild */
-  guild: v.exactOptional(v.partial(guildSchema)),
+  guild: v.exactOptional(partial(guildSchema)),
   /** If this app is a game sold on Discord, this field will be the id of the "Game SKU" that is created, if exists */
   primarySkuId: v.exactOptional(v.string()),
   /** If this app is a game sold on Discord, this field will be the URL slug that links to the store page */
@@ -98,4 +96,9 @@ export const applicationSchema = v.object({
   customInstallUrl: v.exactOptional(url)
 });
 
-export interface Application extends v.InferOutput<typeof applicationSchema> {}
+export interface Application extends v.InferOutput<typeof _applicationSchema> {}
+
+/**
+ * ### [Application](https://discord.com/developers/docs/resources/application#application-object)
+ */
+export const applicationSchema = schema<Application>(_applicationSchema);

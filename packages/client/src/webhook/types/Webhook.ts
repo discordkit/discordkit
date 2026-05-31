@@ -1,5 +1,11 @@
 import * as v from "valibot";
-import { schema, snowflake, boundedString, url } from "@discordkit/core";
+import {
+  partial,
+  schema,
+  snowflake,
+  boundedString,
+  url
+} from "@discordkit/core";
 import { partialChannelSchema } from "../../channel/types/Channel.js";
 import { guildSchema } from "../../guild/types/Guild.js";
 import { userSchema } from "../../user/types/User.js";
@@ -25,7 +31,7 @@ const _webhookSchema = v.object({
   /** the bot/OAuth2 application that created this webhook */
   applicationId: v.nullable(snowflake),
   /** the guild of the channel that this webhook is following (returned for Channel Follower Webhooks) */
-  sourceGuild: v.exactOptional(v.partial(guildSchema)),
+  sourceGuild: v.exactOptional(partial(guildSchema)),
   /** the channel that this webhook is following (returned for Channel Follower Webhooks) */
   sourceChannel: v.exactOptional(partialChannelSchema),
   /** the url used for executing the webhook (returned by the webhooks OAuth2 flow) */

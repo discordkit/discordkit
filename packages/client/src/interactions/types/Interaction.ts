@@ -3,7 +3,8 @@ import {
   snowflake,
   asDigits,
   boundedString,
-  boundedInteger
+  boundedInteger,
+  partial
 } from "@discordkit/core";
 import { memberSchema } from "../../guild/types/Member.js";
 import type { Locales } from "../../application/types/Locales.js";
@@ -34,7 +35,7 @@ export const interactionSchema = v.object({
   /** Interaction data payload */
   data: v.exactOptional(applicationCommandDataSchema),
   /** Guild that the interaction was sent from */
-  guild: v.exactOptional(v.partial(guildSchema)),
+  guild: v.exactOptional(partial(guildSchema)),
   /** Guild that the interaction was sent from */
   guildId: v.exactOptional(snowflake),
   /** Channel that the interaction was sent from */

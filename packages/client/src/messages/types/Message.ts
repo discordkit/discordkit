@@ -1,6 +1,8 @@
 import * as v from "valibot";
 import {
   asInteger,
+  partial,
+  schema,
   snowflake,
   timestamp,
   boundedInteger
@@ -33,12 +35,7 @@ import {
 import { applicationCommandInteractionMetadataSchea } from "./ApplicationCommandInteractionMetadata.js";
 import { type MessageCall, messageCallSchema } from "./MessageCall.js";
 
-/**
- * ### [Message](https://discord.com/developers/docs/resources/message#message-object)
- *
- * Represents a message sent in a channel within Discord.
- */
-export const messageSchema = v.object({
+const _messageSchema = v.object({
   /** id of the message */
   id: snowflake,
   /** id of the channel the message was sent in */
@@ -84,9 +81,7 @@ export const messageSchema = v.object({
   /** sent with Rich Presence-related chat embeds */
   activity: v.exactOptional(messageActivitySchema),
   /** sent with Rich Presence-related chat embeds */
-  application: v.exactOptional<v.GenericSchema<Partial<Application>>>(
-    v.lazy(() => v.partial(applicationSchema))
-  ),
+  application: v.exactOptional(v.lazy(() => partial(applicationSchema))),
   /** if the message is an Interaction or application-owned webhook, this is the id of the application */
   applicationId: v.exactOptional(snowflake),
   /** message flags combined as a bitfield */
@@ -125,4 +120,11 @@ export const messageSchema = v.object({
   call: v.exactOptional<v.GenericSchema<MessageCall>>(messageCallSchema)
 });
 
-export interface Message extends v.InferOutput<typeof messageSchema> {}
+export interface Message extends v.InferOutput<typeof _messageSchema> {}
+
+/**
+ * ### [Message](https://discord.com/developers/docs/resources/message#message-object)
+ *
+ * Represents a message sent in a channel within Discord.
+ */
+export const messageSchema = schema<Message>(_messageSchema);

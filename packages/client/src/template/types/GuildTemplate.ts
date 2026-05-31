@@ -1,5 +1,6 @@
 import * as v from "valibot";
 import {
+  partial,
   snowflake,
   timestamp,
   boundedInteger,
@@ -34,7 +35,7 @@ export const guildTemplateSchema = v.object({
   /** the ID of the guild this template is based on */
   sourceGuildId: snowflake,
   /** the guild snapshot this template contains; placeholder IDs are given as integers */
-  serializedSourceGuild: v.partial(guildSchema),
+  serializedSourceGuild: partial(guildSchema),
   /** whether the template has unsynced changes */
   isDirty: v.nullable(v.boolean())
 });

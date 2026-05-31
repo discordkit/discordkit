@@ -1,5 +1,6 @@
 import * as v from "valibot";
 import {
+  schema,
   snowflake,
   asDigits,
   asInteger,
@@ -22,10 +23,7 @@ import { systemChannelFlag } from "./SystemChannelFlags.js";
 import { permissionFlag } from "../../permissions/Permissions.js";
 import { incidentsDataSchema } from "./IncidentsData.js";
 
-/**
- * ### [Guild](https://discord.com/developers/docs/resources/guild#guild-object)
- */
-export const guildSchema = v.object({
+const _guildSchema = v.object({
   /** guild id */
   id: snowflake,
   /** guild name (2-100 characters, excluding trailing and leading whitespace) */
@@ -116,4 +114,9 @@ export const guildSchema = v.object({
   incidentsData: v.exactOptional(incidentsDataSchema)
 });
 
-export interface Guild extends v.InferOutput<typeof guildSchema> {}
+export interface Guild extends v.InferOutput<typeof _guildSchema> {}
+
+/**
+ * ### [Guild](https://discord.com/developers/docs/resources/guild#guild-object)
+ */
+export const guildSchema = schema<Guild>(_guildSchema);
