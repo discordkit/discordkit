@@ -3,10 +3,11 @@ import {
   snowflake,
   boundedArray,
   boundedInteger,
-  boundedString
+  boundedString,
+  partial
 } from "@discordkit/core";
 import { guildVoiceChannelSchema } from "../../channel/types/Channel.js";
-import { type User, userSchema } from "../../user/types/User.js";
+import { userSchema } from "../../user/types/User.js";
 
 /**
  * ### [Guild Widget](https://discord.com/developers/docs/resources/guild#guild-widget-object)
@@ -21,9 +22,7 @@ export const guildWidgetSchema = v.object({
   /** voice and stage channels which are accessible by @everyone */
   channels: v.array(guildVoiceChannelSchema),
   /** special widget user objects that includes users presence (Limit 100) */
-  members: boundedArray(v.partial(userSchema), { max: 100 }) as v.GenericSchema<
-    Array<Partial<User>>
-  >,
+  members: boundedArray(partial(userSchema), { max: 100 }),
   /** number of online members in this guild */
   presenceCount: boundedInteger()
 });

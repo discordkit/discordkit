@@ -1,5 +1,6 @@
 import * as v from "valibot";
 import {
+  schema,
   snowflake,
   asDigits,
   asInteger,
@@ -11,12 +12,7 @@ import { permissionFlag } from "./Permissions.js";
 import { roleFlag } from "./RoleFlags.js";
 import { roleColorsSchema } from "./RoleColors.js";
 
-/**
- * ### [Role](https://discord.com/developers/docs/topics/permissions#role-object)
- *
- * Roles represent a set of permissions attached to a group of users. Roles have names, colors, and can be "pinned" to the side bar, causing their members to be listed separately. Roles can have separate permission profiles for the global context (guild) and channel context. The `@everyone` role has the same ID as the guild it belongs to.
- */
-export const roleSchema = v.object({
+const _roleSchema = v.object({
   /** role id */
   id: snowflake,
   /** role name */
@@ -50,4 +46,11 @@ export const roleSchema = v.object({
   flags: asInteger(roleFlag)
 });
 
-export interface Role extends v.InferOutput<typeof roleSchema> {}
+export interface Role extends v.InferOutput<typeof _roleSchema> {}
+
+/**
+ * ### [Role](https://discord.com/developers/docs/topics/permissions#role-object)
+ *
+ * Roles represent a set of permissions attached to a group of users. Roles have names, colors, and can be "pinned" to the side bar, causing their members to be listed separately. Roles can have separate permission profiles for the global context (guild) and channel context. The `@everyone` role has the same ID as the guild it belongs to.
+ */
+export const roleSchema = schema<Role>(_roleSchema);

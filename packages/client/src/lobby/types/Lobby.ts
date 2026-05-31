@@ -1,6 +1,6 @@
 import * as v from "valibot";
 import { snowflake } from "@discordkit/core";
-import { guildTextChannelSchema } from "../../channel/types/Channel.js";
+import { guildTextChannelEntries } from "../../channel/types/Channel.js";
 import { ChannelType } from "../../channel/types/ChannelType.js";
 import { lobbyMemberSchema } from "./LobbyMember.js";
 
@@ -23,7 +23,7 @@ export const lobbySchema = v.object({
   /** the guild channel linked to the lobby */
   linkedChannel: v.exactOptional(
     v.object({
-      ...guildTextChannelSchema.entries,
+      ...guildTextChannelEntries,
       type: v.literal(ChannelType.GUILD_TEXT),
       nsfw: v.literal(false)
     })

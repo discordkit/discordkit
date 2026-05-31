@@ -7,7 +7,7 @@ import {
   multipart,
   fileUpload
 } from "@discordkit/core";
-import { threadChannelSchema } from "./types/Channel.js";
+import { threadChannelEntries } from "./types/Channel.js";
 import { autoArchiveDurationSchema } from "./types/AutoArchiveDuration.js";
 import { embedSchema } from "../messages/types/Embed.js";
 import { allowedMentionSchema } from "../messages/types/AllowedMention.js";
@@ -54,7 +54,7 @@ export const startThreadInForumOrMediaChannelSchema = v.object({
 });
 
 export const threadInForumOrMediaChannelResponseSchema = v.object({
-  ...threadChannelSchema.entries,
+  ...threadChannelEntries,
   message: messageSchema
 });
 

@@ -4,10 +4,10 @@ import {
   boundedArray,
   boundedInteger,
   boundedString,
+  partial,
   snowflake,
   url
 } from "@discordkit/core";
-import type { User } from "../../user/types/User.js";
 import { userSchema } from "../../user/types/User.js";
 import { teamSchema } from "../../teams/types/Team.js";
 import { guildSchema } from "../../guild/types/Guild.js";
@@ -36,15 +36,13 @@ export const applicationSchema = v.object({
   /** When `true`, the app's bot will only join upon completion of the full OAuth2 code grant flow */
   botRequireCodeGrant: v.boolean(),
   /** Partial user object for the bot user associated with the app */
-  bot: v.exactOptional(v.partial(userSchema) as v.GenericSchema<Partial<User>>),
+  bot: v.exactOptional(partial(userSchema)),
   /** URL of the app's Terms of Service */
   termsOfServiceUrl: v.exactOptional(url),
   /** URL of the app's Privacy Policy */
   privacyPolicyUrl: v.exactOptional(url),
   /** Partial user object for the owner of the app */
-  owner: v.exactOptional(
-    v.partial(userSchema) as v.GenericSchema<Partial<User>>
-  ),
+  owner: v.exactOptional(partial(userSchema)),
   /** Hex encoded key for verification in interactions and the GameSDK's GetTicket */
   verifyKey: v.string(),
   /** If the app belongs to a team, this will be a list of the members of that team */
