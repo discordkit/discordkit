@@ -2,18 +2,19 @@ import * as v from "valibot";
 import {
   asDigits,
   asInteger,
+  schema,
   snowflake,
   timestamp,
   boundedString
 } from "@discordkit/core";
-import { type User, userSchema } from "../../user/types/User.js";
+import { userSchema } from "../../user/types/User.js";
 import { guildMemberFlag } from "./GuildMemberFlags.js";
 import { permissionFlag } from "../../permissions/Permissions.js";
 import { avatarDecorationDataSchema } from "../../user/types/AvatarDecorationData.js";
 
-export const memberSchema = v.object({
+const _memberSchema = v.object({
   /** the user this guild member represents */
-  user: v.exactOptional<v.GenericSchema<User>>(userSchema),
+  user: v.exactOptional(userSchema),
   /** this user's guild nickname */
   nick: v.nullish(boundedString()),
   /** the member's guild avatar hash */
@@ -42,4 +43,6 @@ export const memberSchema = v.object({
   avatarDecorationData: v.nullish(avatarDecorationDataSchema)
 });
 
-export interface Member extends v.InferOutput<typeof memberSchema> {}
+export interface Member extends v.InferOutput<typeof _memberSchema> {}
+
+export const memberSchema = schema<Member>(_memberSchema);

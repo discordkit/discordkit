@@ -2,6 +2,7 @@ import * as v from "valibot";
 import {
   patch,
   type Fetcher,
+  partial,
   snowflake,
   boundedString,
   boundedArray,
@@ -38,7 +39,7 @@ export const editFollowupMessageSchema = v.object({
       /** the contents of the file being sent */
       files: v.array(fileUpload),
       /** attachment objects with filename and description */
-      attachments: v.array(v.partial(attachmentSchema))
+      attachments: v.array(partial(attachmentSchema))
     },
     { partial: true }
   )

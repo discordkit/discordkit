@@ -1,20 +1,18 @@
 import * as v from "valibot";
 import {
+  schema,
   snowflake,
   timestamp,
   boundedInteger,
   boundedString
 } from "@discordkit/core";
-import { type User, userSchema } from "../../user/types/User.js";
+import { userSchema } from "../../user/types/User.js";
 import { scopesSchema } from "../../application/types/Scopes.js";
 import { integrationApplicationSchema } from "./IntegrationApplication.js";
 import { integrationAccountSchema } from "./IntegrationAccount.js";
 import { integrationExpireBehaviorSchema } from "./IntegrationExpireBehavior.js";
 
-/**
- * ### [Integration](https://discord.com/developers/docs/resources/guild#integration-object)
- */
-export const integrationSchema = v.object({
+const _integrationSchema = v.object({
   /** integration id */
   id: snowflake,
   /** integration name */
@@ -34,7 +32,7 @@ export const integrationSchema = v.object({
   /** the grace period (in days) before expiring subscribers */
   expireGracePeriod: v.exactOptional(boundedInteger()),
   /** user for this integration */
-  user: v.exactOptional<v.GenericSchema<User>>(userSchema),
+  user: v.exactOptional(userSchema),
   /** integration account information */
   account: integrationAccountSchema,
   /** when this integration was last synced */
@@ -49,4 +47,9 @@ export const integrationSchema = v.object({
   scopes: v.exactOptional(v.array(scopesSchema))
 });
 
-export interface Integration extends v.InferOutput<typeof integrationSchema> {}
+export interface Integration extends v.InferOutput<typeof _integrationSchema> {}
+
+/**
+ * ### [Integration](https://discord.com/developers/docs/resources/guild#integration-object)
+ */
+export const integrationSchema = schema<Integration>(_integrationSchema);

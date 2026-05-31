@@ -3,6 +3,7 @@ import {
   post,
   buildURL,
   type Fetcher,
+  partial,
   snowflake,
   asInteger,
   boundedArray,
@@ -59,7 +60,7 @@ export const executeWebhookSchema = v.object({
       /** the contents of the file being sent */
       files: v.array(fileUpload),
       /** attachment objects with filename and description */
-      attachments: v.array(v.partial(attachmentSchema)),
+      attachments: v.array(partial(attachmentSchema)),
       /** message flags combined as a bitfield (only SUPPRESS_EMBEDS can be set) */
       flags: asInteger(messageFlag),
       /** name of thread to create (requires the webhook channel to be a forum channel) */

@@ -1,5 +1,6 @@
 import * as v from "valibot";
 import {
+  pick,
   snowflake,
   boundedInteger,
   boundedString,
@@ -24,13 +25,7 @@ export const buttonSchema = v.object({
   /** Text that appears on the button; max 80 characters */
   label: v.exactOptional(boundedString({ max: 80 })),
   /** `name`, `id`, and `animated` */
-  emoji: v.exactOptional(
-    v.object({
-      id: emojiSchema.entries.id,
-      name: emojiSchema.entries.name,
-      animated: emojiSchema.entries.animated
-    })
-  ),
+  emoji: v.exactOptional(pick(emojiSchema, [`id`, `name`, `animated`])),
   /** Developer-defined identifier for the button; 1-100 characters */
   customId: v.exactOptional(boundedString({ max: 100 })),
   /** Identifier for a purchasable SKU, only available when using premium-style buttons */

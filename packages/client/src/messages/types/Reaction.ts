@@ -1,4 +1,5 @@
 import * as v from "valibot";
+import { partial } from "@discordkit/core";
 import { emojiSchema } from "../../emoji/types/Emoji.js";
 import { reactionCountDetailsSchema } from "./ReactionCountDetails.js";
 
@@ -15,7 +16,7 @@ export const reactionSchema = v.object({
   /** Whether the current user super-reacted using this emoji */
   meBurst: v.boolean(),
   /** emoji information */
-  emoji: v.partial(emojiSchema),
+  emoji: partial(emojiSchema),
   /** HEX colors used for super reaction */
   burstColors: v.array(v.string())
 });

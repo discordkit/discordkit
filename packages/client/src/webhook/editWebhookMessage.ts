@@ -3,6 +3,7 @@ import {
   patch,
   buildURL,
   type Fetcher,
+  partial,
   snowflake,
   boundedArray,
   boundedString,
@@ -50,7 +51,7 @@ export const editWebhookMessageSchema = v.object({
       /** the contents of the file being sent */
       files: v.array(fileUpload),
       /** attachment objects with filename and description */
-      attachments: v.array(v.partial(attachmentSchema)),
+      attachments: v.array(partial(attachmentSchema)),
       /** A poll! */
       poll: pollSchema
     },

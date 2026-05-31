@@ -2,6 +2,7 @@ import * as v from "valibot";
 import {
   post,
   type Fetcher,
+  partial,
   snowflake,
   asInteger,
   boundedArray,
@@ -38,7 +39,7 @@ export const createMessageSchema = v.object({
       /** Contents of the file being sent. See Uploading Files */
       files: v.array(fileUpload),
       /** Attachment objects with filename and description. See Uploading Files */
-      attachments: v.array(v.partial(attachmentSchema)),
+      attachments: v.array(partial(attachmentSchema)),
       /** Message flags combined as a bitfield (only SUPPRESS_EMBEDS can be set) */
       flags: asInteger(messageFlag)
     },

@@ -1,5 +1,4 @@
-import { toValidated } from "@discordkit/core";
-import * as v from "valibot";
+import { omit, toValidated } from "@discordkit/core";
 import { mockUtils } from "#mocks";
 import { webhookSchema } from "../types/Webhook.js";
 import {
@@ -11,7 +10,7 @@ describe(`getWebhookWithToken`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.get(
     `/webhooks/:webhook/:token`,
     getWebhookWithTokenSchema,
-    v.omit(webhookSchema, [`user`])
+    omit(webhookSchema, [`user`])
   );
 
   it(`validates input, fetches, and validates output`, async () => {
@@ -19,7 +18,7 @@ describe(`getWebhookWithToken`, { repeats: 5 }, () => {
       toValidated(
         getWebhookWithToken,
         getWebhookWithTokenSchema,
-        v.omit(webhookSchema, [`user`])
+        omit(webhookSchema, [`user`])
       )(config, { anonymous: true })
     ).resolves.toEqual(expected);
   });

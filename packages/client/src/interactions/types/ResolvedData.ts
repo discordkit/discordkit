@@ -1,5 +1,11 @@
 import * as v from "valibot";
-import { snowflake, asDigits, boundedString } from "@discordkit/core";
+import {
+  snowflake,
+  asDigits,
+  boundedString,
+  omit,
+  partial
+} from "@discordkit/core";
 import type { User } from "../../user/types/User.js";
 import { userSchema } from "../../user/types/User.js";
 import { memberSchema } from "../../guild/types/Member.js";
@@ -23,10 +29,7 @@ export const resolvedDataSchema = v.object({
   ),
   /** the ids and partial Member objects */
   members: v.exactOptional(
-    v.record(
-      snowflake,
-      v.partial(v.omit(memberSchema, [`user`, `deaf`, `mute`]))
-    )
+    v.record(snowflake, partial(omit(memberSchema, [`user`, `deaf`, `mute`])))
   ),
   /** the ids and Role objects */
   roles: v.exactOptional<v.GenericSchema<Record<string, Role>>>(
@@ -69,7 +72,7 @@ export const resolvedDataSchema = v.object({
   messages: v.exactOptional(
     v.record(
       snowflake,
-      v.lazy<v.GenericSchema<Partial<Message>>>(() => v.partial(messageSchema))
+      v.lazy<v.GenericSchema<Partial<Message>>>(() => partial(messageSchema))
     )
   ),
   /** the ids and attachment objects */

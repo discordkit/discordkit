@@ -1,4 +1,5 @@
 import * as v from "valibot";
+import { partial } from "@discordkit/core";
 import { emojiSchema } from "../../emoji/types/Emoji.js";
 
 /**
@@ -14,7 +15,7 @@ export const pollMediaSchema = v.object({
   /** The question of the poll. Only `text` is supported. */
   text: v.exactOptional(v.pipe(v.string(), v.nonEmpty())),
   /** Each of the answers available in the poll. */
-  answers: v.exactOptional(v.partial(emojiSchema))
+  answers: v.exactOptional(partial(emojiSchema))
 });
 
 export interface PollMedia extends v.InferOutput<typeof pollMediaSchema> {}

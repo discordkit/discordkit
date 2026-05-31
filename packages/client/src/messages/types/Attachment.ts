@@ -1,6 +1,7 @@
 import * as v from "valibot";
 import {
   asInteger,
+  schema,
   snowflake,
   boundedString,
   boundedInteger,
@@ -8,10 +9,7 @@ import {
 } from "@discordkit/core";
 import { attachmentFlag } from "./AttachmentFlags.js";
 
-/**
- * ### [Attachment](https://discord.com/developers/docs/resources/message#attachment-object)
- */
-export const attachmentSchema = v.object({
+const _attachmentSchema = v.object({
   /** attachment id */
   id: snowflake,
   /** name of file attached */
@@ -44,4 +42,9 @@ export const attachmentSchema = v.object({
   flags: v.exactOptional(asInteger(attachmentFlag))
 });
 
-export interface Attachment extends v.InferOutput<typeof attachmentSchema> {}
+export interface Attachment extends v.InferOutput<typeof _attachmentSchema> {}
+
+/**
+ * ### [Attachment](https://discord.com/developers/docs/resources/message#attachment-object)
+ */
+export const attachmentSchema = schema<Attachment>(_attachmentSchema);

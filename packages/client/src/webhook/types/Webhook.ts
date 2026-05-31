@@ -1,16 +1,11 @@
 import * as v from "valibot";
-import { snowflake, boundedString, url } from "@discordkit/core";
+import { schema, snowflake, boundedString, url } from "@discordkit/core";
 import { partialChannelSchema } from "../../channel/types/Channel.js";
 import { guildSchema } from "../../guild/types/Guild.js";
 import { userSchema } from "../../user/types/User.js";
 import { webhookTypeSchema } from "./WebhookType.js";
 
-/**
- * ### [Webhook](https://discord.com/developers/docs/resources/webhook#webhook-object)
- *
- * Used to represent a webhook.
- */
-export const webhookSchema = v.object({
+const _webhookSchema = v.object({
   /** the id of the webhook */
   id: snowflake,
   /** the type of the webhook */
@@ -37,4 +32,11 @@ export const webhookSchema = v.object({
   url: v.exactOptional(url)
 });
 
-export interface Webhook extends v.InferOutput<typeof webhookSchema> {}
+export interface Webhook extends v.InferOutput<typeof _webhookSchema> {}
+
+/**
+ * ### [Webhook](https://discord.com/developers/docs/resources/webhook#webhook-object)
+ *
+ * Used to represent a webhook.
+ */
+export const webhookSchema = schema<Webhook>(_webhookSchema);

@@ -2,6 +2,7 @@ import * as v from "valibot";
 import {
   post,
   type Fetcher,
+  partial,
   snowflake,
   asInteger,
   multipart,
@@ -41,7 +42,7 @@ export const startThreadInForumOrMediaChannelSchema = v.object({
         /** IDs of up to 3 stickers in the server to send in the message */
         stickerIds: v.pipe(v.array(v.string()), v.maxLength(3)),
         /** Attachment objects with filename and description. See Uploading Files */
-        attachments: v.array(v.partial(attachmentSchema)),
+        attachments: v.array(partial(attachmentSchema)),
         /** Message flags combined as a bitfield (only `SUPPRESS_EMBEDS` and `SUPPRESS_NOTIFICATIONS` can be set) */
         flags: asInteger(messageFlag) as v.GenericSchema<number>
       })

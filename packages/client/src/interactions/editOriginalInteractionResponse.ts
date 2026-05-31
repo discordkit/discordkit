@@ -3,6 +3,7 @@ import {
   patch,
   buildURL,
   type Fetcher,
+  partial,
   snowflake,
   boundedString,
   boundedArray,
@@ -46,7 +47,7 @@ export const editOriginalInteractionResponseSchema = v.object({
       /** the contents of the file being sent */
       files: v.array(fileUpload),
       /** attachment objects with filename and description */
-      attachments: v.array(v.partial(attachmentSchema))
+      attachments: v.array(partial(attachmentSchema))
     },
     { partial: true }
   )

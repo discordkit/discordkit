@@ -1,11 +1,8 @@
 import * as v from "valibot";
-import { snowflake, boundedString } from "@discordkit/core";
+import { schema, snowflake, boundedString } from "@discordkit/core";
 import { userSchema } from "../../user/types/User.js";
 
-/**
- * ### [Emoji](https://discord.com/developers/docs/resources/emoji#emoji-object)
- */
-export const emojiSchema = v.object({
+const _emojiSchema = v.object({
   /** emoji id */
   id: v.nullable(snowflake),
   /** (can be null only in reaction emoji objects)	emoji name */
@@ -24,4 +21,9 @@ export const emojiSchema = v.object({
   available: v.exactOptional(v.boolean())
 });
 
-export interface Emoji extends v.InferOutput<typeof emojiSchema> {}
+export interface Emoji extends v.InferOutput<typeof _emojiSchema> {}
+
+/**
+ * ### [Emoji](https://discord.com/developers/docs/resources/emoji#emoji-object)
+ */
+export const emojiSchema = schema<Emoji>(_emojiSchema);

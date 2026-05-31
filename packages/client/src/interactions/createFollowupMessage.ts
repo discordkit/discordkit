@@ -2,6 +2,7 @@ import * as v from "valibot";
 import {
   post,
   type Fetcher,
+  partial,
   snowflake,
   asInteger,
   boundedString,
@@ -40,7 +41,7 @@ export const createFollowupMessageSchema = v.object({
       /** the contents of the file being sent */
       files: v.array(fileUpload),
       /** attachment objects with filename and description */
-      attachments: v.array(v.partial(attachmentSchema)),
+      attachments: v.array(partial(attachmentSchema)),
       /** message flags combined as a bitfield */
       flags: asInteger(messageFlag),
       /** name of thread to create (requires the webhook channel to be a forum channel) */

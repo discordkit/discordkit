@@ -1,4 +1,5 @@
 import * as v from "valibot";
+import { partial } from "@discordkit/core";
 import { channelSchema } from "../../channel/types/Channel.js";
 import { scheduledEventSchema } from "../../event/types/ScheduledEvent.js";
 import { integrationSchema } from "../../guild/types/Integration.js";
@@ -21,7 +22,7 @@ export const auditLogSchema = v.object({
   /** List of guild scheduled events referenced in the audit log */
   guildScheduledEvents: v.array(scheduledEventSchema),
   /** List of partial integration objects */
-  integrations: v.array(v.partial(integrationSchema)),
+  integrations: v.array(partial(integrationSchema)),
   /** List of threads referenced in the audit log */
   threads: v.array(channelSchema),
   /** List of users referenced in the audit log */
