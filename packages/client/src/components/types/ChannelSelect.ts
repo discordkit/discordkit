@@ -1,7 +1,7 @@
 import * as v from "valibot";
 import { boundedInteger, boundedString } from "@discordkit/core";
 import { ComponentType } from "./ComponentType.js";
-import { selectDefaultValueSchema } from "./SelectDefaultValue.js";
+import { channelSelectDefaultValueSchema } from "./SelectDefaultValue.js";
 import { channelTypeSchema } from "../../channel/types/ChannelType.js";
 
 /**
@@ -21,9 +21,9 @@ export const channelSelectSchema = v.object({
   /** Placeholder text if nothing is selected; max 150 characters */
   placeholder: v.exactOptional(boundedString({ max: 150 })),
   /** List of default values for auto-populated select menu components; number of default values must be in the range defined by `minValues` and `maxValues` */
-  defaultValues: v.exactOptional(v.array(selectDefaultValueSchema)),
+  defaultValues: v.exactOptional(v.array(channelSelectDefaultValueSchema)),
   /** Minimum number of items that must be chosen (defaults to 1); min 0, max 25 */
-  minValues: v.exactOptional(boundedInteger({ max: 25 })),
+  minValues: v.exactOptional(boundedInteger({ min: 0, max: 25 })),
   /** Maximum number of items that can be chosen (defaults to 1); max 25 */
   maxValues: v.exactOptional(boundedInteger({ min: 1, max: 25 })),
   /** Whether select menu is disabled (defaults to `false`) */
