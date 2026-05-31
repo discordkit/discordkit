@@ -1,14 +1,9 @@
 import * as v from "valibot";
-import { boundedInteger, boundedString } from "@discordkit/core";
+import { boundedInteger, boundedString, schema } from "@discordkit/core";
 import { ComponentType } from "./ComponentType.js";
 import { selectDefaultValueSchema } from "./SelectDefaultValue.js";
 
-/**
- * ### [User Select](https://discord.com/developers/docs/components/reference#user-select)
- *
- * A User Select is an interactive component that allows users to select one or more users in a message or modal. Options are automatically populated based on the server's available users. User Selects can be configured for both single-select and multi-select behavior. When a user finishes making their choice(s) your app receives an interaction. User Selects are available in messages and modals. They must be placed inside an Action Row in messages and a Label in modals.
- */
-export const userSelectSchema = v.object({
+const _userSelectSchema = v.object({
   /** `5` for user select */
   type: v.literal(ComponentType.UserSelect),
   /** Optional identifier for component */
@@ -27,4 +22,11 @@ export const userSelectSchema = v.object({
   disabled: v.exactOptional(v.boolean())
 });
 
-export interface UserSelect extends v.InferOutput<typeof userSelectSchema> {}
+export interface UserSelect extends v.InferOutput<typeof _userSelectSchema> {}
+
+/**
+ * ### [User Select](https://discord.com/developers/docs/components/reference#user-select)
+ *
+ * A User Select is an interactive component that allows users to select one or more users in a message or modal. Options are automatically populated based on the server's available users. User Selects can be configured for both single-select and multi-select behavior. When a user finishes making their choice(s) your app receives an interaction. User Selects are available in messages and modals. They must be placed inside an Action Row in messages and a Label in modals.
+ */
+export const userSelectSchema = schema<UserSelect>(_userSelectSchema);

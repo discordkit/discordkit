@@ -1,14 +1,9 @@
 import * as v from "valibot";
-import { snowflake, timestamp, boundedString } from "@discordkit/core";
+import { snowflake, timestamp, boundedString, schema } from "@discordkit/core";
 import { memberSchema } from "../../guild/types/Member.js";
 
 // https://discord.com/developers/docs/resources/voice#voice-state-object-voice-state-structure
-/**
- * ### [Voice State](https://discord.com/developers/docs/resources/voice#voice-state-object)
- *
- * Used to represent a user's voice connection status.
- */
-export const voiceStateSchema = v.object({
+const _voiceStateSchema = v.object({
   /** the guild id this voice state is for */
   guildId: v.exactOptional(snowflake),
   /** the channel id this user is connected to */
@@ -37,4 +32,11 @@ export const voiceStateSchema = v.object({
   requestToSpeakTimestamp: v.nullable(timestamp)
 });
 
-export interface VoiceState extends v.InferOutput<typeof voiceStateSchema> {}
+export interface VoiceState extends v.InferOutput<typeof _voiceStateSchema> {}
+
+/**
+ * ### [Voice State](https://discord.com/developers/docs/resources/voice#voice-state-object)
+ *
+ * Used to represent a user's voice connection status.
+ */
+export const voiceStateSchema = schema<VoiceState>(_voiceStateSchema);

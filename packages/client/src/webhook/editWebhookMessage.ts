@@ -1,9 +1,9 @@
-import * as v from "valibot";
+﻿import * as v from "valibot";
 import {
   patch,
   buildURL,
   type Fetcher,
-  partial,
+  partialSchema,
   snowflake,
   boundedArray,
   boundedString,
@@ -11,7 +11,7 @@ import {
   fileUpload
 } from "@discordkit/core";
 import { type Message } from "../messages/types/Message.js";
-import { embedSchema } from "../messages/types/Embed.js";
+import { embedEntries } from "../messages/types/Embed.js";
 import { allowedMentionSchema } from "../messages/types/AllowedMention.js";
 import { attachmentSchema } from "../messages/types/Attachment.js";
 import { messageComponentSchema } from "../messages/types/MessageComponent.js";
@@ -39,7 +39,7 @@ export const editWebhookMessageSchema = v.object({
       /** embedded `rich` content */
       embeds: boundedArray(
         v.object({
-          ...embedSchema.entries,
+          ...embedEntries,
           type: v.literal(EmbedType.RICH)
         }),
         { max: 10 }
@@ -51,7 +51,7 @@ export const editWebhookMessageSchema = v.object({
       /** the contents of the file being sent */
       files: v.array(fileUpload),
       /** attachment objects with filename and description */
-      attachments: v.array(partial(attachmentSchema)),
+      attachments: v.array(partialSchema(attachmentSchema)),
       /** A poll! */
       poll: pollSchema
     },

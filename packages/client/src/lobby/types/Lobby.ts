@@ -1,15 +1,10 @@
 import * as v from "valibot";
-import { snowflake } from "@discordkit/core";
+import { snowflake, schema } from "@discordkit/core";
 import { guildTextChannelEntries } from "../../channel/types/Channel.js";
 import { ChannelType } from "../../channel/types/ChannelType.js";
 import { lobbyMemberSchema } from "./LobbyMember.js";
 
-/**
- * ### [Lobby](https://discord.com/developers/docs/resources/lobby#lobby-object)
- *
- * Represents a lobby within Discord. See Managing Lobbies for more information.
- */
-export const lobbySchema = v.object({
+const _lobbySchema = v.object({
   /** the id of this channel */
   id: snowflake,
   /** application that created the lobby */
@@ -30,4 +25,11 @@ export const lobbySchema = v.object({
   )
 });
 
-export interface Lobby extends v.InferOutput<typeof lobbySchema> {}
+export interface Lobby extends v.InferOutput<typeof _lobbySchema> {}
+
+/**
+ * ### [Lobby](https://discord.com/developers/docs/resources/lobby#lobby-object)
+ *
+ * Represents a lobby within Discord. See Managing Lobbies for more information.
+ */
+export const lobbySchema = schema<Lobby>(_lobbySchema);

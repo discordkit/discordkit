@@ -1,6 +1,19 @@
 import * as v from "valibot";
-import { boundedInteger } from "@discordkit/core";
+import { boundedInteger, schema } from "@discordkit/core";
 import { ComponentType } from "./ComponentType.js";
+
+const _separatorSchema = v.object({
+  /** `14` for separator component */
+  type: v.literal(ComponentType.Separator),
+  /** Optional identifier for component */
+  id: v.exactOptional(boundedInteger()),
+  /** Whether a visual divider should be displayed in the component. Defaults to `true` */
+  divider: v.exactOptional(v.boolean()),
+  /** Size of separator padding— `1` for small padding, `2` for large padding. Defaults to `1` */
+  spacing: v.exactOptional(v.picklist([1, 2]))
+});
+
+export interface Separator extends v.InferOutput<typeof _separatorSchema> {}
 
 /**
  * ### [Separator](https://discord.com/developers/docs/components/reference#separator)
@@ -13,15 +26,4 @@ import { ComponentType } from "./ComponentType.js";
  * >
  * > To use this component, you need to send the message flag `1 << 15` (IS_COMPONENTS_V2) which can be activated on a per-message basis.
  */
-export const separatorSchema = v.object({
-  /** `14` for separator component */
-  type: v.literal(ComponentType.Separator),
-  /** Optional identifier for component */
-  id: v.exactOptional(boundedInteger()),
-  /** Whether a visual divider should be displayed in the component. Defaults to `true` */
-  divider: v.exactOptional(v.boolean()),
-  /** Size of separator padding— `1` for small padding, `2` for large padding. Defaults to `1` */
-  spacing: v.exactOptional(v.picklist([1, 2]))
-});
-
-export interface Separator extends v.InferOutput<typeof separatorSchema> {}
+export const separatorSchema = schema<Separator>(_separatorSchema);

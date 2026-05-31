@@ -1,5 +1,5 @@
-import * as v from "valibot";
-import { post, type Fetcher, snowflake } from "@discordkit/core";
+﻿import * as v from "valibot";
+import { post, type Fetcher, partialSchema, snowflake } from "@discordkit/core";
 import { type Channel } from "../channel/types/Channel.js";
 import { channelTypeSchema } from "../channel/types/ChannelType.js";
 import { overwriteSchema } from "../channel/types/Overwrite.js";
@@ -30,7 +30,7 @@ export const createGuildChannelSchema = v.object({
     /** sorting position of the channel */
     position: v.nullish(v.pipe(v.number(), v.integer(), v.minValue(0))),
     /** the channel's permission overwrites */
-    permissionOverwrites: v.nullish(v.array(v.partial(overwriteSchema))),
+    permissionOverwrites: v.nullish(v.array(partialSchema(overwriteSchema))),
     /** id of the parent category for a channel */
     parentId: v.nullish(snowflake),
     /** whether the channel is nsfw */

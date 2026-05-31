@@ -1,10 +1,10 @@
-import * as v from "valibot";
+﻿import * as v from "valibot";
 import {
   asInteger,
   boundedArray,
   boundedInteger,
   boundedString,
-  partial,
+  partialSchema,
   schema,
   snowflake,
   url
@@ -34,13 +34,13 @@ const _applicationSchema = v.object({
   /** When `true`, the app's bot will only join upon completion of the full OAuth2 code grant flow */
   botRequireCodeGrant: v.boolean(),
   /** Partial user object for the bot user associated with the app */
-  bot: v.exactOptional(partial(userSchema)),
+  bot: v.exactOptional(partialSchema(userSchema)),
   /** URL of the app's Terms of Service */
   termsOfServiceUrl: v.exactOptional(url),
   /** URL of the app's Privacy Policy */
   privacyPolicyUrl: v.exactOptional(url),
   /** Partial user object for the owner of the app */
-  owner: v.exactOptional(partial(userSchema)),
+  owner: v.exactOptional(partialSchema(userSchema)),
   /** Hex encoded key for verification in interactions and the GameSDK's GetTicket */
   verifyKey: v.string(),
   /** If the app belongs to a team, this will be a list of the members of that team */
@@ -48,7 +48,7 @@ const _applicationSchema = v.object({
   /** Guild associated with the app. For example, a developer support server. */
   guildId: v.exactOptional(v.string()),
   /** Partial object of the associated guild */
-  guild: v.exactOptional(partial(guildSchema)),
+  guild: v.exactOptional(partialSchema(guildSchema)),
   /** If this app is a game sold on Discord, this field will be the id of the "Game SKU" that is created, if exists */
   primarySkuId: v.exactOptional(v.string()),
   /** If this app is a game sold on Discord, this field will be the URL slug that links to the store page */

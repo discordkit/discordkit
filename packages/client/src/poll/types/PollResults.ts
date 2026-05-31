@@ -1,5 +1,15 @@
 import * as v from "valibot";
+import { schema } from "@discordkit/core";
 import { pollAnswerCountSchema } from "./PollAnswerCount.js";
+
+const _pollResultsSchema = v.object({
+  /** Whether the votes have been precisely counted */
+  isFinalized: v.boolean(),
+  /** The counts for each answer */
+  answerCounts: v.array(pollAnswerCountSchema)
+});
+
+export interface PollResults extends v.InferOutput<typeof _pollResultsSchema> {}
 
 /**
  * ### [Poll Results](https://discord.com/developers/docs/resources/poll#poll-results-object)
@@ -14,11 +24,4 @@ import { pollAnswerCountSchema } from "./PollAnswerCount.js";
  *
  * If `answerCounts` does not contain an entry for a particular answer, then there are no votes for that answer.
  */
-export const pollResultsSchema = v.object({
-  /** Whether the votes have been precisely counted */
-  isFinalized: v.boolean(),
-  /** The counts for each answer */
-  answerCounts: v.array(pollAnswerCountSchema)
-});
-
-export interface PollResults extends v.InferOutput<typeof pollResultsSchema> {}
+export const pollResultsSchema = schema<PollResults>(_pollResultsSchema);

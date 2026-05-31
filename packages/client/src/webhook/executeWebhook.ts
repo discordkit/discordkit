@@ -1,9 +1,9 @@
-import * as v from "valibot";
+﻿import * as v from "valibot";
 import {
   post,
   buildURL,
   type Fetcher,
-  partial,
+  partialSchema,
   snowflake,
   asInteger,
   boundedArray,
@@ -12,7 +12,7 @@ import {
   multipart,
   fileUpload
 } from "@discordkit/core";
-import { embedSchema } from "../messages/types/Embed.js";
+import { embedEntries } from "../messages/types/Embed.js";
 import { allowedMentionSchema } from "../messages/types/AllowedMention.js";
 import { attachmentSchema } from "../messages/types/Attachment.js";
 import { EmbedType } from "../messages/types/EmbedType.js";
@@ -48,7 +48,7 @@ export const executeWebhookSchema = v.object({
       /** embedded rich content */
       embeds: boundedArray(
         v.object({
-          ...embedSchema.entries,
+          ...embedEntries,
           type: v.literal(EmbedType.RICH)
         }),
         { max: 10 }
@@ -60,7 +60,7 @@ export const executeWebhookSchema = v.object({
       /** the contents of the file being sent */
       files: v.array(fileUpload),
       /** attachment objects with filename and description */
-      attachments: v.array(partial(attachmentSchema)),
+      attachments: v.array(partialSchema(attachmentSchema)),
       /** message flags combined as a bitfield (only SUPPRESS_EMBEDS can be set) */
       flags: asInteger(messageFlag),
       /** name of thread to create (requires the webhook channel to be a forum channel) */

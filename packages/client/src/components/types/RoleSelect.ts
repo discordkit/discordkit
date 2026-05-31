@@ -1,14 +1,9 @@
 import * as v from "valibot";
-import { boundedInteger, boundedString } from "@discordkit/core";
+import { boundedInteger, boundedString, schema } from "@discordkit/core";
 import { ComponentType } from "./ComponentType.js";
 import { selectDefaultValueSchema } from "./SelectDefaultValue.js";
 
-/**
- * ### [Role Select](https://discord.com/developers/docs/components/reference#role-select)
- *
- * A Role Select is an interactive component that allows users to select one or more roles in a message or modal. Options are automatically populated based on the server's available roles. Role Selects can be configured for both single-select and multi-select behavior. When a user finishes making their choice(s) your app receives an interaction. Role Selects are available in messages and modals. They must be placed inside an Action Row in messages and a Label in modals.
- */
-export const roleSelectSchema = v.object({
+const _roleSelectSchema = v.object({
   /** `6` for role select */
   type: v.literal(ComponentType.RoleSelect),
   /** Optional identifier for component */
@@ -27,4 +22,11 @@ export const roleSelectSchema = v.object({
   disabled: v.exactOptional(v.boolean())
 });
 
-export interface RoleSelect extends v.InferOutput<typeof roleSelectSchema> {}
+export interface RoleSelect extends v.InferOutput<typeof _roleSelectSchema> {}
+
+/**
+ * ### [Role Select](https://discord.com/developers/docs/components/reference#role-select)
+ *
+ * A Role Select is an interactive component that allows users to select one or more roles in a message or modal. Options are automatically populated based on the server's available roles. Role Selects can be configured for both single-select and multi-select behavior. When a user finishes making their choice(s) your app receives an interaction. Role Selects are available in messages and modals. They must be placed inside an Action Row in messages and a Label in modals.
+ */
+export const roleSelectSchema = schema<RoleSelect>(_roleSelectSchema);

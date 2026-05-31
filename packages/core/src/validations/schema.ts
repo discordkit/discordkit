@@ -35,8 +35,10 @@ import * as v from "valibot";
  *
  * `v.partial(userSchema)`, `v.pick(userSchema, [...])`, `v.omit(...)`,
  * and `userSchema.entries.id` stop type-checking because the constraint
- * is `ObjectSchema<...>` not `GenericSchema<T>`. Use the {@link partial},
- * {@link pick}, and {@link omit} helpers below for the common cases.
+ * is `ObjectSchema<...>` not `GenericSchema<T>`. Use the
+ * {@link partialSchema}, {@link pickFields}, {@link omitFields},
+ * {@link requiredFields}, and {@link variantSchema} helpers below for
+ * the common cases.
  */
 export const schema = <T>(s: v.GenericSchema<unknown>): v.GenericSchema<T> =>
   s as v.GenericSchema<T>;
@@ -47,7 +49,7 @@ export const schema = <T>(s: v.GenericSchema<unknown>): v.GenericSchema<T> =>
  * annotated `GenericSchema<T>` (which `v.partial` would reject because
  * its constraint is `ObjectSchema<...>`).
  */
-export const partial = <T>(
+export const partialSchema = <T>(
   s: v.GenericSchema<T>
 ): v.GenericSchema<Partial<T>> =>
   // The runtime cast is sound: schema<T>(...) returns an ObjectSchema
@@ -58,10 +60,10 @@ export const partial = <T>(
   ) as unknown as v.GenericSchema<Partial<T>>;
 
 /**
- * Pick a subset of keys from `T` at both type and runtime levels.
- * Equivalent to Valibot's `v.pick`. See {@link partial}.
+ * Pick a subset of fields from `T` at both type and runtime levels.
+ * Equivalent to Valibot's `v.pick`. See {@link partialSchema}.
  */
-export const pick = <T, K extends keyof T & string>(
+export const pickFields = <T, K extends keyof T & string>(
   s: v.GenericSchema<T>,
   keys: readonly K[]
 ): v.GenericSchema<Pick<T, K>> => {
@@ -73,10 +75,10 @@ export const pick = <T, K extends keyof T & string>(
 };
 
 /**
- * Omit a subset of keys from `T` at both type and runtime levels.
- * Equivalent to Valibot's `v.omit`. See {@link partial}.
+ * Omit a subset of fields from `T` at both type and runtime levels.
+ * Equivalent to Valibot's `v.omit`. See {@link partialSchema}.
  */
-export const omit = <T, K extends keyof T & string>(
+export const omitFields = <T, K extends keyof T & string>(
   s: v.GenericSchema<T>,
   keys: readonly K[]
 ): v.GenericSchema<Omit<T, K>> => {
@@ -85,4 +87,51 @@ export const omit = <T, K extends keyof T & string>(
     s as unknown as Erased,
     keys as unknown as v.ObjectKeys<Erased>
   ) as unknown as v.GenericSchema<Omit<T, K>>;
+};
+
+/**
+ * Mark a subset of fields on `T` as required at both type and runtime
+ * levels. Equivalent to Valibot's `v.required`. See {@link partialSchema}.
+ */
+export const requiredFields = <T, K extends keyof T & string>(
+  s: v.GenericSchema<T>,
+  keys: readonly K[]
+): v.GenericSchema<T & Required<Pick<T, K>>> => {
+  type Erased = v.ObjectSchema<v.ObjectEntries, undefined>;
+  return v.required(
+    s as unknown as Erased,
+    keys as unknown as v.ObjectKeys<Erased>
+  ) as unknown as v.GenericSchema<T & Required<Pick<T, K>>>;
+};
+
+/**
+ * Build a discriminated union schema. Equivalent to Valibot's
+ * `v.variant`, but accepts annotated `GenericSchema<T>` variants
+ * (which `v.variant` would reject because its constraint is
+ * `ObjectSchema<...>`).
+ *
+ * Prefer `v.variant` whenever variants share a literal discriminator
+ * field — it dispatches on that field at runtime, producing focused
+ * error messages and O(1) validation, vs. {@link v.union}'s O(n)
+ * try-each behavior.
+ *
+ * @example
+ * ```ts
+ * export const channelSchema = variantSchema<Channel>(`type`, [
+ *   guildTextChannelSchema,
+ *   guildVoiceChannelSchema,
+ *   threadChannelSchema,
+ *   // ...
+ * ]);
+ * ```
+ */
+export const variantSchema = <T>(
+  key: keyof T & string,
+  schemas: ReadonlyArray<v.GenericSchema<unknown>>
+): v.GenericSchema<T> => {
+  type Erased = v.ObjectSchema<v.ObjectEntries, undefined>;
+  return v.variant(
+    key as never,
+    schemas as unknown as [Erased, Erased, ...Erased[]]
+  ) as unknown as v.GenericSchema<T>;
 };

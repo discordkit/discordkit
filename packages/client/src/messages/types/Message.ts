@@ -1,7 +1,7 @@
-import * as v from "valibot";
+﻿import * as v from "valibot";
 import {
   asInteger,
-  partial,
+  partialSchema,
   schema,
   snowflake,
   timestamp,
@@ -81,7 +81,7 @@ const _messageSchema = v.object({
   /** sent with Rich Presence-related chat embeds */
   activity: v.exactOptional(messageActivitySchema),
   /** sent with Rich Presence-related chat embeds */
-  application: v.exactOptional(v.lazy(() => partial(applicationSchema))),
+  application: v.exactOptional(v.lazy(() => partialSchema(applicationSchema))),
   /** if the message is an Interaction or application-owned webhook, this is the id of the application */
   applicationId: v.exactOptional(snowflake),
   /** message flags combined as a bitfield */

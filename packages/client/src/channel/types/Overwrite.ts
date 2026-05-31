@@ -1,13 +1,8 @@
 import * as v from "valibot";
-import { asDigits, snowflake } from "@discordkit/core";
+import { asDigits, snowflake, schema } from "@discordkit/core";
 import { permissionFlag } from "../../permissions/Permissions.js";
 
-/**
- * ### [Overwrite](https://discord.com/developers/docs/resources/channel#overwrite-object)
- *
- * See permissions for more information about the `allow` and `deny` fields.
- */
-export const overwriteSchema = v.object({
+const _overwriteSchema = v.object({
   /** role or user id */
   id: snowflake,
   /** either 0 (role) or 1 (member) */
@@ -18,4 +13,11 @@ export const overwriteSchema = v.object({
   deny: asDigits(permissionFlag)
 });
 
-export interface Overwrite extends v.InferOutput<typeof overwriteSchema> {}
+export interface Overwrite extends v.InferOutput<typeof _overwriteSchema> {}
+
+/**
+ * ### [Overwrite](https://discord.com/developers/docs/resources/channel#overwrite-object)
+ *
+ * See permissions for more information about the `allow` and `deny` fields.
+ */
+export const overwriteSchema = schema<Overwrite>(_overwriteSchema);

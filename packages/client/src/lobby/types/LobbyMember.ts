@@ -1,13 +1,8 @@
 import * as v from "valibot";
-import { snowflake, asInteger } from "@discordkit/core";
+import { snowflake, asInteger, schema } from "@discordkit/core";
 import { lobbyMemberFlag } from "./LobbyMemberFlags.js";
 
-/**
- * ### [Lobby Member](https://discord.com/developers/docs/resources/lobby#lobby-member-object)
- *
- * Represents a member of a lobby, including optional metadata and flags.
- */
-export const lobbyMemberSchema = v.object({
+const _lobbyMemberSchema = v.object({
   /** the id of the user */
   id: snowflake,
   /** dictionary of string key/value pairs. The max total length is 1000. */
@@ -18,4 +13,11 @@ export const lobbyMemberSchema = v.object({
   flags: v.exactOptional(asInteger(lobbyMemberFlag) as v.GenericSchema<number>)
 });
 
-export interface LobbyMember extends v.InferOutput<typeof lobbyMemberSchema> {}
+export interface LobbyMember extends v.InferOutput<typeof _lobbyMemberSchema> {}
+
+/**
+ * ### [Lobby Member](https://discord.com/developers/docs/resources/lobby#lobby-member-object)
+ *
+ * Represents a member of a lobby, including optional metadata and flags.
+ */
+export const lobbyMemberSchema = schema<LobbyMember>(_lobbyMemberSchema);

@@ -1,6 +1,19 @@
 import * as v from "valibot";
-import { boundedInteger, boundedString } from "@discordkit/core";
+import { boundedInteger, boundedString, schema } from "@discordkit/core";
 import { ComponentType } from "./ComponentType.js";
+
+const _checkboxSchema = v.object({
+  /** `23` for checkbox */
+  type: v.literal(ComponentType.Checkbox),
+  /** Optional identifier for component */
+  id: v.exactOptional(boundedInteger()),
+  /** Developer-defined identifier for the input; 1-100 characters */
+  customId: boundedString({ min: 1, max: 100 }),
+  /** Whether the checkbox is selected by default */
+  default: v.exactOptional(v.boolean())
+});
+
+export interface Checkbox extends v.InferOutput<typeof _checkboxSchema> {}
 
 /**
  * ### [Checkbox](https://discord.com/developers/docs/components/reference#checkbox-structure)
@@ -13,15 +26,4 @@ import { ComponentType } from "./ComponentType.js";
  * > {@link CheckboxGroup} with a single option and `required: true` to
  * > achieve similar functionality.
  */
-export const checkboxSchema = v.object({
-  /** `23` for checkbox */
-  type: v.literal(ComponentType.Checkbox),
-  /** Optional identifier for component */
-  id: v.exactOptional(boundedInteger()),
-  /** Developer-defined identifier for the input; 1-100 characters */
-  customId: boundedString({ min: 1, max: 100 }),
-  /** Whether the checkbox is selected by default */
-  default: v.exactOptional(v.boolean())
-});
-
-export interface Checkbox extends v.InferOutput<typeof checkboxSchema> {}
+export const checkboxSchema = schema<Checkbox>(_checkboxSchema);

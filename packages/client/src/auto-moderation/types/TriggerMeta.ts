@@ -1,8 +1,8 @@
 import * as v from "valibot";
-import { boundedArray, boundedInteger } from "@discordkit/core";
+import { boundedArray, boundedInteger, schema } from "@discordkit/core";
 import { keywordPresetSchema } from "./KeywordPreset.js";
 
-export const triggerMetaSchema = v.object({
+const _triggerMetaSchema = v.object({
   /** KEYWORD	substrings which will be searched for in content (Maximum of 1000) */
   keywordFilter: boundedArray(v.string(), { max: 1000 }),
   /** KEYWORD	regular expression patterns which will be matched against content (Maximum of 10) */
@@ -17,4 +17,6 @@ export const triggerMetaSchema = v.object({
   mentionRaidProtectionEnabled: v.boolean()
 });
 
-export interface TriggerMeta extends v.InferOutput<typeof triggerMetaSchema> {}
+export interface TriggerMeta extends v.InferOutput<typeof _triggerMetaSchema> {}
+
+export const triggerMetaSchema = schema<TriggerMeta>(_triggerMetaSchema);

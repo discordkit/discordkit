@@ -1,12 +1,7 @@
 import * as v from "valibot";
-import { snowflake, boundedString, url } from "@discordkit/core";
+import { snowflake, boundedString, url, schema } from "@discordkit/core";
 
-/**
- * ### [Nameplate](https://discord.com/developers/docs/resources/user#nameplate)
- *
- * The nameplate the user has.
- */
-export const nameplateSchema = v.object({
+const _nameplateSchema = v.object({
   /** id of the nameplate SKU */
   skuId: snowflake,
   /** path to the nameplate asset */
@@ -29,4 +24,11 @@ export const nameplateSchema = v.object({
   ])
 });
 
-export interface Nameplate extends v.InferOutput<typeof nameplateSchema> {}
+export interface Nameplate extends v.InferOutput<typeof _nameplateSchema> {}
+
+/**
+ * ### [Nameplate](https://discord.com/developers/docs/resources/user#nameplate)
+ *
+ * The nameplate the user has.
+ */
+export const nameplateSchema = schema<Nameplate>(_nameplateSchema);

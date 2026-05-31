@@ -1,5 +1,4 @@
-import { toValidated } from "@discordkit/core";
-import * as v from "valibot";
+﻿import { toValidated, partialSchema } from "@discordkit/core";
 import { mockUtils } from "#mocks";
 import { inviteSchema } from "../../invite/types/Invite.js";
 import {
@@ -11,7 +10,7 @@ describe(`getGuildVanityURL`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.get(
     `/guilds/:guild/vanity-url`,
     getGuildVanityURLSchema,
-    v.partial(inviteSchema)
+    partialSchema(inviteSchema)
   );
 
   it(`validates input, fetches, and validates output`, async () => {
@@ -19,7 +18,7 @@ describe(`getGuildVanityURL`, { repeats: 5 }, () => {
       toValidated(
         getGuildVanityURL,
         getGuildVanityURLSchema,
-        v.partial(inviteSchema)
+        partialSchema(inviteSchema)
       )(config)
     ).resolves.toEqual(expected);
   });

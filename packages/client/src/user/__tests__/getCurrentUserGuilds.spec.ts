@@ -1,4 +1,4 @@
-import { partial, toValidated } from "@discordkit/core";
+﻿import { partialSchema, toValidated } from "@discordkit/core";
 import * as v from "valibot";
 import { mockUtils } from "#mocks";
 import { guildSchema } from "../../guild/types/Guild.js";
@@ -11,7 +11,7 @@ describe(`getCurrentUserGuilds`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.get(
     `/users/@me/guilds`,
     getCurrentUserGuildsSchema,
-    v.pipe(v.array(partial(guildSchema)), v.length(1))
+    v.pipe(v.array(partialSchema(guildSchema)), v.length(1))
   );
 
   it(`validates input, fetches, and validates output`, async () => {
@@ -19,7 +19,7 @@ describe(`getCurrentUserGuilds`, { repeats: 5 }, () => {
       toValidated(
         getCurrentUserGuilds,
         getCurrentUserGuildsSchema,
-        v.pipe(v.array(partial(guildSchema)), v.length(1))
+        v.pipe(v.array(partialSchema(guildSchema)), v.length(1))
       )(config)
     ).resolves.toEqual(expected);
   });

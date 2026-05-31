@@ -1,11 +1,8 @@
 import * as v from "valibot";
-import { snowflake, boundedString } from "@discordkit/core";
+import { snowflake, boundedString, schema } from "@discordkit/core";
 import { stagePrivacyLevelSchema } from "./StagePrivacyLevel.js";
 
-/**
- * ### [Stage](https://discord.com/developers/docs/resources/stage-instance#stage-instance-object)
- */
-export const stageSchema = v.object({
+const _stageSchema = v.object({
   /** The id of this Stage instance */
   id: snowflake,
   /** The guild id of the associated Stage channel */
@@ -22,4 +19,9 @@ export const stageSchema = v.object({
   guildScheduledEventId: v.nullable(snowflake)
 });
 
-export interface Stage extends v.InferOutput<typeof stageSchema> {}
+export interface Stage extends v.InferOutput<typeof _stageSchema> {}
+
+/**
+ * ### [Stage](https://discord.com/developers/docs/resources/stage-instance#stage-instance-object)
+ */
+export const stageSchema = schema<Stage>(_stageSchema);

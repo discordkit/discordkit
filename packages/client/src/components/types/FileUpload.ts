@@ -1,20 +1,8 @@
 import * as v from "valibot";
-import { boundedInteger, boundedString } from "@discordkit/core";
+import { boundedInteger, boundedString, schema } from "@discordkit/core";
 import { ComponentType } from "./ComponentType.js";
 
-/**
- * ### [File Upload](https://discord.com/developers/docs/components/reference#file-upload)
- *
- * File Upload is an interactive component that allows users to upload files in modals. File Uploads can be configured to have a minimum and maximum number of files between 0 and 10, along with `required` for if the upload is required to submit the modal. The max file size a user can upload is based on the user's upload limit in that channel.
- *
- * File Uploads are available on modals. They must be placed inside a {@link Label}.
- *
- * > [!NOTE]
- * >
- * > `minValues` must be either omitted or at least `1` if `required` is
- * > omitted or `true`.
- */
-export const fileUploadSchema = v.object({
+const _fileUploadSchema = v.object({
   /** `19` for file upload */
   type: v.literal(ComponentType.FileUpload),
   /** Optional identifier for component */
@@ -29,4 +17,18 @@ export const fileUploadSchema = v.object({
   required: v.exactOptional(v.boolean())
 });
 
-export interface FileUpload extends v.InferOutput<typeof fileUploadSchema> {}
+export interface FileUpload extends v.InferOutput<typeof _fileUploadSchema> {}
+
+/**
+ * ### [File Upload](https://discord.com/developers/docs/components/reference#file-upload)
+ *
+ * File Upload is an interactive component that allows users to upload files in modals. File Uploads can be configured to have a minimum and maximum number of files between 0 and 10, along with `required` for if the upload is required to submit the modal. The max file size a user can upload is based on the user's upload limit in that channel.
+ *
+ * File Uploads are available on modals. They must be placed inside a {@link Label}.
+ *
+ * > [!NOTE]
+ * >
+ * > `minValues` must be either omitted or at least `1` if `required` is
+ * > omitted or `true`.
+ */
+export const fileUploadSchema = schema<FileUpload>(_fileUploadSchema);

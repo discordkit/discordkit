@@ -1,5 +1,4 @@
-import { toValidated } from "@discordkit/core";
-import * as v from "valibot";
+﻿import { toValidated, requiredFields } from "@discordkit/core";
 import { mockUtils } from "#mocks";
 import { lobbySchema } from "../types/Lobby.js";
 import {
@@ -11,7 +10,7 @@ describe(`linkChannelToLobby`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.patch(
     `/lobbies/:lobby/channel-linking`,
     linkChannelToLobbySchema,
-    v.required(lobbySchema, [`linkedChannel`])
+    requiredFields(lobbySchema, [`linkedChannel`])
   );
 
   it(`validates input, fetches, and validates output`, async () => {
@@ -19,7 +18,7 @@ describe(`linkChannelToLobby`, { repeats: 5 }, () => {
       toValidated(
         linkChannelToLobby,
         linkChannelToLobbySchema,
-        v.required(lobbySchema, [`linkedChannel`])
+        requiredFields(lobbySchema, [`linkedChannel`])
       )(config)
     ).resolves.toEqual(expected);
   });

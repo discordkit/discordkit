@@ -1,6 +1,17 @@
 import * as v from "valibot";
-import { boundedInteger } from "@discordkit/core";
+import { boundedInteger, schema } from "@discordkit/core";
 import { ComponentType } from "./ComponentType.js";
+
+const _textDisplaySchema = v.object({
+  /** `10` for text display */
+  type: v.literal(ComponentType.TextDisplay),
+  /** Optional identifier for component */
+  id: v.exactOptional(boundedInteger()),
+  /** Text that will be displayed similar to a message */
+  content: v.string()
+});
+
+export interface TextDisplay extends v.InferOutput<typeof _textDisplaySchema> {}
 
 /**
  * ### [Text Display](https://discord.com/developers/docs/components/reference#text-display)
@@ -13,13 +24,4 @@ import { ComponentType } from "./ComponentType.js";
  * >
  * > To use this component, you need to send the message flag `1 << 15` (IS_COMPONENTS_V2) which can be activated on a per-message basis.
  */
-export const textDisplaySchema = v.object({
-  /** `10` for text display */
-  type: v.literal(ComponentType.TextDisplay),
-  /** Optional identifier for component */
-  id: v.exactOptional(boundedInteger()),
-  /** Text that will be displayed similar to a message */
-  content: v.string()
-});
-
-export interface TextDisplay extends v.InferOutput<typeof textDisplaySchema> {}
+export const textDisplaySchema = schema<TextDisplay>(_textDisplaySchema);

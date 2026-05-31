@@ -1,11 +1,9 @@
 // https://discord.com/developers/docs/resources/voice#voice-region-object-voice-region-structure
 
 import * as v from "valibot";
+import { schema } from "@discordkit/core";
 
-/**
- * ### [Voice Region](https://discord.com/developers/docs/resources/voice#voice-region-object)
- */
-export const voiceRegionSchema = v.object({
+const _voiceRegionSchema = v.object({
   /** unique ID for the region */
   id: v.string(),
   /** name of the region */
@@ -18,4 +16,9 @@ export const voiceRegionSchema = v.object({
   custom: v.boolean()
 });
 
-export interface VoiceRegion extends v.InferOutput<typeof voiceRegionSchema> {}
+export interface VoiceRegion extends v.InferOutput<typeof _voiceRegionSchema> {}
+
+/**
+ * ### [Voice Region](https://discord.com/developers/docs/resources/voice#voice-region-object)
+ */
+export const voiceRegionSchema = schema<VoiceRegion>(_voiceRegionSchema);

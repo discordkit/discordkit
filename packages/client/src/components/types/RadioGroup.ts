@@ -1,14 +1,14 @@
 import * as v from "valibot";
-import { boundedArray, boundedInteger, boundedString } from "@discordkit/core";
+import {
+  boundedArray,
+  boundedInteger,
+  boundedString,
+  schema
+} from "@discordkit/core";
 import { ComponentType } from "./ComponentType.js";
 import { radioGroupOptionSchema } from "./RadioGroupOption.js";
 
-/**
- * ### [Radio Group](https://discord.com/developers/docs/components/reference#radio-group-structure)
- *
- * A Radio Group is an interactive component for selecting exactly one option from a defined list. Radio Groups are available in modals and must be placed inside a {@link Label}.
- */
-export const radioGroupSchema = v.object({
+const _radioGroupSchema = v.object({
   /** `21` for radio group */
   type: v.literal(ComponentType.RadioGroup),
   /** Optional identifier for component */
@@ -21,4 +21,11 @@ export const radioGroupSchema = v.object({
   required: v.exactOptional(v.boolean())
 });
 
-export interface RadioGroup extends v.InferOutput<typeof radioGroupSchema> {}
+export interface RadioGroup extends v.InferOutput<typeof _radioGroupSchema> {}
+
+/**
+ * ### [Radio Group](https://discord.com/developers/docs/components/reference#radio-group-structure)
+ *
+ * A Radio Group is an interactive component for selecting exactly one option from a defined list. Radio Groups are available in modals and must be placed inside a {@link Label}.
+ */
+export const radioGroupSchema = schema<RadioGroup>(_radioGroupSchema);

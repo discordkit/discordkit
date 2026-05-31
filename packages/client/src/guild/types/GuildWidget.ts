@@ -1,18 +1,16 @@
-import * as v from "valibot";
+﻿import * as v from "valibot";
 import {
   snowflake,
   boundedArray,
   boundedInteger,
   boundedString,
-  partial
+  partialSchema,
+  schema
 } from "@discordkit/core";
 import { guildVoiceChannelSchema } from "../../channel/types/Channel.js";
 import { userSchema } from "../../user/types/User.js";
 
-/**
- * ### [Guild Widget](https://discord.com/developers/docs/resources/guild#guild-widget-object)
- */
-export const guildWidgetSchema = v.object({
+const _guildWidgetSchema = v.object({
   /** guild id */
   id: snowflake,
   /** guild name (2-100 characters) */
@@ -22,9 +20,14 @@ export const guildWidgetSchema = v.object({
   /** voice and stage channels which are accessible by @everyone */
   channels: v.array(guildVoiceChannelSchema),
   /** special widget user objects that includes users presence (Limit 100) */
-  members: boundedArray(partial(userSchema), { max: 100 }),
+  members: boundedArray(partialSchema(userSchema), { max: 100 }),
   /** number of online members in this guild */
   presenceCount: boundedInteger()
 });
 
-export interface GuildWidget extends v.InferOutput<typeof guildWidgetSchema> {}
+export interface GuildWidget extends v.InferOutput<typeof _guildWidgetSchema> {}
+
+/**
+ * ### [Guild Widget](https://discord.com/developers/docs/resources/guild#guild-widget-object)
+ */
+export const guildWidgetSchema = schema<GuildWidget>(_guildWidgetSchema);

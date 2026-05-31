@@ -1,6 +1,6 @@
-import * as v from "valibot";
+﻿import * as v from "valibot";
 import type { Fetcher } from "@discordkit/core";
-import { patch, snowflake, asInteger } from "@discordkit/core";
+import { patch, partialSchema, snowflake, asInteger } from "@discordkit/core";
 import { type Channel } from "./types/Channel.js";
 import { autoArchiveDurationSchema } from "./types/AutoArchiveDuration.js";
 import { ChannelType } from "./types/ChannelType.js";
@@ -42,7 +42,7 @@ const guildChannelOptions = v.partial(
     /** the user limit of the voice or stage channel, max 99 for voice channels and 10,000 for stage channels (0 refers to no limit) */
     userLimit: v.nullable(v.pipe(v.number(), v.minValue(0), v.maxValue(10000))),
     /** channel or category-specific permissions */
-    permissionOverwrites: v.nullable(v.array(v.partial(overwriteSchema))),
+    permissionOverwrites: v.nullable(v.array(partialSchema(overwriteSchema))),
     /** id of the new parent category for a channel */
     parentId: v.nullable(snowflake),
     /** channel {@link VoiceRegion | voice region} id, automatic when set to null */

@@ -1,12 +1,7 @@
 import * as v from "valibot";
-import { snowflake, boundedString } from "@discordkit/core";
+import { snowflake, boundedString, schema } from "@discordkit/core";
 
-/**
- * ### [Forum Tag](https://discord.com/developers/docs/resources/channel#forum-tag-object)
- *
- * An object that represents a tag that is able to be applied to a thread in a `GUILD_FORUM` or `GUILD_MEDIA` channel.
- */
-export const forumTagSchema = v.object({
+const _forumTagSchema = v.object({
   /** the id of the tag */
   id: snowflake,
   /** the name of the tag (0-20 characters) */
@@ -19,4 +14,11 @@ export const forumTagSchema = v.object({
   emojiName: v.nullable(boundedString())
 });
 
-export interface ForumTag extends v.InferOutput<typeof forumTagSchema> {}
+export interface ForumTag extends v.InferOutput<typeof _forumTagSchema> {}
+
+/**
+ * ### [Forum Tag](https://discord.com/developers/docs/resources/channel#forum-tag-object)
+ *
+ * An object that represents a tag that is able to be applied to a thread in a `GUILD_FORUM` or `GUILD_MEDIA` channel.
+ */
+export const forumTagSchema = schema<ForumTag>(_forumTagSchema);

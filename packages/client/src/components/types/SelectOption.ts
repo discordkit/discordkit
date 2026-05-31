@@ -1,5 +1,5 @@
-import * as v from "valibot";
-import { pick, boundedString } from "@discordkit/core";
+﻿import * as v from "valibot";
+import { pickFields, boundedString } from "@discordkit/core";
 import { emojiSchema } from "../../emoji/types/Emoji.js";
 
 export const selectOptionSchema = v.object({
@@ -10,7 +10,7 @@ export const selectOptionSchema = v.object({
   /** Additional description of the option; max 100 characters */
   description: v.exactOptional(boundedString({ max: 100 })),
   /** id, name, and animated */
-  emoji: v.exactOptional(pick(emojiSchema, [`id`, `name`, `animated`])),
+  emoji: v.exactOptional(pickFields(emojiSchema, [`id`, `name`, `animated`])),
   /** Will show this option as selected by default */
   default: v.exactOptional(v.boolean())
 });

@@ -1,10 +1,11 @@
-import * as v from "valibot";
+﻿import * as v from "valibot";
 import {
   snowflake,
   asDigits,
   boundedString,
   boundedInteger,
-  partial
+  partialSchema,
+  schema
 } from "@discordkit/core";
 import { memberSchema } from "../../guild/types/Member.js";
 import type { Locales } from "../../application/types/Locales.js";
@@ -22,10 +23,7 @@ import { ApplicationIntegrationTypes } from "../../application/types/Application
 import { applicationIntegrationTypeConfigurationSchema } from "../../application/types/ApplicationIntegrationTypeConfiguration.js";
 import { interactionContextSchema } from "./InteractionContextType.js";
 
-/**
- * ### [Interaction](https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object)
- */
-export const interactionSchema = v.object({
+const _interactionSchema = v.object({
   /** ID of the interaction */
   id: snowflake,
   /** ID of the application this interaction is for */
@@ -35,7 +33,7 @@ export const interactionSchema = v.object({
   /** Interaction data payload */
   data: v.exactOptional(applicationCommandDataSchema),
   /** Guild that the interaction was sent from */
-  guild: v.exactOptional(partial(guildSchema)),
+  guild: v.exactOptional(partialSchema(guildSchema)),
   /** Guild that the interaction was sent from */
   guildId: v.exactOptional(snowflake),
   /** Channel that the interaction was sent from */
@@ -75,4 +73,9 @@ export const interactionSchema = v.object({
   attachmentSizeLimit: boundedInteger()
 });
 
-export interface Interaction extends v.InferOutput<typeof interactionSchema> {}
+export interface Interaction extends v.InferOutput<typeof _interactionSchema> {}
+
+/**
+ * ### [Interaction](https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object)
+ */
+export const interactionSchema = schema<Interaction>(_interactionSchema);

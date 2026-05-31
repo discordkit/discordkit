@@ -1,5 +1,10 @@
-import * as v from "valibot";
-import { partial, timestamp, boundedInteger } from "@discordkit/core";
+﻿import * as v from "valibot";
+import {
+  partialSchema,
+  timestamp,
+  boundedInteger,
+  schema
+} from "@discordkit/core";
 import { applicationSchema } from "../../application/types/Application.js";
 import { channelSchema } from "../../channel/types/Channel.js";
 import { scheduledEventSchema } from "../../event/types/ScheduledEvent.js";
@@ -9,18 +14,13 @@ import { inviteStageInstanceSchema } from "./InviteStageInstance.js";
 import { inviteTargetSchema } from "./InviteTarget.js";
 import { inviteTypeSchema } from "./InviteType.js";
 
-/**
- * ### [Invite](https://discord.com/developers/docs/resources/invite#invite-object)
- *
- * Represents a code that when used, adds a user to a guild or group {@link Channel | DM channel}.
- */
-export const inviteSchema = v.object({
+export const inviteEntries = {
   /** the type of invite */
   type: inviteTypeSchema,
   /** the invite code (unique ID) */
   code: v.string(),
   /** the guild this invite is for */
-  guild: v.exactOptional(partial(guildSchema)),
+  guild: v.exactOptional(partialSchema(guildSchema)),
   /** the channel this invite is for */
   channel: v.nullable(channelSchema),
   /** the user who created the invite */
@@ -30,7 +30,9 @@ export const inviteSchema = v.object({
   /** the user whose stream to display for this voice channel stream invite */
   targetUser: v.exactOptional(userSchema),
   /** the embedded application to open for this voice channel embedded application invite */
-  targetApplication: v.exactOptional(v.lazy(() => partial(applicationSchema))),
+  targetApplication: v.exactOptional(
+    v.lazy(() => partialSchema(applicationSchema))
+  ),
   /** approximate count of online members, returned from the `GET /invites/<code>` endpoint when `withCounts` is `true` */
   approximatePresenceCount: v.exactOptional(boundedInteger()),
   /** approximate count of total members, returned from the `GET /invites/<code>` endpoint when `withCounts` is `true` */
@@ -41,6 +43,15 @@ export const inviteSchema = v.object({
   stageInstance: v.exactOptional(inviteStageInstanceSchema),
   /** {@link ScheduledEvent | guild scheduled event} data, only included if `guildScheduledEventId` contains a valid {@link ScheduledEvent | guild scheduled event} id */
   guildScheduledEvent: v.exactOptional(scheduledEventSchema)
-});
+} as const;
 
-export interface Invite extends v.InferOutput<typeof inviteSchema> {}
+const _inviteSchema = v.object(inviteEntries);
+
+export interface Invite extends v.InferOutput<typeof _inviteSchema> {}
+
+/**
+ * ### [Invite](https://discord.com/developers/docs/resources/invite#invite-object)
+ *
+ * Represents a code that when used, adds a user to a guild or group {@link Channel | DM channel}.
+ */
+export const inviteSchema = schema<Invite>(_inviteSchema);

@@ -1,6 +1,15 @@
-import * as v from "valibot";
-import { partial } from "@discordkit/core";
+﻿import * as v from "valibot";
+import { partialSchema, schema } from "@discordkit/core";
 import { emojiSchema } from "../../emoji/types/Emoji.js";
+
+const _pollMediaSchema = v.object({
+  /** The question of the poll. Only `text` is supported. */
+  text: v.exactOptional(v.pipe(v.string(), v.nonEmpty())),
+  /** Each of the answers available in the poll. */
+  answers: v.exactOptional(partialSchema(emojiSchema))
+});
+
+export interface PollMedia extends v.InferOutput<typeof _pollMediaSchema> {}
 
 /**
  * ### [Poll Media](https://discord.com/developers/docs/resources/poll#poll-media-object)
@@ -11,11 +20,4 @@ import { emojiSchema } from "../../emoji/types/Emoji.js";
  *
  * When creating a poll answer with an emoji, one only needs to send either the `id` (custom emoji) or `name` (default emoji) as the only field.
  */
-export const pollMediaSchema = v.object({
-  /** The question of the poll. Only `text` is supported. */
-  text: v.exactOptional(v.pipe(v.string(), v.nonEmpty())),
-  /** Each of the answers available in the poll. */
-  answers: v.exactOptional(partial(emojiSchema))
-});
-
-export interface PollMedia extends v.InferOutput<typeof pollMediaSchema> {}
+export const pollMediaSchema = schema<PollMedia>(_pollMediaSchema);

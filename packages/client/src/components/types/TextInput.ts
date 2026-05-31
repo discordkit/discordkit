@@ -1,14 +1,9 @@
 import * as v from "valibot";
-import { boundedInteger, boundedString } from "@discordkit/core";
+import { boundedInteger, boundedString, schema } from "@discordkit/core";
 import { ComponentType } from "./ComponentType.js";
 import { textInputStyleSchema } from "./TextInputStyle.js";
 
-/**
- * ### [Text Input](https://discord.com/developers/docs/components/reference#text-input)
- *
- * Text Input is an interactive component that allows users to enter free-form text responses in modals. It supports both short, single-line inputs and longer, multi-line paragraph inputs. Text Inputs can only be used within modals and must be placed inside a Label.
- */
-export const textInputSchema = v.object({
+const _textInputSchema = v.object({
   /** `4` for a text input */
   type: v.literal(ComponentType.TextInput),
   /** Optional identifier for component */
@@ -31,4 +26,11 @@ export const textInputSchema = v.object({
   placeholder: v.exactOptional(boundedString({ max: 100 }))
 });
 
-export interface TextInput extends v.InferOutput<typeof textInputSchema> {}
+export interface TextInput extends v.InferOutput<typeof _textInputSchema> {}
+
+/**
+ * ### [Text Input](https://discord.com/developers/docs/components/reference#text-input)
+ *
+ * Text Input is an interactive component that allows users to enter free-form text responses in modals. It supports both short, single-line inputs and longer, multi-line paragraph inputs. Text Inputs can only be used within modals and must be placed inside a Label.
+ */
+export const textInputSchema = schema<TextInput>(_textInputSchema);

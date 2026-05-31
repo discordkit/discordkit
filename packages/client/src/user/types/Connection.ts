@@ -1,15 +1,10 @@
 import * as v from "valibot";
-import { boundedString } from "@discordkit/core";
+import { boundedString, schema } from "@discordkit/core";
 import { integrationSchema } from "../../guild/types/Integration.js";
 import { connectionVisibilitySchema } from "./ConnectionVisibility.js";
 import { servicesSchema } from "./Services.js";
 
-/**
- * ### [Connection](https://discord.com/developers/docs/resources/user#connection-object)
- *
- * The connection object that the user has attached.
- */
-export const connectionSchema = v.object({
+const _connectionSchema = v.object({
   /** id of the connection account */
   id: boundedString(),
   /** the username of the connection account */
@@ -32,4 +27,11 @@ export const connectionSchema = v.object({
   visibility: connectionVisibilitySchema
 });
 
-export interface Connection extends v.InferOutput<typeof connectionSchema> {}
+export interface Connection extends v.InferOutput<typeof _connectionSchema> {}
+
+/**
+ * ### [Connection](https://discord.com/developers/docs/resources/user#connection-object)
+ *
+ * The connection object that the user has attached.
+ */
+export const connectionSchema = schema<Connection>(_connectionSchema);

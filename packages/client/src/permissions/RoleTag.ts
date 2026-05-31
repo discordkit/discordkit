@@ -1,10 +1,7 @@
 import * as v from "valibot";
-import { snowflake } from "@discordkit/core";
+import { snowflake, schema } from "@discordkit/core";
 
-/**
- * Tags with type null represent booleans. They will be present and set to null if they are "true", and will be not present if they are "false".
- */
-export const roleTagSchema = v.object({
+const _roleTagSchema = v.object({
   /** the id of the bot this role belongs to */
   botId: v.exactOptional(snowflake),
   /** the id of the integration this role belongs to */
@@ -19,4 +16,9 @@ export const roleTagSchema = v.object({
   guildConnections: v.exactOptional(v.null_())
 });
 
-export interface RoleTag extends v.InferOutput<typeof roleTagSchema> {}
+export interface RoleTag extends v.InferOutput<typeof _roleTagSchema> {}
+
+/**
+ * Tags with type null represent booleans. They will be present and set to null if they are "true", and will be not present if they are "false".
+ */
+export const roleTagSchema = schema<RoleTag>(_roleTagSchema);

@@ -1,9 +1,9 @@
-import * as v from "valibot";
+﻿import * as v from "valibot";
 import {
   boundedArray,
   boundedInteger,
   boundedString,
-  partial
+  partialSchema
 } from "@discordkit/core";
 import { allowedMentionSchema } from "../../messages/types/AllowedMention.js";
 import { embedSchema } from "../../messages/types/Embed.js";
@@ -29,7 +29,7 @@ export const interactionCallbackDataSchema = v.union([
     /** message components */
     components: v.exactOptional(messageComponentSchema),
     /** attachment objects with filename and description */
-    attachments: v.exactOptional(v.array(partial(attachmentSchema))),
+    attachments: v.exactOptional(v.array(partialSchema(attachmentSchema))),
     /** Details about the poll */
     poll: v.exactOptional(pollCreateRequestSchema)
   }),

@@ -1,14 +1,15 @@
 import * as v from "valibot";
-import { asInteger, snowflake, boundedString, url } from "@discordkit/core";
+import {
+  asInteger,
+  snowflake,
+  boundedString,
+  url,
+  schema
+} from "@discordkit/core";
 import { skuTypesSchema } from "./SKUTypes.js";
 import { skuFlag } from "./SKUFlags.js";
 
-/**
- * ### [SKU](https://discord.com/developers/docs/resources/sku#sku-object)
- *
- * SKUs (stock-keeping units) in Discord represent premium offerings that can be made available to your application's users or guilds.
- */
-export const skuSchema = v.object({
+const _skuSchema = v.object({
   /** ID of SKU */
   id: snowflake,
   /** Type of SKU */
@@ -23,4 +24,11 @@ export const skuSchema = v.object({
   flags: asInteger(skuFlag)
 });
 
-export interface SKU extends v.InferOutput<typeof skuSchema> {}
+export interface SKU extends v.InferOutput<typeof _skuSchema> {}
+
+/**
+ * ### [SKU](https://discord.com/developers/docs/resources/sku#sku-object)
+ *
+ * SKUs (stock-keeping units) in Discord represent premium offerings that can be made available to your application's users or guilds.
+ */
+export const skuSchema = schema<SKU>(_skuSchema);
