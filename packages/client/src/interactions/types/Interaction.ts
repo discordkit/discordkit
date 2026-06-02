@@ -19,8 +19,7 @@ import { applicationCommandDataSchema } from "./ApplicationCommandData.js";
 import { guildSchema } from "../../guild/types/index.js";
 import { permissionFlag } from "../../permissions/Permissions.js";
 import { entitlementSchema } from "../../entitlements/types/Entitlement.js";
-import { ApplicationIntegrationTypes } from "../../application/types/ApplicationIntegrationTypes.js";
-import { applicationIntegrationTypeConfigurationSchema } from "../../application/types/ApplicationIntegrationTypeConfiguration.js";
+import { authorizingIntegrationOwnersSchema } from "../../application/types/ApplicationIntegrationTypes.js";
 import { interactionContextSchema } from "./InteractionContextType.js";
 
 const _interactionSchema = v.object({
@@ -61,12 +60,7 @@ const _interactionSchema = v.object({
   /**
    * Mapping of installation contexts that the interaction was authorized for to related user or guild IDs. See Authorizing Integration Owners Object for details
    */
-  authorizingIntegrationOwners: v.object(
-    v.entriesFromList(
-      Object.values(ApplicationIntegrationTypes),
-      applicationIntegrationTypeConfigurationSchema
-    )
-  ),
+  authorizingIntegrationOwners: authorizingIntegrationOwnersSchema,
   /** Context where the interaction was triggered from */
   context: v.exactOptional(interactionContextSchema),
   /** Attachment size limit in bytes */
