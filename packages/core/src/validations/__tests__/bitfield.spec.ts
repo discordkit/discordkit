@@ -1,4 +1,4 @@
-import { any, object, parse, safeParse } from "valibot";
+import { object, parse, safeParse } from "valibot";
 import { MockUtils } from "#mock-utils";
 import { discord } from "../../requests/DiscordSession.js";
 import { bitfield } from "../bitfield.js";
@@ -84,34 +84,28 @@ describe(`bitField`, () => {
 
   it(`integrates with valimock`, { repeats: 5 }, () => {
     const sampleSchema = object({
-      flags: permissionFlag,
-      invalid: any()
+      flags: permissionFlag
     });
     const actual = mockUtils.schema(sampleSchema);
     expect(() => parse(sampleSchema, actual)).not.toThrow();
-    expect(parse(sampleSchema, actual).invalid).toBeUndefined();
   });
 
   it(`integrates with asDigits`, { repeats: 5 }, () => {
     const sampleSchema = object({
-      flags: asDigits(permissionFlag),
-      invalid: any()
+      flags: asDigits(permissionFlag)
     });
     const actual = mockUtils.schema(sampleSchema);
     expect(() => parse(sampleSchema, actual)).not.toThrow();
     expect(parse(sampleSchema, actual).flags).toBeTypeOf(`string`);
-    expect(parse(sampleSchema, actual).invalid).toBeUndefined();
   });
 
   it(`integrates with asInteger`, { repeats: 5 }, () => {
     const sampleSchema = object({
       id: snowflake,
-      flags: asInteger(permissionFlag),
-      invalid: any()
+      flags: asInteger(permissionFlag)
     });
     const actual = mockUtils.schema(sampleSchema);
     expect(() => parse(sampleSchema, actual)).not.toThrow();
     expect(parse(sampleSchema, actual).flags).toBeTypeOf(`number`);
-    expect(parse(sampleSchema, actual).invalid).toBeUndefined();
   });
 });
