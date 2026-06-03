@@ -25,6 +25,9 @@
     "access": "public",
     "registry": "https://registry.npmjs.org"
   },
+  "scripts": {
+    "prepack": "node -e \"require('node:fs').copyFileSync(require('node:path').join('..','..','README.md'),'README.md')\""
+  },
   "type": "module",
   "imports": {
     "#mocks": "./src/__mocks__/mockSchema.mock.ts"

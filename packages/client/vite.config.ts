@@ -8,8 +8,7 @@ export default defineConfig({
     }
   },
   test: {
-    globals: true,
-    environment: `happy-dom`
+    globals: true
   },
   pack: {
     // Entry needs to be a glob covering every source file so unbundle

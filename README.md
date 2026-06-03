@@ -1,13 +1,12 @@
 <div align="center">
 
-![Discordkit](./static/logo-light.svg#gh-light-mode-only)
-![Discordkit](./static/logo-dark.svg#gh-dark-mode-only)
+![Discordkit][logo-light]
+![Discordkit][logo-dark]
 
-[![npm version](https://img.shields.io/npm/v/@discordkit/client.svg?style=flat)](https://www.npmjs.com/package/@discordkit/client)
-[![CI status](https://github.com/discordkit/discordkit/actions/workflows/ci.yml/badge.svg)](https://github.com/discordkit/discordkit/actions/workflows/ci.yml)
-[![Codecov coverage](https://codecov.io/gh/discordkit/discordkit/branch/master/graph/badge.svg)](https://codecov.io/gh/discordkit/discordkit)
+[![npm version][npm_badge]][npm]
+[![CI status][ci_badge]][ci]
 
-TypeScript SDK for [Discord's API](https://discord.com/developers/docs)
+TypeScript SDK for [Discord's API][discord_api]
 
 </div>
 
@@ -73,9 +72,9 @@ const guild = await getGuildSafe({ guild: `123456789012345678` });
 // throws if input doesn't match getGuildSchema, or the response doesn't match guildSchema
 ```
 
-#### With [react-query](https://tanstack.com/query/latest):
+#### With [react-query][react_query]:
 
-For `GET` endpoints, use `toQuery` from `@discordkit/core` to produce a queryFn compatible with [`useQuery`](https://tanstack.com/query/latest/docs/react/reference/useQuery):
+For `GET` endpoints, use `toQuery` from `@discordkit/core` to produce a queryFn compatible with [`useQuery`][use_query]:
 
 ```ts
 import { useQuery } from "@tanstack/react-query";
@@ -94,7 +93,7 @@ export const UserProfile = ({ user }) => {
 };
 ```
 
-For mutations, pass the Fetcher straight to [`useMutation`](https://tanstack.com/query/latest/docs/react/reference/useMutation) — schemas can validate input in `onMutate`:
+For mutations, pass the Fetcher straight to [`useMutation`][use_mutation] — schemas can validate input in `onMutate`:
 
 ```ts
 import { useMutation } from "@tanstack/react-query";
@@ -132,7 +131,7 @@ export const RenameGuild = ({ guild }) => {
 };
 ```
 
-#### With [tRPC](https://trpc.io/):
+#### With [tRPC][trpc]:
 
 Use `toProcedure` from `@discordkit/core` to wrap a Fetcher + schemas into a tRPC procedure builder. You assemble each procedure where you need it — no per-endpoint imports of pre-wired procedures.
 
@@ -208,10 +207,37 @@ createHTTPServer({
 }).listen(1337);
 ```
 
+## 🤝 Contributing
+
+The project uses [Vite+][viteplus] as a unified toolchain (Oxlint + Oxfmt + tsdown + Vitest) and [Bumpy][bumpy] for versioning and release.
+
+```bash
+vp install           # install dependencies
+vp check --fix       # format + lint + typecheck (with autofixes)
+vp test              # run Vitest
+yarn bumpy add       # create a bump file for your PR
+```
+
 ## 📣 Acknowledgements
 
-Endpoint documentation taken from Discord's [Official API docs](https://discord.com/developers/docs/).
+Endpoint documentation taken from Discord's [Official API docs][discord_api].
 
 ## 🥂 License
 
-Released under the [MIT license](https://github.com/Saeris/discordkit/blob/master/LICENSE.md).
+Released under the [MIT license][license] © [Drake Costa][personal-website].
+
+[logo-light]: https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-light.svg#gh-light-mode-only
+[logo-dark]: https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-dark.svg#gh-dark-mode-only
+[npm_badge]: https://img.shields.io/npm/v/@discordkit/client.svg?style=flat
+[npm]: https://www.npmjs.com/package/@discordkit/client
+[ci_badge]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml/badge.svg
+[ci]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml
+[discord_api]: https://discord.com/developers/docs
+[react_query]: https://tanstack.com/query/latest
+[use_query]: https://tanstack.com/query/latest/docs/react/reference/useQuery
+[use_mutation]: https://tanstack.com/query/latest/docs/react/reference/useMutation
+[trpc]: https://trpc.io/
+[viteplus]: https://viteplus.dev/
+[bumpy]: https://bumpy.varlock.dev/
+[license]: ./LICENSE.md
+[personal-website]: https://saeris.gg
