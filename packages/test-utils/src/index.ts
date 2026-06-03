@@ -266,8 +266,16 @@ export class MockUtils {
       opts?: Partial<ValimockOptions>
     ): CreateMockReturn<TConfig, TResult> => {
       const config = configSchema ? this.schema(configSchema, opts) : null;
-      const expected = resultSchema ? this.schema(resultSchema, opts) : null;
-      const result = this.#serialize(expected); //?
+      const mocked = resultSchema ? this.schema(resultSchema, opts) : null;
+      const result = this.#serialize(mocked); //?
+      // Round-trip `expected` through JSON so it matches what the fetch
+      // response will actually look like on the wire. Without this, the
+      // in-memory mock retains `{ field: undefined }` entries that
+      // JSON.stringify drops from the response body — and `toStrictEqual`
+      // (correctly) distinguishes `{ field: undefined }` from `{}`,
+      // producing flakes on any spec with `exact_optional` fields.
+      // oxlint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const expected = result === undefined ? mocked : JSON.parse(result);
 
       try {
         this.#msw.use(

@@ -15,6 +15,6 @@
     "msw": "^2.14.6",
     "nodejs-snowflake": "^2.0.1",
     "valibot": "catalog:",
-    "valimock": "^1.4.0"
+    "valimock": "1.6.0"
   }
 }

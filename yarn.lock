@@ -112,7 +112,7 @@ __metadata:
     msw: "npm:^2.14.6"
     nodejs-snowflake: "npm:^2.0.1"
     valibot: "catalog:"
-    valimock: "npm:^1.4.0"
+    valimock: "npm:1.6.0"
   languageName: unknown
   linkType: soft
 
@@ -2143,7 +2143,7 @@ __metadata:
     typescript: "catalog:"
     unified: "npm:^11.0.5"
     valibot: "catalog:"
-    valimock: "npm:^1.4.0"
+    valimock: "npm:1.6.0"
     vite-plus: "catalog:"
     vitest: "catalog:"
   languageName: unknown
@@ -4940,15 +4940,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"valimock@npm:^1.4.0":
-  version: 1.4.0
-  resolution: "valimock@npm:1.4.0"
+"valimock@npm:1.6.0":
+  version: 1.6.0
+  resolution: "valimock@npm:1.6.0"
   dependencies:
     randexp: "npm:^0.5.3"
   peerDependencies:
     "@faker-js/faker": ">= 8.0.0"
     valibot: ">= 0.30.0"
-  checksum: 10/d8f8eee6d2fa5749612efa6c2d9a229e110bcceba2ae46b3c5de9b96e1314b0928ad825eff54d4d37831096c69fa2b20b15d31f7b18f51e4eb66f73ae71b385f
+  checksum: 10/a595949c9c269968123ebe5eaa26e7d6c5c19f6178658bada5db389bcd8b27f504f541aad5c6ce035436bcd00f36b69bbb64b3f9dfd27f1d47e80158333c12f3
   languageName: node
   linkType: hard
 
