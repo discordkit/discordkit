@@ -1,10 +1,7 @@
 ﻿import * as v from "valibot";
-import {
-  partialSchema,
-  timestamp,
-  boundedInteger,
-  schema
-} from "@discordkit/core";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { partialSchema, schema } from "@discordkit/core/validations/schema";
+import { timestamp } from "@discordkit/core/validations/timestamp";
 import { applicationSchema } from "../../application/types/Application.js";
 import { channelSchema } from "../../channel/types/Channel.js";
 import { scheduledEventSchema } from "../../event/types/ScheduledEvent.js";

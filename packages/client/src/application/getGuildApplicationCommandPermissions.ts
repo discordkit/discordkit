@@ -1,5 +1,6 @@
 import * as v from "valibot";
-import { get, type Fetcher, snowflake } from "@discordkit/core";
+import { get, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { type GuildApplicationCommandPermissions } from "../application-commands/types/GuildApplicationCommandPermissions.js";
 
 export const getGuildApplicationCommandPermissionsSchema = v.object({

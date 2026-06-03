@@ -1,11 +1,8 @@
 import * as v from "valibot";
-import {
-  patch,
-  type Fetcher,
-  snowflake,
-  boundedString,
-  url
-} from "@discordkit/core";
+import { patch, type Fetcher } from "@discordkit/core/requests/methods";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { url } from "@discordkit/core/validations/url";
 import { type Webhook } from "./types/Webhook.js";
 
 export const modifyWebhookSchema = v.object({

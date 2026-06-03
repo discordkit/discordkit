@@ -1,11 +1,8 @@
 import * as v from "valibot";
-import {
-  boundedArray,
-  boundedInteger,
-  boundedString,
-  partialSchema,
-  schema
-} from "@discordkit/core";
+import { boundedArray } from "@discordkit/core/validations/boundedArray";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { partialSchema, schema } from "@discordkit/core/validations/schema";
 import { allowedMentionSchema } from "../../messages/types/AllowedMention.js";
 import { embedSchema } from "../../messages/types/Embed.js";
 import { messageComponentSchema } from "../../messages/types/MessageComponent.js";

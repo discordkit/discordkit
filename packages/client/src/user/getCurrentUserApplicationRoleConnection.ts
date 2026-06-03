@@ -1,5 +1,6 @@
 import * as v from "valibot";
-import { get, type Fetcher, snowflake } from "@discordkit/core";
+import { get, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { type ApplicationRoleConnection } from "./types/ApplicationRoleConnection.js";
 
 export const getCurrentUserApplicationRoleConnectionSchema = v.object({

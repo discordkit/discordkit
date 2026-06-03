@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { boundedString } from "@discordkit/core";
+import { boundedString } from "@discordkit/core/validations/boundedString";
 
 /**
  * ### [Audit Log Change](https://discord.com/developers/docs/resources/audit-log#audit-log-change-object)

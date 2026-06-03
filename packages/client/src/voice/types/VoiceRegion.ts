@@ -1,7 +1,7 @@
 // https://discord.com/developers/docs/resources/voice#voice-region-object-voice-region-structure
 
 import * as v from "valibot";
-import { schema } from "@discordkit/core";
+import { schema } from "@discordkit/core/validations/schema";
 
 const _voiceRegionSchema = v.object({
   /** unique ID for the region */

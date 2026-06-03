@@ -1,5 +1,7 @@
 import * as v from "valibot";
-import { asInteger, snowflake, timestamp } from "@discordkit/core";
+import { asInteger } from "@discordkit/core/validations/asInteger";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { timestamp } from "@discordkit/core/validations/timestamp";
 import { stickerSchema } from "../../sticker/types/Sticker.js";
 import { userSchema } from "../../user/types/User.js";
 import { attachmentSchema } from "./Attachment.js";

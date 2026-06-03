@@ -1,6 +1,9 @@
 ﻿import * as v from "valibot";
 import type { Fetcher } from "@discordkit/core";
-import { patch, partialSchema, snowflake, asInteger } from "@discordkit/core";
+import { patch } from "@discordkit/core/requests/methods";
+import { asInteger } from "@discordkit/core/validations/asInteger";
+import { partialSchema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { type Channel } from "./types/Channel.js";
 import { autoArchiveDurationSchema } from "./types/AutoArchiveDuration.js";
 import { ChannelType } from "./types/ChannelType.js";

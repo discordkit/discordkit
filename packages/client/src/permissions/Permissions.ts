@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { bitfield } from "@discordkit/core";
+import { bitfield } from "@discordkit/core/validations/bitfield";
 
 // NOTE: Because teats bitwise operates as 32bit by default, we have
 // to encode Discord permissions using hexidecimal notation `0x02`

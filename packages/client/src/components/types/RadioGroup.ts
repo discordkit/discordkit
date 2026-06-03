@@ -1,10 +1,8 @@
 import * as v from "valibot";
-import {
-  boundedArray,
-  boundedInteger,
-  boundedString,
-  schema
-} from "@discordkit/core";
+import { boundedArray } from "@discordkit/core/validations/boundedArray";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { schema } from "@discordkit/core/validations/schema";
 import { ComponentType } from "./ComponentType.js";
 import { radioGroupOptionSchema } from "./RadioGroupOption.js";
 

@@ -1,12 +1,10 @@
 import * as v from "valibot";
-import {
-  asInteger,
-  schema,
-  snowflake,
-  boundedString,
-  boundedInteger,
-  url
-} from "@discordkit/core";
+import { asInteger } from "@discordkit/core/validations/asInteger";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { schema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { url } from "@discordkit/core/validations/url";
 import { attachmentFlag } from "./AttachmentFlags.js";
 
 const _attachmentSchema = v.object({

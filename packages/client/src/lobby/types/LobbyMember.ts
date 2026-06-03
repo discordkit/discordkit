@@ -1,5 +1,7 @@
 import * as v from "valibot";
-import { snowflake, asInteger, schema } from "@discordkit/core";
+import { asInteger } from "@discordkit/core/validations/asInteger";
+import { schema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { lobbyMemberFlag } from "./LobbyMemberFlags.js";
 
 const _lobbyMemberSchema = v.object({

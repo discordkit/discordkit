@@ -1,5 +1,6 @@
 import * as v from "valibot";
-import { post, type Fetcher, snowflake } from "@discordkit/core";
+import { post, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { type Invite } from "../invite/types/Invite.js";
 import { inviteTargetSchema } from "../invite/types/InviteTarget.js";
 

@@ -1,4 +1,5 @@
-﻿import { omitFields, toValidated } from "@discordkit/core";
+﻿import { toValidated } from "@discordkit/core/requests/toValidated";
+import { omitFields } from "@discordkit/core/validations/schema";
 import { mockUtils } from "#mocks";
 import { incomingWebhookSchema } from "../types/Webhook.js";
 import {

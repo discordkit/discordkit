@@ -1,5 +1,7 @@
 import * as v from "valibot";
-import { boundedArray, boundedString, boundedInteger } from "@discordkit/core";
+import { boundedArray } from "@discordkit/core/validations/boundedArray";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { boundedString } from "@discordkit/core/validations/boundedString";
 import { channelTypeSchema } from "../../channel/types/ChannelType.js";
 import {
   ApplicationCommandOptionType,

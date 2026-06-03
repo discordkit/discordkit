@@ -1,5 +1,7 @@
 import * as v from "valibot";
-import { snowflake, boundedArray, boundedString } from "@discordkit/core";
+import { boundedArray } from "@discordkit/core/validations/boundedArray";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { moderationActionSchema } from "./ModerationAction.js";
 import { moderationEventSchema } from "./ModerationEvent.js";
 import { moderationTriggerTypeSchema } from "./ModerationTriggerType.js";

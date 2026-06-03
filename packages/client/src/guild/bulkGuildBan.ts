@@ -1,5 +1,6 @@
 import * as v from "valibot";
-import { post, type Fetcher, snowflake } from "@discordkit/core";
+import { post, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 export const bulkGuildBanSchema = v.object({
   guild: snowflake,

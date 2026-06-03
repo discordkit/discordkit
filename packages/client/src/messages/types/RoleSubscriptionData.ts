@@ -1,5 +1,7 @@
 import * as v from "valibot";
-import { snowflake, boundedInteger, boundedString } from "@discordkit/core";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 /**
  * ### [Role Subscription Data](https://discord.com/developers/docs/resources/message#role-subscription-data-object)

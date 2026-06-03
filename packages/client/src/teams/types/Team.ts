@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { schema } from "@discordkit/core";
+import { schema } from "@discordkit/core/validations/schema";
 import { teamMemberSchema } from "./TeamMember.js";
 
 // https://discord.com/developers/docs/topics/teams#data-models-team-object

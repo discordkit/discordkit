@@ -1,11 +1,9 @@
 import * as v from "valibot";
-import {
-  asInteger,
-  schema,
-  snowflake,
-  boundedInteger,
-  boundedString
-} from "@discordkit/core";
+import { asInteger } from "@discordkit/core/validations/asInteger";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { schema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import type { Locales } from "../../application/types/Locales.js";
 import { localesSchema } from "../../application/types/Locales.js";
 import { premiumTypeSchema } from "./PremiumType.js";

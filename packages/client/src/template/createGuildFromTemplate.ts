@@ -1,5 +1,7 @@
 import * as v from "valibot";
-import { post, type Fetcher, snowflake, datauri } from "@discordkit/core";
+import { post, type Fetcher } from "@discordkit/core/requests/methods";
+import { datauri } from "@discordkit/core/validations/datauri";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { type Guild } from "../guild/types/Guild.js";
 
 export const createGuildFromTemplateSchema = v.object({

@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { asDigits } from "@discordkit/core";
+import { asDigits } from "@discordkit/core/validations/asDigits";
 import type { Scopes } from "./Scopes.js";
 import { scopesSchema } from "./Scopes.js";
 import { permissionFlag } from "../../permissions/Permissions.js";

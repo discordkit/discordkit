@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { boundedInteger } from "@discordkit/core";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
 
 /**
  * ### [Reaction Count Details](https://discord.com/developers/docs/resources/message#reaction-count-details-object)

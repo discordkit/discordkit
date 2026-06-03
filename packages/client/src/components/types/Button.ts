@@ -1,12 +1,9 @@
 ﻿import * as v from "valibot";
-import {
-  pickFields,
-  schema,
-  snowflake,
-  boundedInteger,
-  boundedString,
-  url
-} from "@discordkit/core";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { pickFields, schema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { url } from "@discordkit/core/validations/url";
 import { emojiSchema } from "../../emoji/types/Emoji.js";
 import { buttonStyleSchema } from "./ButtonStyle.js";
 import { ComponentType } from "./ComponentType.js";

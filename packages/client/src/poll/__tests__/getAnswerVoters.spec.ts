@@ -1,4 +1,4 @@
-import { toValidated } from "@discordkit/core";
+import { toValidated } from "@discordkit/core/requests/toValidated";
 import * as v from "valibot";
 import { mockUtils } from "#mocks";
 import { getAnswerVotersSchema, getAnswerVoters } from "../getAnswerVoters.js";

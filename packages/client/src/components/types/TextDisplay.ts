@@ -1,5 +1,6 @@
 import * as v from "valibot";
-import { boundedInteger, schema } from "@discordkit/core";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { schema } from "@discordkit/core/validations/schema";
 import { ComponentType } from "./ComponentType.js";
 
 const _textDisplaySchema = v.object({

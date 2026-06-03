@@ -1,10 +1,8 @@
 import * as v from "valibot";
-import {
-  asDigits,
-  snowflake,
-  boundedArray,
-  boundedString
-} from "@discordkit/core";
+import { asDigits } from "@discordkit/core/validations/asDigits";
+import { boundedArray } from "@discordkit/core/validations/boundedArray";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import type { Locales } from "../../application/types/Locales.js";
 import { localesSchema } from "../../application/types/Locales.js";
 import { applicationCommandOptionSchema } from "./ApplicationCommandOption.js";

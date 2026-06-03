@@ -1,15 +1,11 @@
 ﻿import * as v from "valibot";
-import {
-  patch,
-  buildURL,
-  type Fetcher,
-  partialSchema,
-  snowflake,
-  boundedString,
-  boundedArray,
-  multipart,
-  fileUpload
-} from "@discordkit/core";
+import { buildURL } from "@discordkit/core/requests/buildURL";
+import { patch, type Fetcher } from "@discordkit/core/requests/methods";
+import { boundedArray } from "@discordkit/core/validations/boundedArray";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { multipart, fileUpload } from "@discordkit/core/validations/fileUpload";
+import { partialSchema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { embedEntries } from "../messages/types/Embed.js";
 import { allowedMentionSchema } from "../messages/types/AllowedMention.js";
 import { attachmentSchema } from "../messages/types/Attachment.js";

@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { boundedString } from "@discordkit/core";
+import { boundedString } from "@discordkit/core/validations/boundedString";
 
 /**
  * ### [Application Role Connection](https://discord.com/developers/docs/resources/user#application-role-connection-object)

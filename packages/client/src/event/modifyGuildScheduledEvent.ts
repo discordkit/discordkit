@@ -1,11 +1,8 @@
 import * as v from "valibot";
-import {
-  patch,
-  type Fetcher,
-  snowflake,
-  datauri,
-  timestamp
-} from "@discordkit/core";
+import { patch, type Fetcher } from "@discordkit/core/requests/methods";
+import { datauri } from "@discordkit/core/validations/datauri";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { timestamp } from "@discordkit/core/validations/timestamp";
 import { type ScheduledEvent } from "./types/ScheduledEvent.js";
 import { entityMetadataSchema } from "./types/EntityMetadata.js";
 import { scheduledEventPrivacyLevelSchema } from "./types/ScheduledEventPrivacyLevel.js";

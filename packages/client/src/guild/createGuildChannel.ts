@@ -1,5 +1,7 @@
 ﻿import * as v from "valibot";
-import { post, type Fetcher, partialSchema, snowflake } from "@discordkit/core";
+import { post, type Fetcher } from "@discordkit/core/requests/methods";
+import { partialSchema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { type Channel } from "../channel/types/Channel.js";
 import { channelTypeSchema } from "../channel/types/ChannelType.js";
 import { overwriteSchema } from "../channel/types/Overwrite.js";

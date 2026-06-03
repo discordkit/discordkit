@@ -4,6 +4,8 @@ import { extractDataURIMetadata } from "./datauri.js";
 /**
  * Validation action to check if the given `datauri` string
  * has one of the provided [MIME types](https://en.wikipedia.org/wiki/Media_type)
+ *
+ * @__NO_SIDE_EFFECTS__
  */
 export const hasMimeType = (
   /** an array of MIME types to validate against */

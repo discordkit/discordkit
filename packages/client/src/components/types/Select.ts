@@ -1,4 +1,4 @@
-import { variantSchema } from "@discordkit/core";
+import { variantSchema } from "@discordkit/core/validations/schema";
 import { type StringSelect, stringSelectSchema } from "./StringSelect.js";
 import { type UserSelect, userSelectSchema } from "./UserSelect.js";
 import { type RoleSelect, roleSelectSchema } from "./RoleSelect.js";

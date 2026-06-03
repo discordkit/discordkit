@@ -1,5 +1,6 @@
 import * as v from "valibot";
-import { snowflake, schema } from "@discordkit/core";
+import { schema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { guildTextChannelEntries } from "../../channel/types/Channel.js";
 import { ChannelType } from "../../channel/types/ChannelType.js";
 import { lobbyMemberSchema } from "./LobbyMember.js";

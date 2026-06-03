@@ -1,5 +1,6 @@
 import * as v from "valibot";
-import { type Fetcher, put, snowflake } from "@discordkit/core";
+import { type Fetcher, put } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import {
   type ApplicationRoleConnectionMetadata,
   applicationRoleConnectionMetadataSchema

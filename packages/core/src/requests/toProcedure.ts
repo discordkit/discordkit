@@ -53,6 +53,8 @@ type BaseProcedure<
  * Capability-free fetchers only — endpoints that require `{ anonymous: true }`
  * or accept `{ reason: string }` cannot currently be wrapped via this helper,
  * because tRPC has no natural channel for those per-call options.
+ *
+ * @__NO_SIDE_EFFECTS__
  */
 export const toProcedure =
   <

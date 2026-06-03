@@ -1,11 +1,7 @@
 import * as v from "valibot";
-import {
-  put,
-  type Fetcher,
-  boundedString,
-  fileUpload,
-  multipart
-} from "@discordkit/core";
+import { put, type Fetcher } from "@discordkit/core/requests/methods";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { fileUpload, multipart } from "@discordkit/core/validations/fileUpload";
 
 export const updateTargetUsersSchema = v.object({
   code: boundedString(),

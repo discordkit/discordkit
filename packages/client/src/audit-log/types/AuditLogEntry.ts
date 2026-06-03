@@ -1,5 +1,6 @@
 import * as v from "valibot";
-import { boundedString, snowflake } from "@discordkit/core";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { auditLogChangeSchema } from "./AuditLogChange.js";
 import { auditLogEventSchema } from "./AuditLogEvent.js";
 import { optionalAuditEntryInfoSchema } from "./OptionalAuditEntryInfo.js";

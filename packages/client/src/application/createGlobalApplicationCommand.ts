@@ -1,11 +1,8 @@
 import * as v from "valibot";
-import {
-  post,
-  type Fetcher,
-  snowflake,
-  asDigits,
-  boundedString
-} from "@discordkit/core";
+import { post, type Fetcher } from "@discordkit/core/requests/methods";
+import { asDigits } from "@discordkit/core/validations/asDigits";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { type ApplicationCommand } from "../application-commands/types/ApplicationCommand.js";
 import { applicationCommandOptionSchema } from "../application-commands/types/ApplicationCommandOption.js";
 import {

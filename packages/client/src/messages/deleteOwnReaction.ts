@@ -1,5 +1,6 @@
 import * as v from "valibot";
-import { remove, type Fetcher, snowflake } from "@discordkit/core";
+import { remove, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 export const deleteOwnReactionSchema = v.object({
   channel: snowflake,

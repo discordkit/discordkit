@@ -1,5 +1,6 @@
 import * as v from "valibot";
-import { timestamp, boundedInteger } from "@discordkit/core";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { timestamp } from "@discordkit/core/validations/timestamp";
 import { inviteEntries } from "./Invite.js";
 
 /**

@@ -1,4 +1,5 @@
-﻿import { toValidated, requiredFields } from "@discordkit/core";
+﻿import { toValidated } from "@discordkit/core/requests/toValidated";
+import { requiredFields } from "@discordkit/core/validations/schema";
 import { mockUtils } from "#mocks";
 import { lobbySchema } from "../types/Lobby.js";
 import {

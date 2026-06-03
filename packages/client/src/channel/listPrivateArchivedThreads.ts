@@ -1,5 +1,7 @@
 import * as v from "valibot";
-import { get, type Fetcher, snowflake, timestamp } from "@discordkit/core";
+import { get, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { timestamp } from "@discordkit/core/validations/timestamp";
 import { type ArchivedThreads } from "./types/ArchivedThreads.js";
 
 export const listPrivateArchivedThreadsSchema = v.object({

@@ -1,4 +1,4 @@
-import { timestamp } from "@discordkit/core";
+import { timestamp } from "@discordkit/core/validations/timestamp";
 import * as v from "valibot";
 
 /**

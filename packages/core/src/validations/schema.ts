@@ -39,6 +39,8 @@ import * as v from "valibot";
  * {@link partialSchema}, {@link pickFields}, {@link omitFields},
  * {@link requiredFields}, and {@link variantSchema} helpers below for
  * the common cases.
+ *
+ * @__NO_SIDE_EFFECTS__
  */
 export const schema = <T>(s: v.GenericSchema<unknown>): v.GenericSchema<T> =>
   s as v.GenericSchema<T>;
@@ -48,6 +50,8 @@ export const schema = <T>(s: v.GenericSchema<unknown>): v.GenericSchema<T> =>
  * runtime. Equivalent to Valibot's `v.partial`, but accepts an
  * annotated `GenericSchema<T>` (which `v.partial` would reject because
  * its constraint is `ObjectSchema<...>`).
+ *
+ * @__NO_SIDE_EFFECTS__
  */
 export const partialSchema = <T>(
   s: v.GenericSchema<T>
@@ -62,6 +66,8 @@ export const partialSchema = <T>(
 /**
  * Pick a subset of fields from `T` at both type and runtime levels.
  * Equivalent to Valibot's `v.pick`. See {@link partialSchema}.
+ *
+ * @__NO_SIDE_EFFECTS__
  */
 export const pickFields = <T, K extends keyof T & string>(
   s: v.GenericSchema<T>,
@@ -77,6 +83,8 @@ export const pickFields = <T, K extends keyof T & string>(
 /**
  * Omit a subset of fields from `T` at both type and runtime levels.
  * Equivalent to Valibot's `v.omit`. See {@link partialSchema}.
+ *
+ * @__NO_SIDE_EFFECTS__
  */
 export const omitFields = <T, K extends keyof T & string>(
   s: v.GenericSchema<T>,
@@ -92,6 +100,8 @@ export const omitFields = <T, K extends keyof T & string>(
 /**
  * Mark a subset of fields on `T` as required at both type and runtime
  * levels. Equivalent to Valibot's `v.required`. See {@link partialSchema}.
+ *
+ * @__NO_SIDE_EFFECTS__
  */
 export const requiredFields = <T, K extends keyof T & string>(
   s: v.GenericSchema<T>,
@@ -124,6 +134,8 @@ export const requiredFields = <T, K extends keyof T & string>(
  *   // ...
  * ]);
  * ```
+ *
+ * @__NO_SIDE_EFFECTS__
  */
 export const variantSchema = <T>(
   key: keyof T & string,

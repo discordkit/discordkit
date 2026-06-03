@@ -1,5 +1,6 @@
 import * as v from "valibot";
-import { boundedArray, snowflake } from "@discordkit/core";
+import { boundedArray } from "@discordkit/core/validations/boundedArray";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 /**
  * ### [Allowed Mention](https://discord.com/developers/docs/resources/message#allowed-mentions-object)

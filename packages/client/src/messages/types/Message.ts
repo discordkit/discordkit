@@ -1,12 +1,9 @@
 ﻿import * as v from "valibot";
-import {
-  asInteger,
-  partialSchema,
-  schema,
-  snowflake,
-  timestamp,
-  boundedInteger
-} from "@discordkit/core";
+import { asInteger } from "@discordkit/core/validations/asInteger";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { partialSchema, schema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { timestamp } from "@discordkit/core/validations/timestamp";
 import { stickerSchema } from "../../sticker/types/Sticker.js";
 import {
   type Application,

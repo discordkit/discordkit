@@ -1,5 +1,7 @@
 import * as v from "valibot";
-import { get, type Fetcher, snowflake, boundedInteger } from "@discordkit/core";
+import { get, type Fetcher } from "@discordkit/core/requests/methods";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { type Message } from "./types/Message.js";
 
 export const getChannelMessagesSchema = v.object({

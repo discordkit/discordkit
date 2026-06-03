@@ -1,6 +1,6 @@
 /* oxlint-disable @typescript-eslint/prefer-literal-enum-member */
 import * as v from "valibot";
-import { bitfield } from "@discordkit/core";
+import { bitfield } from "@discordkit/core/validations/bitfield";
 
 /**
  * ### [System Channel Flags](https://discord.com/developers/docs/resources/guild#guild-object-system-channel-flags)

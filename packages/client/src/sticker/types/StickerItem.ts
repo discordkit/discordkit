@@ -1,5 +1,7 @@
 import * as v from "valibot";
-import { snowflake, boundedString, schema } from "@discordkit/core";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { schema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { stickerFormatTypeSchema } from "./StickerFormatType.js";
 
 const _stickerItemSchema = v.object({

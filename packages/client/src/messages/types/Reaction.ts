@@ -1,5 +1,5 @@
 ﻿import * as v from "valibot";
-import { partialSchema, schema } from "@discordkit/core";
+import { partialSchema, schema } from "@discordkit/core/validations/schema";
 import { emojiSchema } from "../../emoji/types/Emoji.js";
 import { reactionCountDetailsSchema } from "./ReactionCountDetails.js";
 

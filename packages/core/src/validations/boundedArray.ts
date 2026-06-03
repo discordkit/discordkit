@@ -1,6 +1,9 @@
 import * as v from "valibot";
 
-/** A non-empty array with a length within the given bounds */
+/** A non-empty array with a length within the given bounds
+ *
+ * @__NO_SIDE_EFFECTS__
+ */
 export const boundedArray = <TItem>(
   items: v.GenericSchema<TItem>,
   req: number | { min?: number; max?: number } = {}

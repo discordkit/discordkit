@@ -1,5 +1,7 @@
 import * as v from "valibot";
-import { put, type Fetcher, snowflake, asDigits } from "@discordkit/core";
+import { put, type Fetcher } from "@discordkit/core/requests/methods";
+import { asDigits } from "@discordkit/core/validations/asDigits";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { permissionFlag } from "../permissions/Permissions.js";
 
 export const editChannelPermissionsSchema = v.object({

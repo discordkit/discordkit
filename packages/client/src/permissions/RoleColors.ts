@@ -1,5 +1,6 @@
 import * as v from "valibot";
-import { boundedInteger, schema } from "@discordkit/core";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { schema } from "@discordkit/core/validations/schema";
 
 const _roleColorsSchema = v.object({
   primaryColor: boundedInteger({ min: 0x000000, max: 0xffffff }),

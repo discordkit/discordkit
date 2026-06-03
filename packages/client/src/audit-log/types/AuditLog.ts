@@ -1,5 +1,5 @@
 ﻿import * as v from "valibot";
-import { partialSchema, schema } from "@discordkit/core";
+import { partialSchema, schema } from "@discordkit/core/validations/schema";
 import { channelSchema } from "../../channel/types/Channel.js";
 import { scheduledEventSchema } from "../../event/types/ScheduledEvent.js";
 import { integrationSchema } from "../../guild/types/Integration.js";

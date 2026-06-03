@@ -1,5 +1,6 @@
 import * as v from "valibot";
-import { getAsset, boundedString } from "@discordkit/core";
+import { getAsset } from "@discordkit/core/requests/getAsset";
+import { boundedString } from "@discordkit/core/validations/boundedString";
 
 export const defaultUserAvatarSchema = v.object({
   index: boundedString()

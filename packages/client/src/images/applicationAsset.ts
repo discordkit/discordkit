@@ -1,5 +1,6 @@
 import * as v from "valibot";
-import { getAsset, snowflake } from "@discordkit/core";
+import { getAsset } from "@discordkit/core/requests/getAsset";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { imageSizes } from "./types/ImageSizes.js";
 
 export const applicationAssetSchema = v.object({

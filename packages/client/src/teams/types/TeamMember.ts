@@ -1,5 +1,5 @@
 ﻿import * as v from "valibot";
-import { partialSchema, schema } from "@discordkit/core";
+import { partialSchema, schema } from "@discordkit/core/validations/schema";
 import { userSchema } from "../../user/types/User.js";
 import { membershipStateSchema } from "./MembershipState.js";
 import { teamMemberRoleSchema } from "./TeamMemberRole.js";

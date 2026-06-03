@@ -1,11 +1,8 @@
 import * as v from "valibot";
-import {
-  remove,
-  buildURL,
-  type Fetcher,
-  snowflake,
-  boundedString
-} from "@discordkit/core";
+import { buildURL } from "@discordkit/core/requests/buildURL";
+import { remove, type Fetcher } from "@discordkit/core/requests/methods";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 export const deleteWebhookMessageSchema = v.object({
   webhook: snowflake,

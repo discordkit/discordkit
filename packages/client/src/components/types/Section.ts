@@ -1,5 +1,7 @@
 import * as v from "valibot";
-import { boundedInteger, boundedArray, schema } from "@discordkit/core";
+import { boundedArray } from "@discordkit/core/validations/boundedArray";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { schema } from "@discordkit/core/validations/schema";
 import { ComponentType } from "./ComponentType.js";
 import { buttonSchema } from "./Button.js";
 import { textDisplaySchema } from "./TextDisplay.js";

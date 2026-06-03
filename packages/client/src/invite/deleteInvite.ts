@@ -1,5 +1,6 @@
 import * as v from "valibot";
-import { remove, type Fetcher, boundedString } from "@discordkit/core";
+import { remove, type Fetcher } from "@discordkit/core/requests/methods";
+import { boundedString } from "@discordkit/core/validations/boundedString";
 import { type Invite } from "./types/Invite.js";
 
 export const deleteInviteSchema = v.object({

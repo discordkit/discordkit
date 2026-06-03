@@ -1,5 +1,7 @@
 import * as v from "valibot";
-import { post, type Fetcher, snowflake, variantSchema } from "@discordkit/core";
+import { post, type Fetcher } from "@discordkit/core/requests/methods";
+import { variantSchema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { type InteractionCallbackResponse } from "./types/InteractionCallbackResponse.js";
 import { InteractionCallbackType } from "./types/InteractionCallbackType.js";
 import {

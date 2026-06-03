@@ -1,5 +1,7 @@
 import * as v from "valibot";
-import { patch, type Fetcher, snowflake, timestamp } from "@discordkit/core";
+import { patch, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { timestamp } from "@discordkit/core/validations/timestamp";
 import type { VoiceState } from "./types/VoiceState.js";
 
 export const modifyCurrentUserVoiceStateSchema = v.object({

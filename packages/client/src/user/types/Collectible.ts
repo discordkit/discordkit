@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { schema } from "@discordkit/core";
+import { schema } from "@discordkit/core/validations/schema";
 import { nameplateSchema } from "./Nameplate.js";
 
 const _collectibleSchema = v.object({

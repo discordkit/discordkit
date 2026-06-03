@@ -1,5 +1,7 @@
 ﻿import * as v from "valibot";
-import { boundedInteger, boundedString, partialSchema } from "@discordkit/core";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { partialSchema } from "@discordkit/core/validations/schema";
 import { memberSchema } from "../../guild/types/Member.js";
 
 /**

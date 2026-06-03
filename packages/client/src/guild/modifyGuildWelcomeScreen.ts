@@ -1,5 +1,6 @@
 import * as v from "valibot";
-import { patch, type Fetcher, snowflake } from "@discordkit/core";
+import { patch, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { type WelcomeScreen } from "./types/WelcomeScreen.js";
 import { welcomeChannelSchema } from "./types/WelcomeChannel.js";
 

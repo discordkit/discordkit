@@ -1,5 +1,7 @@
 ﻿import * as v from "valibot";
-import { boundedString, partialSchema, snowflake } from "@discordkit/core";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { partialSchema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { interactionTypeSchema } from "./InteractionType.js";
 import { userSchema } from "../../user/types/User.js";
 import { memberSchema } from "../../guild/types/Member.js";

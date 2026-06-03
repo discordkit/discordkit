@@ -1,5 +1,6 @@
 import * as v from "valibot";
-import { patch, type Fetcher, snowflake } from "@discordkit/core";
+import { patch, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { type Member } from "./types/Member.js";
 
 export const modifyCurrentMemberSchema = v.object({

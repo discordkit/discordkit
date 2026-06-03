@@ -1,4 +1,4 @@
-import { toValidated } from "@discordkit/core";
+import { toValidated } from "@discordkit/core/requests/toValidated";
 
 import { mockUtils } from "#mocks";
 import { leaveGuild, leaveGuildSchema } from "../leaveGuild.js";

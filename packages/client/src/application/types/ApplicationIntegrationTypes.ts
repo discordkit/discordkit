@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { snowflake } from "@discordkit/core";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 /** Where an app can be installed, also called its supported installation contexts. */
 export const ApplicationIntegrationTypes = {

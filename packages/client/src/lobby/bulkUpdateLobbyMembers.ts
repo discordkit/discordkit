@@ -1,11 +1,8 @@
 import * as v from "valibot";
-import {
-  post,
-  type Fetcher,
-  snowflake,
-  asInteger,
-  boundedArray
-} from "@discordkit/core";
+import { post, type Fetcher } from "@discordkit/core/requests/methods";
+import { asInteger } from "@discordkit/core/validations/asInteger";
+import { boundedArray } from "@discordkit/core/validations/boundedArray";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { type LobbyMember } from "./types/LobbyMember.js";
 import { lobbyMemberFlag } from "./types/LobbyMemberFlags.js";
 

@@ -1,4 +1,4 @@
-import { toValidated } from "@discordkit/core";
+import { toValidated } from "@discordkit/core/requests/toValidated";
 
 import { mockUtils } from "#mocks";
 import { editMessage, editMessageSchema } from "../editMessage.js";

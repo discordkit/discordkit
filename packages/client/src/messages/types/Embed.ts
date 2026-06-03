@@ -1,12 +1,10 @@
 import * as v from "valibot";
-import {
-  schema,
-  timestamp,
-  boundedArray,
-  boundedInteger,
-  boundedString,
-  url
-} from "@discordkit/core";
+import { boundedArray } from "@discordkit/core/validations/boundedArray";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { schema } from "@discordkit/core/validations/schema";
+import { timestamp } from "@discordkit/core/validations/timestamp";
+import { url } from "@discordkit/core/validations/url";
 import { embedTypeSchema } from "./EmbedType.js";
 
 const _embedFooterSchema = v.object({

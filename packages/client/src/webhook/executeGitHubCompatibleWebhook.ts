@@ -1,11 +1,8 @@
 import * as v from "valibot";
-import {
-  post,
-  buildURL,
-  type Fetcher,
-  snowflake,
-  boundedString
-} from "@discordkit/core";
+import { buildURL } from "@discordkit/core/requests/buildURL";
+import { post, type Fetcher } from "@discordkit/core/requests/methods";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 export const executeGitHubCompatibleWebhookSchema = v.object({
   webhook: snowflake,

@@ -1,5 +1,6 @@
 import * as v from "valibot";
-import { timestamp, schema } from "@discordkit/core";
+import { schema } from "@discordkit/core/validations/schema";
+import { timestamp } from "@discordkit/core/validations/timestamp";
 import { pollMediaSchema } from "./PollMedia.js";
 import { pollAnswerSchema } from "./PollAnswer.js";
 import { pollLayoutTypeSchema } from "./PollLayoutType.js";

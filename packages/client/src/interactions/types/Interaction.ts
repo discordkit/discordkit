@@ -1,12 +1,9 @@
 ﻿import * as v from "valibot";
-import {
-  snowflake,
-  asDigits,
-  boundedString,
-  boundedInteger,
-  partialSchema,
-  schema
-} from "@discordkit/core";
+import { asDigits } from "@discordkit/core/validations/asDigits";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { partialSchema, schema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { memberSchema } from "../../guild/types/Member.js";
 import type { Locales } from "../../application/types/Locales.js";
 import { localesSchema } from "../../application/types/Locales.js";
@@ -16,7 +13,7 @@ import type { User } from "../../user/types/User.js";
 import { userSchema } from "../../user/types/User.js";
 import { interactionTypeSchema } from "./InteractionType.js";
 import { applicationCommandDataSchema } from "./ApplicationCommandData.js";
-import { guildSchema } from "../../guild/types/index.js";
+import { guildSchema } from "../../guild/types/Guild.js";
 import { permissionFlag } from "../../permissions/Permissions.js";
 import { entitlementSchema } from "../../entitlements/types/Entitlement.js";
 import { authorizingIntegrationOwnersSchema } from "../../application/types/ApplicationIntegrationTypes.js";

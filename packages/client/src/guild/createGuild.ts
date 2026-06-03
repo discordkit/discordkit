@@ -1,11 +1,8 @@
 import * as v from "valibot";
-import {
-  post,
-  type Fetcher,
-  snowflake,
-  datauri,
-  asInteger
-} from "@discordkit/core";
+import { post, type Fetcher } from "@discordkit/core/requests/methods";
+import { asInteger } from "@discordkit/core/validations/asInteger";
+import { datauri } from "@discordkit/core/validations/datauri";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { channelSchema } from "../channel/types/Channel.js";
 import { verificationLevelSchema } from "./types/VerificationLevel.js";
 import { defaultMessageNotificationLevelSchema } from "./types/DefaultMessageNotificationLevel.js";

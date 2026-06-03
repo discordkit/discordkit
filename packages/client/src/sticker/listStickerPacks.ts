@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { get, type Fetcher } from "@discordkit/core";
+import { get, type Fetcher } from "@discordkit/core/requests/methods";
 import { stickerPackSchema } from "./types/StickerPack.js";
 
 export const stickerPacksSchema = v.object({

@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { bitfield } from "@discordkit/core";
+import { bitfield } from "@discordkit/core/validations/bitfield";
 
 export const RoleFlags = {
   /** role can be selected by members in an onboarding prompt */

@@ -1,11 +1,8 @@
 import * as v from "valibot";
-import {
-  patch,
-  type Fetcher,
-  snowflake,
-  asInteger,
-  timestamp
-} from "@discordkit/core";
+import { patch, type Fetcher } from "@discordkit/core/requests/methods";
+import { asInteger } from "@discordkit/core/validations/asInteger";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { timestamp } from "@discordkit/core/validations/timestamp";
 import { type Member } from "./types/Member.js";
 import { guildMemberFlag } from "./types/GuildMemberFlags.js";
 

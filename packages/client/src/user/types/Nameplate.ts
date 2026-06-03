@@ -1,5 +1,8 @@
 import * as v from "valibot";
-import { snowflake, boundedString, url, schema } from "@discordkit/core";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { schema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { url } from "@discordkit/core/validations/url";
 
 const _nameplateSchema = v.object({
   /** id of the nameplate SKU */

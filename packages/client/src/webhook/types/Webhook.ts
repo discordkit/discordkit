@@ -1,11 +1,8 @@
 ﻿import * as v from "valibot";
-import {
-  partialSchema,
-  schema,
-  snowflake,
-  boundedString,
-  url
-} from "@discordkit/core";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { partialSchema, schema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { url } from "@discordkit/core/validations/url";
 import { partialChannelSchema } from "../../channel/types/Channel.js";
 import { guildSchema } from "../../guild/types/Guild.js";
 import { userSchema } from "../../user/types/User.js";

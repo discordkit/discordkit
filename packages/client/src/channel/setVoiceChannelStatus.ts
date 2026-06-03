@@ -1,5 +1,7 @@
 import * as v from "valibot";
-import { put, type Fetcher, snowflake, boundedString } from "@discordkit/core";
+import { put, type Fetcher } from "@discordkit/core/requests/methods";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 export const setVoiceChannelStatusSchema = v.object({
   channel: snowflake,

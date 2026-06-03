@@ -1,5 +1,6 @@
 import * as v from "valibot";
-import { snowflake, schema } from "@discordkit/core";
+import { schema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 const _roleTagSchema = v.object({
   /** the id of the bot this role belongs to */

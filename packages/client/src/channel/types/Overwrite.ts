@@ -1,5 +1,7 @@
 import * as v from "valibot";
-import { asDigits, snowflake, schema } from "@discordkit/core";
+import { asDigits } from "@discordkit/core/validations/asDigits";
+import { schema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { permissionFlag } from "../../permissions/Permissions.js";
 
 const _overwriteSchema = v.object({

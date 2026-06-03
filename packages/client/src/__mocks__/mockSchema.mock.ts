@@ -1,12 +1,12 @@
 ﻿import { afterAll } from "vite-plus/test";
 import { MockUtils } from "@discordkit/test-utils";
+import { discord } from "@discordkit/core/requests/DiscordSession";
+import { datauri } from "@discordkit/core/validations/datauri";
 import {
-  datauri,
-  discord,
   fileUpload,
-  snowflake,
   type FileUpload
-} from "@discordkit/core";
+} from "@discordkit/core/validations/fileUpload";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { faker } from "@faker-js/faker";
 import {
   applicationFlag,

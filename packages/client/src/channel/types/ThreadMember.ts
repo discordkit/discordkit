@@ -1,5 +1,7 @@
 import * as v from "valibot";
-import { asInteger, snowflake, timestamp } from "@discordkit/core";
+import { asInteger } from "@discordkit/core/validations/asInteger";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { timestamp } from "@discordkit/core/validations/timestamp";
 import { memberSchema } from "../../guild/types/Member.js";
 import { channelFlag } from "./ChannelFlags.js";
 

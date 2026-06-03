@@ -1,5 +1,6 @@
 import * as v from "valibot";
-import { get, type Fetcher, boundedString } from "@discordkit/core";
+import { get, type Fetcher } from "@discordkit/core/requests/methods";
+import { boundedString } from "@discordkit/core/validations/boundedString";
 import { type TargetUsersJobStatus } from "./types/TargetUsersJobStatus.js";
 
 export const getTargetUsersJobStatusSchema = v.object({

@@ -1,4 +1,5 @@
-﻿import { toValidated, partialSchema } from "@discordkit/core";
+﻿import { toValidated } from "@discordkit/core/requests/toValidated";
+import { partialSchema } from "@discordkit/core/validations/schema";
 import { mockUtils } from "#mocks";
 import { inviteSchema } from "../../invite/types/Invite.js";
 import {

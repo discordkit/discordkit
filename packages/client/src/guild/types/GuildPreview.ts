@@ -1,5 +1,6 @@
 import * as v from "valibot";
-import { snowflake, boundedInteger } from "@discordkit/core";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { emojiSchema } from "../../emoji/types/Emoji.js";
 import { stickerSchema } from "../../sticker/types/Sticker.js";
 import { guildFeaturesSchema } from "./GuildFeatures.js";

@@ -13,6 +13,8 @@ import type { Fetcher, FetcherCapabilities } from "./methods.js";
  * This is useful in contexts where you want strong guarantees on runtime
  * type-safety when dealing with raw user input in a framework agnostic
  * environment.
+ *
+ * @__NO_SIDE_EFFECTS__
  */
 export const toValidated = <
   S extends GenericSchema | GenericSchemaAsync | null = null,

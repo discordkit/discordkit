@@ -1,5 +1,7 @@
 import * as v from "valibot";
-import { get, type Fetcher, snowflake, boundedString } from "@discordkit/core";
+import { get, type Fetcher } from "@discordkit/core/requests/methods";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { type Webhook } from "./types/Webhook.js";
 
 export const getWebhookWithTokenSchema = v.object({

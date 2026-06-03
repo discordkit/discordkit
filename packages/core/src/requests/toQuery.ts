@@ -42,6 +42,8 @@ export type QueryFunction<
  * Capability-free fetchers only — endpoints that require `{ anonymous: true }`
  * or accept `{ reason: string }` cannot currently be wrapped via this helper,
  * because react-query has no natural channel for those per-call options.
+ *
+ * @__NO_SIDE_EFFECTS__
  */
 export const toQuery =
   <S extends GenericSchema | null, R, T extends Fetcher<S, R>>(

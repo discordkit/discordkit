@@ -1,11 +1,8 @@
 import * as v from "valibot";
-import {
-  snowflake,
-  boundedInteger,
-  boundedString,
-  schema,
-  variantSchema
-} from "@discordkit/core";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { schema, variantSchema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { ModerationActionType } from "./ModerationActionType.js";
 
 const _blockMessageActionSchema = v.object({

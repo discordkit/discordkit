@@ -1,4 +1,4 @@
-import { get, type Fetcher } from "@discordkit/core";
+import { get, type Fetcher } from "@discordkit/core/requests/methods";
 import { type User } from "./types/User.js";
 
 /**

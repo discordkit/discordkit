@@ -1,11 +1,8 @@
 ﻿import * as v from "valibot";
-import {
-  snowflake,
-  asDigits,
-  boundedString,
-  omitFields,
-  partialSchema
-} from "@discordkit/core";
+import { asDigits } from "@discordkit/core/validations/asDigits";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { omitFields, partialSchema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import type { User } from "../../user/types/User.js";
 import { userSchema } from "../../user/types/User.js";
 import { memberSchema } from "../../guild/types/Member.js";

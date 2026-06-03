@@ -1,5 +1,7 @@
 import * as v from "valibot";
-import { remove, buildURL, type Fetcher, snowflake } from "@discordkit/core";
+import { buildURL } from "@discordkit/core/requests/buildURL";
+import { remove, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 export const deleteOriginalInteractionResponseSchema = v.object({
   application: snowflake,

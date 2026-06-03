@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { snowflake } from "@discordkit/core";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 export const welcomeChannelSchema = v.object({
   /** the channel's id */

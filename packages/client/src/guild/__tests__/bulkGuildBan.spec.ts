@@ -1,5 +1,6 @@
 import * as v from "valibot";
-import { snowflake, toValidated } from "@discordkit/core";
+import { toValidated } from "@discordkit/core/requests/toValidated";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { mockUtils } from "#mocks";
 import { bulkGuildBan, bulkGuildBanSchema } from "../bulkGuildBan.js";
 

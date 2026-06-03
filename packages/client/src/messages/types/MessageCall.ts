@@ -1,5 +1,7 @@
 import * as v from "valibot";
-import { snowflake, timestamp, schema } from "@discordkit/core";
+import { schema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { timestamp } from "@discordkit/core/validations/timestamp";
 
 const _messageCallSchema = v.object({
   /** array of user object ids that participated in the call */

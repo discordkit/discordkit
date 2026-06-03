@@ -1,4 +1,4 @@
-import { variantSchema } from "@discordkit/core";
+import { variantSchema } from "@discordkit/core/validations/schema";
 import { type ActionRow, actionRowSchema } from "./ActionRow.js";
 import { type Button, buttonSchema } from "./Button.js";
 import { type StringSelect, stringSelectSchema } from "./StringSelect.js";

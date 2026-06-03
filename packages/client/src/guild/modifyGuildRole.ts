@@ -1,11 +1,8 @@
 import * as v from "valibot";
-import {
-  patch,
-  type Fetcher,
-  snowflake,
-  asDigits,
-  datauri
-} from "@discordkit/core";
+import { patch, type Fetcher } from "@discordkit/core/requests/methods";
+import { asDigits } from "@discordkit/core/validations/asDigits";
+import { datauri } from "@discordkit/core/validations/datauri";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { type Role } from "../permissions/Role.js";
 import { roleColorsSchema } from "../permissions/RoleColors.js";
 import { permissionFlag } from "../permissions/Permissions.js";

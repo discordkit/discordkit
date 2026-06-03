@@ -1,5 +1,6 @@
 ﻿import * as v from "valibot";
-import { pickFields, boundedString } from "@discordkit/core";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { pickFields } from "@discordkit/core/validations/schema";
 import { emojiSchema } from "../../emoji/types/Emoji.js";
 
 export const selectOptionSchema = v.object({

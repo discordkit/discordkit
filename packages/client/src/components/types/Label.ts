@@ -1,10 +1,7 @@
 import * as v from "valibot";
-import {
-  boundedInteger,
-  boundedString,
-  schema,
-  variantSchema
-} from "@discordkit/core";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { schema, variantSchema } from "@discordkit/core/validations/schema";
 import { ComponentType } from "./ComponentType.js";
 import { type TextInput, textInputSchema } from "./TextInput.js";
 import { type StringSelect, stringSelectSchema } from "./StringSelect.js";

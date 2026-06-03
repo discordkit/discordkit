@@ -1,11 +1,8 @@
 import * as v from "valibot";
-import {
-  post,
-  type Fetcher,
-  snowflake,
-  boundedString,
-  datauri
-} from "@discordkit/core";
+import { post, type Fetcher } from "@discordkit/core/requests/methods";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { datauri } from "@discordkit/core/validations/datauri";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { type SoundboardSound } from "./types/SoundboardSound.js";
 
 export const createGuildSoundboardSoundSchema = v.object({

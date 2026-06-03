@@ -1,5 +1,6 @@
 import * as v from "valibot";
-import { boundedString, boundedInteger } from "@discordkit/core";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { boundedString } from "@discordkit/core/validations/boundedString";
 import type { Locales } from "../../application/types/Locales.js";
 import { localesSchema } from "../../application/types/Locales.js";
 

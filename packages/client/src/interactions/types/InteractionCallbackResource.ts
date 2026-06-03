@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { messageSchema } from "../../messages/index.js";
+import { messageSchema } from "../../messages/types/Message.js";
 import { interactionCallbackTypeSchema } from "./InteractionCallbackType.js";
 import { interactionCallbackActivityInstanceSchema } from "./InteractionCallbackActivityInstance.js";
 

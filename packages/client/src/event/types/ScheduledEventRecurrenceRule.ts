@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { timestamp } from "@discordkit/core";
+import { timestamp } from "@discordkit/core/validations/timestamp";
 import { scheduledEventRecurrenceRuleFrequencySchema } from "./ScheduledEventRecurrenceRuleFrequency.js";
 import {
   scheduledEventRecurrenceRuleNWeekdaySchema,

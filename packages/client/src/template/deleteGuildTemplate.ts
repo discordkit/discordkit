@@ -1,5 +1,6 @@
 import * as v from "valibot";
-import { remove, type Fetcher, snowflake } from "@discordkit/core";
+import { remove, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { type GuildTemplate } from "./types/GuildTemplate.js";
 
 export const deleteGuildTemplateSchema = v.object({

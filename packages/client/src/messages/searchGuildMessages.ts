@@ -1,11 +1,8 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  snowflake,
-  boundedInteger,
-  boundedString
-} from "@discordkit/core";
+import { get, type Fetcher } from "@discordkit/core/requests/methods";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { type Message, messageSchema } from "./types/Message.js";
 import { type Channel, channelSchema } from "../channel/types/Channel.js";
 import {

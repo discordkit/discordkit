@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { snowflake } from "@discordkit/core";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { authorizingIntegrationOwnersSchema } from "../../application/types/ApplicationIntegrationTypes.js";
 import { interactionTypeSchema } from "../../interactions/types/InteractionType.js";
 import { userSchema } from "../../user/types/User.js";

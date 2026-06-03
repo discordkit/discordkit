@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { snowflake } from "@discordkit/core";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 /**
  * ### [Guild Widget Settings](https://discord.com/developers/docs/resources/guild#guild-widget-settings-object)

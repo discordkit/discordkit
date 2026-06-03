@@ -1,5 +1,6 @@
 import * as v from "valibot";
-import { snowflake, schema } from "@discordkit/core";
+import { schema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { userSchema } from "../../user/types/User.js";
 import { clientStatusSchema } from "./ClientStatus.js";
 import { activitySchema } from "./Activity.js";

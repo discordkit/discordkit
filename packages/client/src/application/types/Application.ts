@@ -1,14 +1,11 @@
 ﻿import * as v from "valibot";
-import {
-  asInteger,
-  boundedArray,
-  boundedInteger,
-  boundedString,
-  partialSchema,
-  schema,
-  snowflake,
-  url
-} from "@discordkit/core";
+import { asInteger } from "@discordkit/core/validations/asInteger";
+import { boundedArray } from "@discordkit/core/validations/boundedArray";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { partialSchema, schema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { url } from "@discordkit/core/validations/url";
 import { userSchema } from "../../user/types/User.js";
 import { teamSchema } from "../../teams/types/Team.js";
 import { guildSchema } from "../../guild/types/Guild.js";

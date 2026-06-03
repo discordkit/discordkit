@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { snowflake } from "@discordkit/core";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 /**
  * ### [Followed Channel](https://discord.com/developers/docs/resources/channel#followed-channel-object)

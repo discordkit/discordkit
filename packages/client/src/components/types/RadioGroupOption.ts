@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { boundedString } from "@discordkit/core";
+import { boundedString } from "@discordkit/core/validations/boundedString";
 
 /**
  * ### [Radio Group Option](https://discord.com/developers/docs/components/reference#radio-group-option-structure)

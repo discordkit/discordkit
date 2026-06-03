@@ -1,5 +1,7 @@
 import * as v from "valibot";
-import { post, type Fetcher, snowflake, boundedArray } from "@discordkit/core";
+import { post, type Fetcher } from "@discordkit/core/requests/methods";
+import { boundedArray } from "@discordkit/core/validations/boundedArray";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 export const bulkDeleteMessagesSchema = v.object({
   channel: snowflake,

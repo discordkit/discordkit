@@ -1,4 +1,5 @@
-﻿import { partialSchema, toValidated } from "@discordkit/core";
+﻿import { toValidated } from "@discordkit/core/requests/toValidated";
+import { partialSchema } from "@discordkit/core/validations/schema";
 import * as v from "valibot";
 import { mockUtils } from "#mocks";
 import { guildSchema } from "../../guild/types/Guild.js";

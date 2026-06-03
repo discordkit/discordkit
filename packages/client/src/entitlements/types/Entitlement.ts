@@ -1,5 +1,7 @@
 import * as v from "valibot";
-import { snowflake, timestamp, schema } from "@discordkit/core";
+import { schema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { timestamp } from "@discordkit/core/validations/timestamp";
 import { entitlementTypeSchema } from "./EntitlementType.js";
 
 const _entitlementSchema = v.object({

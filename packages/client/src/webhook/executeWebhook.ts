@@ -1,17 +1,13 @@
 ﻿import * as v from "valibot";
-import {
-  post,
-  buildURL,
-  type Fetcher,
-  partialSchema,
-  snowflake,
-  asInteger,
-  boundedArray,
-  boundedString,
-  url,
-  multipart,
-  fileUpload
-} from "@discordkit/core";
+import { buildURL } from "@discordkit/core/requests/buildURL";
+import { post, type Fetcher } from "@discordkit/core/requests/methods";
+import { asInteger } from "@discordkit/core/validations/asInteger";
+import { boundedArray } from "@discordkit/core/validations/boundedArray";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { multipart, fileUpload } from "@discordkit/core/validations/fileUpload";
+import { partialSchema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { url } from "@discordkit/core/validations/url";
 import { embedEntries } from "../messages/types/Embed.js";
 import { allowedMentionSchema } from "../messages/types/AllowedMention.js";
 import { attachmentSchema } from "../messages/types/Attachment.js";

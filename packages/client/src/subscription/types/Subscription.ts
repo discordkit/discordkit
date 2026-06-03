@@ -1,5 +1,6 @@
 import * as v from "valibot";
-import { snowflake, timestamp } from "@discordkit/core";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { timestamp } from "@discordkit/core/validations/timestamp";
 import { subscriptionStatusSchema } from "./SubscriptionStatuses.js";
 
 /**

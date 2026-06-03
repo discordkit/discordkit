@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { bitfield } from "@discordkit/core";
+import { bitfield } from "@discordkit/core/validations/bitfield";
 
 // https://discord.com/developers/docs/resources/application#application-object-application-flags
 

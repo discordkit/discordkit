@@ -1,5 +1,7 @@
 import * as v from "valibot";
-import { boundedArray, boundedInteger, schema } from "@discordkit/core";
+import { boundedArray } from "@discordkit/core/validations/boundedArray";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { schema } from "@discordkit/core/validations/schema";
 import { keywordPresetSchema } from "./KeywordPreset.js";
 
 const _triggerMetaSchema = v.object({

@@ -15,6 +15,8 @@ export type RequestParams = Partial<
  * how Discord's HTTP API documents array query strings. Scalars are
  * stringified once. Keys are converted from camelCase to snake_case to
  * match Discord's convention.
+ *
+ * @__NO_SIDE_EFFECTS__
  */
 export const addParams = (url: URL, params: RequestParams): URL => {
   for (const [key, value] of Object.entries(params)) {

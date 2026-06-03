@@ -1,5 +1,6 @@
 import * as v from "valibot";
-import { schema, snowflake } from "@discordkit/core";
+import { schema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 const _userSelectDefaultValueSchema = v.object({
   /** ID of the user */

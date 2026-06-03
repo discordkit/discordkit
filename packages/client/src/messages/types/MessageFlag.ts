@@ -1,6 +1,6 @@
 /* oxlint-disable @typescript-eslint/prefer-literal-enum-member */
 import * as v from "valibot";
-import { bitfield } from "@discordkit/core";
+import { bitfield } from "@discordkit/core/validations/bitfield";
 
 /**
  * ### [Message Flag](https://discord.com/developers/docs/resources/message#message-object-message-flags)

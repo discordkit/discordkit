@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { schema } from "@discordkit/core";
+import { schema } from "@discordkit/core/validations/schema";
 import { userSchema } from "../../user/types/User.js";
 
 const _banSchema = v.object({

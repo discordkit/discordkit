@@ -1,5 +1,6 @@
 import * as v from "valibot";
-import { boundedString, schema } from "@discordkit/core";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { schema } from "@discordkit/core/validations/schema";
 import { integrationSchema } from "../../guild/types/Integration.js";
 import { connectionVisibilitySchema } from "./ConnectionVisibility.js";
 import { servicesSchema } from "./Services.js";

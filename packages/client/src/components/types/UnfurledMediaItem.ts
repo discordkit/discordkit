@@ -1,10 +1,8 @@
 import * as v from "valibot";
-import {
-  boundedString,
-  boundedInteger,
-  url,
-  snowflake
-} from "@discordkit/core";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { url } from "@discordkit/core/validations/url";
 
 /**
  * ### [Unfurled Media Item](https://discord.com/developers/docs/components/reference#unfurled-media-item)

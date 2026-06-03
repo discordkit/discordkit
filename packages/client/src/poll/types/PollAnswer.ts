@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { schema } from "@discordkit/core";
+import { schema } from "@discordkit/core/validations/schema";
 import { pollMediaSchema } from "./PollMedia.js";
 
 const _pollAnswerSchema = v.object({

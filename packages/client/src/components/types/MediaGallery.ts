@@ -1,5 +1,6 @@
 import * as v from "valibot";
-import { boundedArray, boundedInteger } from "@discordkit/core";
+import { boundedArray } from "@discordkit/core/validations/boundedArray";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
 import { ComponentType } from "./ComponentType.js";
 import { mediaGalleryItemSchema } from "./MediaGalleryItem.js";
 

@@ -1,14 +1,11 @@
 import * as v from "valibot";
-import {
-  snowflake,
-  schema,
-  variantSchema,
-  asDigits,
-  asInteger,
-  timestamp,
-  boundedInteger,
-  boundedString
-} from "@discordkit/core";
+import { asDigits } from "@discordkit/core/validations/asDigits";
+import { asInteger } from "@discordkit/core/validations/asInteger";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { schema, variantSchema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { timestamp } from "@discordkit/core/validations/timestamp";
 import { type User, userSchema } from "../../user/types/User.js";
 import { autoArchiveDurationSchema } from "./AutoArchiveDuration.js";
 import { ChannelType } from "./ChannelType.js";

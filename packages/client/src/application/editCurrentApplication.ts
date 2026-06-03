@@ -1,13 +1,10 @@
 import * as v from "valibot";
-import {
-  asInteger,
-  boundedArray,
-  boundedString,
-  datauri,
-  patch,
-  url,
-  type Fetcher
-} from "@discordkit/core";
+import { patch, type Fetcher } from "@discordkit/core/requests/methods";
+import { asInteger } from "@discordkit/core/validations/asInteger";
+import { boundedArray } from "@discordkit/core/validations/boundedArray";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { datauri } from "@discordkit/core/validations/datauri";
+import { url } from "@discordkit/core/validations/url";
 import { type Application } from "./types/Application.js";
 import { applicationEventWebhookStatusSchema } from "./types/ApplicationEventWebhookStatus.js";
 import { applicationFlag } from "./types/ApplicationFlags.js";
