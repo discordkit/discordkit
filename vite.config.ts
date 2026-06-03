@@ -22,7 +22,13 @@ export default defineConfig({
     name: `discordkit`,
     globals: true,
     watch: false,
-    environment: `happy-dom`,
+    // Node is ~2x faster than happy-dom for this suite (13s vs 26s wall-clock).
+    // No test in this codebase touches DOM APIs that Node 18+ doesn't already
+    // provide globally (Response, URL, Blob, File, FormData, crypto.subtle).
+    // verifyKey.ts feature-detects `typeof window` so it works in both
+    // environments. If a future test needs a real DOM, opt in per-file with:
+    //   // @vitest-environment happy-dom
+    environment: `node`,
     coverage: {
       provider: `v8`
     },
