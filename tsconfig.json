@@ -18,9 +18,6 @@
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "customConditions": ["development"],
-    "paths": {
-      "#mock-utils": ["./scripts/mock-utils.ts"]
-    },
     "isolatedModules": true,
     "allowJs": true,
     "esModuleInterop": true,

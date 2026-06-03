@@ -9,7 +9,7 @@
   "type": "module",
   "dependencies": {
     "@discordkit/client": "workspace:^",
-    "valibot": "^1.4.0"
+    "valibot": "catalog:"
   },
   "devDependencies": {
     "vite-plus": "catalog:"

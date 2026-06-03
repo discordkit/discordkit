@@ -33,9 +33,6 @@ const getCurrentApplicationProcedure = toProcedure(
 
 export const router = t.router({
   getCurrentApplication: getCurrentApplicationProcedure(
-    // @ts-expect-error — @trpc/server bundles two copies of AnyProcedureBuilder
-    // from differently-hashed declaration files, so the structurally-identical
-    // types don't unify. Safe at runtime.
     loggedProcedure,
     (cause) => {
       throw new TRPCError({

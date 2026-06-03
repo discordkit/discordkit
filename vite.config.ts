@@ -18,11 +18,6 @@ export default defineConfig({
       ci: { command: `vp lint && vp test && vp run build:all`, cache: false }
     }
   },
-  resolve: {
-    alias: {
-      "mock-utils": `./scripts/mock-utils.ts`
-    }
-  },
   test: {
     name: `discordkit`,
     globals: true,
@@ -30,7 +25,19 @@ export default defineConfig({
     environment: `happy-dom`,
     coverage: {
       provider: `v8`
-    }
+    },
+    // Exclude Claude Code agent worktrees from test discovery. Each agent
+    // run materializes a full git worktree under `.claude/worktrees/`,
+    // including its own copy of every spec file. Without this exclusion,
+    // Wallaby/vitest pick up the duplicated specs and report them as
+    // failing/passing alongside the canonical ones.
+    exclude: [
+      `**/node_modules/**`,
+      `**/dist/**`,
+      `**/.{idea,git,cache,output,temp}/**`,
+      `**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build,eslint,prettier}.config.*`,
+      `**/.claude/**`
+    ]
   },
   lint: {
     plugins: [`oxc`, `typescript`, `unicorn`, `react`, `import`, `promise`],

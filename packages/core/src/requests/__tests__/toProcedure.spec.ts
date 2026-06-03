@@ -1,4 +1,4 @@
-import {
+﻿import {
   pipe,
   array,
   object,
@@ -9,7 +9,7 @@ import {
   type GenericSchema
 } from "valibot";
 import { initTRPC } from "@trpc/server";
-import { MockUtils } from "#mock-utils";
+import { MockUtils } from "@discordkit/test-utils";
 import { type Fetcher, get } from "../methods.js";
 import { toProcedure } from "../toProcedure.js";
 import { discord } from "../DiscordSession.js";

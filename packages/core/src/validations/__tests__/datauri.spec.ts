@@ -1,5 +1,5 @@
-import { safeParse, parse, object, pipe } from "valibot";
-import { MockUtils } from "#mock-utils";
+﻿import { safeParse, parse, object, pipe } from "valibot";
+import { MockUtils } from "@discordkit/test-utils";
 import { faker } from "@faker-js/faker";
 import { datauri } from "../datauri.js";
 import { hasMimeType } from "../hasMimeType.js";

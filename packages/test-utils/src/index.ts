@@ -17,14 +17,7 @@ import type {
 } from "valibot";
 import { Snowflake } from "nodejs-snowflake";
 import { faker } from "@faker-js/faker";
-
-interface ClientSession {
-  endpoint: string;
-  get ready(): boolean;
-  setToken: (token: string) => void;
-  clearSession: () => void;
-  getSession: () => string;
-}
+import type { DiscordSession } from "@discordkit/core/requests/DiscordSession";
 
 type Optional<T, K extends keyof T> = Omit<T, K> & Pick<Partial<T>, K>;
 
@@ -123,7 +116,7 @@ export class MockUtils {
     CustomMock
   >();
 
-  #session: ClientSession;
+  #session: DiscordSession;
   #msw: SetupServer = setupServer();
   static uid = new Snowflake({ custom_epoch: 1420070400000 });
 
@@ -192,9 +185,9 @@ export class MockUtils {
       MockUtils.applyTransforms(reference, MockUtils.flags(flags));
 
   constructor(
-    discord: ClientSession,
+    discord: DiscordSession,
     options?: {
-      token?: string;
+      token?: `Bot ${string}` | `Bearer ${string}`;
       customMocks?: Array<
         [matcher: SchemaMaybeWithPipe<SchemaMaybeWithTitle>, mockFn: CustomMock]
       >;

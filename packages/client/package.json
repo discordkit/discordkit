@@ -27,8 +27,7 @@
   },
   "type": "module",
   "imports": {
-    "#mocks": "./src/__mocks__/mockSchema.mock.ts",
-    "#mock-utils": "../../scripts/mock-utils.ts"
+    "#mocks": "./src/__mocks__/mockSchema.mock.ts"
   },
   "exports": {
     ".": {
@@ -50,7 +49,10 @@
   "dependencies": {
     "@discordkit/core": "workspace:^"
   },
+  "devDependencies": {
+    "@discordkit/test-utils": "workspace:^"
+  },
   "peerDependencies": {
-    "valibot": ">= 1.0.0"
+    "valibot": ">= 1.4.0"
   }
 }

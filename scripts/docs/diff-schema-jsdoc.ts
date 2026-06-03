@@ -732,7 +732,7 @@ function extractExistingBlockDescription(
     }
     const isListItem = /^\s*[-*]\s+/.test(piece);
     const isBlockquote = /^\s*>/.test(piece);
-    const lineMode: typeof mode = isBlockquote
+    const lineMode: `prose` | `list` | `quote` = isBlockquote
       ? `quote`
       : isListItem
         ? `list`
@@ -1178,7 +1178,7 @@ function refreshEndpointParamSchemas(
     if (inSchemaBody && braceDepth === 1) {
       const keyMatch = /^\s*(body|params|form)\s*:/.exec(line);
       if (keyMatch) {
-        pendingFieldKey = keyMatch[1] as typeof pendingFieldKey;
+        pendingFieldKey = keyMatch[1] as `body` | `params` | `form`;
         pendingDepth = braceDepth;
       }
     }

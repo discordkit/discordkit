@@ -1,5 +1,5 @@
-import { afterAll } from "vite-plus/test";
-import { MockUtils } from "#mock-utils";
+﻿import { afterAll } from "vite-plus/test";
+import { MockUtils } from "@discordkit/test-utils";
 import {
   datauri,
   discord,

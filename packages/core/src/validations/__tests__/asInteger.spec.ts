@@ -1,7 +1,7 @@
-/* oxlint-disable @typescript-eslint/prefer-literal-enum-member */
+﻿/* oxlint-disable @typescript-eslint/prefer-literal-enum-member */
 import type { InferOutput } from "valibot";
 import { integer, parse, pipe, object, safeParse } from "valibot";
-import { MockUtils } from "#mock-utils";
+import { MockUtils } from "@discordkit/test-utils";
 import { asInteger } from "../asInteger.js";
 import { bitfield } from "../bitfield.js";
 import { discord } from "../../requests/DiscordSession.js";
