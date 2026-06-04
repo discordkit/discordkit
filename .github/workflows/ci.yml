@@ -30,15 +30,8 @@ jobs:
       # field, but currently don't honor the `development` condition that
       # local dev relies on — they fall through to the `import`/`types`
       # conditions, which require `dist/` to exist. Bare `tsc --noEmit`
-      # works either way because it does honor `customConditions`. Track
-      # at oxc-project/oxc#20704 (conditional-exports false positives).
-      - name: Build @discordkit/core
-        run: vp pack
-        working-directory: packages/core
-      - name: Build @discordkit/client
-        run: vp pack
-        working-directory: packages/client
-
+      # works either way because it does honor `customConditions`.
+      - run: vp run -r build
       - run: vp check
       - run: vp test
 

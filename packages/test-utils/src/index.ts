@@ -17,7 +17,17 @@ import type {
 } from "valibot";
 import { Snowflake } from "nodejs-snowflake";
 import { faker } from "@faker-js/faker";
-import type { DiscordSession } from "@discordkit/core/requests/DiscordSession";
+
+// Structural type matching @discordkit/core's DiscordSession. Inlined
+// rather than imported so test-utils doesn't declare a runtime dep on
+// @discordkit/core — that edge, combined with core's devDep on this
+// package, creates a phantom cycle in vp's task graph (per vp#1610,
+// which follows devDeps in its build-order graph). Any class satisfying
+// these two members will be assignable here.
+interface DiscordSessionLike {
+  endpoint: string;
+  setToken(token: `Bot ${string}` | `Bearer ${string}`): unknown;
+}
 
 type Optional<T, K extends keyof T> = Omit<T, K> & Pick<Partial<T>, K>;
 
@@ -116,7 +126,7 @@ export class MockUtils {
     CustomMock
   >();
 
-  #session: DiscordSession;
+  #session: DiscordSessionLike;
   #msw: SetupServer = setupServer();
   static uid = new Snowflake({ custom_epoch: 1420070400000 });
 
@@ -185,7 +195,7 @@ export class MockUtils {
       MockUtils.applyTransforms(reference, MockUtils.flags(flags));
 
   constructor(
-    discord: DiscordSession,
+    discord: DiscordSessionLike,
     options?: {
       token?: `Bot ${string}` | `Bearer ${string}`;
       customMocks?: Array<

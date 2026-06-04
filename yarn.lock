@@ -107,7 +107,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@discordkit/test-utils@workspace:packages/test-utils"
   dependencies:
-    "@discordkit/core": "workspace:^"
     "@faker-js/faker": "npm:^10.4.0"
     msw: "npm:^2.14.6"
     nodejs-snowflake: "npm:^2.0.1"

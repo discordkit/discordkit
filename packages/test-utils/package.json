@@ -10,7 +10,6 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@discordkit/core": "workspace:^",
     "@faker-js/faker": "^10.4.0",
     "msw": "^2.14.6",
     "nodejs-snowflake": "^2.0.1",
