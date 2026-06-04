@@ -1,5 +1,183 @@
 # @discordkit/core
 
+
+## 4.0.0
+<sub>2026-06-04</sub>
+
+- [#50](https://github.com/discordkit/discordkit/pull/50)  *(major)* Thanks [@Saeris](https://github.com/Saeris)! - ## Drop pre-built `*Safe` / `*Procedure` / `*Query` exports
+  Each `@discordkit/client` endpoint now exports only two symbols: the input `*Schema` and the raw Fetcher. The runtime-validated `*Safe` Proxy, the tRPC `*Procedure` builder, and the react-query `*Query` wrapper are no longer pre-wired per endpoint.
+  ### Migration
+  The helpers themselves still ship from `@discordkit/core` — call them yourself where you need them:
+  ```ts
+  // Before
+  import {
+    getGuildSafe,
+    getGuildProcedure,
+    getGuildQuery
+  } from "@discordkit/client";
+  // After
+  import { toValidated, toProcedure, toQuery } from "@discordkit/core";
+  import { getGuild, getGuildSchema } from "@discordkit/client";
+  import { guildSchema } from "@discordkit/client";
+  const getGuildSafe = toValidated(getGuild, getGuildSchema, guildSchema);
+  const getGuildProcedure = toProcedure(
+    `query`,
+    getGuild,
+    getGuildSchema,
+    guildSchema
+  );
+  const getGuildQuery = toQuery(getGuild);
+  ```
+  The new pattern keeps the integration logic visible at the consumer site, removes ~600 dead exports from the published surface, and lets you customize the wrapping (different schemas, different procedure types, layered middleware) without forking the library.
+  ### Also removed
+  - The `procedures.ts` barrel files (per-subdir and root) and their `allProcedures` / `<group>Procedures` namespace re-exports.
+  ### See also
+  - `README.md` for the updated integration examples.
+  - `examples/with-nextjs/src/app/api/trpc/[trpc]/trpc.ts` for a working tRPC router built on the new pattern.
+- [#50](https://github.com/discordkit/discordkit/pull/50)  *(major)* Thanks [@Saeris](https://github.com/Saeris)! - ## Capability-aware `Fetcher<S, R, C>` and required per-call options
+  Every endpoint Fetcher now carries a capability marker that determines which per-call options it accepts. The two capabilities introduced in v4:
+  - `{ anonymous: true }` — endpoints whose Discord docs explicitly state "does not require authentication". Required at the call site; passing anything other than `true` is a type error.
+  - `{ auditLogReason: true }` — endpoints whose Discord docs explicitly state "supports the `X-Audit-Log-Reason` header". The call accepts an optional `{ reason: string }`.
+  The `Fetcher<S, R, C>` generic in `@discordkit/core` encodes these capabilities at the type level:
+  ```ts
+  type FetcherCapabilities = {
+    anonymous?: boolean; // endpoint MUST skip Authorization
+    auditLogReason?: boolean; // endpoint accepts X-Audit-Log-Reason
+  };
+  type Fetcher<S, R, C extends FetcherCapabilities = {}> = (
+    input: S,
+    options: RequestOptionsFor<C>
+  ) => Promise<R>;
+  ```
+  ### What changed for consumers
+  #### Anonymous endpoints (17 total)
+  These endpoints REQUIRE `{ anonymous: true }` as the second argument:
+  - **Webhook (9)**: `getWebhookWithToken`, `modifyWebhookWithToken`, `deleteWebhookWithToken`, `getWebhookMessage`, `editWebhookMessage`, `deleteWebhookMessage`, `executeWebhook`, `executeSlackCompatibleWebhook`, `executeGitHubCompatibleWebhook`
+  - **Interaction tokens (8)**: `createInteractionResponse`, `getOriginalInteractionResponse`, `editOriginalInteractionResponse`, `deleteOriginalInteractionResponse`, `createFollowupMessage`, `getFollowupMessage`, `editFollowupMessage`, `deleteFollowupMessage`
+  ```ts
+  // Before (v3.x)
+  await editWebhookMessage({ webhook, token, message, body });
+  // After (v4)
+  await editWebhookMessage(
+    { webhook, token, message, body },
+    { anonymous: true }
+  );
+  ```
+  #### Audit-log-reason endpoints (54 total)
+  These endpoints OPTIONALLY accept `{ reason: string }`:
+  ```ts
+  // Before (v3.x): no way to thread X-Audit-Log-Reason at the call site
+  await modifyGuildRole({ guild, role, body: { name: "Mod" } });
+  // After (v4)
+  await modifyGuildRole(
+    { guild, role, body: { name: "Mod" } },
+    { reason: "Promoted alice to moderator" }
+  );
+  ```
+  Affected folders: `auto-moderation`, `application-commands`, `channel`, `emoji`, `guild`, `guild-scheduled-event`, `invite`, `messages`, `permissions`, `sticker`, `template`, `webhook`.
+  ### Why
+  - The previous "second-argument boolean for anonymous, no support for audit-log reason" pattern was easy to forget and easy to misuse.
+  - A type-level capability marker surfaces the requirement at the call site instead of failing silently at runtime when Discord rejects the request.
+  - Wrappers like `toValidated`, `toProcedure`, and `toQuery` forward the capability through `Fetcher<S, R, C>` so the same guarantees hold post-composition.
+  ### Migration
+  For each call site, audit whether the endpoint is now capability-marked:
+  - Anonymous endpoints — add `{ anonymous: true }` as the second arg. TypeScript will flag every site you missed.
+  - Audit-log endpoints — no change required. Add `{ reason: "..." }` opportunistically wherever you've previously logged the cause-of-mutation elsewhere.
+- [#50](https://github.com/discordkit/discordkit/pull/50)  *(major)* Thanks [@Saeris](https://github.com/Saeris)! - ## `multipart()` schema wrapper and `fileUpload` helper
+  `@discordkit/core` adds two new exports for endpoints that send `multipart/form-data` bodies (file uploads, sticker creation, attachment-bearing messages):
+  - `multipart(schema)` — wraps an object schema so the request layer serializes it as `FormData` instead of JSON. Files declared in the schema become parts; other fields become JSON-encoded form fields keyed as `payload_json` per Discord's REST conventions.
+  - `fileUpload(opts)` — a Valibot schema for File/Blob inputs with optional MIME-type and byte-size constraints, used inside `multipart()` schemas.
+  ```ts
+  import { fileUpload } from "@discordkit/core/validations/fileUpload";
+  const uploadSchema = multipart(
+    v.object({
+      avatar: fileUpload({
+        mimeTypes: [`image/png`, `image/jpeg`],
+        maxSize: 256_000
+      }),
+      nick: boundedString({ max: 32 })
+    })
+  );
+  ```
+  ### Endpoints migrated to `multipart()` in `@discordkit/client`
+  Every endpoint that previously hand-rolled FormData now uses `multipart()` + `fileUpload` from `@discordkit/core`:
+  - `createMessage`, `editMessage`, `executeWebhook`, `editWebhookMessage`, `editOriginalInteractionResponse`, `editFollowupMessage`, `createFollowupMessage`, `createInteractionResponse`
+  - `createGuildSticker`, `modifyCurrentMember`, `modifyCurrentUser`, `modifyGuild`
+  ### What changed for consumers
+  - The schemas exported by these endpoints now describe their **inputs** uniformly — no more separate `*Multipart` types vs. JSON-body types. The same `parse` / `safeParse` call validates both file and field shapes.
+  - `toValidated` automatically detects the multipart wrapper and validates uploads through the wrapped schema before the request goes out.
+  ### Migration
+  If you previously constructed `FormData` by hand and passed it to one of these endpoints, switch to the structured shape the schema expects:
+  ```ts
+  // Before
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("payload_json", JSON.stringify({ content: "look at this" }));
+  await executeWebhook({ webhook, token, body: formData }, { anonymous: true });
+  // After
+  await executeWebhook(
+    { webhook, token, body: { file, content: "look at this" } },
+    { anonymous: true }
+  );
+  ```
+  The request layer handles FormData construction internally.
+- [#50](https://github.com/discordkit/discordkit/pull/50)  *(major)* Thanks [@Saeris](https://github.com/Saeris)! - ## "Pattern B" schema typing — `schema<T>`, `partialSchema`, `pickFields`/`omitFields`/`requiredFields`, `variantSchema`
+  `@discordkit/core` adds six new helpers under `@discordkit/core/validations/schema` that change how `@discordkit/client` declares the types of its exported schemas. The goal: stop downstream `.d.ts` files from inlining the entire entries map of every schema they reference.
+  ### Why this exists
+  In v3.x, the type of every published schema was the full `v.ObjectSchema<{ id: v.GenericSchema<string>, ... }>` shape. Every consumer file that imported a schema re-inlined that entries map into its own emitted declarations. The result:
+  - Dramatic duplication of nested object shapes in `.d.ts` output
+  - Slow IDE hover (tsserver expands the full shape on every reference)
+  - Occasional TS2502 / "type too complex" errors on deeply circular schemas (Channel, Message, Interaction)
+  The fix: annotate the published type as `v.GenericSchema<T>` so downstream `.d.ts` references `T` by name instead of inlining it.
+  ### What's new
+  ```ts
+  import {
+    schema,
+    partialSchema,
+    pickFields,
+    omitFields,
+    requiredFields,
+    variantSchema
+  } from "@discordkit/core/validations/schema";
+  const _userSchema = v.object({
+    /* ... */
+  });
+  export interface User extends v.InferOutput<typeof _userSchema> {}
+  export const userSchema = schema<User>(_userSchema);
+  ```
+  - `schema<T>(s)` — type-erases the runtime schema to `v.GenericSchema<T>`. Runtime unchanged.
+  - `partialSchema<T>(s)`, `pickFields<T, K>(s, keys)`, `omitFields<T, K>(s, keys)`, `requiredFields<T, K>(s, keys)` — replacements for `v.partial` / `v.pick` / `v.omit` / `v.required` that accept type-erased `GenericSchema<T>` (which the raw Valibot functions reject because their constraint is `ObjectSchema<...>`).
+  - `variantSchema<T>(key, schemas)` — replacement for `v.variant` that accepts erased variants. Preferred over `v.union` for discriminated unions because it dispatches in O(1) by the discriminator field.
+  All six are annotated with `@__NO_SIDE_EFFECTS__` so tree-shakers can drop unused calls.
+  ### Trade-offs
+  After annotation, `v.partial(userSchema)`, `v.pick(userSchema, [...])`, and direct field-access patterns like `userSchema.entries.id` stop type-checking. Use the equivalent helpers above for the common cases.
+  ### `@discordkit/client` sweep
+  Every exported schema in `@discordkit/client` is now annotated through `schema<T>`. Discriminated unions (Component, ModerationAction, Channel, etc.) use `variantSchema` and dispatch on their discriminator field instead of trying each branch.
+  ### Migration
+  Most consumer code is unaffected — `getGuildSchema`, `guildSchema`, etc. still validate the same shapes at runtime. Only consumers that **manipulate the schema value** at the type level (e.g. via `v.partial`/`v.pick`/`schema.entries`) need the new helpers:
+  ```ts
+  // Before
+  const patchSchema = v.partial(modifyGuildSchema);
+  // After
+  import { partialSchema } from "@discordkit/core/validations/schema";
+  const patchSchema = partialSchema(modifyGuildSchema);
+  ```
+- [#50](https://github.com/discordkit/discordkit/pull/50)  *(major)* Thanks [@Saeris](https://github.com/Saeris)! - ## Toolchain migration + consumer bundle size
+  Two changes that don't alter the public API but affect how `@discordkit/client` integrates into downstream projects.
+  ### Tree-shaking
+  - Every `@discordkit/core` and `@discordkit/client` export is annotated with `@__NO_SIDE_EFFECTS__` on its enclosing function and `"sideEffects": false` in each package.json.
+  - The 614 client source files that previously imported from the `@discordkit/core` package barrel have been migrated to deep submodule paths — `from "@discordkit/core/validations/snowflake"` instead of `from "@discordkit/core"`. The published `dist/*.mjs` carry these deep imports too, so consumer bundlers see exactly which submodules are needed.
+  - Combined effect: consumer bundles only pay for what they actually import. A consumer that uses one endpoint no longer pulls in all 200+.
+  ### Toolchain
+  The contributor toolchain switched from `ESLint + Prettier + Turbo + Changesets` to:
+  - **Vite+** (`vp`) — unified `vp check` (oxlint + oxfmt + tsc), `vp test` (vitest), `vp pack` (tsdown). A single `vite.config.ts` per workspace declares lint, format, test, and pack settings.
+  - **Bumpy** — per-PR `.bumpy/*.md` files instead of `.changeset/*.md`. Each PR adds one or more markdown files declaring the package bumps it triggers.
+  - **Per-package `tsconfig` removed** in favor of a single root `tsconfig.json`. The root adds `customConditions: ["development"]` so workspace imports resolve to `src/` during development without each package needing to build before its peers can typecheck.
+  - **Package exports gain a `development` condition** pointing at `src/`. Type-aware lint and `tsc` no longer require `dist/` to exist.
+  ### CI
+  - New `.github/workflows/ci.yml` matrix tests against Node `22`, `lts`, and `latest`.
+  - New `.github/workflows/bumpy-check.yml` verifies every PR adds a bump file.
+
 ## 3.2.0
 
 ### Minor Changes
