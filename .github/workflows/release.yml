@@ -66,6 +66,8 @@ jobs:
     needs: [changes]
     if: needs.changes.outputs.version == 'true'
     runs-on: ubuntu-latest
+    outputs:
+      published: ${{ steps.detect.outputs.published }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -86,10 +88,25 @@ jobs:
           NO_COLOR: "1"
           YARN_ENABLE_COLORS: "false"
 
+      # The `changes` job only knows whether `packages/*/package.json`
+      # changed at all — not whether a real version bump happened. Bumpy
+      # publishes to npm only when bump files were consumed, which it
+      # signals by tagging the commit. Use the presence of tags pointing
+      # at HEAD to gate the announcement job below: any toolchain or
+      # metadata change that touches package.json without consuming a
+      # bump file should NOT trigger an announcement.
+      - id: detect
+        run: |
+          if git tag --points-at HEAD | grep -q .; then
+            echo "published=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "published=false" >> "$GITHUB_OUTPUT"
+          fi
+
   announce:
     name: Announce to Discord
     needs: [publish]
-    if: success()
+    if: needs.publish.outputs.published == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6

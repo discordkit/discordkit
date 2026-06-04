@@ -12,5 +12,9 @@ inputs:
     description: "the message contents (up to 2000 characters)"
     required: true
 runs:
-  using: node20
+  # GitHub Actions has no evergreen LTS alias for JavaScript actions —
+  # `using:` must be a pinned major (currently `node20` or `node24` are
+  # accepted; `node22` is not). Bump this when the next supported
+  # runtime is published.
+  using: node24
   main: dist/index.mjs
