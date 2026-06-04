@@ -1,11 +1,6 @@
 import * as v from "valibot";
-import {
-  post,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { post, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { threadChannelSchema } from "./types/Channel.js";
 import { autoArchiveDurationSchema } from "./types/AutoArchiveDuration.js";
 
@@ -29,9 +24,9 @@ export const startThreadFromMessageSchema = v.object({
  *
  * **POST** `/channels/:channel/messages/:message/threads`
  *
- * Creates a new thread from an existing message. Returns a {@link Channel | channel} on success, and a `400 BAD REQUEST` on invalid parameters. Fires a Thread Create and a Message Update Gateway event.
+ * Creates a new thread from an existing message. Returns a {@link Channel | channel} on success, and a 400 BAD REQUEST on invalid parameters. Fires a Thread Create and a Message Update Gateway event.
  *
- * When called on a `GUILD_TEXT` channel, creates a `PUBLIC_THREAD`. When called on a `GUILD_ANNOUNCEMENT` channel, creates a `ANNOUNCEMENT_THREAD`. Does not work on a `GUILD_FORUM` or a `GUILD_MEDIA` channel. The id of the created thread will be the same as the id of the source message, and as such a message can only have a single thread created from it.
+ * When called on a `GUILD_TEXT` {@link Channel | channel}, creates a `PUBLIC_THREAD`. When called on a `GUILD_ANNOUNCEMENT` {@link Channel | channel}, creates a `ANNOUNCEMENT_THREAD`. Does not work on a `GUILD_FORUM` or a `GUILD_MEDIA` {@link Channel | channel}. The id of the created thread will be the same as the id of the source message, and as such a message can only have a single thread created from it.
  *
  * > [!NOTE]
  * >
@@ -39,19 +34,7 @@ export const startThreadFromMessageSchema = v.object({
  */
 export const startThreadFromMessage: Fetcher<
   typeof startThreadFromMessageSchema,
-  v.InferOutput<typeof threadChannelSchema>
-> = async ({ channel, message, body }) =>
-  post(`/channels/${channel}/messages/${message}/threads`, body);
-
-export const startThreadFromMessageSafe = toValidated(
-  startThreadFromMessage,
-  startThreadFromMessageSchema,
-  threadChannelSchema
-);
-
-export const startThreadFromMessageProcedure = toProcedure(
-  `mutation`,
-  startThreadFromMessage,
-  startThreadFromMessageSchema,
-  threadChannelSchema
-);
+  v.InferOutput<typeof threadChannelSchema>,
+  { auditLogReason: true }
+> = async ({ channel, message, body }, options) =>
+  post(`/channels/${channel}/messages/${message}/threads`, body, options);

@@ -1,11 +1,9 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core/requests/toValidated";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
 import {
-  listPublicArchivedThreadsProcedure,
-  listPublicArchivedThreadsQuery,
-  listPublicArchivedThreadsSafe,
-  listPublicArchivedThreadsSchema
+  listPublicArchivedThreadsSchema,
+  listPublicArchivedThreads
 } from "../listPublicArchivedThreads.js";
 import { archivedThreadsSchema } from "../types/ArchivedThreads.js";
 
@@ -16,21 +14,13 @@ describe(`listPublicArchivedThreads`, { repeats: 5 }, () => {
     archivedThreadsSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(listPublicArchivedThreadsSafe(config)).resolves.toEqual(
-      expected
-    );
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(listPublicArchivedThreadsProcedure)(config)
+      toValidated(
+        listPublicArchivedThreads,
+        listPublicArchivedThreadsSchema,
+        archivedThreadsSchema
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(listPublicArchivedThreadsQuery, config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

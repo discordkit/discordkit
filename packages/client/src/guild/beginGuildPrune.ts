@@ -1,11 +1,6 @@
 import * as v from "valibot";
-import {
-  post,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { post, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 export const beginGuildPruneSchema = v.object({
   guild: snowflake,
@@ -16,7 +11,7 @@ export const beginGuildPruneSchema = v.object({
     computePruneCount: v.boolean(),
     /** role(s) to include */
     includeRoles: v.array(snowflake),
-    /** @deprecated reason for the prune */
+    /** @deprecated Use the `X-Audit-Log-Reason` header instead. Reason for the prune. */
     reason: v.exactOptional(v.pipe(v.string(), v.nonEmpty()))
   })
 });
@@ -30,7 +25,7 @@ export const guildPruneResultSchema = v.object({
  *
  * **POST** `/guilds/:guild/prune`
  *
- * Begin a prune operation. Requires the `KICK_MEMBERS` permission. Returns an object with one `pruned` key indicating the number of members that were removed in the prune operation. For large guilds it's recommended to set the `computePruneCount` option to `false`, forcing `pruned` to `null`. Fires multiple Guild Member Remove Gateway events.
+ * Begin a prune operation. Requires the `MANAGE_GUILD` and `KICK_MEMBERS` permissions. Returns an object with one `pruned` key indicating the number of members that were removed in the prune operation. For large guilds it's recommended to set the `computePruneCount` option to `false`, forcing `pruned` to `null`. Fires multiple Guild Member Remove Gateway events.
  *
  * By default, prune will not remove users with roles. You can optionally include specific roles in your prune by providing the `includeRoles` parameter. Any inactive user that has a subset of the provided role(s) will be included in the prune and users with additional roles will not.
  *
@@ -40,18 +35,7 @@ export const guildPruneResultSchema = v.object({
  */
 export const beginGuildPrune: Fetcher<
   typeof beginGuildPruneSchema,
-  v.InferOutput<typeof guildPruneResultSchema>
-> = async ({ guild, body }) => post(`/guilds/${guild}/prune`, body);
-
-export const beginGuildPruneSafe = toValidated(
-  beginGuildPrune,
-  beginGuildPruneSchema,
-  guildPruneResultSchema
-);
-
-export const beginGuildPruneProcedure = toProcedure(
-  `mutation`,
-  beginGuildPrune,
-  beginGuildPruneSchema,
-  guildPruneResultSchema
-);
+  v.InferOutput<typeof guildPruneResultSchema>,
+  { auditLogReason: true }
+> = async ({ guild, body }, options) =>
+  post(`/guilds/${guild}/prune`, body, options);

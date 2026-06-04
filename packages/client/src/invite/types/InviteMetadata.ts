@@ -1,9 +1,15 @@
 import * as v from "valibot";
-import { timestamp, boundedInteger } from "@discordkit/core";
-import { inviteSchema } from "./Invite.js";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { timestamp } from "@discordkit/core/validations/timestamp";
+import { inviteEntries } from "./Invite.js";
 
+/**
+ * ### [Invite Metadata](https://discord.com/developers/docs/resources/invite#invite-metadata-object)
+ *
+ * Extra information about an invite, will extend the invite object.
+ */
 export const inviteMetadataSchema = v.object({
-  ...inviteSchema.entries,
+  ...inviteEntries,
   /** number of times this invite has been used */
   uses: boundedInteger(),
   /** max number of times this invite can be used */
@@ -16,5 +22,6 @@ export const inviteMetadataSchema = v.object({
   createdAt: timestamp
 });
 
-export interface InviteMetadata
-  extends v.InferOutput<typeof inviteMetadataSchema> {}
+export interface InviteMetadata extends v.InferOutput<
+  typeof inviteMetadataSchema
+> {}

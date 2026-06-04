@@ -1,5 +1,10 @@
 import * as v from "valibot";
 
+/**
+ * ### [Message Type](https://discord.com/developers/docs/resources/message#message-object)
+ *
+ * Represents a message sent in a channel within Discord.
+ */
 export enum MessageType {
   DEFAULT = 0,
   RECIPIENT_ADD = 1,

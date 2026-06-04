@@ -1,12 +1,7 @@
 import * as v from "valibot";
-import {
-  post,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake,
-  boundedArray
-} from "@discordkit/core";
+import { post, type Fetcher } from "@discordkit/core/requests/methods";
+import { boundedArray } from "@discordkit/core/validations/boundedArray";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 export const bulkDeleteMessagesSchema = v.object({
   channel: snowflake,
@@ -17,34 +12,25 @@ export const bulkDeleteMessagesSchema = v.object({
 });
 
 /**
- * ### [Bulk Delete Messages](https://discord.com/developers/docs/resources/channel#bulk-delete-messages)
+ * ### [Bulk Delete Messages](https://discord.com/developers/docs/resources/message#bulk-delete-messages)
  *
  * **POST** `/channels/:channel/messages/bulk-delete`
  *
- * Delete multiple messages in a single request. This endpoint can only be used on guild channels and requires the `MANAGE_MESSAGES` permission. Returns a `204 empty` response on success. Fires a Message Delete Bulk Gateway event.
+ * Delete multiple messages in a single request. This endpoint can only be used on guild channels and requires the `MANAGE_MESSAGES` permission. Returns a 204 empty response on success. Fires a Message Delete Bulk Gateway event.
  *
  * Any message IDs given that do not exist or are invalid will count towards the minimum and maximum message count (currently 2 and 100 respectively).
  *
  * > [!WARNING]
  * >
- * > This endpoint will not delete messages older than 2 weeks, and will fail with a `400 BAD REQUEST` if any message provided is older than that or if any duplicate message IDs are provided.
+ * > This endpoint will not delete messages older than 2 weeks, and will fail with a 400 BAD REQUEST if any message provided is older than that or if any duplicate message IDs are provided.
  *
  * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const bulkDeleteMessages: Fetcher<
-  typeof bulkDeleteMessagesSchema
-> = async ({ channel, body }) =>
-  post(`/channels/${channel}/messages/bulk-delete`, body);
-
-export const bulkDeleteMessagesSafe = toValidated(
-  bulkDeleteMessages,
-  bulkDeleteMessagesSchema
-);
-
-export const bulkDeleteMessagesProcedure = toProcedure(
-  `mutation`,
-  bulkDeleteMessages,
-  bulkDeleteMessagesSchema
-);
+  typeof bulkDeleteMessagesSchema,
+  void,
+  { auditLogReason: true }
+> = async ({ channel, body }, options) =>
+  post(`/channels/${channel}/messages/bulk-delete`, body, options);

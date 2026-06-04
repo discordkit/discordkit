@@ -2,6 +2,7 @@ import type { CheckAction } from "valibot";
 import { check } from "valibot";
 import { extractDataURIMetadata, toBase64 } from "./datauri.js";
 
+/** @__NO_SIDE_EFFECTS__ */
 export const hasSize = (
   size: number | { min?: number; max?: number },
   message = `Data URI is the incorrect size` as const

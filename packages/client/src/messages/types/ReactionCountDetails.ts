@@ -1,6 +1,11 @@
 import * as v from "valibot";
-import { boundedInteger } from "@discordkit/core";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
 
+/**
+ * ### [Reaction Count Details](https://discord.com/developers/docs/resources/message#reaction-count-details-object)
+ *
+ * The reaction count details object contains a breakdown of normal and super reaction counts for the associated emoji.
+ */
 export const reactionCountDetailsSchema = v.object({
   /** Count of super reactions */
   burst: boundedInteger(),
@@ -8,5 +13,6 @@ export const reactionCountDetailsSchema = v.object({
   normal: boundedInteger()
 });
 
-export interface ReactionCountDetails
-  extends v.InferOutput<typeof reactionCountDetailsSchema> {}
+export interface ReactionCountDetails extends v.InferOutput<
+  typeof reactionCountDetailsSchema
+> {}

@@ -1,5 +1,5 @@
-import { digits, object, parse, pipe } from "valibot";
-import { MockUtils } from "#mock-utils";
+﻿import { digits, object, parse, pipe } from "valibot";
+import { MockUtils } from "@discordkit/test-utils";
 import { asDigits } from "../asDigits.js";
 import { bitfield } from "../bitfield.js";
 import { discord } from "../../requests/DiscordSession.js";

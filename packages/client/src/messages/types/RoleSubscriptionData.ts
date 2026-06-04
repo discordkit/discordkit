@@ -1,6 +1,11 @@
 import * as v from "valibot";
-import { snowflake, boundedInteger, boundedString } from "@discordkit/core";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
+/**
+ * ### [Role Subscription Data](https://discord.com/developers/docs/resources/message#role-subscription-data-object)
+ */
 export const roleSubscriptionDataSchema = v.object({
   /** the id of the sku and listing that the user is subscribed to */
   roleSubscriptionListingId: snowflake,
@@ -12,5 +17,6 @@ export const roleSubscriptionDataSchema = v.object({
   isRenewal: v.boolean()
 });
 
-export interface RoleSubscriptionData
-  extends v.InferOutput<typeof roleSubscriptionDataSchema> {}
+export interface RoleSubscriptionData extends v.InferOutput<
+  typeof roleSubscriptionDataSchema
+> {}

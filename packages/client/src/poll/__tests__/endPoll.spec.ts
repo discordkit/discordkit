@@ -1,12 +1,7 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core/requests/toValidated";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
-import {
-  endPoll,
-  endPollProcedure,
-  endPollSafe,
-  endPollSchema
-} from "../endPoll.js";
+import { endPoll, endPollSchema } from "../endPoll.js";
 
 describe(`endPoll`, { repeats: 5 }, () => {
   const { config } = mockUtils.request.post(
@@ -14,17 +9,9 @@ describe(`endPoll`, { repeats: 5 }, () => {
     endPollSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(endPollSafe(config)).resolves.not.toThrow();
-  });
-
-  it(`is tRPC compatible`, async () => {
-    await expect(runProcedure(endPollProcedure)(config)).resolves.not.toThrow();
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(endPoll);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+  it(`validates input, fetches, and validates output`, async () => {
+    await expect(
+      toValidated(endPoll, endPollSchema)(config)
+    ).resolves.not.toThrow();
   });
 });

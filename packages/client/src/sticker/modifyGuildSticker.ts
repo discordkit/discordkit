@@ -1,13 +1,8 @@
 import * as v from "valibot";
-import {
-  patch,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake,
-  boundedString
-} from "@discordkit/core";
-import { stickerSchema, type Sticker } from "./types/Sticker.js";
+import { patch, type Fetcher } from "@discordkit/core/requests/methods";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type Sticker } from "./types/Sticker.js";
 
 export const modifyGuildStickerSchema = v.object({
   guild: snowflake,
@@ -29,7 +24,7 @@ export const modifyGuildStickerSchema = v.object({
  *
  * **PATCH** `/guilds/:guild/stickers/:sticker`
  *
- * Modify the given sticker. Requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns the updated {@link Sticker | sticker object} on success. Fires a Guild Stickers Update Gateway event.
+ * Modify the given sticker. For stickers created by the current user, requires either the `CREATE_GUILD_EXPRESSIONS` or `MANAGE_GUILD_EXPRESSIONS` permission. For other stickers, requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns the updated {@link Sticker | sticker object} on success. Fires a Guild Stickers Update Gateway event.
  *
  * > [!NOTE]
  * >
@@ -41,19 +36,7 @@ export const modifyGuildStickerSchema = v.object({
  */
 export const modifyGuildSticker: Fetcher<
   typeof modifyGuildStickerSchema,
-  Sticker
-> = async ({ guild, sticker, body }) =>
-  patch(`/guilds/${guild}/stickers/${sticker}`, body);
-
-export const modifyGuildStickerSafe = toValidated(
-  modifyGuildSticker,
-  modifyGuildStickerSchema,
-  stickerSchema
-);
-
-export const modifyGuildStickerProcedure = toProcedure(
-  `mutation`,
-  modifyGuildSticker,
-  modifyGuildStickerSchema,
-  stickerSchema
-);
+  Sticker,
+  { auditLogReason: true }
+> = async ({ guild, sticker, body }, options) =>
+  patch(`/guilds/${guild}/stickers/${sticker}`, body, options);

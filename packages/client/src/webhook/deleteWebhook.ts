@@ -1,11 +1,6 @@
 import * as v from "valibot";
-import {
-  remove,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { remove, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 export const deleteWebhookSchema = v.object({
   webhook: snowflake
@@ -22,17 +17,8 @@ export const deleteWebhookSchema = v.object({
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
-export const deleteWebhook: Fetcher<typeof deleteWebhookSchema> = async ({
-  webhook
-}) => remove(`/webhooks/${webhook}`);
-
-export const deleteWebhookSafe = toValidated(
-  deleteWebhook,
-  deleteWebhookSchema
-);
-
-export const deleteWebhookProcedure = toProcedure(
-  `mutation`,
-  deleteWebhook,
-  deleteWebhookSchema
-);
+export const deleteWebhook: Fetcher<
+  typeof deleteWebhookSchema,
+  void,
+  { auditLogReason: true }
+> = async ({ webhook }, options) => remove(`/webhooks/${webhook}`, options);

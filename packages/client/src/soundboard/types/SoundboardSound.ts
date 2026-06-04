@@ -1,7 +1,11 @@
 import * as v from "valibot";
-import { snowflake, boundedString } from "@discordkit/core";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { userSchema } from "../../user/types/User.js";
 
+/**
+ * ### [Soundboard Sound](https://discord.com/developers/docs/resources/soundboard#soundboard-sound-object)
+ */
 export const soundboardSoundSchema = v.object({
   /** the name of this sound */
   name: boundedString(),
@@ -21,5 +25,6 @@ export const soundboardSoundSchema = v.object({
   user: v.exactOptional(userSchema)
 });
 
-export interface SoundboardSound
-  extends v.InferOutput<typeof soundboardSoundSchema> {}
+export interface SoundboardSound extends v.InferOutput<
+  typeof soundboardSoundSchema
+> {}

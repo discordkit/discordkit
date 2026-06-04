@@ -1,5 +1,6 @@
 import * as v from "valibot";
-import { snowflake, timestamp } from "@discordkit/core";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { timestamp } from "@discordkit/core/validations/timestamp";
 import { userSchema } from "../../user/types/User.js";
 import { ScheduledEventEntityType } from "./ScheduledEventEntityType.js";
 import { scheduledEventPrivacyLevelSchema } from "./ScheduledEventPrivacyLevel.js";
@@ -7,6 +8,9 @@ import { scheduledEventStatusSchema } from "./ScheduledEventStatus.js";
 import { entityMetadataSchema } from "./EntityMetadata.js";
 import { scheduledEventRecurrenceRuleSchema } from "./ScheduledEventRecurrenceRule.js";
 
+/**
+ * ### [Scheduled Event](https://discord.com/developers/docs/resources/guild-scheduled-event#guild-scheduled-event-object)
+ */
 export const scheduledEventSchema = v.intersect([
   v.object({
     /** the id of the scheduled event */

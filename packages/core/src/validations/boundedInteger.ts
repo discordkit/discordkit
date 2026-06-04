@@ -1,6 +1,9 @@
 import * as v from "valibot";
 
-/** An integer with a value within the given bounds */
+/** An integer with a value within the given bounds
+ *
+ * @__NO_SIDE_EFFECTS__
+ */
 export const boundedInteger = (
   req: number | { min?: number; max?: number } = {}
 ): v.GenericSchema<number> =>

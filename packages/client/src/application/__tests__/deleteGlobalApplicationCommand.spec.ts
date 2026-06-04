@@ -1,10 +1,8 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core/requests/toValidated";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
 import {
   deleteGlobalApplicationCommand,
-  deleteGlobalApplicationCommandProcedure,
-  deleteGlobalApplicationCommandSafe,
   deleteGlobalApplicationCommandSchema
 } from "../deleteGlobalApplicationCommand.js";
 
@@ -14,21 +12,12 @@ describe(`deleteGlobalApplicationCommand`, { repeats: 5 }, () => {
     deleteGlobalApplicationCommandSchema
   );
 
-  it(`can be used standalone`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      deleteGlobalApplicationCommandSafe(config)
+      toValidated(
+        deleteGlobalApplicationCommand,
+        deleteGlobalApplicationCommandSchema
+      )(config)
     ).resolves.not.toThrow();
-  });
-
-  it(`is tRPC compatible`, async () => {
-    await expect(
-      runProcedure(deleteGlobalApplicationCommandProcedure)(config)
-    ).resolves.not.toThrow();
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(deleteGlobalApplicationCommand);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
   });
 });

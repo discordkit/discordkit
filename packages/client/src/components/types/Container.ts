@@ -1,5 +1,6 @@
 import * as v from "valibot";
-import { boundedInteger } from "@discordkit/core";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { schema } from "@discordkit/core/validations/schema";
 import { actionRowSchema } from "./ActionRow.js";
 import { textDisplaySchema } from "./TextDisplay.js";
 import { sectionSchema } from "./Section.js";
@@ -8,21 +9,12 @@ import { separatorSchema } from "./Separator.js";
 import { fileSchema } from "./File.js";
 import { ComponentType } from "./ComponentType.js";
 
-/**
- * A Container is a top-level layout component. Containers are visually distinct from surrounding components and have an optional customizable color bar.
- *
- * Containers are only available in messages.
- *
- * > [!NOTE]
- * >
- * > To use this component, you need to send the message flag `1 << 15` (IS_COMPONENTS_V2) which can be activated on a per-message basis.
- */
-export const containerSchema = v.object({
+const _containerSchema = v.object({
   /** `17` for container component */
   type: v.literal(ComponentType.Container),
   /** Optional identifier for component */
   id: v.exactOptional(boundedInteger()),
-  /** Components of the type action row, text display, section, media gallery, separator, or file */
+  /** Child components that are encapsulated within the Container */
   components: v.array(
     v.union([
       actionRowSchema,
@@ -39,4 +31,17 @@ export const containerSchema = v.object({
   spoiler: v.exactOptional(v.boolean())
 });
 
-export interface Container extends v.InferOutput<typeof containerSchema> {}
+export interface Container extends v.InferOutput<typeof _containerSchema> {}
+
+/**
+ * ### [Container](https://discord.com/developers/docs/components/reference#container)
+ *
+ * A Container is a top-level layout component. Containers are visually distinct from surrounding components and have an optional customizable color bar.
+ *
+ * Containers are only available in messages.
+ *
+ * > [!NOTE]
+ * >
+ * > To use this component, you need to send the message flag `1 << 15` (IS_COMPONENTS_V2) which can be activated on a per-message basis.
+ */
+export const containerSchema = schema<Container>(_containerSchema);

@@ -7,4 +7,3 @@ export * from "./modifyGuildSoundboardSound.js";
 export * from "./sendSoundboardSound.js";
 
 export * from "./types/index.js";
-export * as soundboardProcedures from "./procedures.js";

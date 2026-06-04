@@ -1,11 +1,6 @@
 import * as v from "valibot";
-import {
-  type Fetcher,
-  toProcedure,
-  put,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { type Fetcher, put } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import {
   type ApplicationRoleConnectionMetadata,
   applicationRoleConnectionMetadataSchema
@@ -23,24 +18,14 @@ export const updateApplicationRoleConnectionMetadataRecordsSchema = v.object({
  *
  * **PUT** `/applications/:application/role-connections/metadata`
  *
- * Updates and returns a list of {@link ApplicationRoleConnectionMetadata | application role connection metadata objects }for the given application.
+ * Updates and returns a list of {@link ApplicationRoleConnectionMetadata | application role connection metadata objects} for the given application.
+ *
+ * > [!NOTE]
+ * >
+ * > An application can have a maximum of 5 metadata records.
  */
 export const updateApplicationRoleConnectionMetadataRecords: Fetcher<
   typeof updateApplicationRoleConnectionMetadataRecordsSchema,
   ApplicationRoleConnectionMetadata[]
 > = async ({ application, body }) =>
   put(`/applications/${application}/role-connections/metadata`, body);
-
-export const updateApplicationRoleConnectionMetadataRecordsSafe = toValidated(
-  updateApplicationRoleConnectionMetadataRecords,
-  updateApplicationRoleConnectionMetadataRecordsSchema,
-  v.array(applicationRoleConnectionMetadataSchema)
-);
-
-export const updateApplicationRoleConnectionMetadataRecordsProcedure =
-  toProcedure(
-    `mutation`,
-    updateApplicationRoleConnectionMetadataRecords,
-    updateApplicationRoleConnectionMetadataRecordsSchema,
-    v.array(applicationRoleConnectionMetadataSchema)
-  );

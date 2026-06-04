@@ -1,13 +1,10 @@
+import { toValidated } from "@discordkit/core/requests/toValidated";
 import * as v from "valibot";
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
-import { waitFor } from "@testing-library/dom";
 import { inviteMetadataSchema } from "../../invite/types/InviteMetadata.js";
 import {
-  getChannelInvitesProcedure,
-  getChannelInvitesQuery,
-  getChannelInvitesSafe,
-  getChannelInvitesSchema
+  getChannelInvitesSchema,
+  getChannelInvites
 } from "../getChannelInvites.js";
 
 describe(`getChannelInvites`, { repeats: 5 }, () => {
@@ -17,19 +14,13 @@ describe(`getChannelInvites`, { repeats: 5 }, () => {
     v.pipe(v.array(inviteMetadataSchema), v.length(1))
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(getChannelInvitesSafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(getChannelInvitesProcedure)(config)
+      toValidated(
+        getChannelInvites,
+        getChannelInvitesSchema,
+        v.pipe(v.array(inviteMetadataSchema), v.length(1))
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(getChannelInvitesQuery, config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

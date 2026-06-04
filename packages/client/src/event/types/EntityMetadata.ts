@@ -5,5 +5,6 @@ export const entityMetadataSchema = v.object({
   location: v.pipe(v.string(), v.minLength(1), v.maxLength(100))
 });
 
-export interface EntityMetadata
-  extends v.InferOutput<typeof entityMetadataSchema> {}
+export interface EntityMetadata extends v.InferOutput<
+  typeof entityMetadataSchema
+> {}

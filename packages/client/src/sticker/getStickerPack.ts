@@ -1,13 +1,7 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import { stickerPackSchema, type StickerPack } from "./types/StickerPack.js";
+import { get, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type StickerPack } from "./types/StickerPack.js";
 
 export const getStickerPackSchema = v.object({
   pack: snowflake
@@ -24,18 +18,3 @@ export const getStickerPack: Fetcher<
   typeof getStickerPackSchema,
   StickerPack
 > = async ({ pack }) => get(`/sticker-packs/${pack}`);
-
-export const getStickerPackSafe = toValidated(
-  getStickerPack,
-  getStickerPackSchema,
-  stickerPackSchema
-);
-
-export const getStickerPackProcedure = toProcedure(
-  `query`,
-  getStickerPack,
-  getStickerPackSchema,
-  stickerPackSchema
-);
-
-export const getStickerPackQuery = toQuery(getStickerPack);

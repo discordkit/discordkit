@@ -1,11 +1,9 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core/requests/toValidated";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
 import {
-  getStageInstanceProcedure,
-  getStageInstanceQuery,
-  getStageInstanceSafe,
-  getStageInstanceSchema
+  getStageInstanceSchema,
+  getStageInstance
 } from "../getStageInstance.js";
 import { stageSchema } from "../types/Stage.js";
 
@@ -16,19 +14,9 @@ describe(`getStageInstance`, { repeats: 5 }, () => {
     stageSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(getStageInstanceSafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(getStageInstanceProcedure)(config)
+      toValidated(getStageInstance, getStageInstanceSchema, stageSchema)(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(getStageInstanceQuery, config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

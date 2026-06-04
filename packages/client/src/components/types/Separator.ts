@@ -1,17 +1,9 @@
 import * as v from "valibot";
-import { boundedInteger } from "@discordkit/core";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { schema } from "@discordkit/core/validations/schema";
 import { ComponentType } from "./ComponentType.js";
 
-/**
- * A Separator is a top-level layout component that adds vertical padding and visual division between other components.
- *
- * Separators are only available in messages.
- *
- * > [!NOTE]
- * >
- * > To use this component, you need to send the message flag `1 << 15` (IS_COMPONENTS_V2) which can be activated on a per-message basis.
- */
-export const separatorSchema = v.object({
+const _separatorSchema = v.object({
   /** `14` for separator component */
   type: v.literal(ComponentType.Separator),
   /** Optional identifier for component */
@@ -22,4 +14,17 @@ export const separatorSchema = v.object({
   spacing: v.exactOptional(v.picklist([1, 2]))
 });
 
-export interface Separator extends v.InferOutput<typeof separatorSchema> {}
+export interface Separator extends v.InferOutput<typeof _separatorSchema> {}
+
+/**
+ * ### [Separator](https://discord.com/developers/docs/components/reference#separator)
+ *
+ * A Separator is a top-level layout component that adds vertical padding and visual division between other components.
+ *
+ * Separators are only available in messages.
+ *
+ * > [!NOTE]
+ * >
+ * > To use this component, you need to send the message flag `1 << 15` (IS_COMPONENTS_V2) which can be activated on a per-message basis.
+ */
+export const separatorSchema = schema<Separator>(_separatorSchema);

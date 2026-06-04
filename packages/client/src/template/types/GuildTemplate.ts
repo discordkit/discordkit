@@ -1,13 +1,17 @@
-import * as v from "valibot";
-import {
-  snowflake,
-  timestamp,
-  boundedInteger,
-  boundedString
-} from "@discordkit/core";
+﻿import * as v from "valibot";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { partialSchema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { timestamp } from "@discordkit/core/validations/timestamp";
 import { guildSchema } from "../../guild/types/Guild.js";
 import { userSchema } from "../../user/types/User.js";
 
+/**
+ * ### [Guild Template](https://discord.com/developers/docs/resources/guild-template#guild-template-object)
+ *
+ * Represents a code that when used, creates a guild based on a snapshot of an existing guild.
+ */
 export const guildTemplateSchema = v.object({
   /** the template code (unique ID) */
   code: boundedString(),
@@ -28,11 +32,12 @@ export const guildTemplateSchema = v.object({
   updatedAt: timestamp,
   /** the ID of the guild this template is based on */
   sourceGuildId: snowflake,
-  /** the guild snapshot this template contains */
-  serializedSourceGuild: v.partial(guildSchema),
+  /** the guild snapshot this template contains; placeholder IDs are given as integers */
+  serializedSourceGuild: partialSchema(guildSchema),
   /** whether the template has unsynced changes */
   isDirty: v.nullable(v.boolean())
 });
 
-export interface GuildTemplate
-  extends v.InferOutput<typeof guildTemplateSchema> {}
+export interface GuildTemplate extends v.InferOutput<
+  typeof guildTemplateSchema
+> {}

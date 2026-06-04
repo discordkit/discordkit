@@ -1,11 +1,6 @@
 import * as v from "valibot";
-import {
-  post,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { post, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 export const endPollSchema = v.object({
   channel: snowflake,
@@ -25,7 +20,3 @@ export const endPoll: Fetcher<typeof endPollSchema> = async ({
   channel,
   message
 }) => post(`/channels/${channel}/polls/${message}/expire`);
-
-export const endPollSafe = toValidated(endPoll, endPollSchema);
-
-export const endPollProcedure = toProcedure(`mutation`, endPoll, endPollSchema);

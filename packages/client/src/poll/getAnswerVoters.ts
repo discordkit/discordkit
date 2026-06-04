@@ -1,14 +1,7 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { get, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import type { User } from "../user/types/User.js";
-import { userSchema } from "../user/types/User.js";
 
 export const getAnswerVotersSchema = v.object({
   channel: snowflake,
@@ -38,22 +31,3 @@ export const getAnswerVoters: Fetcher<
   { users: User[] }
 > = async ({ channel, message, answer, params }) =>
   get(`/channels/${channel}/polls/${message}/answers/${answer}`, params);
-
-export const getAnswerVotersSafe = toValidated(
-  getAnswerVoters,
-  getAnswerVotersSchema,
-  v.object({
-    users: v.array(userSchema)
-  })
-);
-
-export const getAnswerVotersProcedure = toProcedure(
-  `query`,
-  getAnswerVoters,
-  getAnswerVotersSchema,
-  v.object({
-    users: v.array(userSchema)
-  })
-);
-
-export const getAnswerVotersQuery = toQuery(getAnswerVoters);

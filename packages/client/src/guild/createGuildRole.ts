@@ -1,14 +1,9 @@
 import * as v from "valibot";
-import {
-  post,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake,
-  asDigits,
-  datauri
-} from "@discordkit/core";
-import { roleSchema, type Role } from "../permissions/Role.js";
+import { post, type Fetcher } from "@discordkit/core/requests/methods";
+import { asDigits } from "@discordkit/core/validations/asDigits";
+import { datauri } from "@discordkit/core/validations/datauri";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type Role } from "../permissions/Role.js";
 import { permissionFlag } from "../permissions/Permissions.js";
 import { roleColorsSchema } from "../permissions/RoleColors.js";
 
@@ -54,18 +49,7 @@ export const createGuildRoleSchema = v.object({
  */
 export const createGuildRole: Fetcher<
   typeof createGuildRoleSchema,
-  Role
-> = async ({ guild, body }) => post(`/guilds/${guild}/roles`, body);
-
-export const createGuildRoleSafe = toValidated(
-  createGuildRole,
-  createGuildRoleSchema,
-  roleSchema
-);
-
-export const createGuildRoleProcedure = toProcedure(
-  `mutation`,
-  createGuildRole,
-  createGuildRoleSchema,
-  roleSchema
-);
+  Role,
+  { auditLogReason: true }
+> = async ({ guild, body }, options) =>
+  post(`/guilds/${guild}/roles`, body, options);

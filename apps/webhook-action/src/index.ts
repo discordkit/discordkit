@@ -1,5 +1,8 @@
 import { nonEmpty, object, pipe, safeParse, string, summarize } from "valibot";
-import { executeWebhookSafe } from "@discordkit/client/webhook/executeWebhook";
+import { toValidated } from "@discordkit/core";
+import { executeWebhook, executeWebhookSchema } from "@discordkit/client";
+
+const executeWebhookSafe = toValidated(executeWebhook, executeWebhookSchema);
 
 const isRequired = `must be a string`;
 const isEmpty = `must not be empty`;
@@ -24,13 +27,19 @@ const { INPUT_WEBHOOK, INPUT_TOKEN, INPUT_CONTENT } = env.output;
 
 try {
   console.info(`Running discord webhook action...`);
-  await executeWebhookSafe({
-    webhook: INPUT_WEBHOOK,
-    token: INPUT_TOKEN,
-    body: {
-      content: INPUT_CONTENT
-    }
-  });
+  await executeWebhookSafe(
+    {
+      webhook: INPUT_WEBHOOK,
+      token: INPUT_TOKEN,
+      body: {
+        content: INPUT_CONTENT
+      }
+    },
+    // Webhook endpoints authenticate via the URL token, not the global
+    // session — without this flag the action throws at runtime with
+    // "Auth Token must be set before requests can be made."
+    { anonymous: true }
+  );
 } catch (error) {
   if (error instanceof Error) {
     console.error(error.message);

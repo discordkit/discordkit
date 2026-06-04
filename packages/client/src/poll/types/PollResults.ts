@@ -1,7 +1,19 @@
 import * as v from "valibot";
+import { schema } from "@discordkit/core/validations/schema";
 import { pollAnswerCountSchema } from "./PollAnswerCount.js";
 
+const _pollResultsSchema = v.object({
+  /** Whether the votes have been precisely counted */
+  isFinalized: v.boolean(),
+  /** The counts for each answer */
+  answerCounts: v.array(pollAnswerCountSchema)
+});
+
+export interface PollResults extends v.InferOutput<typeof _pollResultsSchema> {}
+
 /**
+ * ### [Poll Results](https://discord.com/developers/docs/resources/poll#poll-results-object)
+ *
  * In a nutshell, this contains the number of votes for each answer.
  *
  * The `results` field may be not present in certain responses where, as an implementation detail, we do not fetch the poll results in our backend. This should be treated as "unknown results", as opposed to "no results". You can keep using the results if you have previously received them through other means.
@@ -12,11 +24,4 @@ import { pollAnswerCountSchema } from "./PollAnswerCount.js";
  *
  * If `answerCounts` does not contain an entry for a particular answer, then there are no votes for that answer.
  */
-export const pollResultsSchema = v.object({
-  /** Whether the votes have been precisely counted */
-  isFinalized: v.boolean(),
-  /** The counts for each answer */
-  answerCounts: v.array(pollAnswerCountSchema)
-});
-
-export interface PollResults extends v.InferOutput<typeof pollResultsSchema> {}
+export const pollResultsSchema = schema<PollResults>(_pollResultsSchema);

@@ -1,10 +1,8 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core/requests/toValidated";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
 import {
   createFollowupMessage,
-  createFollowupMessageProcedure,
-  createFollowupMessageSafe,
   createFollowupMessageSchema
 } from "../createFollowupMessage.js";
 
@@ -14,19 +12,11 @@ describe(`createFollowupMessage`, { repeats: 5 }, () => {
     createFollowupMessageSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(createFollowupMessageSafe(config)).resolves.not.toThrow();
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(createFollowupMessageProcedure)(config)
+      toValidated(createFollowupMessage, createFollowupMessageSchema)(config, {
+        anonymous: true
+      })
     ).resolves.not.toThrow();
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(createFollowupMessage);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
   });
 });

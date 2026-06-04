@@ -1,5 +1,6 @@
 import * as v from "valibot";
-import { boundedString, boundedInteger } from "@discordkit/core";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { boundedString } from "@discordkit/core/validations/boundedString";
 import type { Locales } from "../../application/types/Locales.js";
 import { localesSchema } from "../../application/types/Locales.js";
 
@@ -16,5 +17,6 @@ export const applicationCommandOptionChoiceSchema = v.object({
   value: v.union([boundedString({ max: 100 }), boundedInteger(), v.number()])
 });
 
-export interface ApplicationCommandOptionChoice
-  extends v.InferOutput<typeof applicationCommandOptionChoiceSchema> {}
+export interface ApplicationCommandOptionChoice extends v.InferOutput<
+  typeof applicationCommandOptionChoiceSchema
+> {}

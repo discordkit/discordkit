@@ -1,15 +1,7 @@
 import * as v from "valibot";
-import {
-  put,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import {
-  type GuildOnboarding,
-  guildOnboardingSchema
-} from "./types/GuildOnboarding.js";
+import { put, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type GuildOnboarding } from "./types/GuildOnboarding.js";
 import { onboardingPromptSchema } from "./types/OnboardingPrompt.js";
 import { onboardingModeSchema } from "./types/OnboardingMode.js";
 
@@ -32,7 +24,7 @@ export const modifyGuildOnboardingSchema = v.object({
  *
  * **PUT** `/guilds/:guild/onboarding`
  *
- * Modifies the onboarding configuration of the guild. Returns a `200` with the {@link GuildOnboarding | Onboarding object} for the guild. Requires the `MANAGE_GUILD` and `MANAGE_ROLES` permissions.
+ * Modifies the onboarding configuration of the guild. Returns a 200 with the {@link GuildOnboarding | Onboarding object} for the guild. Requires the `MANAGE_GUILD` and `MANAGE_ROLES` permissions.
  *
  * > [!NOTE]
  * >
@@ -41,21 +33,14 @@ export const modifyGuildOnboardingSchema = v.object({
  * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
+ *
+ * > [!NOTE]
+ * >
+ * > All parameters to this endpoint are optional.
  */
 export const modifyGuildOnboarding: Fetcher<
   typeof modifyGuildOnboardingSchema,
-  GuildOnboarding
-> = async ({ guild, body }) => put(`/guilds/${guild}/onboarding`, body);
-
-export const modifyGuildOnboardingSafe = toValidated(
-  modifyGuildOnboarding,
-  modifyGuildOnboardingSchema,
-  guildOnboardingSchema
-);
-
-export const modifyGuildOnboardingProcedure = toProcedure(
-  `mutation`,
-  modifyGuildOnboarding,
-  modifyGuildOnboardingSchema,
-  guildOnboardingSchema
-);
+  GuildOnboarding,
+  { auditLogReason: true }
+> = async ({ guild, body }, options) =>
+  put(`/guilds/${guild}/onboarding`, body, options);

@@ -1,10 +1,8 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core/requests/toValidated";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
 import {
   modifyApplicationEmoji,
-  modifyApplicationEmojiProcedure,
-  modifyApplicationEmojiSafe,
   modifyApplicationEmojiSchema
 } from "../modifyApplicationEmoji.js";
 import { emojiSchema } from "../types/Emoji.js";
@@ -16,20 +14,13 @@ describe(`modifyApplicationEmoji`, { repeats: 5 }, () => {
     emojiSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(modifyApplicationEmojiSafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(modifyApplicationEmojiProcedure)(config)
+      toValidated(
+        modifyApplicationEmoji,
+        modifyApplicationEmojiSchema,
+        emojiSchema
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(modifyApplicationEmoji);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

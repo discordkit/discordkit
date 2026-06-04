@@ -1,13 +1,7 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import { webhookSchema, type Webhook } from "./types/Webhook.js";
+import { get, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type Webhook } from "./types/Webhook.js";
 
 export const getGuildWebhooksSchema = v.object({
   guild: snowflake
@@ -24,18 +18,3 @@ export const getGuildWebhooks: Fetcher<
   typeof getGuildWebhooksSchema,
   Webhook[]
 > = async ({ guild }) => get(`/guilds/${guild}/webhooks`);
-
-export const getGuildWebhooksSafe = toValidated(
-  getGuildWebhooks,
-  getGuildWebhooksSchema,
-  v.array(webhookSchema)
-);
-
-export const getGuildWebhooksProcedure = toProcedure(
-  `query`,
-  getGuildWebhooks,
-  getGuildWebhooksSchema,
-  v.array(webhookSchema)
-);
-
-export const getGuildWebhooksQuery = toQuery(getGuildWebhooks);

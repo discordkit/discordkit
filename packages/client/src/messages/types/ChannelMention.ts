@@ -1,7 +1,10 @@
 import * as v from "valibot";
-import { snowflake } from "@discordkit/core";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { channelTypeSchema } from "../../channel/types/ChannelType.js";
 
+/**
+ * ### [Channel Mention](https://discord.com/developers/docs/resources/message#channel-mention-object)
+ */
 export const channelMentionSchema = v.object({
   /** id of the channel */
   id: snowflake,
@@ -13,5 +16,6 @@ export const channelMentionSchema = v.object({
   name: v.string()
 });
 
-export interface ChannelMention
-  extends v.InferOutput<typeof channelMentionSchema> {}
+export interface ChannelMention extends v.InferOutput<
+  typeof channelMentionSchema
+> {}

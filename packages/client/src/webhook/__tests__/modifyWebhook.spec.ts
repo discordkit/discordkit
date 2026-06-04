@@ -1,12 +1,7 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core/requests/toValidated";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
-import {
-  modifyWebhook,
-  modifyWebhookProcedure,
-  modifyWebhookSafe,
-  modifyWebhookSchema
-} from "../modifyWebhook.js";
+import { modifyWebhook, modifyWebhookSchema } from "../modifyWebhook.js";
 import { webhookSchema } from "../types/Webhook.js";
 
 describe(`modifyWebhook`, { repeats: 5 }, () => {
@@ -16,20 +11,9 @@ describe(`modifyWebhook`, { repeats: 5 }, () => {
     webhookSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(modifyWebhookSafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
-    await expect(runProcedure(modifyWebhookProcedure)(config)).resolves.toEqual(
-      expected
-    );
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(modifyWebhook);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
+  it(`validates input, fetches, and validates output`, async () => {
+    await expect(
+      toValidated(modifyWebhook, modifyWebhookSchema, webhookSchema)(config)
+    ).resolves.toEqual(expected);
   });
 });

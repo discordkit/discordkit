@@ -1,5 +1,5 @@
-import { safeParse, parse, object, any } from "valibot";
-import { MockUtils } from "#mock-utils";
+﻿import { safeParse, parse, object } from "valibot";
+import { MockUtils } from "@discordkit/test-utils";
 import { snowflake, snowflakeToDate, DISCORD_EPOCH } from "../snowflake.js";
 import { discord } from "../../requests/DiscordSession.js";
 
@@ -20,12 +20,11 @@ describe(`snowflake`, () => {
 
   it(`integrates with valimock`, () => {
     const sampleSchema = object({
-      userId: snowflake,
-      invalid: any()
+      userId: snowflake
     });
     const actual = mockUtils.schema(sampleSchema);
     expect(() => parse(sampleSchema, actual)).not.toThrow();
-    expect(parse(sampleSchema, actual).invalid).toBeUndefined();
+    expect(parse(sampleSchema, actual).userId).toBeTypeOf(`string`);
   });
 });
 

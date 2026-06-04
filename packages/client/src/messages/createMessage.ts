@@ -1,15 +1,12 @@
-import * as v from "valibot";
-import {
-  post,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake,
-  asInteger,
-  boundedArray,
-  boundedString
-} from "@discordkit/core";
-import { type Message, messageSchema } from "./types/Message.js";
+﻿import * as v from "valibot";
+import { post, type Fetcher } from "@discordkit/core/requests/methods";
+import { asInteger } from "@discordkit/core/validations/asInteger";
+import { boundedArray } from "@discordkit/core/validations/boundedArray";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { multipart, fileUpload } from "@discordkit/core/validations/fileUpload";
+import { partialSchema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type Message } from "./types/Message.js";
 import { embedSchema } from "./types/Embed.js";
 import { allowedMentionSchema } from "./types/AllowedMention.js";
 import { messageReferenceSchema } from "./types/MessageReference.js";
@@ -19,8 +16,8 @@ import { messageFlag } from "./types/MessageFlag.js";
 
 export const createMessageSchema = v.object({
   channel: snowflake,
-  body: v.partial(
-    v.object({
+  body: multipart(
+    {
       /** Message contents (up to 2000 characters) */
       content: boundedString({ max: 20000 }),
       /** true if this is a TTS message */
@@ -36,55 +33,53 @@ export const createMessageSchema = v.object({
       /** IDs of up to 3 stickers in the server to send in the message */
       stickerIds: boundedArray(v.string(), { max: 3 }),
       /** Contents of the file being sent. See Uploading Files */
-      files: v.unknown(),
-      /** JSON-encoded body of non-file params, only for multipart/form-data requests. See Uploading Files */
-      payloadJson: v.string(),
+      files: v.array(fileUpload),
       /** Attachment objects with filename and description. See Uploading Files */
-      attachments: v.array(v.partial(attachmentSchema)),
+      attachments: v.array(partialSchema(attachmentSchema)),
       /** Message flags combined as a bitfield (only SUPPRESS_EMBEDS can be set) */
       flags: asInteger(messageFlag)
-    })
+    },
+    { partial: true }
   )
 });
 
 /**
- * ### [Create Message](https://discord.com/developers/docs/resources/channel#create-message)
+ * ### [Create Message](https://discord.com/developers/docs/resources/message#create-message)
  *
  * **POST** `/channels/:channel/messages`
+ *
+ * Post a message to a guild text or {@link Channel | DM channel}. Returns a {@link Message | message object}. Fires a Message Create Gateway event. See message formatting for more information on how to properly format messages.
+ *
+ * To create a message as a reply or forward of another message, apps can include a `messageReference`. Refer to the documentation for required fields.
+ *
+ * Files must be attached using a `multipart/form-data` body as described in Uploading Files.
+ *
+ * **Limitations**
+ *
+ * - When operating on a guild channel, the current user must have the `SEND_MESSAGES` permission.
+ * - When sending a message with `tts` (text-to-speech) set to `true`, the current user must have the `SEND_TTS_MESSAGES` permission.
+ * - When creating a message as a reply to another message, the current user must have the `READ_MESSAGE_HISTORY` permission. The referenced message must exist and cannot be a system message.
+ * - The maximum request size when sending a message is **25 MiB**
+ * - For the embed object, you can set every field except `type` (it will be `rich` regardless of if you try to set it), `provider`, `video`, and any `height`, `width`, or `proxyUrl` values for images.
  *
  * > [!WARNING]
  * >
  * > Discord may strip certain characters from message content, like invalid unicode characters or characters which cause unexpected message formatting. If you are passing user-generated strings into message content, consider sanitizing the data to prevent unexpected behavior and using `allowedMentions` to prevent unexpected mentions.
  *
- * Post a message to a guild text or DM channel. Returns a {@link Message | message object}. Fires a Message Create Gateway event. See message formatting for more information on how to properly format messages.
+ * **Example Request Body (application/json)**
  *
- * To create a message as a reply to another message, apps can include a `messageReference` with a `message_id`. The `channelId` and `guildId` in the `messageReference` are optional, but will be validated if provided.
- *
- * Files must be attached using a `multipart/form-data` body as described in Uploading Files.
- *
- * Limitations
- *
- * - When operating on a guild channel, the current user must have the `SEND_MESSAGES` permission.
- * - When sending a message with `tts` (text-to-speech) set to `true`, the current user must have the `SEND_TTS_MESSAGES` permission.
- * - When creating a message as a reply to another message, the current user must have the `READ_MESSAGE_HISTORY` permission.
- *    - The referenced message must exist and cannot be a system message.
- * - The maximum request size when sending a message is **25 MiB**
- * - For the embed object, you can set every field except `type` (it will be `rich` regardless of if you try to set it), `provider`, `video`, and any `height`, `width`, or `proxyUrl` values for images.
+ * ```json
+ * {
+ *   "content": "Hello, World!",
+ *   "tts": false,
+ *   "embeds": [{
+ *     "title": "Hello, Embed!",
+ *     "description": "This is an embedded message."
+ *   }]
+ * }
+ * ```
  */
 export const createMessage: Fetcher<
   typeof createMessageSchema,
   Message
 > = async ({ channel, body }) => post(`/channels/${channel}/messages`, body);
-
-export const createMessageSafe = toValidated(
-  createMessage,
-  createMessageSchema,
-  messageSchema
-);
-
-export const createMessageProcedure = toProcedure(
-  `mutation`,
-  createMessage,
-  createMessageSchema,
-  messageSchema
-);

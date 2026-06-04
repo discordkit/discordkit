@@ -1,6 +1,10 @@
 import * as v from "valibot";
 
-/** A non-empty string with a length within the given bounds */
+/**
+ * A non-empty string with a length within the given bounds.
+ *
+ * @__NO_SIDE_EFFECTS__
+ */
 export const boundedString = (
   req: number | { min?: number; max?: number } = {}
 ): v.GenericSchema<string> =>

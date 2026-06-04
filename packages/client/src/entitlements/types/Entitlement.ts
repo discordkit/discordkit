@@ -1,8 +1,10 @@
 import * as v from "valibot";
-import { snowflake, timestamp } from "@discordkit/core";
+import { schema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { timestamp } from "@discordkit/core/validations/timestamp";
 import { entitlementTypeSchema } from "./EntitlementType.js";
 
-export const entitlementSchema = v.object({
+const _entitlementSchema = v.object({
   /** ID of the entitlement */
   id: snowflake,
   /** ID of the SKU */
@@ -25,4 +27,9 @@ export const entitlementSchema = v.object({
   consumed: v.exactOptional(v.boolean())
 });
 
-export interface Entitlement extends v.InferOutput<typeof entitlementSchema> {}
+export interface Entitlement extends v.InferOutput<typeof _entitlementSchema> {}
+
+/**
+ * ### [Entitlement](https://discord.com/developers/docs/resources/entitlement#entitlement-object)
+ */
+export const entitlementSchema = schema<Entitlement>(_entitlementSchema);

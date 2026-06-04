@@ -18,6 +18,8 @@ export interface Flags {
  * can validate a [bitfield](https://en.wikipedia.org/wiki/Bit_field)
  * numeric value (a data structure for efficiently serializing a
  * group of boolean values).
+ *
+ * @__NO_SIDE_EFFECTS__
  */
 export const bitfield = <TName extends string>(
   /** A name to differentiate this custom schema */

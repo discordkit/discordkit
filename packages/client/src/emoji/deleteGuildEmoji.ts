@@ -1,11 +1,6 @@
 import * as v from "valibot";
-import {
-  remove,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { remove, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 export const deleteGuildEmojiSchema = v.object({
   guild: snowflake,
@@ -17,24 +12,15 @@ export const deleteGuildEmojiSchema = v.object({
  *
  * **DELETE** `/guilds/:guild/emojis/:emoji`
  *
- * Delete the given emoji. Requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns `204 No Content` on success. Fires a Guild Emojis Update Gateway event.
+ * Delete the given emoji. For emojis created by the current user, requires either the `CREATE_GUILD_EXPRESSIONS` or `MANAGE_GUILD_EXPRESSIONS` permission. For other emojis, requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns `204 No Content` on success. Fires a Guild Emojis Update Gateway event.
  *
  * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
-export const deleteGuildEmoji: Fetcher<typeof deleteGuildEmojiSchema> = async ({
-  guild,
-  emoji
-}) => remove(`/guilds/${guild}/emojis/${emoji}`);
-
-export const deleteGuildEmojiSafe = toValidated(
-  deleteGuildEmoji,
-  deleteGuildEmojiSchema
-);
-
-export const deleteGuildEmojiProcedure = toProcedure(
-  `mutation`,
-  deleteGuildEmoji,
-  deleteGuildEmojiSchema
-);
+export const deleteGuildEmoji: Fetcher<
+  typeof deleteGuildEmojiSchema,
+  void,
+  { auditLogReason: true }
+> = async ({ guild, emoji }, options) =>
+  remove(`/guilds/${guild}/emojis/${emoji}`, options);

@@ -1,8 +1,10 @@
-/* eslint-disable @typescript-eslint/prefer-literal-enum-member */
+/* oxlint-disable @typescript-eslint/prefer-literal-enum-member */
 import * as v from "valibot";
-import { bitfield } from "@discordkit/core";
+import { bitfield } from "@discordkit/core/validations/bitfield";
 
 /**
+ * ### [SKU Flags](https://discord.com/developers/docs/resources/sku#sku-object-sku-flags)
+ *
  * For subscriptions, there are two types of access levels you can offer to users:
  *
  * - **Guild Subscriptions**: A subscription purchased by a user and applied to a single server. Everyone in that server gets your premium benefits.

@@ -1,14 +1,8 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake,
-  boundedInteger
-} from "@discordkit/core";
-import { messagePinSchema, type MessagePin } from "./types/MessagePin.js";
+import { get, type Fetcher } from "@discordkit/core/requests/methods";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type MessagePin } from "./types/MessagePin.js";
 
 export const getChannelPinsSchema = v.object({
   channel: snowflake,
@@ -25,29 +19,18 @@ export const getChannelPinsSchema = v.object({
 });
 
 /**
- * ### [Get Channel Messages](https://discord.com/developers/docs/resources/channel#get-channel-messages)
+ * ### [Get Channel Pins](https://discord.com/developers/docs/resources/message#get-channel-pins)
  *
  * **GET** `/channels/:channel/messages/pins`
  *
  * Retrieves the list of pins in a channel. Requires the `VIEW_CHANNEL` permission. If the user is missing the `READ_MESSAGE_HISTORY` permission in the channel, then no pins will be returned.
+ *
+ * **Example**
+ *
+ * If you want to get 100 pins you'd send these two requests: `GET /channels/:id/messages/pins?limit=50` `GET /channels/:id/messages/pins?limit=50&before={pins[pins.len() - 1].pinned_at}`
  */
 export const getChannelPins: Fetcher<
   typeof getChannelPinsSchema,
   MessagePin[]
 > = async ({ channel, params }) =>
   get(`/channels/${channel}/messages/pins`, params);
-
-export const getChannelPinsSafe = toValidated(
-  getChannelPins,
-  getChannelPinsSchema,
-  v.array(messagePinSchema)
-);
-
-export const getChannelPinsProcedure = toProcedure(
-  `query`,
-  getChannelPins,
-  getChannelPinsSchema,
-  v.array(messagePinSchema)
-);
-
-export const getChannelPinsQuery = toQuery(getChannelPins);

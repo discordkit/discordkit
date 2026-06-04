@@ -1,14 +1,9 @@
 import * as v from "valibot";
-import {
-  post,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake,
-  datauri,
-  boundedString
-} from "@discordkit/core";
-import { emojiSchema, type Emoji } from "./types/Emoji.js";
+import { post, type Fetcher } from "@discordkit/core/requests/methods";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { datauri } from "@discordkit/core/validations/datauri";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type Emoji } from "./types/Emoji.js";
 
 export const createApplicationEmojiSchema = v.object({
   application: snowflake,
@@ -27,7 +22,7 @@ export const createApplicationEmojiSchema = v.object({
  *
  * Create a new emoji for the application. Returns the new emoji object on success.
  *
- * > [!WARN]
+ * > [!WARNING]
  * >
  * > Emojis and animated emojis have a maximum file size of 256 KiB. Attempting to upload an emoji larger than this limit will fail and return 400 Bad Request and an error message, but not a JSON status code.
  *
@@ -40,16 +35,3 @@ export const createApplicationEmoji: Fetcher<
   Emoji
 > = async ({ application, body }) =>
   post(`/applications/${application}/emojis`, body);
-
-export const createApplicationEmojiSafe = toValidated(
-  createApplicationEmoji,
-  createApplicationEmojiSchema,
-  emojiSchema
-);
-
-export const createApplicationEmojiProcedure = toProcedure(
-  `mutation`,
-  createApplicationEmoji,
-  createApplicationEmojiSchema,
-  emojiSchema
-);

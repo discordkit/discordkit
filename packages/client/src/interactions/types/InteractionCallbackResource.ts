@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { messageSchema } from "../../messages/index.js";
+import { messageSchema } from "../../messages/types/Message.js";
 import { interactionCallbackTypeSchema } from "./InteractionCallbackType.js";
 import { interactionCallbackActivityInstanceSchema } from "./InteractionCallbackActivityInstance.js";
 
@@ -12,5 +12,6 @@ export const interactionCallbackResourceSchema = v.object({
   message: v.exactOptional(messageSchema)
 });
 
-export interface InteractionCallbackResource
-  extends v.InferOutput<typeof interactionCallbackResourceSchema> {}
+export interface InteractionCallbackResource extends v.InferOutput<
+  typeof interactionCallbackResourceSchema
+> {}

@@ -1,8 +1,11 @@
 import * as v from "valibot";
-import { snowflake, timestamp } from "@discordkit/core";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { timestamp } from "@discordkit/core/validations/timestamp";
 import { subscriptionStatusSchema } from "./SubscriptionStatuses.js";
 
 /**
+ * ### [Subscription](https://discord.com/developers/docs/resources/subscription#subscription-object)
+ *
  * The start of a subscription is determined by its ID. When the subscription renews, its current period is updated.
  *
  * If the user cancels the subscription, the subscription will enter the `ENDING` status and the `canceledAt` timestamp will reflect the time of the cancellation.
@@ -30,5 +33,6 @@ export const subscriptionSchema = v.object({
   country: v.exactOptional(v.pipe(v.string(), v.nonEmpty()))
 });
 
-export interface Subscription
-  extends v.InferOutput<typeof subscriptionSchema> {}
+export interface Subscription extends v.InferOutput<
+  typeof subscriptionSchema
+> {}

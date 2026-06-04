@@ -1,14 +1,8 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake,
-  boundedString
-} from "@discordkit/core";
-import { inviteSchema, type Invite } from "./types/Invite.js";
+import { get, type Fetcher } from "@discordkit/core/requests/methods";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type Invite } from "./types/Invite.js";
 
 export const getInviteSchema = v.object({
   code: boundedString(),
@@ -19,7 +13,7 @@ export const getInviteSchema = v.object({
         withCounts: v.boolean(),
         /** whether the invite should contain the expiration date */
         withExpiration: v.boolean(),
-        /** the guild scheduled event to include with the invite */
+        /** the {@link ScheduledEvent | guild scheduled event} to include with the invite */
         guildScheduledEventId: snowflake
       })
     )
@@ -37,18 +31,3 @@ export const getInvite: Fetcher<typeof getInviteSchema, Invite> = async ({
   code,
   params
 }) => get(`/invites/${code}`, params);
-
-export const getInviteSafe = toValidated(
-  getInvite,
-  getInviteSchema,
-  inviteSchema
-);
-
-export const getInviteProcedure = toProcedure(
-  `query`,
-  getInvite,
-  getInviteSchema,
-  inviteSchema
-);
-
-export const getInviteQuery = toQuery(getInvite);

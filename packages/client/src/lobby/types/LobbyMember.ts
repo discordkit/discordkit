@@ -1,17 +1,25 @@
 import * as v from "valibot";
-import { snowflake, asInteger } from "@discordkit/core";
+import { asInteger } from "@discordkit/core/validations/asInteger";
+import { schema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { lobbyMemberFlag } from "./LobbyMemberFlags.js";
 
-/** Represents a member of a lobby, including optional metadata and flags. */
-export const lobbyMemberSchema = v.object({
+const _lobbyMemberSchema = v.object({
   /** the id of the user */
   id: snowflake,
   /** dictionary of string key/value pairs. The max total length is 1000. */
-  metaday: v.nullish(
+  metadata: v.nullish(
     v.pipe(v.record(v.string(), v.string()), v.maxEntries(1000))
   ),
   /** lobby member flags combined as a bitfield */
   flags: v.exactOptional(asInteger(lobbyMemberFlag) as v.GenericSchema<number>)
 });
 
-export interface LobbyMember extends v.InferOutput<typeof lobbyMemberSchema> {}
+export interface LobbyMember extends v.InferOutput<typeof _lobbyMemberSchema> {}
+
+/**
+ * ### [Lobby Member](https://discord.com/developers/docs/resources/lobby#lobby-member-object)
+ *
+ * Represents a member of a lobby, including optional metadata and flags.
+ */
+export const lobbyMemberSchema = schema<LobbyMember>(_lobbyMemberSchema);

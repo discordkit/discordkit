@@ -1,13 +1,10 @@
+import { toValidated } from "@discordkit/core/requests/toValidated";
 import * as v from "valibot";
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
-import { waitFor } from "@testing-library/dom";
 import { moderationRuleSchema } from "../types/ModerationRule.js";
 import {
-  listAutoModerationRulesForGuildProcedure,
-  listAutoModerationRulesForGuildQuery,
-  listAutoModerationRulesForGuildSafe,
-  listAutoModerationRulesForGuildSchema
+  listAutoModerationRulesForGuildSchema,
+  listAutoModerationRulesForGuild
 } from "../listAutoModerationRulesForGuild.js";
 
 describe(`listAutoModerationRulesForGuild`, { repeats: 5 }, () => {
@@ -18,21 +15,13 @@ describe(`listAutoModerationRulesForGuild`, { repeats: 5 }, () => {
     { seed: 1 }
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(listAutoModerationRulesForGuildSafe(config)).resolves.toEqual(
-      expected
-    );
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(listAutoModerationRulesForGuildProcedure)(config)
+      toValidated(
+        listAutoModerationRulesForGuild,
+        listAutoModerationRulesForGuildSchema,
+        v.pipe(v.array(moderationRuleSchema), v.length(1))
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(listAutoModerationRulesForGuildQuery, config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

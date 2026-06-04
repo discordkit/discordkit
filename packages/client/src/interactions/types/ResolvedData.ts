@@ -1,5 +1,8 @@
-import * as v from "valibot";
-import { snowflake, asDigits, boundedString } from "@discordkit/core";
+﻿import * as v from "valibot";
+import { asDigits } from "@discordkit/core/validations/asDigits";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { omitFields, partialSchema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import type { User } from "../../user/types/User.js";
 import { userSchema } from "../../user/types/User.js";
 import { memberSchema } from "../../guild/types/Member.js";
@@ -25,7 +28,7 @@ export const resolvedDataSchema = v.object({
   members: v.exactOptional(
     v.record(
       snowflake,
-      v.partial(v.omit(memberSchema, [`user`, `deaf`, `mute`]))
+      partialSchema(omitFields(memberSchema, [`user`, `deaf`, `mute`]))
     )
   ),
   /** the ids and Role objects */
@@ -69,7 +72,9 @@ export const resolvedDataSchema = v.object({
   messages: v.exactOptional(
     v.record(
       snowflake,
-      v.lazy<v.GenericSchema<Partial<Message>>>(() => v.partial(messageSchema))
+      v.lazy<v.GenericSchema<Partial<Message>>>(() =>
+        partialSchema(messageSchema)
+      )
     )
   ),
   /** the ids and attachment objects */
@@ -78,5 +83,6 @@ export const resolvedDataSchema = v.object({
   )
 });
 
-export interface ResolvedData
-  extends v.InferOutput<typeof resolvedDataSchema> {}
+export interface ResolvedData extends v.InferOutput<
+  typeof resolvedDataSchema
+> {}

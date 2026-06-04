@@ -1,13 +1,7 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import { guildWidgetSchema, type GuildWidget } from "./types/GuildWidget.js";
+import { get, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type GuildWidget } from "./types/GuildWidget.js";
 
 export const getGuildWidgetSchema = v.object({
   guild: snowflake
@@ -18,24 +12,9 @@ export const getGuildWidgetSchema = v.object({
  *
  * **GET** `/guilds/:guild/widget.json`
  *
- * Returns the {@link GuildWidget | widget} for the guild.
+ * Returns the {@link GuildWidget | widget} for the guild. Fires an Invite Create Gateway event when an invite channel is defined and a new Invite is generated.
  */
 export const getGuildWidget: Fetcher<
   typeof getGuildWidgetSchema,
   GuildWidget
 > = async ({ guild }) => get(`/guilds/${guild}/widget.json`);
-
-export const getGuildWidgetSafe = toValidated(
-  getGuildWidget,
-  getGuildWidgetSchema,
-  guildWidgetSchema
-);
-
-export const getGuildWidgetProcedure = toProcedure(
-  `query`,
-  getGuildWidget,
-  getGuildWidgetSchema,
-  guildWidgetSchema
-);
-
-export const getGuildWidgetQuery = toQuery(getGuildWidget);

@@ -20,21 +20,16 @@
     "registry": "https://registry.npmjs.org"
   },
   "type": "module",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "imports": {
-    "#mock-utils": "../../scripts/mock-utils.ts",
-    "#test-utils": "../../scripts/test-utils.ts"
-  },
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
+      "development": "./src/index.ts",
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
     },
     "./*": {
-      "types": "./dist/*.d.ts",
-      "default": "./dist/*.js"
+      "development": "./src/*.ts",
+      "types": "./dist/*.d.mts",
+      "import": "./dist/*.mjs"
     },
     "./package.json": "./package.json"
   },
@@ -42,18 +37,13 @@
     "dist/**/*"
   ],
   "sideEffects": false,
-  "scripts": {
-    "dev": "yarn build --watch --declarationmap",
-    "build": "tsc",
-    "lint": "eslint --cache"
-  },
   "peerDependencies": {
-    "valibot": ">= 1.0.0"
-  },
-  "devDependencies": {
-    "typescript": "^5.8.3"
+    "valibot": ">= 1.4.0"
   },
   "dependencies": {
-    "type-fest": "^4.41.0"
+    "type-fest": "catalog:"
+  },
+  "devDependencies": {
+    "@discordkit/test-utils": "workspace:^"
   }
 }

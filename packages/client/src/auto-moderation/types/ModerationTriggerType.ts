@@ -1,5 +1,8 @@
 import * as v from "valibot";
 
+/**
+ * ### [Moderation Trigger Type](https://discord.com/developers/docs/resources/auto-moderation#auto-moderation-rule-object-trigger-types)
+ */
 export enum ModerationTriggerType {
   /** check if content contains words from a user defined list of keywords */
   KEYWORD = 1,

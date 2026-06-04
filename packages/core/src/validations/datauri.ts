@@ -1,7 +1,7 @@
 import * as v from "valibot";
 
 export const datauriRegex =
-  /^data:((?<mediaType>(?<mimeType>[a-z]+\/[a-z0-9-+.]+)(?<params>;[a-z0-9-.!#$%*+.{}|~`]+=[a-z0-9-.!#$%*+.{}()_|~`]+)*))?(?<encoding>;base64)?,(?<data>[a-z0-9!$&',()*+;=\-._~:@\/?%\s<>]*?)$/i;
+  /^data:((?<mediaType>(?<mimeType>[a-z]+\/[a-z0-9-+.]+)(?<params>;[a-z0-9-.!#$%*+.{}|~`]+=[a-z0-9-.!#$%*+.{}()_|~`]+)*))?(?<encoding>;base64)?,(?<data>[a-z0-9!$&',()*+;=\-._~:@/?%\s<>]*?)$/i;
 
 /**
  * Extracts metadata from a given Data URI such as it's

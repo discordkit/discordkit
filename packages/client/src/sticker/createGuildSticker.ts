@@ -1,17 +1,13 @@
 import * as v from "valibot";
-import {
-  post,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake,
-  boundedString
-} from "@discordkit/core";
-import { stickerSchema, type Sticker } from "./types/Sticker.js";
+import { post, type Fetcher } from "@discordkit/core/requests/methods";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { multipart, fileUpload } from "@discordkit/core/validations/fileUpload";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type Sticker } from "./types/Sticker.js";
 
 export const createGuildStickerSchema = v.object({
   guild: snowflake,
-  body: v.object({
+  body: multipart({
     /** name of the sticker (2-30 characters) */
     name: boundedString({ min: 2, max: 30 }),
     /** description of the sticker (empty or 2-100 characters) */
@@ -19,7 +15,7 @@ export const createGuildStickerSchema = v.object({
     /** autocomplete/suggestion tags for the sticker (max 200 characters) */
     tags: boundedString({ max: 200 }),
     /** the sticker file to upload, must be a PNG, APNG, or Lottie JSON file, max 500 KB */
-    file: v.unknown()
+    file: fileUpload
   })
 });
 
@@ -28,7 +24,7 @@ export const createGuildStickerSchema = v.object({
  *
  * **POST** `/guilds/:guild/stickers`
  *
- * Create a new sticker for the guild. Send a `multipart/form-data` body. Requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns the new {@link Sticker | sticker object} on success. Fires a Guild Stickers Update Gateway event.
+ * Create a new sticker for the guild. Send a `multipart/form-data` body. Requires the `CREATE_GUILD_EXPRESSIONS` permission. Returns the new {@link Sticker | sticker object} on success. Fires a Guild Stickers Update Gateway event.
  *
  * Every guilds has five free sticker slots by default, and each Boost level will grant access to more slots.
  *
@@ -46,18 +42,7 @@ export const createGuildStickerSchema = v.object({
  */
 export const createGuildSticker: Fetcher<
   typeof createGuildStickerSchema,
-  Sticker
-> = async ({ guild, body }) => post(`/guilds/${guild}/stickers`, body);
-
-export const createGuildStickerSafe = toValidated(
-  createGuildSticker,
-  createGuildStickerSchema,
-  stickerSchema
-);
-
-export const createGuildStickerProcedure = toProcedure(
-  `mutation`,
-  createGuildSticker,
-  createGuildStickerSchema,
-  stickerSchema
-);
+  Sticker,
+  { auditLogReason: true }
+> = async ({ guild, body }, options) =>
+  post(`/guilds/${guild}/stickers`, body, options);

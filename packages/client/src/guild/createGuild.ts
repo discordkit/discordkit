@@ -1,26 +1,21 @@
 import * as v from "valibot";
-import {
-  post,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake,
-  datauri,
-  asInteger
-} from "@discordkit/core";
+import { post, type Fetcher } from "@discordkit/core/requests/methods";
+import { asInteger } from "@discordkit/core/validations/asInteger";
+import { datauri } from "@discordkit/core/validations/datauri";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { channelSchema } from "../channel/types/Channel.js";
 import { verificationLevelSchema } from "./types/VerificationLevel.js";
 import { defaultMessageNotificationLevelSchema } from "./types/DefaultMessageNotificationLevel.js";
 import { explicitContentFilterLevelSchema } from "./types/ExplicitContentFilterLevel.js";
 import { roleSchema } from "../permissions/Role.js";
-import { guildSchema, type Guild } from "./types/Guild.js";
+import { type Guild } from "./types/Guild.js";
 import { systemChannelFlag } from "./types/SystemChannelFlags.js";
 
 export const createGuildSchema = v.object({
   body: v.object({
     /** name of the guild (2-100 characters) */
     name: v.pipe(v.string(), v.minLength(2), v.maxLength(100)),
-    /** @deprecated voice region id */
+    /** @deprecated {@link VoiceRegion | voice region} id */
     region: v.nullish(v.pipe(v.string(), v.nonEmpty())),
     /** icon hash */
     icon: v.exactOptional(datauri),
@@ -50,7 +45,7 @@ export const createGuildSchema = v.object({
 });
 
 /**
- * ### [Create Guild](https://discord.com/developers/docs/resources/guild#create-guild)
+ * ### Create Guild
  *
  * **POST** `/guilds`
  *
@@ -59,20 +54,13 @@ export const createGuildSchema = v.object({
  * > [!WARNING]
  * >
  * > This endpoint can be used only by bots in less than 10 guilds.
+ *
+ * @deprecated Discord removed this endpoint on July 15, 2025 — see
+ * [Guild Create Deprecation](https://discord.com/developers/docs/change-log#guild-create-deprecation).
+ * Apps can no longer create guilds. This export is retained for
+ * backwards compatibility but calls will fail; it will be removed in a
+ * future major release.
  */
 export const createGuild: Fetcher<typeof createGuildSchema, Guild> = async ({
   body
 }) => post(`/guilds`, body);
-
-export const createGuildSafe = toValidated(
-  createGuild,
-  createGuildSchema,
-  guildSchema
-);
-
-export const createGuildProcedure = toProcedure(
-  `mutation`,
-  createGuild,
-  createGuildSchema,
-  guildSchema
-);

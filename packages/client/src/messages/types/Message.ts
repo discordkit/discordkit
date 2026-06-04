@@ -1,15 +1,11 @@
-import * as v from "valibot";
-import {
-  asInteger,
-  snowflake,
-  timestamp,
-  boundedInteger
-} from "@discordkit/core";
+﻿import * as v from "valibot";
+import { asInteger } from "@discordkit/core/validations/asInteger";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { partialSchema, schema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { timestamp } from "@discordkit/core/validations/timestamp";
 import { stickerSchema } from "../../sticker/types/Sticker.js";
-import {
-  type Application,
-  applicationSchema
-} from "../../application/types/Application.js";
+import { applicationSchema } from "../../application/types/Application.js";
 import type { User } from "../../user/types/User.js";
 import { userSchema } from "../../user/types/User.js";
 import { type Reaction, reactionSchema } from "./Reaction.js";
@@ -33,7 +29,7 @@ import {
 import { applicationCommandInteractionMetadataSchea } from "./ApplicationCommandInteractionMetadata.js";
 import { type MessageCall, messageCallSchema } from "./MessageCall.js";
 
-export const messageSchema = v.object({
+const _messageSchema = v.object({
   /** id of the message */
   id: snowflake,
   /** id of the channel the message was sent in */
@@ -79,9 +75,7 @@ export const messageSchema = v.object({
   /** sent with Rich Presence-related chat embeds */
   activity: v.exactOptional(messageActivitySchema),
   /** sent with Rich Presence-related chat embeds */
-  application: v.exactOptional<v.GenericSchema<Partial<Application>>>(
-    v.lazy(() => v.partial(applicationSchema))
-  ),
+  application: v.exactOptional(v.lazy(() => partialSchema(applicationSchema))),
   /** if the message is an Interaction or application-owned webhook, this is the id of the application */
   applicationId: v.exactOptional(snowflake),
   /** message flags combined as a bitfield */
@@ -98,15 +92,15 @@ export const messageSchema = v.object({
   interactionMetadata: v.exactOptional(
     applicationCommandInteractionMetadataSchea
   ),
-  /** **Deprecated in favor of `interaction_metadata`**; sent if the message is a response to an interaction */
+  /** @deprecated Use `interactionMetadata` instead; sent if the message is a response to an interaction */
   interaction: v.exactOptional(messageInteractionSchema),
-  /** the thread that was started from this message, includes thread member object */
+  /** the thread that was started from this message, includes {@link ThreadMember | thread member object} */
   thread: v.exactOptional<v.GenericSchema<Channel>>(channelSchema),
   /** sent if the message contains components like buttons, action rows, or other interactive components */
   components: v.exactOptional(v.array(messageComponentSchema)),
   /** sent if the message contains stickers */
   stickerItems: v.exactOptional(v.array(stickerSchema)),
-  /** @deprecated the stickers sent with the message */
+  /** @deprecated Use `stickerItems` instead. The stickers sent with the message. */
   stickers: v.exactOptional(v.array(stickerSchema)),
   /** A generally increasing integer (there may be gaps or duplicates) that represents the approximate position of the message in a thread, it can be used to estimate the relative position of the message in a thread in company with totalMessageSent on parent thread */
   position: v.exactOptional(boundedInteger()),
@@ -120,4 +114,11 @@ export const messageSchema = v.object({
   call: v.exactOptional<v.GenericSchema<MessageCall>>(messageCallSchema)
 });
 
-export interface Message extends v.InferOutput<typeof messageSchema> {}
+export interface Message extends v.InferOutput<typeof _messageSchema> {}
+
+/**
+ * ### [Message](https://discord.com/developers/docs/resources/message#message-object)
+ *
+ * Represents a message sent in a channel within Discord.
+ */
+export const messageSchema = schema<Message>(_messageSchema);

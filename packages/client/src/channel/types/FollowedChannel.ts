@@ -1,6 +1,9 @@
 import * as v from "valibot";
-import { snowflake } from "@discordkit/core";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
+/**
+ * ### [Followed Channel](https://discord.com/developers/docs/resources/channel#followed-channel-object)
+ */
 export const followedChannelSchema = v.object({
   /** source channel id */
   channelId: snowflake,
@@ -8,5 +11,6 @@ export const followedChannelSchema = v.object({
   webhookId: snowflake
 });
 
-export interface FollowedChannel
-  extends v.InferOutput<typeof followedChannelSchema> {}
+export interface FollowedChannel extends v.InferOutput<
+  typeof followedChannelSchema
+> {}

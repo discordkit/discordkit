@@ -1,12 +1,7 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core/requests/toValidated";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
-import {
-  joinThread,
-  joinThreadProcedure,
-  joinThreadSafe,
-  joinThreadSchema
-} from "../joinThread.js";
+import { joinThread, joinThreadSchema } from "../joinThread.js";
 
 describe(`joinThread`, { repeats: 5 }, () => {
   const { config } = mockUtils.request.put(
@@ -14,19 +9,9 @@ describe(`joinThread`, { repeats: 5 }, () => {
     joinThreadSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(joinThreadSafe(config)).resolves.not.toThrow();
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(joinThreadProcedure)(config)
+      toValidated(joinThread, joinThreadSchema)(config)
     ).resolves.not.toThrow();
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(joinThread);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
   });
 });

@@ -1,12 +1,7 @@
 import * as v from "valibot";
-import {
-  patch,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake,
-  timestamp
-} from "@discordkit/core";
+import { patch, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { timestamp } from "@discordkit/core/validations/timestamp";
 import type { VoiceState } from "./types/VoiceState.js";
 
 export const modifyCurrentUserVoiceStateSchema = v.object({
@@ -30,30 +25,17 @@ export const modifyCurrentUserVoiceStateSchema = v.object({
  *
  * Updates the current user's voice state. Returns `204 No Content` on success. Fires a Voice State Update Gateway event.
  *
- * > [!NOTE]
- * >
- * > **Caveats**
- * >
- * > There are currently several caveats for this endpoint:
- * >
- * > - `channelId` must currently point to a stage channel.
- * > - current user must already have joined `channelId`.
- * > - You must have the `MUTE_MEMBERS` permission to unsuppress yourself. You can always suppress yourself.
- * > - You must have the `REQUEST_TO_SPEAK` permission to request to speak. You can always clear your own request to speak.
- * > - You are able to set `requestToSpeakTimestamp` to any present or future time.
+ * **Caveats**
+ *
+ * There are currently several caveats for this endpoint:
+ *
+ * - `channel_id` must currently point to a stage channel.
+ * - current user must already have joined `channel_id`.
+ * - You must have the `MUTE_MEMBERS` permission to unsuppress yourself. You can always suppress yourself.
+ * - You must have the `REQUEST_TO_SPEAK` permission to request to speak. You can always clear your own request to speak.
+ * - You are able to set `request_to_speak_timestamp` to any present or future time.
  */
 export const modifyCurrentUserVoiceState: Fetcher<
   typeof modifyCurrentUserVoiceStateSchema,
   VoiceState
 > = async ({ guild, body }) => patch(`/guilds/${guild}/voice-states/@me`, body);
-
-export const modifyCurrentUserVoiceStateSafe = toValidated(
-  modifyCurrentUserVoiceState,
-  modifyCurrentUserVoiceStateSchema
-);
-
-export const modifyCurrentUserVoiceStateProcedure = toProcedure(
-  `mutation`,
-  modifyCurrentUserVoiceState,
-  modifyCurrentUserVoiceStateSchema
-);

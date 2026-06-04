@@ -1,8 +1,10 @@
 import * as v from "valibot";
-import { snowflake, boundedString } from "@discordkit/core";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { schema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { stickerSchema } from "./Sticker.js";
 
-export const stickerPackSchema = v.object({
+const _stickerPackSchema = v.object({
   /** id of the sticker pack */
   id: snowflake,
   /** the stickers in the pack */
@@ -19,4 +21,11 @@ export const stickerPackSchema = v.object({
   bannerAssetId: v.exactOptional(snowflake)
 });
 
-export interface StickerPack extends v.InferOutput<typeof stickerPackSchema> {}
+export interface StickerPack extends v.InferOutput<typeof _stickerPackSchema> {}
+
+/**
+ * ### [Sticker Pack](https://discord.com/developers/docs/resources/sticker#sticker-pack-object)
+ *
+ * Represents a pack of standard stickers.
+ */
+export const stickerPackSchema = schema<StickerPack>(_stickerPackSchema);

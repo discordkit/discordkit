@@ -1,35 +1,26 @@
-import * as v from "valibot";
+﻿import { toValidated } from "@discordkit/core/requests/toValidated";
+import { omitFields } from "@discordkit/core/validations/schema";
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
-import { waitFor } from "@testing-library/dom";
-import { webhookSchema } from "../types/Webhook.js";
+import { incomingWebhookSchema } from "../types/Webhook.js";
 import {
-  getWebhookWithTokenProcedure,
-  getWebhookWithTokenQuery,
-  getWebhookWithTokenSafe,
-  getWebhookWithTokenSchema
+  getWebhookWithTokenSchema,
+  getWebhookWithToken
 } from "../getWebhookWithToken.js";
 
 describe(`getWebhookWithToken`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.get(
     `/webhooks/:webhook/:token`,
     getWebhookWithTokenSchema,
-    v.omit(webhookSchema, [`user`])
+    omitFields(incomingWebhookSchema, [`user`])
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(getWebhookWithTokenSafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(getWebhookWithTokenProcedure)(config)
+      toValidated(
+        getWebhookWithToken,
+        getWebhookWithTokenSchema,
+        omitFields(incomingWebhookSchema, [`user`])
+      )(config, { anonymous: true })
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(getWebhookWithTokenQuery, config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

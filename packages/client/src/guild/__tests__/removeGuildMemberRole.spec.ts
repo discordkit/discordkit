@@ -1,10 +1,8 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core/requests/toValidated";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
 import {
   removeGuildMemberRole,
-  removeGuildMemberRoleProcedure,
-  removeGuildMemberRoleSafe,
   removeGuildMemberRoleSchema
 } from "../removeGuildMemberRole.js";
 
@@ -14,19 +12,9 @@ describe(`removeGuildMemberRole`, { repeats: 5 }, () => {
     removeGuildMemberRoleSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(removeGuildMemberRoleSafe(config)).resolves.not.toThrow();
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(removeGuildMemberRoleProcedure)(config)
+      toValidated(removeGuildMemberRole, removeGuildMemberRoleSchema)(config)
     ).resolves.not.toThrow();
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(removeGuildMemberRole);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
   });
 });

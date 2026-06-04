@@ -1,5 +1,6 @@
 import * as v from "valibot";
-import { snowflake } from "@discordkit/core";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { authorizingIntegrationOwnersSchema } from "../../application/types/ApplicationIntegrationTypes.js";
 import { interactionTypeSchema } from "../../interactions/types/InteractionType.js";
 import { userSchema } from "../../user/types/User.js";
 
@@ -11,15 +12,13 @@ export const messageComponentInteractionMetadataSchema = v.object({
   /** User who triggered the interaction */
   user: userSchema,
   /** IDs for installation context(s) related to an interaction. Details in Authorizing Integration Owners Object */
-  authoringIntegrationOwners: v.record(
-    v.picklist([`GUILD_INSTALL`, `USER_INSTALL`]),
-    v.union([snowflake, v.literal(0)])
-  ),
+  authorizingIntegrationOwners: authorizingIntegrationOwnersSchema,
   /** ID of the original response message, present only on follow-up messages */
   originalResponseMessageId: v.exactOptional(snowflake),
   /** ID of the message that contained the interactive component */
   interactedMessageId: v.exactOptional(snowflake)
 });
 
-export interface MessageComponentInteractionMetadata
-  extends v.InferOutput<typeof messageComponentInteractionMetadataSchema> {}
+export interface MessageComponentInteractionMetadata extends v.InferOutput<
+  typeof messageComponentInteractionMetadataSchema
+> {}

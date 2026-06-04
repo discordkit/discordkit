@@ -1,15 +1,12 @@
-import * as v from "valibot";
-import {
-  patch,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake,
-  boundedString,
-  boundedArray
-} from "@discordkit/core";
-import { messageSchema, type Message } from "../messages/types/Message.js";
-import { embedSchema } from "../messages/types/Embed.js";
+﻿import * as v from "valibot";
+import { patch, type Fetcher } from "@discordkit/core/requests/methods";
+import { boundedArray } from "@discordkit/core/validations/boundedArray";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { multipart, fileUpload } from "@discordkit/core/validations/fileUpload";
+import { partialSchema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type Message } from "../messages/types/Message.js";
+import { embedEntries } from "../messages/types/Embed.js";
 import { allowedMentionSchema } from "../messages/types/AllowedMention.js";
 import { attachmentSchema } from "../messages/types/Attachment.js";
 import { messageComponentSchema } from "../messages/types/MessageComponent.js";
@@ -19,14 +16,14 @@ export const editFollowupMessageSchema = v.object({
   application: snowflake,
   token: v.pipe(v.string(), v.nonEmpty()),
   message: snowflake,
-  body: v.partial(
-    v.object({
+  body: multipart(
+    {
       /** the message contents (up to 2000 characters) */
       content: boundedString({ max: 2000 }),
       /** embedded `rich` content */
       embeds: boundedArray(
         v.object({
-          ...embedSchema.entries,
+          ...embedEntries,
           type: v.literal(EmbedType.RICH)
         }),
         { max: 10 }
@@ -36,10 +33,11 @@ export const editFollowupMessageSchema = v.object({
       /** the components to include with the message */
       components: v.array(messageComponentSchema),
       /** the contents of the file being sent */
-      files: v.array(v.unknown()),
+      files: v.array(fileUpload),
       /** attachment objects with filename and description */
-      attachments: v.array(v.partial(attachmentSchema))
-    })
+      attachments: v.array(partialSchema(attachmentSchema))
+    },
+    { partial: true }
   )
 });
 
@@ -52,19 +50,7 @@ export const editFollowupMessageSchema = v.object({
  */
 export const editFollowupMessage: Fetcher<
   typeof editFollowupMessageSchema,
-  Message
-> = async ({ application, token, message, body }) =>
-  patch(`/webhooks/${application}/${token}/messages/${message}`, body);
-
-export const editFollowupMessageSafe = toValidated(
-  editFollowupMessage,
-  editFollowupMessageSchema,
-  messageSchema
-);
-
-export const editFollowupMessageProcedure = toProcedure(
-  `mutation`,
-  editFollowupMessage,
-  editFollowupMessageSchema,
-  messageSchema
-);
+  Message,
+  { anonymous: true }
+> = async ({ application, token, message, body }, options) =>
+  patch(`/webhooks/${application}/${token}/messages/${message}`, body, options);

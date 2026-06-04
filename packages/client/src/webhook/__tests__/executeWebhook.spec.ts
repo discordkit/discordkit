@@ -1,12 +1,7 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core/requests/toValidated";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
-import {
-  executeWebhook,
-  executeWebhookProcedure,
-  executeWebhookSafe,
-  executeWebhookSchema
-} from "../executeWebhook.js";
+import { executeWebhook, executeWebhookSchema } from "../executeWebhook.js";
 
 describe(`executeWebhook`, { repeats: 5 }, () => {
   const { config } = mockUtils.request.post(
@@ -14,19 +9,11 @@ describe(`executeWebhook`, { repeats: 5 }, () => {
     executeWebhookSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(executeWebhookSafe(config)).resolves.not.toThrow();
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(executeWebhookProcedure)(config)
+      toValidated(executeWebhook, executeWebhookSchema)(config, {
+        anonymous: true
+      })
     ).resolves.not.toThrow();
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(executeWebhook);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
   });
 });

@@ -1,23 +1,17 @@
-import * as v from "valibot";
-import {
-  patch,
-  buildURL,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake,
-  boundedString,
-  boundedArray
-} from "@discordkit/core";
-import { embedSchema } from "../messages/types/Embed.js";
+﻿import * as v from "valibot";
+import { buildURL } from "@discordkit/core/requests/buildURL";
+import { patch, type Fetcher } from "@discordkit/core/requests/methods";
+import { boundedArray } from "@discordkit/core/validations/boundedArray";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { multipart, fileUpload } from "@discordkit/core/validations/fileUpload";
+import { partialSchema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { embedEntries } from "../messages/types/Embed.js";
 import { allowedMentionSchema } from "../messages/types/AllowedMention.js";
 import { attachmentSchema } from "../messages/types/Attachment.js";
 import { messageComponentSchema } from "../messages/types/MessageComponent.js";
 import { EmbedType } from "../messages/types/EmbedType.js";
-import {
-  type InteractionCallbackResponse,
-  interactionCallbackResponseSchema
-} from "./types/InteractionCallbackResponse.js";
+import { type InteractionCallbackResponse } from "./types/InteractionCallbackResponse.js";
 
 export const editOriginalInteractionResponseSchema = v.object({
   application: snowflake,
@@ -30,14 +24,14 @@ export const editOriginalInteractionResponseSchema = v.object({
       })
     )
   ),
-  body: v.partial(
-    v.object({
+  body: multipart(
+    {
       /** the message contents (up to 2000 characters) */
       content: boundedString({ max: 2000 }),
       /** embedded `rich` content */
       embeds: boundedArray(
         v.object({
-          ...embedSchema.entries,
+          ...embedEntries,
           type: v.literal(EmbedType.RICH)
         }),
         { max: 10 }
@@ -47,10 +41,11 @@ export const editOriginalInteractionResponseSchema = v.object({
       /** the components to include with the message */
       components: v.array(messageComponentSchema),
       /** the contents of the file being sent */
-      files: v.array(v.unknown()),
+      files: v.array(fileUpload),
       /** attachment objects with filename and description */
-      attachments: v.array(v.partial(attachmentSchema))
-    })
+      attachments: v.array(partialSchema(attachmentSchema))
+    },
+    { partial: true }
   )
 });
 
@@ -59,27 +54,16 @@ export const editOriginalInteractionResponseSchema = v.object({
  *
  * **PATCH** `/webhooks/:application/:token/messages/@original`
  *
- * Edits the initial {@link InteractionCallbackReponse Interaction response}.. Functions the same as Edit Webhook Message.
+ * Edits the initial {@link InteractionCallbackResponse | Interaction response}. Functions the same as Edit Webhook Message.
  */
 export const editOriginalInteractionResponse: Fetcher<
   typeof editOriginalInteractionResponseSchema,
-  InteractionCallbackResponse
-> = async ({ application, token, params, body }) =>
+  InteractionCallbackResponse,
+  { anonymous: true }
+> = async ({ application, token, params, body }, options) =>
   patch(
     buildURL(`/webhooks/${application}/${token}/messages/@original`, params)
       .href,
-    body
+    body,
+    options
   );
-
-export const editOriginalInteractionResponseSafe = toValidated(
-  editOriginalInteractionResponse,
-  editOriginalInteractionResponseSchema,
-  interactionCallbackResponseSchema
-);
-
-export const editOriginalInteractionResponseProcedure = toProcedure(
-  `mutation`,
-  editOriginalInteractionResponse,
-  editOriginalInteractionResponseSchema,
-  interactionCallbackResponseSchema
-);

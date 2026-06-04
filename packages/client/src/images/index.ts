@@ -12,6 +12,7 @@ export * from "./guildMemberAvatar.js";
 export * from "./guildMemberBanner.js";
 export * from "./guildScheduledEventCover.js";
 export * from "./guildSplash.js";
+export * from "./guildTagBadge.js";
 export * from "./roleIcon.js";
 export * from "./sticker.js";
 export * from "./stickerPackBanner.js";

@@ -1,7 +1,10 @@
-/* eslint-disable @typescript-eslint/prefer-literal-enum-member */
+/* oxlint-disable @typescript-eslint/prefer-literal-enum-member */
 import * as v from "valibot";
-import { bitfield } from "@discordkit/core";
+import { bitfield } from "@discordkit/core/validations/bitfield";
 
+/**
+ * ### [Guild Member Flags](https://discord.com/developers/docs/resources/guild#guild-member-object-guild-member-flags)
+ */
 export enum GuildMemberFlags {
   /** Member has left and rejoined the guild */
   DID_REJOIN = 1 << 0,

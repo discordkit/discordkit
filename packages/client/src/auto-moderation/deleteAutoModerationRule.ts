@@ -1,11 +1,6 @@
 import * as v from "valibot";
-import {
-  remove,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { remove, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 export const deleteAutoModerationRuleSchema = v.object({
   guild: snowflake,
@@ -28,17 +23,8 @@ export const deleteAutoModerationRuleSchema = v.object({
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const deleteAutoModerationRule: Fetcher<
-  typeof deleteAutoModerationRuleSchema
-> = async ({ guild, rule }) =>
-  remove(`/guilds/${guild}/auto-moderation/rules/${rule}`);
-
-export const deleteAutoModerationRuleSafe = toValidated(
-  deleteAutoModerationRule,
-  deleteAutoModerationRuleSchema
-);
-
-export const deleteAutoModerationRuleProcedure = toProcedure(
-  `mutation`,
-  deleteAutoModerationRule,
-  deleteAutoModerationRuleSchema
-);
+  typeof deleteAutoModerationRuleSchema,
+  void,
+  { auditLogReason: true }
+> = async ({ guild, rule }, options) =>
+  remove(`/guilds/${guild}/auto-moderation/rules/${rule}`, options);

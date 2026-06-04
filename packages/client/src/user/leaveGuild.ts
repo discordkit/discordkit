@@ -1,11 +1,6 @@
 import * as v from "valibot";
-import {
-  remove,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { remove, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 export const leaveGuildSchema = v.object({
   guild: snowflake
@@ -16,15 +11,7 @@ export const leaveGuildSchema = v.object({
  *
  * **DELETE** `/users/@me/guilds/:guild`
  *
- * Leave a guild. Returns a `204 empty` response on success. Fires a Guild Delete Gateway event and a Guild Member Remove Gateway event.
+ * Leave a guild. Returns a 204 empty response on success. Fires a Guild Delete Gateway event and a Guild Member Remove Gateway event.
  */
 export const leaveGuild: Fetcher<typeof leaveGuildSchema> = async ({ guild }) =>
   remove(`/users/@me/guilds/${guild}`);
-
-export const leaveGuildSafe = toValidated(leaveGuild, leaveGuildSchema);
-
-export const leaveGuildProcedure = toProcedure(
-  `mutation`,
-  leaveGuild,
-  leaveGuildSchema
-);

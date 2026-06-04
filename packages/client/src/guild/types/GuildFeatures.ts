@@ -11,7 +11,7 @@ export enum GuildFeatures {
   AUTO_MODERATION = `AUTO_MODERATION`,
   /** guild has access to set a guild banner image */
   BANNER = `BANNER`,
-  /** guild can enable welcome screen, Membership Screening, stage channels and discovery, and receives community updates */
+  /** guild can enable {@link WelcomeScreen | welcome screen}, Membership Screening, stage channels and discovery, and receives community updates */
   COMMUNITY = `COMMUNITY`,
   /** guild has enabled monetization */
   CREATOR_MONETIZABLE_PROVISIONAL = `CREATOR_MONETIZABLE_PROVISIONAL`,
@@ -55,7 +55,7 @@ export enum GuildFeatures {
   VERIFIED = `VERIFIED`,
   /** guild has access to set 384kbps bitrate in voice (previously VIP voice servers) */
   VIP_REGIONS = `VIP_REGIONS`,
-  /** guild has enabled the welcome screen */
+  /** guild has enabled the {@link WelcomeScreen | welcome screen} */
   WELCOME_SCREEN_ENABLED = `WELCOME_SCREEN_ENABLED`,
   /** guild is able to set gradient colors to roles */
   ENHANCED_ROLE_COLORS = `ENHANCED_ROLE_COLORS`

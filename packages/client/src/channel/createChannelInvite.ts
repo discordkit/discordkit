@@ -1,12 +1,7 @@
 import * as v from "valibot";
-import {
-  post,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import { type Invite, inviteSchema } from "../invite/types/Invite.js";
+import { post, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type Invite } from "../invite/types/Invite.js";
 import { inviteTargetSchema } from "../invite/types/InviteTarget.js";
 
 export const createChannelInviteSchema = v.object({
@@ -48,7 +43,7 @@ export const createChannelInviteSchema = v.object({
  *
  * **POST** `/channels/:channel/invites`
  *
- * Create a new invite object for the channel. Only usable for guild channels. Requires the `CREATE_INSTANT_INVITE` permission. All JSON parameters for this route are optional, however the request body is not. If you are not sending any fields, you still have to send an empty JSON object (`{}`). Returns an {@link Invite | invite object}. Fires an Invite Create Gateway event.
+ * Create a new {@link Invite | invite object} for the channel. Only usable for guild channels. Requires the `CREATE_INSTANT_INVITE` permission. All JSON parameters for this route are optional, however the request body is not. If you are not sending any fields, you still have to send an empty JSON object (`{}`). Returns an {@link Invite | invite object}. Fires an Invite Create Gateway event.
  *
  * > [!NOTE]
  * >
@@ -56,18 +51,7 @@ export const createChannelInviteSchema = v.object({
  */
 export const createChannelInvite: Fetcher<
   typeof createChannelInviteSchema,
-  Invite
-> = async ({ channel, body }) => post(`/channels/${channel}/invites`, body);
-
-export const createChannelInviteSafe = toValidated(
-  createChannelInvite,
-  createChannelInviteSchema,
-  inviteSchema
-);
-
-export const createChannelInviteProcedure = toProcedure(
-  `mutation`,
-  createChannelInvite,
-  createChannelInviteSchema,
-  inviteSchema
-);
+  Invite,
+  { auditLogReason: true }
+> = async ({ channel, body }, options) =>
+  post(`/channels/${channel}/invites`, body, options);

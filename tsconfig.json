@@ -1,12 +1,12 @@
 {
-  "references": [
-    {"path": "./apps/feedback-scraper"},
-    {"path": "./apps/webhook-action"},
-    {"path": "./packages/client"},
-    {"path": "./packages/core"}
-  ],
   "include": ["./**/*.{j,t}s?(x)", "./**/*.spec.ts"],
-  "exclude": ["node_modules", "./scripts", "./**/.next/**/*.*", "./**/dist", "./*.mjs"],
+  "exclude": [
+    "node_modules",
+    ".yarn",
+    ".claude",
+    "./**/.next/**/*.*",
+    "./**/dist"
+  ],
   "compilerOptions": {
     "noImplicitAny": true,
     "noEmit": true,
@@ -15,13 +15,9 @@
     "lib": ["ESNext", "DOM"],
     "types": ["node", "vitest/globals"],
     "target": "ESNext",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "paths": {
-      "*": ["../../*"],
-      "#mock-utils": ["./scripts/mock-utils.ts"],
-      "#test-utils": ["./scripts/test-utils.ts"]
-    },
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "customConditions": ["development"],
     "isolatedModules": true,
     "allowJs": true,
     "esModuleInterop": true,

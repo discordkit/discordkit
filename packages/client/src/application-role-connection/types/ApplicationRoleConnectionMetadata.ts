@@ -1,8 +1,11 @@
 import * as v from "valibot";
-import { boundedString } from "@discordkit/core";
+import { boundedString } from "@discordkit/core/validations/boundedString";
 import { applicationRoleConnectionMetadataTypeSchema } from "./ApplicationRoleConnectionMetadataType.js";
 import { localesSchema } from "../../application/types/Locales.js";
 
+/**
+ * ### [Application Role Connection Metadata](https://discord.com/developers/docs/resources/application-role-connection-metadata#application-role-connection-metadata-object)
+ */
 export const applicationRoleConnectionMetadataSchema = v.object({
   /** type of metadata value */
   type: applicationRoleConnectionMetadataTypeSchema,
@@ -23,5 +26,6 @@ export const applicationRoleConnectionMetadataSchema = v.object({
   descriptionLocalizations: v.nullish(v.record(localesSchema, v.string()))
 });
 
-export interface ApplicationRoleConnectionMetadata
-  extends v.InferOutput<typeof applicationRoleConnectionMetadataSchema> {}
+export interface ApplicationRoleConnectionMetadata extends v.InferOutput<
+  typeof applicationRoleConnectionMetadataSchema
+> {}

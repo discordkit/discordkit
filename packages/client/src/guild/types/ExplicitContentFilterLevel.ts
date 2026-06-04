@@ -1,5 +1,8 @@
 import * as v from "valibot";
 
+/**
+ * ### [Explicit Content Filter Level](https://discord.com/developers/docs/resources/guild#guild-object-explicit-content-filter-level)
+ */
 export enum ExplicitContentFilterLevel {
   /** media content will not be scanned */
   DISABLED = 0,

@@ -1,10 +1,9 @@
-import * as v from "valibot";
-import {
-  snowflake,
-  asDigits,
-  boundedString,
-  boundedInteger
-} from "@discordkit/core";
+﻿import * as v from "valibot";
+import { asDigits } from "@discordkit/core/validations/asDigits";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { partialSchema, schema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { memberSchema } from "../../guild/types/Member.js";
 import type { Locales } from "../../application/types/Locales.js";
 import { localesSchema } from "../../application/types/Locales.js";
@@ -14,14 +13,13 @@ import type { User } from "../../user/types/User.js";
 import { userSchema } from "../../user/types/User.js";
 import { interactionTypeSchema } from "./InteractionType.js";
 import { applicationCommandDataSchema } from "./ApplicationCommandData.js";
-import { guildSchema } from "../../guild/types/index.js";
+import { guildSchema } from "../../guild/types/Guild.js";
 import { permissionFlag } from "../../permissions/Permissions.js";
 import { entitlementSchema } from "../../entitlements/types/Entitlement.js";
-import { ApplicationIntegrationTypes } from "../../application/types/ApplicationIntegrationTypes.js";
-import { applicationIntegrationTypeConfigurationSchema } from "../../application/types/ApplicationIntegrationTypeConfiguration.js";
+import { authorizingIntegrationOwnersSchema } from "../../application/types/ApplicationIntegrationTypes.js";
 import { interactionContextSchema } from "./InteractionContextType.js";
 
-export const interactionSchema = v.object({
+const _interactionSchema = v.object({
   /** ID of the interaction */
   id: snowflake,
   /** ID of the application this interaction is for */
@@ -31,14 +29,14 @@ export const interactionSchema = v.object({
   /** Interaction data payload */
   data: v.exactOptional(applicationCommandDataSchema),
   /** Guild that the interaction was sent from */
-  guild: v.exactOptional(v.partial(guildSchema)),
+  guild: v.exactOptional(partialSchema(guildSchema)),
   /** Guild that the interaction was sent from */
   guildId: v.exactOptional(snowflake),
   /** Channel that the interaction was sent from */
   channel: v.exactOptional(channelSchema),
   /** Channel that the interaction was sent from */
   channelId: v.exactOptional(snowflake),
-  /** Guild member data for the invoking user, including permissions */
+  /** {@link Member | Guild member} data for the invoking user, including permissions */
   member: v.exactOptional(memberSchema),
   /** User object for the invoking user, if invoked in a DM */
   user: v.exactOptional(v.lazy<v.GenericSchema<User>>(() => userSchema)),
@@ -56,16 +54,19 @@ export const interactionSchema = v.object({
   guildLocale: v.exactOptional<v.GenericSchema<Locales>>(localesSchema),
   /** For monetized apps, any entitlements for the invoking user, representing access to premium SKUs */
   entitlements: v.array(entitlementSchema),
-  authorizingIntegrationOwners: v.object(
-    v.entriesFromList(
-      Object.values(ApplicationIntegrationTypes),
-      applicationIntegrationTypeConfigurationSchema
-    )
-  ),
+  /**
+   * Mapping of installation contexts that the interaction was authorized for to related user or guild IDs. See Authorizing Integration Owners Object for details
+   */
+  authorizingIntegrationOwners: authorizingIntegrationOwnersSchema,
   /** Context where the interaction was triggered from */
   context: v.exactOptional(interactionContextSchema),
   /** Attachment size limit in bytes */
   attachmentSizeLimit: boundedInteger()
 });
 
-export interface Interaction extends v.InferOutput<typeof interactionSchema> {}
+export interface Interaction extends v.InferOutput<typeof _interactionSchema> {}
+
+/**
+ * ### [Interaction](https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object)
+ */
+export const interactionSchema = schema<Interaction>(_interactionSchema);

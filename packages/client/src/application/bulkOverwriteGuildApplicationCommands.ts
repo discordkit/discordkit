@@ -1,17 +1,9 @@
 import * as v from "valibot";
-import {
-  put,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake,
-  asDigits,
-  boundedString
-} from "@discordkit/core";
-import {
-  type ApplicationCommand,
-  applicationCommandSchema
-} from "../application-commands/types/ApplicationCommand.js";
+import { put, type Fetcher } from "@discordkit/core/requests/methods";
+import { asDigits } from "@discordkit/core/validations/asDigits";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type ApplicationCommand } from "../application-commands/types/ApplicationCommand.js";
 import type { Locales } from "./types/Locales.js";
 import { localesSchema } from "./types/Locales.js";
 import { applicationCommandOptionSchema } from "../application-commands/types/ApplicationCommandOption.js";
@@ -20,6 +12,8 @@ import {
   applicationCommandTypeSchema
 } from "../application-commands/types/ApplicationCommandType.js";
 import { permissionFlag } from "../permissions/Permissions.js";
+import { applicationIntegrationTypesSchema } from "./types/ApplicationIntegrationTypes.js";
+import { interactionContextSchema } from "../interactions/types/InteractionContextType.js";
 
 export const bulkOverwriteGuildApplicationCommandsSchema = v.object({
   application: snowflake,
@@ -51,10 +45,19 @@ export const bulkOverwriteGuildApplicationCommandsSchema = v.object({
         options: v.nullish(v.array(applicationCommandOptionSchema)),
         /** Set of permissions represented as a bit set */
         defaultMemberPermissions: v.nullish(asDigits(permissionFlag)),
-        /** Indicates whether the command is available in DMs with the app, only for globally-scoped commands. By default, commands are visible. */
+        /**
+         * Indicates whether the command is available in DMs with the app,
+         * only for globally-scoped commands. By default, commands are visible.
+         *
+         * @deprecated Use `contexts` instead.
+         */
         dmPermission: v.nullish(v.boolean()),
         /** Replaced by `defaultMemberPermissions` and will be deprecated in the future. Indicates whether the command is enabled by default when the app is added to a guild. Defaults to `true` */
         defaultPermission: v.nullish(v.boolean()),
+        /** Installation context(s) where the command is available. Defaults to `[GUILD_INSTALL]`. */
+        integrationTypes: v.nullish(v.array(applicationIntegrationTypesSchema)),
+        /** Interaction context(s) where the command can be used. Defaults to all contexts. */
+        contexts: v.nullish(v.array(interactionContextSchema)),
         /** Type of command, defaults `1` if not set */
         type: v.nullish(
           applicationCommandTypeSchema,
@@ -75,25 +78,12 @@ export const bulkOverwriteGuildApplicationCommandsSchema = v.object({
  *
  * Takes a list of application commands, overwriting the existing command list for this application for the targeted guild. Returns `200` and a list of {@link ApplicationCommand | application command objects}.
  *
- * > [!CAUTION]
+ * > [!WARNING]
  * >
- * > This will overwrite all types of application commands: slash commands, user commands, and message commands.
+ * > This will overwrite **all** types of application commands: slash commands, user commands, and message commands.
  */
 export const bulkOverwriteGuildApplicationCommands: Fetcher<
   typeof bulkOverwriteGuildApplicationCommandsSchema,
   ApplicationCommand[]
 > = async ({ application, guild, body }) =>
   put(`/applications/${application}/guilds/${guild}/commands`, body);
-
-export const bulkOverwriteGuildApplicationCommandsSafe = toValidated(
-  bulkOverwriteGuildApplicationCommands,
-  bulkOverwriteGuildApplicationCommandsSchema,
-  v.array(applicationCommandSchema)
-);
-
-export const bulkOverwriteGuildApplicationCommandsProcedure = toProcedure(
-  `mutation`,
-  bulkOverwriteGuildApplicationCommands,
-  bulkOverwriteGuildApplicationCommandsSchema,
-  v.array(applicationCommandSchema)
-);

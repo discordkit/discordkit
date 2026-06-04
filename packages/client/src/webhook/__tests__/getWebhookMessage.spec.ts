@@ -1,11 +1,9 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core/requests/toValidated";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
 import {
-  getWebhookMessageProcedure,
-  getWebhookMessageQuery,
-  getWebhookMessageSafe,
-  getWebhookMessageSchema
+  getWebhookMessageSchema,
+  getWebhookMessage
 } from "../getWebhookMessage.js";
 import { messageSchema } from "../../messages/types/Message.js";
 
@@ -16,19 +14,13 @@ describe(`getWebhookMessage`, { repeats: 5 }, () => {
     messageSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(getWebhookMessageSafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(getWebhookMessageProcedure)(config)
+      toValidated(
+        getWebhookMessage,
+        getWebhookMessageSchema,
+        messageSchema
+      )(config, { anonymous: true })
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(getWebhookMessageQuery, config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

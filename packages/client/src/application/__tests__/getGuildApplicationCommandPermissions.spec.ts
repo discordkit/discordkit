@@ -1,13 +1,10 @@
+import { toValidated } from "@discordkit/core/requests/toValidated";
 import * as v from "valibot";
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
-import { waitFor } from "@testing-library/dom";
 import { guildApplicationCommandPermissionsSchema } from "../../application-commands/types/GuildApplicationCommandPermissions.js";
 import {
   getGuildApplicationCommandPermissionsSchema,
-  getGuildApplicationCommandPermissionsProcedure,
-  getGuildApplicationCommandPermissionsQuery,
-  getGuildApplicationCommandPermissionsSafe
+  getGuildApplicationCommandPermissions
 } from "../getGuildApplicationCommandPermissions.js";
 
 describe(`getGuildApplicationCommandPermissions`, { repeats: 5 }, () => {
@@ -17,24 +14,13 @@ describe(`getGuildApplicationCommandPermissions`, { repeats: 5 }, () => {
     v.pipe(v.array(guildApplicationCommandPermissionsSchema), v.length(1))
   );
 
-  it(`can be used standalone`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      getGuildApplicationCommandPermissionsSafe(config)
+      toValidated(
+        getGuildApplicationCommandPermissions,
+        getGuildApplicationCommandPermissionsSchema,
+        v.pipe(v.array(guildApplicationCommandPermissionsSchema), v.length(1))
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
-    await expect(
-      runProcedure(getGuildApplicationCommandPermissionsProcedure)(config)
-    ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(
-      getGuildApplicationCommandPermissionsQuery,
-      config
-    );
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

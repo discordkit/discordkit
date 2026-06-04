@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { boundedString } from "@discordkit/core";
+import { boundedString } from "@discordkit/core/validations/boundedString";
 import { componentTypeSchema } from "../../components/types/ComponentType.js";
 import { selectOptionSchema } from "../../components/types/SelectOption.js";
 import { resolvedDataSchema } from "./ResolvedData.js";
@@ -15,5 +15,6 @@ export const messageComponentData = v.object({
   resolved: v.exactOptional(resolvedDataSchema)
 });
 
-export interface MessageComponentData
-  extends v.InferOutput<typeof messageComponentData> {}
+export interface MessageComponentData extends v.InferOutput<
+  typeof messageComponentData
+> {}

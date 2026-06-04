@@ -1,17 +1,9 @@
 import * as v from "valibot";
-import {
-  post,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake,
-  datauri,
-  timestamp
-} from "@discordkit/core";
-import {
-  type ScheduledEvent,
-  scheduledEventSchema
-} from "./types/ScheduledEvent.js";
+import { post, type Fetcher } from "@discordkit/core/requests/methods";
+import { datauri } from "@discordkit/core/validations/datauri";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { timestamp } from "@discordkit/core/validations/timestamp";
+import { type ScheduledEvent } from "./types/ScheduledEvent.js";
 import { entityMetadataSchema } from "./types/EntityMetadata.js";
 import { scheduledEventPrivacyLevelSchema } from "./types/ScheduledEventPrivacyLevel.js";
 import { scheduledEventEntityTypeSchema } from "./types/ScheduledEventEntityType.js";
@@ -48,7 +40,7 @@ export const createGuildScheduledEventSchema = v.object({
  *
  * **POST** `/guilds/:guild/scheduled-events`
  *
- * Create a guild scheduled event in the guild. Returns a {@link ScheduledEvent | guild scheduled event object} on success. Fires a Guild Scheduled Event Create Gateway event.
+ * Create a {@link ScheduledEvent | guild scheduled event} in the guild. Returns a {@link ScheduledEvent | guild scheduled event object} on success. Fires a Guild Scheduled Event Create Gateway event.
  *
  * > [!NOTE]
  * >
@@ -60,18 +52,7 @@ export const createGuildScheduledEventSchema = v.object({
  */
 export const createGuildScheduledEvent: Fetcher<
   typeof createGuildScheduledEventSchema,
-  ScheduledEvent
-> = async ({ guild, body }) => post(`/guilds/${guild}/scheduled-events`, body);
-
-export const createGuildScheduledEventSafe = toValidated(
-  createGuildScheduledEvent,
-  createGuildScheduledEventSchema,
-  scheduledEventSchema
-);
-
-export const createGuildScheduledEventProcedure = toProcedure(
-  `mutation`,
-  createGuildScheduledEvent,
-  createGuildScheduledEventSchema,
-  scheduledEventSchema
-);
+  ScheduledEvent,
+  { auditLogReason: true }
+> = async ({ guild, body }, options) =>
+  post(`/guilds/${guild}/scheduled-events`, body, options);

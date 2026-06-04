@@ -9,5 +9,6 @@ export const pollAnswerCountSchema = v.object({
   meVoted: v.boolean()
 });
 
-export interface PollAnswerCount
-  extends v.InferOutput<typeof pollAnswerCountSchema> {}
+export interface PollAnswerCount extends v.InferOutput<
+  typeof pollAnswerCountSchema
+> {}

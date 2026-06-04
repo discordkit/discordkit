@@ -1,17 +1,9 @@
 import * as v from "valibot";
-import {
-  patch,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake,
-  datauri,
-  timestamp
-} from "@discordkit/core";
-import {
-  type ScheduledEvent,
-  scheduledEventSchema
-} from "./types/ScheduledEvent.js";
+import { patch, type Fetcher } from "@discordkit/core/requests/methods";
+import { datauri } from "@discordkit/core/validations/datauri";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { timestamp } from "@discordkit/core/validations/timestamp";
+import { type ScheduledEvent } from "./types/ScheduledEvent.js";
 import { entityMetadataSchema } from "./types/EntityMetadata.js";
 import { scheduledEventPrivacyLevelSchema } from "./types/ScheduledEventPrivacyLevel.js";
 import { scheduledEventEntityTypeSchema } from "./types/ScheduledEventEntityType.js";
@@ -52,7 +44,7 @@ export const modifyGuildScheduledEventSchema = v.object({
  *
  * **PATCH** `/guilds/:guild/scheduled-events/:event`
  *
- * Modify a guild scheduled event. Returns the modified {@link ScheduledEvent | guild scheduled event object} on success. Fires a Guild Scheduled Event Update Gateway event.
+ * Modify a {@link ScheduledEvent | guild scheduled event}. Returns the modified {@link ScheduledEvent | guild scheduled event object} on success. Fires a Guild Scheduled Event Update Gateway event.
  *
  * > [!NOTE]
  * >
@@ -65,22 +57,14 @@ export const modifyGuildScheduledEventSchema = v.object({
  * > [!NOTE]
  * >
  * > This endpoint silently discards `entity_metadata` for non-`EXTERNAL` events.
+ *
+ * > [!NOTE]
+ * >
+ * > All parameters to this endpoint are optional.
  */
 export const modifyGuildScheduledEvent: Fetcher<
   typeof modifyGuildScheduledEventSchema,
-  ScheduledEvent
-> = async ({ guild, event, body }) =>
-  patch(`/guilds/${guild}/scheduled-events/${event}`, body);
-
-export const modifyGuildScheduledEventSafe = toValidated(
-  modifyGuildScheduledEvent,
-  modifyGuildScheduledEventSchema,
-  scheduledEventSchema
-);
-
-export const modifyGuildScheduledEventProcedure = toProcedure(
-  `mutation`,
-  modifyGuildScheduledEvent,
-  modifyGuildScheduledEventSchema,
-  scheduledEventSchema
-);
+  ScheduledEvent,
+  { auditLogReason: true }
+> = async ({ guild, event, body }, options) =>
+  patch(`/guilds/${guild}/scheduled-events/${event}`, body, options);

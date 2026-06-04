@@ -1,16 +1,8 @@
 import * as v from "valibot";
-import {
-  put,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake,
-  timestamp
-} from "@discordkit/core";
-import {
-  type IncidentsData,
-  incidentsDataSchema
-} from "./types/IncidentsData.js";
+import { put, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { timestamp } from "@discordkit/core/validations/timestamp";
+import { type IncidentsData } from "./types/IncidentsData.js";
 
 export const modifyGuildIncidentActionsSchema = v.object({
   guild: snowflake,
@@ -37,16 +29,3 @@ export const modifyGuildIncidentActions: Fetcher<
   typeof modifyGuildIncidentActionsSchema,
   IncidentsData
 > = async ({ guild, body }) => put(`/guilds/${guild}/incident-actions`, body);
-
-export const modifyGuildIncidentActionsSafe = toValidated(
-  modifyGuildIncidentActions,
-  modifyGuildIncidentActionsSchema,
-  incidentsDataSchema
-);
-
-export const modifyGuildIncidentActionsProcedure = toProcedure(
-  `mutation`,
-  modifyGuildIncidentActions,
-  modifyGuildIncidentActionsSchema,
-  incidentsDataSchema
-);

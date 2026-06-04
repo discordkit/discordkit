@@ -9,5 +9,6 @@ export const interactionCallbackResponseSchema = v.object({
   resource: v.exactOptional(interactionCallbackResourceSchema)
 });
 
-export interface InteractionCallbackResponse
-  extends v.InferOutput<typeof interactionCallbackResponseSchema> {}
+export interface InteractionCallbackResponse extends v.InferOutput<
+  typeof interactionCallbackResponseSchema
+> {}

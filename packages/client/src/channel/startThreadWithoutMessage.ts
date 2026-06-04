@@ -1,12 +1,7 @@
 import * as v from "valibot";
-import {
-  toProcedure,
-  post,
-  type Fetcher,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import { type Channel, channelSchema } from "./types/Channel.js";
+import { post, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type Channel } from "./types/Channel.js";
 import { autoArchiveDurationSchema } from "./types/AutoArchiveDuration.js";
 import { channelTypeSchema } from "./types/ChannelType.js";
 
@@ -33,7 +28,7 @@ export const startThreadWithoutMessageSchema = v.object({
  *
  * **POST** `/channels/:channel/threads`
  *
- * Creates a new thread that is not connected to an existing message. Returns a {@link Channel | channel} on success, and a `400 BAD REQUEST` on invalid parameters. Fires a Thread Create Gateway event.
+ * Creates a new thread that is not connected to an existing message. Returns a {@link Channel | channel} on success, and a 400 BAD REQUEST on invalid parameters. Fires a Thread Create Gateway event.
  *
  * > [!NOTE]
  * >
@@ -41,18 +36,7 @@ export const startThreadWithoutMessageSchema = v.object({
  */
 export const startThreadWithoutMessage: Fetcher<
   typeof startThreadWithoutMessageSchema,
-  Channel
-> = async ({ channel, body }) => post(`/channels/${channel}/threads`, body);
-
-export const startThreadWithoutMessageSafe = toValidated(
-  startThreadWithoutMessage,
-  startThreadWithoutMessageSchema,
-  channelSchema
-);
-
-export const startThreadWithoutMessageProcedure = toProcedure(
-  `mutation`,
-  startThreadWithoutMessage,
-  startThreadWithoutMessageSchema,
-  channelSchema
-);
+  Channel,
+  { auditLogReason: true }
+> = async ({ channel, body }, options) =>
+  post(`/channels/${channel}/threads`, body, options);

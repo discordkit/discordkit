@@ -1,13 +1,10 @@
+import { toValidated } from "@discordkit/core/requests/toValidated";
 import * as v from "valibot";
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
-import { waitFor } from "@testing-library/dom";
 import { channelSchema } from "../../channel/types/Channel.js";
 import {
-  getGuildChannelsProcedure,
-  getGuildChannelsQuery,
-  getGuildChannelsSafe,
-  getGuildChannelsSchema
+  getGuildChannelsSchema,
+  getGuildChannels
 } from "../getGuildChannels.js";
 
 describe(`getGuildChannels`, { repeats: 5 }, () => {
@@ -17,19 +14,13 @@ describe(`getGuildChannels`, { repeats: 5 }, () => {
     v.pipe(v.array(channelSchema), v.length(1))
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(getGuildChannelsSafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(getGuildChannelsProcedure)(config)
+      toValidated(
+        getGuildChannels,
+        getGuildChannelsSchema,
+        v.pipe(v.array(channelSchema), v.length(1))
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(getGuildChannelsQuery, config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

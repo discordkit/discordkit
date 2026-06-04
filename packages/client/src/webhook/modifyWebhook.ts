@@ -1,14 +1,9 @@
 import * as v from "valibot";
-import {
-  patch,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake,
-  boundedString,
-  url
-} from "@discordkit/core";
-import { webhookSchema, type Webhook } from "./types/Webhook.js";
+import { patch, type Fetcher } from "@discordkit/core/requests/methods";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { url } from "@discordkit/core/validations/url";
+import { type Webhook } from "./types/Webhook.js";
 
 export const modifyWebhookSchema = v.object({
   webhook: snowflake,
@@ -35,26 +30,15 @@ export const modifyWebhookSchema = v.object({
  *
  * > [!NOTE]
  * >
- * > All parameters to this endpoint are optional
+ * > All parameters to this endpoint are optional.
  *
  * > [!NOTE]
  * >
- * > This endpoint supports the `X-Audit-Log-Reason `header.
+ * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const modifyWebhook: Fetcher<
   typeof modifyWebhookSchema,
-  Webhook
-> = async ({ webhook, body }) => patch(`/webhooks/${webhook}`, body);
-
-export const modifyWebhookSafe = toValidated(
-  modifyWebhook,
-  modifyWebhookSchema,
-  webhookSchema
-);
-
-export const modifyWebhookProcedure = toProcedure(
-  `mutation`,
-  modifyWebhook,
-  modifyWebhookSchema,
-  webhookSchema
-);
+  Webhook,
+  { auditLogReason: true }
+> = async ({ webhook, body }, options) =>
+  patch(`/webhooks/${webhook}`, body, options);

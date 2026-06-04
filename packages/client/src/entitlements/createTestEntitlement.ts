@@ -1,11 +1,6 @@
 import * as v from "valibot";
-import {
-  post,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { post, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 export const createTestEntitlementSchema = v.object({
   application: snowflake,
@@ -38,14 +33,3 @@ export const createTestEntitlement: Fetcher<
   typeof createTestEntitlementSchema
 > = async ({ application, params }) =>
   post(`/applications/${application}/entitlements`, params);
-
-export const createTestEntitlementSafe = toValidated(
-  createTestEntitlement,
-  createTestEntitlementSchema
-);
-
-export const createTestEntitlementProcedure = toProcedure(
-  `mutation`,
-  createTestEntitlement,
-  createTestEntitlementSchema
-);

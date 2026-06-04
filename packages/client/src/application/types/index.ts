@@ -1,3 +1,6 @@
+export * from "./ActivityInstance.js";
+export * from "./ActivityLocation.js";
+export * from "./ActivityLocationKind.js";
 export * from "./Application.js";
 export * from "./ApplicationEventWebhookStatus.js";
 export * from "./ApplicationFlags.js";

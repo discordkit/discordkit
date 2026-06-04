@@ -1,7 +1,11 @@
 import * as v from "valibot";
-import { snowflake, boundedString } from "@discordkit/core";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { type User, userSchema } from "../../user/types/User.js";
 
+/**
+ * ### [Integration Application](https://discord.com/developers/docs/resources/guild#integration-application-object)
+ */
 export const integrationApplicationSchema = v.object({
   /** the id of the app */
   id: snowflake,
@@ -15,5 +19,6 @@ export const integrationApplicationSchema = v.object({
   bot: v.exactOptional<v.GenericSchema<User>>(userSchema)
 });
 
-export interface IntegrationApplication
-  extends v.InferOutput<typeof integrationApplicationSchema> {}
+export interface IntegrationApplication extends v.InferOutput<
+  typeof integrationApplicationSchema
+> {}

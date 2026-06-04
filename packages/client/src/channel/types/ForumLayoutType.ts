@@ -1,5 +1,8 @@
 import * as v from "valibot";
 
+/**
+ * ### [Forum Layout Type](https://discord.com/developers/docs/resources/channel#channel-object-forum-layout-types)
+ */
 export enum ForumLayoutType {
   /** No default has been set for forum channel */
   NOT_SET = 0,

@@ -1,14 +1,8 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake,
-  boundedString
-} from "@discordkit/core";
-import { messageSchema, type Message } from "../messages/types/Message.js";
+import { get, type Fetcher } from "@discordkit/core/requests/methods";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type Message } from "../messages/types/Message.js";
 
 export const getFollowupMessageSchema = v.object({
   application: snowflake,
@@ -33,21 +27,7 @@ export const getFollowupMessageSchema = v.object({
  */
 export const getFollowupMessage: Fetcher<
   typeof getFollowupMessageSchema,
-  Message
-> = async ({ application, token, message, params }) =>
-  get(`/webhooks/${application}/${token}/messages/${message}`, params);
-
-export const getFollowupMessageSafe = toValidated(
-  getFollowupMessage,
-  getFollowupMessageSchema,
-  messageSchema
-);
-
-export const getFollowupMessageProcedure = toProcedure(
-  `query`,
-  getFollowupMessage,
-  getFollowupMessageSchema,
-  messageSchema
-);
-
-export const getFollowupMessageQuery = toQuery(getFollowupMessage);
+  Message,
+  { anonymous: true }
+> = async ({ application, token, message, params }, options) =>
+  get(`/webhooks/${application}/${token}/messages/${message}`, params, options);

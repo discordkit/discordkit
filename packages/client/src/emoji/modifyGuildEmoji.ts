@@ -1,13 +1,8 @@
 import * as v from "valibot";
-import {
-  patch,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake,
-  boundedString
-} from "@discordkit/core";
-import { emojiSchema, type Emoji } from "./types/Emoji.js";
+import { patch, type Fetcher } from "@discordkit/core/requests/methods";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type Emoji } from "./types/Emoji.js";
 
 export const modifyGuildEmojiSchema = v.object({
   guild: snowflake,
@@ -25,9 +20,9 @@ export const modifyGuildEmojiSchema = v.object({
 /**
  * ### [Modify Guild Emoji](https://discord.com/developers/docs/resources/emoji#modify-guild-emoji)
  *
- * **PATCH* `/guilds/:guild/emojis/:emoji`
+ * **PATCH** `/guilds/:guild/emojis/:emoji`
  *
- * Modify the given emoji. Requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns the updated {@link Emoji | emoji object} on success. Fires a Guild Emojis Update Gateway event.
+ * Modify the given emoji. For emojis created by the current user, requires either the `CREATE_GUILD_EXPRESSIONS` or `MANAGE_GUILD_EXPRESSIONS` permission. For other emojis, requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns the updated {@link Emoji | emoji object} on success. Fires a Guild Emojis Update Gateway event.
  *
  * > [!NOTE]
  * >
@@ -39,19 +34,7 @@ export const modifyGuildEmojiSchema = v.object({
  */
 export const modifyGuildEmoji: Fetcher<
   typeof modifyGuildEmojiSchema,
-  Emoji
-> = async ({ guild, emoji, body }) =>
-  patch(`/guilds/${guild}/emojis/${emoji}`, body);
-
-export const modifyGuildEmojiSafe = toValidated(
-  modifyGuildEmoji,
-  modifyGuildEmojiSchema,
-  emojiSchema
-);
-
-export const modifyGuildEmojiProcedure = toProcedure(
-  `mutation`,
-  modifyGuildEmoji,
-  modifyGuildEmojiSchema,
-  emojiSchema
-);
+  Emoji,
+  { auditLogReason: true }
+> = async ({ guild, emoji, body }, options) =>
+  patch(`/guilds/${guild}/emojis/${emoji}`, body, options);

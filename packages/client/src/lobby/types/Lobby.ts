@@ -1,11 +1,11 @@
 import * as v from "valibot";
-import { snowflake } from "@discordkit/core";
-import { guildTextChannelSchema } from "../../channel/types/Channel.js";
+import { schema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { guildTextChannelEntries } from "../../channel/types/Channel.js";
 import { ChannelType } from "../../channel/types/ChannelType.js";
 import { lobbyMemberSchema } from "./LobbyMember.js";
 
-/** Represents a lobby within Discord. See [Managing Lobbies](https://discord.com/developers/docs/discord-social-sdk/development-guides/managing-lobbies) for more information. */
-export const lobbySchema = v.object({
+const _lobbySchema = v.object({
   /** the id of this channel */
   id: snowflake,
   /** application that created the lobby */
@@ -19,11 +19,18 @@ export const lobbySchema = v.object({
   /** the guild channel linked to the lobby */
   linkedChannel: v.exactOptional(
     v.object({
-      ...guildTextChannelSchema.entries,
+      ...guildTextChannelEntries,
       type: v.literal(ChannelType.GUILD_TEXT),
       nsfw: v.literal(false)
     })
   )
 });
 
-export interface Lobby extends v.InferOutput<typeof lobbySchema> {}
+export interface Lobby extends v.InferOutput<typeof _lobbySchema> {}
+
+/**
+ * ### [Lobby](https://discord.com/developers/docs/resources/lobby#lobby-object)
+ *
+ * Represents a lobby within Discord. See Managing Lobbies for more information.
+ */
+export const lobbySchema = schema<Lobby>(_lobbySchema);

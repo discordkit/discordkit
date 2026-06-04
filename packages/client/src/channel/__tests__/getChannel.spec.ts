@@ -1,12 +1,7 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core/requests/toValidated";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
-import {
-  getChannelProcedure,
-  getChannelQuery,
-  getChannelSafe,
-  getChannelSchema
-} from "../getChannel.js";
+import { getChannelSchema, getChannel } from "../getChannel.js";
 import { channelSchema } from "../types/Channel.js";
 
 describe(`getChannel`, { repeats: 5 }, () => {
@@ -16,19 +11,9 @@ describe(`getChannel`, { repeats: 5 }, () => {
     channelSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(getChannelSafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
-    await expect(runProcedure(getChannelProcedure)(config)).resolves.toEqual(
-      expected
-    );
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(getChannelQuery, config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
+  it(`validates input, fetches, and validates output`, async () => {
+    await expect(
+      toValidated(getChannel, getChannelSchema, channelSchema)(config)
+    ).resolves.toEqual(expected);
   });
 });

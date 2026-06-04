@@ -1,6 +1,6 @@
 import * as v from "valibot";
 import type { Fetcher } from "@discordkit/core";
-import { post, toProcedure, toValidated } from "@discordkit/core";
+import { post } from "@discordkit/core/requests/methods";
 import { groupDirectMessageChannelSchema } from "../channel/types/Channel.js";
 
 export const createGroupDMSchema = v.object({
@@ -17,7 +17,7 @@ export const createGroupDMSchema = v.object({
  *
  * **POST** `/users/@me/channels`
  *
- * Create a new group DM channel with multiple users. Returns a {@link Channel | DM channel object}. This endpoint was intended to be used with the now-deprecated GameBridge SDK. Fires a Channel Create Gateway event.
+ * Create a new group {@link Channel | DM channel} with multiple users. Returns a {@link Channel | DM channel object}. This endpoint was intended to be used with the now-deprecated GameBridge SDK. Fires a Channel Create Gateway event.
  *
  * > [!WARNING]
  * >
@@ -27,16 +27,3 @@ export const createGroupDM: Fetcher<
   typeof createGroupDMSchema,
   v.InferOutput<typeof groupDirectMessageChannelSchema>
 > = async ({ body }) => post(`/users/@me/channels`, body);
-
-export const createGroupDMSafe = toValidated(
-  createGroupDM,
-  createGroupDMSchema,
-  groupDirectMessageChannelSchema
-);
-
-export const createGroupDMProcedure = toProcedure(
-  `mutation`,
-  createGroupDM,
-  createGroupDMSchema,
-  groupDirectMessageChannelSchema
-);

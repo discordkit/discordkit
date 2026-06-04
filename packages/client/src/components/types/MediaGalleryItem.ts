@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { boundedString } from "@discordkit/core";
+import { boundedString } from "@discordkit/core/validations/boundedString";
 import { unfurledMediaItemSchema } from "./UnfurledMediaItem.js";
 
 export const mediaGalleryItemSchema = v.object({
@@ -11,5 +11,6 @@ export const mediaGalleryItemSchema = v.object({
   spoiler: v.exactOptional(v.boolean())
 });
 
-export interface MediaGalleryItem
-  extends v.InferOutput<typeof mediaGalleryItemSchema> {}
+export interface MediaGalleryItem extends v.InferOutput<
+  typeof mediaGalleryItemSchema
+> {}

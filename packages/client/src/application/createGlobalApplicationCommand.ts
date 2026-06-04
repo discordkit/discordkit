@@ -1,17 +1,9 @@
 import * as v from "valibot";
-import {
-  post,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake,
-  asDigits,
-  boundedString
-} from "@discordkit/core";
-import {
-  applicationCommandSchema,
-  type ApplicationCommand
-} from "../application-commands/types/ApplicationCommand.js";
+import { post, type Fetcher } from "@discordkit/core/requests/methods";
+import { asDigits } from "@discordkit/core/validations/asDigits";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type ApplicationCommand } from "../application-commands/types/ApplicationCommand.js";
 import { applicationCommandOptionSchema } from "../application-commands/types/ApplicationCommandOption.js";
 import {
   ApplicationCommandType,
@@ -20,6 +12,8 @@ import {
 import type { Locales } from "./types/Locales.js";
 import { localesSchema } from "./types/Locales.js";
 import { permissionFlag } from "../permissions/Permissions.js";
+import { applicationIntegrationTypesSchema } from "./types/ApplicationIntegrationTypes.js";
+import { interactionContextSchema } from "../interactions/types/InteractionContextType.js";
 
 export const createGlobalApplicationCommandSchema = v.object({
   application: snowflake,
@@ -44,10 +38,19 @@ export const createGlobalApplicationCommandSchema = v.object({
     options: v.nullish(v.array(applicationCommandOptionSchema)),
     /** Set of permissions represented as a bit set */
     defaultMemberPermissions: v.nullish(asDigits(permissionFlag)),
-    /** Indicates whether the command is available in DMs with the app, only for globally-scoped commands. By default, commands are visible. */
+    /**
+     * Indicates whether the command is available in DMs with the app,
+     * only for globally-scoped commands. By default, commands are visible.
+     *
+     * @deprecated Use `contexts` instead.
+     */
     dmPermission: v.nullish(v.boolean()),
     /** Replaced by defaultMemberPermissions and will be deprecated in the future. Indicates whether the command is enabled by default when the app is added to a guild. Defaults to true */
     defaultPermission: v.nullish(v.boolean(), true),
+    /** Installation context(s) where the command is available */
+    integrationTypes: v.nullish(v.array(applicationIntegrationTypesSchema)),
+    /** Interaction context(s) where the command can be used */
+    contexts: v.nullish(v.array(interactionContextSchema)),
     /** Type of command, defaults 1 if not set */
     type: v.nullish(
       applicationCommandTypeSchema,
@@ -63,27 +66,14 @@ export const createGlobalApplicationCommandSchema = v.object({
  *
  * **POST** `/applications/:application/commands`
  *
- * > [!CAUTION]
+ * Create a new global command. Returns `201` if a command with the same name does not already exist, or a `200` if it does (in which case the previous command will be overwritten). Both responses include an {@link ApplicationCommand | application command object}.
+ *
+ * > [!WARNING]
  * >
  * > Creating a command with the same name as an existing command for your application will overwrite the old command.
- *
- * Create a new global command. Returns `201` if a command with the same name does not already exist, or a `200` if it does (in which case the previous command will be overwritten). Both responses include an {@link ApplicationCommand | application command object}.
  */
 export const createGlobalApplicationCommand: Fetcher<
   typeof createGlobalApplicationCommandSchema,
   ApplicationCommand
 > = async ({ application, body }) =>
   post(`/applications/${application}/commands`, body);
-
-export const createGlobalApplicationCommandSafe = toValidated(
-  createGlobalApplicationCommand,
-  createGlobalApplicationCommandSchema,
-  applicationCommandSchema
-);
-
-export const createGlobalApplicationCommandProcedure = toProcedure(
-  `mutation`,
-  createGlobalApplicationCommand,
-  createGlobalApplicationCommandSchema,
-  applicationCommandSchema
-);

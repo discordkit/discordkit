@@ -1,12 +1,8 @@
-import * as v from "valibot";
-import {
-  post,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import { channelSchema, type Channel } from "../channel/types/Channel.js";
+﻿import * as v from "valibot";
+import { post, type Fetcher } from "@discordkit/core/requests/methods";
+import { partialSchema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type Channel } from "../channel/types/Channel.js";
 import { channelTypeSchema } from "../channel/types/ChannelType.js";
 import { overwriteSchema } from "../channel/types/Overwrite.js";
 import { videoQualityModeSchema } from "../channel/types/VideoQualityMode.js";
@@ -36,12 +32,12 @@ export const createGuildChannelSchema = v.object({
     /** sorting position of the channel */
     position: v.nullish(v.pipe(v.number(), v.integer(), v.minValue(0))),
     /** the channel's permission overwrites */
-    permissionOverwrites: v.nullish(v.array(v.partial(overwriteSchema))),
+    permissionOverwrites: v.nullish(v.array(partialSchema(overwriteSchema))),
     /** id of the parent category for a channel */
     parentId: v.nullish(snowflake),
     /** whether the channel is nsfw */
     nsfw: v.nullish(v.boolean()),
-    /** channel voice region id of the voice or stage channel, automatic when set to null */
+    /** channel {@link VoiceRegion | voice region} id of the voice or stage channel, automatic when set to null */
     rtcRegion: v.nullish(v.pipe(v.string(), v.nonEmpty())),
     /** the camera video quality mode of the voice channel */
     videoQualityMode: v.nullish(videoQualityModeSchema),
@@ -67,11 +63,11 @@ export const createGuildChannelSchema = v.object({
  *
  * **POST** `/guilds/:guild/channels`
  *
- * Create a new {@link Channel | channel object} for the guild. Requires the `MANAGE_CHANNELS` permission. If setting permission overwrites, only permissions your bot has in the guild can be allowed/denied. Setting `MANAGE_ROLES` permission in channels is only possible for guild administrators. Returns the new channel object on success. Fires a Channel Create Gateway event.
+ * Create a new {@link Channel | channel object} for the guild. Requires the `MANAGE_CHANNELS` permission. If setting permission overwrites, only permissions your bot has in the guild can be allowed/denied. Setting `MANAGE_ROLES` permission in channels is only possible for guild administrators. Returns the new {@link Channel | channel object} on success. Fires a Channel Create Gateway event.
  *
  * > [!NOTE]
  * >
- * > All parameters to this endpoint are optional and nullable excluding `name`
+ * > All parameters to this endpoint are optional and nullable excluding `name`.
  *
  * > [!NOTE]
  * >
@@ -79,18 +75,7 @@ export const createGuildChannelSchema = v.object({
  */
 export const createGuildChannel: Fetcher<
   typeof createGuildChannelSchema,
-  Channel
-> = async ({ guild, body }) => post(`/guilds/${guild}/channels`, body);
-
-export const createGuildChannelSafe = toValidated(
-  createGuildChannel,
-  createGuildChannelSchema,
-  channelSchema
-);
-
-export const createGuildChannelProcedure = toProcedure(
-  `mutation`,
-  createGuildChannel,
-  createGuildChannelSchema,
-  channelSchema
-);
+  Channel,
+  { auditLogReason: true }
+> = async ({ guild, body }, options) =>
+  post(`/guilds/${guild}/channels`, body, options);

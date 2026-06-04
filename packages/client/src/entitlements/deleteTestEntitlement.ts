@@ -1,11 +1,6 @@
 import * as v from "valibot";
-import {
-  remove,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { remove, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 export const deleteTestEntitlementSchema = v.object({
   application: snowflake,
@@ -17,7 +12,7 @@ export const deleteTestEntitlementSchema = v.object({
  *
  * **DELETE** `/applications/:application/entitlements/:entitlement`
  *
- * Deletes a currently-active test entitlement. Discord will act as though that user or guild no longer has entitlement to your premium offering.
+ * Deletes a currently-active test entitlement. Discord will act as though that user or guild *no longer has* entitlement to your premium offering.
  *
  * Returns `204 No Content` on success.
  */
@@ -25,14 +20,3 @@ export const deleteTestEntitlement: Fetcher<
   typeof deleteTestEntitlementSchema
 > = async ({ application, entitlement }) =>
   remove(`/applications/${application}/entitlements/${entitlement}`);
-
-export const deleteTestEntitlementSafe = toValidated(
-  deleteTestEntitlement,
-  deleteTestEntitlementSchema
-);
-
-export const deleteTestEntitlementProcedure = toProcedure(
-  `mutation`,
-  deleteTestEntitlement,
-  deleteTestEntitlementSchema
-);

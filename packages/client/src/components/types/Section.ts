@@ -1,11 +1,28 @@
 import * as v from "valibot";
-import { boundedInteger, boundedArray } from "@discordkit/core";
+import { boundedArray } from "@discordkit/core/validations/boundedArray";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { schema } from "@discordkit/core/validations/schema";
 import { ComponentType } from "./ComponentType.js";
 import { buttonSchema } from "./Button.js";
 import { textDisplaySchema } from "./TextDisplay.js";
 import { thumbnailSchema } from "./Thumbnail.js";
 
+const _sectionSchema = v.object({
+  /** `9` for section component */
+  type: v.literal(ComponentType.Section),
+  /** Optional identifier for component */
+  id: v.exactOptional(boundedInteger()),
+  /** One to three child components representing the content of the section that is contextually associated to the accessory */
+  components: boundedArray(textDisplaySchema, { max: 3 }),
+  /** A thumbnail or a button component, with a future possibility of adding more compatible components */
+  accessroy: v.union([thumbnailSchema, buttonSchema])
+});
+
+export interface Section extends v.InferOutput<typeof _sectionSchema> {}
+
 /**
+ * ### [Section](https://discord.com/developers/docs/components/reference#section)
+ *
  * A Section is a top-level layout component that allows you to join text contextually with an accessory.
  *
  * Sections are only available in messages.
@@ -18,15 +35,4 @@ import { thumbnailSchema } from "./Thumbnail.js";
  * >
  * > Don't hardcode `components` to contain only text components. We may add other components in the future. Similarly, `accessory` may be expanded to include other components in the future.
  */
-export const sectionSchema = v.object({
-  /** `9` for section component */
-  type: v.literal(ComponentType.Section),
-  /** Optional identifier for component */
-  id: v.exactOptional(boundedInteger()),
-  /** One to three text components */
-  components: boundedArray(textDisplaySchema, { max: 3 }),
-  /** A thumbnail or a button component, with a future possibility of adding more compatible components */
-  accessroy: v.union([thumbnailSchema, buttonSchema])
-});
-
-export interface Section extends v.InferOutput<typeof sectionSchema> {}
+export const sectionSchema = schema<Section>(_sectionSchema);

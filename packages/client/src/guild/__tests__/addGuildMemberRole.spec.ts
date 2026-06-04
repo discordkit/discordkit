@@ -1,10 +1,8 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core/requests/toValidated";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
 import {
   addGuildMemberRole,
-  addGuildMemberRoleProcedure,
-  addGuildMemberRoleSafe,
   addGuildMemberRoleSchema
 } from "../addGuildMemberRole.js";
 
@@ -14,19 +12,9 @@ describe(`addGuildMemberRole`, { repeats: 5 }, () => {
     addGuildMemberRoleSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(addGuildMemberRoleSafe(config)).resolves.not.toThrow();
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(addGuildMemberRoleProcedure)(config)
+      toValidated(addGuildMemberRole, addGuildMemberRoleSchema)(config)
     ).resolves.not.toThrow();
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(addGuildMemberRole);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
   });
 });

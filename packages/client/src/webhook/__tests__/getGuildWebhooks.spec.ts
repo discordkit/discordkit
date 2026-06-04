@@ -1,13 +1,10 @@
+import { toValidated } from "@discordkit/core/requests/toValidated";
 import * as v from "valibot";
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
-import { waitFor } from "@testing-library/dom";
 import { webhookSchema } from "../types/Webhook.js";
 import {
-  getGuildWebhooksProcedure,
-  getGuildWebhooksQuery,
-  getGuildWebhooksSafe,
-  getGuildWebhooksSchema
+  getGuildWebhooksSchema,
+  getGuildWebhooks
 } from "../getGuildWebhooks.js";
 
 describe(`getGuildWebhooks`, { repeats: 5 }, () => {
@@ -17,19 +14,13 @@ describe(`getGuildWebhooks`, { repeats: 5 }, () => {
     v.pipe(v.array(webhookSchema), v.length(1))
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(getGuildWebhooksSafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(getGuildWebhooksProcedure)(config)
+      toValidated(
+        getGuildWebhooks,
+        getGuildWebhooksSchema,
+        v.pipe(v.array(webhookSchema), v.length(1))
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(getGuildWebhooksQuery, config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

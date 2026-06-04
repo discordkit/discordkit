@@ -1,16 +1,7 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import {
-  type ApplicationRoleConnectionMetadata,
-  applicationRoleConnectionMetadataSchema
-} from "./types/ApplicationRoleConnectionMetadata.js";
+import { get, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type ApplicationRoleConnectionMetadata } from "./types/ApplicationRoleConnectionMetadata.js";
 
 export const getApplicationRoleConnectionMetadataRecordsSchema = v.object({
   application: snowflake
@@ -28,20 +19,3 @@ export const getApplicationRoleConnectionMetadataRecords: Fetcher<
   ApplicationRoleConnectionMetadata[]
 > = async ({ application }) =>
   get(`/applications/${application}/role-connections/metadata`);
-
-export const getApplicationRoleConnectionMetadataRecordsSafe = toValidated(
-  getApplicationRoleConnectionMetadataRecords,
-  getApplicationRoleConnectionMetadataRecordsSchema,
-  v.array(applicationRoleConnectionMetadataSchema)
-);
-
-export const getApplicationRoleConnectionMetadataRecordsProcedure = toProcedure(
-  `query`,
-  getApplicationRoleConnectionMetadataRecords,
-  getApplicationRoleConnectionMetadataRecordsSchema,
-  v.array(applicationRoleConnectionMetadataSchema)
-);
-
-export const getApplicationRoleConnectionMetadataRecordsQuery = toQuery(
-  getApplicationRoleConnectionMetadataRecords
-);

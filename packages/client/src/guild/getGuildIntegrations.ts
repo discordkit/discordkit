@@ -1,13 +1,7 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import { integrationSchema, type Integration } from "./types/Integration.js";
+import { get, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type Integration } from "./types/Integration.js";
 
 export const getGuildIntegrationsSchema = v.object({
   guild: snowflake
@@ -28,18 +22,3 @@ export const getGuildIntegrations: Fetcher<
   typeof getGuildIntegrationsSchema,
   Integration[]
 > = async ({ guild }) => get(`/guilds/${guild}/integrations`);
-
-export const getGuildIntegrationsSafe = toValidated(
-  getGuildIntegrations,
-  getGuildIntegrationsSchema,
-  v.array(integrationSchema)
-);
-
-export const getGuildIntegrationsProcedure = toProcedure(
-  `query`,
-  getGuildIntegrations,
-  getGuildIntegrationsSchema,
-  v.array(integrationSchema)
-);
-
-export const getGuildIntegrationsQuery = toQuery(getGuildIntegrations);

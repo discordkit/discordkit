@@ -1,12 +1,7 @@
 import * as v from "valibot";
-import {
-  put,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import { memberSchema, type Member } from "./types/Member.js";
+import { put, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type Member } from "./types/Member.js";
 
 export const addGuildMemberSchema = v.object({
   guild: snowflake,
@@ -30,9 +25,9 @@ export const addGuildMemberSchema = v.object({
  *
  * **PUT** `/guilds/:guild/members/:user`
  *
- * Adds a user to the guild, provided you have a valid oauth2 access token for the user with the `guilds.join` scope. Returns a `201 Created` with the {@link Member | guild member} as the body, or `204 No Content` if the user is already a member of the guild. Fires a Guild Member Add Gateway event.
+ * Adds a user to the guild, provided you have a valid oauth2 access token for the user with the `guilds.join` scope. Returns a 201 Created with the {@link Member | guild member} as the body, or 204 No Content if the user is already a member of the guild. Fires a Guild Member Add Gateway event.
  *
- * For guilds with Membership Screening enabled, this endpoint will default to adding new members as `pending` in the guild member object. Members that are `pending` will have to complete membership screening before they become full members that can talk.
+ * For guilds with Membership Screening enabled, this endpoint will default to adding new members as `pending` in the {@link Member | guild member} object. Members that are `pending` will have to complete membership screening before they become full members that can talk.
  *
  * > [!NOTE]
  * >
@@ -47,16 +42,3 @@ export const addGuildMember: Fetcher<
   Member
 > = async ({ guild, user, body }) =>
   put(`/guilds/${guild}/members/${user}`, body);
-
-export const addGuildMemberSafe = toValidated(
-  addGuildMember,
-  addGuildMemberSchema,
-  memberSchema
-);
-
-export const addGuildMemberProcedure = toProcedure(
-  `mutation`,
-  addGuildMember,
-  addGuildMemberSchema,
-  memberSchema
-);

@@ -1,11 +1,9 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core/requests/toValidated";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
 import {
-  getCurrentUserApplicationRoleConnectionProcedure,
-  getCurrentUserApplicationRoleConnectionQuery,
-  getCurrentUserApplicationRoleConnectionSafe,
-  getCurrentUserApplicationRoleConnectionSchema
+  getCurrentUserApplicationRoleConnectionSchema,
+  getCurrentUserApplicationRoleConnection
 } from "../getCurrentUserApplicationRoleConnection.js";
 import { applicationRoleConnectionSchema } from "../types/ApplicationRoleConnection.js";
 
@@ -16,24 +14,13 @@ describe(`getCurrentUserApplicationRoleConnection`, { repeats: 5 }, () => {
     applicationRoleConnectionSchema
   );
 
-  it(`can be used standalone`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      getCurrentUserApplicationRoleConnectionSafe(config)
+      toValidated(
+        getCurrentUserApplicationRoleConnection,
+        getCurrentUserApplicationRoleConnectionSchema,
+        applicationRoleConnectionSchema
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
-    await expect(
-      runProcedure(getCurrentUserApplicationRoleConnectionProcedure)(config)
-    ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(
-      getCurrentUserApplicationRoleConnectionQuery,
-      config
-    );
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

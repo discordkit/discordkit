@@ -1,15 +1,10 @@
 import * as v from "valibot";
-import {
-  patch,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake,
-  datauri,
-  asInteger
-} from "@discordkit/core";
+import { patch, type Fetcher } from "@discordkit/core/requests/methods";
+import { asInteger } from "@discordkit/core/validations/asInteger";
+import { datauri } from "@discordkit/core/validations/datauri";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { localesSchema } from "../application/types/Locales.js";
-import { type Guild, guildSchema } from "./types/Guild.js";
+import { type Guild } from "./types/Guild.js";
 import { verificationLevelSchema } from "./types/VerificationLevel.js";
 import { defaultMessageNotificationLevelSchema } from "./types/DefaultMessageNotificationLevel.js";
 import { explicitContentFilterLevelSchema } from "./types/ExplicitContentFilterLevel.js";
@@ -22,7 +17,7 @@ export const modifyGuildSchema = v.object({
     v.object({
       /** guild name */
       name: v.pipe(v.string(), v.nonEmpty()),
-      /** @deprecated guild voice region id */
+      /** @deprecated guild {@link VoiceRegion | voice region} id */
       region: v.nullable(v.pipe(v.string(), v.nonEmpty())),
       /** verification level */
       verificationLevel: v.nullable(verificationLevelSchema),
@@ -79,7 +74,7 @@ export const modifyGuildSchema = v.object({
  *
  * > [!NOTE]
  * >
- * > All parameters to this endpoint are optional
+ * > All parameters to this endpoint are optional.
  *
  * > [!NOTE]
  * >
@@ -89,20 +84,9 @@ export const modifyGuildSchema = v.object({
  * >
  * > Attempting to add or remove the `COMMUNITY` guild feature requires the `ADMINISTRATOR` permission.
  */
-export const modifyGuild: Fetcher<typeof modifyGuildSchema, Guild> = async ({
-  guild,
-  body
-}) => patch(`/guilds/${guild}`, body);
-
-export const modifyGuildSafe = toValidated(
-  modifyGuild,
-  modifyGuildSchema,
-  guildSchema
-);
-
-export const modifyGuildProcedure = toProcedure(
-  `mutation`,
-  modifyGuild,
-  modifyGuildSchema,
-  guildSchema
-);
+export const modifyGuild: Fetcher<
+  typeof modifyGuildSchema,
+  Guild,
+  { auditLogReason: true }
+> = async ({ guild, body }, options) =>
+  patch(`/guilds/${guild}`, body, options);

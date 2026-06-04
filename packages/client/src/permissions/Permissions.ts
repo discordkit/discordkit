@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { bitfield } from "@discordkit/core";
+import { bitfield } from "@discordkit/core/validations/bitfield";
 
 // NOTE: Because teats bitwise operates as 32bit by default, we have
 // to encode Discord permissions using hexidecimal notation `0x02`
@@ -109,10 +109,16 @@ export const Permissions = {
   USE_EXTERNAL_SOUNDS: 0x0000200000000000,
   /** Allows sending voice messages `T V S` */
   SEND_VOICE_MESSAGES: 0x0000400000000000,
+  /** Allows setting voice channel status `V` */
+  SET_VOICE_CHANNEL_STATUS: 0x0001000000000000,
   /** Allows sending polls `T V S` */
   SEND_POLLS: 0x0002000000000000,
   /** Allows user-installed apps to send public responses. When disabled, users will still be allowed to use their apps but the responses will be ephemeral. This only applies to apps not also installed to the server. `T V S` */
-  USE_EXTERNAL_APPS: 0x0004000000000000
+  USE_EXTERNAL_APPS: 0x0004000000000000,
+  /** Allows pinning and unpinning messages `T` */
+  PIN_MESSAGES: 0x0008000000000000,
+  /** Allows bypassing slowmode restrictions `T V S` */
+  BYPASS_SLOWMODE: 0x0010000000000000
 } as const;
 
 export const permissionsSchema = v.enum_(Permissions);

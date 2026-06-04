@@ -1,13 +1,8 @@
 import * as v from "valibot";
-import {
-  patch,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake,
-  asInteger
-} from "@discordkit/core";
-import { lobbySchema, type Lobby } from "./types/Lobby.js";
+import { patch, type Fetcher } from "@discordkit/core/requests/methods";
+import { asInteger } from "@discordkit/core/validations/asInteger";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type Lobby } from "./types/Lobby.js";
 import { lobbyMemberFlag } from "./types/LobbyMemberFlags.js";
 
 export const modifyLobbySchema = v.object({
@@ -28,7 +23,7 @@ export const modifyLobbySchema = v.object({
             metadata: v.nullish(
               v.pipe(v.record(v.string(), v.string()), v.maxEntries(1000))
             ),
-            /** lobby member flags combined as a bitfield */
+            /** {@link LobbyMember | lobby member} flags combined as a bitfield */
             flags: v.exactOptional(
               asInteger(lobbyMemberFlag) as v.GenericSchema<number>
             )
@@ -60,16 +55,3 @@ export const modifyLobby: Fetcher<typeof modifyLobbySchema, Lobby> = async ({
   lobby,
   body
 }) => patch(`/lobbies/${lobby}`, body);
-
-export const modifyLobbySafe = toValidated(
-  modifyLobby,
-  modifyLobbySchema,
-  lobbySchema
-);
-
-export const modifyLobbyProcedure = toProcedure(
-  `mutation`,
-  modifyLobby,
-  modifyLobbySchema,
-  lobbySchema
-);

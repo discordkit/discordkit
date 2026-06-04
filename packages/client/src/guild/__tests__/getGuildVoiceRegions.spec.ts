@@ -1,11 +1,9 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core/requests/toValidated";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
 import {
-  getGuildVoiceRegionsProcedure,
-  getGuildVoiceRegionsQuery,
-  getGuildVoiceRegionsSafe,
-  getGuildVoiceRegionsSchema
+  getGuildVoiceRegionsSchema,
+  getGuildVoiceRegions
 } from "../getGuildVoiceRegions.js";
 import { voiceRegionSchema } from "../../voice/types/VoiceRegion.js";
 
@@ -16,19 +14,13 @@ describe(`getGuildVoiceRegions`, { repeats: 5 }, () => {
     voiceRegionSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(getGuildVoiceRegionsSafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(getGuildVoiceRegionsProcedure)(config)
+      toValidated(
+        getGuildVoiceRegions,
+        getGuildVoiceRegionsSchema,
+        voiceRegionSchema
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(getGuildVoiceRegionsQuery, config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

@@ -1,10 +1,15 @@
 import * as v from "valibot";
-import { snowflake, boundedArray, boundedString } from "@discordkit/core";
+import { boundedArray } from "@discordkit/core/validations/boundedArray";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { moderationActionSchema } from "./ModerationAction.js";
 import { moderationEventSchema } from "./ModerationEvent.js";
 import { moderationTriggerTypeSchema } from "./ModerationTriggerType.js";
 import { triggerMetaSchema } from "./TriggerMeta.js";
 
+/**
+ * ### [Moderation Rule](https://discord.com/developers/docs/resources/auto-moderation#auto-moderation-rule-object)
+ */
 export const moderationRuleSchema = v.object({
   /** the id of this rule */
   id: snowflake,
@@ -30,5 +35,6 @@ export const moderationRuleSchema = v.object({
   exemptChannels: boundedArray(snowflake, { max: 50 })
 });
 
-export interface ModerationRule
-  extends v.InferOutput<typeof moderationRuleSchema> {}
+export interface ModerationRule extends v.InferOutput<
+  typeof moderationRuleSchema
+> {}

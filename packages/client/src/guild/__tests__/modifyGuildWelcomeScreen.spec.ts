@@ -1,10 +1,8 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core/requests/toValidated";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
 import {
   modifyGuildWelcomeScreen,
-  modifyGuildWelcomeScreenProcedure,
-  modifyGuildWelcomeScreenSafe,
   modifyGuildWelcomeScreenSchema
 } from "../modifyGuildWelcomeScreen.js";
 import { welcomeScreenSchema } from "../types/WelcomeScreen.js";
@@ -16,22 +14,13 @@ describe(`modifyGuildWelcomeScreen`, { repeats: 5 }, () => {
     welcomeScreenSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(modifyGuildWelcomeScreenSafe(config)).resolves.toEqual(
-      expected
-    );
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(modifyGuildWelcomeScreenProcedure)(config)
+      toValidated(
+        modifyGuildWelcomeScreen,
+        modifyGuildWelcomeScreenSchema,
+        welcomeScreenSchema
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(modifyGuildWelcomeScreen);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

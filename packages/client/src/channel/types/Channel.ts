@@ -1,15 +1,14 @@
 import * as v from "valibot";
-import {
-  snowflake,
-  asDigits,
-  asInteger,
-  timestamp,
-  boundedInteger,
-  boundedString
-} from "@discordkit/core";
+import { asDigits } from "@discordkit/core/validations/asDigits";
+import { asInteger } from "@discordkit/core/validations/asInteger";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { schema, variantSchema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { timestamp } from "@discordkit/core/validations/timestamp";
 import { type User, userSchema } from "../../user/types/User.js";
 import { autoArchiveDurationSchema } from "./AutoArchiveDuration.js";
-import { ChannelType, channelTypeSchema } from "./ChannelType.js";
+import { ChannelType } from "./ChannelType.js";
 import { overwriteSchema } from "./Overwrite.js";
 import { threadMetadataSchema } from "./ThreadMetadata.js";
 import { threadMemberSchema } from "./ThreadMember.js";
@@ -21,11 +20,9 @@ import { forumLayoutTypeSchema } from "./ForumLayoutType.js";
 import { channelFlag } from "./ChannelFlags.js";
 import { permissionFlag } from "../../permissions/Permissions.js";
 
-export const commonChannelSchema = v.object({
+const _commonChannelSchema = v.object({
   /** the id of this channel */
   id: snowflake,
-  /** the type of channel */
-  type: channelTypeSchema,
   /** explicit permission overwrites for members and roles */
   permissionOverwrites: v.exactOptional(v.array(overwriteSchema)),
   /** the name of the channel (1-100 characters) */
@@ -46,8 +43,10 @@ export const commonChannelSchema = v.object({
   flags: v.exactOptional(asInteger(channelFlag))
 });
 
-export const guildOrganizationChannelSchema = v.object({
-  ...commonChannelSchema.entries,
+type CommonChannelFields = v.InferOutput<typeof _commonChannelSchema>;
+
+const _guildOrganizationChannelVariantSchema = v.object({
+  /** the type of channel */
   type: v.picklist([ChannelType.GUILD_CATEGORY, ChannelType.GUILD_DIRECTORY]),
   /** the id of the guild (may be missing for some channel objects received over gateway guild dispatches) */
   guildId: v.exactOptional(snowflake),
@@ -55,12 +54,17 @@ export const guildOrganizationChannelSchema = v.object({
   position: v.exactOptional(boundedInteger())
 });
 
-export type GuildOrganizationChannel = v.InferOutput<
-  typeof guildOrganizationChannelSchema
->;
+export interface GuildOrganizationChannel
+  extends
+    CommonChannelFields,
+    v.InferOutput<typeof _guildOrganizationChannelVariantSchema> {}
 
-export const guildTextChannelSchema = v.object({
-  ...commonChannelSchema.entries,
+export const guildOrganizationChannelSchema = schema<GuildOrganizationChannel>(
+  v.intersect([_commonChannelSchema, _guildOrganizationChannelVariantSchema])
+);
+
+const _guildTextChannelVariantSchema = v.object({
+  /** the type of channel */
   type: v.picklist([ChannelType.GUILD_ANNOUNCEMENT, ChannelType.GUILD_TEXT]),
   /** the id of the guild (may be missing for some channel objects received over gateway guild dispatches) */
   guildId: v.exactOptional(snowflake),
@@ -70,10 +74,27 @@ export const guildTextChannelSchema = v.object({
   position: v.exactOptional(boundedInteger())
 });
 
-export type GuildTextChannel = v.InferOutput<typeof guildTextChannelSchema>;
+export interface GuildTextChannel
+  extends
+    CommonChannelFields,
+    v.InferOutput<typeof _guildTextChannelVariantSchema> {}
 
-export const guildVoiceChannelSchema = v.object({
-  ...commonChannelSchema.entries,
+export const guildTextChannelSchema = schema<GuildTextChannel>(
+  v.intersect([_commonChannelSchema, _guildTextChannelVariantSchema])
+);
+
+/**
+ * Entries map for {@link guildTextChannelSchema}, re-exported so callers
+ * that need to extend the schema by spreading its fields can do so —
+ * `guildTextChannelSchema.entries` is unavailable because the annotated
+ * schema deliberately hides the `ObjectSchema` shape.
+ */
+export const guildTextChannelEntries = {
+  ..._commonChannelSchema.entries,
+  ..._guildTextChannelVariantSchema.entries
+};
+
+const _guildVoiceChannelVariantSchema = v.object({
   /** the type of channel */
   type: v.picklist([ChannelType.GUILD_STAGE_VOICE, ChannelType.GUILD_VOICE]),
   /** the id of the guild (may be missing for some channel objects received over gateway guild dispatches) */
@@ -86,16 +107,23 @@ export const guildVoiceChannelSchema = v.object({
   bitrate: v.exactOptional(boundedInteger()),
   /** the user limit of the voice channel */
   userLimit: v.exactOptional(boundedInteger()),
-  /** voice region id for the voice channel, automatic when set to null */
+  /** {@link VoiceRegion | voice region} id for the voice channel, automatic when set to null */
   rtcRegion: v.nullish(boundedString()),
   /** the camera video quality mode of the voice channel, 1 when not present */
   videoQualityMode: v.exactOptional(videoQualityModeSchema)
 });
 
-export type GuildVoiceChannel = v.InferOutput<typeof guildVoiceChannelSchema>;
+export interface GuildVoiceChannel
+  extends
+    CommonChannelFields,
+    v.InferOutput<typeof _guildVoiceChannelVariantSchema> {}
 
-export const guildForumChannelSchema = v.object({
-  ...commonChannelSchema.entries,
+export const guildVoiceChannelSchema = schema<GuildVoiceChannel>(
+  v.intersect([_commonChannelSchema, _guildVoiceChannelVariantSchema])
+);
+
+const _guildForumChannelVariantSchema = v.object({
+  /** the type of channel */
   type: v.picklist([ChannelType.GUILD_FORUM, ChannelType.GUILD_MEDIA]),
   /** the id of the guild (may be missing for some channel objects received over gateway guild dispatches) */
   guildId: v.exactOptional(snowflake),
@@ -115,10 +143,17 @@ export const guildForumChannelSchema = v.object({
   defaultForumLayout: v.exactOptional(forumLayoutTypeSchema)
 });
 
-export type GuildForumChannel = v.InferOutput<typeof guildForumChannelSchema>;
+export interface GuildForumChannel
+  extends
+    Omit<CommonChannelFields, `topic`>,
+    v.InferOutput<typeof _guildForumChannelVariantSchema> {}
 
-export const threadChannelSchema = v.object({
-  ...commonChannelSchema.entries,
+export const guildForumChannelSchema = schema<GuildForumChannel>(
+  v.intersect([_commonChannelSchema, _guildForumChannelVariantSchema])
+);
+
+const _threadChannelVariantSchema = v.object({
+  /** the type of channel */
   type: v.picklist([
     ChannelType.ANNOUNCEMENT_THREAD,
     ChannelType.PRIVATE_THREAD,
@@ -140,7 +175,7 @@ export const threadChannelSchema = v.object({
   threadMetadata: v.exactOptional(threadMetadataSchema),
   /** the IDs of the set of tags that have been applied to a thread in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */
   appliedTags: v.exactOptional<v.GenericSchema<string[]>>(v.array(snowflake)),
-  /** thread member object for the current user, if they have joined the thread, only included on certain API endpoints */
+  /** {@link ThreadMember | thread member object} for the current user, if they have joined the thread, only included on certain API endpoints */
   member: v.exactOptional(threadMemberSchema),
   /** default duration that the clients (not the API) will use for newly created threads, in minutes, to automatically archive the thread after recent activity, can be set to: 60, 1440, 4320, 10080 */
   defaultAutoArchiveDuration: v.exactOptional(autoArchiveDurationSchema),
@@ -150,21 +185,39 @@ export const threadChannelSchema = v.object({
   defaultThreadRateLimitPerUser: v.exactOptional(boundedInteger())
 });
 
-export type ThreadChannel = v.InferOutput<typeof threadChannelSchema>;
+export interface ThreadChannel
+  extends
+    CommonChannelFields,
+    v.InferOutput<typeof _threadChannelVariantSchema> {}
 
-export const directMessageChannelSchema = v.object({
-  ...commonChannelSchema.entries,
+export const threadChannelSchema = schema<ThreadChannel>(
+  v.intersect([_commonChannelSchema, _threadChannelVariantSchema])
+);
+
+/** Entries map for {@link threadChannelSchema}; see {@link guildTextChannelEntries}. */
+export const threadChannelEntries = {
+  ..._commonChannelSchema.entries,
+  ..._threadChannelVariantSchema.entries
+};
+
+const _directMessageChannelVariantSchema = v.object({
+  /** the type of channel */
   type: v.literal(ChannelType.DM),
   /** the recipients of the DM */
   recipients: v.exactOptional<v.GenericSchema<User[]>>(v.array(userSchema))
 });
 
-export type DirectMessageChannel = v.InferOutput<
-  typeof directMessageChannelSchema
->;
+export interface DirectMessageChannel
+  extends
+    CommonChannelFields,
+    v.InferOutput<typeof _directMessageChannelVariantSchema> {}
 
-export const groupDirectMessageChannelSchema = v.object({
-  ...commonChannelSchema.entries,
+export const directMessageChannelSchema = schema<DirectMessageChannel>(
+  v.intersect([_commonChannelSchema, _directMessageChannelVariantSchema])
+);
+
+const _groupDirectMessageChannelVariantSchema = v.object({
+  /** the type of channel */
   type: v.literal(ChannelType.GROUP_DM),
   /** the recipients of the DM */
   recipients: v.exactOptional<v.GenericSchema<User[]>>(v.array(userSchema)),
@@ -178,9 +231,15 @@ export const groupDirectMessageChannelSchema = v.object({
   managed: v.exactOptional(v.boolean())
 });
 
-export type GroupDirectMessageChannel = v.InferOutput<
-  typeof groupDirectMessageChannelSchema
->;
+export interface GroupDirectMessageChannel
+  extends
+    CommonChannelFields,
+    v.InferOutput<typeof _groupDirectMessageChannelVariantSchema> {}
+
+export const groupDirectMessageChannelSchema =
+  schema<GroupDirectMessageChannel>(
+    v.intersect([_commonChannelSchema, _groupDirectMessageChannelVariantSchema])
+  );
 
 export type Channel =
   | GuildOrganizationChannel
@@ -191,25 +250,41 @@ export type Channel =
   | DirectMessageChannel
   | GroupDirectMessageChannel;
 
-// https://discord.com/developers/docs/resources/channel#channel-object-channel-structure
-export const channelSchema = v.union([
-  guildOrganizationChannelSchema,
-  guildTextChannelSchema,
-  guildVoiceChannelSchema,
-  guildForumChannelSchema,
-  threadChannelSchema,
-  directMessageChannelSchema,
-  groupDirectMessageChannelSchema
-]) as v.GenericSchema<Channel>;
+/**
+ * ### [Channel](https://discord.com/developers/docs/resources/channel#channel-object)
+ *
+ * Represents a guild or DM channel within Discord.
+ */
+export const channelSchema = schema<Channel>(
+  v.intersect([
+    _commonChannelSchema,
+    variantSchema<Channel>(`type`, [
+      _guildOrganizationChannelVariantSchema,
+      _guildTextChannelVariantSchema,
+      _guildVoiceChannelVariantSchema,
+      _guildForumChannelVariantSchema,
+      _threadChannelVariantSchema,
+      _directMessageChannelVariantSchema,
+      _groupDirectMessageChannelVariantSchema
+    ])
+  ])
+);
 
 type PartialExcept<T, K extends keyof T> = Partial<Omit<T, K>> & Pick<T, K>;
 
-export const partialChannelSchema = v.union([
-  v.required(v.partial(guildOrganizationChannelSchema), [`type`]),
-  v.required(v.partial(guildTextChannelSchema), [`type`]),
-  v.required(v.partial(guildVoiceChannelSchema), [`type`]),
-  v.required(v.partial(guildForumChannelSchema), [`type`]),
-  v.required(v.partial(threadChannelSchema), [`type`]),
-  v.required(v.partial(directMessageChannelSchema), [`type`]),
-  v.required(v.partial(groupDirectMessageChannelSchema), [`type`])
-]) as v.GenericSchema<PartialExcept<Channel, `type`>>;
+// Build via the underlying unannotated schemas so v.partial / v.required
+// still type-check; the result is still cast to a flat GenericSchema.
+export const partialChannelSchema = schema<PartialExcept<Channel, `type`>>(
+  v.intersect([
+    v.partial(_commonChannelSchema),
+    variantSchema<PartialExcept<Channel, `type`>>(`type`, [
+      v.required(v.partial(_guildOrganizationChannelVariantSchema), [`type`]),
+      v.required(v.partial(_guildTextChannelVariantSchema), [`type`]),
+      v.required(v.partial(_guildVoiceChannelVariantSchema), [`type`]),
+      v.required(v.partial(_guildForumChannelVariantSchema), [`type`]),
+      v.required(v.partial(_threadChannelVariantSchema), [`type`]),
+      v.required(v.partial(_directMessageChannelVariantSchema), [`type`]),
+      v.required(v.partial(_groupDirectMessageChannelVariantSchema), [`type`])
+    ])
+  ])
+);

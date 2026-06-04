@@ -19,5 +19,6 @@ export const scheduledEventRecurrenceRuleNWeekdaySchema = v.object({
   day: scheduledEventRecurrenceRuleWeekdaySchema
 });
 
-export interface ScheduledEventRecurrenceRuleNWeekday
-  extends v.InferOutput<typeof scheduledEventRecurrenceRuleNWeekdaySchema> {}
+export interface ScheduledEventRecurrenceRuleNWeekday extends v.InferOutput<
+  typeof scheduledEventRecurrenceRuleNWeekdaySchema
+> {}

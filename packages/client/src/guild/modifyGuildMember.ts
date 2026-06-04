@@ -1,14 +1,9 @@
 import * as v from "valibot";
-import {
-  patch,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake,
-  asInteger,
-  timestamp
-} from "@discordkit/core";
-import { memberSchema, type Member } from "./types/Member.js";
+import { patch, type Fetcher } from "@discordkit/core/requests/methods";
+import { asInteger } from "@discordkit/core/validations/asInteger";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { timestamp } from "@discordkit/core/validations/timestamp";
+import { type Member } from "./types/Member.js";
 import { guildMemberFlag } from "./types/GuildMemberFlags.js";
 
 export const modifyGuildMemberSchema = v.object({
@@ -28,7 +23,7 @@ export const modifyGuildMemberSchema = v.object({
       channelId: v.nullish(snowflake),
       /** when the user's timeout will expire and the user will be able to communicate in the guild again (up to 28 days in the future), set to null to remove timeout. Will throw a 403 error if the user has the `ADMINISTRATOR` permission or is the owner of the guild (Requires `MODERATE_MEMBERS` permission) */
       communicationDisabledUntil: v.nullish(timestamp),
-      /** guild member flags */
+      /** {@link Member | guild member} flags */
       flags: v.nullish(asInteger(guildMemberFlag) as v.GenericSchema<number>)
     })
   )
@@ -39,11 +34,11 @@ export const modifyGuildMemberSchema = v.object({
  *
  * **PATCH** `/guilds/:guild/members/:user`
  *
- * Modify attributes of a guild member. Returns a `200 OK` with the {@link Member | guild member} as the body. Fires a Guild Member Update Gateway event. If the `channelId` is set to null, this will force the target user to be disconnected from voice.
+ * Modify attributes of a {@link Member | guild member}. Returns a 200 OK with the {@link Member | guild member} as the body. Fires a Guild Member Update Gateway event. If the `channelId` is set to null, this will force the target user to be disconnected from voice.
  *
  * > [!NOTE]
  * >
- * > All parameters to this endpoint are optional and nullable. When moving members to channels, the API user must have permissions to both connect to the channel and have the `MOVE_MEMBERS` permission.
+ * > All parameters to this endpoint are optional and nullable. When moving members to channels, the API user *must* have permissions to both connect to the channel and have the `MOVE_MEMBERS` permission.
  *
  * > [!NOTE]
  * >
@@ -51,19 +46,7 @@ export const modifyGuildMemberSchema = v.object({
  */
 export const modifyGuildMember: Fetcher<
   typeof modifyGuildMemberSchema,
-  Member
-> = async ({ guild, user, body }) =>
-  patch(`/guilds/${guild}/members/${user}`, body);
-
-export const modifyGuildMemberSafe = toValidated(
-  modifyGuildMember,
-  modifyGuildMemberSchema,
-  memberSchema
-);
-
-export const modifyGuildMemberProcedure = toProcedure(
-  `mutation`,
-  modifyGuildMember,
-  modifyGuildMemberSchema,
-  memberSchema
-);
+  Member,
+  { auditLogReason: true }
+> = async ({ guild, user, body }, options) =>
+  patch(`/guilds/${guild}/members/${user}`, body, options);

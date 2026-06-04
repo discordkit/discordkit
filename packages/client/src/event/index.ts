@@ -6,4 +6,3 @@ export * from "./listScheduledEventsForGuild.js";
 export * from "./modifyGuildScheduledEvent.js";
 
 export * from "./types/index.js";
-export * as eventProcedures from "./procedures.js";

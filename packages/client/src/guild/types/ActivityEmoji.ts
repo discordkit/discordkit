@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { snowflake } from "@discordkit/core";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 export const activityEmojiSchema = v.object({
   /** the name of the emoji */
@@ -10,5 +10,6 @@ export const activityEmojiSchema = v.object({
   animated: v.optional(v.boolean())
 });
 
-export interface ActivityEmoji
-  extends v.InferOutput<typeof activityEmojiSchema> {}
+export interface ActivityEmoji extends v.InferOutput<
+  typeof activityEmojiSchema
+> {}

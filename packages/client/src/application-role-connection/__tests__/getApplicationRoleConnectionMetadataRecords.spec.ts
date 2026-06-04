@@ -1,13 +1,10 @@
+import { toValidated } from "@discordkit/core/requests/toValidated";
 import * as v from "valibot";
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
-import { waitFor } from "@testing-library/dom";
 import { applicationRoleConnectionMetadataSchema } from "../types/ApplicationRoleConnectionMetadata.js";
 import {
-  getApplicationRoleConnectionMetadataRecordsProcedure,
-  getApplicationRoleConnectionMetadataRecordsQuery,
-  getApplicationRoleConnectionMetadataRecordsSafe,
-  getApplicationRoleConnectionMetadataRecordsSchema
+  getApplicationRoleConnectionMetadataRecordsSchema,
+  getApplicationRoleConnectionMetadataRecords
 } from "../getApplicationRoleConnectionMetadataRecords.js";
 
 describe(`getApplicationRoleConnectionMetadataRecords`, { repeats: 5 }, () => {
@@ -17,24 +14,13 @@ describe(`getApplicationRoleConnectionMetadataRecords`, { repeats: 5 }, () => {
     v.pipe(v.array(applicationRoleConnectionMetadataSchema), v.length(1))
   );
 
-  it(`can be used standalone`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      getApplicationRoleConnectionMetadataRecordsSafe(config)
+      toValidated(
+        getApplicationRoleConnectionMetadataRecords,
+        getApplicationRoleConnectionMetadataRecordsSchema,
+        v.pipe(v.array(applicationRoleConnectionMetadataSchema), v.length(1))
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
-    await expect(
-      runProcedure(getApplicationRoleConnectionMetadataRecordsProcedure)(config)
-    ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(
-      getApplicationRoleConnectionMetadataRecordsQuery,
-      config
-    );
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

@@ -1,13 +1,10 @@
+import { toValidated } from "@discordkit/core/requests/toValidated";
 import * as v from "valibot";
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
-import { waitFor } from "@testing-library/dom";
 import { entitlementSchema } from "../types/Entitlement.js";
 import {
-  listEntitlementsProcedure,
-  listEntitlementsQuery,
-  listEntitlementsSafe,
-  listEntitlementsSchema
+  listEntitlementsSchema,
+  listEntitlements
 } from "../listEntitlements.js";
 
 describe(`listEntitlements`, { repeats: 5 }, () => {
@@ -17,19 +14,13 @@ describe(`listEntitlements`, { repeats: 5 }, () => {
     v.pipe(v.array(entitlementSchema), v.length(1))
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(listEntitlementsSafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(listEntitlementsProcedure)(config)
+      toValidated(
+        listEntitlements,
+        listEntitlementsSchema,
+        v.pipe(v.array(entitlementSchema), v.length(1))
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(listEntitlementsQuery, config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { snowflake } from "@discordkit/core";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { applicationCommandTypeSchema } from "../../application-commands/types/ApplicationCommandType.js";
 import { resolvedDataSchema } from "./ResolvedData.js";
 import { applicationCommandInteractionDataOptionSchema } from "./ApplicationCommandInteractionDataOption.js";
@@ -23,5 +23,6 @@ export const applicationCommandDataSchema = v.object({
   targetId: v.exactOptional(snowflake)
 });
 
-export interface ApplicationCommandDataSchema
-  extends v.InferOutput<typeof applicationCommandDataSchema> {}
+export interface ApplicationCommandDataSchema extends v.InferOutput<
+  typeof applicationCommandDataSchema
+> {}

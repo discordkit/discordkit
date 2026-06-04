@@ -1,16 +1,12 @@
 import * as v from "valibot";
-import { timestamp } from "@discordkit/core";
+import { schema } from "@discordkit/core/validations/schema";
+import { timestamp } from "@discordkit/core/validations/timestamp";
 import { pollMediaSchema } from "./PollMedia.js";
 import { pollAnswerSchema } from "./PollAnswer.js";
 import { pollLayoutTypeSchema } from "./PollLayoutType.js";
 import { pollResultsSchema } from "./PollResults.js";
 
-/**
- * The poll object has a lot of levels and nested structures. It was also designed to support future extensibility, so some fields may appear to be more complex than necessary.
- *
- * `expiry` is marked as nullable to support non-expiring polls in the future, but all polls have an expiry currently.
- */
-export const pollSchema = v.object({
+const _pollSchema = v.object({
   /** The question of the poll. Only `text` is supported. */
   question: pollMediaSchema,
   /** Each of the answers available in the poll. */
@@ -25,4 +21,13 @@ export const pollSchema = v.object({
   results: v.exactOptional(pollResultsSchema)
 });
 
-export interface Poll extends v.InferOutput<typeof pollSchema> {}
+export interface Poll extends v.InferOutput<typeof _pollSchema> {}
+
+/**
+ * ### [Poll](https://discord.com/developers/docs/resources/poll#poll-object)
+ *
+ * The poll object has a lot of levels and nested structures. It was also designed to support future extensibility, so some fields may appear to be more complex than necessary.
+ *
+ * `expiry` is marked as nullable to support non-expiring polls in the future, but all polls have an expiry currently.
+ */
+export const pollSchema = schema<Poll>(_pollSchema);

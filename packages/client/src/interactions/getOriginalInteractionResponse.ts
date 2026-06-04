@@ -1,17 +1,8 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake,
-  boundedString
-} from "@discordkit/core";
-import {
-  type InteractionCallbackResponse,
-  interactionCallbackResponseSchema
-} from "./types/InteractionCallbackResponse.js";
+import { get, type Fetcher } from "@discordkit/core/requests/methods";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type InteractionCallbackResponse } from "./types/InteractionCallbackResponse.js";
 
 export const getOriginalInteractionResponseSchema = v.object({
   application: snowflake,
@@ -31,27 +22,11 @@ export const getOriginalInteractionResponseSchema = v.object({
  *
  * **GET** `/webhooks/:application/:token/messages/@original`
  *
- * Returns the initial {@link InteractionCallbackResponse Interaction response}. Functions the same as Get Webhook Message.
+ * Returns the initial {@link InteractionCallbackResponse | Interaction response}. Functions the same as Get Webhook Message.
  */
 export const getOriginalInteractionResponse: Fetcher<
   typeof getOriginalInteractionResponseSchema,
-  InteractionCallbackResponse
-> = async ({ application, token, params }) =>
-  get(`/webhooks/${application}/${token}/messages/@original`, params);
-
-export const getOriginalInteractionResponseSafe = toValidated(
-  getOriginalInteractionResponse,
-  getOriginalInteractionResponseSchema,
-  interactionCallbackResponseSchema
-);
-
-export const getOriginalInteractionResponseProcedure = toProcedure(
-  `query`,
-  getOriginalInteractionResponse,
-  getOriginalInteractionResponseSchema,
-  interactionCallbackResponseSchema
-);
-
-export const getOriginalInteractionResponseQuery = toQuery(
-  getOriginalInteractionResponse
-);
+  InteractionCallbackResponse,
+  { anonymous: true }
+> = async ({ application, token, params }, options) =>
+  get(`/webhooks/${application}/${token}/messages/@original`, params, options);

@@ -1,17 +1,15 @@
 import * as v from "valibot";
-import {
-  asInteger,
-  snowflake,
-  boundedInteger,
-  boundedString
-} from "@discordkit/core";
+import { asInteger } from "@discordkit/core/validations/asInteger";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { schema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import type { Locales } from "../../application/types/Locales.js";
 import { localesSchema } from "../../application/types/Locales.js";
 import { premiumTypeSchema } from "./PremiumType.js";
 import { userFlag } from "./UserFlags.js";
 
-// https://discord.com/developers/docs/resources/user#user-object-user-structure
-export const userSchema = v.object({
+const _userSchema = v.object({
   /** the user's id (scope: `identify`) */
   id: snowflake,
   /** the user's username, not unique across the platform (scope: `identify`) */
@@ -48,4 +46,9 @@ export const userSchema = v.object({
   avatarDecoration: v.nullish(v.string())
 });
 
-export interface User extends v.InferOutput<typeof userSchema> {}
+export interface User extends v.InferOutput<typeof _userSchema> {}
+
+/**
+ * ### [User](https://discord.com/developers/docs/resources/user#user-object)
+ */
+export const userSchema = schema<User>(_userSchema);

@@ -1,13 +1,10 @@
+import { toValidated } from "@discordkit/core/requests/toValidated";
 import * as v from "valibot";
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
-import { waitFor } from "@testing-library/dom";
 import { memberSchema } from "../types/Member.js";
 import {
-  listGuildMembersProcedure,
-  listGuildMembersQuery,
-  listGuildMembersSafe,
-  listGuildMembersSchema
+  listGuildMembersSchema,
+  listGuildMembers
 } from "../listGuildMembers.js";
 
 describe(`listGuildMembers`, { repeats: 5 }, () => {
@@ -17,19 +14,13 @@ describe(`listGuildMembers`, { repeats: 5 }, () => {
     v.pipe(v.array(memberSchema), v.length(1))
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(listGuildMembersSafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(listGuildMembersProcedure)(config)
+      toValidated(
+        listGuildMembers,
+        listGuildMembersSchema,
+        v.pipe(v.array(memberSchema), v.length(1))
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(listGuildMembersQuery, config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

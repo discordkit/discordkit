@@ -5,4 +5,3 @@ export * from "./modifyCurrentUserVoiceState.js";
 export * from "./modifyUserVoiceState.js";
 
 export * from "./types/index.js";
-export * as voiceProcedures from "./procedures.js";

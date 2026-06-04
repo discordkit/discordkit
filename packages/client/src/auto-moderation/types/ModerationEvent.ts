@@ -1,5 +1,8 @@
 import * as v from "valibot";
 
+/**
+ * ### [Moderation Event](https://discord.com/developers/docs/resources/auto-moderation#auto-moderation-rule-object-event-types)
+ */
 export enum ModerationEvent {
   /** when a member sends or edits a message in the guild */
   MESSAGE_SEND = 1,

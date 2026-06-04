@@ -1,10 +1,11 @@
 import * as v from "valibot";
-import { boundedString } from "@discordkit/core";
+import { boundedString } from "@discordkit/core/validations/boundedString";
 
 export const interactionCallbackActivityInstanceSchema = v.object({
   /** 	Instance ID of the Activity if one was launched or joined. */
   id: boundedString()
 });
 
-export interface InteractionCallbackActivityInstance
-  extends v.InferOutput<typeof interactionCallbackActivityInstanceSchema> {}
+export interface InteractionCallbackActivityInstance extends v.InferOutput<
+  typeof interactionCallbackActivityInstanceSchema
+> {}

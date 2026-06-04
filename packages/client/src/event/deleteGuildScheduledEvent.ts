@@ -1,11 +1,6 @@
 import * as v from "valibot";
-import {
-  remove,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { remove, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 export const deleteGuildScheduledEventSchema = v.object({
   guild: snowflake,
@@ -17,20 +12,9 @@ export const deleteGuildScheduledEventSchema = v.object({
  *
  * **DELETE** `/guilds/:guild/scheduled-events/:event`
  *
- * Delete a guild scheduled event. Returns a `204` on success. Fires a Guild Scheduled Event Delete Gateway event.
+ * Delete a {@link ScheduledEvent | guild scheduled event}. Returns a `204` on success. Fires a Guild Scheduled Event Delete Gateway event.
  */
 export const deleteGuildScheduledEvent: Fetcher<
   typeof deleteGuildScheduledEventSchema
 > = async ({ guild, event }) =>
   remove(`/guilds/${guild}/scheduled-events/${event}`);
-
-export const deleteGuildScheduledEventSafe = toValidated(
-  deleteGuildScheduledEvent,
-  deleteGuildScheduledEventSchema
-);
-
-export const deleteGuildScheduledEventProcedure = toProcedure(
-  `mutation`,
-  deleteGuildScheduledEvent,
-  deleteGuildScheduledEventSchema
-);

@@ -1,11 +1,10 @@
 import * as v from "valibot";
-import {
-  snowflake,
-  asDigits,
-  asInteger,
-  boundedInteger,
-  boundedString
-} from "@discordkit/core";
+import { asDigits } from "@discordkit/core/validations/asDigits";
+import { asInteger } from "@discordkit/core/validations/asInteger";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { schema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { emojiSchema } from "../../emoji/types/Emoji.js";
 import { stickerSchema } from "../../sticker/types/Sticker.js";
 import { localesSchema } from "../../application/types/Locales.js";
@@ -22,7 +21,7 @@ import { systemChannelFlag } from "./SystemChannelFlags.js";
 import { permissionFlag } from "../../permissions/Permissions.js";
 import { incidentsDataSchema } from "./IncidentsData.js";
 
-export const guildSchema = v.object({
+const _guildSchema = v.object({
   /** guild id */
   id: snowflake,
   /** guild name (2-100 characters, excluding trailing and leading whitespace) */
@@ -41,7 +40,7 @@ export const guildSchema = v.object({
   ownerId: snowflake,
   /** total permissions for the user in the guild (excludes overwrites) */
   permissions: v.exactOptional(asDigits(permissionFlag)),
-  /** @deprecated voice region id for the guild */
+  /** @deprecated {@link VoiceRegion | voice region} id for the guild */
   region: v.nullish(boundedString()),
   /** id of afk channel */
   afkChannelId: v.nullable(snowflake),
@@ -99,9 +98,9 @@ export const guildSchema = v.object({
   approximateMemberCount: v.exactOptional(boundedInteger()),
   /** approximate number of non-offline members in this guild, returned from the **GET** `/guilds/:guild` endpoint when `withCounts` is `true` */ approximatePresenceCount:
     v.exactOptional(boundedInteger()),
-  /** the welcome screen of a Community guild, shown to new members, returned in an Invite's guild object */
+  /** the {@link WelcomeScreen | welcome screen} of a Community guild, shown to new members, returned in an Invite's guild object */
   welcomeScreen: v.exactOptional(welcomeScreenSchema),
-  /** guild NSFW level */
+  /** guild age-restriction level */
   nsfwLevel: guildNSFWLevelSchema,
   /** custom guild stickers */
   stickers: v.exactOptional(v.array(stickerSchema)),
@@ -113,4 +112,9 @@ export const guildSchema = v.object({
   incidentsData: v.exactOptional(incidentsDataSchema)
 });
 
-export interface Guild extends v.InferOutput<typeof guildSchema> {}
+export interface Guild extends v.InferOutput<typeof _guildSchema> {}
+
+/**
+ * ### [Guild](https://discord.com/developers/docs/resources/guild#guild-object)
+ */
+export const guildSchema = schema<Guild>(_guildSchema);

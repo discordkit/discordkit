@@ -3,6 +3,8 @@ import type { bitfield } from "./bitfield.js";
 
 /**
  * Transforms a `bitfield` schema into an integer
+ *
+ * @__NO_SIDE_EFFECTS__
  */
 export const asInteger = (
   schema: ReturnType<typeof bitfield>

@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { snowflake } from "@discordkit/core";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { promptOptionSchema } from "./PromptOption.js";
 import { promptTypeSchema } from "./PromptType.js";
 
@@ -20,5 +20,6 @@ export const onboardingPromptSchema = v.object({
   inOnboarding: v.boolean()
 });
 
-export interface OnboardingPrompt
-  extends v.InferOutput<typeof onboardingPromptSchema> {}
+export interface OnboardingPrompt extends v.InferOutput<
+  typeof onboardingPromptSchema
+> {}

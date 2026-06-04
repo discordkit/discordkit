@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { snowflake } from "@discordkit/core";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 export const activityPartySchema = v.object({
   /** the id of the party */
@@ -15,5 +15,6 @@ export const activityPartySchema = v.object({
   )
 });
 
-export interface ActivityParty
-  extends v.InferOutput<typeof activityPartySchema> {}
+export interface ActivityParty extends v.InferOutput<
+  typeof activityPartySchema
+> {}

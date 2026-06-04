@@ -1,16 +1,7 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import {
-  inviteMetadataSchema,
-  type InviteMetadata
-} from "../invite/types/InviteMetadata.js";
+import { get, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type InviteMetadata } from "../invite/types/InviteMetadata.js";
 
 export const getChannelInvitesSchema = v.object({
   channel: snowflake
@@ -27,18 +18,3 @@ export const getChannelInvites: Fetcher<
   typeof getChannelInvitesSchema,
   InviteMetadata[]
 > = async ({ channel }) => get(`/channels/${channel}/invites`);
-
-export const getChannelInvitesSafe = toValidated(
-  getChannelInvites,
-  getChannelInvitesSchema,
-  v.array(inviteMetadataSchema)
-);
-
-export const getChannelInvitesProcedure = toProcedure(
-  `query`,
-  getChannelInvites,
-  getChannelInvitesSchema,
-  v.array(inviteMetadataSchema)
-);
-
-export const getChannelInvitesQuery = toQuery(getChannelInvites);

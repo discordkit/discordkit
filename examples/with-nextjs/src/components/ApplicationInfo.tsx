@@ -2,7 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
-import { userAvatar } from "@discordkit/client/images/userAvatar";
+import { userAvatar } from "@discordkit/client";
 import { trpc } from "../app/providers";
 
 export const ApplicationInfo: React.FC = () => {

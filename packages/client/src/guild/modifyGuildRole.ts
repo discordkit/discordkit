@@ -1,14 +1,9 @@
 import * as v from "valibot";
-import {
-  patch,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake,
-  asDigits,
-  datauri
-} from "@discordkit/core";
-import { roleSchema, type Role } from "../permissions/Role.js";
+import { patch, type Fetcher } from "@discordkit/core/requests/methods";
+import { asDigits } from "@discordkit/core/validations/asDigits";
+import { datauri } from "@discordkit/core/validations/datauri";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type Role } from "../permissions/Role.js";
 import { roleColorsSchema } from "../permissions/RoleColors.js";
 import { permissionFlag } from "../permissions/Permissions.js";
 
@@ -49,7 +44,7 @@ export const modifyGuildRoleSchema = v.object({
  *
  * **PATCH** `/guilds/:guild/roles/:role`
  *
- * Modify a guild role. Requires the `MANAGE_ROLES` permission. Returns the updated {@link Role | role} on success. Fires a Guild Role Update Gateway event.
+ * Modify a guild {@link Role | role}. Requires the `MANAGE_ROLES` permission. Returns the updated {@link Role | role} on success. Fires a Guild Role Update Gateway event.
  *
  * > [!NOTE]
  * >
@@ -61,19 +56,7 @@ export const modifyGuildRoleSchema = v.object({
  */
 export const modifyGuildRole: Fetcher<
   typeof modifyGuildRoleSchema,
-  Role
-> = async ({ guild, role, body }) =>
-  patch(`/guilds/${guild}/roles/${role}`, body);
-
-export const modifyGuildRoleSafe = toValidated(
-  modifyGuildRole,
-  modifyGuildRoleSchema,
-  roleSchema
-);
-
-export const modifyGuildRoleProcedure = toProcedure(
-  `mutation`,
-  modifyGuildRole,
-  modifyGuildRoleSchema,
-  roleSchema
-);
+  Role,
+  { auditLogReason: true }
+> = async ({ guild, role, body }, options) =>
+  patch(`/guilds/${guild}/roles/${role}`, body, options);

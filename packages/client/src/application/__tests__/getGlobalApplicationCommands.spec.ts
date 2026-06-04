@@ -1,13 +1,10 @@
+import { toValidated } from "@discordkit/core/requests/toValidated";
 import * as v from "valibot";
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
-import { waitFor } from "@testing-library/dom";
 import { applicationCommandSchema } from "../../application-commands/types/ApplicationCommand.js";
 import {
   getGlobalApplicationCommandsSchema,
-  getGlobalApplicationCommandsProcedure,
-  getGlobalApplicationCommandsQuery,
-  getGlobalApplicationCommandsSafe
+  getGlobalApplicationCommands
 } from "../getGlobalApplicationCommands.js";
 
 describe(`getGlobalApplicationCommands`, { repeats: 5 }, () => {
@@ -17,21 +14,13 @@ describe(`getGlobalApplicationCommands`, { repeats: 5 }, () => {
     v.pipe(v.array(applicationCommandSchema), v.length(1))
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(getGlobalApplicationCommandsSafe(config)).resolves.toEqual(
-      expected
-    );
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(getGlobalApplicationCommandsProcedure)(config)
+      toValidated(
+        getGlobalApplicationCommands,
+        getGlobalApplicationCommandsSchema,
+        v.pipe(v.array(applicationCommandSchema), v.length(1))
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(getGlobalApplicationCommandsQuery, config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

@@ -19,4 +19,7 @@ export const EntitlementType = {
   APPLICATION_SUBSCRIPTION: 8
 } as const;
 
+/**
+ * ### [Entitlement Type](https://discord.com/developers/docs/resources/entitlement#entitlement-object)
+ */
 export const entitlementTypeSchema = v.enum_(EntitlementType);

@@ -5,8 +5,10 @@ export * from "./createGuildApplicationCommand.js";
 export * from "./deleteGlobalApplicationCommand.js";
 export * from "./deleteGuildApplicationCommand.js";
 export * from "./editApplicationCommandPermissions.js";
+export * from "./editCurrentApplication.js";
 export * from "./editGlobalApplicationCommand.js";
 export * from "./editGuildApplicationCommand.js";
+export * from "./getApplicationActivityInstance.js";
 export * from "./getApplicationCommandPermissions.js";
 export * from "./getCurrentApplication.js";
 export * from "./getGlobalApplicationCommand.js";
@@ -16,4 +18,3 @@ export * from "./getGuildApplicationCommandPermissions.js";
 export * from "./getGuildApplicationCommands.js";
 
 export * from "./types/index.js";
-export * as applicationProcedures from "./procedures.js";

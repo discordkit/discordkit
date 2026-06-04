@@ -1,11 +1,6 @@
 import * as v from "valibot";
-import {
-  patch,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { patch, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 export const modifyGuildChannelPositionsSchema = v.object({
   guild: snowflake,
@@ -28,7 +23,9 @@ export const modifyGuildChannelPositionsSchema = v.object({
  *
  * **PATCH** `/guilds/:guild/channels`
  *
- * Modify the positions of a set of channel objects for the guild. Requires `MANAGE_CHANNELS` permission. Returns a `204 empty` response on success. Fires multiple Channel Update Gateway events.
+ * Modify the positions of a set of channel objects for the guild. Requires `MANAGE_CHANNELS` permission. Returns a 204 empty response on success. Fires multiple Channel Update Gateway events.
+ *
+ * This endpoint takes a JSON array of parameters in the following format:
  *
  * > [!NOTE]
  * >
@@ -37,14 +34,3 @@ export const modifyGuildChannelPositionsSchema = v.object({
 export const modifyGuildChannelPositions: Fetcher<
   typeof modifyGuildChannelPositionsSchema
 > = async ({ guild, body }) => patch(`/guilds/${guild}/channels`, body);
-
-export const modifyGuildChannelPositionsSafe = toValidated(
-  modifyGuildChannelPositions,
-  modifyGuildChannelPositionsSchema
-);
-
-export const modifyGuildChannelPositionsProcedure = toProcedure(
-  `mutation`,
-  modifyGuildChannelPositions,
-  modifyGuildChannelPositionsSchema
-);

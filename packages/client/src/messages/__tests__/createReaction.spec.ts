@@ -1,12 +1,7 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core/requests/toValidated";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
-import {
-  createReaction,
-  createReactionProcedure,
-  createReactionSafe,
-  createReactionSchema
-} from "../createReaction.js";
+import { createReaction, createReactionSchema } from "../createReaction.js";
 
 describe(`createReaction`, { repeats: 5 }, () => {
   const { config } = mockUtils.request.put(
@@ -14,19 +9,9 @@ describe(`createReaction`, { repeats: 5 }, () => {
     createReactionSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(createReactionSafe(config)).resolves.not.toThrow();
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(createReactionProcedure)(config)
+      toValidated(createReaction, createReactionSchema)(config)
     ).resolves.not.toThrow();
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(createReaction);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
   });
 });

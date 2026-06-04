@@ -1,17 +1,9 @@
 import * as v from "valibot";
-import {
-  patch,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake,
-  asDigits,
-  boundedString
-} from "@discordkit/core";
-import {
-  applicationCommandSchema,
-  type ApplicationCommand
-} from "../application-commands/types/ApplicationCommand.js";
+import { patch, type Fetcher } from "@discordkit/core/requests/methods";
+import { asDigits } from "@discordkit/core/validations/asDigits";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type ApplicationCommand } from "../application-commands/types/ApplicationCommand.js";
 import { applicationCommandOptionSchema } from "../application-commands/types/ApplicationCommandOption.js";
 import { localesSchema } from "./types/Locales.js";
 import { permissionFlag } from "../permissions/Permissions.js";
@@ -38,8 +30,6 @@ export const editGuildApplicationCommandSchema = v.object({
       options: v.nullish(v.array(applicationCommandOptionSchema)),
       /** Set of permissions represented as a bit set */
       defaultMemberPermissions: v.nullish(asDigits(permissionFlag)),
-      /** Indicates whether the command is available in DMs with the app, only for globally-scoped commands. By default, commands are visible. */
-      dmPermission: v.nullish(v.boolean()),
       /** Replaced by default_member_permissions and will be deprecated in the future. Indicates whether the command is enabled by default when the app is added to a guild. Defaults to true */
       defaultPermission: v.nullish(v.boolean()),
       /** Indicates whether the command is age-restricted */
@@ -51,13 +41,13 @@ export const editGuildApplicationCommandSchema = v.object({
 /**
  * ### [Edit Guild Application Command](https://discord.com/developers/docs/interactions/application-commands#edit-guild-application-command)
  *
- * **PATCH* `/applications/:application/guilds/:guild/commands/:command`
+ * **PATCH** `/applications/:application/guilds/:guild/commands/:command`
+ *
+ * Edit a guild command. Updates for guild commands will be available immediately. Returns `200` and an {@link ApplicationCommand | application command object}. All fields are optional, but any fields provided will entirely overwrite the existing values of those fields.
  *
  * > [!NOTE]
  * >
  * > All parameters for this endpoint are optional.
- *
- * Edit a guild command. Updates for guild commands will be available immediately. Returns `200` and an {@link ApplicationCommand | application command object}. All fields are optional, but any fields provided will entirely overwrite the existing values of those fields.
  */
 export const editGuildApplicationCommand: Fetcher<
   typeof editGuildApplicationCommandSchema,
@@ -67,16 +57,3 @@ export const editGuildApplicationCommand: Fetcher<
     `/applications/${application}/guilds/${guild}/commands/${command}`,
     body
   );
-
-export const editGuildApplicationCommandSafe = toValidated(
-  editGuildApplicationCommand,
-  editGuildApplicationCommandSchema,
-  applicationCommandSchema
-);
-
-export const editGuildApplicationCommandProcedure = toProcedure(
-  `mutation`,
-  editGuildApplicationCommand,
-  editGuildApplicationCommandSchema,
-  applicationCommandSchema
-);

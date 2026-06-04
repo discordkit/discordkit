@@ -1,14 +1,8 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake,
-  boundedString
-} from "@discordkit/core";
-import { webhookSchema, type Webhook } from "./types/Webhook.js";
+import { get, type Fetcher } from "@discordkit/core/requests/methods";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type Webhook } from "./types/Webhook.js";
 
 export const getWebhookWithTokenSchema = v.object({
   webhook: snowflake,
@@ -20,24 +14,11 @@ export const getWebhookWithTokenSchema = v.object({
  *
  * **GET** `/webhooks/:webhook/:token`
  *
- * Returns the new {@link Webhook | webhook object} for the given id, except this call does not require authentication and returns no user in the webhook object.
+ * Returns the {@link Webhook | webhook object} for the given id. Same as Get Webhook, except this call does not require authentication and returns no user in the {@link Webhook | webhook object}.
  */
 export const getWebhookWithToken: Fetcher<
   typeof getWebhookWithTokenSchema,
-  Omit<Webhook, `user`>
-> = async ({ webhook, token }) => get(`/webhooks/${webhook}/${token}`);
-
-export const getWebhookWithTokenSafe = toValidated(
-  getWebhookWithToken,
-  getWebhookWithTokenSchema,
-  v.omit(webhookSchema, [`user`])
-);
-
-export const getWebhookWithTokenProcedure = toProcedure(
-  `query`,
-  getWebhookWithToken,
-  getWebhookWithTokenSchema,
-  v.omit(webhookSchema, [`user`])
-);
-
-export const getWebhookWithTokenQuery = toQuery(getWebhookWithToken);
+  Omit<Webhook, `user`>,
+  { anonymous: true }
+> = async ({ webhook, token }, options) =>
+  get(`/webhooks/${webhook}/${token}`, undefined, options);

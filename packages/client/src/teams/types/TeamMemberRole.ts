@@ -9,4 +9,7 @@ export const TeamMemberRole = {
   ReadOnly: `read_only`
 } as const;
 
+/**
+ * ### [Team Member Role](https://discord.com/developers/docs/topics/teams#team-member-roles-team-member-role-types)
+ */
 export const teamMemberRoleSchema = v.enum_(TeamMemberRole);

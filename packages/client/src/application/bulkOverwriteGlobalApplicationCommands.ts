@@ -1,11 +1,6 @@
 import * as v from "valibot";
-import {
-  put,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { put, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import {
   type ApplicationCommand,
   applicationCommandSchema
@@ -21,27 +16,14 @@ export const bulkOverwriteGlobalApplicationCommandsSchema = v.object({
  *
  * **PUT** `/applications/:application/commands`
  *
- * Takes a list of application commands, overwriting the existing global command list for this application. Returns `200` and a list of {@link ApplicationCommand | application command objects}. Commands that do not already exist will count toward daily application command create limits.
+ * Takes a list of application commands, overwriting the existing global command list for this application. Returns `200` and a list of {@link ApplicationCommand | application command objects}. Commands that do not already exist will count toward daily {@link ApplicationCommand | application command} create limits.
  *
- * > [!CAUTION]
+ * > [!WARNING]
  * >
- * > This will overwrite all types of application commands: slash commands, user commands, and message commands.
+ * > This will overwrite **all** types of application commands: slash commands, user commands, and message commands.
  */
 export const bulkOverwriteGlobalApplicationCommands: Fetcher<
   typeof bulkOverwriteGlobalApplicationCommandsSchema,
   ApplicationCommand[]
 > = async ({ application, body }) =>
   put(`/applications/${application}/commands`, body);
-
-export const bulkOverwriteGlobalApplicationCommandsSafe = toValidated(
-  bulkOverwriteGlobalApplicationCommands,
-  bulkOverwriteGlobalApplicationCommandsSchema,
-  v.array(applicationCommandSchema)
-);
-
-export const bulkOverwriteGlobalApplicationCommandsProcedure = toProcedure(
-  `mutation`,
-  bulkOverwriteGlobalApplicationCommands,
-  bulkOverwriteGlobalApplicationCommandsSchema,
-  v.array(applicationCommandSchema)
-);

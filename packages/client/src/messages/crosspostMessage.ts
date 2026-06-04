@@ -1,12 +1,7 @@
 import * as v from "valibot";
-import {
-  post,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import { messageSchema, type Message } from "./types/Message.js";
+import { post, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type Message } from "./types/Message.js";
 
 export const crosspostMessageSchema = v.object({
   channel: snowflake,
@@ -14,7 +9,7 @@ export const crosspostMessageSchema = v.object({
 });
 
 /**
- * ### [Crosspost Message](https://discord.com/developers/docs/resources/channel#crosspost-message)
+ * ### [Crosspost Message](https://discord.com/developers/docs/resources/message#crosspost-message)
  *
  * **POST** `/channels/:channel/messages/:message/crosspost`
  *
@@ -27,16 +22,3 @@ export const crosspostMessage: Fetcher<
   Message
 > = async ({ channel, message }) =>
   post(`/channels/${channel}/messages/${message}/crosspost`);
-
-export const crosspostMessageSafe = toValidated(
-  crosspostMessage,
-  crosspostMessageSchema,
-  messageSchema
-);
-
-export const crosspostMessageProcedure = toProcedure(
-  `mutation`,
-  crosspostMessage,
-  crosspostMessageSchema,
-  messageSchema
-);

@@ -1,14 +1,7 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { get, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import type { Entitlement } from "./types/Entitlement.js";
-import { entitlementSchema } from "./types/Entitlement.js";
 
 export const listEntitlementsSchema = v.object({
   application: snowflake,
@@ -48,18 +41,3 @@ export const listEntitlements: Fetcher<
   Entitlement[]
 > = async ({ application, params }) =>
   get(`/applications/${application}/entitlements`, params);
-
-export const listEntitlementsSafe = toValidated(
-  listEntitlements,
-  listEntitlementsSchema,
-  v.array(entitlementSchema)
-);
-
-export const listEntitlementsProcedure = toProcedure(
-  `query`,
-  listEntitlements,
-  listEntitlementsSchema,
-  v.array(entitlementSchema)
-);
-
-export const listEntitlementsQuery = toQuery(listEntitlements);

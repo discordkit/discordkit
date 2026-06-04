@@ -1,14 +1,9 @@
 import * as v from "valibot";
-import {
-  post,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake,
-  boundedString,
-  datauri
-} from "@discordkit/core";
-import { emojiSchema, type Emoji } from "./types/Emoji.js";
+import { post, type Fetcher } from "@discordkit/core/requests/methods";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { datauri } from "@discordkit/core/validations/datauri";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type Emoji } from "./types/Emoji.js";
 
 export const createGuildEmojiSchema = v.object({
   guild: snowflake,
@@ -27,11 +22,15 @@ export const createGuildEmojiSchema = v.object({
  *
  * **POST** `/guilds/:guild/emojis`
  *
- * Create a new emoji for the guild. Requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns the new {@link Emoji | emoji object} on success. Fires a Guild Emojis Update Gateway event.
+ * Create a new emoji for the guild. Requires the `CREATE_GUILD_EXPRESSIONS` permission. Returns the new {@link Emoji | emoji object} on success. Fires a Guild Emojis Update Gateway event.
  *
  * > [!WARNING]
  * >
- * > Emojis and animated emojis have a maximum file size of 256kb. Attempting to upload an emoji larger than this limit will fail and return 400 Bad Request and an error message, but not a JSON status code.
+ * > Emojis and animated emojis have a maximum file size of 256 KiB. Attempting to upload an emoji larger than this limit will fail and return 400 Bad Request and an error message, but not a JSON status code.
+ *
+ * > [!NOTE]
+ * >
+ * > We highly recommend that developers use the `.webp` extension when fetching emoji so they're rendered as WebP for maximum performance and compatibility. See the Emoji Formats section above for more details.
  *
  * > [!NOTE]
  * >
@@ -39,18 +38,7 @@ export const createGuildEmojiSchema = v.object({
  */
 export const createGuildEmoji: Fetcher<
   typeof createGuildEmojiSchema,
-  Emoji
-> = async ({ guild, body }) => post(`/guilds/${guild}/emojis`, body);
-
-export const createGuildEmojiSafe = toValidated(
-  createGuildEmoji,
-  createGuildEmojiSchema,
-  emojiSchema
-);
-
-export const createGuildEmojiProcedure = toProcedure(
-  `mutation`,
-  createGuildEmoji,
-  createGuildEmojiSchema,
-  emojiSchema
-);
+  Emoji,
+  { auditLogReason: true }
+> = async ({ guild, body }, options) =>
+  post(`/guilds/${guild}/emojis`, body, options);

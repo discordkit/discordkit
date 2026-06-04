@@ -1,18 +1,11 @@
 import * as v from "valibot";
-import { boundedInteger, boundedString } from "@discordkit/core";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { schema } from "@discordkit/core/validations/schema";
 import { unfurledMediaItemSchema } from "./UnfurledMediaItem.js";
 import { ComponentType } from "./ComponentType.js";
 
-/**
- * A File is a top-level component that allows you to display an uploaded file as an attachment to the message and reference it in the component. Each file component can only display 1 attached file, but you can upload multiple files and add them to different file components within your payload.
- *
- * Files are only available in messages.
- *
- * > [!NOTE]
- * >
- * > To use this component, you need to send the message flag `1 << 15` (IS_COMPONENTS_V2) which can be activated on a per-message basis.
- */
-export const fileSchema = v.object({
+const _fileSchema = v.object({
   /** `13` for a file component */
   type: v.literal(ComponentType.File),
   /** Optional identifier for component */
@@ -27,4 +20,17 @@ export const fileSchema = v.object({
   size: boundedInteger()
 });
 
-export interface File extends v.InferOutput<typeof fileSchema> {}
+export interface File extends v.InferOutput<typeof _fileSchema> {}
+
+/**
+ * ### [File](https://discord.com/developers/docs/components/reference#file)
+ *
+ * A File is a top-level component that allows you to display an uploaded file as an attachment to the message and reference it in the component. Each file component can only display 1 attached file, but you can upload multiple files and add them to different file components within your payload.
+ *
+ * Files are only available in messages.
+ *
+ * > [!NOTE]
+ * >
+ * > To use this component, you need to send the message flag `1 << 15` (IS_COMPONENTS_V2) which can be activated on a per-message basis.
+ */
+export const fileSchema = schema<File>(_fileSchema);

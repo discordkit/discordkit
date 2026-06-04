@@ -1,12 +1,7 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core/requests/toValidated";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
-import {
-  getStickerPackProcedure,
-  getStickerPackQuery,
-  getStickerPackSafe,
-  getStickerPackSchema
-} from "../getStickerPack.js";
+import { getStickerPackSchema, getStickerPack } from "../getStickerPack.js";
 import { stickerPackSchema } from "../types/StickerPack.js";
 
 describe(`getStickerPack`, { repeats: 5 }, () => {
@@ -16,19 +11,13 @@ describe(`getStickerPack`, { repeats: 5 }, () => {
     stickerPackSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(getStickerPackSafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(getStickerPackProcedure)(config)
+      toValidated(
+        getStickerPack,
+        getStickerPackSchema,
+        stickerPackSchema
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(getStickerPackQuery, config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

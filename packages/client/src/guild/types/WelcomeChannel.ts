@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { snowflake } from "@discordkit/core";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 export const welcomeChannelSchema = v.object({
   /** the channel's id */
@@ -12,5 +12,6 @@ export const welcomeChannelSchema = v.object({
   emojiName: v.nullable(v.pipe(v.string(), v.nonEmpty()))
 });
 
-export interface WelcomeChannel
-  extends v.InferOutput<typeof welcomeChannelSchema> {}
+export interface WelcomeChannel extends v.InferOutput<
+  typeof welcomeChannelSchema
+> {}

@@ -1,16 +1,7 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import {
-  scheduledEventSchema,
-  type ScheduledEvent
-} from "./types/ScheduledEvent.js";
+import { get, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type ScheduledEvent } from "./types/ScheduledEvent.js";
 
 export const listScheduledEventsForGuildSchema = v.object({
   guild: snowflake,
@@ -35,20 +26,3 @@ export const listScheduledEventsForGuild: Fetcher<
   ScheduledEvent[]
 > = async ({ guild, params }) =>
   get(`/guilds/${guild}/scheduled-events`, params);
-
-export const listScheduledEventsForGuildSafe = toValidated(
-  listScheduledEventsForGuild,
-  listScheduledEventsForGuildSchema,
-  v.array(scheduledEventSchema)
-);
-
-export const listScheduledEventsForGuildProcedure = toProcedure(
-  `query`,
-  listScheduledEventsForGuild,
-  listScheduledEventsForGuildSchema,
-  v.array(scheduledEventSchema)
-);
-
-export const listScheduledEventsForGuildQuery = toQuery(
-  listScheduledEventsForGuild
-);

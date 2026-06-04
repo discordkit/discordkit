@@ -1,6 +1,12 @@
-import { afterAll } from "vitest";
-import { MockUtils } from "#mock-utils";
-import { datauri, discord, snowflake } from "@discordkit/core";
+﻿import { afterAll } from "vite-plus/test";
+import { MockUtils } from "@discordkit/test-utils";
+import { discord } from "@discordkit/core/requests/DiscordSession";
+import { datauri } from "@discordkit/core/validations/datauri";
+import {
+  fileUpload,
+  type FileUpload
+} from "@discordkit/core/validations/fileUpload";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { faker } from "@faker-js/faker";
 import {
   applicationFlag,
@@ -34,6 +40,13 @@ export const mockUtils = new MockUtils(discord, {
   customMocks: [
     [snowflake, (): string => MockUtils.uid.getUniqueID().toString()],
     [datauri, (): string => faker.image.dataUri()],
+    [
+      fileUpload,
+      (): FileUpload => ({
+        filename: `${faker.system.commonFileName(`txt`)}`,
+        content: new Blob([faker.lorem.paragraph()], { type: `text/plain` })
+      })
+    ],
     [applicationFlag, MockUtils.flagMatcher(ApplicationFlags)],
     [channelFlag, MockUtils.flagMatcher(ChannelFlags)],
     [activityFlag, MockUtils.flagMatcher(ActivityFlags)],

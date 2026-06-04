@@ -1,11 +1,6 @@
 import * as v from "valibot";
-import {
-  remove,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { remove, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 export const removeMemberFromLobbySchema = v.object({
   lobby: snowflake,
@@ -24,14 +19,3 @@ export const removeMemberFromLobbySchema = v.object({
 export const removeMemberFromLobby: Fetcher<
   typeof removeMemberFromLobbySchema
 > = async ({ lobby, user }) => remove(`/lobbies/${lobby}/members/${user}`);
-
-export const removeMemberFromLobbySafe = toValidated(
-  removeMemberFromLobby,
-  removeMemberFromLobbySchema
-);
-
-export const removeMemberFromLobbyProcedure = toProcedure(
-  `mutation`,
-  removeMemberFromLobby,
-  removeMemberFromLobbySchema
-);

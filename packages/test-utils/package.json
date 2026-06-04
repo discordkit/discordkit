@@ -1,0 +1,20 @@
+{
+  "name": "@discordkit/test-utils",
+  "description": "Internal test utilities shared across discordkit workspace packages",
+  "version": "0.0.0",
+  "license": "MIT",
+  "author": "Drake Costa <drake@saeris.gg> (https://saeris.gg)",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@discordkit/core": "workspace:^",
+    "@faker-js/faker": "^10.4.0",
+    "msw": "^2.14.6",
+    "nodejs-snowflake": "^2.0.1",
+    "valibot": "catalog:",
+    "valimock": "1.6.0"
+  }
+}

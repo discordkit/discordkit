@@ -1,12 +1,7 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core/requests/toValidated";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
-import {
-  getGuildPreviewProcedure,
-  getGuildPreviewQuery,
-  getGuildPreviewSafe,
-  getGuildPreviewSchema
-} from "../getGuildPreview.js";
+import { getGuildPreviewSchema, getGuildPreview } from "../getGuildPreview.js";
 import { guildPreviewSchema } from "../types/GuildPreview.js";
 
 describe(`getGuildPreview`, { repeats: 5 }, () => {
@@ -16,19 +11,13 @@ describe(`getGuildPreview`, { repeats: 5 }, () => {
     guildPreviewSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(getGuildPreviewSafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(getGuildPreviewProcedure)(config)
+      toValidated(
+        getGuildPreview,
+        getGuildPreviewSchema,
+        guildPreviewSchema
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(getGuildPreviewQuery, config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

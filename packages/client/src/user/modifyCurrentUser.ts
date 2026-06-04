@@ -1,12 +1,7 @@
 import * as v from "valibot";
-import {
-  patch,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  datauri
-} from "@discordkit/core";
-import { userSchema, type User } from "./types/User.js";
+import { patch, type Fetcher } from "@discordkit/core/requests/methods";
+import { datauri } from "@discordkit/core/validations/datauri";
+import { type User } from "./types/User.js";
 
 export const modifyCurrentUserSchema = v.object({
   body: v.partial(
@@ -36,16 +31,3 @@ export const modifyCurrentUser: Fetcher<
   typeof modifyCurrentUserSchema,
   User
 > = async ({ body }) => patch(`/users/@me`, body);
-
-export const modifyCurrentUserSafe = toValidated(
-  modifyCurrentUser,
-  modifyCurrentUserSchema,
-  userSchema
-);
-
-export const modifyCurrentUserProcedure = toProcedure(
-  `mutation`,
-  modifyCurrentUser,
-  modifyCurrentUserSchema,
-  userSchema
-);

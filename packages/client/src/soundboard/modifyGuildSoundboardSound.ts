@@ -1,16 +1,8 @@
 import * as v from "valibot";
-import {
-  patch,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake,
-  boundedString
-} from "@discordkit/core";
-import {
-  soundboardSoundSchema,
-  type SoundboardSound
-} from "./types/SoundboardSound.js";
+import { patch, type Fetcher } from "@discordkit/core/requests/methods";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type SoundboardSound } from "./types/SoundboardSound.js";
 
 export const modifyGuildSoundboardSoundSchema = v.object({
   guild: snowflake,
@@ -46,19 +38,7 @@ export const modifyGuildSoundboardSoundSchema = v.object({
  */
 export const modifyGuildSoundboardSound: Fetcher<
   typeof modifyGuildSoundboardSoundSchema,
-  SoundboardSound
-> = async ({ guild, sound, body }) =>
-  patch(`/guilds/${guild}/soundboard-sounds/${sound}`, body);
-
-export const modifyGuildSoundboardSoundSafe = toValidated(
-  modifyGuildSoundboardSound,
-  modifyGuildSoundboardSoundSchema,
-  soundboardSoundSchema
-);
-
-export const modifyGuildSoundboardSoundProcedure = toProcedure(
-  `mutation`,
-  modifyGuildSoundboardSound,
-  modifyGuildSoundboardSoundSchema,
-  soundboardSoundSchema
-);
+  SoundboardSound,
+  { auditLogReason: true }
+> = async ({ guild, sound, body }, options) =>
+  patch(`/guilds/${guild}/soundboard-sounds/${sound}`, body, options);

@@ -1,5 +1,6 @@
 import * as v from "valibot";
-import { snowflake } from "@discordkit/core";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { authorizingIntegrationOwnersSchema } from "../../application/types/ApplicationIntegrationTypes.js";
 import { interactionTypeSchema } from "../../interactions/types/InteractionType.js";
 import { userSchema } from "../../user/types/User.js";
 import { applicationCommandInteractionMetadataSchea } from "./ApplicationCommandInteractionMetadata.js";
@@ -13,10 +14,7 @@ export const modalSubmitInteractionMetadataSchema = v.object({
   /** User who triggered the interaction */
   user: userSchema,
   /** IDs for installation context(s) related to an interaction. Details in Authorizing Integration Owners Object */
-  authoringIntegrationOwners: v.record(
-    v.picklist([`GUILD_INSTALL`, `USER_INSTALL`]),
-    v.union([snowflake as v.GenericSchema<string>, v.literal(0)])
-  ),
+  authorizingIntegrationOwners: authorizingIntegrationOwnersSchema,
   /** ID of the original response message, present only on follow-up messages */
   originalResponseMessageId:
     v.exactOptional<v.GenericSchema<string>>(snowflake),
@@ -27,5 +25,6 @@ export const modalSubmitInteractionMetadataSchema = v.object({
   ])
 });
 
-export interface ModalSubmitInteractionMetadata
-  extends v.InferOutput<typeof modalSubmitInteractionMetadataSchema> {}
+export interface ModalSubmitInteractionMetadata extends v.InferOutput<
+  typeof modalSubmitInteractionMetadataSchema
+> {}

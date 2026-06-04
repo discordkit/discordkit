@@ -1,13 +1,10 @@
-import * as v from "valibot";
+﻿import * as v from "valibot";
 import type { Fetcher } from "@discordkit/core";
-import {
-  toProcedure,
-  patch,
-  toValidated,
-  snowflake,
-  asInteger
-} from "@discordkit/core";
-import { type Channel, channelSchema } from "./types/Channel.js";
+import { patch } from "@discordkit/core/requests/methods";
+import { asInteger } from "@discordkit/core/validations/asInteger";
+import { partialSchema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type Channel } from "./types/Channel.js";
 import { autoArchiveDurationSchema } from "./types/AutoArchiveDuration.js";
 import { ChannelType } from "./types/ChannelType.js";
 import { videoQualityModeSchema } from "./types/VideoQualityMode.js";
@@ -48,10 +45,10 @@ const guildChannelOptions = v.partial(
     /** the user limit of the voice or stage channel, max 99 for voice channels and 10,000 for stage channels (0 refers to no limit) */
     userLimit: v.nullable(v.pipe(v.number(), v.minValue(0), v.maxValue(10000))),
     /** channel or category-specific permissions */
-    permissionOverwrites: v.nullable(v.array(v.partial(overwriteSchema))),
+    permissionOverwrites: v.nullable(v.array(partialSchema(overwriteSchema))),
     /** id of the new parent category for a channel */
     parentId: v.nullable(snowflake),
-    /** channel voice region id, automatic when set to null */
+    /** channel {@link VoiceRegion | voice region} id, automatic when set to null */
     rtcRegion: v.nullable(v.pipe(v.string(), v.nonEmpty())),
     /** the camera video quality mode of the voice channel */
     videoQualityMode: v.nullable(videoQualityModeSchema),
@@ -109,7 +106,11 @@ export const modifyChannelSchema = v.object({
  *
  * **PATCH** `/channels/:channel`
  *
- * Update a channel's settings. Returns a channel on success, and a `400 BAD REQUEST` on invalid parameters. All JSON parameters are optional.
+ * Update a channel's settings. Returns a channel on success, and a 400 BAD REQUEST on invalid parameters.
+ *
+ * > [!NOTE]
+ * >
+ * > All parameters to this endpoint are optional.
  *
  * > [!NOTE]
  * >
@@ -117,18 +118,7 @@ export const modifyChannelSchema = v.object({
  */
 export const modifyChannel: Fetcher<
   typeof modifyChannelSchema,
-  Channel
-> = async ({ channel, body }) => patch(`/channels/${channel}`, body);
-
-export const modifyChannelSafe = toValidated(
-  modifyChannel,
-  modifyChannelSchema,
-  channelSchema
-);
-
-export const modifyChannelProcedure = toProcedure(
-  `mutation`,
-  modifyChannel,
-  modifyChannelSchema,
-  channelSchema
-);
+  Channel,
+  { auditLogReason: true }
+> = async ({ channel, body }, options) =>
+  patch(`/channels/${channel}`, body, options);

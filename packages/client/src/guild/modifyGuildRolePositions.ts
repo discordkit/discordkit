@@ -1,12 +1,7 @@
 import * as v from "valibot";
-import {
-  patch,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import { roleSchema, type Role } from "../permissions/Role.js";
+import { patch, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type Role } from "../permissions/Role.js";
 
 export const modifyGuildRolePositionsSchema = v.object({
   guild: snowflake,
@@ -25,7 +20,9 @@ export const modifyGuildRolePositionsSchema = v.object({
  *
  * **PATCH** `/guilds/:guild/roles`
  *
- * Modify the positions of a set of role objects for the guild. Requires the `MANAGE_ROLES` permission. Returns a list of all of the guild's {@link Role | role objects} on success. Fires multiple Guild Role Update Gateway events.
+ * Modify the positions of a set of {@link Role | role objects} for the guild. Requires the `MANAGE_ROLES` permission. Returns a list of all of the guild's {@link Role | role objects} on success. Fires multiple Guild Role Update Gateway events.
+ *
+ * This endpoint takes a JSON array of parameters in the following format:
  *
  * > [!NOTE]
  * >
@@ -33,18 +30,7 @@ export const modifyGuildRolePositionsSchema = v.object({
  */
 export const modifyGuildRolePositions: Fetcher<
   typeof modifyGuildRolePositionsSchema,
-  Role[]
-> = async ({ guild, body }) => patch(`/guilds/${guild}/roles`, body);
-
-export const modifyGuildRolePositionsSafe = toValidated(
-  modifyGuildRolePositions,
-  modifyGuildRolePositionsSchema,
-  v.array(roleSchema)
-);
-
-export const modifyGuildRolePositionsProcedure = toProcedure(
-  `mutation`,
-  modifyGuildRolePositions,
-  modifyGuildRolePositionsSchema,
-  v.array(roleSchema)
-);
+  Role[],
+  { auditLogReason: true }
+> = async ({ guild, body }, options) =>
+  patch(`/guilds/${guild}/roles`, body, options);

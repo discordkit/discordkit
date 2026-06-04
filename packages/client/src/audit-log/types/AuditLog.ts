@@ -1,4 +1,5 @@
-import * as v from "valibot";
+﻿import * as v from "valibot";
+import { partialSchema, schema } from "@discordkit/core/validations/schema";
 import { channelSchema } from "../../channel/types/Channel.js";
 import { scheduledEventSchema } from "../../event/types/ScheduledEvent.js";
 import { integrationSchema } from "../../guild/types/Integration.js";
@@ -8,7 +9,7 @@ import { webhookSchema } from "../../webhook/types/Webhook.js";
 import { applicationCommandSchema } from "../../application-commands/types/ApplicationCommand.js";
 import { auditLogEntrySchema } from "./AuditLogEntry.js";
 
-export const auditLogSchema = v.object({
+const _auditLogSchema = v.object({
   /** List of application commands referenced in the audit log */
   applicationCommands: v.array(applicationCommandSchema),
   /** List of audit log entries, sorted from most to least recent */
@@ -18,7 +19,7 @@ export const auditLogSchema = v.object({
   /** List of guild scheduled events referenced in the audit log */
   guildScheduledEvents: v.array(scheduledEventSchema),
   /** List of partial integration objects */
-  integrations: v.array(v.partial(integrationSchema)),
+  integrations: v.array(partialSchema(integrationSchema)),
   /** List of threads referenced in the audit log */
   threads: v.array(channelSchema),
   /** List of users referenced in the audit log */
@@ -27,4 +28,9 @@ export const auditLogSchema = v.object({
   webhooks: v.array(webhookSchema)
 });
 
-export interface AuditLog extends v.InferOutput<typeof auditLogSchema> {}
+export interface AuditLog extends v.InferOutput<typeof _auditLogSchema> {}
+
+/**
+ * ### [Audit Log](https://discord.com/developers/docs/resources/audit-log#audit-log-object)
+ */
+export const auditLogSchema = schema<AuditLog>(_auditLogSchema);

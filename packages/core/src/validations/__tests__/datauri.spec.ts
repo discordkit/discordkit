@@ -1,5 +1,5 @@
-import { safeParse, parse, object, any, pipe } from "valibot";
-import { MockUtils } from "#mock-utils";
+﻿import { safeParse, parse, object, pipe } from "valibot";
+import { MockUtils } from "@discordkit/test-utils";
 import { faker } from "@faker-js/faker";
 import { datauri } from "../datauri.js";
 import { hasMimeType } from "../hasMimeType.js";
@@ -26,11 +26,10 @@ describe.concurrent(`datauri`, { repeats: 5 }, () => {
 
   it(`integrates with valimock`, () => {
     const sampleSchema = object({
-      image: datauri,
-      invalid: any()
+      image: datauri
     });
     const actual = mockUtils.schema(sampleSchema);
     expect(() => parse(sampleSchema, actual)).not.toThrow();
-    expect(parse(sampleSchema, actual).invalid).toBeUndefined();
+    expect(parse(sampleSchema, actual).image).toBeTypeOf(`string`);
   });
 });

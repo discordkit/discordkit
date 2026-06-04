@@ -1,11 +1,6 @@
 import * as v from "valibot";
-import {
-  remove,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { remove, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 export const deleteGuildSoundboardSoundSchema = v.object({
   guild: snowflake,
@@ -18,19 +13,12 @@ export const deleteGuildSoundboardSoundSchema = v.object({
  * **DELETE** `/guilds/:guild/soundboard-sounds/:sound`
  *
  * Delete the given soundboard sound. For sounds created by the current user, requires either the `CREATE_GUILD_EXPRESSIONS` or `MANAGE_GUILD_EXPRESSIONS` permission. For other sounds, requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns `204 No Content` on success. Fires a Guild Soundboard Sound Delete Gateway event.
+ *
+ * > [!NOTE]
+ * >
+ * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const deleteGuildSoundboardSound: Fetcher<
   typeof deleteGuildSoundboardSoundSchema
 > = async ({ guild, sound }) =>
   remove(`/guilds/${guild}/soundboard-sounds/${sound}`);
-
-export const deleteGuildSoundboardSoundSafe = toValidated(
-  deleteGuildSoundboardSound,
-  deleteGuildSoundboardSoundSchema
-);
-
-export const deleteGuildSoundboardSoundProcedure = toProcedure(
-  `mutation`,
-  deleteGuildSoundboardSound,
-  deleteGuildSoundboardSoundSchema
-);

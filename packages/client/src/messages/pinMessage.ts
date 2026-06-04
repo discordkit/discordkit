@@ -1,11 +1,6 @@
 import * as v from "valibot";
-import {
-  put,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { put, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 export const pinMessageSchema = v.object({
   channel: snowflake,
@@ -27,15 +22,9 @@ export const pinMessageSchema = v.object({
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
-export const pinMessage: Fetcher<typeof pinMessageSchema> = async ({
-  channel,
-  message
-}) => put(`/channels/${channel}/messages/pins/${message}`);
-
-export const pinMessageSafe = toValidated(pinMessage, pinMessageSchema);
-
-export const pinMessageProcedure = toProcedure(
-  `mutation`,
-  pinMessage,
-  pinMessageSchema
-);
+export const pinMessage: Fetcher<
+  typeof pinMessageSchema,
+  void,
+  { auditLogReason: true }
+> = async ({ channel, message }, options) =>
+  put(`/channels/${channel}/messages/pins/${message}`, undefined, options);

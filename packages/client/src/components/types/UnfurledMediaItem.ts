@@ -1,11 +1,14 @@
 import * as v from "valibot";
-import {
-  boundedString,
-  boundedInteger,
-  url,
-  snowflake
-} from "@discordkit/core";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { url } from "@discordkit/core/validations/url";
 
+/**
+ * ### [Unfurled Media Item](https://discord.com/developers/docs/components/reference#unfurled-media-item)
+ *
+ * An Unfurled Media Item is a piece of media, represented by a URL, that is used within a component. It can be constructed via either uploading media to Discord, or by referencing external media via **a direct link** to the asset.
+ */
 export const unfurledMediaItemSchema = v.object({
   /** Supports arbitrary urls and `attachment://<filename>` references */
   url: url,
@@ -21,5 +24,6 @@ export const unfurledMediaItemSchema = v.object({
   attachmentId: snowflake
 });
 
-export interface UnfurledMediaItem
-  extends v.InferOutput<typeof unfurledMediaItemSchema> {}
+export interface UnfurledMediaItem extends v.InferOutput<
+  typeof unfurledMediaItemSchema
+> {}

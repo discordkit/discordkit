@@ -1,10 +1,13 @@
 import * as v from "valibot";
-import { snowflake, boundedInteger, boundedString } from "@discordkit/core";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { schema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { userSchema } from "../../user/types/User.js";
 import { stickerFormatTypeSchema } from "./StickerFormatType.js";
 import { stickerTypeSchema } from "./StickerType.js";
 
-export const stickerSchema = v.object({
+const _stickerSchema = v.object({
   /** id of the sticker */
   id: snowflake,
   /** for standard stickers, id of the pack the sticker is from */
@@ -29,4 +32,11 @@ export const stickerSchema = v.object({
   sortValue: v.exactOptional(boundedInteger())
 });
 
-export interface Sticker extends v.InferOutput<typeof stickerSchema> {}
+export interface Sticker extends v.InferOutput<typeof _stickerSchema> {}
+
+/**
+ * ### [Sticker](https://discord.com/developers/docs/resources/sticker#sticker-object)
+ *
+ * Represents a sticker that can be sent in messages.
+ */
+export const stickerSchema = schema<Sticker>(_stickerSchema);

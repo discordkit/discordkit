@@ -1,10 +1,11 @@
 import * as v from "valibot";
-import { snowflake } from "@discordkit/core";
+import { schema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { userSchema } from "../../user/types/User.js";
 import { clientStatusSchema } from "./ClientStatus.js";
 import { activitySchema } from "./Activity.js";
 
-export const presenceSchema = v.object({
+const _presenceSchema = v.object({
   /** the user presence is being updated for */
   user: userSchema,
   /** id of the guild */
@@ -22,4 +23,6 @@ export const presenceSchema = v.object({
   clientStatus: clientStatusSchema
 });
 
-export interface Presence extends v.InferOutput<typeof presenceSchema> {}
+export interface Presence extends v.InferOutput<typeof _presenceSchema> {}
+
+export const presenceSchema = schema<Presence>(_presenceSchema);

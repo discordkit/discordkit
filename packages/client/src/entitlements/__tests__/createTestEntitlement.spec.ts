@@ -1,10 +1,8 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core/requests/toValidated";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
 import {
   createTestEntitlement,
-  createTestEntitlementProcedure,
-  createTestEntitlementSafe,
   createTestEntitlementSchema
 } from "../createTestEntitlement.js";
 
@@ -14,19 +12,9 @@ describe(`createTestEntitlement`, { repeats: 5 }, () => {
     createTestEntitlementSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(createTestEntitlementSafe(config)).resolves.not.toThrow();
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(createTestEntitlementProcedure)(config)
+      toValidated(createTestEntitlement, createTestEntitlementSchema)(config)
     ).resolves.not.toThrow();
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(createTestEntitlement);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
   });
 });

@@ -4,4 +4,3 @@ export * from "./getStageInstance.js";
 export * from "./modifyStageInstance.js";
 
 export * from "./types/index.js";
-export * as stageProcedures from "./procedures.js";

@@ -1,11 +1,6 @@
 import * as v from "valibot";
-import {
-  remove,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { remove, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 export const deleteGuildStickerSchema = v.object({
   guild: snowflake,
@@ -17,24 +12,15 @@ export const deleteGuildStickerSchema = v.object({
  *
  * **DELETE** `/guilds/:guild/stickers/:sticker`
  *
- * Delete the given sticker. Requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns `204 No Content` on success. Fires a Guild Stickers Update Gateway event.
+ * Delete the given sticker. For stickers created by the current user, requires either the `CREATE_GUILD_EXPRESSIONS` or `MANAGE_GUILD_EXPRESSIONS` permission. For other stickers, requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns `204 No Content` on success. Fires a Guild Stickers Update Gateway event.
  *
  * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const deleteGuildSticker: Fetcher<
-  typeof deleteGuildStickerSchema
-> = async ({ guild, sticker }) =>
-  remove(`/guilds/${guild}/stickers/${sticker}`);
-
-export const deleteGuildStickerSafe = toValidated(
-  deleteGuildSticker,
-  deleteGuildStickerSchema
-);
-
-export const deleteGuildStickerProcedure = toProcedure(
-  `mutation`,
-  deleteGuildSticker,
-  deleteGuildStickerSchema
-);
+  typeof deleteGuildStickerSchema,
+  void,
+  { auditLogReason: true }
+> = async ({ guild, sticker }, options) =>
+  remove(`/guilds/${guild}/stickers/${sticker}`, options);

@@ -1,4 +1,4 @@
-import {
+﻿import {
   pipe,
   array,
   object,
@@ -9,7 +9,7 @@ import {
   type GenericSchema
 } from "valibot";
 import { initTRPC } from "@trpc/server";
-import { MockUtils } from "#mock-utils";
+import { MockUtils } from "@discordkit/test-utils";
 import { type Fetcher, get } from "../methods.js";
 import { toProcedure } from "../toProcedure.js";
 import { discord } from "../DiscordSession.js";
@@ -89,7 +89,7 @@ describe(`toProcedure`, () => {
     array(userSchema)
   );
 
-  it(`is tRPC compatible`, async () => {
+  it(`builds a query procedure with no input and an output schema`, async () => {
     const tRPC = initTRPC.create();
     const listUsers: Fetcher<
       null,
@@ -110,5 +110,54 @@ describe(`toProcedure`, () => {
         .createCaller({})
         .listUsers()
     ).resolves.toStrictEqual(expected);
+  });
+
+  it(`builds a query procedure with both input and output schemas`, async () => {
+    const tRPC = initTRPC.create();
+    const inputSchema = object({ id: snowflake });
+    const sentinel = {
+      id: `0`,
+      username: `ab`,
+      permissions: `0`
+    } satisfies InferOutput<typeof userSchema>;
+    const getUser: Fetcher<
+      typeof inputSchema,
+      InferOutput<typeof userSchema>
+    > = async () => sentinel;
+    const getUserProcedure = toProcedure(
+      `query`,
+      getUser,
+      inputSchema,
+      userSchema
+    );
+
+    await expect(
+      tRPC
+        .router({
+          getUser: getUserProcedure(tRPC.procedure)
+        })
+        .createCaller({})
+        .getUser({ id: `0` })
+    ).resolves.toStrictEqual(sentinel);
+  });
+
+  it(`builds a mutation procedure with input and no output schema`, async () => {
+    const tRPC = initTRPC.create();
+    const inputSchema = object({ id: snowflake });
+    const deleteUser: Fetcher<typeof inputSchema> = async () => undefined;
+    const deleteUserProcedure = toProcedure(
+      `mutation`,
+      deleteUser,
+      inputSchema
+    );
+
+    await expect(
+      tRPC
+        .router({
+          deleteUser: deleteUserProcedure(tRPC.procedure)
+        })
+        .createCaller({})
+        .deleteUser({ id: `0` })
+    ).resolves.toBeUndefined();
   });
 });

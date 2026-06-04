@@ -1,6 +1,9 @@
 import * as v from "valibot";
-import { snowflake } from "@discordkit/core";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
+/**
+ * ### [Guild Widget Settings](https://discord.com/developers/docs/resources/guild#guild-widget-settings-object)
+ */
 export const guildWidgetSettingsSchema = v.object({
   /** whether the widget is enabled */
   enabled: v.boolean(),
@@ -8,5 +11,6 @@ export const guildWidgetSettingsSchema = v.object({
   channelId: v.nullable(snowflake)
 });
 
-export interface GuildWidgetSettings
-  extends v.InferOutput<typeof guildWidgetSettingsSchema> {}
+export interface GuildWidgetSettings extends v.InferOutput<
+  typeof guildWidgetSettingsSchema
+> {}

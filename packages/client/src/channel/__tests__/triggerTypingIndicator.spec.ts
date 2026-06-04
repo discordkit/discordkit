@@ -1,10 +1,8 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core/requests/toValidated";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
 import {
   triggerTypingIndicator,
-  triggerTypingIndicatorProcedure,
-  triggerTypingIndicatorSafe,
   triggerTypingIndicatorSchema
 } from "../triggerTypingIndicator.js";
 
@@ -14,19 +12,9 @@ describe(`triggerTypingIndicator`, { repeats: 5 }, () => {
     triggerTypingIndicatorSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(triggerTypingIndicatorSafe(config)).resolves.not.toThrow();
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(triggerTypingIndicatorProcedure)(config)
+      toValidated(triggerTypingIndicator, triggerTypingIndicatorSchema)(config)
     ).resolves.not.toThrow();
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(triggerTypingIndicator);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
   });
 });

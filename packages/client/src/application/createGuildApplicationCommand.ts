@@ -1,17 +1,9 @@
 import * as v from "valibot";
-import {
-  post,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake,
-  asDigits,
-  boundedString
-} from "@discordkit/core";
-import {
-  applicationCommandSchema,
-  type ApplicationCommand
-} from "../application-commands/types/ApplicationCommand.js";
+import { post, type Fetcher } from "@discordkit/core/requests/methods";
+import { asDigits } from "@discordkit/core/validations/asDigits";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type ApplicationCommand } from "../application-commands/types/ApplicationCommand.js";
 import { applicationCommandOptionSchema } from "../application-commands/types/ApplicationCommandOption.js";
 import {
   ApplicationCommandType,
@@ -40,8 +32,6 @@ export const createGuildApplicationCommandSchema = v.object({
     options: v.nullish(v.array(applicationCommandOptionSchema)),
     /** Set of permissions represented as a bit set */
     defaultMemberPermissions: v.nullish(asDigits(permissionFlag)),
-    /** Indicates whether the command is available in DMs with the app, only for globally-scoped commands. By default, commands are visible. */
-    dmPermission: v.nullish(v.boolean()),
     /** Replaced by defaultMemberPermissions and will be deprecated in the future. Indicates whether the command is enabled by default when the app is added to a guild. Defaults to true */
     defaultPermission: v.nullish(v.boolean(), true),
     /** Type of command, defaults 1 if not set */
@@ -59,27 +49,14 @@ export const createGuildApplicationCommandSchema = v.object({
  *
  * **POST** `/applications/:application/guilds/:guild/commands`
  *
- * > [!CAUTION]
+ * Create a new guild command. New guild commands will be available in the guild immediately. Returns `201` if a command with the same name does not already exist, or a `200` if it does (in which case the previous command will be overwritten). Both responses include an {@link ApplicationCommand | application command object}.
+ *
+ * > [!WARNING]
  * >
  * > Creating a command with the same name as an existing command for your application will overwrite the old command.
- *
- * Create a new guild command. New guild commands will be available in the guild immediately. Returns `201` if a command with the same name does not already exist, or a `200` if it does (in which case the previous command will be overwritten). Both responses include an {@link ApplicationCommand | application command object}.
  */
 export const createGuildApplicationCommand: Fetcher<
   typeof createGuildApplicationCommandSchema,
   ApplicationCommand
 > = async ({ application, guild, body }) =>
   post(`/applications/${application}/guilds/${guild}/commands`, body);
-
-export const createGuildApplicationCommandSafe = toValidated(
-  createGuildApplicationCommand,
-  createGuildApplicationCommandSchema,
-  applicationCommandSchema
-);
-
-export const createGuildApplicationCommandProcedure = toProcedure(
-  `mutation`,
-  createGuildApplicationCommand,
-  createGuildApplicationCommandSchema,
-  applicationCommandSchema
-);

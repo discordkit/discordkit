@@ -1,16 +1,8 @@
 import * as v from "valibot";
-import {
-  patch,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake,
-  boundedArray
-} from "@discordkit/core";
-import {
-  guildApplicationCommandPermissionsSchema,
-  type GuildApplicationCommandPermissions
-} from "../application-commands/types/GuildApplicationCommandPermissions.js";
+import { patch, type Fetcher } from "@discordkit/core/requests/methods";
+import { boundedArray } from "@discordkit/core/validations/boundedArray";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type GuildApplicationCommandPermissions } from "../application-commands/types/GuildApplicationCommandPermissions.js";
 import { applicationCommandPermissionsSchema } from "../application-commands/types/ApplicationCommandPermissions.js";
 
 export const editApplicationCommandPermissionsSchema = v.object({
@@ -26,23 +18,19 @@ export const editApplicationCommandPermissionsSchema = v.object({
 /**
  * ### [Edit Application Command Permissions](https://discord.com/developers/docs/interactions/application-commands#edit-application-command-permissions)
  *
- * **PUT* `/applications/:application/guilds/:guild/commands/:command/permissions`
+ * **PUT** `/applications/:application/guilds/:guild/commands/:command/permissions`
  *
- * > [!CAUTION]
- * >
- * > Apps that use this endpoint may be affected by upcoming breaking changes around permission configuration behavior starting on December 16, 2022. Read the changelog for details.
+ * Edits command permissions for a specific command for your application in a guild and returns a {@link GuildApplicationCommandPermissions | guild application command permissions object}. Fires an Application Command Permissions Update Gateway event.
+ *
+ * You can add up to 100 permission overwrites for a command.
  *
  * > [!WARNING]
  * >
  * > This endpoint will overwrite existing permissions for the command in that guild
  *
- * Edits command permissions for a specific command for your application in a guild and returns a guild application command permissions object. Fires an Application Command Permissions Update Gateway event.
- *
- * You can add up to 100 permission overwrites for a command.
- *
  * > [!NOTE]
  * >
- * > This endpoint requires authentication with a Bearer token that has permission to manage the guild and its roles. For more information, read above about application command permissions.
+ * > This endpoint requires authentication with a Bearer token that has permission to manage the guild and its roles. For more information, read above about {@link GuildApplicationCommandPermissions | application command permissions}.
  *
  * > [!WARNING]
  * >
@@ -56,16 +44,3 @@ export const editApplicationCommandPermissions: Fetcher<
     `/applications/${application}/guilds/${guild}/commands/${command}/permissions`,
     body
   );
-
-export const editApplicationCommandPermissionsSafe = toValidated(
-  editApplicationCommandPermissions,
-  editApplicationCommandPermissionsSchema,
-  guildApplicationCommandPermissionsSchema
-);
-
-export const editApplicationCommandPermissionsProcedure = toProcedure(
-  `mutation`,
-  editApplicationCommandPermissions,
-  editApplicationCommandPermissionsSchema,
-  guildApplicationCommandPermissionsSchema
-);

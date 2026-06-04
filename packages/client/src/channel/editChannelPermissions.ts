@@ -1,12 +1,7 @@
 import * as v from "valibot";
-import {
-  put,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake,
-  asDigits
-} from "@discordkit/core";
+import { put, type Fetcher } from "@discordkit/core/requests/methods";
+import { asDigits } from "@discordkit/core/validations/asDigits";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { permissionFlag } from "../permissions/Permissions.js";
 
 export const editChannelPermissionsSchema = v.object({
@@ -27,24 +22,15 @@ export const editChannelPermissionsSchema = v.object({
  *
  * **PUT** `/channels/:channel/permissions/:overwrite`
  *
- * Edit the channel permission overwrites for a user or role in a channel. Only usable for guild channels. Requires the `MANAGE_ROLES` permission. Only permissions your bot has in the guild or parent channel (if applicable) can be allowed/denied (unless your bot has a `MANAGE_ROLES` overwrite in the channel). Returns a `204 empty` response on success. Fires a Channel Update Gateway event. For more information about permissions, see permissions.
+ * Edit the channel permission overwrites for a user or role in a channel. Only usable for guild channels. Requires the `MANAGE_ROLES` permission. Only permissions your bot has in the guild or parent channel (if applicable) can be allowed/denied (unless your bot has a `MANAGE_ROLES` overwrite in the channel). Returns a 204 empty response on success. Fires a Channel Update Gateway event. For more information about permissions, see permissions.
  *
  * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const editChannelPermissions: Fetcher<
-  typeof editChannelPermissionsSchema
-> = async ({ channel, overwrite, body }) =>
-  put(`/channels/${channel}/permissions/${overwrite}`, body);
-
-export const editChannelPermissionsSafe = toValidated(
-  editChannelPermissions,
-  editChannelPermissionsSchema
-);
-
-export const editChannelPermissionsProcedure = toProcedure(
-  `mutation`,
-  editChannelPermissions,
-  editChannelPermissionsSchema
-);
+  typeof editChannelPermissionsSchema,
+  void,
+  { auditLogReason: true }
+> = async ({ channel, overwrite, body }, options) =>
+  put(`/channels/${channel}/permissions/${overwrite}`, body, options);

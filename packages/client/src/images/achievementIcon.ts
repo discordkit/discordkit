@@ -1,5 +1,7 @@
 import * as v from "valibot";
-import { getAsset, snowflake, boundedString } from "@discordkit/core";
+import { getAsset } from "@discordkit/core/requests/getAsset";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { imageSizes } from "./types/ImageSizes.js";
 
 export const achievementIconSchema = v.object({

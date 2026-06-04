@@ -1,11 +1,6 @@
 import * as v from "valibot";
-import {
-  remove,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { remove, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 export const leaveThreadSchema = v.object({
   channel: snowflake
@@ -16,16 +11,8 @@ export const leaveThreadSchema = v.object({
  *
  * **DELETE** `/channels/:channel/thread-members/@me`
  *
- * Removes the current user from a thread. Also requires the thread is not archived. Returns a `204 empty` response on success. Fires a Thread Members Update Gateway event.
+ * Removes the current user from a thread. Also requires the thread is not archived. Returns a 204 empty response on success. Fires a Thread Members Update Gateway event.
  */
 export const leaveThread: Fetcher<typeof leaveThreadSchema> = async ({
   channel
 }) => remove(`/channels/${channel}/thread-members/@me`);
-
-export const leaveThreadSafe = toValidated(leaveThread, leaveThreadSchema);
-
-export const leaveThreadProcedure = toProcedure(
-  `mutation`,
-  leaveThread,
-  leaveThreadSchema
-);

@@ -45,4 +45,67 @@ describe(`request`, () => {
     expect(channels[0].name).toBe(`general`);
     expect(channels[1].name).toBe(`announcements`);
   });
+
+  describe(`RequestOptions`, () => {
+    it(`omits the Authorization header when anonymous: true`, async () => {
+      const authHeaders: Array<string | null> = [];
+
+      server.use(
+        http.post(
+          `https://discord.com/api/v10/webhooks/1/abc`,
+          ({ request: req }) => {
+            authHeaders.push(req.headers.get(`Authorization`));
+            return new Response(null, { status: 204 });
+          }
+        )
+      );
+
+      // The session has no token at all — anonymous calls must not require one.
+      discord.clearSession();
+
+      await request(
+        new URL(`https://discord.com/api/v10/webhooks/1/abc`),
+        `POST`,
+        { content: `hello` },
+        { anonymous: true }
+      );
+
+      expect(authHeaders).toEqual([null]);
+    });
+
+    it(`throws when an auth'd request is made without a session`, async () => {
+      discord.clearSession();
+      await expect(
+        request(new URL(`https://discord.com/api/v10/users/@me`), `GET`)
+      ).rejects.toThrow(/Auth Token must be set/);
+    });
+
+    it(`forwards the reason as an URL-encoded X-Audit-Log-Reason header`, async () => {
+      const reasons: Array<string | null> = [];
+
+      server.use(
+        http.delete(
+          `https://discord.com/api/v10/channels/123`,
+          ({ request: req }) => {
+            reasons.push(req.headers.get(`X-Audit-Log-Reason`));
+            return new Response(null, { status: 204 });
+          }
+        )
+      );
+
+      discord.clearSession();
+      discord.setToken(`Bot test-token`);
+
+      await request(
+        new URL(`https://discord.com/api/v10/channels/123`),
+        `DELETE`,
+        undefined,
+        { reason: `Spring cleaning — duplicate channel` }
+      );
+
+      expect(reasons).toEqual([
+        encodeURIComponent(`Spring cleaning — duplicate channel`)
+      ]);
+    });
+  });
 });

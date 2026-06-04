@@ -1,14 +1,13 @@
-import * as v from "valibot";
-import {
-  snowflake,
-  boundedArray,
-  boundedInteger,
-  boundedString
-} from "@discordkit/core";
+﻿import * as v from "valibot";
+import { boundedArray } from "@discordkit/core/validations/boundedArray";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { partialSchema, schema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { guildVoiceChannelSchema } from "../../channel/types/Channel.js";
-import { type User, userSchema } from "../../user/types/User.js";
+import { userSchema } from "../../user/types/User.js";
 
-export const guildWidgetSchema = v.object({
+const _guildWidgetSchema = v.object({
   /** guild id */
   id: snowflake,
   /** guild name (2-100 characters) */
@@ -18,11 +17,14 @@ export const guildWidgetSchema = v.object({
   /** voice and stage channels which are accessible by @everyone */
   channels: v.array(guildVoiceChannelSchema),
   /** special widget user objects that includes users presence (Limit 100) */
-  members: boundedArray(v.partial(userSchema), { max: 100 }) as v.GenericSchema<
-    Array<Partial<User>>
-  >,
+  members: boundedArray(partialSchema(userSchema), { max: 100 }),
   /** number of online members in this guild */
   presenceCount: boundedInteger()
 });
 
-export interface GuildWidget extends v.InferOutput<typeof guildWidgetSchema> {}
+export interface GuildWidget extends v.InferOutput<typeof _guildWidgetSchema> {}
+
+/**
+ * ### [Guild Widget](https://discord.com/developers/docs/resources/guild#guild-widget-object)
+ */
+export const guildWidgetSchema = schema<GuildWidget>(_guildWidgetSchema);

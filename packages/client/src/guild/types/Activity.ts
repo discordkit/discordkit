@@ -1,5 +1,7 @@
 import * as v from "valibot";
-import { snowflake, timestamp } from "@discordkit/core";
+import { schema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { timestamp } from "@discordkit/core/validations/timestamp";
 import { activityButtonSchema } from "./ActivityButton.js";
 import { activitySecretsSchema } from "./ActivitySecrets.js";
 import { activityAssetsSchema } from "./ActivityAssets.js";
@@ -7,7 +9,7 @@ import { activityPartySchema } from "./ActivityParty.js";
 import { activityEmojiSchema } from "./ActivityEmoji.js";
 import { activityTimestampsSchema } from "./ActivityTimestamps.js";
 
-export const activitySchema = v.object({
+const _activitySchema = v.object({
   /** the activity's name */
   name: v.string(),
   /** activity type */
@@ -40,4 +42,6 @@ export const activitySchema = v.object({
   buttons: v.optional(v.array(activityButtonSchema))
 });
 
-export interface Activity extends v.InferOutput<typeof activitySchema> {}
+export interface Activity extends v.InferOutput<typeof _activitySchema> {}
+
+export const activitySchema = schema<Activity>(_activitySchema);

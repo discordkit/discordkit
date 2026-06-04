@@ -1,10 +1,8 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core/requests/toValidated";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
 import {
   createGuildTemplate,
-  createGuildTemplateProcedure,
-  createGuildTemplateSafe,
   createGuildTemplateSchema
 } from "../createGuildTemplate.js";
 import { guildTemplateSchema } from "../types/GuildTemplate.js";
@@ -16,20 +14,13 @@ describe(`createGuildTemplate`, { repeats: 5 }, () => {
     guildTemplateSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(createGuildTemplateSafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(createGuildTemplateProcedure)(config)
+      toValidated(
+        createGuildTemplate,
+        createGuildTemplateSchema,
+        guildTemplateSchema
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(createGuildTemplate);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

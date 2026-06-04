@@ -1,9 +1,10 @@
 import * as v from "valibot";
+import { schema } from "@discordkit/core/validations/schema";
 import { teamMemberSchema } from "./TeamMember.js";
 
 // https://discord.com/developers/docs/topics/teams#data-models-team-object
 
-export const teamSchema = v.object({
+const _teamSchema = v.object({
   /** Hash of the image of the team's icon */
   icon: v.exactOptional(v.string()),
   /** Unique ID of the team */
@@ -16,4 +17,6 @@ export const teamSchema = v.object({
   ownerUserId: v.string()
 });
 
-export interface Team extends v.InferOutput<typeof teamSchema> {}
+export interface Team extends v.InferOutput<typeof _teamSchema> {}
+
+export const teamSchema = schema<Team>(_teamSchema);

@@ -1,18 +1,11 @@
 import {
   type GenericSchema,
   type GenericSchemaAsync,
-  type InferOutput,
   isOfKind,
   safeParseAsync,
   summarize
 } from "valibot";
-import type { Fetcher } from "./methods.js";
-
-type InferFetcherSchema<F> = F extends Fetcher<infer S, unknown> ? S : never;
-type InferFetcherReturn<F> =
-  F extends Fetcher<GenericSchema | GenericSchemaAsync | null, infer R>
-    ? R
-    : never;
+import type { Fetcher, FetcherCapabilities } from "./methods.js";
 
 /**
  * Given a {@link Fetcher | Fetcher} function and it's associated input
@@ -20,25 +13,20 @@ type InferFetcherReturn<F> =
  * This is useful in contexts where you want strong guarantees on runtime
  * type-safety when dealing with raw user input in a framework agnostic
  * environment.
+ *
+ * @__NO_SIDE_EFFECTS__
  */
 export const toValidated = <
-  F extends
-    | Fetcher<
-        GenericSchema | GenericSchemaAsync,
-        InferOutput<GenericSchema | GenericSchemaAsync>
-      >
-    | Fetcher<GenericSchema | GenericSchemaAsync>
-    | Fetcher<null, null>
-    | Fetcher<null, InferOutput<GenericSchema | GenericSchemaAsync>>
+  S extends GenericSchema | GenericSchemaAsync | null = null,
+  R = void,
+  C extends FetcherCapabilities = {}
 >(
-  fn: F,
-  input?: InferFetcherSchema<F> | null,
-  output?:
-    | GenericSchema<unknown, InferFetcherReturn<F>>
-    | GenericSchemaAsync<unknown, InferFetcherReturn<F>>
-): F =>
-  new Proxy<F>(fn, {
-    async apply(target, _, [config]): Promise<ReturnType<F>> {
+  fn: Fetcher<S, R, C>,
+  input?: S | null,
+  output?: GenericSchema<unknown, R> | GenericSchemaAsync<unknown, R>
+): Fetcher<S, R, C> =>
+  new Proxy<Fetcher<S, R, C>>(fn, {
+    async apply(target, _, [config, options]): Promise<R> {
       // Validate the fetcher args before fetching
       if (input && isOfKind(`schema`, input)) {
         const { issues } = await safeParseAsync(input, config);
@@ -49,7 +37,13 @@ export const toValidated = <
         }
       }
 
-      const result = await target(config);
+      // Forward the per-call options (anonymous, reason) to the underlying
+      // fetcher. The proxy was previously dropping the second argument.
+      // oxlint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
+      const call = target as unknown as (
+        ...args: unknown[]
+      ) => Promise<unknown>;
+      const result = (await call(config, options)) as R;
 
       // Validate the result of the fetch call before returning
       if (output && isOfKind(`schema`, output)) {
@@ -61,6 +55,6 @@ export const toValidated = <
         }
       }
 
-      return result as ReturnType<F>;
+      return result;
     }
   });

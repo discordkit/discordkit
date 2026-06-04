@@ -1,16 +1,13 @@
-import * as v from "valibot";
-import {
-  patch,
-  buildURL,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake,
-  boundedArray,
-  boundedString
-} from "@discordkit/core";
-import { messageSchema, type Message } from "../messages/types/Message.js";
-import { embedSchema } from "../messages/types/Embed.js";
+﻿import * as v from "valibot";
+import { buildURL } from "@discordkit/core/requests/buildURL";
+import { patch, type Fetcher } from "@discordkit/core/requests/methods";
+import { boundedArray } from "@discordkit/core/validations/boundedArray";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { multipart, fileUpload } from "@discordkit/core/validations/fileUpload";
+import { partialSchema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type Message } from "../messages/types/Message.js";
+import { embedEntries } from "../messages/types/Embed.js";
 import { allowedMentionSchema } from "../messages/types/AllowedMention.js";
 import { attachmentSchema } from "../messages/types/Attachment.js";
 import { messageComponentSchema } from "../messages/types/MessageComponent.js";
@@ -31,14 +28,14 @@ export const editWebhookMessageSchema = v.object({
       })
     )
   ),
-  body: v.partial(
-    v.object({
+  body: multipart(
+    {
       /** the message contents (up to 2000 characters) */
       content: boundedString({ max: 2000 }),
       /** embedded `rich` content */
       embeds: boundedArray(
         v.object({
-          ...embedSchema.entries,
+          ...embedEntries,
           type: v.literal(EmbedType.RICH)
         }),
         { max: 10 }
@@ -48,14 +45,13 @@ export const editWebhookMessageSchema = v.object({
       /** the components to include with the message */
       components: v.array(messageComponentSchema),
       /** the contents of the file being sent */
-      files: v.array(v.unknown()),
-      /** JSON encoded body of non-file params (multipart/form-data only) */
-      payloadJson: v.string(),
+      files: v.array(fileUpload),
       /** attachment objects with filename and description */
-      attachments: v.array(v.partial(attachmentSchema)),
+      attachments: v.array(partialSchema(attachmentSchema)),
       /** A poll! */
       poll: pollSchema
-    })
+    },
+    { partial: true }
   )
 });
 
@@ -66,9 +62,9 @@ export const editWebhookMessageSchema = v.object({
  *
  * Edits a previously-sent webhook message from the same token. Returns a {@link Message | message object} on success.
  *
- * When the `content` field is edited, the `mentions` array in the message object will be reconstructed from scratch based on the new content. The `allowedMentions` field of the edit request controls how this happens. If there is no explicit `allowedMentions` in the edit request, the content will be parsed with default allowances, that is, without regard to whether or not an `allowedMentions` was present in the request that originally created the message.
+ * When the `content` field is edited, the arrays `mentions` and `mention_roles` and the boolean `mention_everyone` in the {@link Message | message object} will be reconstructed from scratch based on the new content. When the message flag `IS_COMPONENTS_V2` is set, the reconstructed arrays and boolean are based on the edited content in the `components` array. The `allowed_mentions` field of the edit request controls how this happens. If there is no explicit `allowed_mentions` in the edit request, the content will be parsed with *default* allowances, that is, without regard to whether or not an `allowed_mentions` was present in the request that originally created the message.
  *
- * Refer to [Uploading Files](https://discord.com/developers/docs/reference#uploading-files) for details on attachments and `multipart/form-data` requests. Any provided files will be **appended** to the message. To remove or replace files you will have to supply the `attachments` field which specifies the files to retain on the message after edit.
+ * Refer to Uploading Files for details on attachments and `multipart/form-data` requests. Any provided files will be **appended** to the message. To remove or replace files you will have to supply the `attachments` field which specifies the files to retain on the message after edit.
  *
  * > [!WARNING]
  * >
@@ -80,22 +76,11 @@ export const editWebhookMessageSchema = v.object({
  */
 export const editWebhookMessage: Fetcher<
   typeof editWebhookMessageSchema,
-  Message
-> = async ({ webhook, token, message, params, body }) =>
+  Message,
+  { anonymous: true }
+> = async ({ webhook, token, message, params, body }, options) =>
   patch(
     buildURL(`/webhooks/${webhook}/${token}/messages/${message}`, params).href,
-    body
+    body,
+    options
   );
-
-export const editWebhookMessageSafe = toValidated(
-  editWebhookMessage,
-  editWebhookMessageSchema,
-  messageSchema
-);
-
-export const editWebhookMessageProcedure = toProcedure(
-  `mutation`,
-  editWebhookMessage,
-  editWebhookMessageSchema,
-  messageSchema
-);

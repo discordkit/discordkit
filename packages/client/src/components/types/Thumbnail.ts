@@ -1,18 +1,11 @@
 import * as v from "valibot";
-import { boundedInteger, boundedString } from "@discordkit/core";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { schema } from "@discordkit/core/validations/schema";
 import { ComponentType } from "./ComponentType.js";
 import { unfurledMediaItemSchema } from "./UnfurledMediaItem.js";
 
-/**
- * A Thumbnail is a content component that is a small image only usable as an accessory in a section. The preview comes from an url or attachment through the unfurled media item structure.
- *
- * Thumbnails are only available in messages as an accessory in a section.
- *
- * > [!NOTE]
- * >
- * > To use this component, you need to send the message flag `1 << 15` (IS_COMPONENTS_V2), which can be activated on a per-message basis.
- */
-export const thumbnailSchema = v.object({
+const _thumbnailSchema = v.object({
   /** `11` for thumbnail component */
   type: v.literal(ComponentType.Thumbnail),
   /** Optional identifier for component */
@@ -25,4 +18,17 @@ export const thumbnailSchema = v.object({
   spoiler: v.exactOptional(v.boolean())
 });
 
-export interface Thumbnail extends v.InferOutput<typeof thumbnailSchema> {}
+export interface Thumbnail extends v.InferOutput<typeof _thumbnailSchema> {}
+
+/**
+ * ### [Thumbnail](https://discord.com/developers/docs/components/reference#thumbnail)
+ *
+ * A Thumbnail is a content component that is a small image only usable as an accessory in a section. The preview comes from an url or attachment through the unfurled media item structure.
+ *
+ * Thumbnails are only available in messages as an accessory in a section.
+ *
+ * > [!NOTE]
+ * >
+ * > To use this component, you need to send the message flag `1 << 15` (IS_COMPONENTS_V2), which can be activated on a per-message basis.
+ */
+export const thumbnailSchema = schema<Thumbnail>(_thumbnailSchema);

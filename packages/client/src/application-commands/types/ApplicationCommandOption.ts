@@ -1,5 +1,7 @@
 import * as v from "valibot";
-import { boundedArray, boundedString, boundedInteger } from "@discordkit/core";
+import { boundedArray } from "@discordkit/core/validations/boundedArray";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { boundedString } from "@discordkit/core/validations/boundedString";
 import { channelTypeSchema } from "../../channel/types/ChannelType.js";
 import {
   ApplicationCommandOptionType,
@@ -9,6 +11,9 @@ import type { Locales } from "../../application/types/Locales.js";
 import { localesSchema } from "../../application/types/Locales.js";
 import { applicationCommandOptionChoiceSchema } from "./ApplicationCommandOptionChoice.js";
 
+/**
+ * ### [Application Command Option](https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-type)
+ */
 export const applicationCommandOptionSchema = v.intersect([
   v.object({
     /** 1-32 character name */

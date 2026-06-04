@@ -1,13 +1,7 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import { userSchema, type User } from "./types/User.js";
+import { get, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type User } from "./types/User.js";
 
 export const getUserSchema = v.object({
   user: snowflake
@@ -22,14 +16,3 @@ export const getUserSchema = v.object({
  */
 export const getUser: Fetcher<typeof getUserSchema, User> = async ({ user }) =>
   get(`/users/${user}`);
-
-export const getUserSafe = toValidated(getUser, getUserSchema, userSchema);
-
-export const getUserProcedure = toProcedure(
-  `query`,
-  getUser,
-  getUserSchema,
-  userSchema
-);
-
-export const getUserQuery = toQuery(getUser);

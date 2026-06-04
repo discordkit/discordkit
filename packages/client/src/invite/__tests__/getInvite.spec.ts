@@ -1,12 +1,7 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core/requests/toValidated";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
-import {
-  getInviteProcedure,
-  getInviteQuery,
-  getInviteSafe,
-  getInviteSchema
-} from "../getInvite.js";
+import { getInviteSchema, getInvite } from "../getInvite.js";
 import { inviteSchema } from "../types/Invite.js";
 
 describe(`getInvite`, { repeats: 5 }, () => {
@@ -16,19 +11,9 @@ describe(`getInvite`, { repeats: 5 }, () => {
     inviteSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(getInviteSafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
-    await expect(runProcedure(getInviteProcedure)(config)).resolves.toEqual(
-      expected
-    );
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(getInviteQuery, config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
+  it(`validates input, fetches, and validates output`, async () => {
+    await expect(
+      toValidated(getInvite, getInviteSchema, inviteSchema)(config)
+    ).resolves.toEqual(expected);
   });
 });

@@ -1,13 +1,8 @@
 import * as v from "valibot";
-import {
-  post,
-  buildURL,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake,
-  boundedString
-} from "@discordkit/core";
+import { buildURL } from "@discordkit/core/requests/buildURL";
+import { post, type Fetcher } from "@discordkit/core/requests/methods";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 export const executeSlackCompatibleWebhookSchema = v.object({
   webhook: snowflake,
@@ -25,24 +20,19 @@ export const executeSlackCompatibleWebhookSchema = v.object({
 });
 
 /**
- * ### [Execute Slack-Compatible Webhook](https://discord.com/developers/docs/resources/webhook#execute-slackcompatible-webhook)
+ * ### [Execute Slack-Compatible Webhook](https://discord.com/developers/docs/resources/webhook#execute-slack-compatible-webhook)
  *
  * **POST** `/webhooks/:webhook/:token/slack`
  *
  * Refer to [Slack's documentation](https://api.slack.com/incoming-webhooks) for more information. We do not support Slack's `channel`, `icon_emoji`, `mrkdwn`, or `mrkdwn_in` properties.
  */
 export const executeSlackCompatibleWebhook: Fetcher<
-  typeof executeSlackCompatibleWebhookSchema
-> = async ({ webhook, token, params }) =>
-  post(buildURL(`/webhooks/${webhook}/${token}/slack`, params).href);
-
-export const executeSlackCompatibleWebhookSafe = toValidated(
-  executeSlackCompatibleWebhook,
-  executeSlackCompatibleWebhookSchema
-);
-
-export const executeSlackCompatibleWebhookProcedure = toProcedure(
-  `mutation`,
-  executeSlackCompatibleWebhook,
-  executeSlackCompatibleWebhookSchema
-);
+  typeof executeSlackCompatibleWebhookSchema,
+  void,
+  { anonymous: true }
+> = async ({ webhook, token, params }, options) =>
+  post(
+    buildURL(`/webhooks/${webhook}/${token}/slack`, params).href,
+    undefined,
+    options
+  );

@@ -1,19 +1,11 @@
 import * as v from "valibot";
-import {
-  patch,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import {
-  guildTemplateSchema,
-  type GuildTemplate
-} from "./types/GuildTemplate.js";
+import { patch, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type GuildTemplate } from "./types/GuildTemplate.js";
 
 export const modifyGuildTemplateSchema = v.object({
   guild: snowflake,
-  template: snowflake,
+  code: snowflake,
   body: v.partial(
     v.object({
       /** name of the template (1-100 characters) */
@@ -29,25 +21,12 @@ export const modifyGuildTemplateSchema = v.object({
 /**
  * ### [Modify Guild Template](https://discord.com/developers/docs/resources/guild-template#modify-guild-template)
  *
- * **PATCH** `/guilds/:guild/templates/:template`
+ * **PATCH** `/guilds/:guild/templates/:code`
  *
  * Modifies the template's metadata. Requires the `MANAGE_GUILD` permission. Returns the {@link GuildTemplate | guild template object} on success.
  */
 export const modifyGuildTemplate: Fetcher<
   typeof modifyGuildTemplateSchema,
   GuildTemplate
-> = async ({ guild, template, body }) =>
-  patch(`/guilds/${guild}/templates/${template}`, body);
-
-export const modifyGuildTemplateSafe = toValidated(
-  modifyGuildTemplate,
-  modifyGuildTemplateSchema,
-  guildTemplateSchema
-);
-
-export const modifyGuildTemplateProcedure = toProcedure(
-  `mutation`,
-  modifyGuildTemplate,
-  modifyGuildTemplateSchema,
-  guildTemplateSchema
-);
+> = async ({ guild, code, body }) =>
+  patch(`/guilds/${guild}/templates/${code}`, body);

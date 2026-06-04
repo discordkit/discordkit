@@ -12,4 +12,7 @@ export const SKUTypes = {
   SUBSCRIPTION_GROUP: 6
 } as const;
 
+/**
+ * ### [SKU Types](https://discord.com/developers/docs/resources/sku#sku-object-sku-types)
+ */
 export const skuTypesSchema = v.enum_(SKUTypes);

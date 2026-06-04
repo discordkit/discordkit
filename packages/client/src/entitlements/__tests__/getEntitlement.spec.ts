@@ -1,12 +1,7 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core/requests/toValidated";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
-import {
-  getEntitlementProcedure,
-  getEntitlementQuery,
-  getEntitlementSafe,
-  getEntitlementSchema
-} from "../getEntitlement.js";
+import { getEntitlementSchema, getEntitlement } from "../getEntitlement.js";
 import { entitlementSchema } from "../types/Entitlement.js";
 
 describe(`getEntitlement`, { repeats: 5 }, () => {
@@ -16,19 +11,13 @@ describe(`getEntitlement`, { repeats: 5 }, () => {
     entitlementSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(getEntitlementSafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(getEntitlementProcedure)(config)
+      toValidated(
+        getEntitlement,
+        getEntitlementSchema,
+        entitlementSchema
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(getEntitlementQuery, config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

@@ -1,13 +1,7 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import { emojiSchema, type Emoji } from "./types/Emoji.js";
+import { get, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type Emoji } from "./types/Emoji.js";
 
 export const listApplicationEmojisSchema = v.object({
   application: snowflake
@@ -19,23 +13,30 @@ export const listApplicationEmojisSchema = v.object({
  * **GET** `/applications/:application/emojis`
  *
  * Returns an object containing a list of emoji objects for the given application under the `items` key. Includes a `user` object for the team member that uploaded the emoji from the app's settings, or for the bot user if uploaded using the API.
+ *
+ * ```json
+ * {
+ *   "items": [
+ *     {
+ *       "id": "41771983429993937",
+ *       "name": "LUL",
+ *       "roles": [],
+ *       "user": {
+ *         "username": "Luigi",
+ *         "discriminator": "0002",
+ *         "id": "96008815106887111",
+ *         "avatar": "5500909a3274e1812beb4e8de6631111",
+ *         "public_flags": 131328
+ *       },
+ *       "require_colons": true,
+ *       "managed": false,
+ *       "animated": false
+ *     }
+ *   ]
+ * }
+ * ```
  */
 export const listApplicationEmojis: Fetcher<
   typeof listApplicationEmojisSchema,
   { items: Emoji[] }
 > = async ({ application }) => get(`/applications/${application}/emojis`);
-
-export const listApplicationEmojisSafe = toValidated(
-  listApplicationEmojis,
-  listApplicationEmojisSchema,
-  v.object({ items: v.array(emojiSchema) })
-);
-
-export const listApplicationEmojisProcedure = toProcedure(
-  `query`,
-  listApplicationEmojis,
-  listApplicationEmojisSchema,
-  v.object({ items: v.array(emojiSchema) })
-);
-
-export const listApplicationEmojisQuery = toQuery(listApplicationEmojis);

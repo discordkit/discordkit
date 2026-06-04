@@ -1,11 +1,6 @@
 import * as v from "valibot";
-import {
-  remove,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { remove, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 export const deleteGuildApplicationCommandSchema = v.object({
   application: snowflake,
@@ -24,14 +19,3 @@ export const deleteGuildApplicationCommand: Fetcher<
   typeof deleteGuildApplicationCommandSchema
 > = async ({ application, guild, command }) =>
   remove(`/applications/${application}/guilds/${guild}/commands/${command}`);
-
-export const deleteGuildApplicationCommandSafe = toValidated(
-  deleteGuildApplicationCommand,
-  deleteGuildApplicationCommandSchema
-);
-
-export const deleteGuildApplicationCommandProcedure = toProcedure(
-  `mutation`,
-  deleteGuildApplicationCommand,
-  deleteGuildApplicationCommandSchema
-);

@@ -1,8 +1,13 @@
 import * as v from "valibot";
-import { snowflake } from "@discordkit/core";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 import { onboardingPromptSchema } from "./OnboardingPrompt.js";
 import { onboardingModeSchema } from "./OnboardingMode.js";
 
+/**
+ * ### [Guild Onboarding](https://discord.com/developers/docs/resources/guild#guild-onboarding-object)
+ *
+ * Represents the [onboarding](https://support.discord.com/hc/en-us/articles/11074987197975-Community-Onboarding-FAQ) flow for a guild.
+ */
 export const guildOnboardingSchema = v.object({
   /** ID of the guild this onboarding is part of */
   guildId: snowflake,
@@ -16,5 +21,6 @@ export const guildOnboardingSchema = v.object({
   mode: onboardingModeSchema
 });
 
-export interface GuildOnboarding
-  extends v.InferOutput<typeof guildOnboardingSchema> {}
+export interface GuildOnboarding extends v.InferOutput<
+  typeof guildOnboardingSchema
+> {}

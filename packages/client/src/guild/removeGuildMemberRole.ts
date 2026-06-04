@@ -1,11 +1,6 @@
 import * as v from "valibot";
-import {
-  remove,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { remove, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 export const removeGuildMemberRoleSchema = v.object({
   guild: snowflake,
@@ -18,24 +13,15 @@ export const removeGuildMemberRoleSchema = v.object({
  *
  * **DELETE** `/guilds/:guild/members/:user/roles/:role`
  *
- * Removes a role from a guild member. Requires the `MANAGE_ROLES` permission. Returns a `204 empty` response on success. Fires a Guild Member Update Gateway event.
+ * Removes a role from a {@link Member | guild member}. Requires the `MANAGE_ROLES` permission. Returns a 204 empty response on success. Fires a Guild Member Update Gateway event.
  *
  * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
 export const removeGuildMemberRole: Fetcher<
-  typeof removeGuildMemberRoleSchema
-> = async ({ guild, user, role }) =>
-  remove(`/guilds/${guild}/members/${user}/roles/${role}`);
-
-export const removeGuildMemberRoleSafe = toValidated(
-  removeGuildMemberRole,
-  removeGuildMemberRoleSchema
-);
-
-export const removeGuildMemberRoleProcedure = toProcedure(
-  `mutation`,
-  removeGuildMemberRole,
-  removeGuildMemberRoleSchema
-);
+  typeof removeGuildMemberRoleSchema,
+  void,
+  { auditLogReason: true }
+> = async ({ guild, user, role }, options) =>
+  remove(`/guilds/${guild}/members/${user}/roles/${role}`, options);

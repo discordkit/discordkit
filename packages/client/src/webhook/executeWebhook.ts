@@ -1,17 +1,14 @@
-import * as v from "valibot";
-import {
-  post,
-  buildURL,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake,
-  asInteger,
-  boundedArray,
-  boundedString,
-  url
-} from "@discordkit/core";
-import { embedSchema } from "../messages/types/Embed.js";
+﻿import * as v from "valibot";
+import { buildURL } from "@discordkit/core/requests/buildURL";
+import { post, type Fetcher } from "@discordkit/core/requests/methods";
+import { asInteger } from "@discordkit/core/validations/asInteger";
+import { boundedArray } from "@discordkit/core/validations/boundedArray";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { multipart, fileUpload } from "@discordkit/core/validations/fileUpload";
+import { partialSchema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { url } from "@discordkit/core/validations/url";
+import { embedEntries } from "../messages/types/Embed.js";
 import { allowedMentionSchema } from "../messages/types/AllowedMention.js";
 import { attachmentSchema } from "../messages/types/Attachment.js";
 import { EmbedType } from "../messages/types/EmbedType.js";
@@ -34,8 +31,8 @@ export const executeWebhookSchema = v.object({
       })
     )
   ),
-  body: v.partial(
-    v.object({
+  body: multipart(
+    {
       /** the message contents (up to 2000 characters) */
       content: boundedString({ max: 2000 }),
       /** override the default username of the webhook */
@@ -47,7 +44,7 @@ export const executeWebhookSchema = v.object({
       /** embedded rich content */
       embeds: boundedArray(
         v.object({
-          ...embedSchema.entries,
+          ...embedEntries,
           type: v.literal(EmbedType.RICH)
         }),
         { max: 10 }
@@ -57,11 +54,9 @@ export const executeWebhookSchema = v.object({
       /** the components to include with the message */
       components: v.array(messageComponentSchema),
       /** the contents of the file being sent */
-      files: v.array(v.unknown()),
-      /** JSON encoded body of non-file params */
-      payloadJson: v.string(),
+      files: v.array(fileUpload),
       /** attachment objects with filename and description */
-      attachments: v.array(v.partial(attachmentSchema)),
+      attachments: v.array(partialSchema(attachmentSchema)),
       /** message flags combined as a bitfield (only SUPPRESS_EMBEDS can be set) */
       flags: asInteger(messageFlag),
       /** name of thread to create (requires the webhook channel to be a forum channel) */
@@ -70,7 +65,8 @@ export const executeWebhookSchema = v.object({
       appliedTags: v.array(snowflake),
       /** A poll! */
       poll: pollSchema
-    })
+    },
+    { partial: true }
   )
 });
 
@@ -83,30 +79,23 @@ export const executeWebhookSchema = v.object({
  *
  * > [!NOTE]
  * >
- * > Note that when sending a message, you must provide a value for at least one of `content`, `embeds`, `components`, or `file`.
+ * > Note that when sending a message, you must provide a value for at **least one of** `content`, `embeds`, `components`, `file`, or `poll`.
  *
  * > [!NOTE]
  * >
- * > If the webhook channel is a forum channel, you must provide either `threadId` in the query string params, or `threadName` in the JSON/form params. If `threadId` is provided, the message will send in that thread. If `threadName` is provided, a thread with that name will be created in the forum channel.
+ * > If the webhook channel is a forum or media channel, you must provide either `thread_id` in the query string params, or `thread_name` in the JSON/form params. If `thread_id` is provided, the message will send in that thread. If `thread_name` is provided, a thread with that name will be created in the channel.
  *
  * > [!WARNING]
  * >
  * > Discord may strip certain characters from message content, like invalid unicode characters or characters which cause unexpected message formatting. If you are passing user-generated strings into message content, consider sanitizing the data to prevent unexpected behavior and using `allowed_mentions` to prevent unexpected mentions.
+ *
+ * > [!NOTE]
+ * >
+ * > For the webhook embed objects, you can set every field except `type` (it will be `rich` regardless of if you try to set it), `provider`, `video`, and any `height`, `width`, or `proxy_url` values for images.
  */
-export const executeWebhook: Fetcher<typeof executeWebhookSchema> = async ({
-  webhook,
-  token,
-  params,
-  body
-}) => post(buildURL(`/webhooks/${webhook}/${token}`, params).href, body);
-
-export const executeWebhookSafe = toValidated(
-  executeWebhook,
-  executeWebhookSchema
-);
-
-export const executeWebhookProcedure = toProcedure(
-  `mutation`,
-  executeWebhook,
-  executeWebhookSchema
-);
+export const executeWebhook: Fetcher<
+  typeof executeWebhookSchema,
+  void,
+  { anonymous: true }
+> = async ({ webhook, token, params, body }, options) =>
+  post(buildURL(`/webhooks/${webhook}/${token}`, params).href, body, options);

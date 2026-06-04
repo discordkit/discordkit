@@ -1,12 +1,7 @@
 import * as v from "valibot";
-import {
-  remove,
-  buildURL,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { buildURL } from "@discordkit/core/requests/buildURL";
+import { remove, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 export const deleteOriginalInteractionResponseSchema = v.object({
   application: snowflake,
@@ -26,23 +21,15 @@ export const deleteOriginalInteractionResponseSchema = v.object({
  *
  * **DELETE** `/webhooks/:application/:token/messages/@original`
  *
- * Deletes the initial Interaction response. Returns `204 No Content` on success.
+ * Deletes the initial {@link InteractionCallbackResponse | Interaction response}. Returns `204 No Content` on success.
  */
 export const deleteOriginalInteractionResponse: Fetcher<
-  typeof deleteOriginalInteractionResponseSchema
-> = async ({ application, token, params }) =>
+  typeof deleteOriginalInteractionResponseSchema,
+  void,
+  { anonymous: true }
+> = async ({ application, token, params }, options) =>
   remove(
     buildURL(`/webhooks/${application}/${token}/messages/@original}`, params)
-      .href
+      .href,
+    options
   );
-
-export const deleteOriginalInteractionResponseSafe = toValidated(
-  deleteOriginalInteractionResponse,
-  deleteOriginalInteractionResponseSchema
-);
-
-export const deleteOriginalInteractionResponseProcedure = toProcedure(
-  `mutation`,
-  deleteOriginalInteractionResponse,
-  deleteOriginalInteractionResponseSchema
-);

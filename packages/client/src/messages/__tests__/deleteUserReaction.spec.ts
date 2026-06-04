@@ -1,10 +1,8 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core/requests/toValidated";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
 import {
   deleteUserReaction,
-  deleteUserReactionProcedure,
-  deleteUserReactionSafe,
   deleteUserReactionSchema
 } from "../deleteUserReaction.js";
 
@@ -14,19 +12,9 @@ describe(`deleteUserReaction`, { repeats: 5 }, () => {
     deleteUserReactionSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(deleteUserReactionSafe(config)).resolves.not.toThrow();
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(deleteUserReactionProcedure)(config)
+      toValidated(deleteUserReaction, deleteUserReactionSchema)(config)
     ).resolves.not.toThrow();
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(deleteUserReaction);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
   });
 });

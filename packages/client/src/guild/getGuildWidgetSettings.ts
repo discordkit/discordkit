@@ -1,16 +1,7 @@
 import * as v from "valibot";
-import {
-  get,
-  type Fetcher,
-  toProcedure,
-  toQuery,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import {
-  guildWidgetSettingsSchema,
-  type GuildWidgetSettings
-} from "./types/GuildWidgetSettings.js";
+import { get, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type GuildWidgetSettings } from "./types/GuildWidgetSettings.js";
 
 export const getGuildWidgetSettingsSchema = v.object({ guild: snowflake });
 
@@ -25,18 +16,3 @@ export const getGuildWidgetSettings: Fetcher<
   typeof getGuildWidgetSettingsSchema,
   GuildWidgetSettings
 > = async ({ guild }) => get(`/guilds/${guild}/widget`);
-
-export const getGuildWidgetSettingsSafe = toValidated(
-  getGuildWidgetSettings,
-  getGuildWidgetSettingsSchema,
-  guildWidgetSettingsSchema
-);
-
-export const getGuildWidgetSettingsProcedure = toProcedure(
-  `query`,
-  getGuildWidgetSettings,
-  getGuildWidgetSettingsSchema,
-  guildWidgetSettingsSchema
-);
-
-export const getGuildWidgetSettingsQuery = toQuery(getGuildWidgetSettings);

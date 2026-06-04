@@ -1,9 +1,12 @@
 import * as v from "valibot";
-import { boundedArray, boundedInteger } from "@discordkit/core";
+import { boundedArray } from "@discordkit/core/validations/boundedArray";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
 import { ComponentType } from "./ComponentType.js";
 import { mediaGalleryItemSchema } from "./MediaGalleryItem.js";
 
 /**
+ * ### [Media Gallery](https://discord.com/developers/docs/components/reference#media-gallery)
+ *
  * A Media Gallery is a top-level content component that allows you to display 1-10 media attachments in an organized gallery format. Each item can have optional descriptions and can be marked as spoilers.
  *
  * Media Galleries are only available in messages.
@@ -21,5 +24,6 @@ export const mediaGallerySchema = v.object({
   items: boundedArray(mediaGalleryItemSchema, { max: 10 })
 });
 
-export interface MediaGallery
-  extends v.InferOutput<typeof mediaGallerySchema> {}
+export interface MediaGallery extends v.InferOutput<
+  typeof mediaGallerySchema
+> {}

@@ -1,13 +1,16 @@
-/* eslint-disable @typescript-eslint/prefer-literal-enum-member */
+/* oxlint-disable @typescript-eslint/prefer-literal-enum-member */
 import * as v from "valibot";
-import { bitfield } from "@discordkit/core";
+import { bitfield } from "@discordkit/core/validations/bitfield";
 
+/**
+ * ### [User Flags](https://discord.com/developers/docs/resources/user#user-object-user-flags)
+ */
 export enum UserFlags {
   /** Discord Employee */
   STAFF = 1 << 0,
   /** Partnered Server Owner */
   PARTNER = 1 << 1,
-  /** HypeSquad Events Coordinator */
+  /** HypeSquad Events Member */
   HYPESQUAD = 1 << 2,
   /** Bug Hunter Level 1 */
   BUG_HUNTER_LEVEL_1 = 1 << 3,
@@ -27,7 +30,7 @@ export enum UserFlags {
   VERIFIED_BOT = 1 << 16,
   /** Early Verified Bot Developer */
   VERIFIED_DEVELOPER = 1 << 17,
-  /** Discord Certified Moderator */
+  /** Moderator Programs Alumni */
   CERTIFIED_MODERATOR = 1 << 18,
   /** Bot uses only HTTP interactions and is shown in the online member list */
   BOT_HTTP_INTERACTIONS = 1 << 19,

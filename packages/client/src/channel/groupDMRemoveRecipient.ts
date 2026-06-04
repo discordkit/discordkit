@@ -1,11 +1,6 @@
 import * as v from "valibot";
-import {
-  remove,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { remove, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 export const groupDMRemoveRecipientSchema = v.object({
   channel: snowflake,
@@ -23,14 +18,3 @@ export const groupDMRemoveRecipient: Fetcher<
   typeof groupDMRemoveRecipientSchema
 > = async ({ channel, user }) =>
   remove(`/channels/${channel}/recipients/${user}`);
-
-export const groupDMRemoveRecipientSafe = toValidated(
-  groupDMRemoveRecipient,
-  groupDMRemoveRecipientSchema
-);
-
-export const groupDMRemoveRecipientProcedure = toProcedure(
-  `mutation`,
-  groupDMRemoveRecipient,
-  groupDMRemoveRecipientSchema
-);

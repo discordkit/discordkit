@@ -1,10 +1,11 @@
 import * as v from "valibot";
-import { boundedString } from "@discordkit/core";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { schema } from "@discordkit/core/validations/schema";
 import { integrationSchema } from "../../guild/types/Integration.js";
-import { connectionVisibiltySchema } from "./ConnectionVisibilty.js";
+import { connectionVisibilitySchema } from "./ConnectionVisibility.js";
 import { servicesSchema } from "./Services.js";
 
-export const connectionSchema = v.object({
+const _connectionSchema = v.object({
   /** id of the connection account */
   id: boundedString(),
   /** the username of the connection account */
@@ -24,7 +25,14 @@ export const connectionSchema = v.object({
   /** whether this connection has a corresponding third party OAuth2 token */
   twoWayLink: v.boolean(),
   /** visibility of this connection */
-  visibility: connectionVisibiltySchema
+  visibility: connectionVisibilitySchema
 });
 
-export interface Connection extends v.InferOutput<typeof connectionSchema> {}
+export interface Connection extends v.InferOutput<typeof _connectionSchema> {}
+
+/**
+ * ### [Connection](https://discord.com/developers/docs/resources/user#connection-object)
+ *
+ * The connection object that the user has attached.
+ */
+export const connectionSchema = schema<Connection>(_connectionSchema);

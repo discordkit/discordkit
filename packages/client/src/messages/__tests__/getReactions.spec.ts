@@ -1,14 +1,8 @@
+import { toValidated } from "@discordkit/core/requests/toValidated";
 import * as v from "valibot";
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
-import { waitFor } from "@testing-library/dom";
 import { userSchema } from "../../user/types/User.js";
-import {
-  getReactionsProcedure,
-  getReactionsQuery,
-  getReactionsSafe,
-  getReactionsSchema
-} from "../getReactions.js";
+import { getReactionsSchema, getReactions } from "../getReactions.js";
 
 describe(`getReactions`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.get(
@@ -18,19 +12,13 @@ describe(`getReactions`, { repeats: 5 }, () => {
     { seed: 1 }
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(getReactionsSafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
-    await expect(runProcedure(getReactionsProcedure)(config)).resolves.toEqual(
-      expected
-    );
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(getReactionsQuery, config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
+  it(`validates input, fetches, and validates output`, async () => {
+    await expect(
+      toValidated(
+        getReactions,
+        getReactionsSchema,
+        v.pipe(v.array(userSchema), v.length(1))
+      )(config)
+    ).resolves.toEqual(expected);
   });
 });

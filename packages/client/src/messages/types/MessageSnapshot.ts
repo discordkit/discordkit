@@ -1,5 +1,7 @@
 import * as v from "valibot";
-import { asInteger, snowflake, timestamp } from "@discordkit/core";
+import { asInteger } from "@discordkit/core/validations/asInteger";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { timestamp } from "@discordkit/core/validations/timestamp";
 import { stickerSchema } from "../../sticker/types/Sticker.js";
 import { userSchema } from "../../user/types/User.js";
 import { attachmentSchema } from "./Attachment.js";
@@ -8,6 +10,9 @@ import { messageComponentSchema } from "./MessageComponent.js";
 import { messageFlag } from "./MessageFlag.js";
 import { messageTypeSchema } from "./MessageType.js";
 
+/**
+ * ### [Message Snapshot](https://discord.com/developers/docs/resources/message#message-snapshot-object)
+ */
 export const messageSnapshotSchema = v.object({
   message: v.object({
     /** type of message */
@@ -37,5 +42,6 @@ export const messageSnapshotSchema = v.object({
   })
 });
 
-export interface MessageSnapshot
-  extends v.InferOutput<typeof messageSnapshotSchema> {}
+export interface MessageSnapshot extends v.InferOutput<
+  typeof messageSnapshotSchema
+> {}

@@ -6,6 +6,9 @@ export const ApplicationCommandPermissionType = {
   CHANNEL: 3
 } as const;
 
+/**
+ * ### [Application Command Permission Type](https://discord.com/developers/docs/interactions/application-commands#application-command-permissions-object)
+ */
 export const applicationCommandPermissionTypeSchema = v.enum_(
   ApplicationCommandPermissionType
 );

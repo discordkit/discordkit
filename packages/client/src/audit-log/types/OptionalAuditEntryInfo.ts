@@ -1,16 +1,16 @@
 import * as v from "valibot";
-import { snowflake } from "@discordkit/core";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 export const optionalAuditEntryInfoSchema = v.partial(
   v.object({
     /** ID of the app whose permissions were targeted */
     applicationId: snowflake as v.GenericSchema<string>,
-    /** Name of the Auto Moderation rule that was triggered */
+    /** Name of the {@link ModerationRule | Auto Moderation rule} that was triggered */
     autoModerationRuleName: v.pipe(
       v.string(),
       v.nonEmpty()
     ) as v.GenericSchema<string>,
-    /** Trigger type of the Auto Moderation rule that was triggered */
+    /** Trigger type of the {@link ModerationRule | Auto Moderation rule} that was triggered */
     autoModerationRuleTriggerType: v.pipe(
       v.string(),
       v.nonEmpty()
@@ -39,5 +39,6 @@ export const optionalAuditEntryInfoSchema = v.partial(
   })
 );
 
-export interface OptionalAuditEntryInfo
-  extends v.InferOutput<typeof optionalAuditEntryInfoSchema> {}
+export interface OptionalAuditEntryInfo extends v.InferOutput<
+  typeof optionalAuditEntryInfoSchema
+> {}

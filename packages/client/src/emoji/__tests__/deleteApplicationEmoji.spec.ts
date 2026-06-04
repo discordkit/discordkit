@@ -1,10 +1,8 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core/requests/toValidated";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
 import {
   deleteApplicationEmoji,
-  deleteApplicationEmojiProcedure,
-  deleteApplicationEmojiSafe,
   deleteApplicationEmojiSchema
 } from "../deleteApplicationEmoji.js";
 
@@ -14,19 +12,9 @@ describe(`deleteApplicationEmoji`, { repeats: 5 }, () => {
     deleteApplicationEmojiSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(deleteApplicationEmojiSafe(config)).resolves.not.toThrow();
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(deleteApplicationEmojiProcedure)(config)
+      toValidated(deleteApplicationEmoji, deleteApplicationEmojiSchema)(config)
     ).resolves.not.toThrow();
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(deleteApplicationEmoji);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
   });
 });

@@ -1,13 +1,11 @@
-import * as v from "valibot";
-import {
-  asInteger,
-  boundedArray,
-  boundedInteger,
-  boundedString,
-  snowflake,
-  url
-} from "@discordkit/core";
-import type { User } from "../../user/types/User.js";
+﻿import * as v from "valibot";
+import { asInteger } from "@discordkit/core/validations/asInteger";
+import { boundedArray } from "@discordkit/core/validations/boundedArray";
+import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { partialSchema, schema } from "@discordkit/core/validations/schema";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { url } from "@discordkit/core/validations/url";
 import { userSchema } from "../../user/types/User.js";
 import { teamSchema } from "../../teams/types/Team.js";
 import { guildSchema } from "../../guild/types/Guild.js";
@@ -17,9 +15,7 @@ import { installParamsSchema } from "./InstallParams.js";
 import { ApplicationIntegrationTypes } from "./ApplicationIntegrationTypes.js";
 import { applicationIntegrationTypeConfigurationSchema } from "./ApplicationIntegrationTypeConfiguration.js";
 
-// https://discord.com/developers/docs/resources/application#application-object-application-structure
-
-export const applicationSchema = v.object({
+const _applicationSchema = v.object({
   /** ID of the app */
   id: snowflake,
   /** Name of the app */
@@ -35,15 +31,13 @@ export const applicationSchema = v.object({
   /** When `true`, the app's bot will only join upon completion of the full OAuth2 code grant flow */
   botRequireCodeGrant: v.boolean(),
   /** Partial user object for the bot user associated with the app */
-  bot: v.exactOptional(v.partial(userSchema) as v.GenericSchema<Partial<User>>),
+  bot: v.exactOptional(partialSchema(userSchema)),
   /** URL of the app's Terms of Service */
   termsOfServiceUrl: v.exactOptional(url),
   /** URL of the app's Privacy Policy */
   privacyPolicyUrl: v.exactOptional(url),
   /** Partial user object for the owner of the app */
-  owner: v.exactOptional(
-    v.partial(userSchema) as v.GenericSchema<Partial<User>>
-  ),
+  owner: v.exactOptional(partialSchema(userSchema)),
   /** Hex encoded key for verification in interactions and the GameSDK's GetTicket */
   verifyKey: v.string(),
   /** If the app belongs to a team, this will be a list of the members of that team */
@@ -51,7 +45,7 @@ export const applicationSchema = v.object({
   /** Guild associated with the app. For example, a developer support server. */
   guildId: v.exactOptional(v.string()),
   /** Partial object of the associated guild */
-  guild: v.exactOptional(v.partial(guildSchema)),
+  guild: v.exactOptional(partialSchema(guildSchema)),
   /** If this app is a game sold on Discord, this field will be the id of the "Game SKU" that is created, if exists */
   primarySkuId: v.exactOptional(v.string()),
   /** If this app is a game sold on Discord, this field will be the URL slug that links to the store page */
@@ -99,4 +93,9 @@ export const applicationSchema = v.object({
   customInstallUrl: v.exactOptional(url)
 });
 
-export interface Application extends v.InferOutput<typeof applicationSchema> {}
+export interface Application extends v.InferOutput<typeof _applicationSchema> {}
+
+/**
+ * ### [Application](https://discord.com/developers/docs/resources/application#application-object)
+ */
+export const applicationSchema = schema<Application>(_applicationSchema);

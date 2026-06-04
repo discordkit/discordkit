@@ -1,10 +1,14 @@
 import * as v from "valibot";
-import { asDigits } from "@discordkit/core";
+import { asDigits } from "@discordkit/core/validations/asDigits";
 import type { Scopes } from "./Scopes.js";
 import { scopesSchema } from "./Scopes.js";
 import { permissionFlag } from "../../permissions/Permissions.js";
 
-// https://discord.com/developers/docs/resources/application#install-params-object-install-params-structure
+/**
+ * ### [Install Params](https://discord.com/developers/docs/resources/application#install-params-object)
+ *
+ * // https://discord.com/developers/docs/resources/application#install-params-object-install-params-structure
+ */
 
 export const installParamsSchema = v.object({
   /** Scopes to add the application to the server with */
@@ -13,5 +17,6 @@ export const installParamsSchema = v.object({
   permissions: asDigits(permissionFlag)
 });
 
-export interface InstallParams
-  extends v.InferOutput<typeof installParamsSchema> {}
+export interface InstallParams extends v.InferOutput<
+  typeof installParamsSchema
+> {}

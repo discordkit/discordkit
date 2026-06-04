@@ -1,14 +1,9 @@
 import * as v from "valibot";
-import {
-  post,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake,
-  boundedString,
-  url
-} from "@discordkit/core";
-import { webhookSchema, type Webhook } from "./types/Webhook.js";
+import { post, type Fetcher } from "@discordkit/core/requests/methods";
+import { boundedString } from "@discordkit/core/validations/boundedString";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { url } from "@discordkit/core/validations/url";
+import { type Webhook } from "./types/Webhook.js";
 
 export const createWebhookSchema = v.object({
   channel: snowflake,
@@ -30,7 +25,7 @@ export const createWebhookSchema = v.object({
  * An error will be returned if a webhook name (`name`) is not valid. A webhook name is valid if:
  *
  * - It does not contain the substrings `clyde` or `discord` (case-insensitive)
- * - It follows the nickname guidelines in the [Usernames and Nicknames](https://discord.com/developers/docs/resources/user#usernames-and-nicknames) documentation, with an exception that webhook names can be up to 80 characters
+ * - It follows the nickname guidelines in the Usernames and Nicknames documentation, with an exception that webhook names can be up to 80 characters
  *
  * > [!NOTE]
  * >
@@ -38,18 +33,7 @@ export const createWebhookSchema = v.object({
  */
 export const createWebhook: Fetcher<
   typeof createWebhookSchema,
-  Webhook
-> = async ({ channel, body }) => post(`/channels/${channel}/webhooks`, body);
-
-export const createWebhookSafe = toValidated(
-  createWebhook,
-  createWebhookSchema,
-  webhookSchema
-);
-
-export const createWebhookProcedure = toProcedure(
-  `mutation`,
-  createWebhook,
-  createWebhookSchema,
-  webhookSchema
-);
+  Webhook,
+  { auditLogReason: true }
+> = async ({ channel, body }, options) =>
+  post(`/channels/${channel}/webhooks`, body, options);

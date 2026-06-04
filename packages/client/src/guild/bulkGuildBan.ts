@@ -1,11 +1,6 @@
 import * as v from "valibot";
-import {
-  post,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { post, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 export const bulkGuildBanSchema = v.object({
   guild: snowflake,
@@ -32,27 +27,14 @@ export const bulkGuildBanSchema = v.object({
  * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
+ *
+ * > [!NOTE]
+ * >
+ * > If none of the users could be banned, an error response code `500000: Failed to ban users` is returned instead.
  */
 export const bulkGuildBan: Fetcher<
   typeof bulkGuildBanSchema,
-  { bannedUsers: string[]; failedUsers: string[] }
-> = async ({ guild, body }) => post(`/guilds/${guild}/bulk-ban`, body);
-
-export const bulkGuildBanSafe = toValidated(
-  bulkGuildBan,
-  bulkGuildBanSchema,
-  v.object({
-    bannedUsers: v.array(snowflake),
-    failedUsers: v.array(snowflake)
-  })
-);
-
-export const bulkGuildBanProcedure = toProcedure(
-  `mutation`,
-  bulkGuildBan,
-  bulkGuildBanSchema,
-  v.object({
-    bannedUsers: v.array(snowflake),
-    failedUsers: v.array(snowflake)
-  })
-);
+  { bannedUsers: string[]; failedUsers: string[] },
+  { auditLogReason: true }
+> = async ({ guild, body }, options) =>
+  post(`/guilds/${guild}/bulk-ban`, body, options);

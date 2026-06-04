@@ -1,10 +1,8 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core/requests/toValidated";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
 import {
   bulkDeleteMessages,
-  bulkDeleteMessagesProcedure,
-  bulkDeleteMessagesSafe,
   bulkDeleteMessagesSchema
 } from "../bulkDeleteMessages.js";
 
@@ -14,19 +12,9 @@ describe(`bulkDeleteMessages`, { repeats: 5 }, () => {
     bulkDeleteMessagesSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(bulkDeleteMessagesSafe(config)).resolves.not.toThrow();
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(bulkDeleteMessagesProcedure)(config)
+      toValidated(bulkDeleteMessages, bulkDeleteMessagesSchema)(config)
     ).resolves.not.toThrow();
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(bulkDeleteMessages);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
   });
 });

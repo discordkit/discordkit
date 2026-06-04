@@ -1,12 +1,7 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core/requests/toValidated";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
-import {
-  createGroupDM,
-  createGroupDMProcedure,
-  createGroupDMSafe,
-  createGroupDMSchema
-} from "../createGroupDM.js";
+import { createGroupDM, createGroupDMSchema } from "../createGroupDM.js";
 import { groupDirectMessageChannelSchema } from "../../channel/types/Channel.js";
 
 describe(`createGroupDM`, { repeats: 5 }, () => {
@@ -16,20 +11,13 @@ describe(`createGroupDM`, { repeats: 5 }, () => {
     groupDirectMessageChannelSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(createGroupDMSafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
-    await expect(runProcedure(createGroupDMProcedure)(config)).resolves.toEqual(
-      expected
-    );
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(createGroupDM);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
+  it(`validates input, fetches, and validates output`, async () => {
+    await expect(
+      toValidated(
+        createGroupDM,
+        createGroupDMSchema,
+        groupDirectMessageChannelSchema
+      )(config)
+    ).resolves.toEqual(expected);
   });
 });

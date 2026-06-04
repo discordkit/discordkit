@@ -1,11 +1,6 @@
 import * as v from "valibot";
-import {
-  remove,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
+import { remove, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
 
 export const unpinMessageSchema = v.object({
   channel: snowflake,
@@ -13,25 +8,19 @@ export const unpinMessageSchema = v.object({
 });
 
 /**
- * ### [Unpin Message](https://discord.com/developers/docs/resources/channel#unpin-message)
+ * ### [Unpin Message](https://discord.com/developers/docs/resources/message#unpin-message)
  *
  * **DELETE** `/channels/:channel/messages/pins/:message`
  *
- * Unpin a message in a channel. Requires the `MANAGE_MESSAGES` permission. Returns a `204 empty` response on success. Fires a Channel Pins Update Gateway event.
+ * Unpin a message in a channel. Requires the `PIN_MESSAGES` permission. Returns a 204 empty response on success. Fires a Channel Pins Update Gateway event.
  *
  * > [!NOTE]
  * >
  * > This endpoint supports the `X-Audit-Log-Reason` header.
  */
-export const unpinMessage: Fetcher<typeof unpinMessageSchema> = async ({
-  channel,
-  message
-}) => remove(`/channels/${channel}/messages/pins/${message}`);
-
-export const unpinMessageSafe = toValidated(unpinMessage, unpinMessageSchema);
-
-export const unpinMessageProcedure = toProcedure(
-  `mutation`,
-  unpinMessage,
-  unpinMessageSchema
-);
+export const unpinMessage: Fetcher<
+  typeof unpinMessageSchema,
+  void,
+  { auditLogReason: true }
+> = async ({ channel, message }, options) =>
+  remove(`/channels/${channel}/messages/pins/${message}`, options);

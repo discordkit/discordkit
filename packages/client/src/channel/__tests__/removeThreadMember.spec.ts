@@ -1,10 +1,8 @@
-import { waitFor } from "@testing-library/react";
+import { toValidated } from "@discordkit/core/requests/toValidated";
+
 import { mockUtils } from "#mocks";
-import { runProcedure, runMutation } from "#test-utils";
 import {
   removeThreadMember,
-  removeThreadMemberProcedure,
-  removeThreadMemberSafe,
   removeThreadMemberSchema
 } from "../removeThreadMember.js";
 
@@ -14,19 +12,9 @@ describe(`removeThreadMember`, { repeats: 5 }, () => {
     removeThreadMemberSchema
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(removeThreadMemberSafe(config)).resolves.not.toThrow();
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(removeThreadMemberProcedure)(config)
+      toValidated(removeThreadMember, removeThreadMemberSchema)(config)
     ).resolves.not.toThrow();
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runMutation(removeThreadMember);
-    result.current.mutate(config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
   });
 });

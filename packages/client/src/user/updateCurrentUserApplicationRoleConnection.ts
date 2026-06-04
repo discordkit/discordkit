@@ -1,15 +1,7 @@
 import * as v from "valibot";
-import {
-  put,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import {
-  type ApplicationRoleConnection,
-  applicationRoleConnectionSchema
-} from "./types/ApplicationRoleConnection.js";
+import { put, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type ApplicationRoleConnection } from "./types/ApplicationRoleConnection.js";
 
 export const updateCurrentUserApplicationRoleConnectionSchema = v.object({
   application: snowflake,
@@ -19,7 +11,7 @@ export const updateCurrentUserApplicationRoleConnectionSchema = v.object({
       platformName: v.nullish(v.string()),
       /** the username on the platform a bot has connected (max 100 characters) */
       platformUsername: v.nullish(v.string()),
-      /** object mapping application role connection metadata keys to their string-ified value (max 100 characters) for the user on the platform a bot has connected */
+      /** object mapping {@link ApplicationRoleConnectionMetadata | application role connection metadata} keys to their string-ified value (max 100 characters) for the user on the platform a bot has connected */
       metadata: v.record(
         v.pipe(
           v.string(),
@@ -45,16 +37,3 @@ export const updateCurrentUserApplicationRoleConnection: Fetcher<
   ApplicationRoleConnection
 > = async ({ application, body }) =>
   put(`/users/@me/applications/${application}/role-connection`, body);
-
-export const updateCurrentUserApplicationRoleConnectionSafe = toValidated(
-  updateCurrentUserApplicationRoleConnection,
-  updateCurrentUserApplicationRoleConnectionSchema,
-  applicationRoleConnectionSchema
-);
-
-export const updateCurrentUserApplicationRoleConnectionProcedure = toProcedure(
-  `mutation`,
-  updateCurrentUserApplicationRoleConnection,
-  updateCurrentUserApplicationRoleConnectionSchema,
-  applicationRoleConnectionSchema
-);

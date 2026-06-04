@@ -11,6 +11,8 @@ export const DISCORD_EPOCH = 1420070400000n;
  * Uses Discord's epoch by default
  *
  * https://discord.com/developers/docs/reference#snowflakes
+ *
+ * @__NO_SIDE_EFFECTS__
  */
 export const snowflakeToDate = (
   /** A snowflake string to convert */

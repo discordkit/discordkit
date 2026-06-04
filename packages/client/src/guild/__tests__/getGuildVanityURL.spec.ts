@@ -1,35 +1,26 @@
-import * as v from "valibot";
+﻿import { toValidated } from "@discordkit/core/requests/toValidated";
+import { partialSchema } from "@discordkit/core/validations/schema";
 import { mockUtils } from "#mocks";
-import { runProcedure, runQuery } from "#test-utils";
-import { waitFor } from "@testing-library/dom";
 import { inviteSchema } from "../../invite/types/Invite.js";
 import {
-  getGuildVanityURLProcedure,
-  getGuildVanityURLQuery,
-  getGuildVanityURLSafe,
-  getGuildVanityURLSchema
+  getGuildVanityURLSchema,
+  getGuildVanityURL
 } from "../getGuildVanityURL.js";
 
 describe(`getGuildVanityURL`, { repeats: 5 }, () => {
   const { config, expected } = mockUtils.request.get(
     `/guilds/:guild/vanity-url`,
     getGuildVanityURLSchema,
-    v.partial(inviteSchema)
+    partialSchema(inviteSchema)
   );
 
-  it(`can be used standalone`, async () => {
-    await expect(getGuildVanityURLSafe(config)).resolves.toEqual(expected);
-  });
-
-  it(`is tRPC compatible`, async () => {
+  it(`validates input, fetches, and validates output`, async () => {
     await expect(
-      runProcedure(getGuildVanityURLProcedure)(config)
+      toValidated(
+        getGuildVanityURL,
+        getGuildVanityURLSchema,
+        partialSchema(inviteSchema)
+      )(config)
     ).resolves.toEqual(expected);
-  });
-
-  it(`is react-query compatible`, async () => {
-    const { result } = runQuery(getGuildVanityURLQuery, config);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(expected);
   });
 });

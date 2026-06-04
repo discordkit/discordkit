@@ -1,12 +1,7 @@
 import * as v from "valibot";
-import {
-  patch,
-  type Fetcher,
-  toProcedure,
-  toValidated,
-  snowflake
-} from "@discordkit/core";
-import { lobbySchema, type Lobby } from "./types/Lobby.js";
+import { patch, type Fetcher } from "@discordkit/core/requests/methods";
+import { snowflake } from "@discordkit/core/validations/snowflake";
+import { type Lobby } from "./types/Lobby.js";
 
 export const linkChannelToLobbySchema = v.object({
   lobby: snowflake,
@@ -25,7 +20,7 @@ export const linkChannelToLobbySchema = v.object({
  *
  * Links an existing text channel to a lobby. See [Linked Channels](https://discord.com/developers/docs/discord-social-sdk/development-guides/linked-channels) for more information.
  *
- * Uses `Bearer` token for authorization and user must be a lobby member with `CanLinkLobby` lobby member flag.
+ * Uses `Bearer` token for authorization and user must be a {@link LobbyMember | lobby member} with `CanLinkLobby` {@link LobbyMember | lobby member} flag.
  *
  * Returns a lobby object with a linked channel.
  */
@@ -33,16 +28,3 @@ export const linkChannelToLobby: Fetcher<
   typeof linkChannelToLobbySchema,
   Lobby & Required<Pick<Lobby, `linkedChannel`>>
 > = async ({ lobby, body }) => patch(`/lobbies/${lobby}/channel-linking`, body);
-
-export const linkChannelToLobbySafe = toValidated(
-  linkChannelToLobby,
-  linkChannelToLobbySchema,
-  v.required(lobbySchema, [`linkedChannel`])
-);
-
-export const linkChannelToLobbyProcedure = toProcedure(
-  `mutation`,
-  linkChannelToLobby,
-  linkChannelToLobbySchema,
-  v.required(lobbySchema, [`linkedChannel`])
-);
