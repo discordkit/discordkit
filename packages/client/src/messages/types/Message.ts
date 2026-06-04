@@ -5,10 +5,7 @@ import { partialSchema, schema } from "@discordkit/core/validations/schema";
 import { snowflake } from "@discordkit/core/validations/snowflake";
 import { timestamp } from "@discordkit/core/validations/timestamp";
 import { stickerSchema } from "../../sticker/types/Sticker.js";
-import {
-  type Application,
-  applicationSchema
-} from "../../application/types/Application.js";
+import { applicationSchema } from "../../application/types/Application.js";
 import type { User } from "../../user/types/User.js";
 import { userSchema } from "../../user/types/User.js";
 import { type Reaction, reactionSchema } from "./Reaction.js";
