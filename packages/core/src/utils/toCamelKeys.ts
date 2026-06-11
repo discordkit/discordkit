@@ -15,5 +15,5 @@ export const toCamelKeys = <T extends object>(
     }, {}) as CamelCasedPropertiesDeep<T>;
   }
 
-  return o;
+  return o as CamelCasedPropertiesDeep<T>;
 };

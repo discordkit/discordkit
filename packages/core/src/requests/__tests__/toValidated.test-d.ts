@@ -15,13 +15,13 @@ import { toValidated } from "../toValidated.js";
  *    permitted, but optional, and must reject it for endpoints without it.
  * 4. A capability-free `Fetcher` must accept neither flag.
  */
-describe(`Fetcher / toValidated type surface`, () => {
+describe(`fetcher / toValidated type surface`, () => {
   const schema = v.object({ id: v.string() });
   type Schema = typeof schema;
 
   it(`preserves capabilities through toValidated for { anonymous: true }`, () => {
     const fn: Fetcher<Schema, void, { anonymous: true }> = async () =>
-      undefined;
+      Promise.resolve(undefined);
     const wrapped = toValidated(fn, schema);
 
     // options arg is REQUIRED
@@ -40,7 +40,7 @@ describe(`Fetcher / toValidated type surface`, () => {
 
   it(`preserves capabilities through toValidated for { auditLogReason: true }`, () => {
     const fn: Fetcher<Schema, void, { auditLogReason: true }> = async () =>
-      undefined;
+      Promise.resolve(undefined);
     const wrapped = toValidated(fn, schema);
 
     // options arg is OPTIONAL — reason is opt-in
@@ -56,7 +56,7 @@ describe(`Fetcher / toValidated type surface`, () => {
       Schema,
       void,
       { anonymous: true; auditLogReason: true }
-    > = async () => undefined;
+    > = async () => Promise.resolve(undefined);
     const wrapped = toValidated(fn, schema);
 
     // anonymous required, reason optional
@@ -72,7 +72,7 @@ describe(`Fetcher / toValidated type surface`, () => {
   });
 
   it(`rejects both flags on a capability-free Fetcher`, () => {
-    const fn: Fetcher<Schema> = async () => undefined;
+    const fn: Fetcher<Schema> = async () => Promise.resolve(undefined);
     const wrapped = toValidated(fn, schema);
 
     // bare call is OK
@@ -87,7 +87,8 @@ describe(`Fetcher / toValidated type surface`, () => {
   });
 
   it(`preserves the schema-less branch (no config arg)`, () => {
-    const fn: Fetcher<null, string, { anonymous: true }> = async () => `result`;
+    const fn: Fetcher<null, string, { anonymous: true }> = async () =>
+      Promise.resolve(`result`);
     const wrapped = toValidated(fn);
 
     // Only options arg, and it's required

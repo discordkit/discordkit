@@ -3,7 +3,7 @@ import { post, type Fetcher } from "@discordkit/core/requests/methods";
 import { boundedArray } from "@discordkit/core/validations/boundedArray";
 import { boundedString } from "@discordkit/core/validations/boundedString";
 import { snowflake } from "@discordkit/core/validations/snowflake";
-import { type ModerationRule } from "./types/ModerationRule.js";
+import type { ModerationRule } from "./types/ModerationRule.js";
 import { moderationEventSchema } from "./types/ModerationEvent.js";
 import { moderationTriggerTypeSchema } from "./types/ModerationTriggerType.js";
 import { triggerMetaSchema } from "./types/TriggerMeta.js";

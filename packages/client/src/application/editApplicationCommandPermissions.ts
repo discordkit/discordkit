@@ -2,7 +2,7 @@ import * as v from "valibot";
 import { patch, type Fetcher } from "@discordkit/core/requests/methods";
 import { boundedArray } from "@discordkit/core/validations/boundedArray";
 import { snowflake } from "@discordkit/core/validations/snowflake";
-import { type GuildApplicationCommandPermissions } from "../application-commands/types/GuildApplicationCommandPermissions.js";
+import type { GuildApplicationCommandPermissions } from "../application-commands/types/GuildApplicationCommandPermissions.js";
 import { applicationCommandPermissionsSchema } from "../application-commands/types/ApplicationCommandPermissions.js";
 
 export const editApplicationCommandPermissionsSchema = v.object({

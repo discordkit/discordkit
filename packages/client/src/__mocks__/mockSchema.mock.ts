@@ -43,7 +43,7 @@ export const mockUtils = new MockUtils(discord, {
     [
       fileUpload,
       (): FileUpload => ({
-        filename: `${faker.system.commonFileName(`txt`)}`,
+        filename: faker.system.commonFileName(`txt`),
         content: new Blob([faker.lorem.paragraph()], { type: `text/plain` })
       })
     ],

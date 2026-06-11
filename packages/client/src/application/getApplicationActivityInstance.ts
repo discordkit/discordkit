@@ -1,7 +1,7 @@
 import * as v from "valibot";
 import { get, type Fetcher } from "@discordkit/core/requests/methods";
 import { snowflake } from "@discordkit/core/validations/snowflake";
-import { type ActivityInstance } from "./types/ActivityInstance.js";
+import type { ActivityInstance } from "./types/ActivityInstance.js";
 
 export const getApplicationActivityInstanceSchema = v.object({
   application: snowflake,

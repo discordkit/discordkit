@@ -1,7 +1,7 @@
 import * as v from "valibot";
 import { get, type Fetcher } from "@discordkit/core/requests/methods";
 import { snowflake } from "@discordkit/core/validations/snowflake";
-import { type Webhook } from "./types/Webhook.js";
+import type { Webhook } from "./types/Webhook.js";
 
 export const getGuildWebhooksSchema = v.object({
   guild: snowflake

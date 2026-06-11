@@ -19,6 +19,7 @@ import type { Fetcher, FetcherCapabilities } from "./methods.js";
 export const toValidated = <
   S extends GenericSchema | GenericSchemaAsync | null = null,
   R = void,
+  // oxlint-disable-next-line typescript/no-empty-object-type
   C extends FetcherCapabilities = {}
 >(
   fn: Fetcher<S, R, C>,
@@ -39,7 +40,6 @@ export const toValidated = <
 
       // Forward the per-call options (anonymous, reason) to the underlying
       // fetcher. The proxy was previously dropping the second argument.
-      // oxlint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
       const call = target as unknown as (
         ...args: unknown[]
       ) => Promise<unknown>;

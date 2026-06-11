@@ -1,5 +1,5 @@
 import { get, type Fetcher } from "@discordkit/core/requests/methods";
-import { type SoundboardSound } from "./types/SoundboardSound.js";
+import type { SoundboardSound } from "./types/SoundboardSound.js";
 
 /**
  * ### [List Default Soundboard Sounds](https://discord.com/developers/docs/resources/soundboard#list-default-soundboard-sounds)

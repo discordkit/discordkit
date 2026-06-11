@@ -1,5 +1,5 @@
 import { get, type Fetcher } from "@discordkit/core/requests/methods";
-import { type User } from "./types/User.js";
+import type { User } from "./types/User.js";
 
 /**
  * ### [Get Current User](https://discord.com/developers/docs/resources/user#get-current-user)

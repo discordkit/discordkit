@@ -1,7 +1,7 @@
 import * as v from "valibot";
 import { get, type Fetcher } from "@discordkit/core/requests/methods";
 import { snowflake } from "@discordkit/core/validations/snowflake";
-import { type Message } from "./types/Message.js";
+import type { Message } from "./types/Message.js";
 
 export const getChannelMessageSchema = v.object({
   channel: snowflake,

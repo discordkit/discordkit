@@ -42,7 +42,7 @@ import * as v from "valibot";
  *
  * @__NO_SIDE_EFFECTS__
  */
-export const schema = <T>(s: v.GenericSchema<unknown>): v.GenericSchema<T> =>
+export const schema = <T>(s: v.GenericSchema): v.GenericSchema<T> =>
   s as v.GenericSchema<T>;
 
 /**
@@ -139,7 +139,7 @@ export const requiredFields = <T, K extends keyof T & string>(
  */
 export const variantSchema = <T>(
   key: keyof T & string,
-  schemas: ReadonlyArray<v.GenericSchema<unknown>>
+  schemas: readonly v.GenericSchema[]
 ): v.GenericSchema<T> => {
   type Erased = v.ObjectSchema<v.ObjectEntries, undefined>;
   return v.variant(

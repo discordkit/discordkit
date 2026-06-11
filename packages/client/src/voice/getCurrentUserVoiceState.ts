@@ -1,7 +1,7 @@
 import * as v from "valibot";
 import { get, type Fetcher } from "@discordkit/core/requests/methods";
 import { snowflake } from "@discordkit/core/validations/snowflake";
-import { type VoiceState } from "./types/VoiceState.js";
+import type { VoiceState } from "./types/VoiceState.js";
 
 export const getCurrentUserVoiceStateSchema = v.object({
   guild: snowflake

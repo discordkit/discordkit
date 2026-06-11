@@ -2,7 +2,7 @@ import * as v from "valibot";
 import { put, type Fetcher } from "@discordkit/core/requests/methods";
 import { snowflake } from "@discordkit/core/validations/snowflake";
 import { timestamp } from "@discordkit/core/validations/timestamp";
-import { type IncidentsData } from "./types/IncidentsData.js";
+import type { IncidentsData } from "./types/IncidentsData.js";
 
 export const modifyGuildIncidentActionsSchema = v.object({
   guild: snowflake,

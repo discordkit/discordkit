@@ -1,4 +1,5 @@
-﻿import { digits, object, parse, pipe } from "valibot";
+﻿import { describe, it, expect } from "vite-plus/test";
+import { digits, object, parse, pipe } from "valibot";
 import { MockUtils } from "@discordkit/test-utils";
 import { asDigits } from "../asDigits.js";
 import { bitfield } from "../bitfield.js";

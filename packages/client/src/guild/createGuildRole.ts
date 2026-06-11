@@ -3,7 +3,7 @@ import { post, type Fetcher } from "@discordkit/core/requests/methods";
 import { asDigits } from "@discordkit/core/validations/asDigits";
 import { datauri } from "@discordkit/core/validations/datauri";
 import { snowflake } from "@discordkit/core/validations/snowflake";
-import { type Role } from "../permissions/Role.js";
+import type { Role } from "../permissions/Role.js";
 import { permissionFlag } from "../permissions/Permissions.js";
 import { roleColorsSchema } from "../permissions/RoleColors.js";
 

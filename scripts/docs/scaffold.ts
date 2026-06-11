@@ -343,9 +343,7 @@ function renderSpec(folder: string, filename: string, ep: DocEndpoint): string {
   // TODO: response schema goes as 3rd arg if available
   mockArgs.push(`/* TODO: response schema */ null`);
 
-  const importedNames = hasInputs
-    ? `${filename}, ${schemaName}`
-    : `${filename}`;
+  const importedNames = hasInputs ? `${filename}, ${schemaName}` : filename;
 
   const lines: string[] = [];
   lines.push(`import { toValidated } from "@discordkit/core";`);
@@ -452,8 +450,8 @@ function primitiveToValibot(name: string, coreImports: Set<string>): string {
 
 // ─── helpers ──────────────────────────────────────────────────────────────
 
-function extractPathParams(path: string): { name: string }[] {
-  const out: { name: string }[] = [];
+function extractPathParams(path: string): Array<{ name: string }> {
+  const out: Array<{ name: string }> = [];
   const regex = /:([a-zA-Z_]\w*)/g;
   let m: RegExpExecArray | null;
   while ((m = regex.exec(path)) !== null) {

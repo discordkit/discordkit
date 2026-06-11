@@ -1,3 +1,4 @@
+import { describe, it, expect } from "vite-plus/test";
 import { toValidated } from "@discordkit/core/requests/toValidated";
 import * as v from "valibot";
 import { mockUtils } from "#mocks";

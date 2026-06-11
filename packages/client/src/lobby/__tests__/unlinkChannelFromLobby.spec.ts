@@ -1,4 +1,5 @@
-﻿import { toValidated } from "@discordkit/core/requests/toValidated";
+﻿import { describe, it, expect } from "vite-plus/test";
+import { toValidated } from "@discordkit/core/requests/toValidated";
 import { omitFields } from "@discordkit/core/validations/schema";
 import { mockUtils } from "#mocks";
 import { lobbySchema } from "../types/Lobby.js";

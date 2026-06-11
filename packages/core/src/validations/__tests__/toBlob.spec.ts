@@ -1,3 +1,4 @@
+import { describe, it, expect } from "vite-plus/test";
 import { faker } from "@faker-js/faker";
 import { is, mimeType, parse, pipe } from "valibot";
 import { toBlob } from "../toBlob.js";

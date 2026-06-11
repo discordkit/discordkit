@@ -26,7 +26,7 @@ const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), `../..`);
 
 const allCandidates = globSync(`packages/client/src/**/*.ts`, {
   cwd: projectRoot
-}) as string[];
+});
 
 const targetFiles = allCandidates
   .filter(
@@ -92,7 +92,7 @@ function collectImportEdit(
   if (!ts.isStringLiteral(decl.moduleSpecifier)) return;
   if (decl.moduleSpecifier.text !== CORE_MODULE) return;
   const importClause = decl.importClause;
-  if (!importClause || !importClause.namedBindings) return;
+  if (!importClause?.namedBindings) return;
   if (!ts.isNamedImports(importClause.namedBindings)) return;
 
   const elements = importClause.namedBindings.elements;

@@ -1,7 +1,7 @@
 import * as v from "valibot";
 import { get, type Fetcher } from "@discordkit/core/requests/methods";
 import { snowflake } from "@discordkit/core/validations/snowflake";
-import { type ApplicationRoleConnectionMetadata } from "./types/ApplicationRoleConnectionMetadata.js";
+import type { ApplicationRoleConnectionMetadata } from "./types/ApplicationRoleConnectionMetadata.js";
 
 export const getApplicationRoleConnectionMetadataRecordsSchema = v.object({
   application: snowflake

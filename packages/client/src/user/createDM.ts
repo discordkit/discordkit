@@ -1,7 +1,7 @@
 import * as v from "valibot";
 import { post, type Fetcher } from "@discordkit/core/requests/methods";
 import { snowflake } from "@discordkit/core/validations/snowflake";
-import { directMessageChannelSchema } from "../channel/types/Channel.js";
+import type { directMessageChannelSchema } from "../channel/types/Channel.js";
 
 export const createDMSchema = v.object({
   body: v.object({

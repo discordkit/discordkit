@@ -253,7 +253,7 @@ function extractTopJsDoc(source: string): ExistingBlock | null {
     if (!inBlock) {
       if (/^\s*\/\*\*/.test(line)) {
         // Single-line block: `/** … *\/` lives on one row.
-        if (/\*\//.test(line)) {
+        if (line.includes("*/")) {
           block = [line];
           considerSave(i, i);
           continue;
@@ -265,7 +265,7 @@ function extractTopJsDoc(source: string): ExistingBlock | null {
       continue;
     }
     block.push(line);
-    if (/\*\//.test(line)) {
+    if (line.includes("*/")) {
       inBlock = false;
       considerSave(i, blockStart);
     }
@@ -352,7 +352,7 @@ function replaceOutsideProtected(
   name: string
 ): string {
   // Compute the protected ranges once per phrase.
-  const ranges: [number, number][] = [];
+  const ranges: Array<[number, number]> = [];
   let pm: RegExpExecArray | null;
   const re = new RegExp(protectedRe.source, `g`);
   while ((pm = re.exec(text)) !== null) {

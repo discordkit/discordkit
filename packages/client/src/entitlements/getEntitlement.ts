@@ -1,7 +1,7 @@
 import * as v from "valibot";
 import { get, type Fetcher } from "@discordkit/core/requests/methods";
 import { snowflake } from "@discordkit/core/validations/snowflake";
-import { type Entitlement } from "./types/Entitlement.js";
+import type { Entitlement } from "./types/Entitlement.js";
 
 export const getEntitlementSchema = v.object({
   application: snowflake,

@@ -2,7 +2,7 @@ import * as v from "valibot";
 import { patch, type Fetcher } from "@discordkit/core/requests/methods";
 import { boundedString } from "@discordkit/core/validations/boundedString";
 import { snowflake } from "@discordkit/core/validations/snowflake";
-import { type SoundboardSound } from "./types/SoundboardSound.js";
+import type { SoundboardSound } from "./types/SoundboardSound.js";
 
 export const modifyGuildSoundboardSoundSchema = v.object({
   guild: snowflake,

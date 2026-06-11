@@ -31,13 +31,13 @@ export interface FileUpload {
 /** Type guard — true if `val` looks like a {@link FileUpload}. */
 export const isFileUpload = (val: unknown): val is FileUpload => {
   if (!isObject(val)) return false;
-  const record = val as Record<string, unknown>;
   // Blob is a global in Node 18+, the browser, and all current runtimes.
-  // We test via duck-typing on `arrayBuffer` to avoid the `instanceof` cross-realm pitfall.
+  // We test via duck-typing on `arrayBuffer` to avoid the `instanceof`
+  // cross-realm pitfall.
+  const content = val.content as { arrayBuffer?: unknown } | undefined;
   return (
-    typeof record.filename === `string` &&
-    typeof (record.content as { arrayBuffer?: unknown })?.arrayBuffer ===
-      `function`
+    typeof val.filename === `string` &&
+    typeof content?.arrayBuffer === `function`
   );
 };
 
@@ -239,7 +239,7 @@ export function multipart<TEntries extends v.ObjectEntries>(
 export function multipart<TEntries extends v.ObjectEntries>(
   entries: TEntries,
   options?: { partial?: boolean }
-): v.GenericSchema<unknown> {
+): v.GenericSchema {
   const base = v.object(entries);
   const inner = options?.partial ? v.partial(base) : base;
   // Wrap with a transform that stamps the marker if any FileUploads are present.

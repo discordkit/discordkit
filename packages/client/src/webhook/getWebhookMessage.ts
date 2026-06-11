@@ -2,7 +2,7 @@ import * as v from "valibot";
 import { get, type Fetcher } from "@discordkit/core/requests/methods";
 import { boundedString } from "@discordkit/core/validations/boundedString";
 import { snowflake } from "@discordkit/core/validations/snowflake";
-import { type Message } from "../messages/types/Message.js";
+import type { Message } from "../messages/types/Message.js";
 
 export const getWebhookMessageSchema = v.object({
   webhook: snowflake,

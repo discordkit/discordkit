@@ -1,5 +1,5 @@
 import { get, type Fetcher } from "@discordkit/core/requests/methods";
-import { type Application } from "./types/Application.js";
+import type { Application } from "./types/Application.js";
 
 /**
  * ### [Get Current Application](https://discord.com/developers/docs/resources/application#get-current-application)

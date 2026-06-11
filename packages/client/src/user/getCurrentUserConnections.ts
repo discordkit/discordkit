@@ -1,5 +1,5 @@
 import { get, type Fetcher } from "@discordkit/core/requests/methods";
-import { type Connection } from "./types/Connection.js";
+import type { Connection } from "./types/Connection.js";
 
 /**
  * ### [Get Current User Connections](https://discord.com/developers/docs/resources/user#get-current-user-connections)

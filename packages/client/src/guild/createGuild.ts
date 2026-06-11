@@ -8,7 +8,7 @@ import { verificationLevelSchema } from "./types/VerificationLevel.js";
 import { defaultMessageNotificationLevelSchema } from "./types/DefaultMessageNotificationLevel.js";
 import { explicitContentFilterLevelSchema } from "./types/ExplicitContentFilterLevel.js";
 import { roleSchema } from "../permissions/Role.js";
-import { type Guild } from "./types/Guild.js";
+import type { Guild } from "./types/Guild.js";
 import { systemChannelFlag } from "./types/SystemChannelFlags.js";
 
 export const createGuildSchema = v.object({

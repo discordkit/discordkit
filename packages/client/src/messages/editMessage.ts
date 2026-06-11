@@ -5,7 +5,7 @@ import { boundedArray } from "@discordkit/core/validations/boundedArray";
 import { boundedString } from "@discordkit/core/validations/boundedString";
 import { multipart, fileUpload } from "@discordkit/core/validations/fileUpload";
 import { snowflake } from "@discordkit/core/validations/snowflake";
-import { type Message } from "./types/Message.js";
+import type { Message } from "./types/Message.js";
 import { embedSchema } from "./types/Embed.js";
 import { allowedMentionSchema } from "./types/AllowedMention.js";
 import { messageComponentSchema } from "./types/MessageComponent.js";

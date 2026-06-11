@@ -4,7 +4,7 @@ import { asInteger } from "@discordkit/core/validations/asInteger";
 import { datauri } from "@discordkit/core/validations/datauri";
 import { snowflake } from "@discordkit/core/validations/snowflake";
 import { localesSchema } from "../application/types/Locales.js";
-import { type Guild } from "./types/Guild.js";
+import type { Guild } from "./types/Guild.js";
 import { verificationLevelSchema } from "./types/VerificationLevel.js";
 import { defaultMessageNotificationLevelSchema } from "./types/DefaultMessageNotificationLevel.js";
 import { explicitContentFilterLevelSchema } from "./types/ExplicitContentFilterLevel.js";

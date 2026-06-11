@@ -1,4 +1,5 @@
 {
+  "extends": "@saeris/configs/tsconfig",
   "include": ["./**/*.{j,t}s?(x)", "./**/*.spec.ts"],
   "exclude": [
     "node_modules",
@@ -8,28 +9,16 @@
     "./**/dist"
   ],
   "compilerOptions": {
-    "noImplicitAny": true,
-    "noEmit": true,
-    "declaration": true,
-    "sourceMap": true,
+    // Add DOM on top of the base's ESNext lib for verifyKey's
+    // window/crypto feature-detection and any other client-runtime checks.
     "lib": ["ESNext", "DOM"],
-    "types": ["node", "vitest/globals"],
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
+    // Resolve workspace imports through each package's `development`
+    // export condition during local dev. Lets `tsc` and tooling read
+    // src/*.ts directly without requiring `dist/` to exist.
     "customConditions": ["development"],
-    "isolatedModules": true,
-    "allowJs": true,
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
+    // Library-shape: pull TS runtime helpers from `tslib` instead of
+    // inlining them into every emitted module. Smaller dist/ output.
     "importHelpers": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "noErrorTruncation": true,
-    "strict": false,
-    "strictNullChecks": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "types": ["node"]
   }
 }

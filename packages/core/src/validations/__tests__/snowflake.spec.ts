@@ -1,4 +1,5 @@
-﻿import { safeParse, parse, object } from "valibot";
+﻿import { describe, it, expect } from "vite-plus/test";
+import { safeParse, parse, object } from "valibot";
 import { MockUtils } from "@discordkit/test-utils";
 import { snowflake, snowflakeToDate, DISCORD_EPOCH } from "../snowflake.js";
 import { discord } from "../../requests/DiscordSession.js";

@@ -1,7 +1,7 @@
 import * as v from "valibot";
 import { post, type Fetcher } from "@discordkit/core/requests/methods";
 import { snowflake } from "@discordkit/core/validations/snowflake";
-import { threadChannelSchema } from "./types/Channel.js";
+import type { threadChannelSchema } from "./types/Channel.js";
 import { autoArchiveDurationSchema } from "./types/AutoArchiveDuration.js";
 
 export const startThreadFromMessageSchema = v.object({

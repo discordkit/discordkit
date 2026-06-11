@@ -161,7 +161,7 @@ function main(): void {
   //      diff-jsdoc.ts. Field-level descriptions for nested body/params/
   //      form objects come from DocEndpoint.jsonParams/queryParams/
   //      formParams.
-  const targets: { dir: string; isTypes: boolean }[] = [];
+  const targets: Array<{ dir: string; isTypes: boolean }> = [];
   const folderTypesPath = join(CLIENT_SRC, folder, `types`);
   if (existsSync(folderTypesPath) && statSync(folderTypesPath).isDirectory()) {
     targets.push({ dir: folderTypesPath, isTypes: true });
@@ -171,7 +171,7 @@ function main(): void {
     targets.push({ dir: join(CLIENT_SRC, folder), isTypes: true });
   }
 
-  const files: { path: string; rel: string; isTypes: boolean }[] = [];
+  const files: Array<{ path: string; rel: string; isTypes: boolean }> = [];
   for (const t of targets) {
     if (!existsSync(t.dir)) continue;
     for (const name of readdirSync(t.dir)) {
@@ -441,7 +441,7 @@ function findSchemaExports(source: string): SchemaExport[] {
     let j = i - 1;
     // Skip blank lines.
     while (j >= 0 && lines[j].trim().length === 0) j--;
-    if (j >= 0 && /\*\//.test(lines[j])) {
+    if (j >= 0 && lines[j].includes("*/")) {
       // Found end of a block — walk up to find its start.
       let k = j;
       while (k >= 0 && !/^\s*\/\*\*/.test(lines[k])) k--;
@@ -803,12 +803,11 @@ function refreshSchemaFieldComments(
   const fieldByName = new Map<string, DocField>();
   for (const f of docFields) fieldByName.set(f.name, f);
 
-  const updates: { line: number; newComment: string[] }[] = [];
+  const updates: Array<{ line: number; newComment: string[] }> = [];
 
   for (let i = exportLineIdx; i < lines.length; i++) {
     const line = lines[i];
-    for (let c = 0; c < line.length; c++) {
-      const ch = line[c];
+    for (const ch of line) {
       if (ch === `{`) braceDepth++;
       else if (ch === `}`) braceDepth--;
       else if (ch === `(`) parenDepth++;
@@ -851,7 +850,7 @@ function refreshSchemaFieldComments(
       // Walk backwards for a preceding `/** */` block.
       let j = i - 1;
       while (j >= 0 && lines[j].trim().length === 0) j--;
-      if (j >= 0 && /\*\//.test(lines[j])) {
+      if (j >= 0 && lines[j].includes("*/")) {
         let k = j;
         while (k >= 0 && !/^\s*\/\*\*/.test(lines[k])) k--;
         if (k >= 0) {
@@ -941,8 +940,11 @@ function refreshEnumMemberComments(
   }
   if (rowByName.size === 0) return source;
 
-  const updates: { line: number; newComment: string[]; lineCount: number }[] =
-    [];
+  const updates: Array<{
+    line: number;
+    newComment: string[];
+    lineCount: number;
+  }> = [];
 
   let braceDepth = 0;
   let inEnum = false;
@@ -973,7 +975,7 @@ function refreshEnumMemberComments(
     let existingLineCount = 0;
     let j = i - 1;
     while (j >= 0 && lines[j].trim().length === 0) j--;
-    if (j >= 0 && /\*\//.test(lines[j])) {
+    if (j >= 0 && lines[j].includes("*/")) {
       let k = j;
       while (k >= 0 && !/^\s*\/\*\*/.test(lines[k])) k--;
       if (k >= 0) {
@@ -1068,7 +1070,9 @@ function transformDocDescription(input: string): string {
   return out.replace(/\s+/g, ` `).trim();
 }
 
-type MergeDecision = { kind: `skip` | `conflict` | `replace` | `add` };
+interface MergeDecision {
+  kind: `skip` | `conflict` | `replace` | `add`;
+}
 
 /**
  * Decide whether to replace `existing` with `desired`, leave it alone,
@@ -1143,7 +1147,7 @@ function refreshEndpointParamSchemas(
   // Identify the endpoint by the top JSDoc heading title (same trick as
   // diff-jsdoc.ts). We tolerate the case where there's no JSDoc match —
   // a file without a recognizable heading is left untouched.
-  const topHeadingMatch = source.match(/\*\s+###\s+\[([^\]]+)\]/);
+  const topHeadingMatch = /\*\s+###\s+\[([^\]]+)\]/.exec(source);
   if (!topHeadingMatch) return source;
   const title = topHeadingMatch[1].trim();
   const endpoint = endpoints.find((ep) => ep.name === title);
@@ -1160,11 +1164,11 @@ function refreshEndpointParamSchemas(
   // Walk into the v.object body. We track brace depth and look for
   // top-level field keys: body|params|form. For each, find the inner
   // v.object body that holds the actual field declarations.
-  const sections: {
+  const sections: Array<{
     fieldKey: `body` | `params` | `form`;
     innerOpenLine: number;
     innerCloseLine: number;
-  }[] = [];
+  }> = [];
 
   let braceDepth = 0;
   let inSchemaBody = false;
@@ -1268,8 +1272,11 @@ function refreshNestedFieldComments(
   const fieldByName = new Map<string, DocField>();
   for (const f of docFields) fieldByName.set(f.name, f);
 
-  const updates: { line: number; newComment: string[]; lineCount: number }[] =
-    [];
+  const updates: Array<{
+    line: number;
+    newComment: string[];
+    lineCount: number;
+  }> = [];
 
   // Walk inside the inner v.object body — between innerOpenLine and
   // innerCloseLine. Field declarations sit at brace-depth 1 RELATIVE to
@@ -1305,7 +1312,7 @@ function refreshNestedFieldComments(
     } else {
       let j = i - 1;
       while (j >= 0 && lines[j].trim().length === 0) j--;
-      if (j >= 0 && /\*\//.test(lines[j])) {
+      if (j >= 0 && lines[j].includes("*/")) {
         let k = j;
         while (k >= 0 && !/^\s*\/\*\*/.test(lines[k])) k--;
         if (k >= 0) {

@@ -176,12 +176,6 @@ function transform(source: string): TransformResult | null {
   }
   // Insert blank line, doc block, alias declaration after the interface
   // declaration.
-  const insertion = [
-    ``,
-    ...(docBlock ? docBlock.split(`\n`).filter((l) => l !== ``) : []),
-    `export const ${schemaName} = schema<${ifaceName}>(_${schemaName});`
-  ];
-  // Actually, structure the doc block properly:
   let insertText: string[] = [``];
   if (docBlock) insertText = insertText.concat(docBlock.trimEnd().split(`\n`));
   insertText.push(

@@ -14,7 +14,7 @@ const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), `../..`);
 
 const targetFiles = globSync(`packages/client/src/**/*.ts`, {
   cwd: projectRoot
-}) as string[];
+});
 
 let changed = 0;
 for (const rel of targetFiles) {

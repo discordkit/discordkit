@@ -3,7 +3,7 @@ import { post, type Fetcher } from "@discordkit/core/requests/methods";
 import { asInteger } from "@discordkit/core/validations/asInteger";
 import { boundedArray } from "@discordkit/core/validations/boundedArray";
 import { snowflake } from "@discordkit/core/validations/snowflake";
-import { type LobbyMember } from "./types/LobbyMember.js";
+import type { LobbyMember } from "./types/LobbyMember.js";
 import { lobbyMemberFlag } from "./types/LobbyMemberFlags.js";
 
 export const bulkUpdateLobbyMembersSchema = v.object({

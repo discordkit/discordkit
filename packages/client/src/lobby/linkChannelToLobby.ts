@@ -1,7 +1,7 @@
 import * as v from "valibot";
 import { patch, type Fetcher } from "@discordkit/core/requests/methods";
 import { snowflake } from "@discordkit/core/validations/snowflake";
-import { type Lobby } from "./types/Lobby.js";
+import type { Lobby } from "./types/Lobby.js";
 
 export const linkChannelToLobbySchema = v.object({
   lobby: snowflake,

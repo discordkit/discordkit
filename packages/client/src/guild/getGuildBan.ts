@@ -1,7 +1,7 @@
 import * as v from "valibot";
 import { get, type Fetcher } from "@discordkit/core/requests/methods";
 import { snowflake } from "@discordkit/core/validations/snowflake";
-import { type Ban } from "./types/Ban.js";
+import type { Ban } from "./types/Ban.js";
 
 export const getGuildBanSchema = v.object({
   guild: snowflake,

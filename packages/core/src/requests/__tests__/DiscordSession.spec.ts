@@ -1,3 +1,11 @@
+import {
+  describe,
+  it,
+  expect,
+  beforeAll,
+  afterEach,
+  afterAll
+} from "vite-plus/test";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { DiscordSession } from "../DiscordSession.js";

@@ -1,7 +1,7 @@
 import * as v from "valibot";
 import { get, type Fetcher } from "@discordkit/core/requests/methods";
 import { snowflake } from "@discordkit/core/validations/snowflake";
-import { type AuditLog } from "./types/AuditLog.js";
+import type { AuditLog } from "./types/AuditLog.js";
 import { auditLogEventSchema } from "./types/AuditLogEvent.js";
 
 export const getGuildAuditLogSchema = v.object({
