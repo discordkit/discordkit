@@ -1,19 +1,10 @@
-import type {
-  AuthorizationInfo,
-  AuthorizedApplication,
-  AuthorizedUser
+import * as v from "valibot";
+import {
+  authorizationInfoSchema,
+  type AuthorizationInfo
 } from "./types/AuthorizationInfo.js";
-import type { OAuth2Scope } from "./types/OAuth2Scope.js";
 
 const AUTH_INFO_URL = `https://discord.com/api/oauth2/@me`;
-
-/** The raw `/oauth2/@me` payload, in Discord's original shape. */
-interface RawAuthorizationInfo {
-  application: AuthorizedApplication;
-  scopes: OAuth2Scope[];
-  expires: string;
-  user?: AuthorizedUser;
-}
 
 /**
  * Fetch the current authorization information for a user access token —
@@ -57,11 +48,7 @@ export const getCurrentAuthorizationInfo = async (
     );
   }
 
-  const raw: RawAuthorizationInfo = await response.json();
-  return {
-    application: raw.application,
-    scopes: raw.scopes,
-    expires: raw.expires,
-    ...(raw.user === undefined ? {} : { user: raw.user })
-  };
+  // Validate Discord's response against the schema (source of truth); the
+  // parsed value IS the public AuthorizationInfo shape — no manual reshaping.
+  return v.parse(authorizationInfoSchema, await response.json());
 };

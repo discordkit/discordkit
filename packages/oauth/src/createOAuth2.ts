@@ -1,5 +1,10 @@
+import * as v from "valibot";
 import type { OAuth2Scope } from "./types/OAuth2Scope.js";
-import type { RawTokenResponse, TokenResponse } from "./types/TokenResponse.js";
+import {
+  rawTokenResponseSchema,
+  type RawTokenResponse,
+  type TokenResponse
+} from "./types/TokenResponse.js";
 
 /** Discord's user-facing authorization page (note: no `/api` segment). */
 const AUTHORIZE_URL = `https://discord.com/oauth2/authorize`;
@@ -175,13 +180,11 @@ export const createOAuth2 = (config: OAuth2Config): OAuth2 => {
   /**
    * POST form-encoded params to a token endpoint and return the parsed JSON
    * body (or `undefined` for an empty 200, as the revoke endpoint returns).
-   * `JSON.parse` yields `any`, which flows into the declared return without
-   * an explicit assertion; callers narrow it to their concrete shape.
    */
   const postForm = async (
     url: string,
     params: Record<string, string>
-  ): Promise<RawTokenResponse | undefined> => {
+  ): Promise<unknown> => {
     const response = await fetch(url, {
       method: `POST`,
       headers: {
@@ -198,12 +201,12 @@ export const createOAuth2 = (config: OAuth2Config): OAuth2 => {
     return text.length === 0 ? undefined : JSON.parse(text);
   };
 
-  /** Exchange via the token endpoint, asserting a (non-empty) token body came back. */
+  /** Exchange via the token endpoint, validating the (non-empty) token body. */
   const tokenGrant = async (
     params: Record<string, string>
   ): Promise<TokenResponse> => {
-    const raw = await postForm(TOKEN_URL, params);
-    if (raw === undefined) {
+    const body = await postForm(TOKEN_URL, params);
+    if (body === undefined) {
       throw new Error(
         `The Discord token endpoint returned a success status but an empty ` +
           `body, so there's no access token to read. This is unexpected and ` +
@@ -211,6 +214,9 @@ export const createOAuth2 = (config: OAuth2Config): OAuth2 => {
           `check the Discord status page (https://discordstatus.com).`
       );
     }
+    // Validate Discord's response against the schema (source of truth) so a
+    // malformed/changed payload fails loudly here rather than downstream.
+    const raw: RawTokenResponse = v.parse(rawTokenResponseSchema, body);
     return normalizeToken(raw);
   };
 

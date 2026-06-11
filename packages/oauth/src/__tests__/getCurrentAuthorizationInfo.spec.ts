@@ -28,7 +28,7 @@ describe(`getCurrentAuthorizationInfo`, () => {
           application: { id: `1`, name: `App`, icon: null, description: `` },
           scopes: [`identify`, `email`],
           expires: `2026-07-01T00:00:00.000Z`,
-          user: { id: `2`, username: `n`, discriminator: `0` }
+          user: { id: `2`, username: `n`, discriminator: `0`, avatar: null }
         });
       })
     );

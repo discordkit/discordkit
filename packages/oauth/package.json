@@ -42,6 +42,12 @@
     "dist/**/*"
   ],
   "sideEffects": false,
+  "dependencies": {
+    "@discordkit/core": "workspace:^"
+  },
+  "peerDependencies": {
+    "valibot": ">= 1.4.0"
+  },
   "devDependencies": {
     "@discordkit/test-utils": "workspace:^"
   }

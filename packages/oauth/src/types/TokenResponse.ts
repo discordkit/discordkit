@@ -1,24 +1,42 @@
+import * as v from "valibot";
+import { schema } from "@discordkit/core/validations/schema";
 import type { OAuth2Scope } from "./OAuth2Scope.js";
 
 /**
- * The raw token response Discord returns from `POST /oauth2/token`, in its
- * original `snake_case` shape. Consumers should prefer {@link TokenResponse},
- * which is the camelCased form the flow utilities resolve to.
- *
- * @internal
+ * Valibot schema for the raw token response Discord returns from
+ * `POST /oauth2/token`, in its original `snake_case` shape. This is the source
+ * of truth: {@link RawTokenResponse} is inferred from it, the flow utilities
+ * validate Discord's responses against it, and the e2e mocks generate fixtures
+ * from it (Valimock). The camelCased {@link TokenResponse} is the public form
+ * the flow utilities normalize to.
  */
-export interface RawTokenResponse {
-  access_token: string;
-  token_type: `Bearer`;
-  expires_in: number;
-  refresh_token?: string;
-  scope: string;
+const _rawTokenResponseSchema = v.object({
+  access_token: v.string(),
+  token_type: v.literal(`Bearer`),
+  expires_in: v.number(),
+  refresh_token: v.exactOptional(v.string()),
+  scope: v.string(),
   /**
    * Present only on the webhook flow (`scope=webhook.incoming`). Left as
    * `unknown` here — the webhook object is owned by `@discordkit/client`.
    */
-  webhook?: unknown;
-}
+  webhook: v.exactOptional(v.unknown())
+});
+
+/**
+ * The raw token response Discord returns from `POST /oauth2/token`. Consumers
+ * should prefer {@link TokenResponse}, the camelCased form the flow utilities
+ * resolve to.
+ *
+ * @internal
+ */
+export interface RawTokenResponse extends v.InferOutput<
+  typeof _rawTokenResponseSchema
+> {}
+
+export const rawTokenResponseSchema = schema<RawTokenResponse>(
+  _rawTokenResponseSchema
+);
 
 /**
  * A successful token exchange / refresh result, normalized to `camelCase` to
