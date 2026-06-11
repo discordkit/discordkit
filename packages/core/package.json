@@ -22,12 +22,12 @@
   "type": "module",
   "exports": {
     ".": {
-      "development": "./src/index.ts",
+      "@discordkit/source": "./src/index.ts",
       "types": "./dist/index.d.mts",
       "import": "./dist/index.mjs"
     },
     "./*": {
-      "development": "./src/*.ts",
+      "@discordkit/source": "./src/*.ts",
       "types": "./dist/*.d.mts",
       "import": "./dist/*.mjs"
     },

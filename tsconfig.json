@@ -12,10 +12,13 @@
     // Add DOM on top of the base's ESNext lib for verifyKey's
     // window/crypto feature-detection and any other client-runtime checks.
     "lib": ["ESNext", "DOM"],
-    // Resolve workspace imports through each package's `development`
-    // export condition during local dev. Lets `tsc` and tooling read
-    // src/*.ts directly without requiring `dist/` to exist.
-    "customConditions": ["development"],
+    // Resolve workspace imports through each package's private
+    // `@discordkit/source` export condition during local dev. Lets `tsc` and
+    // tooling read src/*.ts directly without requiring `dist/` to exist. The
+    // name is intentionally private (not the standard `development`) so that
+    // external consumers — notably Next.js bundlers — don't pick it up and try
+    // to resolve our `.js`-on-`.ts` source imports, which they can't.
+    "customConditions": ["@discordkit/source"],
     // Library-shape: pull TS runtime helpers from `tslib` instead of
     // inlining them into every emitted module. Smaller dist/ output.
     "importHelpers": true,

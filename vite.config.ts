@@ -16,6 +16,14 @@ export default defineConfig({
       ci: { command: `vp lint && vp test && vp run build:all`, cache: false }
     }
   },
+  // Resolve workspace packages to their TypeScript source via the private
+  // `@discordkit/source` export condition (matches tsconfig `customConditions`)
+  // so Vitest runs against `src/` without requiring a build. The name is
+  // private — not `development` — so external bundlers (Next.js) don't pick it
+  // up and try to resolve our `.js`-on-`.ts` source imports, which they can't.
+  resolve: {
+    conditions: [`@discordkit/source`]
+  },
   test: {
     name: `discordkit`,
     globals: true,

@@ -117,5 +117,108 @@ describe(`request`, () => {
         encodeURIComponent(`Spring cleaning — duplicate channel`)
       ]);
     });
+
+    it(`uses the user token (asUser) over the session token`, async () => {
+      // WHY: user-scoped OAuth2 calls run inside asUser().request(); the user's
+      // bearer token must take precedence over the global bot session token,
+      // and asUser prepends the `Bearer ` prefix to the bare access token.
+      const authHeaders: (string | null)[] = [];
+      server.use(
+        http.get(
+          `https://discord.com/api/v10/users/@me`,
+          ({ request: req }) => {
+            authHeaders.push(req.headers.get(`Authorization`));
+            return Response.json({ id: `1` });
+          }
+        )
+      );
+
+      discord.clearSession();
+      discord.setToken(`Bot global-bot-token`);
+
+      const user = discord.asUser(`user-access-token`);
+      await user.request(async () =>
+        request(new URL(`https://discord.com/api/v10/users/@me`), `GET`)
+      );
+
+      expect(authHeaders).toEqual([`Bearer user-access-token`]);
+      // request() restored the previous (bot) token afterwards.
+      expect(discord.getSession()).toBe(`Bot global-bot-token`);
+    });
+
+    it(`restores the previous token after request() resolves, even on throw`, async () => {
+      // WHY: a user token must not leak past its request() scope — otherwise a
+      // later request (e.g. on a reused serverless instance) could send it.
+      server.use(
+        http.get(`https://discord.com/api/v10/users/@me`, () =>
+          HttpResponse.text(`boom`, { status: 500 })
+        )
+      );
+      discord.clearSession();
+      discord.setToken(`Bot global-bot-token`);
+
+      const user = discord.asUser(`user-access-token`);
+      await expect(
+        user.request(async () =>
+          request(new URL(`https://discord.com/api/v10/users/@me`), `GET`)
+        )
+      ).rejects.toThrow();
+
+      // Despite the throw, the active token was restored.
+      expect(discord.getSession()).toBe(`Bot global-bot-token`);
+    });
+
+    it(`disposes a lingering user token at scope exit (using)`, async () => {
+      // WHY: the `using` disposal is the safety net for tokens left active
+      // outside a request() call. We simulate that by activating the token via
+      // a request() that resolves, then leaving a second one pending — on scope
+      // exit, dispose() must clear whatever is active so it can't leak into a
+      // later request on a reused (warm) instance.
+      server.use(
+        http.get(`https://discord.com/api/v10/users/@me`, () =>
+          Response.json({ id: `1` })
+        )
+      );
+      discord.clearSession();
+
+      {
+        using user = discord.asUser(`user-access-token`);
+        // A pending (not awaited) request leaves the token active when the
+        // block exits — exactly the leak `using` guards against.
+        const pending = user.request(async () =>
+          request(new URL(`https://discord.com/api/v10/users/@me`), `GET`)
+        );
+        expect(discord.hasAuth).toBe(true);
+        await pending;
+      }
+
+      // Dispose ran on scope exit; no token remains active.
+      expect(discord.hasAuth).toBe(false);
+    });
+
+    it(`allows a user token when the session is unset`, async () => {
+      // WHY: a server handling per-user requests may never set a global session
+      // — the user token alone must satisfy the auth guard.
+      const authHeaders: (string | null)[] = [];
+      server.use(
+        http.get(
+          `https://discord.com/api/v10/users/@me`,
+          ({ request: req }) => {
+            authHeaders.push(req.headers.get(`Authorization`));
+            return Response.json({ id: `1` });
+          }
+        )
+      );
+
+      discord.clearSession();
+      const user = discord.asUser(`solo-user-token`);
+      await user.request(async () =>
+        request(new URL(`https://discord.com/api/v10/users/@me`), `GET`)
+      );
+
+      expect(authHeaders).toEqual([`Bearer solo-user-token`]);
+      // No session token remained active after the scoped request.
+      expect(discord.hasAuth).toBe(false);
+    });
   });
 });

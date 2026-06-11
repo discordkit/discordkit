@@ -8,6 +8,14 @@ interface QueuedRequest {
   method: string;
   body?: string | FormData | null;
   options?: RequestOptions;
+  /**
+   * The `Authorization` header value captured for this request at enqueue
+   * time — a snapshot of {@link DiscordSession.setActiveToken} (falling back
+   * to the session token). Travels with the request through retries so a
+   * later `setActiveToken` by a concurrent caller can't change the auth used
+   * for an already-sent request.
+   */
+  token?: `${`Bot` | `Bearer`} ${string}`;
   resolve: (value: Response) => void;
   reject: (error: Error) => void;
   retryCount?: number; // Optional retry tracking
@@ -25,11 +33,32 @@ interface InvalidRequestTracker {
   windowStart: number; // Timestamp in ms
 }
 
+/**
+ * A disposable handle scoping requests to a single user's token, returned by
+ * {@link DiscordSession.asUser}. Use with `using` for automatic cleanup:
+ *
+ * ```ts
+ * using user = discord.asUser(accessToken);
+ * const me = await user.request(() => getCurrentUser());
+ * ```
+ */
+export interface UserSession extends Disposable {
+  /** Run `fn` with this user's token active; restores the previous token after. */
+  request: <T>(fn: () => Promise<T>) => Promise<T>;
+}
+
 /** @internal */
 export class DiscordSession {
   endpoint: string = endpoint;
   maxRetries: number = 5;
   #authToken: string | null = null;
+  /**
+   * The currently-active per-request token override. When set, requests
+   * enqueued via {@link queueRequest} capture this value (instead of the
+   * session token) for their `Authorization` header. Used to make user-scoped
+   * (OAuth2 bearer) calls without permanently changing the session.
+   */
+  #activeToken: `${`Bot` | `Bearer`} ${string}` | null = null;
 
   // Rate limit tracking
   #buckets = new Map<string, RateLimitBucket>();
@@ -81,6 +110,7 @@ export class DiscordSession {
 
   clearSession = (): this => {
     this.#authToken = null;
+    this.#activeToken = null;
     this.#buckets.clear();
     this.#globalReset = 0;
     this.#requestQueue = [];
@@ -91,6 +121,61 @@ export class DiscordSession {
     };
     return this;
   };
+
+  /** Clear the active per-request token; requests fall back to the session token. */
+  clearActiveToken = (): this => {
+    this.#activeToken = null;
+    return this;
+  };
+
+  /**
+   * Scope subsequent requests to a single user's OAuth2 access token.
+   *
+   * Pass the **bare** access token (no `Bearer ` prefix — it's added for you).
+   * Returns a disposable handle whose `request()` method runs a callback with
+   * the user's token active, so any discordkit fetcher called inside it
+   * authenticates as that user instead of the bot session:
+   *
+   * ```ts
+   * using user = discord.asUser(accessToken);
+   * const guilds = await user.request(() => getCurrentUserGuilds({}));
+   * // `using` disposes the handle at scope exit — even on throw — clearing
+   * // the active token so it can't leak into a later request (important on
+   * // reused serverless/warm instances).
+   * ```
+   *
+   * Without `using`, call {@link clearActiveToken} yourself when done, or rely
+   * on each `request()` restoring the previous token after it resolves.
+   */
+  asUser = (accessToken: string): UserSession => {
+    const token = `Bearer ${accessToken}` as const;
+    return {
+      request: async <T>(fn: () => Promise<T>): Promise<T> => {
+        const previous = this.#activeToken;
+        this.#activeToken = token;
+        try {
+          // `fn` enqueues the request synchronously, capturing `token` onto the
+          // QueuedRequest before the first await — so restoring below can't
+          // affect the in-flight request's auth.
+          return await fn();
+        } finally {
+          this.#activeToken = previous;
+        }
+      },
+      [Symbol.dispose]: (): void => {
+        this.#activeToken = null;
+      }
+    };
+  };
+
+  /**
+   * Whether a request can authenticate right now — either an active
+   * per-request token or a session token is set. Used by the request layer to
+   * decide if it must fail early for lack of auth.
+   */
+  get hasAuth(): boolean {
+    return this.#activeToken !== null || this.#authToken !== null;
+  }
 
   getSession = (): string => {
     const token = this.#authToken;
@@ -117,6 +202,11 @@ export class DiscordSession {
         method,
         body,
         options,
+        // Snapshot the active token NOW, at enqueue time. Reading it here
+        // (synchronously) rather than later in #executeRequest is what makes
+        // concurrent per-user calls safe: a subsequent setActiveToken can't
+        // retroactively change the auth for a request already in the queue.
+        ...(this.#activeToken === null ? {} : { token: this.#activeToken }),
         resolve,
         reject
       });
@@ -205,9 +295,11 @@ export class DiscordSession {
 
     // Anonymous endpoints (webhook/interaction tokens in the URL) must NOT
     // send an Authorization header — Discord rejects requests that present
-    // both forms of auth.
+    // both forms of auth. Otherwise we use the token captured for this
+    // request at enqueue time (see queueRequest), which isolates per-request
+    // (e.g. OAuth2 bearer) tokens from concurrent callers.
     if (!request.options?.anonymous) {
-      headers.Authorization = this.getSession();
+      headers.Authorization = request.token ?? this.getSession();
     }
 
     // Audit-log reason. URL-encode so non-ASCII characters survive the

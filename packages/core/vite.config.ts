@@ -1,4 +1,5 @@
 import { defineConfig } from "vite-plus";
+import { buildTarget } from "../../scripts/buildTarget.js";
 
 export default defineConfig({
   run: {
@@ -11,6 +12,9 @@ export default defineConfig({
     globals: true
   },
   pack: {
+    // Build target derived from the root package.json `engines.node` — a
+    // single source of truth for the whole workspace.
+    target: buildTarget,
     // Unbundled mode (see packages/client/vite.config.ts for rationale).
     entry: [
       `src/**/*.ts`,

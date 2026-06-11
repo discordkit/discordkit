@@ -37,10 +37,11 @@ export const request = async <T>(
   body?: RequestBody,
   options?: RequestOptions
 ): Promise<T> => {
-  // For anonymous endpoints the session is optional — webhook and
-  // interaction tokens travel in the URL, not the Authorization header.
-  if (!options?.anonymous) {
-    discord.getSession();
+  // Non-anonymous requests need *some* auth: either an active per-request
+  // token or a session token. Anonymous endpoints (webhook/interaction tokens
+  // in the URL) need neither. Fail early with a clear message if none is set.
+  if (!options?.anonymous && !discord.hasAuth) {
+    discord.getSession(); // throws the canonical "Auth Token must be set" error
   }
 
   /**
