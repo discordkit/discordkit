@@ -27,7 +27,7 @@ const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), `../..`);
 
 const allCandidates = globSync(`packages/client/src/**/*.ts`, {
   cwd: projectRoot
-}) as string[];
+});
 
 const targetFiles = allCandidates
   .filter(
@@ -135,7 +135,7 @@ function computeEdits(filePath: string, source: string): Edit[] {
 function collectReferencedIdentifiers(sf: ts.SourceFile): Set<string> {
   const refs = new Set<string>();
 
-  function visit(node: ts.Node, insideImport: boolean): void {
+  function visit(node: ts.Node): void {
     if (ts.isImportDeclaration(node)) {
       // Skip the entire import declaration when collecting references.
       // (We don't want the import specifier itself to count as a reference.)
@@ -144,10 +144,10 @@ function collectReferencedIdentifiers(sf: ts.SourceFile): Set<string> {
     if (ts.isIdentifier(node)) {
       refs.add(node.text);
     }
-    ts.forEachChild(node, (child) => visit(child, insideImport));
+    ts.forEachChild(node, visit);
   }
 
-  ts.forEachChild(sf, (child) => visit(child, false));
+  ts.forEachChild(sf, visit);
   return refs;
 }
 

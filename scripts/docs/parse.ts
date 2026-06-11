@@ -181,7 +181,7 @@ export function parseResource(markdown: string): DocResource {
     .use(remarkParse)
     .use(remarkGfm)
     .use(remarkMdx)
-    .parse(markdown) as Root;
+    .parse(markdown);
 
   // Title and resource description.
   const { title, description, bodyStart } = extractHeader(tree.children);
@@ -189,15 +189,23 @@ export function parseResource(markdown: string): DocResource {
   // Pre-pass: build an indexed view of every node, with the heading-stack
   // at each position. Each node has [h2, h3, h4, h5, h6] showing the nearest
   // heading at each level above it (or null).
-  type IndexedNode = {
+  interface IndexedNode {
     node: RootContent;
-    stack: (string | null)[]; // index 2..6 → heading text at that depth, or null
+    stack: Array<string | null>; // index 2..6 → heading text at that depth, or null
     /** The deepest non-null heading in the stack. */
     deepestHeading: { depth: number; text: string } | null;
-  };
+  }
 
   const indexed: IndexedNode[] = [];
-  const stack: (string | null)[] = [null, null, null, null, null, null, null];
+  const stack: Array<string | null> = [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+  ];
   for (let i = bodyStart; i < tree.children.length; i++) {
     const node = tree.children[i];
     if (node.type === `heading`) {
@@ -209,7 +217,7 @@ export function parseResource(markdown: string): DocResource {
       // Don't index heading nodes themselves — only the content following.
       continue;
     }
-    const stackCopy: (string | null)[] = [...stack];
+    const stackCopy: Array<string | null> = [...stack];
     let deepest: { depth: number; text: string } | null = null;
     for (let d = 6; d >= 2; d--) {
       const heading = stackCopy[d];
@@ -237,12 +245,12 @@ export function parseResource(markdown: string): DocResource {
     notes: AdmonitionBlock[];
     examples: DocExample[];
     /** Param groups by kind, keyed by variant label. */
-    paramTables: {
+    paramTables: Array<{
       kind: `json` | `query` | `form`;
       variant: string;
       table: Table;
       headingText: string; // the sub-heading title that wrapped this table
-    }[];
+    }>;
   }
   const endpointSeeds: EndpointSeed[] = [];
   /** Map from heading text + depth to seed (so we can attach later-found content). */
@@ -283,11 +291,11 @@ export function parseResource(markdown: string): DocResource {
 
   // Second pass — for each non-heading node, attach to its closest endpoint
   // OR record as candidate for object/enum.
-  const tableCandidates: { entry: IndexedNode; table: Table }[] = [];
-  const admonitionCandidates: {
+  const tableCandidates: Array<{ entry: IndexedNode; table: Table }> = [];
+  const admonitionCandidates: Array<{
     entry: IndexedNode;
     admonition: AdmonitionBlock;
-  }[] = [];
+  }> = [];
 
   for (const entry of indexed) {
     const { node, stack } = entry;
@@ -664,7 +672,7 @@ function isStructuralHeading(heading: string): boolean {
  * (or `null` if the node sits directly under the endpoint heading).
  */
 function closestSubHeading(
-  stack: (string | null)[],
+  stack: Array<string | null>,
   endpointDepth: number
 ): string | null {
   for (let d = 6; d > endpointDepth; d--) {
@@ -735,15 +743,8 @@ function mdxElementText(el: MdxJsxElement): string {
 
 // ─── table classification ──────────────────────────────────────────────────
 
-interface TableClassification {
-  kind: `param` | `object` | `enum` | `unknown`;
-  paramKind?: `json` | `query` | `form`;
-  variant?: string;
-  headingText?: string;
-}
-
 interface IndexedNodeView {
-  stack: (string | null)[];
+  stack: Array<string | null>;
   deepestHeading: { depth: number; text: string } | null;
 }
 
@@ -858,8 +859,8 @@ function parseTableHeader(table: Table): string[] | null {
 function parseTableRowsAsRecord(
   table: Table,
   header: string[]
-): Record<string, string>[] {
-  const rows: Record<string, string>[] = [];
+): Array<Record<string, string>> {
+  const rows: Array<Record<string, string>> = [];
   for (let i = 1; i < table.children.length; i++) {
     const row = table.children[i];
     if (row.type !== `tableRow`) continue;
@@ -938,6 +939,11 @@ function cellToMarkdown(cell: RootContent | PhrasingContent): string {
 }
 
 function phrasingToMarkdown(node: PhrasingContent): string {
+  // mdast's PhrasingContent union has ~25 members; we only handle the ones
+  // Discord's docs actually emit. The `default` branch falls back to mdast's
+  // own to-string for anything unexpected, so missing cases degrade
+  // gracefully rather than crash.
+  // oxlint-disable-next-line typescript/switch-exhaustiveness-check
   switch (node.type) {
     case `text`:
       return node.value;
@@ -1046,6 +1052,9 @@ function nodesToText(nodes: RootContent[]): string {
  * Other block types fall back to plain text.
  */
 function nodeToMarkdown(node: RootContent): string {
+  // mdast's RootContent union has ~25 members; see the matching
+  // suppression on `phrasingToMarkdown` above for the same rationale.
+  // oxlint-disable-next-line typescript/switch-exhaustiveness-check
   switch (node.type) {
     case `paragraph`:
       // Collapse soft line breaks (hard-wrapped MDX source) to single spaces
@@ -1219,9 +1228,7 @@ function summarize(r: DocResource): void {
       );
     }
     console.log(
-      `  - ${ep.method.padEnd(6)} ${ep.path.padEnd(50)} ${ep.name}${
-        params.length ? ` (${params.join(`, `)})` : ``
-      }`
+      `  - ${ep.method.padEnd(6)} ${ep.path.padEnd(50)} ${ep.name}${params.length ? ` (${params.join(`, `)})` : ``}`
     );
   }
   if (r.unparsedSections.length > 0) {

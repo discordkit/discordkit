@@ -25,11 +25,9 @@ import ts from "typescript";
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), `../..`);
 
-const specs = (
-  globSync(`packages/client/src/**/__tests__/*.spec.ts`, {
-    cwd: projectRoot
-  }) as string[]
-).map((p) => resolve(projectRoot, p));
+const specs = globSync(`packages/client/src/**/__tests__/*.spec.ts`, {
+  cwd: projectRoot
+}).map((p) => resolve(projectRoot, p));
 
 const DROPPED_TEST_HELPERS = new Set([
   `runProcedure`,
@@ -365,7 +363,7 @@ function computeImportEdits(sf: ts.SourceFile, source: string): Edit[] {
     if (!ts.isStringLiteral(stmt.moduleSpecifier)) continue;
     const moduleName = stmt.moduleSpecifier.text;
     const ic = stmt.importClause;
-    if (!ic || !ic.namedBindings) continue;
+    if (!ic?.namedBindings) continue;
     if (!ts.isNamedImports(ic.namedBindings)) continue;
 
     const elements = ic.namedBindings.elements;
@@ -457,15 +455,9 @@ function computeImportEdits(sf: ts.SourceFile, source: string): Edit[] {
       const ic = coreImport.importClause!;
       if (ic.namedBindings && ts.isNamedImports(ic.namedBindings)) {
         const elements = ic.namedBindings.elements;
-        const keptAfter = elements.filter((el) => {
-          // After applying drop logic above, we know what'll remain.
-          // For this synthesis, just retain everything that wouldn't be dropped.
-          return true; // We trust the prior edit already dropped what's needed.
-        });
-        // The simplest approach: replace the existing edit (if any) that targeted
-        // this import, OR if no edit existed, just insert toValidated.
-        // For safety, we re-build the named imports list from scratch including
-        // toValidated, and emit a single edit replacing the named imports range.
+        // Re-build the named imports list from scratch including toValidated,
+        // and emit a single edit replacing the named imports range. This
+        // supersedes any previously-queued edit targeting the same range.
         const openBrace = ic.namedBindings.getStart(sf, false);
         const closeBrace = ic.namedBindings.end;
         const namesAfterDrops = elements

@@ -61,6 +61,7 @@ export type Fetcher<
   /** The return value expected from the fetch call */
   R = void,
   /** Endpoint capabilities; shapes the `options` argument */
+  // oxlint-disable-next-line typescript/no-empty-object-type
   C extends FetcherCapabilities = {}
 > = S extends null
   ? RequiresOptions<C> extends true

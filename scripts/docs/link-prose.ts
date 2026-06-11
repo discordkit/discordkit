@@ -179,7 +179,7 @@ function linkProseInFile(
     if (!inJsDoc) {
       if (trimmedStart.startsWith(`/**`)) {
         // Single-line block.
-        if (/\*\//.test(trimmedStart.slice(3))) {
+        if (trimmedStart.slice(3).includes("*/")) {
           const replaced = rewriteJsDocLine(line, registry, phrases, ownType);
           if (replaced !== line) {
             lines[i] = replaced;
@@ -192,7 +192,7 @@ function linkProseInFile(
       continue;
     }
     // We're inside a multi-line JSDoc block.
-    if (/\*\//.test(trimmedStart)) {
+    if (trimmedStart.includes("*/")) {
       inJsDoc = false;
       continue;
     }
@@ -237,7 +237,7 @@ function rewriteJsDocLine(
   //     event" within a generous window.
   const protectedRe =
     /\{@link[^}]*\}|`[^`]*`|\*\*[^*]+\*\*|\]\([^)]+\)|\[[^\]]+\]\([^)]+\)|(?:[A-Z][A-Za-z]+\s+){1,8}(?:[a-z]+\s+){0,4}(?:[A-Z][A-Za-z]+\s+){0,5}Gateway\s+events?/g;
-  const segments: { text: string; protect: boolean }[] = [];
+  const segments: Array<{ text: string; protect: boolean }> = [];
   let lastIdx = 0;
   let pm: RegExpExecArray | null;
   while ((pm = protectedRe.exec(line)) !== null) {
@@ -250,14 +250,9 @@ function rewriteJsDocLine(
   if (lastIdx < line.length) {
     segments.push({ text: line.slice(lastIdx), protect: false });
   }
-  for (let i = 0; i < segments.length; i++) {
-    if (segments[i].protect) continue;
-    segments[i].text = rewriteSegment(
-      segments[i].text,
-      registry,
-      phrases,
-      ownType
-    );
+  for (const segment of segments) {
+    if (segment.protect) continue;
+    segment.text = rewriteSegment(segment.text, registry, phrases, ownType);
   }
   return segments.map((s) => s.text).join(``);
 }

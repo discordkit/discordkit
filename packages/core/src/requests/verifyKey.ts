@@ -1,20 +1,31 @@
 /**
- * Get the SubtleCrypto interface for the current environment
+ * Get the SubtleCrypto interface for the current environment.
+ * Modern Node and browsers both expose `globalThis.crypto.subtle`;
+ * the older Node fallback and the browser-specific `window.crypto`
+ * branches handle environments where that's not the case.
  */
+interface MaybeCrypto {
+  crypto?: { subtle?: SubtleCrypto };
+}
+
 const getSubtleCrypto = (): SubtleCrypto => {
-  // Node.js environment
+  // Modern Node.js / browsers / workers
   if (typeof globalThis.crypto !== `undefined`) {
     return globalThis.crypto.subtle;
   }
 
-  // Older Node.js versions
-  if (typeof global !== `undefined` && (global as any).crypto?.subtle) {
-    return (global as any).crypto.subtle;
+  // Older Node.js versions where `crypto` lives on `global`, not `globalThis`.
+  const maybeGlobal: MaybeCrypto | undefined =
+    typeof global !== `undefined` ? (global as MaybeCrypto) : undefined;
+  if (maybeGlobal?.crypto?.subtle) {
+    return maybeGlobal.crypto.subtle;
   }
 
-  // Browser environment
-  if (typeof window !== `undefined` && window.crypto?.subtle) {
-    return window.crypto.subtle;
+  // Browser environment where `window.crypto` is the only path.
+  const maybeWindow: MaybeCrypto | undefined =
+    typeof window !== `undefined` ? (window as MaybeCrypto) : undefined;
+  if (maybeWindow?.crypto?.subtle) {
+    return maybeWindow.crypto.subtle;
   }
 
   throw new Error(`SubtleCrypto is not available in this environment`);

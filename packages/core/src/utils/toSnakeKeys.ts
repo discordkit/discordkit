@@ -15,5 +15,5 @@ export const toSnakeKeys = <T extends object>(
     }, {}) as SnakeCasedPropertiesDeep<T>;
   }
 
-  return o;
+  return o as SnakeCasedPropertiesDeep<T>;
 };

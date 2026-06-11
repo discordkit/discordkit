@@ -1,7 +1,9 @@
-import type { GenericSchema } from "valibot";
 import type { Fetcher } from "./methods.js";
 
 /* Lifted from @tanstack/react-query */
+// Intentional declaration-merging surface: consumers extend `Register`
+// to override `queryMeta` and other framework-wide types.
+// oxlint-disable-next-line typescript/no-empty-object-type
 interface Register {}
 type QueryKey = readonly unknown[];
 type QueryMeta = Register extends {
@@ -45,18 +47,31 @@ export type QueryFunction<
  *
  * @__NO_SIDE_EFFECTS__
  */
-export const toQuery =
-  <S extends GenericSchema | null, R, T extends Fetcher<S, R>>(
-    fn: T
-  ): Parameters<T>[`length`] extends 0
-    ? () => QueryFunction<Awaited<ReturnType<T>>>
-    : (config: Parameters<T>[0]) => QueryFunction<Awaited<ReturnType<T>>> =>
-  // @ts-expect-error
-  (...config: [unknown]) =>
-  async () => {
-    // oxlint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
-    const call = fn as unknown as (
-      ...args: unknown[]
-    ) => Promise<Awaited<ReturnType<T>>>;
-    return call(...config);
-  };
+// Two overloads disambiguate the no-input vs input-accepting Fetcher
+// shapes. Under strict mode, a single signature with a conditional return
+// type forces TS to check the argument against the union of both branches
+// at the call site, which fails on contravariant param positions.
+// Overloads let inference pick one branch at a time.
+//
+// The second overload uses a structural shape `(config: TConfig, options?:
+// unknown) => Promise<R>` rather than `Fetcher<S, R>` so TS can infer
+// `TConfig` directly from the supplied callback's first parameter — going
+// through `Fetcher<S, R>` would require TS to first invert the conditional
+// type `S extends null ? ... : ...` to recover `S`, which it gives up on.
+// The runtime check is unchanged (the implementation casts internally), so
+// the looser structural type doesn't widen what consumers can pass in any
+// meaningful way — every endpoint Fetcher in the codebase is shaped this
+// way already.
+export function toQuery<R>(fn: Fetcher<null, R>): () => QueryFunction<R>;
+export function toQuery<TConfig, R>(
+  fn: (config: TConfig, options?: never) => Promise<R>
+): (config: TConfig) => QueryFunction<R>;
+export function toQuery<R>(
+  fn: (...args: never[]) => Promise<R>
+): (...config: [unknown]) => QueryFunction<R> {
+  return (...config: [unknown]) =>
+    async () => {
+      const call = fn as unknown as (...args: unknown[]) => Promise<R>;
+      return call(...config);
+    };
+}
