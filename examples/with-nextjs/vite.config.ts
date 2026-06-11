@@ -4,8 +4,16 @@ import { mergeLint, lint, react, next, fmt } from "@saeris/configs";
 export default defineConfig({
   run: {
     tasks: {
-      dev: { command: `next dev`, cache: false },
-      "build:examples": { command: `next build`, cache: true },
+      // Generate the Varlock env types (`env.d.ts`, gitignored) before dev or
+      // build so TypeScript can resolve `ENV.*`. Mirrors how `next-env.d.ts` is
+      // generated rather than committed.
+      typegen: { command: `varlock typegen`, cache: false },
+      dev: { command: `next dev`, cache: false, dependsOn: [`typegen`] },
+      "build:examples": {
+        command: `next build`,
+        cache: true,
+        dependsOn: [`typegen`]
+      },
       start: { command: `next start`, cache: false }
     }
   },

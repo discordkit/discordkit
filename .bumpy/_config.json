@@ -3,5 +3,5 @@
   "baseBranch": "main",
   "changelog": ["github", { "repo": "discordkit/discordkit" }],
   "linked": [["@discordkit/client", "@discordkit/core"]],
-  "ignore": ["webhook-action", "with-nextjs"]
+  "ignore": ["webhook-action", "with-nextjs-trpc", "with-nextjs"]
 }

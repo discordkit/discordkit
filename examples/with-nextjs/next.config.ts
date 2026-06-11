@@ -1,23 +1,15 @@
 import type { NextConfig } from "next";
-import * as v from "valibot";
-import { envSchema } from "./src/env";
+import { varlockNextConfigPlugin } from "@varlock/nextjs-integration/plugin";
 
-const { issues } = v.safeParse(envSchema, process.env);
-
-if (issues) {
-  throw new Error(v.summarize(issues));
-}
-
-declare global {
-  namespace NodeJS {
-    interface ProcessEnv extends v.InferOutput<typeof envSchema> {}
-  }
-}
+// Varlock validates env against `.env.schema`, redacts @sensitive values, and
+// makes `ENV` available at runtime. The plugin wires it into Next; env types
+// are generated separately by the `typegen` task.
+const withVarlock = varlockNextConfigPlugin();
 
 const config: NextConfig = {
   images: {
-    domains: [`cdn.discordapp.com`]
+    remotePatterns: [{ protocol: `https`, hostname: `cdn.discordapp.com` }]
   }
 };
 
-export default config;
+export default withVarlock(config);

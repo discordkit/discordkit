@@ -11,13 +11,8 @@
     "moduleResolution": "Bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "react-jsx",
+    "jsx": "preserve",
     "incremental": true,
-    // Mirror the package.json `imports` (`#src/*`) so `tsc` resolves the
-    // Node-style subpath alias the same way Next/Turbopack does at runtime.
-    "paths": {
-      "#src/*": ["./src/*"]
-    },
     "plugins": [
       {
         "name": "next"
@@ -29,8 +24,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "./*.cjs",
-    ".next/dev/types/**/*.ts"
+    "./*.cjs"
   ],
   "exclude": ["node_modules"]
 }
