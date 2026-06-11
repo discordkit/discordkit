@@ -2,7 +2,7 @@ import * as v from "valibot";
 import { post, type Fetcher } from "@discordkit/core/requests/methods";
 import { boundedString } from "@discordkit/core/validations/boundedString";
 import { snowflake } from "@discordkit/core/validations/snowflake";
-import { type Stage } from "./types/Stage.js";
+import type { Stage } from "./types/Stage.js";
 import { stagePrivacyLevelSchema } from "./types/StagePrivacyLevel.js";
 
 export const createStageInstanceSchema = v.object({

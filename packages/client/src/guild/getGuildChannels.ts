@@ -1,7 +1,7 @@
 import * as v from "valibot";
 import { get, type Fetcher } from "@discordkit/core/requests/methods";
 import { snowflake } from "@discordkit/core/validations/snowflake";
-import { type Channel } from "../channel/types/Channel.js";
+import type { Channel } from "../channel/types/Channel.js";
 
 export const getGuildChannelsSchema = v.object({
   guild: snowflake

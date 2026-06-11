@@ -1,7 +1,7 @@
 import * as v from "valibot";
 import { get, type Fetcher } from "@discordkit/core/requests/methods";
 import { snowflake } from "@discordkit/core/validations/snowflake";
-import { type ModerationRule } from "./types/ModerationRule.js";
+import type { ModerationRule } from "./types/ModerationRule.js";
 
 export const listAutoModerationRulesForGuildSchema = v.object({
   guild: snowflake

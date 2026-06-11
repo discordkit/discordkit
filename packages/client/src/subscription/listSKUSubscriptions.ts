@@ -1,7 +1,7 @@
 import * as v from "valibot";
 import { get, type Fetcher } from "@discordkit/core/requests/methods";
 import { snowflake } from "@discordkit/core/validations/snowflake";
-import { type Subscription } from "./types/Subscription.js";
+import type { Subscription } from "./types/Subscription.js";
 
 export const listSKUSubscriptionsSchema = v.object({
   sku: snowflake,

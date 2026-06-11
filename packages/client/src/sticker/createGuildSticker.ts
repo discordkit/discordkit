@@ -3,7 +3,7 @@ import { post, type Fetcher } from "@discordkit/core/requests/methods";
 import { boundedString } from "@discordkit/core/validations/boundedString";
 import { multipart, fileUpload } from "@discordkit/core/validations/fileUpload";
 import { snowflake } from "@discordkit/core/validations/snowflake";
-import { type Sticker } from "./types/Sticker.js";
+import type { Sticker } from "./types/Sticker.js";
 
 export const createGuildStickerSchema = v.object({
   guild: snowflake,

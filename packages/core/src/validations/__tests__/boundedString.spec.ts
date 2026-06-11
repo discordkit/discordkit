@@ -1,3 +1,4 @@
+import { describe, it, expect } from "vite-plus/test";
 import * as v from "valibot";
 import { boundedString } from "../boundedString.js";
 

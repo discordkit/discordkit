@@ -1,7 +1,7 @@
 import * as v from "valibot";
 import { get, type Fetcher } from "@discordkit/core/requests/methods";
 import { snowflake } from "@discordkit/core/validations/snowflake";
-import { type Emoji } from "./types/Emoji.js";
+import type { Emoji } from "./types/Emoji.js";
 
 export const listApplicationEmojisSchema = v.object({
   application: snowflake

@@ -1,7 +1,7 @@
 import * as v from "valibot";
 import { post, type Fetcher } from "@discordkit/core/requests/methods";
 import { snowflake } from "@discordkit/core/validations/snowflake";
-import { type GuildTemplate } from "./types/GuildTemplate.js";
+import type { GuildTemplate } from "./types/GuildTemplate.js";
 
 export const createGuildTemplateSchema = v.object({
   guild: snowflake,

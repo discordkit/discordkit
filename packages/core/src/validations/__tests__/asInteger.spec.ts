@@ -1,4 +1,5 @@
-﻿/* oxlint-disable @typescript-eslint/prefer-literal-enum-member */
+﻿import { describe, it, expect } from "vite-plus/test";
+/* oxlint-disable @typescript-eslint/prefer-literal-enum-member */
 import type { InferOutput } from "valibot";
 import { integer, parse, pipe, object, safeParse } from "valibot";
 import { MockUtils } from "@discordkit/test-utils";

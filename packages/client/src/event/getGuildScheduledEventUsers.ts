@@ -1,7 +1,7 @@
 import * as v from "valibot";
 import { get, type Fetcher } from "@discordkit/core/requests/methods";
 import { snowflake } from "@discordkit/core/validations/snowflake";
-import { type ScheduledEventUser } from "./types/ScheduledEventUser.js";
+import type { ScheduledEventUser } from "./types/ScheduledEventUser.js";
 
 export const getGuildScheduledEventUsersSchema = v.object({
   guild: snowflake,

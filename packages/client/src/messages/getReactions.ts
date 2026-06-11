@@ -2,7 +2,7 @@ import * as v from "valibot";
 import { get, type Fetcher } from "@discordkit/core/requests/methods";
 import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
 import { snowflake } from "@discordkit/core/validations/snowflake";
-import { type User } from "../user/types/User.js";
+import type { User } from "../user/types/User.js";
 
 export const getReactionsSchema = v.object({
   channel: snowflake,

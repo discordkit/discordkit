@@ -1,7 +1,7 @@
 import * as v from "valibot";
 import { get, type Fetcher } from "@discordkit/core/requests/methods";
 import { snowflake } from "@discordkit/core/validations/snowflake";
-import { type SoundboardSound } from "./types/SoundboardSound.js";
+import type { SoundboardSound } from "./types/SoundboardSound.js";
 
 export const listGuildSoundboardSoundsSchema = v.object({
   guild: snowflake

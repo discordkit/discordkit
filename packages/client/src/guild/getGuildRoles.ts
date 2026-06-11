@@ -1,7 +1,7 @@
 import * as v from "valibot";
 import { get, type Fetcher } from "@discordkit/core/requests/methods";
 import { snowflake } from "@discordkit/core/validations/snowflake";
-import { type Role } from "../permissions/Role.js";
+import type { Role } from "../permissions/Role.js";
 
 export const getGuildRolesSchema = v.object({
   guild: snowflake

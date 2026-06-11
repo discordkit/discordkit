@@ -3,7 +3,7 @@ import { put, type Fetcher } from "@discordkit/core/requests/methods";
 import { asDigits } from "@discordkit/core/validations/asDigits";
 import { boundedString } from "@discordkit/core/validations/boundedString";
 import { snowflake } from "@discordkit/core/validations/snowflake";
-import { type ApplicationCommand } from "../application-commands/types/ApplicationCommand.js";
+import type { ApplicationCommand } from "../application-commands/types/ApplicationCommand.js";
 import type { Locales } from "./types/Locales.js";
 import { localesSchema } from "./types/Locales.js";
 import { applicationCommandOptionSchema } from "../application-commands/types/ApplicationCommandOption.js";

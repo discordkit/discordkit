@@ -2,7 +2,7 @@ import * as v from "valibot";
 import { get, type Fetcher } from "@discordkit/core/requests/methods";
 import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
 import { snowflake } from "@discordkit/core/validations/snowflake";
-import { type MessagePin } from "./types/MessagePin.js";
+import type { MessagePin } from "./types/MessagePin.js";
 
 export const getChannelPinsSchema = v.object({
   channel: snowflake,

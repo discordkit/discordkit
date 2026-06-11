@@ -1,6 +1,6 @@
 import type { Fetcher } from "@discordkit/core";
 import { get } from "@discordkit/core/requests/methods";
-import { type VoiceRegion } from "./types/VoiceRegion.js";
+import type { VoiceRegion } from "./types/VoiceRegion.js";
 
 /**
  * ### [List Voice Regions](https://discord.com/developers/docs/resources/voice#list-voice-regions)

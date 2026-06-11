@@ -1,4 +1,4 @@
-﻿import * as v from "valibot";
+import * as v from "valibot";
 import { asInteger } from "@discordkit/core/validations/asInteger";
 import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
 import { partialSchema, schema } from "@discordkit/core/validations/schema";

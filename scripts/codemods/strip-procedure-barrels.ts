@@ -14,11 +14,9 @@ import { fileURLToPath } from "node:url";
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), `../..`);
 
-const proceduresFiles = (
-  globSync(`packages/client/src/**/procedures.ts`, {
-    cwd: projectRoot
-  }) as string[]
-).map((p) => resolve(projectRoot, p));
+const proceduresFiles = globSync(`packages/client/src/**/procedures.ts`, {
+  cwd: projectRoot
+}).map((p) => resolve(projectRoot, p));
 
 let deletedFiles = 0;
 for (const file of proceduresFiles) {
@@ -26,11 +24,9 @@ for (const file of proceduresFiles) {
   deletedFiles++;
 }
 
-const barrelFiles = (
-  globSync(`packages/client/src/**/index.ts`, {
-    cwd: projectRoot
-  }) as string[]
-).map((p) => resolve(projectRoot, p));
+const barrelFiles = globSync(`packages/client/src/**/index.ts`, {
+  cwd: projectRoot
+}).map((p) => resolve(projectRoot, p));
 
 const reExportRegex =
   /^\s*export\s+\*\s+as\s+\w+\s+from\s+["']\.\/procedures\.js["'];?\s*$/gm;

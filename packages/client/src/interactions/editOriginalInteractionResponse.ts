@@ -11,7 +11,7 @@ import { allowedMentionSchema } from "../messages/types/AllowedMention.js";
 import { attachmentSchema } from "../messages/types/Attachment.js";
 import { messageComponentSchema } from "../messages/types/MessageComponent.js";
 import { EmbedType } from "../messages/types/EmbedType.js";
-import { type InteractionCallbackResponse } from "./types/InteractionCallbackResponse.js";
+import type { InteractionCallbackResponse } from "./types/InteractionCallbackResponse.js";
 
 export const editOriginalInteractionResponseSchema = v.object({
   application: snowflake,

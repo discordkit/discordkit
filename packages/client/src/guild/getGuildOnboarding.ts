@@ -1,7 +1,7 @@
 import * as v from "valibot";
 import { get, type Fetcher } from "@discordkit/core/requests/methods";
 import { snowflake } from "@discordkit/core/validations/snowflake";
-import { type GuildOnboarding } from "./types/GuildOnboarding.js";
+import type { GuildOnboarding } from "./types/GuildOnboarding.js";
 
 export const getGuildOnboardingSchema = v.object({
   guild: snowflake

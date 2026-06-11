@@ -1,7 +1,7 @@
 import * as v from "valibot";
 import { put, type Fetcher } from "@discordkit/core/requests/methods";
 import { snowflake } from "@discordkit/core/validations/snowflake";
-import { type GuildOnboarding } from "./types/GuildOnboarding.js";
+import type { GuildOnboarding } from "./types/GuildOnboarding.js";
 import { onboardingPromptSchema } from "./types/OnboardingPrompt.js";
 import { onboardingModeSchema } from "./types/OnboardingMode.js";
 

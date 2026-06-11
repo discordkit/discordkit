@@ -3,7 +3,7 @@ import { post, type Fetcher } from "@discordkit/core/requests/methods";
 import { boundedString } from "@discordkit/core/validations/boundedString";
 import { snowflake } from "@discordkit/core/validations/snowflake";
 import { url } from "@discordkit/core/validations/url";
-import { type Webhook } from "./types/Webhook.js";
+import type { Webhook } from "./types/Webhook.js";
 
 export const createWebhookSchema = v.object({
   channel: snowflake,

@@ -1,3 +1,4 @@
+import { describe, it, expect } from "vite-plus/test";
 import { toSnakeKeys } from "../toSnakeKeys.js";
 
 describe(`toSnakeKeys`, () => {

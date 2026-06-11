@@ -1,7 +1,7 @@
 import * as v from "valibot";
 import { patch, type Fetcher } from "@discordkit/core/requests/methods";
 import { datauri } from "@discordkit/core/validations/datauri";
-import { type User } from "./types/User.js";
+import type { User } from "./types/User.js";
 
 export const modifyCurrentUserSchema = v.object({
   body: v.partial(

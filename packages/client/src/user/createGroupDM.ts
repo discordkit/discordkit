@@ -1,7 +1,7 @@
 import * as v from "valibot";
 import type { Fetcher } from "@discordkit/core";
 import { post } from "@discordkit/core/requests/methods";
-import { groupDirectMessageChannelSchema } from "../channel/types/Channel.js";
+import type { groupDirectMessageChannelSchema } from "../channel/types/Channel.js";
 
 export const createGroupDMSchema = v.object({
   body: v.object({

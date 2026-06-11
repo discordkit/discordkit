@@ -1,5 +1,5 @@
+import { describe, it, expect } from "vite-plus/test";
 import { toValidated } from "@discordkit/core/requests/toValidated";
-
 import { mockUtils } from "#mocks";
 import { createDM, createDMSchema } from "../createDM.js";
 import { directMessageChannelSchema } from "../../channel/types/Channel.js";

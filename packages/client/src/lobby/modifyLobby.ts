@@ -2,7 +2,7 @@ import * as v from "valibot";
 import { patch, type Fetcher } from "@discordkit/core/requests/methods";
 import { asInteger } from "@discordkit/core/validations/asInteger";
 import { snowflake } from "@discordkit/core/validations/snowflake";
-import { type Lobby } from "./types/Lobby.js";
+import type { Lobby } from "./types/Lobby.js";
 import { lobbyMemberFlag } from "./types/LobbyMemberFlags.js";
 
 export const modifyLobbySchema = v.object({

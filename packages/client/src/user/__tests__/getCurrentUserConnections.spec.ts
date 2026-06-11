@@ -1,6 +1,6 @@
+import { describe, it, expect } from "vite-plus/test";
 import * as v from "valibot";
 import { toValidated } from "@discordkit/core/requests/toValidated";
-
 import { mockUtils } from "#mocks";
 import { getCurrentUserConnections } from "../getCurrentUserConnections.js";
 import { connectionSchema } from "../types/Connection.js";

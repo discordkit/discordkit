@@ -1,4 +1,5 @@
-﻿import { object, parse, safeParse } from "valibot";
+﻿import { describe, it, expect } from "vite-plus/test";
+import { object, parse, safeParse } from "valibot";
 import { MockUtils } from "@discordkit/test-utils";
 import { discord } from "../../requests/DiscordSession.js";
 import { bitfield } from "../bitfield.js";

@@ -1,3 +1,4 @@
+import { describe, it, expect } from "vite-plus/test";
 import {
   pipe,
   string,
@@ -14,7 +15,7 @@ describe(`toValidated`, () => {
   describe(`with both input and output schemas`, () => {
     const input = pipe(string(), minLength(1), maxLength(5));
     const output = pipe(number(), minValue(1), maxValue(5));
-    const wrap = (i: string, o: unknown) =>
+    const wrap = async (i: string, o: unknown) =>
       toValidated(
         async (_: InferOutput<typeof input>) => Promise.resolve(o),
         input,
@@ -36,7 +37,7 @@ describe(`toValidated`, () => {
 
   describe(`with only an input schema`, () => {
     const input = pipe(string(), minLength(3));
-    const wrap = (i: string) =>
+    const wrap = async (i: string) =>
       toValidated(async (_: string) => Promise.resolve(undefined), input)(i);
 
     it(`resolves when input satisfies its schema`, async () => {
@@ -50,7 +51,7 @@ describe(`toValidated`, () => {
 
   describe(`with only an output schema`, () => {
     const output = pipe(number(), minValue(0));
-    const wrap = (o: unknown) =>
+    const wrap = async (o: unknown) =>
       toValidated(async () => Promise.resolve(o), null, output)();
 
     it(`resolves when output satisfies its schema`, async () => {

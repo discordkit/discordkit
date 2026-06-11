@@ -3,7 +3,7 @@ import { post, type Fetcher } from "@discordkit/core/requests/methods";
 import { datauri } from "@discordkit/core/validations/datauri";
 import { snowflake } from "@discordkit/core/validations/snowflake";
 import { timestamp } from "@discordkit/core/validations/timestamp";
-import { type ScheduledEvent } from "./types/ScheduledEvent.js";
+import type { ScheduledEvent } from "./types/ScheduledEvent.js";
 import { entityMetadataSchema } from "./types/EntityMetadata.js";
 import { scheduledEventPrivacyLevelSchema } from "./types/ScheduledEventPrivacyLevel.js";
 import { scheduledEventEntityTypeSchema } from "./types/ScheduledEventEntityType.js";

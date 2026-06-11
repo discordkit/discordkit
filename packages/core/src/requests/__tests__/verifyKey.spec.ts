@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeAll } from "vite-plus/test";
 import { verifyKey } from "../verifyKey.js";
 
 describe(`verifyKey`, () => {

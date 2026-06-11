@@ -1,7 +1,7 @@
 import * as v from "valibot";
 import { get, type Fetcher } from "@discordkit/core/requests/methods";
 import { snowflake } from "@discordkit/core/validations/snowflake";
-import { type Sticker } from "./types/Sticker.js";
+import type { Sticker } from "./types/Sticker.js";
 
 export const getStickerSchema = v.object({
   sticker: snowflake

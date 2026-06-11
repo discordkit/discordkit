@@ -1,4 +1,5 @@
-﻿import { safeParse, parse, object, pipe } from "valibot";
+﻿import { describe, it, expect } from "vite-plus/test";
+import { safeParse, parse, object, pipe } from "valibot";
 import { MockUtils } from "@discordkit/test-utils";
 import { faker } from "@faker-js/faker";
 import { datauri } from "../datauri.js";

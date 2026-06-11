@@ -3,7 +3,7 @@ import { patch, type Fetcher } from "@discordkit/core/requests/methods";
 import { asInteger } from "@discordkit/core/validations/asInteger";
 import { snowflake } from "@discordkit/core/validations/snowflake";
 import { timestamp } from "@discordkit/core/validations/timestamp";
-import { type Member } from "./types/Member.js";
+import type { Member } from "./types/Member.js";
 import { guildMemberFlag } from "./types/GuildMemberFlags.js";
 
 export const modifyGuildMemberSchema = v.object({

@@ -1,5 +1,6 @@
+import { describe, it, expect } from "vite-plus/test";
 import * as v from "valibot";
-import { type Fetcher } from "../methods.js";
+import type { Fetcher } from "../methods.js";
 import { toQuery } from "../toQuery.js";
 
 describe(`toQuery`, () => {
@@ -23,7 +24,10 @@ describe(`toQuery`, () => {
     const getUser: Fetcher<
       typeof inputSchema,
       { id: string; name: string }
-    > = async ({ id }) => ({ id, name: `user-${id}` });
+    > = async ({ id }) => ({
+      id,
+      name: `user-${id}`
+    });
 
     // toQuery passes the config through to the underlying Fetcher.
     const query = toQuery(getUser) as unknown as (input: {

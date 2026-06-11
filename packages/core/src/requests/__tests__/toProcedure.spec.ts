@@ -1,12 +1,12 @@
-﻿import {
+import { describe, it, expect } from "vite-plus/test";
+import {
   pipe,
   array,
   object,
   string,
   minLength,
   maxLength,
-  type InferOutput,
-  type GenericSchema
+  type InferOutput
 } from "valibot";
 import { initTRPC } from "@trpc/server";
 import { MockUtils } from "@discordkit/test-utils";
@@ -81,7 +81,7 @@ describe(`toProcedure`, () => {
   const userSchema = object({
     id: snowflake,
     username: pipe(string(), minLength(2), maxLength(16)),
-    permissions: asDigits(permissionFlag) as GenericSchema<string>
+    permissions: asDigits(permissionFlag)
   });
   const { expected } = mockUtils.request.get(
     `/listUsers`,
@@ -93,7 +93,7 @@ describe(`toProcedure`, () => {
     const tRPC = initTRPC.create();
     const listUsers: Fetcher<
       null,
-      Array<InferOutput<typeof userSchema>>
+      InferOutput<typeof userSchema>[]
     > = async () => get(`/listUsers`);
     const listUsersProcedure = toProcedure(
       `query`,

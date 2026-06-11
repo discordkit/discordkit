@@ -71,9 +71,7 @@ export const request = async <T>(
 
   if (!res.ok) {
     throw new Error(
-      `Request to resource '${resource.toString()}' failed:\n\n${
-        res.statusText
-      }`
+      `Request to resource '${resource.toString()}' failed:\n\n${res.statusText}`
     );
   }
 

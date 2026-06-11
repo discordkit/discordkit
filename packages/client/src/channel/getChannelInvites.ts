@@ -1,7 +1,7 @@
 import * as v from "valibot";
 import { get, type Fetcher } from "@discordkit/core/requests/methods";
 import { snowflake } from "@discordkit/core/validations/snowflake";
-import { type InviteMetadata } from "../invite/types/InviteMetadata.js";
+import type { InviteMetadata } from "../invite/types/InviteMetadata.js";
 
 export const getChannelInvitesSchema = v.object({
   channel: snowflake

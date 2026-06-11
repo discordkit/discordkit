@@ -355,8 +355,8 @@ function listRepoTypes(folder: string): Set<string> {
 interface Findings {
   toAdd: DocEndpoint[];
   toReview: RepoEndpoint[];
-  toRename: { repo: RepoEndpoint; doc: DocEndpoint }[];
-  typesToAdd: { kind: `Object` | `Enum`; name: string }[];
+  toRename: Array<{ repo: RepoEndpoint; doc: DocEndpoint }>;
+  typesToAdd: Array<{ kind: `Object` | `Enum`; name: string }>;
 }
 
 function compare(
@@ -368,7 +368,7 @@ function compare(
 ): Findings {
   const toAdd: DocEndpoint[] = [];
   const toReview: RepoEndpoint[] = [];
-  const toRename: { repo: RepoEndpoint; doc: DocEndpoint }[] = [];
+  const toRename: Array<{ repo: RepoEndpoint; doc: DocEndpoint }> = [];
 
   // Index repo by (method, normalizedPath) — multiple endpoints may share a
   // method+path (Create DM and Create Group DM both POST /users/@me/channels),
@@ -438,7 +438,7 @@ function compare(
 
   // Types: check object & enum names against repoTypes.
   // Map doc names to a normalized PascalCase form to compare against type filenames.
-  const typesToAdd: { kind: `Object` | `Enum`; name: string }[] = [];
+  const typesToAdd: Array<{ kind: `Object` | `Enum`; name: string }> = [];
   for (const obj of docObjects) {
     const base = pascalCase(
       obj.name.replace(/\sObject$/i, ``).replace(/\sStructure$/i, ``)
@@ -468,7 +468,7 @@ function matchesAnyRepoType(base: string, repoTypes: Set<string>): boolean {
     `${base}Object`,
     base.endsWith(`s`) ? base.slice(0, -1) : `${base}s`,
     base.endsWith(`Types`) ? base.slice(0, -1) : null,
-    base.endsWith(`Flags`) ? `${base.slice(0, -1)}` : null
+    base.endsWith(`Flags`) ? base.slice(0, -1) : null
   ].filter((c): c is string => c !== null);
   return candidates.some((c) => repoTypes.has(c));
 }

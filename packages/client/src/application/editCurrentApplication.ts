@@ -5,7 +5,7 @@ import { boundedArray } from "@discordkit/core/validations/boundedArray";
 import { boundedString } from "@discordkit/core/validations/boundedString";
 import { datauri } from "@discordkit/core/validations/datauri";
 import { url } from "@discordkit/core/validations/url";
-import { type Application } from "./types/Application.js";
+import type { Application } from "./types/Application.js";
 import { applicationEventWebhookStatusSchema } from "./types/ApplicationEventWebhookStatus.js";
 import { applicationFlag } from "./types/ApplicationFlags.js";
 import { applicationIntegrationTypeConfigurationSchema } from "./types/ApplicationIntegrationTypeConfiguration.js";

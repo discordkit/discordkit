@@ -1,7 +1,7 @@
 import * as v from "valibot";
 import { post, type Fetcher } from "@discordkit/core/requests/methods";
 import { snowflake } from "@discordkit/core/validations/snowflake";
-import { type FollowedChannel } from "./types/FollowedChannel.js";
+import type { FollowedChannel } from "./types/FollowedChannel.js";
 
 export const followAnnouncementChannelSchema = v.object({
   channel: snowflake,

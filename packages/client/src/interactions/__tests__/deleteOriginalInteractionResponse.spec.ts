@@ -1,3 +1,4 @@
+import { describe, it, expect } from "vite-plus/test";
 import { toValidated } from "@discordkit/core/requests/toValidated";
 
 import { mockUtils } from "#mocks";
@@ -17,7 +18,9 @@ describe(`deleteOriginalInteractionResponse`, { repeats: 5 }, () => {
       toValidated(
         deleteOriginalInteractionResponse,
         deleteOriginalInteractionResponseSchema
-      )(config, { anonymous: true })
+      )(config, {
+        anonymous: true
+      })
     ).resolves.not.toThrow();
   });
 });

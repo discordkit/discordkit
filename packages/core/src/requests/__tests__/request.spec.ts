@@ -1,3 +1,11 @@
+import {
+  describe,
+  it,
+  expect,
+  beforeAll,
+  afterEach,
+  afterAll
+} from "vite-plus/test";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { discord } from "../DiscordSession.js";
@@ -38,7 +46,7 @@ describe(`request`, () => {
     discord.setToken(`Bot test-token`);
 
     const channels = await request<
-      Array<{ id: string; name: string; type: number }>
+      { id: string; name: string; type: number }[]
     >(new URL(`https://discord.com/api/v10/guilds/${guildId}/channels`));
 
     expect(channels).toHaveLength(2);
@@ -46,9 +54,9 @@ describe(`request`, () => {
     expect(channels[1].name).toBe(`announcements`);
   });
 
-  describe(`RequestOptions`, () => {
+  describe(`requestOptions`, () => {
     it(`omits the Authorization header when anonymous: true`, async () => {
-      const authHeaders: Array<string | null> = [];
+      const authHeaders: (string | null)[] = [];
 
       server.use(
         http.post(
@@ -81,7 +89,7 @@ describe(`request`, () => {
     });
 
     it(`forwards the reason as an URL-encoded X-Audit-Log-Reason header`, async () => {
-      const reasons: Array<string | null> = [];
+      const reasons: (string | null)[] = [];
 
       server.use(
         http.delete(
@@ -100,7 +108,9 @@ describe(`request`, () => {
         new URL(`https://discord.com/api/v10/channels/123`),
         `DELETE`,
         undefined,
-        { reason: `Spring cleaning — duplicate channel` }
+        {
+          reason: `Spring cleaning — duplicate channel`
+        }
       );
 
       expect(reasons).toEqual([
