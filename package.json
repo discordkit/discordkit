@@ -20,7 +20,6 @@
   },
   "type": "module",
   "scripts": {
-    "clean": "rimraf --glob packages/*/dist",
     "format": "vp run lint --fix",
     "test": "vp test --fileParallelism",
     "typecheck": "tsc --noEmit"

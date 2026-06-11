@@ -14,7 +14,11 @@ export default defineConfig({
         cache: true,
         dependsOn: [`typegen`]
       },
-      start: { command: `next start`, cache: false }
+      start: { command: `next start`, cache: false },
+      // E2E: Playwright drives the running app; Discord is mocked via MSW
+      // (instrumentation.ts under DISCORD_E2E_MOCK). The playwright config
+      // starts the dev server itself with the test env.
+      e2e: { command: `playwright test`, cache: false, dependsOn: [`typegen`] }
     }
   },
   lint: mergeLint(lint, react, next),

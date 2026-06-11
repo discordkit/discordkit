@@ -12,7 +12,25 @@ export default defineConfig({
         cache: true
       },
       lint: { command: `vp lint`, cache: true },
+      // Run every package's `typegen` task (e.g. the examples' Varlock
+      // `env.d.ts`). New packages with a `typegen` task are picked up
+      // automatically. `vp check`/`vp test` resolve workspace source via the
+      // `@discordkit/source` condition, but the examples' generated env types
+      // must exist for the typecheck to pass.
+      typegen: { command: `vp run -r typegen`, cache: false },
+      // Platform-agnostic cleanup of build/test artifacts (rimraf globs work
+      // identically across OSes). Covers package dist, Next builds, Playwright
+      // outputs, generated env types, and coverage.
+      clean: {
+        command: `rimraf --glob "packages/*/dist" "examples/*/.next" "examples/*/test-results" "examples/*/playwright-report" "examples/*/env.d.ts" ".playwright-mcp" "coverage"`,
+        cache: false
+      },
       dev: { command: `vp run -r --parallel dev`, cache: false },
+      // Run every example's `e2e` task (each boots its own server with Discord
+      // mocked and drives the shared @discordkit/e2e flow via Playwright). New
+      // example apps are picked up automatically once they define an `e2e` task.
+      // The examples resolve @discordkit/* to dist, so build the packages first.
+      e2e: { command: `vp run -r e2e`, cache: false, dependsOn: [`build`] },
       ci: { command: `vp lint && vp test && vp run build:all`, cache: false }
     }
   },
@@ -48,7 +66,11 @@ export default defineConfig({
       `**/dist/**`,
       `**/.{idea,git,cache,output,temp}/**`,
       `**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build,eslint,prettier}.config.*`,
-      `**/.claude/**`
+      `**/.claude/**`,
+      // Playwright E2E specs (examples/*/e2e/**) import @playwright/test and
+      // run under the Playwright runner, not Vitest. Keep them out of the unit
+      // test discovery.
+      `**/e2e/**`
     ]
   },
   lint: mergeLint(lint, next, {
