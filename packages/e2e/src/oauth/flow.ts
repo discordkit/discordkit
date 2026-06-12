@@ -62,6 +62,16 @@ const login = async (page: Page, context: BrowserContext): Promise<void> => {
  * ```
  */
 export const registerOAuthFlowTests = (): void => {
+  test(`the dashboard is protected when logged out`, async ({ page }) => {
+    // Visiting the protected route without a session must redirect to the
+    // public landing (the middleware guard), not render the dashboard.
+    await page.goto(`/dashboard`);
+    await expect(
+      page.getByRole(`link`, { name: `Login with Discord` })
+    ).toBeVisible();
+    await expect(page.getByText(MOCK_USERNAME)).toBeHidden();
+  });
+
   test(`logs in, shows the mocked profile and guilds`, async ({
     page,
     context
@@ -101,7 +111,7 @@ export const registerOAuthFlowTests = (): void => {
     ).toBeVisible();
   });
 
-  test(`logout returns to the login screen and stays there on reload`, async ({
+  test(`logout clears the session and the dashboard becomes inaccessible`, async ({
     page,
     context
   }) => {
@@ -116,11 +126,14 @@ export const registerOAuthFlowTests = (): void => {
     ).toBeVisible();
     await expect(page.getByText(MOCK_USERNAME)).toBeHidden();
 
-    // The regression we fixed: a reload must NOT snap back to the dashboard
-    // (the __Host- session cookie must actually be cleared on logout).
-    await page.reload();
+    // The protected route must now be inaccessible: visiting /dashboard after
+    // logout redirects back to the public landing (proves the route guard AND
+    // that the __Host- session cookie was actually cleared — the regression we
+    // fixed, where a lingering cookie kept the user "logged in").
+    await page.goto(`/dashboard`);
     await expect(
       page.getByRole(`link`, { name: `Login with Discord` })
     ).toBeVisible();
+    await expect(page.getByText(MOCK_USERNAME)).toBeHidden();
   });
 };

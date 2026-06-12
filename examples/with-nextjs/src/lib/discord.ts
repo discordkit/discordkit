@@ -28,7 +28,8 @@ export const SCOPES = [`identify`, `email`, `guilds`] as const;
 export const authHandler = createAuthHandler({
   ...config,
   scopes: [...SCOPES],
-  successRedirect: `/`,
+  // After login land on the protected dashboard (guarded by middleware.ts).
+  successRedirect: `/dashboard`,
   onSuccess: async (tokens) => {
     await setSession(sessionFromTokens(tokens));
     return undefined;
