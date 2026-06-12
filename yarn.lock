@@ -657,6 +657,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@hono/node-server@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "@hono/node-server@npm:2.0.4"
+  peerDependencies:
+    hono: ^4
+  checksum: 10/12c12741fcd30269812a6d041e243ad5730e9ca051721686b27be38456278b789f889d0921a2aa7dd348628edeef63c09dff22039068aeed4b9a3970e2cec9d4
+  languageName: node
+  linkType: hard
+
 "@img/colour@npm:^1.0.0":
   version: 1.1.0
   resolution: "@img/colour@npm:1.1.0"
@@ -1711,7 +1720,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rolldown/pluginutils@npm:^1.0.0":
+"@rolldown/pluginutils@npm:^1.0.0, @rolldown/pluginutils@npm:^1.0.1":
   version: 1.0.1
   resolution: "@rolldown/pluginutils@npm:1.0.1"
   checksum: 10/4e95cf9ce23d75e5aa03ea0249cd86f7d1e21f83fbf6f8520e4edd8a251ba1b82c4ba9bc13cd24b6c4661daec6225b06e6d35c64c604e731b230b2a49af47d05
@@ -2626,7 +2635,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitejs/plugin-react@npm:^6.0.2":
+"@vitejs/plugin-react@npm:^6.0.1, @vitejs/plugin-react@npm:^6.0.2":
   version: 6.0.2
   resolution: "@vitejs/plugin-react@npm:6.0.2"
   dependencies:
@@ -2641,6 +2650,30 @@ __metadata:
     babel-plugin-react-compiler:
       optional: true
   checksum: 10/4b3693e94c1907aac699df34fa71c8d5d53228b110f7520dcaca56c96c7127772e806147fa9d2f15edfc64cdefbe13b28c4c71e058601f7311d303ad435701c6
+  languageName: node
+  linkType: hard
+
+"@vitejs/plugin-rsc@npm:^0.5.26":
+  version: 0.5.27
+  resolution: "@vitejs/plugin-rsc@npm:0.5.27"
+  dependencies:
+    "@rolldown/pluginutils": "npm:^1.0.1"
+    es-module-lexer: "npm:^2.1.0"
+    estree-walker: "npm:^3.0.3"
+    magic-string: "npm:^0.30.21"
+    srvx: "npm:^0.11.15"
+    strip-literal: "npm:^3.1.0"
+    turbo-stream: "npm:^3.2.0"
+    vitefu: "npm:^1.1.3"
+  peerDependencies:
+    react: "*"
+    react-dom: "*"
+    react-server-dom-webpack: "*"
+    vite: "*"
+  peerDependenciesMeta:
+    react-server-dom-webpack:
+      optional: true
+  checksum: 10/854d8312c6b6f690076b6726d4ab3e74de4c14cff4f053372942680ca67749e6ef457a4ba0aadb2ed82550da9667d46a12a4e3775c429950d58dda85659bbcb1
   languageName: node
   linkType: hard
 
@@ -2957,6 +2990,15 @@ __metadata:
   peerDependencies:
     acorn: ^6.0.0 || ^7.0.0 || ^8.0.0
   checksum: 10/d4371eaef7995530b5b5ca4183ff6f062ca17901a6d3f673c9ac011b01ede37e7a1f7f61f8f5cfe709e88054757bb8f3277dc4061087cdf4f2a1f90ccbcdb977
+  languageName: node
+  linkType: hard
+
+"acorn-loose@npm:^8.3.0":
+  version: 8.5.2
+  resolution: "acorn-loose@npm:8.5.2"
+  dependencies:
+    acorn: "npm:^8.15.0"
+  checksum: 10/3a86f4263ad8eac8d5638e15608bb31b916ab95183e3c9f0cc10ab5b11645dc09fe5b3f22464e8f484b3df13f1a7254ec155a98ae50b6458721f3fee65ebfb4f
   languageName: node
   linkType: hard
 
@@ -3752,6 +3794,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dotenv@npm:^17.4.2":
+  version: 17.4.2
+  resolution: "dotenv@npm:17.4.2"
+  checksum: 10/ca1b6f54d58e39914901e1518958e86083aca8deb5aa2e7f2a51acd53291d97852479b0ab26ed949b6a45a0e9adcc7b0d1c3c72375e8ea670f7005e341c6daba
+  languageName: node
+  linkType: hard
+
 "drange@npm:^1.0.2":
   version: 1.1.1
   resolution: "drange@npm:1.1.1"
@@ -3894,7 +3943,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"es-module-lexer@npm:^2.0.0":
+"es-module-lexer@npm:^2.0.0, es-module-lexer@npm:^2.1.0":
   version: 2.1.0
   resolution: "es-module-lexer@npm:2.1.0"
   checksum: 10/554c4374e78a812a1fa3673871ce7d42236438c414ea80c2ec35521cd9bb26d1d9155287529057d07431fd91df50d6a26d9bee5afd755fb7f6f7c81905a03956
@@ -4556,6 +4605,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"hono@npm:^4.12.14":
+  version: 4.12.25
+  resolution: "hono@npm:4.12.25"
+  checksum: 10/0cbdcdfdfb45b43cc915beaa44604170bb73b45e647927917714ec222347e7f44c944708471a45b4733cfd20b03c53820593db5b3b19663b935afca9cf984817
+  languageName: node
+  linkType: hard
+
 "hookable@npm:^6.1.1":
   version: 6.1.1
   resolution: "hookable@npm:6.1.1"
@@ -4868,6 +4924,13 @@ __metadata:
   version: 4.0.0
   resolution: "js-tokens@npm:4.0.0"
   checksum: 10/af37d0d913fb56aec6dc0074c163cc71cd23c0b8aad5c2350747b6721d37ba118af35abdd8b33c47ec2800de07dedb16a527ca9c530ee004093e04958bd0cbf2
+  languageName: node
+  linkType: hard
+
+"js-tokens@npm:^9.0.1":
+  version: 9.0.1
+  resolution: "js-tokens@npm:9.0.1"
+  checksum: 10/3288ba73bb2023adf59501979fb4890feb6669cc167b13771b226814fde96a1583de3989249880e3f4d674040d1815685db9a9880db9153307480d39dc760365
   languageName: node
   linkType: hard
 
@@ -6049,6 +6112,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"neo-async@npm:^2.6.1":
+  version: 2.6.2
+  resolution: "neo-async@npm:2.6.2"
+  checksum: 10/1a7948fea86f2b33ec766bc899c88796a51ba76a4afc9026764aedc6e7cde692a09067031e4a1bf6db4f978ccd99e7f5b6c03fe47ad9865c3d4f99050d67e002
+  languageName: node
+  linkType: hard
+
 "neotraverse@npm:^0.6.18":
   version: 0.6.18
   resolution: "neotraverse@npm:0.6.18"
@@ -6848,6 +6918,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-server-dom-webpack@npm:19.2.6":
+  version: 19.2.6
+  resolution: "react-server-dom-webpack@npm:19.2.6"
+  dependencies:
+    acorn-loose: "npm:^8.3.0"
+    neo-async: "npm:^2.6.1"
+    webpack-sources: "npm:^3.2.0"
+  peerDependencies:
+    react: ^19.2.6
+    react-dom: ^19.2.6
+    webpack: ^5.59.0
+  checksum: 10/5ae8bb7be772f10405691b42b2dbc09d9c60580fb43d59e19f670e38130689324c18376103998f39e07e82578acd4cad05366ce624f4d999739ed6531e8d35c8
+  languageName: node
+  linkType: hard
+
 "react@npm:^19.2.6":
   version: 19.2.6
   resolution: "react@npm:19.2.6"
@@ -7165,6 +7250,13 @@ __metadata:
   version: 0.8.1
   resolution: "rou3@npm:0.8.1"
   checksum: 10/dc4ba6b153358658ade50cd901f25b0237185c4877fec7d594c520fce718cfb8d7dc932153994d860daedff68c57fe15b298357aae5068f6751f5021dfaf2be1
+  languageName: node
+  linkType: hard
+
+"rsc-html-stream@npm:^0.0.7":
+  version: 0.0.7
+  resolution: "rsc-html-stream@npm:0.0.7"
+  checksum: 10/a71745ee523e2db390bbe25c9e279ff7edd4dddb8201083d0e6927f971313c94116fb9dbf3b94d126685c1e15acd872d4f49952a16bde9c9a31498979c3d378f
   languageName: node
   linkType: hard
 
@@ -7583,6 +7675,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"strip-literal@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "strip-literal@npm:3.1.0"
+  dependencies:
+    js-tokens: "npm:^9.0.1"
+  checksum: 10/6eb00906a1c343a1050579d1d6023e067a2d72152edb92e64cad49535115beb2e77905ace24aa459f29b66e75edba75ef9d8eca90575b0322640d64a5d37e131
+  languageName: node
+  linkType: hard
+
 "styled-jsx@npm:5.1.6":
   version: 5.1.6
   resolution: "styled-jsx@npm:5.1.6"
@@ -7785,6 +7886,13 @@ __metadata:
   version: 2.8.1
   resolution: "tslib@npm:2.8.1"
   checksum: 10/3e2e043d5c2316461cb54e5c7fe02c30ef6dccb3384717ca22ae5c6b5bc95232a6241df19c622d9c73b809bea33b187f6dbc73030963e29950c2141bc32a79f7
+  languageName: node
+  linkType: hard
+
+"turbo-stream@npm:^3.2.0":
+  version: 3.2.0
+  resolution: "turbo-stream@npm:3.2.0"
+  checksum: 10/aa23c715277c3ffc3693689d03050b06c5cedb865041eab62119870b564f31db67cc11b21db21ad5471f46c190f169bfc86c81e6ce57cbd4d91a594b3165e7bf
   languageName: node
   linkType: hard
 
@@ -8295,7 +8403,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitefu@npm:^1.1.1, vitefu@npm:^1.1.2":
+"vitefu@npm:^1.1.1, vitefu@npm:^1.1.2, vitefu@npm:^1.1.3":
   version: 1.1.3
   resolution: "vitefu@npm:1.1.3"
   peerDependencies:
@@ -8357,6 +8465,29 @@ __metadata:
   languageName: node
   linkType: hard
 
+"waku@npm:1.0.0-beta.2":
+  version: 1.0.0-beta.2
+  resolution: "waku@npm:1.0.0-beta.2"
+  dependencies:
+    "@hono/node-server": "npm:^2.0.4"
+    "@vitejs/plugin-react": "npm:^6.0.1"
+    "@vitejs/plugin-rsc": "npm:^0.5.26"
+    dotenv: "npm:^17.4.2"
+    hono: "npm:^4.12.14"
+    magic-string: "npm:^0.30.21"
+    picocolors: "npm:^1.1.1"
+    rsc-html-stream: "npm:^0.0.7"
+    vite: "npm:^8.0.0"
+  peerDependencies:
+    react: ~19.2.4
+    react-dom: ~19.2.4
+    react-server-dom-webpack: ~19.2.4
+  bin:
+    waku: ./cli.js
+  checksum: 10/14323b32c19bbfde7a82b8ef9c46290ba87592472fbd34c1efc4eed705866cbd0ec2ad71e9af9641c1eedfb58f2778b9b4230806730ea2c960b4248a95b535ef
+  languageName: node
+  linkType: hard
+
 "web-namespaces@npm:^2.0.0":
   version: 2.0.1
   resolution: "web-namespaces@npm:2.0.1"
@@ -8373,6 +8504,13 @@ __metadata:
     vite-plus: "npm:^0.1.24"
   languageName: unknown
   linkType: soft
+
+"webpack-sources@npm:^3.2.0":
+  version: 3.5.0
+  resolution: "webpack-sources@npm:3.5.0"
+  checksum: 10/e5af4245dbe52bb1520c7c373d73042fe091e273ff94269b877725a7873481e544ba4e71722df13e278f88069de900052764d98b99f9910be634826ec2f6e67d
+  languageName: node
+  linkType: hard
 
 "webpack-virtual-modules@npm:^0.6.2":
   version: 0.6.2
@@ -8515,6 +8653,30 @@ __metadata:
     valibot: "catalog:"
     varlock: "npm:^1.5.1"
     vite-plus: "npm:^0.1.24"
+  languageName: unknown
+  linkType: soft
+
+"with-waku@workspace:examples/with-waku":
+  version: 0.0.0-use.local
+  resolution: "with-waku@workspace:examples/with-waku"
+  dependencies:
+    "@discordkit/client": "workspace:^"
+    "@discordkit/core": "workspace:^"
+    "@discordkit/e2e": "workspace:^"
+    "@discordkit/oauth": "workspace:^"
+    "@playwright/test": "npm:^1.56.0"
+    "@types/react": "catalog:"
+    "@types/react-dom": "catalog:"
+    "@vitejs/plugin-react": "npm:^6.0.2"
+    jose: "npm:^6.1.0"
+    react: "catalog:"
+    react-dom: "catalog:"
+    react-server-dom-webpack: "npm:19.2.6"
+    typescript: "catalog:"
+    valibot: "catalog:"
+    varlock: "npm:^1.5.1"
+    vite-plus: "npm:^0.1.24"
+    waku: "npm:1.0.0-beta.2"
   languageName: unknown
   linkType: soft
 

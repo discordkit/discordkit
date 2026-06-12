@@ -8,6 +8,7 @@
     "with-nextjs-trpc",
     "with-nextjs",
     "with-astro",
-    "with-tanstack-start"
+    "with-tanstack-start",
+    "with-waku"
   ]
 }

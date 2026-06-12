@@ -1,0 +1,26 @@
+# build output
+dist/
+.output/
+
+# generated
+env.d.ts
+src/pages.gen.ts
+
+# dependencies
+node_modules/
+
+# local env files — real secrets stay out of git; .env.schema is the
+# committed, value-free contract.
+.env
+.env*.local
+!.env.schema
+
+# playwright
+/test-results
+/playwright-report
+/blob-report
+/playwright/.cache
+
+# misc
+.DS_Store
+*.tsbuildinfo

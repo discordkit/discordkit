@@ -1,5 +1,5 @@
 import { defineConfig } from "vite-plus";
-import { lint, next, fmt, mergeLint } from "@saeris/configs";
+import { lint, fmt, mergeLint } from "@saeris/configs";
 
 export default defineConfig({
   run: {
@@ -94,7 +94,7 @@ export default defineConfig({
       `**/e2e/**`
     ]
   },
-  lint: mergeLint(lint, next, {
+  lint: mergeLint(lint, {
     rules: {
       // False-positive on type-only namespace members like `v.InferOutput`.
       // The rule reads the runtime JS bundle rather than the .d.ts, so
@@ -147,19 +147,12 @@ export default defineConfig({
         }
       },
       {
-        // The `next` fragment's rules are applied workspace-wide (and live in
-        // an `overrides` block, so a downstream top-level `rules` disable can't
-        // beat them — only a later, equally-specific override can). The
-        // TanStack Start example is React-but-not-Next: there's no `next/image`,
-        // `next/head`, or Next page router, so these three rules are pure
-        // false-positives on idiomatic TanStack markup. `only-throw-error` is
-        // off here too because `throw redirect(...)` is TanStack Router's
-        // documented control-flow API (redirect() returns a throwable).
+        // `throw redirect(...)` is TanStack Router's documented control-flow API
+        // (redirect() returns a throwable), not an error-handling antipattern.
+        // (The `next` lint fragment is applied per-Next-example now, not
+        // workspace-wide, so no Next-rule exceptions are needed here.)
         files: [`examples/with-tanstack-start/**/*.{ts,tsx}`],
         rules: {
-          "nextjs/no-img-element": `off`,
-          "nextjs/no-head-element": `off`,
-          "nextjs/no-html-link-for-pages": `off`,
           "typescript/only-throw-error": `off`
         }
       },
