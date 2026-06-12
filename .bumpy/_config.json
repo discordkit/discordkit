@@ -5,7 +5,7 @@
   "linked": [["@discordkit/client", "@discordkit/core"]],
   "ignore": [
     "webhook-action",
-    "with-nextjs-trpc",
+    "with-nextjs-better-auth",
     "with-nextjs",
     "with-astro",
     "with-tanstack-start",

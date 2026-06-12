@@ -8,7 +8,8 @@
   "type": "module",
   "exports": {
     "./oauth-handlers": "./src/oauth/handlers.ts",
-    "./oauth-e2e": "./src/oauth/flow.ts"
+    "./oauth-e2e": "./src/oauth/flow.ts",
+    "./oauth-fixtures": "./src/oauth/fixtures.ts"
   },
   "dependencies": {
     "@discordkit/client": "workspace:^",

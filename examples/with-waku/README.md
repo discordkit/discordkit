@@ -18,7 +18,7 @@ A minimal [Waku](https://waku.gg) app demonstrating Discord OAuth2 login with
 - **`src/lib/discord.ts`** — the OAuth2 client + login/callback handler
   (`@discordkit/oauth`). The `@sensitive` client secret never reaches the client.
 - **`src/lib/session.ts`** — a signed (`jose`) httpOnly session cookie. Waku has
-  no ambient mutable response, so writes produce a `Set-Cookie` *string* that the
+  no ambient mutable response, so writes produce a `Set-Cookie` _string_ that the
   caller attaches to the `Response` it returns, and reads use Waku's
   `unstable_getRequest()`. (`session-shared.ts` holds the client-safe `Session`
   type + `hasUsableSession` predicate so page components never import the secret.)

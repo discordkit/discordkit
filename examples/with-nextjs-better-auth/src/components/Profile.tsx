@@ -7,8 +7,8 @@ import { fetchJson } from "#src/lib/fetchJson";
 
 /**
  * Shows the authorizing user from `/oauth2/@me`. Fetched via React Query
- * against our `/api/me` route — the server route holds the bearer token; this
- * component only ever sees the returned JSON.
+ * against our `/api/me` route — the server route holds the bearer token (from
+ * Better Auth); this component only ever sees the returned JSON.
  */
 export const Profile: React.FC = () => {
   const { data, isLoading, isError } = useQuery<AuthorizationInfo>({

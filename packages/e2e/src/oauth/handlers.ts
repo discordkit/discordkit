@@ -1,13 +1,13 @@
 import { http, HttpResponse } from "msw";
 import { Valimock } from "valimock";
 import * as v from "valibot";
-import { guildSchema } from "@discordkit/client";
-import { pickFields } from "@discordkit/core/validations/schema";
-import { rawTokenResponseSchema } from "@discordkit/oauth/types/TokenResponse";
 import {
+  guildSchema,
   authorizationInfoSchema,
   authorizedUserSchema
-} from "@discordkit/oauth/types/AuthorizationInfo";
+} from "@discordkit/client";
+import { pickFields } from "@discordkit/core/validations/schema";
+import { rawTokenResponseSchema } from "@discordkit/oauth/types/TokenResponse";
 import {
   MOCK_ACCESS_TOKEN,
   MOCK_SCOPES,
@@ -22,9 +22,9 @@ import {
  *
  * Mock responses are **schema-driven** via Valimock — the same approach the
  * client/core unit suites use — so a fixture can't drift from the shape the
- * code actually validates against. The OAuth response schemas live in
- * `@discordkit/oauth`; the partial-guild shape is picked from the client's
- * `guildSchema`.
+ * code actually validates against. The token-response schema lives in
+ * `@discordkit/oauth`; the authorization-info and partial-guild shapes come
+ * from `@discordkit/client`.
  *
  * These intercept the calls the Next *server* makes (token exchange, /@me,
  * guilds). The browser's redirect to /oauth2/authorize is handled in the
@@ -80,7 +80,12 @@ export const handlers = [
     const body = new URLSearchParams(await request.text());
     const grantType = body.get(`grant_type`);
     if (grantType === `authorization_code`) {
-      if (body.get(`code`) === null || body.get(`code_verifier`) === null) {
+      // Require a `code`. We don't require `code_verifier`: PKCE is optional in
+      // the OAuth2 spec and not every client uses it (the @discordkit/oauth
+      // examples do; Better Auth's Discord provider doesn't by default). The
+      // mock's job is to stand in for a successful exchange, not to enforce
+      // PKCE — that's the app's concern, covered by the oauth package's tests.
+      if (body.get(`code`) === null) {
         return HttpResponse.json({ error: `invalid_request` }, { status: 400 });
       }
     } else if (grantType !== `refresh_token`) {
@@ -103,8 +108,9 @@ export const handlers = [
     HttpResponse.json({})
   ),
 
-  // /oauth2/@me — authorization info (profile panel).
-  http.get(`https://discord.com/api/oauth2/@me`, ({ request }) => {
+  // /oauth2/@me — authorization info (profile panel). Now called via
+  // @discordkit/client's Fetcher, which uses the versioned `/api/v10` base.
+  http.get(`https://discord.com/api/v10/oauth2/@me`, ({ request }) => {
     if (
       request.headers.get(`authorization`) !== `Bearer ${MOCK_ACCESS_TOKEN}`
     ) {
@@ -122,5 +128,24 @@ export const handlers = [
       return HttpResponse.text(`401: Unauthorized`, { status: 401 });
     }
     return HttpResponse.json(mockGuilds);
+  }),
+
+  // /users/@me — the current user. The @discordkit/oauth examples don't call
+  // this, but a third-party auth framework (e.g. Better Auth in
+  // with-nextjs-better-auth) fetches it during sign-in to populate its own user
+  // record. Returns the same mocked identity, plus the email/verified fields
+  // such frameworks expect. Regex matcher because some clients percent-encode
+  // the `@` as `%40` (Better Auth does), which a literal string path won't match.
+  http.get(/https:\/\/discord\.com\/api\/users\/(@|%40)me$/, ({ request }) => {
+    if (
+      request.headers.get(`authorization`) !== `Bearer ${MOCK_ACCESS_TOKEN}`
+    ) {
+      return HttpResponse.text(`401: Unauthorized`, { status: 401 });
+    }
+    return HttpResponse.json({
+      ...mockUser,
+      email: `${MOCK_USERNAME}@example.com`,
+      verified: true
+    });
   })
 ];

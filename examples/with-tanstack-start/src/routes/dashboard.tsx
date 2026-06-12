@@ -3,10 +3,10 @@ import { createServerFn } from "@tanstack/react-start";
 import {
   userAvatar,
   guildIcon,
-  getCurrentUserGuilds
+  getCurrentUserGuilds,
+  getCurrentAuthorizationInfo
 } from "@discordkit/client";
 import { discord } from "@discordkit/core";
-import { getCurrentAuthorizationInfo } from "@discordkit/oauth";
 import { getValidSession } from "#src/lib/auth";
 import { hasUsableSession } from "#src/lib/session-shared";
 
@@ -37,14 +37,15 @@ const loadDashboard = createServerFn().handler(
     if (!hasUsableSession(session) || session === null) {
       return null;
     }
-    const info = await getCurrentAuthorizationInfo(session.accessToken);
+    // Both calls are per-user, so scope them to one asUser session: it sets
+    // the bearer token for the enclosed requests and clears it at scope exit.
+    using user = discord.asUser(session.accessToken);
+    const info = await user.request(async () => getCurrentAuthorizationInfo());
     // getCurrentUserGuilds returns `Array<Partial<Guild>>`; pick just the
     // fields the UI renders into our narrower PartialGuild shape. Mapping
     // (rather than asserting `as PartialGuild[]`) keeps the narrowing checked.
     const guilds: PartialGuild[] = (
-      await discord
-        .asUser(session.accessToken)
-        .request(async () => getCurrentUserGuilds({}))
+      await user.request(async () => getCurrentUserGuilds({}))
     ).map((guild) => ({
       id: guild.id ?? ``,
       name: guild.name ?? `Unknown server`,

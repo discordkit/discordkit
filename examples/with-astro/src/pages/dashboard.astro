@@ -1,7 +1,11 @@
 ---
-import { userAvatar, guildIcon, getCurrentUserGuilds } from "@discordkit/client";
+import {
+  userAvatar,
+  guildIcon,
+  getCurrentUserGuilds,
+  getCurrentAuthorizationInfo
+} from "@discordkit/client";
 import { discord } from "@discordkit/core";
-import { getCurrentAuthorizationInfo } from "@discordkit/oauth";
 import { getValidSession, type Session } from "#src/lib/auth";
 
 // Protected dashboard. Access is gated by src/middleware.ts, which redirects
@@ -25,13 +29,14 @@ let profile: Awaited<ReturnType<typeof getCurrentAuthorizationInfo>> | null =
 let guilds: PartialGuild[] = [];
 
 if (session) {
-  profile = await getCurrentAuthorizationInfo(session.accessToken);
-  // Per-user call: the core `discord` session's asUser scopes the bearer token
-  // to this request (and clears it after), so concurrent users can't leak
-  // tokens. getCurrentUserGuilds is a @discordkit/client fetcher.
-  guilds = (await discord
-    .asUser(session.accessToken)
-    .request(() => getCurrentUserGuilds({}))) as PartialGuild[];
+  // Both are per-user @discordkit/client fetchers: the core `discord` session's
+  // asUser scopes the bearer token to these requests (and clears it after), so
+  // concurrent users can't leak tokens.
+  using user = discord.asUser(session.accessToken);
+  profile = await user.request(() => getCurrentAuthorizationInfo());
+  guilds = (await user.request(() =>
+    getCurrentUserGuilds({})
+  )) as PartialGuild[];
 }
 
 const initials = (name: string): string =>

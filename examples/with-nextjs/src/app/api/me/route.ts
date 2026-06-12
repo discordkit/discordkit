@@ -1,4 +1,5 @@
-import { getCurrentAuthorizationInfo } from "@discordkit/oauth";
+import { getCurrentAuthorizationInfo } from "@discordkit/client";
+import { discord } from "@discordkit/core";
 import { getValidSession } from "#src/lib/auth";
 
 /**
@@ -14,6 +15,7 @@ export const GET = async (): Promise<Response> => {
   if (session === null) {
     return Response.json({ error: `Not authenticated` }, { status: 401 });
   }
-  const info = await getCurrentAuthorizationInfo(session.accessToken);
+  using user = discord.asUser(session.accessToken);
+  const info = await user.request(async () => getCurrentAuthorizationInfo());
   return Response.json(info);
 };
