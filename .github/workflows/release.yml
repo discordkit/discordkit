@@ -114,6 +114,12 @@ jobs:
         with:
           node-version: "lts"
           cache: true
+      # Build the workspace packages first: webhook-action imports
+      # @discordkit/client (+ transitively @discordkit/core) and resolves them
+      # to their dist/ at runtime. This is a fresh job (separate runner from
+      # `publish`), so their dist/ isn't present unless we build it here —
+      # otherwise the action fails with ERR_MODULE_NOT_FOUND on core's dist.
+      - run: vp run build
       - run: vp run build:apps
       - uses: ./apps/webhook-action
         with:
