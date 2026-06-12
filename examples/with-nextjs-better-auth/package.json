@@ -1,0 +1,35 @@
+{
+  "name": "with-nextjs-better-auth",
+  "version": "0.0.0",
+  "private": true,
+  "imports": {
+    "#src/*": "./src/*"
+  },
+  "dependencies": {
+    "@discordkit/client": "workspace:^",
+    "@discordkit/core": "workspace:^",
+    "@discordkit/oauth": "workspace:^",
+    "@tanstack/react-query": "catalog:",
+    "@tanstack/react-query-devtools": "^5.100.14",
+    "better-auth": "1.6.15",
+    "next": "^16.2.6",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "valibot": "catalog:"
+  },
+  "devDependencies": {
+    "@discordkit/e2e": "workspace:^",
+    "@playwright/test": "^1.56.0",
+    "@tailwindcss/postcss": "^4.3.0",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@varlock/nextjs-integration": "^1.1.3",
+    "msw": "^2.14.6",
+    "postcss": "^8.5.15",
+    "tailwindcss": "^4.3.0",
+    "typescript": "catalog:",
+    "varlock": "^1.5.1",
+    "vite-plus": "^0.1.24"
+  }
+}

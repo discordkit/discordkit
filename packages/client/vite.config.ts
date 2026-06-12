@@ -1,4 +1,5 @@
 import { defineConfig } from "vite-plus";
+import { buildTarget } from "../../scripts/buildTarget.js";
 
 export default defineConfig({
   run: {
@@ -11,6 +12,9 @@ export default defineConfig({
     globals: true
   },
   pack: {
+    // Build target derived from the root package.json `engines.node` — a
+    // single source of truth for the whole workspace.
+    target: buildTarget,
     // Entry needs to be a glob covering every source file so unbundle
     // emits a 1:1 mirror of src/ in dist/. A single `src/index.ts`
     // entry combined with `unbundle` would still emit the transitive

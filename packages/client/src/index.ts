@@ -16,6 +16,7 @@ export * from "./interactions/index.js";
 export * from "./invite/index.js";
 export * from "./lobby/index.js";
 export * from "./messages/index.js";
+export * from "./oauth2/index.js";
 export * from "./permissions/index.js";
 export * from "./poll/index.js";
 export * from "./sku/index.js";

@@ -1,0 +1,92 @@
+name: E2E
+
+# End-to-end tests for the example apps. They boot a real example server (with
+# Discord mocked via MSW) and drive it with Playwright, so they're slower than
+# the unit suite — run them only when something that affects the integration
+# changes (the published packages, the shared @discordkit/e2e harness, or an
+# example), plus on-demand via the Actions tab.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "packages/core/**"
+      - "packages/client/**"
+      - "packages/oauth/**"
+      - "packages/e2e/**"
+      - "examples/**"
+      - "yarn.lock"
+      - ".github/workflows/e2e.yml"
+  push:
+    branches: [main]
+    paths:
+      - "packages/core/**"
+      - "packages/client/**"
+      - "packages/oauth/**"
+      - "packages/e2e/**"
+      - "examples/**"
+      - "yarn.lock"
+      - ".github/workflows/e2e.yml"
+  workflow_dispatch:
+
+# Least privilege: the job only checks out and runs tests — no writes, and the
+# suite needs no secrets (Discord is fully mocked), so fork PRs run safely.
+permissions:
+  contents: read
+
+# A newer commit on the same ref supersedes an in-flight run.
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e:
+    name: OAuth example E2E
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+
+      # Current LTS only — E2E validates the integration contract, not Node
+      # version compatibility (the unit suite covers the 22/lts/latest matrix).
+      - uses: voidzero-dev/setup-vp@v1
+        with:
+          node-version: "24"
+          cache: true
+
+      # Build the workspace packages so the example resolves @discordkit/* to
+      # dist (Next/Turbopack can't resolve our .js-on-.ts source imports).
+      - run: vp run -r build
+
+      # Cache the Playwright browser binaries, keyed on the resolved Playwright
+      # version (from the lockfile). On a cache miss we install browsers + OS
+      # deps; on a hit we still need the OS deps (not cached).
+      - name: Resolve Playwright version
+        id: pw
+        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/cache@v4
+        id: pw-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.pw.outputs.version }}
+
+      - name: Install Playwright browsers (+ OS deps)
+        if: steps.pw-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+
+      - name: Install Playwright OS deps (cached browsers)
+        if: steps.pw-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+
+      # Run every example's e2e task (root aggregator). Each playwright config
+      # boots its own dev server with DISCORD_E2E_MOCK=1 (MSW intercepts
+      # Discord) and placeholder, non-secret env values.
+      - run: vp run e2e
+
+      - name: Upload Playwright reports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-reports
+          path: examples/*/playwright-report/
+          retention-days: 14

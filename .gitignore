@@ -97,3 +97,6 @@ cypress/e2e/build
 .DS_Store
 .vercel/*
 !.vercel/package.json
+
+# Playwright MCP debugging artifacts (snapshots/console logs)
+.playwright-mcp

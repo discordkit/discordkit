@@ -32,6 +32,9 @@ jobs:
       # conditions, which require `dist/` to exist. Bare `tsc --noEmit`
       # works either way because it does honor `customConditions`.
       - run: vp run -r build
+      # Generate per-package codegen the type-check depends on (e.g. the
+      # examples' Varlock `env.d.ts`, which is gitignored like `next-env.d.ts`).
+      - run: vp run -r typegen
       - run: vp check
       - run: vp test
 

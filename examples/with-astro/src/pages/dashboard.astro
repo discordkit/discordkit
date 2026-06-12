@@ -1,0 +1,153 @@
+---
+import {
+  userAvatar,
+  guildIcon,
+  getCurrentUserGuilds,
+  getCurrentAuthorizationInfo
+} from "@discordkit/client";
+import { discord } from "@discordkit/core";
+import { getValidSession, type Session } from "#src/lib/auth";
+
+// Protected dashboard. Access is gated by src/middleware.ts, which redirects
+// unauthenticated visitors to `/` before this renders — so a session exists.
+// Server-first: profile + guilds are fetched here in frontmatter (Astro's
+// idiomatic data-fetching), no /api/me or /api/guilds round-trips.
+const session: Session | null = await getValidSession(Astro.cookies);
+
+// The refresh button reloads to `/dashboard?refreshed` on success; render the
+// confirmation server-side so it survives the full-page reload.
+const justRefreshed = Astro.url.searchParams.has("refreshed");
+
+interface PartialGuild {
+  id: string;
+  name: string;
+  icon: string | null;
+}
+
+let profile: Awaited<ReturnType<typeof getCurrentAuthorizationInfo>> | null =
+  null;
+let guilds: PartialGuild[] = [];
+
+if (session) {
+  // Both are per-user @discordkit/client fetchers: the core `discord` session's
+  // asUser scopes the bearer token to these requests (and clears it after), so
+  // concurrent users can't leak tokens.
+  using user = discord.asUser(session.accessToken);
+  profile = await user.request(() => getCurrentAuthorizationInfo());
+  guilds = (await user.request(() =>
+    getCurrentUserGuilds({})
+  )) as PartialGuild[];
+}
+
+const initials = (name: string): string =>
+  name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((word) => word.charAt(0))
+    .join("")
+    .toUpperCase();
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>discordkit — Astro OAuth2 example</title>
+    <style>
+      :root { color-scheme: light dark; }
+      body {
+        font-family: system-ui, sans-serif;
+        max-width: 42rem;
+        margin: 0 auto;
+        padding: 4rem 1.5rem;
+        line-height: 1.5;
+      }
+      .card { border: 1px solid color-mix(in srgb, currentColor 15%, transparent); border-radius: 0.5rem; padding: 1.25rem; }
+      .btn { background: #5865f2; color: white; padding: 0.6rem 1rem; border-radius: 0.375rem; text-decoration: none; border: none; cursor: pointer; font: inherit; }
+      .btn-secondary { background: transparent; color: inherit; border: 1px solid color-mix(in srgb, currentColor 25%, transparent); }
+      .guilds { display: grid; grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr)); gap: 0.5rem; list-style: none; padding: 0; }
+      .guild { display: flex; align-items: center; gap: 0.5rem; border: 1px solid color-mix(in srgb, currentColor 10%, transparent); border-radius: 0.375rem; padding: 0.4rem; }
+      .avatar { width: 2.25rem; height: 2.25rem; border-radius: 9999px; }
+      .fallback { display: flex; align-items: center; justify-content: center; background: #5865f2; color: white; font-size: 0.75rem; font-weight: 600; }
+      .row { display: flex; gap: 0.75rem; align-items: center; margin-top: 1.5rem; }
+      .muted { opacity: 0.6; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>discordkit</h1>
+      <p class="muted">Discord OAuth2 with @discordkit/oauth + @discordkit/client (Astro)</p>
+    </header>
+
+    {
+      profile && (
+        <div>
+          <section class="card" style="display:flex;align-items:center;gap:1rem;">
+            {profile.user?.avatar ? (
+              <img
+                class="avatar"
+                alt={profile.user.username}
+                src={userAvatar({
+                  user: profile.user.id,
+                  avatar: profile.user.avatar,
+                  params: { size: 128 }
+                })}
+              />
+            ) : (
+              <span class="avatar fallback">
+                {(profile.user?.username ?? "?").charAt(0).toUpperCase()}
+              </span>
+            )}
+            <div>
+              <p style="font-weight:600;">{profile.user?.username ?? "Unknown user"}</p>
+              <p class="muted">Scopes: {profile.scopes.join(", ")}</p>
+              <p class="muted">Token expires {new Date(profile.expires).toLocaleString()}</p>
+            </div>
+          </section>
+
+          <section class="card" style="margin-top:1rem;">
+            <h2>Your servers ({guilds.length})</h2>
+            <ul class="guilds">
+              {guilds.map((guild) => (
+                <li class="guild">
+                  {guild.icon ? (
+                    <img
+                      class="avatar"
+                      alt={guild.name}
+                      src={guildIcon({ guild: guild.id, icon: guild.icon, params: { size: 64 } })}
+                    />
+                  ) : (
+                    <span class="avatar fallback">{initials(guild.name)}</span>
+                  )}
+                  <span>{guild.name}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <div class="row">
+            <button class="btn btn-secondary" id="refresh">Refresh now</button>
+            <button class="btn btn-secondary" id="logout">Log out</button>
+            {justRefreshed && <span class="muted">Token refreshed</span>}
+          </div>
+        </div>
+      )
+    }
+
+    <script>
+      // Plain client script (Astro ships no JS unless you add it). Wires the
+      // refresh/logout buttons to their POST endpoints, then navigates.
+      document.getElementById("refresh")?.addEventListener("click", async () => {
+        const res = await fetch("/api/auth/refresh", { method: "POST" });
+        // On success reload to `/dashboard?refreshed` so the server renders the
+        // "Token refreshed" confirmation (it survives the reload). A dead
+        // refresh token (401) means the session is unrecoverable → back to login.
+        location.href = res.ok ? "/dashboard?refreshed" : "/";
+      });
+      document.getElementById("logout")?.addEventListener("click", async () => {
+        await fetch("/api/auth/logout", { method: "POST" });
+        location.href = "/";
+      });
+    </script>
+  </body>
+</html>

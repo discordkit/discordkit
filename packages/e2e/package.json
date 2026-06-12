@@ -1,0 +1,23 @@
+{
+  "name": "@discordkit/e2e",
+  "description": "Shared end-to-end test harness for the discordkit example apps",
+  "version": "0.0.0",
+  "license": "MIT",
+  "author": "Drake Costa <drake@saeris.gg> (https://saeris.gg)",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./oauth-handlers": "./src/oauth/handlers.ts",
+    "./oauth-e2e": "./src/oauth/flow.ts",
+    "./oauth-fixtures": "./src/oauth/fixtures.ts"
+  },
+  "dependencies": {
+    "@discordkit/client": "workspace:^",
+    "@discordkit/core": "workspace:^",
+    "@discordkit/oauth": "workspace:^",
+    "@playwright/test": "^1.56.0",
+    "msw": "^2.14.6",
+    "valibot": "catalog:",
+    "valimock": "1.6.0"
+  }
+}

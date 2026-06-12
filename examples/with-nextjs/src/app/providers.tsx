@@ -1,61 +1,28 @@
 "use client";
-import React, { useMemo } from "react";
+import React, { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { httpBatchLink, getFetch, loggerLink } from "@trpc/client";
-import { createTRPCReact } from "@trpc/react-query";
-import type { Router } from "./api/trpc/[trpc]/trpc";
 
-export const trpc = createTRPCReact<Router>();
-
-const getUrl = (): string => {
-  const base = ((): string => {
-    if (typeof window !== `undefined`) return ``;
-    if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
-    return `http://localhost:3000`;
-  })();
-  return `${base}/api/trpc`;
-};
-
-export const TrpcProvider: React.FC<{ readonly children: React.ReactNode }> = ({
+/**
+ * Client-side data fetching uses React Query, the idiomatic choice for a plain
+ * React/Next app. Components fetch through the server route handlers
+ * (`/api/me`, `/api/guilds`), which hold the user's token server-side — the
+ * browser never touches it. No fetching in `useEffect`.
+ */
+export const Providers: React.FC<{ readonly children: React.ReactNode }> = ({
   children
 }) => {
-  const queryClient = useMemo(
+  const [queryClient] = useState(
     () =>
       new QueryClient({
-        defaultOptions: { queries: { staleTime: 5000 } }
-      }),
-    []
-  );
-
-  const trpcClient = useMemo(
-    () =>
-      trpc.createClient({
-        links: [
-          loggerLink({
-            enabled: () => true
-          }),
-          httpBatchLink({
-            url: getUrl(),
-            fetch: async (input, init?) => {
-              const fetch = getFetch();
-              return fetch(input, {
-                ...init,
-                credentials: `include`
-              });
-            }
-          })
-        ]
-      }),
-    []
+        defaultOptions: { queries: { staleTime: 60_000, retry: false } }
+      })
   );
 
   return (
-    <trpc.Provider client={trpcClient} queryClient={queryClient}>
-      <QueryClientProvider client={queryClient}>
-        {children}
-        <ReactQueryDevtools />
-      </QueryClientProvider>
-    </trpc.Provider>
+    <QueryClientProvider client={queryClient}>
+      {children}
+      <ReactQueryDevtools />
+    </QueryClientProvider>
   );
 };
