@@ -7,7 +7,7 @@ const baseURL = `http://localhost:${PORT}`;
  * E2E config for the OAuth example. The web server runs with `DISCORD_E2E_MOCK`
  * set, which makes `instrumentation.ts` start MSW so the Next server's Discord
  * calls are intercepted — no real Discord account or network is involved (see
- * docs in instrumentation.ts / src/mocks). Env values are placeholders since
+ * docs in instrumentation.ts / src/__mocks__). Env values are placeholders since
  * every Discord call is mocked; SESSION_SECRET just needs to be present.
  */
 export default defineConfig({
