@@ -54,7 +54,13 @@ export default defineConfig({
       // mocked and drives the shared @discordkit/e2e flow via Playwright). New
       // example apps are picked up automatically once they define an `e2e` task.
       // The examples resolve @discordkit/* to dist, so build the packages first.
-      e2e: { command: `vp run -r e2e`, cache: false, dependsOn: [`build`] },
+      // Sequence build BEFORE the recursive e2e in the command itself, not via
+      // `dependsOn`: the examples resolve @discordkit/* to dist at their Next
+      // server runtime, so the packages must be fully built first. A
+      // `dependsOn: [build]` doesn't enforce that here because the command is a
+      // nested `vp run -r e2e` (its own task graph), which would race the
+      // still-running build. `&&` guarantees the ordering across that boundary.
+      e2e: { command: `vp run build && vp run -r e2e`, cache: false },
       ci: { command: `vp lint && vp test && vp run build:all`, cache: false }
     }
   },

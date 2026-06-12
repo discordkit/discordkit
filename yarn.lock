@@ -2329,6 +2329,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/router-cli@npm:1.167.17":
+  version: 1.167.17
+  resolution: "@tanstack/router-cli@npm:1.167.17"
+  dependencies:
+    "@tanstack/router-generator": "npm:1.167.17"
+    chokidar: "npm:^5.0.0"
+    yargs: "npm:^17.7.2"
+  bin:
+    tsr: bin/tsr.cjs
+  checksum: 10/a23ff8e8fbd3008b0766aa3d62db8e950976243f55abcd57b21ce31ddb5aeac3d0c86e510336c019a6fe3287496b1db71ac628f9275455ae833be82c2c5a537c
+  languageName: node
+  linkType: hard
+
 "@tanstack/router-core@npm:1.171.13":
   version: 1.171.13
   resolution: "@tanstack/router-core@npm:1.171.13"
@@ -8854,6 +8867,7 @@ __metadata:
     "@playwright/test": "npm:^1.56.0"
     "@tanstack/react-router": "npm:^1.170.15"
     "@tanstack/react-start": "npm:^1.168.25"
+    "@tanstack/router-cli": "npm:1.167.17"
     "@types/react": "catalog:"
     "@types/react-dom": "catalog:"
     "@varlock/vite-integration": "npm:^1.1.3"
