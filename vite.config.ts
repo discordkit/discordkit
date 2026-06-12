@@ -145,6 +145,40 @@ export default defineConfig({
           "typescript/no-unsafe-type-assertion": `off`,
           "typescript/no-unnecessary-type-assertion": `off`
         }
+      },
+      {
+        // The `next` fragment's rules are applied workspace-wide (and live in
+        // an `overrides` block, so a downstream top-level `rules` disable can't
+        // beat them — only a later, equally-specific override can). The
+        // TanStack Start example is React-but-not-Next: there's no `next/image`,
+        // `next/head`, or Next page router, so these three rules are pure
+        // false-positives on idiomatic TanStack markup. `only-throw-error` is
+        // off here too because `throw redirect(...)` is TanStack Router's
+        // documented control-flow API (redirect() returns a throwable).
+        files: [`examples/with-tanstack-start/**/*.{ts,tsx}`],
+        rules: {
+          "nextjs/no-img-element": `off`,
+          "nextjs/no-head-element": `off`,
+          "nextjs/no-html-link-for-pages": `off`,
+          "typescript/only-throw-error": `off`
+        }
+      },
+      {
+        // TanStack Start route modules and the custom server entry export a
+        // `default` by framework contract (TanStack's file-router and
+        // server-entry APIs consume the default export). The shared `imports`
+        // fragment only exempts Next's `app/`/`pages/`/`middleware` paths, so
+        // grant the same exemption for TanStack's equivalents here. Scoped to
+        // just these files so accidental default exports in lib code still warn.
+        files: [
+          `examples/with-tanstack-start/src/routes/**/*.{ts,tsx}`,
+          `examples/with-tanstack-start/src/server.ts`,
+          `examples/with-tanstack-start/src/router.tsx`
+        ],
+        rules: {
+          "import/no-default-export": `off`,
+          "import/no-anonymous-default-export": `off`
+        }
       }
     ]
   }),
