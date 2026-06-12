@@ -9,6 +9,7 @@ import {
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { DiscordSession } from "../DiscordSession.js";
+import { sleep } from "../../utils/sleep.js";
 
 const server = setupServer();
 
@@ -506,6 +507,156 @@ describe(`discordSession`, () => {
 
       expect(session.getQueueSize()).toBe(0);
       expect(session.ready).toBe(false);
+    });
+  });
+
+  // These guard the central invariant of `asUser`/per-request tokens: the
+  // Authorization header a request sends is the one captured at ENQUEUE time,
+  // and it travels with the request unchanged — across retries, and regardless
+  // of what a concurrent caller (or the `using` dispose / request() restore)
+  // does to the active token afterwards. A regression here would silently send
+  // one user's request with another user's (or the bot's) bearer token.
+  describe(`per-request token isolation`, () => {
+    it(`retries a rate-limited request with the SAME token it was issued with — even if another caller changes the active token during the retry gap`, async () => {
+      const sentAuth: (string | null)[] = [];
+      let attempts = 0;
+      // Gate that keeps an "intruder" request's `request()` scope OPEN — i.e.
+      // holds `#activeToken` set to the intruder's token — across the window in
+      // which the first request's retry fires.
+      let releaseIntruder: () => void = () => {};
+      const intruderGate = new Promise<void>((resolve) => {
+        releaseIntruder = resolve;
+      });
+
+      server.use(
+        http.get(`https://discord.com/api/v10/users/@me`, ({ request }) => {
+          attempts++;
+          sentAuth.push(request.headers.get(`authorization`));
+          // First attempt is rate-limited; the retry must reuse the same token.
+          if (attempts === 1) {
+            return HttpResponse.json(
+              { message: `rate limited`, retry_after: 0.2, global: false },
+              {
+                status: 429,
+                headers: {
+                  "Retry-After": `0.2`,
+                  "X-RateLimit-Scope": `user`
+                }
+              }
+            );
+          }
+          return HttpResponse.json({ id: `1` });
+        }),
+        // A second route the intruder hits; held open by the gate so the
+        // intruder's `request()` scope (and thus its active token) stays live.
+        http.get(`https://discord.com/api/v10/intruder`, async () => {
+          await intruderGate;
+          return HttpResponse.json({ ok: true });
+        })
+      );
+
+      // The session (bot) token is DIFFERENT from the user token, so a leak
+      // would be unmistakable in `sentAuth`.
+      const session = new DiscordSession(`Bot bot-session-token`);
+
+      const user = session.asUser(`user-access-token`);
+      const inflight = user.request(async () =>
+        session.queueRequest(
+          new URL(`https://discord.com/api/v10/users/@me`),
+          `GET`
+        )
+      );
+
+      // Start a concurrent intruder request whose `request()` scope sets
+      // `#activeToken = intruder` and STAYS OPEN (gated). Its presence means
+      // that during the first request's Retry-After wait, the live active token
+      // is the intruder's — so a live-read on retry would send the wrong token.
+      const intruder = session.asUser(`intruder-token`);
+      const intruderInflight = intruder.request(async () =>
+        session.queueRequest(
+          new URL(`https://discord.com/api/v10/intruder`),
+          `GET`
+        )
+      );
+
+      // Let the first request 429 and enter its retry wait while the intruder
+      // token is active, then release the intruder and await both.
+      await sleep(120);
+      releaseIntruder();
+      const [response] = await Promise.all([inflight, intruderInflight]);
+      intruder[Symbol.dispose]();
+      user[Symbol.dispose]();
+
+      expect(response.status).toBe(200);
+      expect(attempts).toBe(2);
+      // Both the initial attempt AND the retry used the user's bearer token —
+      // never the bot session token, and never the intruder's token.
+      expect(sentAuth).toEqual([
+        `Bearer user-access-token`,
+        `Bearer user-access-token`
+      ]);
+    }, 10000);
+
+    it(`keeps each concurrent user's token isolated across the shared queue`, async () => {
+      // Map the auth header each request arrived with, keyed by a per-user
+      // path, so overlapping requests can't be confused.
+      const seen = new Map<string, string | null>();
+
+      server.use(
+        http.get(
+          `https://discord.com/api/v10/users/:id/profile`,
+          ({ request, params }) => {
+            seen.set(String(params.id), request.headers.get(`authorization`));
+            return HttpResponse.json({ id: params.id });
+          }
+        )
+      );
+
+      const session = new DiscordSession(`Bot bot-session-token`);
+
+      // Enqueue two user-scoped requests that overlap on the single queue.
+      // Each `asUser().request()` enqueues synchronously (capturing its token)
+      // before yielding, so the two captures must not interfere.
+      using alice = session.asUser(`alice-token`);
+      using bob = session.asUser(`bob-token`);
+
+      await Promise.all([
+        alice.request(async () =>
+          session.queueRequest(
+            new URL(`https://discord.com/api/v10/users/alice/profile`),
+            `GET`
+          )
+        ),
+        bob.request(async () =>
+          session.queueRequest(
+            new URL(`https://discord.com/api/v10/users/bob/profile`),
+            `GET`
+          )
+        )
+      ]);
+
+      expect(seen.get(`alice`)).toBe(`Bearer alice-token`);
+      expect(seen.get(`bob`)).toBe(`Bearer bob-token`);
+    });
+
+    it(`falls back to the session token when no active token is set`, async () => {
+      let sentAuth: string | null = null;
+
+      server.use(
+        http.get(`https://discord.com/api/v10/users/@me`, ({ request }) => {
+          sentAuth = request.headers.get(`authorization`);
+          return HttpResponse.json({ id: `1` });
+        })
+      );
+
+      const session = new DiscordSession(`Bot bot-session-token`);
+
+      await session.queueRequest(
+        new URL(`https://discord.com/api/v10/users/@me`),
+        `GET`
+      );
+
+      expect(sentAuth).toBe(`Bot bot-session-token`);
     });
   });
 });
