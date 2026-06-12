@@ -1,0 +1,52 @@
+---
+import { getValidSession } from "#src/lib/auth";
+import { hasUsableSession } from "#src/lib/session";
+
+// Public landing page. Shows the login button; if the visitor already has a
+// usable session, it links through to the protected dashboard. The /dashboard
+// route is guarded by src/middleware.ts — this page is open to everyone.
+const loggedIn = hasUsableSession(await getValidSession(Astro.cookies));
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>discordkit — Astro OAuth2 example</title>
+    <style>
+      :root { color-scheme: light dark; }
+      body {
+        font-family: system-ui, sans-serif;
+        max-width: 42rem;
+        margin: 0 auto;
+        padding: 4rem 1.5rem;
+        line-height: 1.5;
+      }
+      .card { border: 1px solid color-mix(in srgb, currentColor 15%, transparent); border-radius: 0.5rem; padding: 1.25rem; }
+      .btn { background: #5865f2; color: white; padding: 0.6rem 1rem; border-radius: 0.375rem; text-decoration: none; }
+      .muted { opacity: 0.6; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>discordkit</h1>
+      <p class="muted">Discord OAuth2 with @discordkit/oauth + @discordkit/client (Astro)</p>
+    </header>
+
+    <div class="card">
+      {
+        loggedIn ? (
+          <>
+            <p>You're logged in.</p>
+            <a class="btn" href="/dashboard">Go to dashboard</a>
+          </>
+        ) : (
+          <>
+            <p>Log in with Discord to see your profile and the servers you're in.</p>
+            <a class="btn" href="/api/auth/login">Login with Discord</a>
+          </>
+        )
+      }
+    </div>
+  </body>
+</html>
