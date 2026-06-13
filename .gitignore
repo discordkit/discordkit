@@ -76,6 +76,9 @@ storybook-static/
 .vite-hooks/
 .claude/settings.local.json
 .discord-docs/
+social-sdk-docs/
+# Discord Social SDK native binaries — license forbids redistribution; never commit
+vendor/
 audit/
 **/dist/
 coverage/
