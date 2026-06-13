@@ -9,6 +9,7 @@
     "with-nextjs",
     "with-astro",
     "with-tanstack-start",
-    "with-waku"
+    "with-waku",
+    "with-electron"
   ]
 }

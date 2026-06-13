@@ -1,0 +1,26 @@
+{
+  "name": "with-electron",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./electron/main.mjs",
+  "scripts": {
+    "dev": "vp dev --host 127.0.0.1",
+    "app": "electron .",
+    "build": "vp build",
+    "smoke": "playwright test"
+  },
+  "dependencies": {
+    "@discordkit/electron": "workspace:^",
+    "@discordkit/native": "workspace:^"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.0",
+    "@types/node": "catalog:",
+    "electron": "^42.4.0",
+    "playwright": "^1.56.0",
+    "typescript": "catalog:",
+    "varlock": "^1.5.1",
+    "vite-plus": "^0.1.24"
+  }
+}

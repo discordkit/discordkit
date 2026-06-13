@@ -137,8 +137,8 @@ Per the user's direction, Tauri is exposed on **both** its Rust core _and_ a Nod
     cleanly (`JSCallback`/`UnsafeCallback` for callbacks, both `.close()` to unregister,
     `CString`/`UnsafePointerView` for strings), and the pump/threading model is
     runtime-agnostic by construction. **The one shared caveat across node:ffi/Bun/Deno:**
-    they take a *structured descriptor* (`{ parameters, result }`), not Koffi's C-signature
-    *string*. So the first non-Koffi backend pays a one-time cost — either a ~30-line
+    they take a _structured descriptor_ (`{ parameters, result }`), not Koffi's C-signature
+    _string_. So the first non-Koffi backend pays a one-time cost — either a ~30-line
     C-decl-string→descriptor parser (shared by all three, keeps feature code's readable
     signatures) or flipping the seam's `func` to accept a descriptor. Contained to that one
     method; the rest of the seam is unaffected. This is the seam's single load-bearing

@@ -527,7 +527,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@discordkit/native@workspace:packages/native":
+"@discordkit/electron@workspace:^, @discordkit/electron@workspace:packages/electron":
+  version: 0.0.0-use.local
+  resolution: "@discordkit/electron@workspace:packages/electron"
+  dependencies:
+    "@discordkit/native": "workspace:^"
+  peerDependencies:
+    electron: ">= 30"
+  languageName: unknown
+  linkType: soft
+
+"@discordkit/native@workspace:^, @discordkit/native@workspace:packages/native":
   version: 0.0.0-use.local
   resolution: "@discordkit/native@workspace:packages/native"
   dependencies:
@@ -558,6 +568,31 @@ __metadata:
     valimock: "npm:1.6.0"
   languageName: unknown
   linkType: soft
+
+"@electron-internal/extract-zip@npm:^1.0.1":
+  version: 1.0.2
+  resolution: "@electron-internal/extract-zip@npm:1.0.2"
+  checksum: 10/3d16b6d11020ad2f50ee9ebabc3b692908729d16fabb812dc3bb77ea65df769eb290052f99bdb00773d03619c866f8ea15d5061837356873939da5f4138b9fb5
+  languageName: node
+  linkType: hard
+
+"@electron/get@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "@electron/get@npm:5.0.0"
+  dependencies:
+    debug: "npm:^4.1.1"
+    env-paths: "npm:^3.0.0"
+    graceful-fs: "npm:^4.2.11"
+    progress: "npm:^2.0.3"
+    semver: "npm:^7.6.3"
+    sumchecker: "npm:^3.0.1"
+    undici: "npm:^7.24.4"
+  dependenciesMeta:
+    undici:
+      optional: true
+  checksum: 10/b69a1874c80f2164e99f8fbab1916bd4f4bfd038310b7bcdadaebc5290f4b9cd61347286a71ed01a74863b14fd31d8def1bd3a6f2eac1d2324a6b0268b1bf309
+  languageName: node
+  linkType: hard
 
 "@emnapi/core@npm:1.10.0, @emnapi/core@npm:^1.10.0":
   version: 1.10.0
@@ -2774,6 +2809,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/node@npm:^24.9.0":
+  version: 24.13.1
+  resolution: "@types/node@npm:24.13.1"
+  dependencies:
+    undici-types: "npm:~7.18.0"
+  checksum: 10/44aef6ada09b68f69b22d8dc6e84e2a40135af97ee4c0c5203c77fc27d7363a1b3659b71e82e4530de7786ed5e4ea6dd42579dcc9708dea9c1ab40e5bdd9c48e
+  languageName: node
+  linkType: hard
+
 "@types/react-dom@npm:^19.2.3":
   version: 19.2.3
   resolution: "@types/react-dom@npm:19.2.3"
@@ -3951,7 +3995,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:^4.0.0, debug@npm:^4.1.0, debug@npm:^4.3.1, debug@npm:^4.4.3":
+"debug@npm:^4.0.0, debug@npm:^4.1.0, debug@npm:^4.1.1, debug@npm:^4.3.1, debug@npm:^4.4.3":
   version: 4.4.3
   resolution: "debug@npm:4.4.3"
   dependencies:
@@ -4157,6 +4201,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"electron@npm:^42.4.0":
+  version: 42.4.0
+  resolution: "electron@npm:42.4.0"
+  dependencies:
+    "@electron-internal/extract-zip": "npm:^1.0.1"
+    "@electron/get": "npm:^5.0.0"
+    "@types/node": "npm:^24.9.0"
+  bin:
+    electron: cli.js
+    install-electron: install.js
+  checksum: 10/70fbe3b297e2c621d47580623a6fb3777df22fba77710bc965870f1247d3d56211673a2a8a579a69ef509718f657541504a75e80aefced733054ca3743f93cc5
+  languageName: node
+  linkType: hard
+
 "emoji-regex@npm:^8.0.0":
   version: 8.0.0
   resolution: "emoji-regex@npm:8.0.0"
@@ -4222,6 +4280,13 @@ __metadata:
   version: 2.2.1
   resolution: "env-paths@npm:2.2.1"
   checksum: 10/65b5df55a8bab92229ab2b40dad3b387fad24613263d103a97f91c9fe43ceb21965cd3392b1ccb5d77088021e525c4e0481adb309625d0cb94ade1d1fb8dc17e
+  languageName: node
+  linkType: hard
+
+"env-paths@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "env-paths@npm:3.0.0"
+  checksum: 10/b2b0a0d0d9931a13d279c22ed94d78648a1cc5f408f05d47ff3e0c1616f0aa0c38fb33deec5e5be50497225d500607d57f9c8652c4d39c2f2b7608cd45768128
   languageName: node
   linkType: hard
 
@@ -4686,7 +4751,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graceful-fs@npm:^4.2.4, graceful-fs@npm:^4.2.6":
+"graceful-fs@npm:^4.2.11, graceful-fs@npm:^4.2.4, graceful-fs@npm:^4.2.6":
   version: 4.2.11
   resolution: "graceful-fs@npm:4.2.11"
   checksum: 10/bf152d0ed1dc159239db1ba1f74fdbc40cb02f626770dcd5815c427ce0688c2635a06ed69af364396da4636d0408fcf7d4afdf7881724c3307e46aff30ca49e2
@@ -7153,7 +7218,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright@npm:1.60.0":
+"playwright@npm:1.60.0, playwright@npm:^1.56.0":
   version: 1.60.0
   resolution: "playwright@npm:1.60.0"
   dependencies:
@@ -7228,6 +7293,13 @@ __metadata:
   version: 3.0.0
   resolution: "proc-log@npm:3.0.0"
   checksum: 10/02b64e1b3919e63df06f836b98d3af002b5cd92655cab18b5746e37374bfb73e03b84fe305454614b34c25b485cc687a9eebdccf0242cda8fda2475dd2c97e02
+  languageName: node
+  linkType: hard
+
+"progress@npm:^2.0.3":
+  version: 2.0.3
+  resolution: "progress@npm:2.0.3"
+  checksum: 10/e6f0bcb71f716eee9dfac0fe8a2606e3704d6a64dd93baaf49fbadbc8499989a610fe14cf1bc6f61b6d6653c49408d94f4a94e124538084efd8e4cf525e0293d
   languageName: node
   linkType: hard
 
@@ -7680,6 +7752,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"semver@npm:^7.6.3":
+  version: 7.8.4
+  resolution: "semver@npm:7.8.4"
+  bin:
+    semver: bin/semver.js
+  checksum: 10/a9c139031d4143932adfacfd2165d6489848c3b84c26d5fc2beef88c6d54c01191ef553e3f71049ccc47df85f0df30748907f84005f46f326095003171c5b673
+  languageName: node
+  linkType: hard
+
 "semver@npm:^7.7.3":
   version: 7.8.1
   resolution: "semver@npm:7.8.1"
@@ -8086,6 +8167,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"sumchecker@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "sumchecker@npm:3.0.1"
+  dependencies:
+    debug: "npm:^4.1.0"
+  checksum: 10/5c69776ce2b53040c952cfbca0f7b487b1ee993c55b6d5523f674ec075f30e031fd84b6706dc8ccc4deb9761b58f9925be8806a316e5eedff2286bb48cb75044
+  languageName: node
+  linkType: hard
+
 "supports-color@npm:^7.1.0":
   version: 7.2.0
   resolution: "supports-color@npm:7.2.0"
@@ -8336,6 +8426,20 @@ __metadata:
   version: 7.24.6
   resolution: "undici-types@npm:7.24.6"
   checksum: 10/defc9538b952e3c15b8526596c591f7c1f0c7605ad27a2b7feddbea7ef2e3003f3eda2cdb051a3cb1a2185e3893100fd9cb925c799db99d48131ea63b5233d10
+  languageName: node
+  linkType: hard
+
+"undici-types@npm:~7.18.0":
+  version: 7.18.2
+  resolution: "undici-types@npm:7.18.2"
+  checksum: 10/e61a5918f624d68420c3ca9d301e9f15b61cba6e97be39fe2ce266dd6151e4afe424d679372638826cb506be33952774e0424141200111a9857e464216c009af
+  languageName: node
+  linkType: hard
+
+"undici@npm:^7.24.4":
+  version: 7.27.2
+  resolution: "undici@npm:7.27.2"
+  checksum: 10/d44f730157713fd2d36a1e98f44aa7661af2188a898b57a85c694013da312fd0c188515e64a59c6bbd4b1f5a79c20b6c564134d06b3ec2f574c990726987e73a
   languageName: node
   linkType: hard
 
@@ -8956,6 +9060,22 @@ __metadata:
     jose: "npm:^6.1.0"
     typescript: "catalog:"
     valibot: "catalog:"
+    varlock: "npm:^1.5.1"
+    vite-plus: "npm:^0.1.24"
+  languageName: unknown
+  linkType: soft
+
+"with-electron@workspace:examples/with-electron":
+  version: 0.0.0-use.local
+  resolution: "with-electron@workspace:examples/with-electron"
+  dependencies:
+    "@discordkit/electron": "workspace:^"
+    "@discordkit/native": "workspace:^"
+    "@playwright/test": "npm:^1.56.0"
+    "@types/node": "catalog:"
+    electron: "npm:^42.4.0"
+    playwright: "npm:^1.56.0"
+    typescript: "catalog:"
     varlock: "npm:^1.5.1"
     vite-plus: "npm:^0.1.24"
   languageName: unknown

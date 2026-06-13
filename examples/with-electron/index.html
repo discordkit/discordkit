@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>discordkit · Electron Rich Presence</title>
+    <link rel="stylesheet" href="./src/style.css" />
+  </head>
+  <body>
+    <main>
+      <h1>discordkit <span class="muted">× Electron</span></h1>
+      <p class="muted">
+        Rich presence via <code>@discordkit/native</code> running in the
+        Electron main process, driven from this renderer over a typed IPC
+        bridge.
+      </p>
+
+      <section class="status">Status: <strong id="status">…</strong></section>
+
+      <section class="actions">
+        <button id="connect">Connect Discord</button>
+        <button id="set" disabled>Set "In a match"</button>
+        <button id="clear" disabled>Clear presence</button>
+      </section>
+
+      <section>
+        <h2>SDK log</h2>
+        <pre id="log" aria-live="polite"></pre>
+      </section>
+    </main>
+    <script type="module" src="./src/main.ts"></script>
+  </body>
+</html>
