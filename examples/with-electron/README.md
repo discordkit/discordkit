@@ -1,9 +1,20 @@
-# discordkit × Electron — Rich Presence example
+# discordkit × Electron — Rich Presence Visualizer
 
-A minimal Electron app showing Discord **Rich Presence** via
+An Electron app showing Discord **Rich Presence** via
 [`@discordkit/native`](../../packages/native) (the Social SDK bridge) running in
 the Electron **main process**, driven from the renderer over the typed IPC bridge
 in [`@discordkit/electron`](../../packages/electron).
+
+The renderer is a **live editor** modelled on Discord's Developer Portal Rich
+Presence Visualizer: edit details/state/images/timestamps/party/buttons and the
+in-app preview updates reactively while the presence is pushed to Discord
+(debounced). Built with **React Aria Components**, **React Hook Form + Valibot**,
+and **Tailwind v4**. A "Show Code" tab emits the equivalent `setActivity({...})`.
+
+> **No login required.** Rich presence is set over RPC to the running Discord
+> desktop client — `SetApplicationId` → `UpdateRichPresence`, no OAuth. (The
+> presence shows as the activity line **under your name**, not the auto-detected
+> game banner, which is Discord's own process detection and not an SDK feature.)
 
 The SDK is native (Koffi FFI) and must run in a Node context, so it lives in the
 main process. The sandboxed renderer never touches FFI — it talks to

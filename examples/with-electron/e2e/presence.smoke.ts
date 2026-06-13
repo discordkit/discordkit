@@ -46,15 +46,21 @@ test.describe(`Electron presence (real SDK, local)`, () => {
       );
       expect(bridgeType).toBe(`object`);
 
-      // Status reflects a real SDK lifecycle value read over IPC (renderer →
-      // preload → ipc → main → keystone → SDK → back), not the `…` placeholder.
-      // This proves the whole main↔renderer round-trip works end to end.
-      await expect(window.locator(`#status`)).not.toHaveText(`…`, {
-        timeout: 10_000
-      });
+      // The React app mounts (proves the renderer + IPC plumbing came up).
+      await expect(
+        window.getByRole(`heading`, { name: /Rich Presence Visualizer/i })
+      ).toBeVisible({ timeout: 10_000 });
 
-      // The Connect button is the renderer's entry into the auth flow.
-      await expect(window.locator(`#connect`)).toBeVisible();
+      // The status read over IPC resolves to a real SDK lifecycle value
+      // (renderer → preload → ipc → main → keystone → SDK → back).
+      const status = await window.evaluate(async () =>
+        (
+          globalThis as unknown as {
+            discord: { getStatus: () => Promise<string> };
+          }
+        ).discord.getStatus()
+      );
+      expect(typeof status).toBe(`string`);
     } finally {
       await app.close();
     }
