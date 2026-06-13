@@ -132,6 +132,17 @@ Per the user's direction, Tauri is exposed on **both** its Rust core _and_ a Nod
     **synchronously on the main thread inside that pump call** — no thread-safety hazard, no
     TSFN, no C++. (Both libs' docs require callbacks fire on their creating thread; the pump
     satisfies this by construction.)
+  - **Bun (`bun:ffi`) and Deno (`Deno.dlopen`) — also one-file backends if ever wanted.**
+    Not supported now (no consumer; out of scope), but assessed: every seam method maps
+    cleanly (`JSCallback`/`UnsafeCallback` for callbacks, both `.close()` to unregister,
+    `CString`/`UnsafePointerView` for strings), and the pump/threading model is
+    runtime-agnostic by construction. **The one shared caveat across node:ffi/Bun/Deno:**
+    they take a *structured descriptor* (`{ parameters, result }`), not Koffi's C-signature
+    *string*. So the first non-Koffi backend pays a one-time cost — either a ~30-line
+    C-decl-string→descriptor parser (shared by all three, keeps feature code's readable
+    signatures) or flipping the seam's `func` to accept a descriptor. Contained to that one
+    method; the rest of the seam is unaffected. This is the seam's single load-bearing
+    assumption, recorded here so it isn't rediscovered later.
 - **Tauri Rust path: `bindgen`** generates Rust FFI from `cdiscord.h` at build time
   (targets C, which the ABI is), wrapped in a small safe Rust layer and exposed as a
   `tauri-plugin` with JS bindings. No C++ shim needed (bindgen can't read C++/STL, but the
