@@ -8,6 +8,13 @@
 // here in the main process) to IPC via @discordkit/electron so the renderer can
 // drive it. The SDK never touches the renderer.
 
+// Load + validate the example's `.env` into process.env via Varlock (matching
+// the other examples). A desktop main is a plain Node runtime — no bundler
+// injection — so we load Varlock here in code; this covers every launch path
+// (manual `electron .`, the Playwright smoke, a packaged build). Must be the
+// first import so env is populated before anything reads process.env.
+import "varlock/auto-load";
+
 import { app, BrowserWindow, ipcMain } from "electron";
 import { registerDiscord } from "@discordkit/electron/main";
 import { dirname, join } from "node:path";
