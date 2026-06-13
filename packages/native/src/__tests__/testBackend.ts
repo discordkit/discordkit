@@ -28,12 +28,25 @@ import type {
 export interface MockState {
   /** Names of every C function invoked, in order. */
   readonly calls: string[];
-  /** Activity fields captured by the last `Discord_Activity_Set*` sequence. */
+  /** Activity fields captured by the last `Discord_*_Set*` sequence. */
   readonly activity: {
     type?: number;
     name?: string;
     state?: string | null;
     details?: string | null;
+    stateUrl?: string | null;
+    detailsUrl?: string | null;
+    largeImage?: string | null;
+    largeText?: string | null;
+    smallImage?: string | null;
+    smallText?: string | null;
+    startTimestamp?: bigint;
+    endTimestamp?: bigint;
+    partyId?: string;
+    partyCurrent?: number;
+    partyMax?: number;
+    buttons: { label?: string; url?: string }[];
+    attached: string[];
   };
   /** Resolved application id passed to `SetApplicationId`. */
   applicationId?: bigint;
@@ -72,7 +85,7 @@ export const mockBackend: FfiBackend = (_libraryPath: string): FfiLibrary => {
   let statusCb: Handler | undefined;
   let logCb: Handler | undefined;
   let statusStep = 0;
-  const activity: MockState[`activity`] = {};
+  const activity: MockState[`activity`] = { buttons: [], attached: [] };
 
   // Each "handle" is just a tagged object; the binding layer treats it as opaque.
   const handle = (): FfiOpaque => ({ __mock: `handle` });
@@ -120,6 +133,60 @@ export const mockBackend: FfiBackend = (_libraryPath: string): FfiLibrary => {
             return undefined;
           case `Discord_Activity_SetDetails`:
             activity.details = decodeString(args[1]);
+            return undefined;
+          case `Discord_Activity_SetStateUrl`:
+            activity.stateUrl = decodeString(args[1]);
+            return undefined;
+          case `Discord_Activity_SetDetailsUrl`:
+            activity.detailsUrl = decodeString(args[1]);
+            return undefined;
+          case `Discord_ActivityAssets_SetLargeImage`:
+            activity.largeImage = decodeString(args[1]);
+            return undefined;
+          case `Discord_ActivityAssets_SetLargeText`:
+            activity.largeText = decodeString(args[1]);
+            return undefined;
+          case `Discord_ActivityAssets_SetSmallImage`:
+            activity.smallImage = decodeString(args[1]);
+            return undefined;
+          case `Discord_ActivityAssets_SetSmallText`:
+            activity.smallText = decodeString(args[1]);
+            return undefined;
+          case `Discord_ActivityTimestamps_SetStart`:
+            activity.startTimestamp = args[1] as bigint;
+            return undefined;
+          case `Discord_ActivityTimestamps_SetEnd`:
+            activity.endTimestamp = args[1] as bigint;
+            return undefined;
+          case `Discord_ActivityParty_SetId`:
+            activity.partyId = decodeString(args[1]);
+            return undefined;
+          case `Discord_ActivityParty_SetCurrentSize`:
+            activity.partyCurrent = args[1] as number;
+            return undefined;
+          case `Discord_ActivityParty_SetMaxSize`:
+            activity.partyMax = args[1] as number;
+            return undefined;
+          case `Discord_ActivityButton_SetLabel`:
+            activity.buttons.push({ label: decodeString(args[1]) });
+            return undefined;
+          case `Discord_ActivityButton_SetUrl`:
+            {
+              const last = activity.buttons.at(-1);
+              if (last) last.url = decodeString(args[1]);
+            }
+            return undefined;
+          case `Discord_Activity_SetAssets`:
+            activity.attached.push(`assets`);
+            return undefined;
+          case `Discord_Activity_SetTimestamps`:
+            activity.attached.push(`timestamps`);
+            return undefined;
+          case `Discord_Activity_SetParty`:
+            activity.attached.push(`party`);
+            return undefined;
+          case `Discord_Activity_AddButton`:
+            activity.attached.push(`button`);
             return undefined;
           case `Discord_Client_UpdateRichPresence`: {
             // args: (self, activityHandle, cb, cbFree, cbUserData)

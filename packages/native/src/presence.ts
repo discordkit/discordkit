@@ -20,24 +20,73 @@ const ACTIVITY_TYPE: Record<ActivityType, number> = {
   competing: 5
 };
 
-/** A rich-presence activity, in plain-object form. */
+/** Art assets shown on the activity card (`Discord_ActivityAssets`). Image
+ * fields are **asset keys** uploaded under the app's Rich Presence → Art Assets
+ * (or external image URLs, where supported). */
+export interface ActivityAssets {
+  /** Large image: asset key (or URL). */
+  largeImage?: string;
+  /** Tooltip text shown when hovering the large image. */
+  largeText?: string;
+  /** Makes the large image a clickable link. */
+  largeUrl?: string;
+  /** Small image (overlaid on the large one): asset key (or URL). */
+  smallImage?: string;
+  /** Tooltip text shown when hovering the small image. */
+  smallText?: string;
+  /** Makes the small image a clickable link. */
+  smallUrl?: string;
+}
+
+/** Start/end of the activity, as Unix epoch **milliseconds**. A `start` renders
+ * "elapsed" (e.g. "02:34 elapsed"); an `end` renders "remaining". */
+export interface ActivityTimestamps {
+  start?: number;
+  end?: number;
+}
+
+/** Party info — renders as "(current of max)" next to the state. */
+export interface ActivityParty {
+  id?: string;
+  currentSize?: number;
+  maxSize?: number;
+}
+
+/** A clickable button on the activity card. Discord shows at most two. */
+export interface ActivityButton {
+  label: string;
+  url: string;
+}
+
+/** A rich-presence activity, in plain-object form. Field names mirror Discord's
+ * Rich Presence vocabulary (and the Developer Portal visualizer). */
 export interface ActivityInput {
   /** Activity type. Default `playing`. */
   type?: ActivityType;
+  /** Overrides the displayed app name (top line of the card). */
+  name?: string;
   /** First line under the app name (e.g. "In Competitive Match"). */
   state?: string;
   /** Second line (e.g. "Rank: Diamond II"). */
   details?: string;
-  /** Overrides the displayed app name. */
-  name?: string;
+  /** Makes `state` a clickable link. */
+  stateUrl?: string;
+  /** Makes `details` a clickable link. */
+  detailsUrl?: string;
+  /** Large/small images + tooltips. */
+  assets?: ActivityAssets;
+  /** Elapsed/remaining timestamps (epoch ms). */
+  timestamps?: ActivityTimestamps;
+  /** Party size info. */
+  party?: ActivityParty;
+  /** Up to two clickable buttons. */
+  buttons?: ActivityButton[];
 }
 
-/** Mutable builder passed to the callback form of {@link setActivity}. */
-export interface ActivityBuilder {
+/** Mutable builder passed to the callback form of {@link setActivity}. Same
+ * shape as {@link ActivityInput} but with `type` required, for in-place edits. */
+export interface ActivityBuilder extends ActivityInput {
   type: ActivityType;
-  state?: string;
-  details?: string;
-  name?: string;
 }
 
 /** Per-call options shared by presence operations. */
@@ -59,7 +108,38 @@ interface PresenceBindings {
   setType: FfiFunction;
   setName: FfiFunction;
   setState: FfiFunction;
+  setStateUrl: FfiFunction;
   setDetails: FfiFunction;
+  setDetailsUrl: FfiFunction;
+  setAssets: FfiFunction;
+  setTimestamps: FfiFunction;
+  setParty: FfiFunction;
+  addButton: FfiFunction;
+  // assets sub-object
+  assetsInit: FfiFunction;
+  assetsDrop: FfiFunction;
+  assetsSetLargeImage: FfiFunction;
+  assetsSetLargeText: FfiFunction;
+  assetsSetLargeUrl: FfiFunction;
+  assetsSetSmallImage: FfiFunction;
+  assetsSetSmallText: FfiFunction;
+  assetsSetSmallUrl: FfiFunction;
+  // timestamps sub-object
+  timestampsInit: FfiFunction;
+  timestampsDrop: FfiFunction;
+  timestampsSetStart: FfiFunction;
+  timestampsSetEnd: FfiFunction;
+  // party sub-object
+  partyInit: FfiFunction;
+  partyDrop: FfiFunction;
+  partySetId: FfiFunction;
+  partySetCurrentSize: FfiFunction;
+  partySetMaxSize: FfiFunction;
+  // button sub-object
+  buttonInit: FfiFunction;
+  buttonDrop: FfiFunction;
+  buttonSetLabel: FfiFunction;
+  buttonSetUrl: FfiFunction;
   updateRichPresence: FfiFunction;
   updateRichPresenceCb: unknown;
   resultSuccessful: FfiFunction;
@@ -84,12 +164,86 @@ const presenceBindings = (lib: FfiLibrary): PresenceBindings => {
     setName: lib.func(
       `void Discord_Activity_SetName(void *self, Discord_String value)`
     ),
-    // SetState/SetDetails take `Discord_String *` (nullable → pass null to clear).
+    // SetState/SetDetails/*Url take `Discord_String *` (use encodeStringPtr).
     setState: lib.func(
       `void Discord_Activity_SetState(void *self, Discord_String *value)`
     ),
+    setStateUrl: lib.func(
+      `void Discord_Activity_SetStateUrl(void *self, Discord_String *value)`
+    ),
     setDetails: lib.func(
       `void Discord_Activity_SetDetails(void *self, Discord_String *value)`
+    ),
+    setDetailsUrl: lib.func(
+      `void Discord_Activity_SetDetailsUrl(void *self, Discord_String *value)`
+    ),
+    // Sub-object attach (pass the sub-handle pointer as void*).
+    setAssets: lib.func(
+      `void Discord_Activity_SetAssets(void *self, void *value)`
+    ),
+    setTimestamps: lib.func(
+      `void Discord_Activity_SetTimestamps(void *self, void *value)`
+    ),
+    setParty: lib.func(
+      `void Discord_Activity_SetParty(void *self, void *value)`
+    ),
+    addButton: lib.func(
+      `void Discord_Activity_AddButton(void *self, void *button)`
+    ),
+    // --- assets sub-object (all image/text/url are Discord_String*) ---
+    assetsInit: lib.func(`void Discord_ActivityAssets_Init(void *self)`),
+    assetsDrop: lib.func(`void Discord_ActivityAssets_Drop(void *self)`),
+    assetsSetLargeImage: lib.func(
+      `void Discord_ActivityAssets_SetLargeImage(void *self, Discord_String *value)`
+    ),
+    assetsSetLargeText: lib.func(
+      `void Discord_ActivityAssets_SetLargeText(void *self, Discord_String *value)`
+    ),
+    assetsSetLargeUrl: lib.func(
+      `void Discord_ActivityAssets_SetLargeUrl(void *self, Discord_String *value)`
+    ),
+    assetsSetSmallImage: lib.func(
+      `void Discord_ActivityAssets_SetSmallImage(void *self, Discord_String *value)`
+    ),
+    assetsSetSmallText: lib.func(
+      `void Discord_ActivityAssets_SetSmallText(void *self, Discord_String *value)`
+    ),
+    assetsSetSmallUrl: lib.func(
+      `void Discord_ActivityAssets_SetSmallUrl(void *self, Discord_String *value)`
+    ),
+    // --- timestamps sub-object (uint64 by value, epoch ms) ---
+    timestampsInit: lib.func(
+      `void Discord_ActivityTimestamps_Init(void *self)`
+    ),
+    timestampsDrop: lib.func(
+      `void Discord_ActivityTimestamps_Drop(void *self)`
+    ),
+    timestampsSetStart: lib.func(
+      `void Discord_ActivityTimestamps_SetStart(void *self, uint64_t value)`
+    ),
+    timestampsSetEnd: lib.func(
+      `void Discord_ActivityTimestamps_SetEnd(void *self, uint64_t value)`
+    ),
+    // --- party sub-object (id by value String; sizes int32) ---
+    partyInit: lib.func(`void Discord_ActivityParty_Init(void *self)`),
+    partyDrop: lib.func(`void Discord_ActivityParty_Drop(void *self)`),
+    partySetId: lib.func(
+      `void Discord_ActivityParty_SetId(void *self, Discord_String value)`
+    ),
+    partySetCurrentSize: lib.func(
+      `void Discord_ActivityParty_SetCurrentSize(void *self, int32_t value)`
+    ),
+    partySetMaxSize: lib.func(
+      `void Discord_ActivityParty_SetMaxSize(void *self, int32_t value)`
+    ),
+    // --- button sub-object (label/url by value String) ---
+    buttonInit: lib.func(`void Discord_ActivityButton_Init(void *self)`),
+    buttonDrop: lib.func(`void Discord_ActivityButton_Drop(void *self)`),
+    buttonSetLabel: lib.func(
+      `void Discord_ActivityButton_SetLabel(void *self, Discord_String value)`
+    ),
+    buttonSetUrl: lib.func(
+      `void Discord_ActivityButton_SetUrl(void *self, Discord_String value)`
     ),
     updateRichPresence: lib.func(
       `void Discord_Client_UpdateRichPresence(void *self, void *activity, void *cb, void *cbFree, void *cbUserData)`
@@ -116,6 +270,97 @@ const toActivity = (
   const builder: ActivityBuilder = { type: `playing` };
   input(builder);
   return builder;
+};
+
+/**
+ * Populate an initialized `Discord_Activity` handle from an {@link ActivityInput},
+ * building the sub-objects (assets/timestamps/party/buttons) as needed. Returns
+ * the sub-object handles so the caller can `Drop` them after the SDK has copied
+ * the activity. Marshaling rules (all verified against the real SDK): `*`-typed
+ * string params → `encodeStringPtr`; by-value strings → `encodeString`; uint64
+ * timestamps + int32 sizes → numbers; sub-object attach → the handle pointer.
+ */
+const applyActivity = (
+  lib: FfiLibrary,
+  b: PresenceBindings,
+  handle: FfiOpaque,
+  a: ActivityInput
+): (() => void) => {
+  // Each sub-object handle is paired with its own Drop so cleanup is correct
+  // regardless of type. Returned as one closure the caller runs after dispatch.
+  const cleanups: Array<() => void> = [];
+
+  // Skip EMPTY strings, not just undefined: the SDK rejects empty values for
+  // length-constrained fields (image keys must be 1–300 chars), and an empty
+  // string is semantically "unset" for every text field. So a cleared input
+  // (RHF holds `""`) is correctly treated as absent.
+  b.setType(handle, ACTIVITY_TYPE[a.type ?? `playing`]);
+  if (a.name) b.setName(handle, lib.encodeString(a.name));
+  if (a.state) b.setState(handle, lib.encodeStringPtr(a.state));
+  if (a.stateUrl) b.setStateUrl(handle, lib.encodeStringPtr(a.stateUrl));
+  if (a.details) b.setDetails(handle, lib.encodeStringPtr(a.details));
+  if (a.detailsUrl) b.setDetailsUrl(handle, lib.encodeStringPtr(a.detailsUrl));
+
+  const assetFields = a.assets ?? {};
+  const hasAssets = Object.values(assetFields).some(Boolean);
+  if (hasAssets) {
+    const assets = lib.allocHandle();
+    b.assetsInit(assets);
+    cleanups.push(() => b.assetsDrop(assets));
+    const { largeImage, largeText, largeUrl, smallImage, smallText, smallUrl } =
+      assetFields;
+    if (largeImage)
+      b.assetsSetLargeImage(assets, lib.encodeStringPtr(largeImage));
+    if (largeText) b.assetsSetLargeText(assets, lib.encodeStringPtr(largeText));
+    if (largeUrl) b.assetsSetLargeUrl(assets, lib.encodeStringPtr(largeUrl));
+    if (smallImage)
+      b.assetsSetSmallImage(assets, lib.encodeStringPtr(smallImage));
+    if (smallText) b.assetsSetSmallText(assets, lib.encodeStringPtr(smallText));
+    if (smallUrl) b.assetsSetSmallUrl(assets, lib.encodeStringPtr(smallUrl));
+    b.setAssets(handle, assets);
+  }
+
+  if (a.timestamps) {
+    const ts = lib.allocHandle();
+    b.timestampsInit(ts);
+    cleanups.push(() => b.timestampsDrop(ts));
+    if (a.timestamps.start !== undefined)
+      b.timestampsSetStart(ts, BigInt(a.timestamps.start));
+    if (a.timestamps.end !== undefined)
+      b.timestampsSetEnd(ts, BigInt(a.timestamps.end));
+    b.setTimestamps(handle, ts);
+  }
+
+  // Discord REQUIRES a party id (2–128 chars) when a party is present, so only
+  // build the party when an id is supplied — sizes alone would be rejected.
+  if (a.party?.id) {
+    const party = lib.allocHandle();
+    b.partyInit(party);
+    cleanups.push(() => b.partyDrop(party));
+    b.partySetId(party, lib.encodeString(a.party.id));
+    if (a.party.currentSize !== undefined)
+      b.partySetCurrentSize(party, a.party.currentSize);
+    if (a.party.maxSize !== undefined)
+      b.partySetMaxSize(party, a.party.maxSize);
+    b.setParty(handle, party);
+  }
+
+  // Discord shows at most two buttons; skip empties and cap to avoid building
+  // handles that won't render (or would be rejected for empty label/url).
+  for (const button of (a.buttons ?? [])
+    .filter((x) => x.label && x.url)
+    .slice(0, 2)) {
+    const btn = lib.allocHandle();
+    b.buttonInit(btn);
+    cleanups.push(() => b.buttonDrop(btn));
+    b.buttonSetLabel(btn, lib.encodeString(button.label));
+    b.buttonSetUrl(btn, lib.encodeString(button.url));
+    b.addButton(handle, btn);
+  }
+
+  return () => {
+    for (const drop of cleanups) drop();
+  };
 };
 
 /**
@@ -198,19 +443,8 @@ export const setActivity = async (
 
   const handle = client.lib.allocHandle();
   b.activityInit(handle);
+  const dropSubs = applyActivity(client.lib, b, handle, activity);
   try {
-    b.setType(handle, ACTIVITY_TYPE[activity.type ?? `playing`]);
-    if (activity.name !== undefined) {
-      b.setName(handle, client.lib.encodeString(activity.name));
-    }
-    // SetState/SetDetails take `Discord_String *` (nullable) — encodeStringPtr
-    // returns a pointer to a Discord_String so the SDK reads the actual value.
-    if (activity.state !== undefined) {
-      b.setState(handle, client.lib.encodeStringPtr(activity.state));
-    }
-    if (activity.details !== undefined) {
-      b.setDetails(handle, client.lib.encodeStringPtr(activity.details));
-    }
     await dispatchPresence(
       client,
       b,
@@ -218,6 +452,7 @@ export const setActivity = async (
       options.timeoutMs ?? DEFAULT_PRESENCE_TIMEOUT_MS
     );
   } finally {
+    dropSubs();
     b.activityDrop(handle);
   }
 };
