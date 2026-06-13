@@ -155,8 +155,12 @@ export const createClient = (config: ClientConfig = {}): DiscordClient => {
   const pump = setInterval(() => {
     runCallbacks();
   }, interval);
-  // Don't keep the process alive solely for the pump.
-  pump.unref();
+  // NB: do NOT `unref()` the pump. It is essential, continuous work — draining
+  // SDK events and firing callbacks. If it's `unref`'d and the pump is the only
+  // active handle (headless Node, the Tauri sidecar, tests), Node stops running
+  // the timer and ALL SDK callbacks stall (presence never acks). Keeping it
+  // ref'd means an active client keeps the process alive — which is correct;
+  // call `close()`/`shutdown()` to stop the pump and let the process exit.
 
   let closed = false;
   const close = (): void => {

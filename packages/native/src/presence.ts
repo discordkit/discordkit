@@ -1,6 +1,6 @@
 import { useClient } from "./ambient.js";
 import type { DiscordClient } from "./client.js";
-import type { FfiFunction, FfiLibrary } from "./ffi/backend.js";
+import type { FfiFunction, FfiLibrary, FfiOpaque } from "./ffi/backend.js";
 
 /** Rich-presence activity type. Mirrors `Discord_ActivityTypes`. */
 export type ActivityType =
@@ -44,6 +44,13 @@ export interface ActivityBuilder {
 export interface PresenceOptions {
   /** Target a specific client instead of the ambient singleton. */
   client?: DiscordClient;
+  /**
+   * Milliseconds to wait for the SDK to acknowledge before rejecting. Default
+   * 10000. Presence reaches Discord over an RPC link to the local desktop client
+   * that takes a moment to establish; the call rejects (never hangs) if no ack
+   * arrives — usually because Discord isn't running.
+   */
+  timeoutMs?: number;
 }
 
 interface PresenceBindings {
@@ -55,6 +62,8 @@ interface PresenceBindings {
   setDetails: FfiFunction;
   updateRichPresence: FfiFunction;
   updateRichPresenceCb: unknown;
+  resultSuccessful: FfiFunction;
+  resultErrorToString: FfiFunction;
 }
 
 /**
@@ -87,6 +96,12 @@ const presenceBindings = (lib: FfiLibrary): PresenceBindings => {
     ),
     updateRichPresenceCb: lib.defineCallback(
       `void UpdateRichPresenceCallback(void *result, void *userData)`
+    ),
+    resultSuccessful: lib.func(
+      `bool Discord_ClientResult_Successful(void *self)`
+    ),
+    resultErrorToString: lib.func(
+      `void Discord_ClientResult_ToString(void *self, Discord_String *returnValue)`
     )
   };
   bindingsByLib.set(lib, bindings);
@@ -102,6 +117,65 @@ const toActivity = (
   input(builder);
   return builder;
 };
+
+/**
+ * How long to wait for the SDK to acknowledge a rich-presence update before
+ * giving up. Presence goes over RPC to the local Discord desktop client; that
+ * link takes a few seconds to establish after the client is created, and the ack
+ * callback only fires once it's up. Without a timeout, a not-yet-ready (or
+ * absent) Discord client would hang the call forever.
+ */
+const DEFAULT_PRESENCE_TIMEOUT_MS = 10_000;
+
+/**
+ * Call `Discord_Client_UpdateRichPresence` and resolve/reject on the SDK's
+ * result. Rejects (rather than hangs) if no ack arrives within the timeout —
+ * the usual cause is the Discord desktop client not running, or its RPC link not
+ * established yet. Also rejects on an unsuccessful result (surfacing what would
+ * otherwise be a silent no-show).
+ */
+const dispatchPresence = async (
+  client: DiscordClient,
+  b: PresenceBindings,
+  activityHandle: FfiOpaque,
+  timeoutMs: number
+): Promise<void> =>
+  new Promise<void>((resolve, reject) => {
+    let settled = false;
+    const timer = setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      reject(
+        new Error(
+          `Rich presence update timed out after ${timeoutMs}ms with no response ` +
+            `from the local Discord client. Is the Discord desktop app running?`
+        )
+      );
+    }, timeoutMs);
+    timer.unref?.();
+
+    const cb = client.lib.registerCallback(
+      b.updateRichPresenceCb,
+      (result: unknown) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        if (b.resultSuccessful(result)) {
+          resolve();
+          return;
+        }
+        const out = client.lib.allocStringOut();
+        b.resultErrorToString(result, out);
+        reject(
+          new Error(
+            `Rich presence update failed: ${client.lib.decodeString(out)}`
+          )
+        );
+      }
+    );
+    client.trackCallback(cb);
+    b.updateRichPresence(client.handle, activityHandle, cb, null, null);
+  });
 
 /**
  * Set the user's rich presence. Accepts a plain object or a builder callback:
@@ -129,20 +203,20 @@ export const setActivity = async (
     if (activity.name !== undefined) {
       b.setName(handle, client.lib.encodeString(activity.name));
     }
+    // SetState/SetDetails take `Discord_String *` (nullable) — encodeStringPtr
+    // returns a pointer to a Discord_String so the SDK reads the actual value.
     if (activity.state !== undefined) {
-      b.setState(handle, client.lib.encodeString(activity.state));
+      b.setState(handle, client.lib.encodeStringPtr(activity.state));
     }
     if (activity.details !== undefined) {
-      b.setDetails(handle, client.lib.encodeString(activity.details));
+      b.setDetails(handle, client.lib.encodeStringPtr(activity.details));
     }
-
-    await new Promise<void>((resolve) => {
-      const cb = client.lib.registerCallback(b.updateRichPresenceCb, () => {
-        resolve();
-      });
-      client.trackCallback(cb);
-      b.updateRichPresence(client.handle, handle, cb, null, null);
-    });
+    await dispatchPresence(
+      client,
+      b,
+      handle,
+      options.timeoutMs ?? DEFAULT_PRESENCE_TIMEOUT_MS
+    );
   } finally {
     b.activityDrop(handle);
   }
@@ -160,13 +234,12 @@ export const clearActivity = async (
   const handle = client.lib.allocHandle();
   b.activityInit(handle);
   try {
-    await new Promise<void>((resolve) => {
-      const cb = client.lib.registerCallback(b.updateRichPresenceCb, () => {
-        resolve();
-      });
-      client.trackCallback(cb);
-      b.updateRichPresence(client.handle, handle, cb, null, null);
-    });
+    await dispatchPresence(
+      client,
+      b,
+      handle,
+      options.timeoutMs ?? DEFAULT_PRESENCE_TIMEOUT_MS
+    );
   } finally {
     b.activityDrop(handle);
   }

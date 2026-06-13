@@ -83,6 +83,9 @@ export const mockBackend: FfiBackend = (_libraryPath: string): FfiLibrary => {
     const tagged: MockString = { __str: value };
     return tagged as unknown as DiscordStringValue;
   };
+  // The mock treats by-value and by-pointer strings the same (the tag carries
+  // the value either way); the real backend distinguishes them.
+  const encodeStringPtr = (value: string): unknown => ({ __str: value });
 
   const lib: FfiLibrary = {
     func: (declaration: string): FfiFunction => {
@@ -149,8 +152,10 @@ export const mockBackend: FfiBackend = (_libraryPath: string): FfiLibrary => {
       registered.delete(h as symbol);
     },
     allocHandle: handle,
+    allocStringOut: handle,
     decodeString,
-    encodeString
+    encodeString,
+    encodeStringPtr
   };
 
   const state: MockState = {

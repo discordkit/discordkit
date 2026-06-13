@@ -76,24 +76,42 @@ export interface FfiLibrary {
 
   /**
    * Allocate a single-pointer opaque handle struct (`{ void* opaque }`) and
-   * return a pointer to it, suitable for the SDK's `*_Init`/`*_Drop` functions.
+   * return a pointer to it, suitable for the SDK's `*_Init`/`*_Drop` functions
+   * and for opaque-handle out-params (e.g. `CreateAuthorizationCodeVerifier`).
    */
   allocHandle: () => FfiOpaque;
 
   /**
-   * Decode a `Discord_String` (received by value in a callback, or written into
-   * an out-param handle) into a JS string. Accepts any backend value — it
-   * guards internally for the `{ ptr, size }` shape and returns `""` otherwise.
+   * Allocate a `Discord_String`-sized buffer (`{ uint8_t* ptr; size_t size }`)
+   * for a `Discord_String*` OUT-param the SDK writes into (e.g.
+   * `GetDefaultPresenceScopes`, `Verifier`). MUST be used instead of
+   * {@link allocHandle} for string out-params: a `Discord_String` is wider than
+   * a single pointer, so a handle-sized buffer overflows when the SDK writes the
+   * string back. Pass the result to the C function, then {@link decodeString} it.
+   */
+  allocStringOut: () => FfiOpaque;
+
+  /**
+   * Decode a `Discord_String` — received by value in a callback, or written into
+   * an {@link allocStringOut} buffer — into a JS string. Accepts any backend
+   * value; guards for the `{ ptr, size }` shape and returns `""` otherwise.
    */
   decodeString: (value: unknown) => string;
 
   /**
-   * Encode a JS string as a `Discord_String` to pass INTO the SDK. The returned
-   * value is suitable as a by-value `Discord_String` argument. The SDK copies
-   * string contents internally, so the backing bytes only need to outlive the
-   * synchronous call that consumes it.
+   * Encode a JS string as a `Discord_String` to pass INTO the SDK by VALUE
+   * (a `Discord_String` argument). The SDK copies string contents internally, so
+   * the backing bytes only need to outlive the synchronous call.
    */
   encodeString: (value: string) => DiscordStringValue;
+
+  /**
+   * Encode a JS string as a POINTER to a `Discord_String`, for params typed
+   * `Discord_String*` (e.g. `Discord_Activity_SetState/SetDetails`, which take a
+   * nullable pointer). Distinct from {@link encodeString} (by value) — passing a
+   * by-value struct where a pointer is expected silently mis-sets the field.
+   */
+  encodeStringPtr: (value: string) => FfiOpaque;
 }
 
 /** A backend is just a function that opens a shared library. */

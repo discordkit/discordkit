@@ -26,25 +26,37 @@ const isDiscordString = (
   `size` in value &&
   Boolean((value as { ptr: unknown }).ptr);
 
-// Register the value-struct types koffi must know to marshal them BY VALUE.
-// Opaque handles passed by *pointer* don't need registration — feature
-// declarations use `void *` for those. The exceptions are the few handles the
-// SDK passes by value (e.g. `Discord_AuthorizationCodeChallenge` into
-// `SetCodeChallenge`), plus `Discord_String` (ptr+size, crosses by value).
+// `Discord_String` (ptr+size) is the one value-struct koffi must know: it
+// crosses by value in callbacks, and we allocate it for string out-params.
 koffi.struct(`Discord_String`, { ptr: `uint8_t *`, size: `size_t` });
-koffi.struct(`Discord_AuthorizationCodeChallenge`, { opaque: `void *` });
 // Every SDK handle is structurally `{ void* opaque }`; we allocate this generic
 // one and pass it through `void *` params, so the backend needs no per-handle
 // type knowledge (`Discord_Client`, `Discord_Activity`, … are never registered).
+// All handle params/out-params are declared `void *`, so by-value handle structs
+// (e.g. the old SetCodeChallenge mistake) never need registering.
 koffi.struct(`Discord_Handle`, { opaque: `void *` });
 
-const decodeString = (value: unknown): string => {
-  if (!isDiscordString(value) || Number(value.size) === 0) return ``;
-  const bytes = koffi.decode(
-    value.ptr,
-    koffi.array(`uint8_t`, Number(value.size))
-  );
+/** Read the UTF-8 bytes of a `{ ptr, size }` Discord_String into a JS string. */
+const readDiscordString = (s: {
+  ptr: unknown;
+  size: number | bigint;
+}): string => {
+  if (!s.ptr || Number(s.size) === 0) return ``;
+  const bytes = koffi.decode(s.ptr, koffi.array(`uint8_t`, Number(s.size)));
   return Buffer.from(bytes as number[]).toString(`utf8`);
+};
+
+const decodeString = (value: unknown): string => {
+  // Callback args arrive as an already-decoded `{ ptr, size }` struct…
+  if (isDiscordString(value)) return readDiscordString(value);
+  // …whereas an `allocStringOut()` buffer is a POINTER to a Discord_String the
+  // SDK wrote into — decode the struct first, then read its bytes.
+  if (value === null || value === undefined) return ``;
+  const decoded = koffi.decode(value, `Discord_String`) as {
+    ptr: unknown;
+    size: number | bigint;
+  };
+  return readDiscordString(decoded);
 };
 
 const encodeString = (value: string): DiscordStringValue => {
@@ -52,6 +64,16 @@ const encodeString = (value: string): DiscordStringValue => {
   // the UTF-8 byte length for the `size` field of `Discord_String`.
   const buffer = Buffer.from(value, `utf8`);
   return { ptr: buffer, size: buffer.byteLength };
+};
+
+const encodeStringPtr = (value: string): unknown => {
+  // For `Discord_String*` params: allocate a Discord_String, encode the value
+  // into it, and return the pointer. koffi.encode writes the struct fields; the
+  // Buffer must stay reachable — koffi keeps the encoded struct's references for
+  // the call's duration, and the SDK copies the string synchronously.
+  const ptr = koffi.alloc(`Discord_String`, 1);
+  koffi.encode(ptr, `Discord_String`, encodeString(value));
+  return ptr;
 };
 
 /** Open the SDK shared library and expose the seam primitives. */
@@ -70,7 +92,9 @@ export const koffiBackend: FfiBackend = (libraryPath: string): FfiLibrary => {
       koffi.unregister(handle as bigint);
     },
     allocHandle: () => koffi.alloc(`Discord_Handle`, 1),
+    allocStringOut: () => koffi.alloc(`Discord_String`, 1),
     decodeString,
+    encodeStringPtr,
     encodeString
   };
 };

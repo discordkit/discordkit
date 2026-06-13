@@ -73,7 +73,9 @@ const authBindings = (lib: FfiLibrary): AuthBindings => {
       `void Discord_AuthorizationArgs_SetScopes(void *self, Discord_String value)`
     ),
     argsSetCodeChallenge: lib.func(
-      `void Discord_AuthorizationArgs_SetCodeChallenge(void *self, Discord_AuthorizationCodeChallenge value)`
+      // Header: `Discord_AuthorizationCodeChallenge* value` — a POINTER to the
+      // challenge handle (NOT by value). Pass the challenge handle pointer.
+      `void Discord_AuthorizationArgs_SetCodeChallenge(void *self, void *value)`
     ),
     authorize: lib.func(
       `void Discord_Client_Authorize(void *self, void *args, void *cb, void *cbFree, void *cbUserData)`
@@ -118,7 +120,9 @@ export const authorize = async (
   const lib = client.lib;
   const b = authBindings(lib);
 
-  const scopesOut = lib.allocHandle();
+  // String out-params (`Discord_String*`) need a Discord_String-sized buffer;
+  // opaque-handle out-params (verifier/challenge) use a handle-sized buffer.
+  const scopesOut = lib.allocStringOut();
   (options.scopes === `communication`
     ? b.getCommunicationScopes
     : b.getPresenceScopes)(scopesOut);
@@ -128,7 +132,7 @@ export const authorize = async (
   b.createVerifier(client.handle, verifier);
   const challenge = lib.allocHandle();
   b.verifierChallenge(verifier, challenge);
-  const verifierOut = lib.allocHandle();
+  const verifierOut = lib.allocStringOut();
   b.verifierVerifier(verifier, verifierOut);
   const codeVerifier = lib.decodeString(verifierOut);
 
