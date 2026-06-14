@@ -37,11 +37,23 @@ koffi.struct(`Discord_String`, { ptr: `uint8_t *`, size: `size_t` });
 koffi.struct(`Discord_Handle`, { opaque: `void *` });
 // A span OUT-param: `{ T* ptr; size_t size }`. The SDK writes a pointer to a
 // contiguous array of inline element handles + a count. We only need the two
-// fields generically — elements are all structurally `Discord_Handle`.
+// fields generically — elements are all structurally `Discord_Handle`. The same
+// struct also fits `Discord_UInt64Span` (`{ uint64_t* ptr; size_t size }`) — two
+// machine words either way — so `allocSpanOut` backs both readers.
 koffi.struct(`Discord_Span`, { ptr: `void *`, size: `size_t` });
+// A `Discord_Properties` map: parallel key/value Discord_String arrays + count.
+koffi.struct(`Discord_Properties`, {
+  size: `size_t`,
+  keys: `Discord_String *`,
+  values: `Discord_String *`
+});
 
 /** Size (bytes) of one inline handle element in a span — a single `void*`. */
 const HANDLE_SIZE = 8;
+/** Size (bytes) of one `uint64_t` element in a `Discord_UInt64Span`. */
+const UINT64_SIZE = 8;
+/** Size (bytes) of one inline `Discord_String` element (`{ ptr, size }`). */
+const STRING_SIZE = 16;
 
 /** Read the UTF-8 bytes of a `{ ptr, size }` Discord_String into a JS string. */
 const readDiscordString = (s: {
@@ -117,6 +129,75 @@ export const koffiBackend: FfiBackend = (libraryPath: string): FfiLibrary => {
         { length: count },
         (_, i) => base + BigInt(i * HANDLE_SIZE)
       );
+    },
+    readUInt64Span: (span) => {
+      // Same {ptr,size} layout as readSpan, but elements are raw uint64 VALUES,
+      // not pointers to handles — decode each in place rather than returning a
+      // pointer. koffi.decode(addr, type) reads from an address (a bigint).
+      const { ptr, size } = koffi.decode(span, `Discord_Span`) as {
+        ptr: bigint | null;
+        size: number | bigint;
+      };
+      const count = Number(size);
+      if (!ptr || count === 0) return [];
+      const base = BigInt(ptr);
+      return Array.from({ length: count }, (_, i) =>
+        BigInt(
+          koffi.decode(base + BigInt(i * UINT64_SIZE), `uint64_t`) as bigint
+        )
+      );
+    },
+    allocPropertiesOut: () => koffi.alloc(`Discord_Properties`, 1),
+    allocUInt64Out: () => koffi.alloc(`uint64_t`, 1),
+    readUInt64Out: (out) => BigInt(koffi.decode(out, `uint64_t`) as bigint),
+    readProperties: (out) => {
+      // Decode the {size, keys*, values*} the SDK wrote; keys/values are parallel
+      // arrays of inline Discord_String structs. Read element i from each by
+      // bigint offset, decode its bytes, and pair them up.
+      const { size, keys, values } = koffi.decode(
+        out,
+        `Discord_Properties`
+      ) as {
+        size: number | bigint;
+        keys: bigint | null;
+        values: bigint | null;
+      };
+      const count = Number(size);
+      if (!keys || !values || count === 0) return {};
+      const keyBase = BigInt(keys);
+      const valBase = BigInt(values);
+      const readAt = (base: bigint, i: number): string =>
+        readDiscordString(
+          koffi.decode(base + BigInt(i * STRING_SIZE), `Discord_String`) as {
+            ptr: unknown;
+            size: number | bigint;
+          }
+        );
+      const result: Record<string, string> = {};
+      for (let i = 0; i < count; i++)
+        result[readAt(keyBase, i)] = readAt(valBase, i);
+      return result;
+    },
+    encodeProperties: (value) => {
+      // Build parallel Discord_String arrays for keys + values and a Properties
+      // struct pointing at them. The encoded buffers must stay reachable for the
+      // call; the SDK copies synchronously, so returning the struct pointer (which
+      // koffi keeps referencing the arrays) suffices.
+      const entries = Object.entries(value);
+      const toStringArray = (strings: string[]): unknown => {
+        const buf = koffi.alloc(`Discord_String`, Math.max(entries.length, 1));
+        strings.forEach((s, i) =>
+          koffi.encode(buf, i * STRING_SIZE, `Discord_String`, encodeString(s))
+        );
+        return buf;
+      };
+      const ptr = koffi.alloc(`Discord_Properties`, 1);
+      koffi.encode(ptr, `Discord_Properties`, {
+        size: entries.length,
+        keys: toStringArray(entries.map(([k]) => k)),
+        values: toStringArray(entries.map(([, v]) => v))
+      });
+      return ptr;
     },
     decodeString,
     encodeStringPtr,

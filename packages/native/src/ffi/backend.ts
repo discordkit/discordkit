@@ -111,6 +111,43 @@ export interface FfiLibrary {
   readSpan: (span: FfiOpaque) => FfiOpaque[];
 
   /**
+   * Read a `Discord_UInt64Span` (`{ uint64_t* ptr; size_t size }`) — the SDK's
+   * scalar-id list getters (`GetLobbyIds`, `LobbyHandle::LobbyMemberIds`) — into
+   * a `bigint[]`. Distinct from {@link readSpan}: elements are raw `uint64_t`
+   * values decoded in place, not pointers to handle structs. Use the SAME
+   * {@link allocSpanOut} buffer (both spans are two machine words: ptr + size).
+   */
+  readUInt64Span: (span: FfiOpaque) => bigint[];
+
+  /**
+   * Read a `Discord_Properties` (`{ size_t size; Discord_String* keys;
+   * Discord_String* values }`) — the SDK's string→string metadata maps
+   * (`LobbyHandle::Metadata`, `LobbyMemberHandle::Metadata`) — into a plain
+   * object. Allocate the out-param with {@link allocPropertiesOut}.
+   */
+  readProperties: (out: FfiOpaque) => Record<string, string>;
+
+  /** Allocate a `Discord_Properties` OUT-param buffer for {@link readProperties}. */
+  allocPropertiesOut: () => FfiOpaque;
+
+  /**
+   * Allocate a `uint64_t` OUT-param buffer for the SDK's bool-gated scalar
+   * getters (`bool getter(self, uint64_t* out)`, e.g. `GuildChannel::ParentId`).
+   * Pass it to the getter, then {@link readUInt64Out} it when the bool is true.
+   */
+  allocUInt64Out: () => FfiOpaque;
+
+  /** Read a `uint64_t` OUT-param buffer (from {@link allocUInt64Out}) as a bigint. */
+  readUInt64Out: (out: FfiOpaque) => bigint;
+
+  /**
+   * Encode a plain object as a `Discord_Properties` to pass INTO the SDK BY VALUE
+   * (e.g. `CreateOrJoinLobbyWithMetadata`'s metadata args). The SDK copies the
+   * contents synchronously, so the backing arrays only need to outlive the call.
+   */
+  encodeProperties: (value: Record<string, string>) => FfiOpaque;
+
+  /**
    * Decode a `Discord_String` — received by value in a callback, or written into
    * an {@link allocStringOut} buffer — into a JS string. Accepts any backend
    * value; guards for the `{ ptr, size }` shape and returns `""` otherwise.

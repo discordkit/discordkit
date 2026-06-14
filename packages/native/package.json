@@ -58,6 +58,11 @@
       "types": "./dist/activityInvites/index.d.mts",
       "import": "./dist/activityInvites/index.mjs"
     },
+    "./lobbies": {
+      "@discordkit/source": "./src/lobby/index.ts",
+      "types": "./dist/lobby/index.d.mts",
+      "import": "./dist/lobby/index.mjs"
+    },
     "./*": {
       "@discordkit/source": "./src/*.ts",
       "types": "./dist/*.d.mts",

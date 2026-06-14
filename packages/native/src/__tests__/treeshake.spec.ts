@@ -91,6 +91,17 @@ describe(`tree-shaking (built dist)`, () => {
     ]);
   });
 
+  it(`lobby imports users but no presence/auth/relationships`, () => {
+    // Why: a lobby member embeds a user, so importing the users reader is
+    // expected — but pulling in presence/auth/relationships is not.
+    expectNoCrossImport(`lobby`, [
+      `auth`,
+      `presence`,
+      `relationships`,
+      `activityInvites`
+    ]);
+  });
+
   it(`signal-polyfill ships as an external bare import, never inlined`, () => {
     // It's a legitimate core dep (the status signal), but must stay external so
     // it's a one-line removal once native signals exist — and so consumers

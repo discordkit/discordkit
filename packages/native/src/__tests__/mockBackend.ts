@@ -206,6 +206,16 @@ export const mockBackend: FfiBackend = (_libraryPath: string): FfiLibrary => {
     allocSpanOut: (): FfiOpaque => ({ __span: [] as FfiOpaque[] }),
     readSpan: (span): FfiOpaque[] =>
       (span as { __span?: FfiOpaque[] }).__span ?? [],
+    readUInt64Span: (span): bigint[] =>
+      (span as { __span?: bigint[] }).__span ?? [],
+    allocPropertiesOut: (): FfiOpaque => ({
+      __props: {} as Record<string, string>
+    }),
+    readProperties: (out): Record<string, string> =>
+      (out as { __props?: Record<string, string> }).__props ?? {},
+    encodeProperties: (value): FfiOpaque => ({ __props: value }),
+    allocUInt64Out: (): FfiOpaque => ({ __u64: 0n }),
+    readUInt64Out: (out): bigint => (out as { __u64?: bigint }).__u64 ?? 0n,
     decodeString,
     encodeString,
     encodeStringPtr
