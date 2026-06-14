@@ -8,16 +8,9 @@ import {
 import { Check, Copy } from "lucide-react";
 
 /**
- * Shared, Discord-styled UI tokens + primitives, so the editor matches Discord's
- * settings aesthetic consistently (dark surfaces, blurple accent, rounded
- * controls, uppercase micro-labels, sectioned layout) rather than ad-hoc styles.
+ * Shared, Discord-styled UI tokens + primitives, so the editor matches Discord's settings aesthetic consistently (dark surfaces, blurple accent, rounded controls, uppercase micro-labels, sectioned layout) rather than ad-hoc styles.
  */
-// Contrast tuned with APCA in mind: on the page bg (#1a1b1e-ish) and the input
-// bg (#2b2d31), body text uses near-white (#f2f3f5, Lc≈90+), secondary text uses
-// #b5bac1 (Discord's "interactive-normal", Lc≈60+ — comfortably readable, not
-// the muted neutral-500 that fell short), and borders are visible (white/12)
-// rather than near-invisible black/30. Inputs sit a step LIGHTER than the page
-// so the field boundary reads without relying on a faint border alone.
+// Contrast tuned with APCA in mind: on the page bg (#1a1b1e-ish) and the input bg (#2b2d31), body text uses near-white (#f2f3f5, Lc≈90+), secondary text uses #b5bac1 (Discord's "interactive-normal", Lc≈60+ — comfortably readable, not the muted neutral-500 that fell short), and borders are visible (white/12) rather than near-invisible black/30. Inputs sit a step LIGHTER than the page so the field boundary reads without relying on a faint border alone.
 export const tokens = {
   input: `h-10 w-full rounded-md border border-white/12 bg-[#2b2d31] px-3 text-sm text-[#f2f3f5] outline-none placeholder:text-[#87898c] focus:border-[#5865f2]`,
   label: `text-xs font-semibold uppercase tracking-wide text-[#b5bac1]`,
@@ -50,8 +43,7 @@ export const PrimaryButton = (props: ButtonProps): React.JSX.Element => (
   />
 );
 
-/** Subtle neutral action (secondary buttons, icon buttons). `h-10` so it lines
- * up exactly with inputs when placed beside them in a row. */
+/** Subtle neutral action (secondary buttons, icon buttons). `h-10` so it lines up exactly with inputs when placed beside them in a row. */
 export const GhostButton = ({
   className = ``,
   ...props
@@ -62,9 +54,7 @@ export const GhostButton = ({
   />
 );
 
-/** The Discord-style switch track + knob. Grey/left when off, blurple/right when
- * on (RAC `group-selected:` variants, enabled by the tailwindcss-react-aria
- * plugin in style.css). Reused by {@link Toggle} and {@link SectionToggle}. */
+/** The Discord-style switch track + knob. Grey/left when off, blurple/right when on (RAC `group-selected:` variants, enabled by the tailwindcss-react-aria plugin in style.css). Reused by {@link Toggle} and {@link SectionToggle}. */
 const SwitchTrack = (): React.JSX.Element => (
   <span className="flex h-6 w-10 shrink-0 items-center rounded-full bg-[#80848e] px-0.5 transition-colors group-selected:bg-[#5865f2]">
     <span className="size-5 rounded-full bg-white shadow-sm transition-transform group-selected:translate-x-4" />
@@ -86,10 +76,7 @@ export const Toggle = ({
 );
 
 /**
- * A section whose header row carries an enable switch on the right — Discord's
- * pattern for conditionally-shown settings. When `isSelected` is false the
- * `children` (the inputs) are hidden, making omission explicit rather than
- * inferred from an empty field.
+ * A section whose header row carries an enable switch on the right — Discord's pattern for conditionally-shown settings. When `isSelected` is false the `children` (the inputs) are hidden, making omission explicit rather than inferred from an empty field.
  */
 export const SectionToggle = ({
   title,

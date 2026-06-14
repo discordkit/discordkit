@@ -20,9 +20,7 @@ import {
 } from "./schema.js";
 
 export const App = (): React.JSX.Element => {
-  // Build the schema ONCE, closing over the session-stable party id + start
-  // timestamp. Its transform turns form values into a ready-to-send
-  // ActivityInput, so there's no mapping function and no extra refs.
+  // Build the schema ONCE, closing over the session-stable party id + start timestamp. Its transform turns form values into a ready-to-send ActivityInput, so there's no mapping function and no extra refs.
   const startedAt = useRef(Date.now()).current;
   const schema = useMemo(
     () => createActivitySchema(crypto.randomUUID(), startedAt),
@@ -42,9 +40,7 @@ export const App = (): React.JSX.Element => {
   });
   const values = watch();
 
-  // safeParse, NOT parse: while you type a partial URL the schema is briefly
-  // invalid, and a throwing parse in render would unmount the tree. On invalid
-  // input keep the last valid activity (seeded from the always-valid defaults).
+  // safeParse, NOT parse: while you type a partial URL the schema is briefly invalid, and a throwing parse in render would unmount the tree. On invalid input keep the last valid activity (seeded from the always-valid defaults).
   const lastValid = useRef<ActivityInput>(v.parse(schema, DEFAULT_VALUES));
   const activity = useMemo(() => {
     const result = v.safeParse(schema, values);

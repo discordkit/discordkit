@@ -3,13 +3,9 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 /**
- * Local, maintainer-driven smoke — NOT a CI gate. It launches the real Electron
- * app, which loads the real (non-redistributable) Social SDK via Koffi, and
- * checks the renderer wires up over IPC: status renders, the Connect button is
- * present, and the SDK log stream reaches the renderer.
+ * Local, maintainer-driven smoke — NOT a CI gate. It launches the real Electron app, which loads the real (non-redistributable) Social SDK via Koffi, and checks the renderer wires up over IPC: the preload bridge is exposed, the React app mounts, and a status read round-trips through to the SDK.
  *
- * It does NOT complete OAuth (that needs a real browser login). It's gated on
- * DISCORD_APPLICATION_ID + DISCORD_SDK_PATH so it skips cleanly without them.
+ * It does NOT authenticate (rich presence needs no login). It's gated on DISCORD_APPLICATION_ID + DISCORD_SDK_PATH so it skips cleanly without them.
  */
 
 const APP_DIR = join(dirname(fileURLToPath(import.meta.url)), `..`);
@@ -25,10 +21,7 @@ test.describe(`Electron presence (real SDK, local)`, () => {
   );
 
   test(`renderer connects to the SDK over IPC`, async () => {
-    // Playwright's env wants Record<string, string>; drop undefined values.
-    // Also strip ELECTRON_RUN_AS_NODE — editor-integrated terminals (VS Code)
-    // set it, which would make the Electron binary boot as plain Node (no app /
-    // BrowserWindow) and the launch would fail.
+    // Playwright's env wants Record<string, string>; drop undefined values. Also strip ELECTRON_RUN_AS_NODE — editor-integrated terminals (VS Code) set it, which would make the Electron binary boot as plain Node (no app / BrowserWindow) and the launch would fail.
     const env = Object.fromEntries(
       Object.entries(process.env).filter(
         (entry): entry is [string, string] =>
@@ -39,8 +32,7 @@ test.describe(`Electron presence (real SDK, local)`, () => {
     try {
       const window = await app.firstWindow();
 
-      // The preload bridge exposed the typed API to the renderer (proves the
-      // sandboxed-preload bundle ran and contextBridge wired up).
+      // The preload bridge exposed the typed API to the renderer (proves the sandboxed-preload bundle ran and contextBridge wired up).
       const bridgeType = await window.evaluate(
         () => typeof (globalThis as { discord?: unknown }).discord
       );

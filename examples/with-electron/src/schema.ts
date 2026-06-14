@@ -3,32 +3,21 @@ import type { ActivityInput } from "@discordkit/native/presence";
 import { dicebear } from "./samples.js";
 
 /**
- * The editor form, as a Valibot schema. Its INPUT is the editable form shape;
- * its OUTPUT (via `transform`) is a ready-to-send `@discordkit/native`
- * `ActivityInput` — so there's no separate flat→activity mapping function.
+ * The editor form, as a Valibot schema. Its INPUT is the editable form shape; its OUTPUT (via `transform`) is a ready-to-send `@discordkit/native` `ActivityInput` — so there's no separate flat→activity mapping function.
  *
  * The form shape deliberately carries BOTH:
- *  - presentation/form state — `enabled` (presence on/off) and per-section `on`
- *    toggles + image `source`/`seed` — which let sections be explicitly omitted
- *    (rather than inferring "off" from an empty string), and
+ *  - presentation/form state — `enabled` (presence on/off) and per-section `on` toggles + image `source`/`seed` — which let sections be explicitly omitted (rather than inferring "off" from an empty string), and
  *  - the activity values themselves, grouped under `activity`.
- * Keeping every value (including the toggles) IN the form means a single
- * `reset(DEFAULT_VALUES)` restores the entire UI, and the transform decides what
- * actually ships based on the `on` flags.
  *
- * Built by a factory closing over the two session-stable, non-editable values —
- * a party `id` (Discord requires one when party size is set) and the `start`
- * timestamp — so the transform stays pure. Build once (memoized) so they don't
- * churn per keystroke.
+ * Keeping every value (including the toggles) IN the form means a single `reset(DEFAULT_VALUES)` restores the entire UI, and the transform decides what actually ships based on the `on` flags.
  *
- * (Lives here, not in `@discordkit/native`: the keystone is deliberately
- * valibot-free — an FFI binding shouldn't force a validation dep on headless
- * consumers. This is a small, intentional mirror of ActivityInput.)
+ * Built by a factory closing over the two session-stable, non-editable values — a party `id` (Discord requires one when party size is set) and the `start` timestamp — so the transform stays pure. Build once (memoized) so they don't churn per keystroke.
+ *
+ * (Lives here, not in `@discordkit/native`: the keystone is deliberately valibot-free — an FFI binding shouldn't force a validation dep on headless consumers. This is a small, intentional mirror of ActivityInput.)
  */
 const urlValue = v.union([v.literal(``), v.pipe(v.string(), v.url())]);
 
-/** A toggleable image: source (sample seed vs. custom URL) + hover text. The
- * resolved image string is derived in the transform, not stored. */
+/** A toggleable image: source (sample seed vs. custom URL) + hover text. The resolved image string is derived in the transform, not stored. */
 const ImageShape = v.object({
   on: v.boolean(),
   source: v.union([v.literal(`sample`), v.literal(`url`)]),
@@ -71,24 +60,25 @@ const resolveImage = (img: ImageValues, style: string): string => {
 };
 
 export const createActivitySchema = (partyId: string, startedAt: number) =>
-  // `transform` (not `rawTransform`): a pure value→value map. Validation already
-  // happened in FormShape; `transform` infers its output (ActivityInput) from
-  // the returned value. The `on` flags decide what ships.
+  // `transform` (not `rawTransform`): a pure value→value map. Validation already happened in FormShape; `transform` infers its output (ActivityInput) from the returned value. The `on` flags decide what ships.
   v.pipe(
     FormShape,
     v.transform(({ activity: a }): ActivityInput => {
       const largeImage = resolveImage(a.largeImage, `shapes`);
       const smallImage = resolveImage(a.smallImage, `bottts`);
+      // Build the optional containers first so they can be omitted entirely when empty — an empty `assets: {}` / `buttons: []` is noise in the Show Code output and isn't how you'd hand-write the call.
+      const assets = {
+        ...(largeImage ? { largeImage, largeText: a.largeImage.text } : {}),
+        ...(smallImage ? { smallImage, smallText: a.smallImage.text } : {})
+      };
+      const buttons = a.buttons.filter((b) => b.label && b.url);
       return {
         type: `playing`,
         ...(a.details.on && a.details.value
           ? { details: a.details.value }
           : {}),
         ...(a.state.on && a.state.value ? { state: a.state.value } : {}),
-        assets: {
-          ...(largeImage ? { largeImage, largeText: a.largeImage.text } : {}),
-          ...(smallImage ? { smallImage, smallText: a.smallImage.text } : {})
-        },
+        ...(Object.keys(assets).length ? { assets } : {}),
         ...(a.party.on && (a.party.currentSize || a.party.maxSize)
           ? {
               party: {
@@ -99,7 +89,7 @@ export const createActivitySchema = (partyId: string, startedAt: number) =>
             }
           : {}),
         ...(a.useTimestamp ? { timestamps: { start: startedAt } } : {}),
-        buttons: a.buttons.filter((b) => b.label && b.url)
+        ...(buttons.length ? { buttons } : {})
       };
     })
   );
@@ -110,8 +100,7 @@ export const DEFAULT_VALUES: FormValues = {
     // Defaults that explain themselves: a discordkit demo. "what / where".
     details: { on: true, value: `Building with discordkit` },
     state: { on: true, value: `Editing Rich Presence` },
-    // DiceBear samples so the card shows delightful art out of the box: an
-    // abstract "scene" large image + a robot "character" small badge.
+    // DiceBear samples so the card shows delightful art out of the box: an abstract "scene" large image + a robot "character" small badge.
     largeImage: {
       on: true,
       source: `sample`,

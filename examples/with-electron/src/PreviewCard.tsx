@@ -20,9 +20,7 @@ const imageUrl = (
 };
 
 /**
- * A simplified Discord-style "Playing a Game" card mirroring the Developer
- * Portal visualizer's Full Profile preview. This is an approximation for the
- * example — the real rendering happens in the Discord client.
+ * A simplified Discord-style "Playing a Game" card mirroring the Developer Portal visualizer's Full Profile preview. This is an approximation for the example — the real rendering happens in the Discord client.
  */
 export const PreviewCard = ({
   values,

@@ -21,17 +21,12 @@ import { ChevronDown, Shuffle } from "lucide-react";
 import { randomSeed } from "./samples.js";
 
 /**
- * A full-width image editor built as ONE combination input — a connected group
- * of `[ source dropdown | value text | (shuffle) ]`, with the paired hover text
- * on its own line below:
+ * A full-width image editor built as ONE combination input — a connected group of `[ source dropdown | value text | (shuffle) ]`, with the paired hover text on its own line below:
  *
- * - **Sample**: the text holds the DiceBear *seed* (editable); a shuffle button
- *   reseeds it. The resolved DiceBear URL is derived in the schema transform.
+ * - **Sample**: the text holds the DiceBear *seed* (editable); a shuffle button reseeds it. The resolved DiceBear URL is derived in the schema transform.
  * - **URL**: the text holds a custom image URL directly (no shuffle).
  *
- * Binds to a nested `{ source, seed, url, text }` object at `name` (the `on`
- * toggle lives in the section header). All values are real form fields, so
- * Reset restores them.
+ * Binds to a nested `{ source, seed, url, text }` object at `name` (the `on` toggle lives in the section header). All values are real form fields, so Reset restores them.
  */
 export const ImageField = <T extends FieldValues>({
   control,

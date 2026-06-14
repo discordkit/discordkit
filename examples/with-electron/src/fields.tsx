@@ -7,18 +7,14 @@ import {
 import { Input, Label, NumberField, TextField } from "react-aria-components";
 import { tokens } from "./ui.js";
 
-/** Control whose transformed-output/context generics are irrelevant to a single
- * field — only the input field-values type `T` matters here. */
+/** Control whose transformed-output/context generics are irrelevant to a single field — only the input field-values type `T` matters here. */
 type AnyControl<T extends FieldValues> = Control<T, unknown, FieldValues>;
 
 const fieldClass = tokens.field;
 const inputClass = tokens.input;
 
 /**
- * A text field wired to React Hook Form via `Controller`. React Aria's fields
- * are controlled, so they integrate through `Controller` (not `register`).
- * Generic over the form so it works with nested field paths
- * (e.g. `assets.largeImage`, `buttons.0.label`).
+ * A text field wired to React Hook Form via `Controller`. React Aria's fields are controlled, so they integrate through `Controller` (not `register`). Generic over the form so it works with nested field paths (e.g. `assets.largeImage`, `buttons.0.label`).
  */
 export const TextControl = <T extends FieldValues>({
   control,

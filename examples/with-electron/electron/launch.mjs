@@ -1,8 +1,4 @@
-// Cross-platform Electron launcher for `npm run app`. Its one job: spawn the
-// Electron binary with a clean environment — specifically WITHOUT
-// `ELECTRON_RUN_AS_NODE`, which editor-integrated terminals (e.g. VS Code) set
-// and which would make Electron boot as plain Node (no window). `env -u` only
-// works in POSIX shells, so we do it here in JS to stay Windows-friendly.
+// Cross-platform Electron launcher for the `start` task (`vp run start`). Its one job: spawn the Electron binary with a clean environment — specifically WITHOUT `ELECTRON_RUN_AS_NODE`, which editor-integrated terminals (e.g. VS Code) set and which would make Electron boot as plain Node (no window). `env -u` only works in POSIX shells, so we do it here in JS to stay Windows-friendly.
 
 import { spawn } from "node:child_process";
 import { createRequire } from "node:module";

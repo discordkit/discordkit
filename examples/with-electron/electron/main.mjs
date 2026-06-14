@@ -1,23 +1,9 @@
 // @ts-check
-// Electron main process (ES module — Electron 42 supports ESM main, and our
-// package.json is `"type": "module"`). NOT bundled by vite; only the renderer
-// (src/) is. Authored in JS (Electron can't run .ts entries) with @ts-check +
-// JSDoc so it still type-checks under `vp check`.
+// Electron main process (ES module — Electron 42 supports ESM main, and our package.json is `"type": "module"`). NOT bundled by vite; only the renderer (src/) is. Authored in JS (Electron can't run .ts entries) with @ts-check + JSDoc so it still type-checks under `vp check`.
 //
-// Responsibilities: create the window, and wire the Discord Social SDK (running
-// here in the main process) to IPC via @discordkit/electron so the renderer can
-// drive it. The SDK never touches the renderer.
+// Responsibilities: create the window, and wire the Discord Social SDK (running here in the main process) to IPC via @discordkit/electron so the renderer can drive it. The SDK never touches the renderer.
 
-// Ordering-sensitive imports (MUST come first, in this order): `./env-cwd.mjs`
-// chdirs to the example root, THEN `varlock/auto-load` loads `.env` from that
-// cwd. This anchors `.env` resolution to the app dir (Varlock reads
-// process.cwd(), but Electron can launch from any cwd — a packaged build or a
-// Playwright `_electron.launch` won't cd here like `vp run start` does), and env
-// must be populated before anything reads process.env. Static side-effect
-// imports (evaluated in source order) — NOT top-level `await import(...)`, which
-// would deadlock Playwright (see the NOTE near the bootstrap IIFE). The
-// "absolute imports first" lint rule can't know this order is load-bearing, so
-// it's disabled across the import block.
+// Ordering-sensitive imports (MUST come first, in this order): `./env-cwd.mjs` chdirs to the example root, THEN `varlock/auto-load` loads `.env` from that cwd. This anchors `.env` resolution to the app dir (Varlock reads process.cwd(), but Electron can launch from any cwd — a packaged build or a Playwright `_electron.launch` won't cd here like `vp run start` does), and env must be populated before anything reads process.env. Static side-effect imports (evaluated in source order) — NOT top-level `await import(...)`, which would deadlock Playwright (see the NOTE near the bootstrap IIFE). The "absolute imports first" lint rule can't know this order is load-bearing, so it's disabled across the import block.
 /* eslint-disable import/first -- relative cwd-setup import must precede the rest */
 import "./env-cwd.mjs";
 import "varlock/auto-load";
@@ -33,11 +19,7 @@ const exampleRoot = join(here, `..`);
 const DEV_URL = process.env.ELECTRON_RENDERER_URL;
 
 /**
- * Resolve the SDK path. A relative `DISCORD_SDK_PATH` is anchored at the example
- * ROOT (where package.json lives), not the launch cwd — so `electron .` from
- * here, the Playwright smoke, or a launch from the repo root all resolve the
- * same. Absolute paths pass through; unset returns undefined (let
- * @discordkit/native probe conventional locations).
+ * Resolve the SDK path. A relative `DISCORD_SDK_PATH` is anchored at the example ROOT (where package.json lives), not the launch cwd — so `electron .` from here, the Playwright smoke, or a launch from the repo root all resolve the same. Absolute paths pass through; unset returns undefined (let @discordkit/native probe conventional locations).
  *
  * @returns {string | undefined}
  */
@@ -49,10 +31,7 @@ function resolveSdkPath() {
 const sdkPath = resolveSdkPath();
 
 /**
- * Forward renderer console output + errors to the main-process stdout, and log
- * main-process failures. Without this, runtime errors in the sandboxed renderer
- * (e.g. a rejected setActivity) are invisible from the terminal — you'd only see
- * them inside the app window. Makes the app observable during dev and CI smokes.
+ * Forward renderer console output + errors to the main-process stdout, and log main-process failures. Without this, runtime errors in the sandboxed renderer (e.g. a rejected setActivity) are invisible from the terminal — you'd only see them inside the app window. Makes the app observable during dev and CI smokes.
  *
  * @param {import("electron").BrowserWindow} window
  */
@@ -80,13 +59,11 @@ async function createWindow() {
   const window = new BrowserWindow({
     width: 1040,
     height: 820,
-    // Size by content area (not incl. frame), and auto-hide the menu bar — this
-    // demo has no use for File/Edit/View/Window.
+    // Size by content area (not incl. frame), and auto-hide the menu bar — this demo has no use for File/Edit/View/Window.
     useContentSize: true,
     autoHideMenuBar: true,
     webPreferences: {
-      // The sandboxed preload is bundled (electron/preload.ts -> .bundle.cjs)
-      // by the `preload` pack task; sandboxed preloads can't import node_modules.
+      // The sandboxed preload is bundled (electron/preload.ts -> .bundle.cjs) by the `preload` pack task; sandboxed preloads can't import node_modules.
       preload: join(here, `preload.bundle.cjs`),
       contextIsolation: true,
       sandbox: true,
@@ -111,10 +88,7 @@ async function createWindow() {
   }
 }
 
-// NOTE: avoid module top-level `await` here. Electron's ESM main + Playwright's
-// debugger attach deadlock when the main module suspends on a top-level await
-// before the app bootstraps (`_electron.launch` then hangs). Awaiting INSIDE an
-// IIFE is fine — it's the module-level suspension that's the problem.
+// NOTE: avoid module top-level `await` here. Electron's ESM main + Playwright's debugger attach deadlock when the main module suspends on a top-level await before the app bootstraps (`_electron.launch` then hangs). Awaiting INSIDE an IIFE is fine — it's the module-level suspension that's the problem.
 // Surface main-process crashes (otherwise silent on a GUI process).
 process.on(`uncaughtException`, (error) => {
   console.error(`[main] uncaughtException:`, error);
