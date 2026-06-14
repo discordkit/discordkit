@@ -61,7 +61,15 @@ export default defineConfig({
       // nested `vp run -r e2e` (its own task graph), which would race the
       // still-running build. `&&` guarantees the ordering across that boundary.
       e2e: { command: `vp run build && vp run -r e2e`, cache: false },
-      ci: { command: `vp lint && vp test && vp run build:all`, cache: false }
+      ci: { command: `vp lint && vp test && vp run build:all`, cache: false },
+      // Scrape the Discord Social SDK docs (guides + Doxygen API) into the
+      // gitignored social-sdk-docs/ cache, so we can reference them while
+      // building out @discordkit/native. Incremental by default; pass --force
+      // to re-fetch all. Output: structured per-member markdown under api/.
+      "scrape:sdk-docs": {
+        command: `node --experimental-strip-types scripts/docs/fetch-social-sdk.ts`,
+        cache: false
+      }
     }
   },
   // Resolve workspace packages to their TypeScript source via the private
