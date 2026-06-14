@@ -80,6 +80,17 @@ describe(`tree-shaking (built dist)`, () => {
     expectNoCrossImport(`auth`, [`presence`, `users`, `relationships`]);
   });
 
+  it(`activityInvites imports no other feature domain`, () => {
+    // Why: an invite snapshot is self-contained (it carries senderId as a bigint,
+    // not an embedded User), so this slice depends on no sibling domain at all.
+    expectNoCrossImport(`activityInvites`, [
+      `auth`,
+      `presence`,
+      `users`,
+      `relationships`
+    ]);
+  });
+
   it(`signal-polyfill ships as an external bare import, never inlined`, () => {
     // It's a legitimate core dep (the status signal), but must stay external so
     // it's a one-line removal once native signals exist — and so consumers

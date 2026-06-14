@@ -52,6 +52,10 @@ export interface MockContext {
   /** Fire the result-bearing callback passed in `args` (success), with extra
    * post-result callback values. Used by async ops that ack via a callback. */
   fireResultCallback: (...afterResult: unknown[]) => void;
+  /** Invoke a specific registered callback handle with raw args (no implicit
+   * `result` prefix). For persistent event subscriptions whose callback's first
+   * arg is NOT a `ClientResult` (e.g. `ActivityInviteCallback(invite)`). */
+  invokeCallback: (handle: unknown, ...args: unknown[]) => void;
   /** Allocate a fresh opaque handle (same shape the binding layer gets). */
   allocHandle: () => FfiOpaque;
 }
@@ -128,6 +132,11 @@ export const mockBackend: FfiBackend = (_libraryPath: string): FfiLibrary => {
     if (cb) registered.get(cb)?.(null, ...afterResult);
   };
 
+  /** Invoke a registered callback handle directly with raw args (no `result`). */
+  const invokeCallback = (handle: unknown, ...args: unknown[]): void => {
+    if (typeof handle === `symbol`) registered.get(handle)?.(...args);
+  };
+
   const lib: FfiLibrary = {
     func: (declaration: string): FfiFunction => {
       const name = /\b(Discord_\w+)\s*\(/.exec(declaration)?.[1] ?? declaration;
@@ -168,6 +177,7 @@ export const mockBackend: FfiBackend = (_libraryPath: string): FfiLibrary => {
             writeString,
             fireResultCallback: (...afterResult) =>
               fireCallback(args, afterResult),
+            invokeCallback,
             allocHandle: handle
           });
         }

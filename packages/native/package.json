@@ -53,6 +53,11 @@
       "types": "./dist/relationships/index.d.mts",
       "import": "./dist/relationships/index.mjs"
     },
+    "./activity-invites": {
+      "@discordkit/source": "./src/activityInvites/index.ts",
+      "types": "./dist/activityInvites/index.d.mts",
+      "import": "./dist/activityInvites/index.mjs"
+    },
     "./*": {
       "@discordkit/source": "./src/*.ts",
       "types": "./dist/*.d.mts",

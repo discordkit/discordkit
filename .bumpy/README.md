@@ -1,6 +1,6 @@
 # 🐸 Bumpy
 
-This directory is used by [bumpy](https://bumpy.varlock.dev) to manage versioning and changelogs.
+This directory is used by [bumpy](https://bumpy.varlock.dev) to manage versioning and changelogs. Source: <https://github.com/dmno-dev/bumpy>.
 
 Bumpy is a modern versioning tool for JavaScript/TypeScript projects (monorepos and single packages). It uses **bump files** — small markdown files in this directory — to declare pending version changes. These files are consumed during the release process to compute version bumps, update changelogs, and publish packages.
 
