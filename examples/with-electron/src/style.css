@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+/* Registers React Aria's data-attribute variants (selected:, pressed:,
+   hover:, focus-within:, group-selected:, …) so they compile. Without this
+   plugin those variants silently no-op under Tailwind v4. */
+@plugin "tailwindcss-react-aria-components";
+
 :root {
   color-scheme: dark;
 }

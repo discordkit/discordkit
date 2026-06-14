@@ -141,6 +141,7 @@ interface PresenceBindings {
   buttonSetLabel: FfiFunction;
   buttonSetUrl: FfiFunction;
   updateRichPresence: FfiFunction;
+  clearRichPresence: FfiFunction;
   updateRichPresenceCb: unknown;
   resultSuccessful: FfiFunction;
   resultErrorToString: FfiFunction;
@@ -247,6 +248,12 @@ const presenceBindings = (lib: FfiLibrary): PresenceBindings => {
     ),
     updateRichPresence: lib.func(
       `void Discord_Client_UpdateRichPresence(void *self, void *activity, void *cb, void *cbFree, void *cbUserData)`
+    ),
+    // Fully REMOVES the presence (no activity at all) — synchronous, no callback.
+    // Distinct from UpdateRichPresence(emptyActivity), which still shows
+    // "Playing <AppName>" with the app icon.
+    clearRichPresence: lib.func(
+      `void Discord_Client_ClearRichPresence(void *self)`
     ),
     updateRichPresenceCb: lib.defineCallback(
       `void UpdateRichPresenceCallback(void *result, void *userData)`
@@ -458,24 +465,13 @@ export const setActivity = async (
 };
 
 /**
- * Clear the user's rich presence (set an empty activity). Resolves when the SDK
- * acknowledges.
+ * Fully clear the user's rich presence. Uses `Discord_Client_ClearRichPresence`,
+ * which REMOVES the activity entirely — unlike updating with an empty activity,
+ * which would still show "Playing <AppName>" with the app icon. Synchronous on
+ * the SDK side (no ack callback), so this resolves immediately.
  */
-export const clearActivity = async (
-  options: PresenceOptions = {}
-): Promise<void> => {
+export const clearActivity = (options: PresenceOptions = {}): void => {
   const client = options.client ?? useClient();
   const b = presenceBindings(client.lib);
-  const handle = client.lib.allocHandle();
-  b.activityInit(handle);
-  try {
-    await dispatchPresence(
-      client,
-      b,
-      handle,
-      options.timeoutMs ?? DEFAULT_PRESENCE_TIMEOUT_MS
-    );
-  } finally {
-    b.activityDrop(handle);
-  }
+  b.clearRichPresence(client.handle);
 };

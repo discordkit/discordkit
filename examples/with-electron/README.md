@@ -40,43 +40,65 @@ renderer (src/, sandboxed)            main process (electron/main.mjs)
   The renderer is **sandboxed** (secure default), so this is **bundled** into a
   self-contained `preload.bundle.cjs` via the `preload` pack task (sandboxed
   preloads can't import from `node_modules`). `electron` stays external.
-- **`src/`** — the renderer (plain TS + Vite); imports
-  `@discordkit/electron/renderer` for `window.discord` typings.
+- **`src/`** — the renderer (React + React Aria + React Hook Form + Valibot +
+  Tailwind v4); imports `@discordkit/electron/renderer` for `window.discord`
+  typings. `useDiscordStatus` (useSyncExternalStore over the IPC status stream)
+  and `useDiscordPresence` (debounced push) wrap the bridge.
 
 ## Prerequisites
 
 1. A Discord application with the **Social SDK enabled** (Developer Portal).
 2. The **Social SDK download** for your platform — it can't be redistributed, so
-   download it yourself and point `DISCORD_SDK_PATH` at the extracted folder (or
-   place it at `./lib/discord_social_sdk`).
-3. Copy `.env.schema` → `.env` and fill in `DISCORD_APPLICATION_ID` (+ optionally
-   `DISCORD_SDK_PATH`).
+   download it yourself. `.env` points `DISCORD_SDK_PATH` at the repo's
+   `vendor/discord-social-sdk/<version>` by default (relative to this example).
+3. The Discord **desktop client** running (presence goes over RPC to it).
+4. Copy `.env.schema` → `.env` and set `DISCORD_APPLICATION_ID` (and
+   `DISCORD_SDK_PATH` if your SDK lives elsewhere — a relative path is resolved
+   against this example's root, so it's portable).
 
 ## Run
 
+First build the workspace packages (once, from the repo root):
+
 ```sh
-# from the repo root — build the workspace packages first
 vp run build
-
-# from this directory
-vp run preload          # bundle the sandboxed preload
-vp run build:examples   # build the renderer
-
-# launch (dev server + Electron pointing at it)
-vp run dev              # terminal 1: renderer dev server (:5173)
-ELECTRON_RENDERER_URL=http://127.0.0.1:5173 electron .   # terminal 2
-
-# …or run the built renderer directly
-electron .
 ```
 
-> If launching from a VS Code integrated terminal fails to open a window, unset
-> `ELECTRON_RUN_AS_NODE` (the editor sets it; it makes Electron boot as plain
-> Node): `env -u ELECTRON_RUN_AS_NODE electron .`
+Then, from this directory:
 
-Click **Connect Discord** → a browser window opens for OAuth login → once status
-reaches **Ready**, the presence buttons enable. Set/clear presence and check your
-Discord profile.
+```sh
+vp run start
+```
+
+That's it — `start` builds the renderer + the sandboxed preload bundle and
+launches Electron in one step. No login required: presence is set over RPC to
+your running Discord desktop client (`SetApplicationId` → `UpdateRichPresence`).
+Edit the fields and watch the card update live; check your Discord profile.
+
+> The launcher scrubs `ELECTRON_RUN_AS_NODE` for you, so it works from any
+> terminal (including VS Code's, which sets that variable and would otherwise
+> make Electron boot as plain Node with no window).
+
+### Live UI editing (HMR)
+
+For hot-reloading the renderer while you tweak the UI, run two terminals:
+
+```sh
+vp run preload   # bundle the preload once (only needed if you change it)
+vp run dev       # terminal 1: renderer dev server on :5173
+
+# terminal 2: launch Electron pointed at the dev server (loads the URL, not dist/)
+ELECTRON_RENDERER_URL=http://127.0.0.1:5173 node electron/launch.mjs
+```
+
+Edit any field and the presence updates live (no login — see the note below).
+Toggle **presence on/off** above the preview, or **Reset to defaults** to restore
+the starting values. Then check your own Discord profile to see the result.
+
+> **You won't see your own buttons.** Discord only shows Rich Presence buttons to
+> _other_ users viewing your profile — never on your own. To verify buttons work,
+> have a friend (or a second account) look at your profile. (Everything else —
+> details, state, images, timestamps, party — shows on your own profile.)
 
 ## Smoke test (local, maintainer-driven)
 

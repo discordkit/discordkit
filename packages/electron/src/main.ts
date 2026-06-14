@@ -85,8 +85,8 @@ export const registerDiscord = (
       await setActivity(input);
     }
   );
-  ipcMain.handle(CHANNELS.clearActivity, async () => {
-    await clearActivity();
+  ipcMain.handle(CHANNELS.clearActivity, () => {
+    clearActivity();
   });
   ipcMain.handle(CHANNELS.getStatus, () => client.status.get());
 

@@ -65,12 +65,15 @@ describe(`setActivity (mock backend)`, () => {
     }
   });
 
-  it(`clearActivity updates presence with an empty activity`, async () => {
+  it(`clearActivity fully removes presence (not an empty update)`, () => {
     using client = createClient(config);
     const state = mockStateOf(client.lib);
-    await clearActivity({ client });
-    expect(state.calls).toContain(`Discord_Client_UpdateRichPresence`);
-    expect(state.activity.state).toBeUndefined();
+    // WHY: an empty UpdateRichPresence still shows "Playing <AppName>" + icon.
+    // Clearing must use ClearRichPresence to remove the activity entirely.
+    clearActivity({ client });
+    expect(state.cleared).toBe(true);
+    expect(state.calls).toContain(`Discord_Client_ClearRichPresence`);
+    expect(state.calls).not.toContain(`Discord_Client_UpdateRichPresence`);
   });
 
   it(`marshals the full rich-presence surface (assets, timestamps, party, buttons)`, async () => {

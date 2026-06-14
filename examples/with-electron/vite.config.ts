@@ -47,6 +47,14 @@ export default defineConfig({
         cache: true,
         dependsOn: [`typegen`, `preload`]
       },
+      // One-command launch: build the renderer + preload, then start Electron.
+      // The launcher scrubs ELECTRON_RUN_AS_NODE so it works from any terminal
+      // (incl. VS Code's, which sets it and would otherwise boot Electron as Node).
+      start: {
+        command: `node electron/launch.mjs`,
+        cache: false,
+        dependsOn: [`build:examples`]
+      },
       // Local, maintainer-driven Electron smoke (skips without DISCORD_* env).
       // Not wired into the workspace e2e aggregator — it needs the real SDK.
       smoke: {

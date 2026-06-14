@@ -1,77 +1,136 @@
 import * as v from "valibot";
 import type { ActivityInput } from "@discordkit/native/presence";
+import { dicebear } from "./samples.js";
 
 /**
- * The editor form, as a Valibot schema. The schema's INPUT is the editable form
- * shape; its OUTPUT (via `rawTransform`) is a ready-to-send `@discordkit/native`
+ * The editor form, as a Valibot schema. Its INPUT is the editable form shape;
+ * its OUTPUT (via `transform`) is a ready-to-send `@discordkit/native`
  * `ActivityInput` — so there's no separate flat→activity mapping function.
  *
- * The schema is built by a factory that closes over the two session-stable,
- * non-editable values — a party `id` (Discord requires one when party size is
- * set) and the activity `start` timestamp — so the transform stays pure while
- * still producing a complete activity. Build it once (memoized) so those values
- * don't churn on every keystroke.
+ * The form shape deliberately carries BOTH:
+ *  - presentation/form state — `enabled` (presence on/off) and per-section `on`
+ *    toggles + image `source`/`seed` — which let sections be explicitly omitted
+ *    (rather than inferring "off" from an empty string), and
+ *  - the activity values themselves, grouped under `activity`.
+ * Keeping every value (including the toggles) IN the form means a single
+ * `reset(DEFAULT_VALUES)` restores the entire UI, and the transform decides what
+ * actually ships based on the `on` flags.
+ *
+ * Built by a factory closing over the two session-stable, non-editable values —
+ * a party `id` (Discord requires one when party size is set) and the `start`
+ * timestamp — so the transform stays pure. Build once (memoized) so they don't
+ * churn per keystroke.
  *
  * (Lives here, not in `@discordkit/native`: the keystone is deliberately
  * valibot-free — an FFI binding shouldn't force a validation dep on headless
  * consumers. This is a small, intentional mirror of ActivityInput.)
  */
-const url = v.union([v.literal(``), v.pipe(v.string(), v.url())]);
+const urlValue = v.union([v.literal(``), v.pipe(v.string(), v.url())]);
+
+/** A toggleable image: source (sample seed vs. custom URL) + hover text. The
+ * resolved image string is derived in the transform, not stored. */
+const ImageShape = v.object({
+  on: v.boolean(),
+  source: v.union([v.literal(`sample`), v.literal(`url`)]),
+  seed: v.string(),
+  url: urlValue,
+  text: v.string()
+});
 
 const FormShape = v.object({
-  details: v.string(),
-  state: v.string(),
-  assets: v.object({
-    largeImage: v.string(),
-    largeText: v.string(),
-    smallImage: v.string(),
-    smallText: v.string()
-  }),
-  party: v.object({
-    currentSize: v.pipe(v.number(), v.minValue(0)),
-    maxSize: v.pipe(v.number(), v.minValue(0))
-  }),
-  useTimestamp: v.boolean(),
-  // Discord shows at most two buttons; each needs a label + a valid URL.
-  buttons: v.pipe(v.array(v.object({ label: v.string(), url })), v.maxLength(2))
+  /** Master presence on/off. When off, nothing is broadcast (presence cleared). */
+  enabled: v.boolean(),
+  activity: v.object({
+    details: v.object({ on: v.boolean(), value: v.string() }),
+    state: v.object({ on: v.boolean(), value: v.string() }),
+    largeImage: ImageShape,
+    smallImage: ImageShape,
+    party: v.object({
+      on: v.boolean(),
+      currentSize: v.pipe(v.number(), v.minValue(0)),
+      maxSize: v.pipe(v.number(), v.minValue(0))
+    }),
+    useTimestamp: v.boolean(),
+    // Discord shows at most two buttons; each needs a label + a valid URL.
+    buttons: v.pipe(
+      v.array(v.object({ label: v.string(), url: urlValue })),
+      v.maxLength(2)
+    )
+  })
 });
 
 /** Input (editable) form values — what RHF holds and the inputs bind to. */
 export type FormValues = v.InferInput<typeof FormShape>;
+/** One image sub-form (used by the ImageField component props). */
+export type ImageValues = v.InferInput<typeof ImageShape>;
+
+/** Resolve an image sub-form to its URL string (or "" when off/empty). */
+const resolveImage = (img: ImageValues, style: string): string => {
+  if (!img.on) return ``;
+  return img.source === `sample` ? dicebear(style, img.seed) : img.url;
+};
 
 export const createActivitySchema = (partyId: string, startedAt: number) =>
   // `transform` (not `rawTransform`): a pure value→value map. Validation already
-  // happened in FormShape, so we don't need addIssue — and `transform` infers
-  // its output (ActivityInput) straight from the returned value.
+  // happened in FormShape; `transform` infers its output (ActivityInput) from
+  // the returned value. The `on` flags decide what ships.
   v.pipe(
     FormShape,
-    v.transform(
-      (f): ActivityInput => ({
+    v.transform(({ activity: a }): ActivityInput => {
+      const largeImage = resolveImage(a.largeImage, `shapes`);
+      const smallImage = resolveImage(a.smallImage, `bottts`);
+      return {
         type: `playing`,
-        details: f.details,
-        state: f.state,
-        assets: f.assets,
-        party: {
-          id: partyId,
-          currentSize: f.party.currentSize,
-          maxSize: f.party.maxSize
+        ...(a.details.on && a.details.value
+          ? { details: a.details.value }
+          : {}),
+        ...(a.state.on && a.state.value ? { state: a.state.value } : {}),
+        assets: {
+          ...(largeImage ? { largeImage, largeText: a.largeImage.text } : {}),
+          ...(smallImage ? { smallImage, smallText: a.smallImage.text } : {})
         },
-        ...(f.useTimestamp ? { timestamps: { start: startedAt } } : {}),
-        buttons: f.buttons.filter((b) => b.label && b.url)
-      })
-    )
+        ...(a.party.on && (a.party.currentSize || a.party.maxSize)
+          ? {
+              party: {
+                id: partyId,
+                currentSize: a.party.currentSize,
+                maxSize: a.party.maxSize
+              }
+            }
+          : {}),
+        ...(a.useTimestamp ? { timestamps: { start: startedAt } } : {}),
+        buttons: a.buttons.filter((b) => b.label && b.url)
+      };
+    })
   );
 
 export const DEFAULT_VALUES: FormValues = {
-  details: `Competitive`,
-  state: `Playing Solo`,
-  assets: {
-    largeImage: ``,
-    largeText: `Numbani`,
-    smallImage: ``,
-    smallText: `Rogue - Level 100`
-  },
-  party: { currentSize: 1, maxSize: 5 },
-  useTimestamp: true,
-  buttons: [{ label: `Website`, url: `https://saeris.gg` }]
+  enabled: true,
+  activity: {
+    // Defaults that explain themselves: a discordkit demo. "what / where".
+    details: { on: true, value: `Building with discordkit` },
+    state: { on: true, value: `Editing Rich Presence` },
+    // DiceBear samples so the card shows delightful art out of the box: an
+    // abstract "scene" large image + a robot "character" small badge.
+    largeImage: {
+      on: true,
+      source: `sample`,
+      seed: `discordkit`,
+      url: ``,
+      text: `discordkit`
+    },
+    smallImage: {
+      on: true,
+      source: `sample`,
+      seed: `discordkit`,
+      url: ``,
+      text: `Online`
+    },
+    // Party off by default — not every presence has a player count.
+    party: { on: false, currentSize: 1, maxSize: 5 },
+    useTimestamp: true,
+    buttons: [
+      { label: `View on GitHub`, url: `https://github.com/saeris/discordkit` }
+    ]
+  }
 };

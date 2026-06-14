@@ -52,6 +52,8 @@ export interface MockState {
   applicationId?: bigint;
   /** Whether `Discord_Client_Drop` has been called. */
   dropped: boolean;
+  /** Whether `Discord_Client_ClearRichPresence` has been called. */
+  cleared: boolean;
   /** Count of registered-but-not-unregistered callbacks (leak check). */
   liveCallbacks: number;
   /** Force the next pump to advance the scripted status by one step. */
@@ -194,6 +196,9 @@ export const mockBackend: FfiBackend = (_libraryPath: string): FfiLibrary => {
             registered.get(cb)?.(null, null);
             return undefined;
           }
+          case `Discord_Client_ClearRichPresence`:
+            state.cleared = true;
+            return undefined;
           case `Discord_ClientResult_Successful`:
             return true;
           default:
@@ -229,6 +234,7 @@ export const mockBackend: FfiBackend = (_libraryPath: string): FfiLibrary => {
     calls,
     activity,
     dropped: false,
+    cleared: false,
     get liveCallbacks() {
       return registered.size;
     },

@@ -5,13 +5,14 @@ import {
   type FieldValues
 } from "react-hook-form";
 import { Input, Label, NumberField, TextField } from "react-aria-components";
+import { tokens } from "./ui.js";
 
 /** Control whose transformed-output/context generics are irrelevant to a single
  * field — only the input field-values type `T` matters here. */
 type AnyControl<T extends FieldValues> = Control<T, unknown, FieldValues>;
 
-const fieldClass = `flex flex-col gap-1 [&_label]:text-xs [&_label]:uppercase [&_label]:tracking-wide [&_label]:text-neutral-400`;
-const inputClass = `rounded-md bg-[#1e1f22] border border-neutral-700 px-3 py-2 text-sm text-neutral-100`;
+const fieldClass = tokens.field;
+const inputClass = tokens.input;
 
 /**
  * A text field wired to React Hook Form via `Controller`. React Aria's fields
@@ -38,7 +39,7 @@ export const TextControl = <T extends FieldValues>({
         onChange={field.onChange}
         onBlur={field.onBlur}
       >
-        <Label>{label}</Label>
+        <Label className={tokens.label}>{label}</Label>
         <Input className={inputClass} ref={field.ref} />
       </TextField>
     )}
@@ -66,7 +67,7 @@ export const NumberControl = <T extends FieldValues>({
         onBlur={field.onBlur}
         minValue={0}
       >
-        <Label>{label}</Label>
+        <Label className={tokens.label}>{label}</Label>
         <Input className={inputClass} ref={field.ref} />
       </NumberField>
     )}

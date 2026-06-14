@@ -4,16 +4,11 @@
   "private": true,
   "type": "module",
   "main": "./electron/main.mjs",
-  "scripts": {
-    "dev": "vp dev --host 127.0.0.1",
-    "app": "electron .",
-    "build": "vp build",
-    "smoke": "playwright test"
-  },
   "dependencies": {
     "@discordkit/electron": "workspace:^",
     "@discordkit/native": "workspace:^",
     "@hookform/resolvers": "^5.4.0",
+    "lucide-react": "^1.17.0",
     "react": "catalog:",
     "react-aria-components": "^1.18.0",
     "react-dom": "catalog:",
@@ -31,6 +26,7 @@
     "playwright": "^1.56.0",
     "postcss": "^8.5.15",
     "tailwindcss": "^4.3.0",
+    "tailwindcss-react-aria-components": "^2.1.1",
     "typescript": "catalog:",
     "varlock": "^1.5.1",
     "vite-plus": "^0.1.24"

@@ -5645,6 +5645,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lucide-react@npm:^1.17.0":
+  version: 1.17.0
+  resolution: "lucide-react@npm:1.17.0"
+  peerDependencies:
+    react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: 10/b0a5029a6eb8904cd5c5e71da21d27090d2a1077d9770334b29ee63e7cc40823c5099ae6294532ff4a8d8a4779769e998bb8e5f52fcac95a3957cca75a50ca4d
+  languageName: node
+  linkType: hard
+
 "lz-string@npm:^1.5.0":
   version: 1.5.0
   resolution: "lz-string@npm:1.5.0"
@@ -8343,6 +8352,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tailwindcss-react-aria-components@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "tailwindcss-react-aria-components@npm:2.1.1"
+  peerDependencies:
+    tailwindcss: ^4.0.0
+  checksum: 10/65c24fdeca9939333dace1a4d250df047d5810e8b4fa9929da8de35b3faa50ddecde46fe9e70256f1f6ab002907c9d448369100359edc9781d7251ba58b71861
+  languageName: node
+  linkType: hard
+
 "tailwindcss@npm:4.3.0, tailwindcss@npm:^4.3.0":
   version: 4.3.0
   resolution: "tailwindcss@npm:4.3.0"
@@ -9213,6 +9231,7 @@ __metadata:
     "@types/react-dom": "catalog:"
     "@vitejs/plugin-react": "npm:^6.0.2"
     electron: "npm:^42.4.0"
+    lucide-react: "npm:^1.17.0"
     playwright: "npm:^1.56.0"
     postcss: "npm:^8.5.15"
     react: "catalog:"
@@ -9220,6 +9239,7 @@ __metadata:
     react-dom: "catalog:"
     react-hook-form: "npm:^7.78.0"
     tailwindcss: "npm:^4.3.0"
+    tailwindcss-react-aria-components: "npm:^2.1.1"
     typescript: "catalog:"
     valibot: "catalog:"
     varlock: "npm:^1.5.1"
