@@ -79,117 +79,136 @@ const resolveApplicationId = (config: ClientConfig): bigint => {
 };
 
 /**
+ * A live client over one native `Discord_Client` handle — the consumer-owned
+ * resource at the center of the package, so it's a class (with `#private` state
+ * and `[Symbol.dispose]`) rather than a factory-returned object. Feature
+ * operations are deliberately NOT methods here: they stay free functions in
+ * subpath modules that take a client, so importing one feature never pulls in
+ * another (the tree-shaking boundary). Methods are arrow-bound so destructuring
+ * (`const { close } = client`) keeps working.
+ *
+ * Prefer the {@link createClient} factory (or the ambient {@link init}); the
+ * class is exported as the implementation type. `using client = createClient(...)`
+ * auto-disposes (drops the handle, stops the pump, unregisters callbacks).
+ */
+class DiscordClientImpl implements DiscordClient {
+  readonly status = new Signal.State<Status>(`Disconnected`);
+  readonly lib: FfiLibrary;
+  readonly handle: FfiOpaque;
+  readonly applicationId: bigint;
+
+  #closed = false;
+  readonly #pump: ReturnType<typeof setInterval>;
+  readonly #registered: FfiOpaque[] = [];
+  readonly #logHandlers = new Set<(entry: LogEntry) => void>();
+  readonly #drop: (handle: FfiOpaque) => unknown;
+
+  constructor(config: ClientConfig) {
+    // The default (Koffi) backend needs a resolved per-platform library file; a
+    // custom backend (tests, a future node:ffi/remote backend) interprets the
+    // raw `libraryPath` itself, so we don't impose our path probing on it.
+    const backend = config.backend ?? koffiBackend;
+    const libraryPath = config.backend
+      ? (config.libraryPath ?? ``)
+      : resolveLibraryPath({ libraryPath: config.libraryPath });
+    const lib = backend(libraryPath);
+    this.lib = lib;
+    this.applicationId = resolveApplicationId(config);
+
+    // --- lifecycle + status bindings (every consumer needs these) ---
+    const init = lib.func(`void Discord_Client_Init(void *self)`);
+    this.#drop = lib.func(`void Discord_Client_Drop(void *self)`);
+    const setAppId = lib.func(
+      `void Discord_Client_SetApplicationId(void *self, uint64_t applicationId)`
+    );
+    const setStatusCb = lib.func(
+      `void Discord_Client_SetStatusChangedCallback(void *self, void *cb, void *cbFree, void *cbUserData)`
+    );
+    const addLogCb = lib.func(
+      `void Discord_Client_AddLogCallback(void *self, void *cb, void *cbFree, void *cbUserData, int minSeverity)`
+    );
+    const runCallbacks = lib.func(`void Discord_RunCallbacks()`);
+
+    const OnStatusChanged = lib.defineCallback(
+      `void OnStatusChanged(int status, int error, int32_t errorDetail, void *userData)`
+    );
+    const LogCallback = lib.defineCallback(
+      `void LogCallback(Discord_String message, int severity, void *userData)`
+    );
+
+    // --- allocate + init the opaque handle ---
+    this.handle = lib.allocHandle();
+    init(this.handle);
+    setAppId(this.handle, this.applicationId);
+
+    // --- status signal + log stream, driven by the SDK's persistent callbacks ---
+    const statusCb = lib.registerCallback(OnStatusChanged, (code: number) => {
+      this.status.set(STATUS_BY_CODE[code] ?? `Disconnected`);
+    });
+    const logCb = lib.registerCallback(
+      LogCallback,
+      (message: unknown, severity: number) => {
+        const entry: LogEntry = {
+          message: lib.decodeString(message),
+          severity: LOG_SEVERITY_BY_CODE[severity] ?? `Info`
+        };
+        for (const handler of this.#logHandlers) handler(entry);
+      }
+    );
+    this.#registered.push(statusCb, logCb);
+
+    // callback triple: (cb, cbFree=null, cbUserData=null) — JS owns lifetime.
+    setStatusCb(this.handle, statusCb, null, null);
+    addLogCb(
+      this.handle,
+      logCb,
+      null,
+      null,
+      LOG_SEVERITY[config.minLogSeverity ?? `Info`]
+    );
+
+    // --- pump on the main thread ---
+    this.#pump = setInterval(() => {
+      runCallbacks();
+    }, config.pumpIntervalMs ?? 16);
+    // NB: do NOT `unref()` the pump. It is essential, continuous work — draining
+    // SDK events and firing callbacks. If it's `unref`'d and the pump is the
+    // only active handle (headless Node, the Tauri sidecar, tests), Node stops
+    // running the timer and ALL SDK callbacks stall (presence never acks).
+    // Keeping it ref'd means an active client keeps the process alive — which is
+    // correct; call `close()`/`shutdown()` to stop the pump and let it exit.
+  }
+
+  onLog = (handler: (entry: LogEntry) => void): Subscription => {
+    this.#logHandlers.add(handler);
+    const unsubscribe = (): void => {
+      this.#logHandlers.delete(handler);
+    };
+    return Object.assign(unsubscribe, {
+      [Symbol.dispose]: unsubscribe
+    }) as Subscription;
+  };
+
+  close = (): void => {
+    if (this.#closed) return;
+    this.#closed = true;
+    clearInterval(this.#pump);
+    this.#drop(this.handle);
+    for (const cb of this.#registered) this.lib.unregisterCallback(cb);
+    this.#logHandlers.clear();
+  };
+
+  trackCallback = (cbHandle: FfiOpaque): void => {
+    this.#registered.push(cbHandle);
+  };
+
+  [Symbol.dispose] = (): void => this.close();
+}
+
+/**
  * Create a client over its own native `Discord_Client` handle. The low-level
  * primitive behind the ambient singleton; use directly for multi-client or
  * test scenarios. `using client = createClient(...)` auto-disposes at scope exit.
  */
-export const createClient = (config: ClientConfig = {}): DiscordClient => {
-  // The default (Koffi) backend needs a resolved per-platform library file; a
-  // custom backend (tests, a future node:ffi/remote backend) interprets the raw
-  // `libraryPath` itself, so we don't impose our path probing on it.
-  const backend = config.backend ?? koffiBackend;
-  const libraryPath = config.backend
-    ? (config.libraryPath ?? ``)
-    : resolveLibraryPath({ libraryPath: config.libraryPath });
-  const lib = backend(libraryPath);
-  const applicationId = resolveApplicationId(config);
-
-  // --- lifecycle + status bindings (every consumer needs these) ---
-  const init = lib.func(`void Discord_Client_Init(void *self)`);
-  const drop = lib.func(`void Discord_Client_Drop(void *self)`);
-  const setAppId = lib.func(
-    `void Discord_Client_SetApplicationId(void *self, uint64_t applicationId)`
-  );
-  const setStatusCb = lib.func(
-    `void Discord_Client_SetStatusChangedCallback(void *self, void *cb, void *cbFree, void *cbUserData)`
-  );
-  const addLogCb = lib.func(
-    `void Discord_Client_AddLogCallback(void *self, void *cb, void *cbFree, void *cbUserData, int minSeverity)`
-  );
-  const runCallbacks = lib.func(`void Discord_RunCallbacks()`);
-
-  const OnStatusChanged = lib.defineCallback(
-    `void OnStatusChanged(int status, int error, int32_t errorDetail, void *userData)`
-  );
-  const LogCallback = lib.defineCallback(
-    `void LogCallback(Discord_String message, int severity, void *userData)`
-  );
-
-  // --- allocate + init the opaque handle ---
-  const handle = lib.allocHandle();
-  init(handle);
-  setAppId(handle, applicationId);
-
-  // --- status signal, driven by the SDK's persistent status callback ---
-  const status = new Signal.State<Status>(`Disconnected`);
-  const logHandlers = new Set<(entry: LogEntry) => void>();
-  const registered: FfiOpaque[] = [];
-
-  const statusCb = lib.registerCallback(OnStatusChanged, (code: number) => {
-    status.set(STATUS_BY_CODE[code] ?? `Disconnected`);
-  });
-  const logCb = lib.registerCallback(
-    LogCallback,
-    (message: unknown, severity: number) => {
-      const entry: LogEntry = {
-        message: lib.decodeString(message),
-        severity: LOG_SEVERITY_BY_CODE[severity] ?? `Info`
-      };
-      for (const handler of logHandlers) handler(entry);
-    }
-  );
-  registered.push(statusCb, logCb);
-
-  // callback triple: (cb, cbFree=null, cbUserData=null) — JS owns lifetime.
-  setStatusCb(handle, statusCb, null, null);
-  addLogCb(
-    handle,
-    logCb,
-    null,
-    null,
-    LOG_SEVERITY[config.minLogSeverity ?? `Info`]
-  );
-
-  // --- pump on the main thread ---
-  const interval = config.pumpIntervalMs ?? 16;
-  const pump = setInterval(() => {
-    runCallbacks();
-  }, interval);
-  // NB: do NOT `unref()` the pump. It is essential, continuous work — draining
-  // SDK events and firing callbacks. If it's `unref`'d and the pump is the only
-  // active handle (headless Node, the Tauri sidecar, tests), Node stops running
-  // the timer and ALL SDK callbacks stall (presence never acks). Keeping it
-  // ref'd means an active client keeps the process alive — which is correct;
-  // call `close()`/`shutdown()` to stop the pump and let the process exit.
-
-  let closed = false;
-  const close = (): void => {
-    if (closed) return;
-    closed = true;
-    clearInterval(pump);
-    drop(handle);
-    for (const cb of registered) lib.unregisterCallback(cb);
-    logHandlers.clear();
-  };
-
-  return {
-    status,
-    onLog: (handler) => {
-      logHandlers.add(handler);
-      const unsubscribe = (): void => {
-        logHandlers.delete(handler);
-      };
-      return Object.assign(unsubscribe, {
-        [Symbol.dispose]: unsubscribe
-      }) as Subscription;
-    },
-    close,
-    lib,
-    handle,
-    applicationId,
-    trackCallback: (cbHandle) => {
-      registered.push(cbHandle);
-    },
-    [Symbol.dispose]: close
-  };
-};
+export const createClient = (config: ClientConfig = {}): DiscordClient =>
+  new DiscordClientImpl(config);

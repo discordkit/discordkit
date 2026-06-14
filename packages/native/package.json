@@ -33,6 +33,11 @@
       "types": "./dist/index.d.mts",
       "import": "./dist/index.mjs"
     },
+    "./presence": {
+      "@discordkit/source": "./src/presence/index.ts",
+      "types": "./dist/presence/index.d.mts",
+      "import": "./dist/presence/index.mjs"
+    },
     "./*": {
       "@discordkit/source": "./src/*.ts",
       "types": "./dist/*.d.mts",

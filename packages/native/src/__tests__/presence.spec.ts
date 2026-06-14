@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { createClient } from "../client.js";
-import { setActivity, clearActivity } from "../presence.js";
+import { setActivity, clearActivity } from "../presence/index.js";
 import { mockBackend, mockStateOf } from "./testBackend.js";
 
 const config = {

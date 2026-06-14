@@ -16,8 +16,8 @@ export default defineConfig({
     // single source of truth for the whole workspace.
     target: buildTarget,
     // Unbundled mode (see packages/core/vite.config.ts for rationale): each
-    // src file maps 1:1 to a dist file so the `./*` subpath export resolves
-    // (`@discordkit/native/presence` -> dist/presence.mjs) and consumers
+    // src file maps 1:1 to a dist file so subpath exports resolve
+    // (`@discordkit/native/presence` -> dist/presence/index.mjs) and consumers
     // tree-shake at the file boundary.
     entry: [
       `src/**/*.ts`,

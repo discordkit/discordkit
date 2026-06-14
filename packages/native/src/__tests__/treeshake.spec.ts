@@ -35,20 +35,33 @@ const importsOf = (file: string): string[] => {
 describe(`tree-shaking (built dist)`, () => {
   beforeAll(() => {
     // The dist must exist; build it if a prior step hasn't.
-    if (!existsSync(join(DIST, `presence.mjs`))) {
+    if (!existsSync(join(DIST, `presence`, `index.mjs`))) {
       execFileSync(`vp`, [`pack`], { cwd: PKG, stdio: `ignore`, shell: true });
     }
   });
 
   it(`presence does not import the auth feature`, () => {
     // Why: an ambient-presence app (our most footprint-sensitive audience) must
-    // ship none of the OAuth surface.
-    expect(importsOf(`presence.mjs`)).not.toContain(`./auth.mjs`);
+    // ship none of the OAuth surface. Presence is a folder of per-class modules;
+    // none of them — nor the barrel — may reach the auth module.
+    const presenceFiles = [
+      join(`presence`, `index.mjs`),
+      join(`presence`, `richPresence.mjs`),
+      join(`presence`, `activity.mjs`),
+      join(`presence`, `activityAssets.mjs`),
+      join(`presence`, `activityParty.mjs`),
+      join(`presence`, `activityButton.mjs`),
+      join(`presence`, `activityTimestamps.mjs`)
+    ];
+    for (const file of presenceFiles) {
+      expect(importsOf(file)).not.toContain(`../auth.mjs`);
+    }
   });
 
   it(`auth does not import the presence feature`, () => {
     // Why: the boundary holds both directions.
-    expect(importsOf(`auth.mjs`)).not.toContain(`./presence.mjs`);
+    expect(importsOf(`auth.mjs`)).not.toContain(`./presence/index.mjs`);
+    expect(importsOf(`auth.mjs`)).not.toContain(`./presence/richPresence.mjs`);
   });
 
   it(`signal-polyfill ships as an external bare import, never inlined`, () => {
@@ -60,7 +73,8 @@ describe(`tree-shaking (built dist)`, () => {
     const inlined = [`Bloomberg Finance`, `class Watcher`, `subtle.Watcher =`];
     for (const file of [
       `client.mjs`,
-      `presence.mjs`,
+      join(`presence`, `index.mjs`),
+      join(`presence`, `richPresence.mjs`),
       `index.mjs`,
       `subscribe.mjs`
     ]) {
