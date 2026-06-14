@@ -58,6 +58,22 @@ describe(`tree-shaking (built dist)`, () => {
     }
   });
 
+  it(`users imports no other feature domain`, () => {
+    // Why: importing `getUser` must not drag in presence or auth — each domain
+    // is independently importable (the read-handle path is footprint-sensitive).
+    const userFiles = [
+      join(`users`, `index.mjs`),
+      join(`users`, `users.mjs`),
+      join(`users`, `userHandle.mjs`)
+    ];
+    for (const file of userFiles) {
+      const imports = importsOf(file);
+      expect(imports).not.toContain(`../auth.mjs`);
+      expect(imports).not.toContain(`../presence/index.mjs`);
+      expect(imports).not.toContain(`../presence/richPresence.mjs`);
+    }
+  });
+
   it(`auth does not import the presence feature`, () => {
     // Why: the boundary holds both directions.
     expect(importsOf(`auth.mjs`)).not.toContain(`./presence/index.mjs`);

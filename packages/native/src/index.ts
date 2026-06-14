@@ -8,6 +8,7 @@
  *
  * - `@discordkit/native/presence` — `setActivity`, `clearActivity`
  * - `@discordkit/native/auth`     — `authorize`
+ * - `@discordkit/native/users`    — `getCurrentUser`, `getUser`
  *
  * @example
  * ```ts

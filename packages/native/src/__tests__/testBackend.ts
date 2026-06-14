@@ -56,8 +56,26 @@ export interface MockState {
   cleared: boolean;
   /** Count of registered-but-not-unregistered callbacks (leak check). */
   liveCallbacks: number;
+  /**
+   * Scripted user data for the users domain. Set this to make
+   * `GetCurrentUserV2`/`GetUser` report a valid handle and the
+   * `Discord_UserHandle_*` getters read these values back. Leave unset (or set
+   * `null`) to make those ops report an invalid/absent user.
+   */
+  scriptedUser: ScriptedUser | null;
   /** Force the next pump to advance the scripted status by one step. */
   readonly pump: () => void;
+}
+
+/** Raw field values a test scripts for the mock's `UserHandle` getters to return. */
+export interface ScriptedUser {
+  id: bigint;
+  username: string;
+  displayName: string;
+  globalName?: string;
+  avatar?: string;
+  status: number;
+  provisional: boolean;
 }
 
 const states = new WeakMap<FfiLibrary, MockState>();
@@ -199,6 +217,45 @@ export const mockBackend: FfiBackend = (_libraryPath: string): FfiLibrary => {
           case `Discord_Client_ClearRichPresence`:
             state.cleared = true;
             return undefined;
+          // --- users: sync getters fill a UserHandle out-param + report valid.
+          // GetCurrentUserV2(self, out) / GetUser(self, id, out) — the out-param
+          // is the last arg. Stash the scripted user on it so the UserHandle_*
+          // getters below read it back.
+          case `Discord_Client_GetCurrentUserV2`:
+          case `Discord_Client_GetUser`: {
+            if (!state.scriptedUser) return false;
+            const out = args[args.length - 1] as { __user?: ScriptedUser };
+            out.__user = state.scriptedUser;
+            return true;
+          }
+          case `Discord_UserHandle_Id`:
+            return (args[0] as { __user?: ScriptedUser }).__user?.id ?? 0n;
+          case `Discord_UserHandle_Status`:
+            return (args[0] as { __user?: ScriptedUser }).__user?.status ?? 7;
+          case `Discord_UserHandle_IsProvisional`:
+            return Boolean(
+              (args[0] as { __user?: ScriptedUser }).__user?.provisional
+            );
+          // String getters: write the field into the out-param (args[1]) and
+          // return whether it's present (matching the real bool-gated getters).
+          case `Discord_UserHandle_Username`:
+          case `Discord_UserHandle_DisplayName`:
+          case `Discord_UserHandle_GlobalName`:
+          case `Discord_UserHandle_Avatar`: {
+            const user = (args[0] as { __user?: ScriptedUser }).__user;
+            const field = (
+              {
+                Discord_UserHandle_Username: `username`,
+                Discord_UserHandle_DisplayName: `displayName`,
+                Discord_UserHandle_GlobalName: `globalName`,
+                Discord_UserHandle_Avatar: `avatar`
+              } as const
+            )[name];
+            const value = user?.[field];
+            if (value === undefined) return false;
+            (args[1] as MockString).__str = value;
+            return true;
+          }
           case `Discord_ClientResult_Successful`:
             return true;
           default:
@@ -235,6 +292,7 @@ export const mockBackend: FfiBackend = (_libraryPath: string): FfiLibrary => {
     activity,
     dropped: false,
     cleared: false,
+    scriptedUser: null,
     get liveCallbacks() {
       return registered.size;
     },
