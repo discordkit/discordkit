@@ -1,3 +1,4 @@
+import { toSubscription } from "../client.js";
 import type { DiscordClient, Subscription } from "../client.js";
 import { defineBindings } from "../ffi/bindings.js";
 import type { FfiOpaque } from "../ffi/backend.js";
@@ -64,7 +65,22 @@ const bindings = defineBindings({
   }
 });
 
-/** A live, interactive voice call in a lobby. Created by the voice ops, never directly. */
+/**
+ * A live, interactive voice call in a lobby. Created by the voice ops
+ * ({@link ../voice/calls.js | startCall}/`getCall`), never constructed directly.
+ *
+ * @example
+ * ```ts
+ * import { startCall } from "@discordkit/native/voice";
+ *
+ * using call = startCall(lobbyId);
+ * using sub = call.onStatusChanged((status) => {
+ *   if (status === "connected") console.log("in voice with", call.participants);
+ * });
+ * call.setSelfMute(true);              // mute my mic for this call
+ * call.setParticipantVolume(userId, 150); // turn someone up (0–200)
+ * ```
+ */
 export class Call {
   readonly #client: DiscordClient;
   readonly #handle: FfiOpaque;
@@ -201,14 +217,10 @@ export class Call {
     const cb = this.#client.lib.registerCallback(cbType, fn);
     this.#registered.add(cb);
     setter(this.#handle, cb);
-    let disposed = false;
-    const off = (): void => {
-      if (disposed) return;
-      disposed = true;
+    return toSubscription(() => {
       this.#client.lib.unregisterCallback(cb);
       this.#registered.delete(cb);
-    };
-    return Object.assign(off, { [Symbol.dispose]: off }) as Subscription;
+    });
   };
 
   /** Subscribe to this call's connection status changing. */

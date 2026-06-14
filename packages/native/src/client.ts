@@ -3,7 +3,7 @@ import { koffiBackend } from "./ffi/koffi-backend.js";
 import type { FfiBackend, FfiLibrary, FfiOpaque } from "./ffi/backend.js";
 import { resolveLibraryPath } from "./resolveLibrary.js";
 import {
-  LOG_SEVERITY,
+  LOG_SEVERITY_CODE,
   LOG_SEVERITY_BY_CODE,
   STATUS_BY_CODE,
   type LogEntry,
@@ -23,8 +23,8 @@ export interface ClientConfig {
    * `DISCORD_SDK_PATH`, then conventional locations. See {@link resolveLibraryPath}.
    */
   libraryPath?: string;
-  /** Minimum log severity to deliver to {@link DiscordClient.onLog}. Default `Info`. */
-  minLogSeverity?: keyof typeof LOG_SEVERITY;
+  /** Minimum log severity to deliver to {@link DiscordClient.onLog}. Default `info`. */
+  minLogSeverity?: keyof typeof LOG_SEVERITY_CODE;
   /**
    * How often (ms) to pump `Discord_RunCallbacks`. Default 16ms (~60Hz). The
    * pump runs on the main thread; callbacks fire synchronously inside it.
@@ -36,6 +36,30 @@ export interface ClientConfig {
 
 /** Unsubscribe handle that is also a {@link Disposable} for `using`. */
 export type Subscription = (() => void) & Disposable;
+
+/**
+ * Wrap a teardown function as a {@link Subscription}: idempotent (safe to call
+ * more than once) and `Disposable` (works with `using`). The single place the
+ * "unsubscribe + `[Symbol.dispose]`" shape is defined, so every event/listener
+ * API across the package returns the exact same object shape.
+ *
+ * @example
+ * ```ts
+ * const off = toSubscription(() => lib.unregisterCallback(cb));
+ * // later: off();  // or: using sub = toSubscription(...)
+ * ```
+ */
+export const toSubscription = (teardown: () => void): Subscription => {
+  let done = false;
+  const unsubscribe = (): void => {
+    if (done) return;
+    done = true;
+    teardown();
+  };
+  return Object.assign(unsubscribe, {
+    [Symbol.dispose]: unsubscribe
+  }) as Subscription;
+};
 
 /**
  * A live client over one native `Discord_Client` handle. Created by
@@ -92,7 +116,7 @@ const resolveApplicationId = (config: ClientConfig): bigint => {
  * auto-disposes (drops the handle, stops the pump, unregisters callbacks).
  */
 class DiscordClientImpl implements DiscordClient {
-  readonly status = new Signal.State<Status>(`Disconnected`);
+  readonly status = new Signal.State<Status>(`disconnected`);
   readonly lib: FfiLibrary;
   readonly handle: FfiOpaque;
   readonly applicationId: bigint;
@@ -143,14 +167,14 @@ class DiscordClientImpl implements DiscordClient {
 
     // --- status signal + log stream, driven by the SDK's persistent callbacks ---
     const statusCb = lib.registerCallback(OnStatusChanged, (code: number) => {
-      this.status.set(STATUS_BY_CODE[code] ?? `Disconnected`);
+      this.status.set(STATUS_BY_CODE[code] ?? `disconnected`);
     });
     const logCb = lib.registerCallback(
       LogCallback,
       (message: unknown, severity: number) => {
         const entry: LogEntry = {
           message: lib.decodeString(message),
-          severity: LOG_SEVERITY_BY_CODE[severity] ?? `Info`
+          severity: LOG_SEVERITY_BY_CODE[severity] ?? `info`
         };
         for (const handler of this.#logHandlers) handler(entry);
       }
@@ -164,7 +188,7 @@ class DiscordClientImpl implements DiscordClient {
       logCb,
       null,
       null,
-      LOG_SEVERITY[config.minLogSeverity ?? `Info`]
+      LOG_SEVERITY_CODE[config.minLogSeverity ?? `info`]
     );
 
     // --- pump on the main thread ---

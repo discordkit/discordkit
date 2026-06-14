@@ -1,5 +1,5 @@
 import { Signal } from "signal-polyfill";
-import type { Subscription } from "./client.js";
+import { toSubscription, type Subscription } from "./client.js";
 
 /**
  * Ergonomic subscription over a TC39 signal. The proposal deliberately omits a
@@ -32,10 +32,10 @@ export const subscribe = <T>(
   });
   watcher.watch(signal);
 
-  const unsubscribe = (): void => {
-    if (disposed) return;
+  // `disposed` also gates the deferred watcher microtask above, so it's set here
+  // (not just inside toSubscription's own idempotency guard).
+  return toSubscription(() => {
     disposed = true;
     watcher.unwatch(signal);
-  };
-  return Object.assign(unsubscribe, { [Symbol.dispose]: unsubscribe });
+  });
 };

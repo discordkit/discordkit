@@ -1,4 +1,5 @@
 import { useClient } from "../ambient.js";
+import { toSubscription } from "../client.js";
 import type { DiscordClient, Subscription } from "../client.js";
 import { awaitCallback, awaitResult, defineBindings } from "../ffi/bindings.js";
 import type { FfiOpaque } from "../ffi/backend.js";
@@ -330,11 +331,5 @@ export const onDeviceChange = (
   );
   client.trackCallback(cb);
   b.setDeviceChangeCb(client.handle, cb, null, null);
-  let disposed = false;
-  const off = (): void => {
-    if (disposed) return;
-    disposed = true;
-    client.lib.unregisterCallback(cb);
-  };
-  return Object.assign(off, { [Symbol.dispose]: off }) as Subscription;
+  return toSubscription(() => client.lib.unregisterCallback(cb));
 };

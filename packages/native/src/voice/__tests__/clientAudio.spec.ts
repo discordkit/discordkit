@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { createClient } from "../../client.js";
 import { mockBackend, mockStateOf } from "../../__tests__/mockBackend.js";
-import { scriptDevices, voiceActionsOf } from "./mock.js";
+import { scriptDevices, scriptCurrentDevices, voiceActionsOf } from "./mock.js";
 import {
   getInputVolume,
   setInputVolume,
@@ -13,7 +13,10 @@ import {
   setSelfDeafAll,
   getInputDevices,
   getOutputDevices,
-  setInputDevice
+  getCurrentInputDevice,
+  getCurrentOutputDevice,
+  setInputDevice,
+  setOutputDevice
 } from "../calls.js";
 
 const config = {
@@ -70,12 +73,35 @@ describe(`client audio (mock backend)`, () => {
     ]);
   });
 
-  it(`setInputDevice resolves via its result callback`, async () => {
+  it(`getCurrent input/output device resolve with the selected device (or undefined)`, async () => {
     using client = createClient(config);
     const state = mockStateOf(client.lib);
-    // Why: unlike enumeration, setInputDevice DOES carry a ClientResult, so it
-    // uses awaitResult (success/fail), not awaitCallback.
-    await setInputDevice(`mic-2`, { client });
-    expect(voiceActionsOf(state)).toContain(`Discord_Client_SetInputDevice`);
+    scriptCurrentDevices(
+      state,
+      { id: `mic-1`, name: `Headset Mic`, isDefault: true },
+      undefined
+    );
+
+    // Why: the current-device callbacks carry a single optional device (no span,
+    // no result) — a present device reads into a snapshot; none → undefined.
+    await expect(getCurrentInputDevice({ client })).resolves.toEqual({
+      id: `mic-1`,
+      name: `Headset Mic`,
+      isDefault: true
+    });
+    await expect(getCurrentOutputDevice({ client })).resolves.toBeUndefined();
+  });
+
+  it.each([
+    [`setInputDevice`, setInputDevice, `Discord_Client_SetInputDevice`],
+    [`setOutputDevice`, setOutputDevice, `Discord_Client_SetOutputDevice`]
+  ] as const)(`%s resolves via its result callback`, async (_n, op, cFn) => {
+    using client = createClient(config);
+    const state = mockStateOf(client.lib);
+    // Why: unlike enumeration, set*Device DOES carry a ClientResult, so it uses
+    // awaitResult (success/fail), not awaitCallback — and each export must wire to
+    // its own C function.
+    await op(`dev-2`, { client });
+    expect(voiceActionsOf(state)).toContain(cFn);
   });
 });

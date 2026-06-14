@@ -1,4 +1,5 @@
 import { useClient } from "../ambient.js";
+import { toSubscription } from "../client.js";
 import type { DiscordClient, Subscription } from "../client.js";
 import { awaitResult, defineBindings } from "../ffi/bindings.js";
 import { buildActivityInvite, readActivityInvite } from "./activityInvite.js";
@@ -123,6 +124,20 @@ export const replyToActivityJoinRequest = async (
 
 /**
  * Accept an activity invite the current user received, resolving with the **join secret** — pass it to your game's party system to actually join the sender (it comes from their rich-presence activity). Takes the {@link ActivityInvite} from the created callback.
+ *
+ * @example
+ * ```ts
+ * import {
+ *   onActivityInviteCreated,
+ *   acceptActivityInvite
+ * } from "@discordkit/native/activity-invites";
+ *
+ * using sub = onActivityInviteCreated(async (invite) => {
+ *   if (!invite.valid) return;            // expired / sender stopped playing
+ *   const joinSecret = await acceptActivityInvite(invite);
+ *   game.joinPartyFromSecret(joinSecret); // your game's own matchmaking
+ * });
+ * ```
  */
 export const acceptActivityInvite = async (
   invite: ActivityInvite,
@@ -157,15 +172,7 @@ const subscribeInvite =
     client.trackCallback(cb);
     b[fn](client.handle, cb, null, null);
 
-    let disposed = false;
-    const unsubscribe = (): void => {
-      if (disposed) return;
-      disposed = true;
-      client.lib.unregisterCallback(cb);
-    };
-    return Object.assign(unsubscribe, {
-      [Symbol.dispose]: unsubscribe
-    }) as Subscription;
+    return toSubscription(() => client.lib.unregisterCallback(cb));
   };
 
 /**

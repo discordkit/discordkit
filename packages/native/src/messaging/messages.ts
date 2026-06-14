@@ -60,7 +60,19 @@ export interface MessageOptions {
   timeoutMs?: number;
 }
 
-/** Send a direct message to a user, optionally with metadata. Resolves with the new message's id. */
+/**
+ * Send a direct message to a user, optionally with metadata. Resolves with the new message's id. Only call in response to an explicit user action.
+ *
+ * @example
+ * ```ts
+ * import { sendUserMessage, getMessage } from "@discordkit/native/messaging";
+ *
+ * const id = await sendUserMessage(recipientId, "gg!");
+ * const sent = getMessage(id); // read it back as a Message snapshot
+ * // with developer metadata (e.g. an in-game character name):
+ * await sendUserMessage(recipientId, "hi", { metadata: { character: "Mage" } });
+ * ```
+ */
 export const sendUserMessage = async (
   recipientId: bigint,
   content: string,

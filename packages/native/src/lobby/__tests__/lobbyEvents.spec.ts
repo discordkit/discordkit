@@ -2,7 +2,14 @@ import { describe, it, expect } from "vitest";
 import { createClient } from "../../client.js";
 import { mockBackend, mockStateOf } from "../../__tests__/mockBackend.js";
 import { scriptLobby, fireLobbyEvent } from "./mock.js";
-import { onLobbyMemberAdded, onLobbyCreated } from "../lobbyEvents.js";
+import {
+  onLobbyMemberAdded,
+  onLobbyMemberRemoved,
+  onLobbyMemberUpdated,
+  onLobbyCreated,
+  onLobbyDeleted,
+  onLobbyUpdated
+} from "../lobbyEvents.js";
 import { createOrJoinLobby } from "../lobbies.js";
 
 const config = {
@@ -74,5 +81,41 @@ describe(`lobby events (mock backend)`, () => {
 
     // Why: the Subscription must remove the handler from the fan-out set.
     expect(seen).toEqual([1n]);
+  });
+
+  // Why: all six events flow through the shared clientEventFanout config; this
+  // pins each export to the right event key + arity, catching a config typo that
+  // would silently route an event to the wrong handler set.
+  it.each([
+    [`onLobbyDeleted`, onLobbyDeleted, `LobbyDeleted`, [7n], [7n]],
+    [`onLobbyUpdated`, onLobbyUpdated, `LobbyUpdated`, [7n], [7n]],
+    [
+      `onLobbyMemberRemoved`,
+      onLobbyMemberRemoved,
+      `LobbyMemberRemoved`,
+      [7n, 11n],
+      [7n, 11n]
+    ],
+    [
+      `onLobbyMemberUpdated`,
+      onLobbyMemberUpdated,
+      `LobbyMemberUpdated`,
+      [7n, 11n],
+      [7n, 11n]
+    ]
+  ] as const)(`%s delivers its ids`, (_name, on, event, fireArgs, expected) => {
+    using client = createClient(config);
+    const state = mockStateOf(client.lib);
+    const seen: bigint[][] = [];
+    using _s = (on as (h: (...a: bigint[]) => void, o: object) => Disposable)(
+      (...ids: bigint[]) => seen.push(ids),
+      { client }
+    );
+    fireLobbyEvent(
+      state,
+      event as Parameters<typeof fireLobbyEvent>[1],
+      ...fireArgs
+    );
+    expect(seen).toEqual([[...expected]]);
   });
 });

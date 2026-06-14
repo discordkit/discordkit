@@ -22,13 +22,13 @@ describe(`createClient (mock backend)`, () => {
     using client = createClient(config);
     const state = mockStateOf(client.lib);
     // Why: status must reflect the SDK's OnStatusChanged, not a guess — a
-    // consumer gating on "Ready" depends on this wiring being live.
-    expect(client.status.get()).toBe(`Disconnected`);
+    // consumer gating on "ready" depends on this wiring being live.
+    expect(client.status.get()).toBe(`disconnected`);
     state.pump();
-    expect(client.status.get()).toBe(`Connecting`);
+    expect(client.status.get()).toBe(`connecting`);
     state.pump();
     state.pump();
-    expect(client.status.get()).toBe(`Ready`);
+    expect(client.status.get()).toBe(`ready`);
   });
 
   it(`delivers log lines to onLog subscribers and stops after unsubscribe`, () => {

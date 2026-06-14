@@ -12,7 +12,10 @@ import {
   getMessage,
   getChannel,
   getUserMessages,
-  getUserMessageSummaries
+  getLobbyMessages,
+  getUserMessageSummaries,
+  canOpenMessageInDiscord,
+  openMessageInDiscord
 } from "../messages.js";
 
 const config = {
@@ -122,5 +125,26 @@ describe(`read messages (mock backend)`, () => {
       { userId: 11n, lastMessageId: 100n },
       { userId: 22n, lastMessageId: 200n }
     ]);
+  });
+
+  it(`getLobbyMessages resolves with the lobby's recent history`, async () => {
+    using client = createClient(config);
+    const state = mockStateOf(client.lib);
+    scriptHistory(state, [makeMessage({ id: 9n, content: `team up?` })]);
+    // Why: lobby history is a distinct C function from DM history but shares the
+    // message-span callback shape — it must read into the same snapshots.
+    const history = await getLobbyMessages(5000n, 25, { client });
+    expect(history.map((m) => m.content)).toEqual([`team up?`]);
+  });
+
+  it(`openMessageInDiscord resolves and canOpen gates it`, async () => {
+    using client = createClient(config);
+    const state = mockStateOf(client.lib);
+    // Why: OpenMessageInDiscord has a TWO-callback signature (a provisional-merge
+    // cb + the result cb) — the op must fire the RESULT cb (not the merge one) to
+    // resolve. canOpenMessageInDiscord is a separate sync gate.
+    expect(canOpenMessageInDiscord(7000n, { client })).toBe(true);
+    await openMessageInDiscord(7000n, { client });
+    expect(state.calls).toContain(`Discord_Client_OpenMessageInDiscord`);
   });
 });

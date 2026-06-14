@@ -105,6 +105,17 @@ export const scriptDevices = (
   s.outputDevices = output;
 };
 
+/** Set the current input/output devices `getCurrent*Device` resolves with. */
+export const scriptCurrentDevices = (
+  state: MockState,
+  input: ScriptedDevice | undefined,
+  output: ScriptedDevice | undefined
+): void => {
+  const s = stateOf(state);
+  s.currentInput = input;
+  s.currentOutput = output;
+};
+
 /** Names of the voice ops invoked on this mock, in order. */
 export const voiceActionsOf = (state: MockState): string[] =>
   stateOf(state).actions;

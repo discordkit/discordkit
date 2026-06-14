@@ -32,6 +32,18 @@ import type { LinkedChannel, LobbyMember, LobbyMetadata } from "./types.js";
  * `[Symbol.dispose]` — mirrors `DiscordClient`. A `Lobby` does NOT own the native
  * handle's lifetime (the SDK does; you `leave()` it, you don't free it), so
  * dispose only tears down this wrapper's event subscriptions.
+ *
+ * @example
+ * ```ts
+ * import { createOrJoinLobby } from "@discordkit/native/lobbies";
+ *
+ * using lobby = await createOrJoinLobby(secret);
+ * console.log(lobby.members.map((m) => m.user?.username));
+ * using sub = lobby.onMemberAdded((memberId) => console.log("joined:", memberId));
+ * await lobby.linkChannel(channelId); // mirror messages to a Discord channel
+ * // …later
+ * await lobby.leave();
+ * ```
  */
 const bindings = defineBindings({
   id: /* C */ `uint64_t Discord_LobbyHandle_Id(void *self)`,

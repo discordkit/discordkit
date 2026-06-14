@@ -1,7 +1,7 @@
 import { useClient } from "../ambient.js";
 import type { DiscordClient } from "../client.js";
 import { awaitResult, defineBindings } from "../ffi/bindings.js";
-import { AUTHORIZATION_TOKEN_TYPE } from "../types.js";
+import { AUTHORIZATION_TOKEN_TYPE_CODE } from "../types.js";
 import { buildAuthorizationArgs } from "./authorizationArgs.js";
 import { createPkcePair } from "./authorizationCodeVerifier.js";
 
@@ -118,7 +118,7 @@ export const authorize = async (
     (ptr) =>
       b.updateToken(
         client.handle,
-        AUTHORIZATION_TOKEN_TYPE.Bearer,
+        AUTHORIZATION_TOKEN_TYPE_CODE.bearer,
         lib.encodeString(accessToken),
         ptr,
         null,

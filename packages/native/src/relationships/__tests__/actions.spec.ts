@@ -6,8 +6,16 @@ import {
   blockUser,
   unblockUser,
   acceptDiscordFriendRequest,
+  acceptGameFriendRequest,
+  rejectDiscordFriendRequest,
+  rejectGameFriendRequest,
+  cancelDiscordFriendRequest,
+  cancelGameFriendRequest,
   removeFriend,
+  removeGameFriend,
   sendDiscordFriendRequest,
+  sendGameFriendRequest,
+  sendDiscordFriendRequestById,
   sendGameFriendRequestById
 } from "../relationships.js";
 
@@ -45,6 +53,66 @@ describe(`relationship actions (mock backend)`, () => {
     await sendDiscordFriendRequest(`ada#0001`, { client });
     expect(relationshipActionsOf(state)).toContain(
       `Discord_Client_SendDiscordFriendRequest`
+    );
+  });
+
+  // Why: every userId-keyed action is produced by the same `action()` factory, so
+  // the risk isn't the bridge (covered above) but a WIRING mistake — an export
+  // pointing at the wrong C function. This table pins each export to its binding,
+  // which is exactly the kind of off-by-one a literal map prevents.
+  it.each([
+    [
+      `acceptGameFriendRequest`,
+      acceptGameFriendRequest,
+      `Discord_Client_AcceptGameFriendRequest`
+    ],
+    [
+      `rejectDiscordFriendRequest`,
+      rejectDiscordFriendRequest,
+      `Discord_Client_RejectDiscordFriendRequest`
+    ],
+    [
+      `rejectGameFriendRequest`,
+      rejectGameFriendRequest,
+      `Discord_Client_RejectGameFriendRequest`
+    ],
+    [
+      `cancelDiscordFriendRequest`,
+      cancelDiscordFriendRequest,
+      `Discord_Client_CancelDiscordFriendRequest`
+    ],
+    [
+      `cancelGameFriendRequest`,
+      cancelGameFriendRequest,
+      `Discord_Client_CancelGameFriendRequest`
+    ],
+    [`removeGameFriend`, removeGameFriend, `Discord_Client_RemoveGameFriend`],
+    [
+      `sendDiscordFriendRequestById`,
+      sendDiscordFriendRequestById,
+      `Discord_Client_SendDiscordFriendRequestById`
+    ],
+    [
+      `sendGameFriendRequestById`,
+      sendGameFriendRequestById,
+      `Discord_Client_SendGameFriendRequestById`
+    ]
+  ] as const)(
+    `%s calls its own C function and resolves`,
+    async (_name, op, cFunction) => {
+      using client = createClient(config);
+      const state = mockStateOf(client.lib);
+      await op(42n, { client });
+      expect(relationshipActionsOf(state)).toEqual([cFunction]);
+    }
+  );
+
+  it(`sendGameFriendRequest (by username) maps to its own C function`, async () => {
+    using client = createClient(config);
+    const state = mockStateOf(client.lib);
+    await sendGameFriendRequest(`grace#0002`, { client });
+    expect(relationshipActionsOf(state)).toContain(
+      `Discord_Client_SendGameFriendRequest`
     );
   });
 });

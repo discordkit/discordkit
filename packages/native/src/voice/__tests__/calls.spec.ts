@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { createClient } from "../../client.js";
 import { mockBackend, mockStateOf } from "../../__tests__/mockBackend.js";
 import { makeCall, scriptCall, voiceActionsOf } from "./mock.js";
-import { startCall, getCall, getCalls, endCall } from "../calls.js";
+import { startCall, getCall, getCalls, endCall, endCalls } from "../calls.js";
 
 const config = {
   applicationId: 123n,
@@ -93,5 +93,14 @@ describe(`calls (mock backend)`, () => {
     // resolves on the bare callback invocation (no success/fail gating).
     await endCall(5000n, { client });
     expect(voiceActionsOf(state)).toContain(`Discord_Client_EndCall`);
+  });
+
+  it(`endCalls ends every active call`, async () => {
+    using client = createClient(config);
+    const state = mockStateOf(client.lib);
+    // Why: endCalls is a distinct C function (no channelId) sharing the same
+    // no-result callback shape — it must wire correctly and resolve.
+    await endCalls({ client });
+    expect(voiceActionsOf(state)).toContain(`Discord_Client_EndCalls`);
   });
 });
