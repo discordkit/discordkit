@@ -130,6 +130,45 @@ export const awaitResult = async <T = void>(
     start(cb);
   });
 
+/**
+ * Drive one SDK async operation whose callback does NOT carry a `ClientResult` (so there's nothing to succeed/fail on) — it just delivers data once. Used by the audio device-enumeration ops (`GetInputDevices`, `GetCurrentInputDevice`, …), whose callbacks fire with a span/handle and no result. Like {@link awaitResult} but resolves unconditionally on the first invocation via `onData`. Still times out so it never hangs.
+ *
+ * @param onData maps the callback's args (all of them — there's no result to skip) to the resolved value.
+ */
+export const awaitCallback = async <T>(
+  client: DiscordClient,
+  callbackType: FfiOpaque,
+  start: (cb: FfiOpaque) => void,
+  onData: (...args: unknown[]) => T,
+  { timeoutMs = 10_000, label = `operation` }: ResultOptions = {}
+): Promise<T> =>
+  new Promise<T>((resolve, reject) => {
+    let settled = false;
+    const timer: ReturnType<typeof setTimeout> = setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      reject(
+        new Error(
+          `Discord ${label} timed out after ${timeoutMs}ms with no response ` +
+            `from the local Discord client. Is the Discord desktop app running?`
+        )
+      );
+    }, timeoutMs);
+    (timer as { unref?: () => void }).unref?.();
+
+    const cb = client.lib.registerCallback(
+      callbackType,
+      (...args: unknown[]) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        resolve(onData(...args));
+      }
+    );
+    client.trackCallback(cb);
+    start(cb);
+  });
+
 /** Options for {@link awaitResult}. */
 export interface ResultOptions {
   /** Reject if the SDK hasn't acked within this many ms. Default 10000. */

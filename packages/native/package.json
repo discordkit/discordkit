@@ -68,6 +68,11 @@
       "types": "./dist/messaging/index.d.mts",
       "import": "./dist/messaging/index.mjs"
     },
+    "./voice": {
+      "@discordkit/source": "./src/voice/index.ts",
+      "types": "./dist/voice/index.d.mts",
+      "import": "./dist/voice/index.mjs"
+    },
     "./*": {
       "@discordkit/source": "./src/*.ts",
       "types": "./dist/*.d.mts",

@@ -113,6 +113,20 @@ describe(`tree-shaking (built dist)`, () => {
     ]);
   });
 
+  it(`voice imports no other feature domain`, () => {
+    // Why: voice snapshots carry scalar user ids (not embedded users), so the
+    // slice is fully self-contained — the strictest boundary.
+    expectNoCrossImport(`voice`, [
+      `auth`,
+      `presence`,
+      `users`,
+      `relationships`,
+      `activityInvites`,
+      `lobby`,
+      `messaging`
+    ]);
+  });
+
   it(`signal-polyfill ships as an external bare import, never inlined`, () => {
     // It's a legitimate core dep (the status signal), but must stay external so
     // it's a one-line removal once native signals exist — and so consumers
