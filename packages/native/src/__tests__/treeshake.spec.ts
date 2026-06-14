@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll } from "vitest";
 import { execFileSync } from "node:child_process";
-import { readFileSync, existsSync } from "node:fs";
+import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -40,60 +40,44 @@ describe(`tree-shaking (built dist)`, () => {
     }
   });
 
-  it(`presence does not import the auth feature`, () => {
-    // Why: an ambient-presence app (our most footprint-sensitive audience) must
-    // ship none of the OAuth surface. Presence is a folder of per-class modules;
-    // none of them — nor the barrel — may reach the auth module.
-    const presenceFiles = [
-      join(`presence`, `index.mjs`),
-      join(`presence`, `richPresence.mjs`),
-      join(`presence`, `activity.mjs`),
-      join(`presence`, `activityAssets.mjs`),
-      join(`presence`, `activityParty.mjs`),
-      join(`presence`, `activityButton.mjs`),
-      join(`presence`, `activityTimestamps.mjs`)
-    ];
-    for (const file of presenceFiles) {
-      expect(importsOf(file)).not.toContain(`../auth.mjs`);
+  /** Every built `.mjs` under a domain folder (the files a consumer's bundler
+   * would pull when importing that domain). */
+  const domainFiles = (domain: string): string[] =>
+    readdirSync(join(DIST, domain))
+      .filter((f) => f.endsWith(`.mjs`))
+      .map((f) => join(domain, f));
+
+  /** Assert no file in `domain` statically imports any path mentioning a
+   * forbidden domain segment (robust to file moves within a domain). */
+  const expectNoCrossImport = (domain: string, forbidden: string[]): void => {
+    for (const file of domainFiles(domain)) {
+      for (const seg of forbidden) {
+        const hits = importsOf(file).filter((i) => i.includes(`${seg}/`));
+        expect(hits, `${file} must not import ${seg}/*`).toEqual([]);
+      }
     }
+  };
+
+  it(`presence imports no other feature domain`, () => {
+    // Why: an ambient-presence app (our most footprint-sensitive audience) must
+    // ship none of the OAuth/users/etc. surface.
+    expectNoCrossImport(`presence`, [`auth`, `users`, `relationships`]);
   });
 
   it(`users imports no other feature domain`, () => {
-    // Why: importing `getUser` must not drag in presence or auth — each domain
-    // is independently importable (the read-handle path is footprint-sensitive).
-    const userFiles = [
-      join(`users`, `index.mjs`),
-      join(`users`, `users.mjs`),
-      join(`users`, `userHandle.mjs`)
-    ];
-    for (const file of userFiles) {
-      const imports = importsOf(file);
-      expect(imports).not.toContain(`../auth.mjs`);
-      expect(imports).not.toContain(`../presence/index.mjs`);
-      expect(imports).not.toContain(`../presence/richPresence.mjs`);
-    }
+    // Why: importing `getUser` must not drag in any other feature.
+    expectNoCrossImport(`users`, [`auth`, `presence`, `relationships`]);
   });
 
   it(`relationships imports users but no presence/auth`, () => {
     // Why: a relationship embeds a user, so importing the users reader is
-    // expected and fine — but pulling in presence or the OAuth surface is not.
-    const relFiles = [
-      join(`relationships`, `index.mjs`),
-      join(`relationships`, `relationships.mjs`),
-      join(`relationships`, `relationshipHandle.mjs`)
-    ];
-    for (const file of relFiles) {
-      const imports = importsOf(file);
-      expect(imports).not.toContain(`../auth.mjs`);
-      expect(imports).not.toContain(`../presence/index.mjs`);
-      expect(imports).not.toContain(`../presence/richPresence.mjs`);
-    }
+    // expected — but pulling in presence or the OAuth surface is not.
+    expectNoCrossImport(`relationships`, [`auth`, `presence`]);
   });
 
-  it(`auth does not import the presence feature`, () => {
-    // Why: the boundary holds both directions.
-    expect(importsOf(`auth.mjs`)).not.toContain(`./presence/index.mjs`);
-    expect(importsOf(`auth.mjs`)).not.toContain(`./presence/richPresence.mjs`);
+  it(`auth imports no other feature domain`, () => {
+    // Why: the boundary holds in every direction.
+    expectNoCrossImport(`auth`, [`presence`, `users`, `relationships`]);
   });
 
   it(`signal-polyfill ships as an external bare import, never inlined`, () => {

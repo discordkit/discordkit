@@ -1,10 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { createClient } from "../../client.js";
-import {
-  mockBackend,
-  mockStateOf,
-  type ScriptedRelationship
-} from "../../__tests__/testBackend.js";
+import { mockBackend, mockStateOf } from "../../__tests__/mockBackend.js";
+import { scriptRelationships, type ScriptedRelationship } from "./mock.js";
 import { getRelationships, getRelationship } from "../relationships.js";
 
 const config = {
@@ -36,7 +33,7 @@ const PENDING: ScriptedRelationship = {
 describe(`getRelationships (mock backend)`, () => {
   it(`reads the relationship list (span) into snapshots, embedding the user`, () => {
     using client = createClient(config);
-    mockStateOf(client.lib).scriptedRelationships = [FRIEND, PENDING];
+    scriptRelationships(mockStateOf(client.lib), [FRIEND, PENDING]);
     const rels = getRelationships({ client });
     // Why: the span primitive must yield one snapshot per element, and the
     // cross-domain embed must read the target user via the users domain reader.
@@ -64,7 +61,7 @@ describe(`getRelationships (mock backend)`, () => {
 
   it(`getRelationship reads a single relationship by id`, () => {
     using client = createClient(config);
-    mockStateOf(client.lib).scriptedRelationships = [FRIEND];
+    scriptRelationships(mockStateOf(client.lib), [FRIEND]);
     const rel = getRelationship(42n, { client });
     expect(rel.userId).toBe(42n);
     expect(rel.discordType).toBe(`friend`);

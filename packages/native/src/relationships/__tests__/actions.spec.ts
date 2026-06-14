@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { createClient } from "../../client.js";
-import { mockBackend, mockStateOf } from "../../__tests__/testBackend.js";
+import { mockBackend, mockStateOf } from "../../__tests__/mockBackend.js";
+import { relationshipActionsOf } from "./mock.js";
 import {
   blockUser,
   unblockUser,
@@ -27,7 +28,7 @@ describe(`relationship actions (mock backend)`, () => {
     await sendGameFriendRequestById(7n, { client });
     // Why: every action funnels through the same awaitResult bridge; this proves
     // each export wires to its own C function and resolves on the result ack.
-    expect(state.relationshipActions).toEqual([
+    expect(relationshipActionsOf(state)).toEqual([
       `Discord_Client_BlockUser`,
       `Discord_Client_UnblockUser`,
       `Discord_Client_AcceptDiscordFriendRequest`,
@@ -42,7 +43,7 @@ describe(`relationship actions (mock backend)`, () => {
     // Why: by-username sends use a different callback prototype than by-id ops;
     // they must still resolve via awaitResult.
     await sendDiscordFriendRequest(`ada#0001`, { client });
-    expect(state.relationshipActions).toContain(
+    expect(relationshipActionsOf(state)).toContain(
       `Discord_Client_SendDiscordFriendRequest`
     );
   });

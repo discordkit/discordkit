@@ -1,10 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { createClient } from "../../client.js";
-import {
-  mockBackend,
-  mockStateOf,
-  type ScriptedUser
-} from "../../__tests__/testBackend.js";
+import { mockBackend, mockStateOf } from "../../__tests__/mockBackend.js";
+import { scriptUser, type ScriptedUser } from "./mock.js";
 import { getUser } from "../users.js";
 
 const config = {
@@ -24,7 +21,7 @@ const SCRIPTED: ScriptedUser = {
 describe(`getUser (mock backend)`, () => {
   it(`reads a cached user by id into a snapshot`, () => {
     using client = createClient(config);
-    mockStateOf(client.lib).scriptedUser = SCRIPTED;
+    scriptUser(mockStateOf(client.lib), SCRIPTED);
     const user = getUser(7n, { client });
     // Why: optional fields the SDK doesn't report (globalName, avatar) must be
     // undefined, not "" — the snapshot distinguishes "unset" from "empty".

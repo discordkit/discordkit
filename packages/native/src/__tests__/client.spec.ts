@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { createClient } from "../client.js";
-import { mockBackend, mockStateOf } from "./testBackend.js";
+import { mockBackend, mockStateOf } from "./mockBackend.js";
 
 const config = {
   applicationId: 123n,

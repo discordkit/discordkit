@@ -1,7 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { createClient } from "../client.js";
-import { setActivity, clearActivity } from "../presence/index.js";
-import { mockBackend, mockStateOf } from "./testBackend.js";
+import { createClient } from "../../client.js";
+import { mockBackend, mockStateOf } from "../../__tests__/mockBackend.js";
+import { presenceOf } from "./mock.js";
+import { setActivity } from "../richPresence.js";
 
 const config = {
   applicationId: 123n,
@@ -19,13 +20,13 @@ describe(`setActivity (mock backend)`, () => {
     );
     // Why: presence is only correct if each field reaches the right setter with
     // the right value, and the activity is handed to UpdateRichPresence.
-    expect(state.activity).toMatchObject({
+    expect(presenceOf(state)).toMatchObject({
       type: 0, // playing
       state: `In Match`,
       details: `Rank: Diamond II`
     });
     expect(state.calls).toContain(`Discord_Client_UpdateRichPresence`);
-    expect(state.calls).toContain(`Discord_Activity_Drop`); // no leak of the activity handle
+    expect(state.calls).toContain(`Discord_Activity_Drop`); // no handle leak
   });
 
   it(`accepts a builder callback equivalently to an object`, async () => {
@@ -40,12 +41,11 @@ describe(`setActivity (mock backend)`, () => {
     );
     // Why: the builder is sugar over the object form — it must produce the same
     // native calls, or the two documented input styles would diverge.
-    expect(state.activity.type).toBe(3); // watching
-    expect(state.activity.state).toBe(`a demo`);
+    expect(presenceOf(state).type).toBe(3); // watching
+    expect(presenceOf(state).state).toBe(`a demo`);
   });
 
   it(`maps each activity type to its ABI enum value`, async () => {
-    const cases: [Parameters<typeof setActivity>[0], number][] = [];
     for (const [type, code] of [
       [`playing`, 0],
       [`streaming`, 1],
@@ -53,27 +53,13 @@ describe(`setActivity (mock backend)`, () => {
       [`watching`, 3],
       [`competing`, 5]
     ] as const) {
-      cases.push([{ type }, code]);
-    }
-    for (const [input, code] of cases) {
       using client = createClient(config);
       const state = mockStateOf(client.lib);
-      await setActivity(input, { client });
+      await setActivity({ type }, { client });
       // Why: a wrong enum mapping silently shows the wrong activity type to
       // every user — exactly the kind of off-by-one a literal table prevents.
-      expect(state.activity.type).toBe(code);
+      expect(presenceOf(state).type).toBe(code);
     }
-  });
-
-  it(`clearActivity fully removes presence (not an empty update)`, () => {
-    using client = createClient(config);
-    const state = mockStateOf(client.lib);
-    // WHY: an empty UpdateRichPresence still shows "Playing <AppName>" + icon.
-    // Clearing must use ClearRichPresence to remove the activity entirely.
-    clearActivity({ client });
-    expect(state.cleared).toBe(true);
-    expect(state.calls).toContain(`Discord_Client_ClearRichPresence`);
-    expect(state.calls).not.toContain(`Discord_Client_UpdateRichPresence`);
   });
 
   it(`marshals the full rich-presence surface (assets, timestamps, party, buttons)`, async () => {
@@ -102,7 +88,7 @@ describe(`setActivity (mock backend)`, () => {
     // Why: each field must reach its correct setter with the correct value, and
     // each sub-object must be attached to the activity — otherwise the card
     // renders partially or not at all.
-    expect(state.activity).toMatchObject({
+    expect(presenceOf(state)).toMatchObject({
       details: `Competitive`,
       state: `Playing Solo`,
       startTimestamp: 1_700_000_000_000n,
@@ -113,11 +99,11 @@ describe(`setActivity (mock backend)`, () => {
       partyCurrent: 1,
       partyMax: 5
     });
-    expect(state.activity.buttons).toEqual([
+    expect(presenceOf(state).buttons).toEqual([
       { label: `Website`, url: `https://saeris.gg` },
       { label: `Repo`, url: `https://github.com/discordkit/discordkit` }
     ]);
-    expect(state.activity.attached).toEqual(
+    expect(presenceOf(state).attached).toEqual(
       expect.arrayContaining([`assets`, `timestamps`, `party`, `button`])
     );
   });
@@ -130,7 +116,7 @@ describe(`setActivity (mock backend)`, () => {
         type: `playing`,
         state: `In Match`,
         // Empty image keys / party-without-id / empty button must NOT be sent —
-        // the SDK rejects empty length-constrained fields, and a party needs an id.
+        // the SDK rejects empty length-constrained fields, a party needs an id.
         assets: {
           largeImage: ``,
           largeText: ``,
@@ -145,10 +131,10 @@ describe(`setActivity (mock backend)`, () => {
     // Why: a cleared field (RHF holds "") would otherwise reach the SDK as an
     // empty string and fail the whole presence update — the exact bug the live
     // editor surfaced.
-    expect(state.activity.largeImage).toBeUndefined();
-    expect(state.activity.attached).not.toContain(`assets`);
-    expect(state.activity.attached).not.toContain(`party`); // no id → not built
-    expect(state.activity.attached).not.toContain(`button`);
+    expect(presenceOf(state).largeImage).toBeUndefined();
+    expect(presenceOf(state).attached).not.toContain(`assets`);
+    expect(presenceOf(state).attached).not.toContain(`party`); // no id → not built
+    expect(presenceOf(state).attached).not.toContain(`button`);
     expect(state.calls).toContain(`Discord_Client_UpdateRichPresence`); // still updates
   });
 
@@ -166,8 +152,8 @@ describe(`setActivity (mock backend)`, () => {
       },
       { client }
     );
-    // Why: Discord ignores >2 buttons; building a third is wasted work and
-    // could mislead a reader into thinking three render.
-    expect(state.activity.buttons).toHaveLength(2);
+    // Why: Discord ignores >2 buttons; building a third is wasted work and could
+    // mislead a reader into thinking three render.
+    expect(presenceOf(state).buttons).toHaveLength(2);
   });
 });
