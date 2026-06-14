@@ -20,29 +20,29 @@ import type { Relationship } from "./types.js";
  * consent (a button click) — do not auto-send or auto-accept.
  */
 const bindings = defineBindings({
-  getRelationships: `void Discord_Client_GetRelationships(void *self, void *returnValue)`,
-  getRelationship: `void Discord_Client_GetRelationshipHandle(void *self, uint64_t userId, void *returnValue)`,
+  getRelationships: /* C */ `void Discord_Client_GetRelationships(void *self, void *returnValue)`,
+  getRelationship: /* C */ `void Discord_Client_GetRelationshipHandle(void *self, uint64_t userId, void *returnValue)`,
   // --- by userId: Discord_Client_UpdateRelationshipCallback(result, userData) ---
-  acceptDiscord: `void Discord_Client_AcceptDiscordFriendRequest(void *self, uint64_t userId, void *cb, void *cbFree, void *cbUserData)`,
-  acceptGame: `void Discord_Client_AcceptGameFriendRequest(void *self, uint64_t userId, void *cb, void *cbFree, void *cbUserData)`,
-  rejectDiscord: `void Discord_Client_RejectDiscordFriendRequest(void *self, uint64_t userId, void *cb, void *cbFree, void *cbUserData)`,
-  rejectGame: `void Discord_Client_RejectGameFriendRequest(void *self, uint64_t userId, void *cb, void *cbFree, void *cbUserData)`,
-  cancelDiscord: `void Discord_Client_CancelDiscordFriendRequest(void *self, uint64_t userId, void *cb, void *cbFree, void *cbUserData)`,
-  cancelGame: `void Discord_Client_CancelGameFriendRequest(void *self, uint64_t userId, void *cb, void *cbFree, void *cbUserData)`,
-  removeDiscordAndGame: `void Discord_Client_RemoveDiscordAndGameFriend(void *self, uint64_t userId, void *cb, void *cbFree, void *cbUserData)`,
-  removeGame: `void Discord_Client_RemoveGameFriend(void *self, uint64_t userId, void *cb, void *cbFree, void *cbUserData)`,
-  block: `void Discord_Client_BlockUser(void *self, uint64_t userId, void *cb, void *cbFree, void *cbUserData)`,
-  unblock: `void Discord_Client_UnblockUser(void *self, uint64_t userId, void *cb, void *cbFree, void *cbUserData)`,
-  sendDiscordById: `void Discord_Client_SendDiscordFriendRequestById(void *self, uint64_t userId, void *cb, void *cbFree, void *cbUserData)`,
-  sendGameById: `void Discord_Client_SendGameFriendRequestById(void *self, uint64_t userId, void *cb, void *cbFree, void *cbUserData)`,
+  acceptDiscord: /* C */ `void Discord_Client_AcceptDiscordFriendRequest(void *self, uint64_t userId, void *cb, void *cbFree, void *cbUserData)`,
+  acceptGame: /* C */ `void Discord_Client_AcceptGameFriendRequest(void *self, uint64_t userId, void *cb, void *cbFree, void *cbUserData)`,
+  rejectDiscord: /* C */ `void Discord_Client_RejectDiscordFriendRequest(void *self, uint64_t userId, void *cb, void *cbFree, void *cbUserData)`,
+  rejectGame: /* C */ `void Discord_Client_RejectGameFriendRequest(void *self, uint64_t userId, void *cb, void *cbFree, void *cbUserData)`,
+  cancelDiscord: /* C */ `void Discord_Client_CancelDiscordFriendRequest(void *self, uint64_t userId, void *cb, void *cbFree, void *cbUserData)`,
+  cancelGame: /* C */ `void Discord_Client_CancelGameFriendRequest(void *self, uint64_t userId, void *cb, void *cbFree, void *cbUserData)`,
+  removeDiscordAndGame: /* C */ `void Discord_Client_RemoveDiscordAndGameFriend(void *self, uint64_t userId, void *cb, void *cbFree, void *cbUserData)`,
+  removeGame: /* C */ `void Discord_Client_RemoveGameFriend(void *self, uint64_t userId, void *cb, void *cbFree, void *cbUserData)`,
+  block: /* C */ `void Discord_Client_BlockUser(void *self, uint64_t userId, void *cb, void *cbFree, void *cbUserData)`,
+  unblock: /* C */ `void Discord_Client_UnblockUser(void *self, uint64_t userId, void *cb, void *cbFree, void *cbUserData)`,
+  sendDiscordById: /* C */ `void Discord_Client_SendDiscordFriendRequestById(void *self, uint64_t userId, void *cb, void *cbFree, void *cbUserData)`,
+  sendGameById: /* C */ `void Discord_Client_SendGameFriendRequestById(void *self, uint64_t userId, void *cb, void *cbFree, void *cbUserData)`,
   // --- by username: Discord_Client_SendFriendRequestCallback(result, userData) ---
-  sendDiscord: `void Discord_Client_SendDiscordFriendRequest(void *self, Discord_String username, void *cb, void *cbFree, void *cbUserData)`,
-  sendGame: `void Discord_Client_SendGameFriendRequest(void *self, Discord_String username, void *cb, void *cbFree, void *cbUserData)`,
+  sendDiscord: /* C */ `void Discord_Client_SendDiscordFriendRequest(void *self, Discord_String username, void *cb, void *cbFree, void *cbUserData)`,
+  sendGame: /* C */ `void Discord_Client_SendGameFriendRequest(void *self, Discord_String username, void *cb, void *cbFree, void *cbUserData)`,
   updateCb: {
-    callback: `void UpdateRelationshipCallback(void *result, void *userData)`
+    callback: /* C */ `void UpdateRelationshipCallback(void *result, void *userData)`
   },
   sendCb: {
-    callback: `void SendFriendRequestCallback(void *result, void *userData)`
+    callback: /* C */ `void SendFriendRequestCallback(void *result, void *userData)`
   }
 });
 

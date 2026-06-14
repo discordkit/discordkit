@@ -9,11 +9,11 @@ import type { FfiLibrary } from "../ffi/backend.js";
  * Bindings for `discordpp::ActivityParty` (`Discord_ActivityParty_*`). The `id` is a `Discord_String` by value; sizes are `int32_t`.
  */
 const bindings = defineBindings({
-  init: `void Discord_ActivityParty_Init(void *self)`,
-  drop: `void Discord_ActivityParty_Drop(void *self)`,
-  setId: `void Discord_ActivityParty_SetId(void *self, Discord_String value)`,
-  setCurrentSize: `void Discord_ActivityParty_SetCurrentSize(void *self, int32_t value)`,
-  setMaxSize: `void Discord_ActivityParty_SetMaxSize(void *self, int32_t value)`
+  init: /* C */ `void Discord_ActivityParty_Init(void *self)`,
+  drop: /* C */ `void Discord_ActivityParty_Drop(void *self)`,
+  setId: /* C */ `void Discord_ActivityParty_SetId(void *self, Discord_String value)`,
+  setCurrentSize: /* C */ `void Discord_ActivityParty_SetCurrentSize(void *self, int32_t value)`,
+  setMaxSize: /* C */ `void Discord_ActivityParty_SetMaxSize(void *self, int32_t value)`
 });
 
 /** Party info — renders as "(current of max)" next to the state. Discord REQUIRES an `id` (2–128 chars) when a party is present. */

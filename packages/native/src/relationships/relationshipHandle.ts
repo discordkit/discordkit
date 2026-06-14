@@ -9,11 +9,11 @@ import { RELATIONSHIP_TYPE_BY_CODE, type Relationship } from "./types.js";
  * Cross-domain by design: `Relationship` embeds the target {@link readUser | User}, so this module imports the users domain's reader. That's a legitimate read dependency (a relationship contains a user) — distinct from the forbidden "feature op as a client method." The tree-shaking boundary that matters (no presence/auth) still holds.
  */
 const bindings = defineBindings({
-  id: `uint64_t Discord_RelationshipHandle_Id(void *self)`,
-  discordType: `int Discord_RelationshipHandle_DiscordRelationshipType(void *self)`,
-  gameType: `int Discord_RelationshipHandle_GameRelationshipType(void *self)`,
-  isSpamRequest: `bool Discord_RelationshipHandle_IsSpamRequest(void *self)`,
-  user: `bool Discord_RelationshipHandle_User(void *self, Discord_UserHandle *returnValue)`
+  id: /* C */ `uint64_t Discord_RelationshipHandle_Id(void *self)`,
+  discordType: /* C */ `int Discord_RelationshipHandle_DiscordRelationshipType(void *self)`,
+  gameType: /* C */ `int Discord_RelationshipHandle_GameRelationshipType(void *self)`,
+  isSpamRequest: /* C */ `bool Discord_RelationshipHandle_IsSpamRequest(void *self)`,
+  user: /* C */ `bool Discord_RelationshipHandle_User(void *self, Discord_UserHandle *returnValue)`
 });
 
 /** Read a native `RelationshipHandle` into a plain {@link Relationship} snapshot. */

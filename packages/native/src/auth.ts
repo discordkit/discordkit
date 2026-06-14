@@ -50,54 +50,58 @@ const authBindings = (lib: FfiLibrary): AuthBindings => {
   if (cached) return cached;
   const bindings: AuthBindings = {
     getPresenceScopes: lib.func(
-      `void Discord_Client_GetDefaultPresenceScopes(Discord_String *returnValue)`
+      /* C */ `void Discord_Client_GetDefaultPresenceScopes(Discord_String *returnValue)`
     ),
     getCommunicationScopes: lib.func(
-      `void Discord_Client_GetDefaultCommunicationScopes(Discord_String *returnValue)`
+      /* C */ `void Discord_Client_GetDefaultCommunicationScopes(Discord_String *returnValue)`
     ),
     createVerifier: lib.func(
-      `void Discord_Client_CreateAuthorizationCodeVerifier(void *self, void *returnValue)`
+      /* C */ `void Discord_Client_CreateAuthorizationCodeVerifier(void *self, void *returnValue)`
     ),
     verifierChallenge: lib.func(
-      `void Discord_AuthorizationCodeVerifier_Challenge(void *self, void *returnValue)`
+      /* C */ `void Discord_AuthorizationCodeVerifier_Challenge(void *self, void *returnValue)`
     ),
     verifierVerifier: lib.func(
-      `void Discord_AuthorizationCodeVerifier_Verifier(void *self, Discord_String *returnValue)`
+      /* C */ `void Discord_AuthorizationCodeVerifier_Verifier(void *self, Discord_String *returnValue)`
     ),
-    argsInit: lib.func(`void Discord_AuthorizationArgs_Init(void *self)`),
-    argsDrop: lib.func(`void Discord_AuthorizationArgs_Drop(void *self)`),
+    argsInit: lib.func(
+      /* C */ `void Discord_AuthorizationArgs_Init(void *self)`
+    ),
+    argsDrop: lib.func(
+      /* C */ `void Discord_AuthorizationArgs_Drop(void *self)`
+    ),
     argsSetClientId: lib.func(
-      `void Discord_AuthorizationArgs_SetClientId(void *self, uint64_t value)`
+      /* C */ `void Discord_AuthorizationArgs_SetClientId(void *self, uint64_t value)`
     ),
     argsSetScopes: lib.func(
-      `void Discord_AuthorizationArgs_SetScopes(void *self, Discord_String value)`
+      /* C */ `void Discord_AuthorizationArgs_SetScopes(void *self, Discord_String value)`
     ),
     argsSetCodeChallenge: lib.func(
       // Header: `Discord_AuthorizationCodeChallenge* value` — a POINTER to the
       // challenge handle (NOT by value). Pass the challenge handle pointer.
-      `void Discord_AuthorizationArgs_SetCodeChallenge(void *self, void *value)`
+      /* C */ `void Discord_AuthorizationArgs_SetCodeChallenge(void *self, void *value)`
     ),
     authorize: lib.func(
-      `void Discord_Client_Authorize(void *self, void *args, void *cb, void *cbFree, void *cbUserData)`
+      /* C */ `void Discord_Client_Authorize(void *self, void *args, void *cb, void *cbFree, void *cbUserData)`
     ),
     getToken: lib.func(
-      `void Discord_Client_GetToken(void *self, uint64_t applicationId, Discord_String code, Discord_String codeVerifier, Discord_String redirectUri, void *cb, void *cbFree, void *cbUserData)`
+      /* C */ `void Discord_Client_GetToken(void *self, uint64_t applicationId, Discord_String code, Discord_String codeVerifier, Discord_String redirectUri, void *cb, void *cbFree, void *cbUserData)`
     ),
     updateToken: lib.func(
-      `void Discord_Client_UpdateToken(void *self, int tokenType, Discord_String token, void *cb, void *cbFree, void *cbUserData)`
+      /* C */ `void Discord_Client_UpdateToken(void *self, int tokenType, Discord_String token, void *cb, void *cbFree, void *cbUserData)`
     ),
-    connect: lib.func(`void Discord_Client_Connect(void *self)`),
+    connect: lib.func(/* C */ `void Discord_Client_Connect(void *self)`),
     resultSuccessful: lib.func(
-      `bool Discord_ClientResult_Successful(void *self)`
+      /* C */ `bool Discord_ClientResult_Successful(void *self)`
     ),
     authorizationCb: lib.defineCallback(
-      `void AuthorizationCallback(void *result, Discord_String code, Discord_String redirectUri, void *userData)`
+      /* C */ `void AuthorizationCallback(void *result, Discord_String code, Discord_String redirectUri, void *userData)`
     ),
     tokenExchangeCb: lib.defineCallback(
-      `void TokenExchangeCallback(void *result, Discord_String accessToken, Discord_String refreshToken, int tokenType, int32_t expiresIn, Discord_String scopes, void *userData)`
+      /* C */ `void TokenExchangeCallback(void *result, Discord_String accessToken, Discord_String refreshToken, int tokenType, int32_t expiresIn, Discord_String scopes, void *userData)`
     ),
     updateTokenCb: lib.defineCallback(
-      `void UpdateTokenCallback(void *result, void *userData)`
+      /* C */ `void UpdateTokenCallback(void *result, void *userData)`
     )
   };
   bindingsByLib.set(lib, bindings);

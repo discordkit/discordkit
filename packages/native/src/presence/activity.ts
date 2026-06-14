@@ -11,18 +11,18 @@ import type { FfiLibrary } from "../ffi/backend.js";
  * Marshaling (verified against the real SDK): `type` is an int enum; `name` is a `Discord_String` by value; `state`/`details`/`*Url` are `Discord_String*` (pointer; use `encodeStringPtr`); sub-object attach + `AddButton` take the sub-handle pointer as `void*`.
  */
 const bindings = defineBindings({
-  init: `void Discord_Activity_Init(void *self)`,
-  drop: `void Discord_Activity_Drop(void *self)`,
-  setType: `void Discord_Activity_SetType(void *self, int value)`,
-  setName: `void Discord_Activity_SetName(void *self, Discord_String value)`,
-  setState: `void Discord_Activity_SetState(void *self, Discord_String *value)`,
-  setStateUrl: `void Discord_Activity_SetStateUrl(void *self, Discord_String *value)`,
-  setDetails: `void Discord_Activity_SetDetails(void *self, Discord_String *value)`,
-  setDetailsUrl: `void Discord_Activity_SetDetailsUrl(void *self, Discord_String *value)`,
-  setAssets: `void Discord_Activity_SetAssets(void *self, void *value)`,
-  setTimestamps: `void Discord_Activity_SetTimestamps(void *self, void *value)`,
-  setParty: `void Discord_Activity_SetParty(void *self, void *value)`,
-  addButton: `void Discord_Activity_AddButton(void *self, void *button)`
+  init: /* C */ `void Discord_Activity_Init(void *self)`,
+  drop: /* C */ `void Discord_Activity_Drop(void *self)`,
+  setType: /* C */ `void Discord_Activity_SetType(void *self, int value)`,
+  setName: /* C */ `void Discord_Activity_SetName(void *self, Discord_String value)`,
+  setState: /* C */ `void Discord_Activity_SetState(void *self, Discord_String *value)`,
+  setStateUrl: /* C */ `void Discord_Activity_SetStateUrl(void *self, Discord_String *value)`,
+  setDetails: /* C */ `void Discord_Activity_SetDetails(void *self, Discord_String *value)`,
+  setDetailsUrl: /* C */ `void Discord_Activity_SetDetailsUrl(void *self, Discord_String *value)`,
+  setAssets: /* C */ `void Discord_Activity_SetAssets(void *self, void *value)`,
+  setTimestamps: /* C */ `void Discord_Activity_SetTimestamps(void *self, void *value)`,
+  setParty: /* C */ `void Discord_Activity_SetParty(void *self, void *value)`,
+  addButton: /* C */ `void Discord_Activity_AddButton(void *self, void *button)`
 });
 
 /** Rich-presence activity type. Mirrors `discordpp::ActivityTypes`. */

@@ -10,13 +10,13 @@ import { STATUS_TYPE_BY_CODE, type User } from "./types.js";
  * The C getters use two shapes: scalars (`Id`→uint64, `Status`→enum int, `IsProvisional`→bool) return directly; strings write into a `Discord_String*` out-param and return a `bool` for "is the value present" — so optional fields (`Avatar`, `GlobalName`) are read only when that bool is true.
  */
 const bindings = defineBindings({
-  id: `uint64_t Discord_UserHandle_Id(void *self)`,
-  status: `int Discord_UserHandle_Status(void *self)`,
-  isProvisional: `bool Discord_UserHandle_IsProvisional(void *self)`,
-  username: `bool Discord_UserHandle_Username(void *self, Discord_String *returnValue)`,
-  displayName: `bool Discord_UserHandle_DisplayName(void *self, Discord_String *returnValue)`,
-  globalName: `bool Discord_UserHandle_GlobalName(void *self, Discord_String *returnValue)`,
-  avatar: `bool Discord_UserHandle_Avatar(void *self, Discord_String *returnValue)`
+  id: /* C */ `uint64_t Discord_UserHandle_Id(void *self)`,
+  status: /* C */ `int Discord_UserHandle_Status(void *self)`,
+  isProvisional: /* C */ `bool Discord_UserHandle_IsProvisional(void *self)`,
+  username: /* C */ `bool Discord_UserHandle_Username(void *self, Discord_String *returnValue)`,
+  displayName: /* C */ `bool Discord_UserHandle_DisplayName(void *self, Discord_String *returnValue)`,
+  globalName: /* C */ `bool Discord_UserHandle_GlobalName(void *self, Discord_String *returnValue)`,
+  avatar: /* C */ `bool Discord_UserHandle_Avatar(void *self, Discord_String *returnValue)`
 });
 
 /**

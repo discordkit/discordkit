@@ -8,8 +8,8 @@ import type { User } from "./types.js";
  * The users domain's client-level operations. `GetCurrentUserV2` and `GetUser` are SYNCHRONOUS — they fill a `UserHandle` out-param and return a `bool` for validity (no callback/promise). We read the handle into a {@link User} snapshot and return `undefined` when the SDK reports the handle invalid (e.g. the user isn't in the SDK's cache yet).
  */
 const bindings = defineBindings({
-  getCurrentUser: `bool Discord_Client_GetCurrentUserV2(void *self, void *returnValue)`,
-  getUser: `bool Discord_Client_GetUser(void *self, uint64_t userId, void *returnValue)`
+  getCurrentUser: /* C */ `bool Discord_Client_GetCurrentUserV2(void *self, void *returnValue)`,
+  getUser: /* C */ `bool Discord_Client_GetUser(void *self, uint64_t userId, void *returnValue)`
 });
 
 /** Per-call options shared by user operations. */

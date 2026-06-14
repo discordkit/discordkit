@@ -9,14 +9,14 @@ import type { FfiLibrary } from "../ffi/backend.js";
  * Bindings for `discordpp::ActivityAssets` — the images + hover text shown on a rich-presence card (`Discord_ActivityAssets_*`). All image/text/url fields take `Discord_String*` (a nullable pointer; use `encodeStringPtr`). Built and attached internally by `applyActivity`; not a standalone public surface.
  */
 const bindings = defineBindings({
-  init: `void Discord_ActivityAssets_Init(void *self)`,
-  drop: `void Discord_ActivityAssets_Drop(void *self)`,
-  setLargeImage: `void Discord_ActivityAssets_SetLargeImage(void *self, Discord_String *value)`,
-  setLargeText: `void Discord_ActivityAssets_SetLargeText(void *self, Discord_String *value)`,
-  setLargeUrl: `void Discord_ActivityAssets_SetLargeUrl(void *self, Discord_String *value)`,
-  setSmallImage: `void Discord_ActivityAssets_SetSmallImage(void *self, Discord_String *value)`,
-  setSmallText: `void Discord_ActivityAssets_SetSmallText(void *self, Discord_String *value)`,
-  setSmallUrl: `void Discord_ActivityAssets_SetSmallUrl(void *self, Discord_String *value)`
+  init: /* C */ `void Discord_ActivityAssets_Init(void *self)`,
+  drop: /* C */ `void Discord_ActivityAssets_Drop(void *self)`,
+  setLargeImage: /* C */ `void Discord_ActivityAssets_SetLargeImage(void *self, Discord_String *value)`,
+  setLargeText: /* C */ `void Discord_ActivityAssets_SetLargeText(void *self, Discord_String *value)`,
+  setLargeUrl: /* C */ `void Discord_ActivityAssets_SetLargeUrl(void *self, Discord_String *value)`,
+  setSmallImage: /* C */ `void Discord_ActivityAssets_SetSmallImage(void *self, Discord_String *value)`,
+  setSmallText: /* C */ `void Discord_ActivityAssets_SetSmallText(void *self, Discord_String *value)`,
+  setSmallUrl: /* C */ `void Discord_ActivityAssets_SetSmallUrl(void *self, Discord_String *value)`
 });
 
 /** Art assets shown on the activity card (`discordpp::ActivityAssets`). Image fields are **asset keys** uploaded under the app's Rich Presence → Art Assets (or external image URLs, where supported). */

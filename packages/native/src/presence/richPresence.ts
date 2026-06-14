@@ -17,12 +17,12 @@ import type {
  * Client-level rich-presence operations (`Discord_Client_UpdateRichPresence` / `Discord_Client_ClearRichPresence`) plus the {@link applyActivity} orchestration that assembles an `Activity` from the per-class sub-object builders. This is the module that ties presence together; the public `setActivity`/`clearActivity` live here too.
  */
 const bindings = defineBindings({
-  update: `void Discord_Client_UpdateRichPresence(void *self, void *activity, void *cb, void *cbFree, void *cbUserData)`,
+  update: /* C */ `void Discord_Client_UpdateRichPresence(void *self, void *activity, void *cb, void *cbFree, void *cbUserData)`,
   // Fully REMOVES the presence (no activity) — synchronous, no callback. Distinct
   // from UpdateRichPresence(emptyActivity), which still shows "Playing <AppName>".
-  clear: `void Discord_Client_ClearRichPresence(void *self)`,
+  clear: /* C */ `void Discord_Client_ClearRichPresence(void *self)`,
   updateCb: {
-    callback: `void UpdateRichPresenceCallback(void *result, void *userData)`
+    callback: /* C */ `void UpdateRichPresenceCallback(void *result, void *userData)`
   }
 });
 

@@ -11,10 +11,10 @@ import type { FfiLibrary } from "../ffi/backend.js";
  * > **Note:** Rich-presence buttons are only visible to *other* users viewing your profile — never on your own. Test with a second account.
  */
 const bindings = defineBindings({
-  init: `void Discord_ActivityButton_Init(void *self)`,
-  drop: `void Discord_ActivityButton_Drop(void *self)`,
-  setLabel: `void Discord_ActivityButton_SetLabel(void *self, Discord_String value)`,
-  setUrl: `void Discord_ActivityButton_SetUrl(void *self, Discord_String value)`
+  init: /* C */ `void Discord_ActivityButton_Init(void *self)`,
+  drop: /* C */ `void Discord_ActivityButton_Drop(void *self)`,
+  setLabel: /* C */ `void Discord_ActivityButton_SetLabel(void *self, Discord_String value)`,
+  setUrl: /* C */ `void Discord_ActivityButton_SetUrl(void *self, Discord_String value)`
 });
 
 /** A clickable button on the activity card. Discord shows at most two. */

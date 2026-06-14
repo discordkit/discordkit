@@ -116,24 +116,24 @@ class DiscordClientImpl implements DiscordClient {
     this.applicationId = resolveApplicationId(config);
 
     // --- lifecycle + status bindings (every consumer needs these) ---
-    const init = lib.func(`void Discord_Client_Init(void *self)`);
-    this.#drop = lib.func(`void Discord_Client_Drop(void *self)`);
+    const init = lib.func(/* C */ `void Discord_Client_Init(void *self)`);
+    this.#drop = lib.func(/* C */ `void Discord_Client_Drop(void *self)`);
     const setAppId = lib.func(
-      `void Discord_Client_SetApplicationId(void *self, uint64_t applicationId)`
+      /* C */ `void Discord_Client_SetApplicationId(void *self, uint64_t applicationId)`
     );
     const setStatusCb = lib.func(
-      `void Discord_Client_SetStatusChangedCallback(void *self, void *cb, void *cbFree, void *cbUserData)`
+      /* C */ `void Discord_Client_SetStatusChangedCallback(void *self, void *cb, void *cbFree, void *cbUserData)`
     );
     const addLogCb = lib.func(
-      `void Discord_Client_AddLogCallback(void *self, void *cb, void *cbFree, void *cbUserData, int minSeverity)`
+      /* C */ `void Discord_Client_AddLogCallback(void *self, void *cb, void *cbFree, void *cbUserData, int minSeverity)`
     );
-    const runCallbacks = lib.func(`void Discord_RunCallbacks()`);
+    const runCallbacks = lib.func(/* C */ `void Discord_RunCallbacks()`);
 
     const OnStatusChanged = lib.defineCallback(
-      `void OnStatusChanged(int status, int error, int32_t errorDetail, void *userData)`
+      /* C */ `void OnStatusChanged(int status, int error, int32_t errorDetail, void *userData)`
     );
     const LogCallback = lib.defineCallback(
-      `void LogCallback(Discord_String message, int severity, void *userData)`
+      /* C */ `void LogCallback(Discord_String message, int severity, void *userData)`
     );
 
     // --- allocate + init the opaque handle ---

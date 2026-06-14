@@ -61,8 +61,8 @@ export const defineBindings = <const T extends Record<string, BindingDecl>>(
 
 /** Bindings shared by every result-returning async op (every feature needs this). */
 const resultBindings = defineBindings({
-  successful: `bool Discord_ClientResult_Successful(void *self)`,
-  errorToString: `void Discord_ClientResult_ToString(void *self, Discord_String *returnValue)`
+  successful: /* C */ `bool Discord_ClientResult_Successful(void *self)`,
+  errorToString: /* C */ `void Discord_ClientResult_ToString(void *self, Discord_String *returnValue)`
 });
 
 /** Whether a `Discord_ClientResult*` (from an SDK callback) reports success. */
@@ -150,4 +150,7 @@ export interface SubObjectHandle extends Disposable {
 export const subObjectHandle = (
   handle: FfiOpaque,
   drop: () => void
-): SubObjectHandle => ({ handle, [Symbol.dispose]: drop });
+): SubObjectHandle => ({
+  handle,
+  [Symbol.dispose]: drop
+});

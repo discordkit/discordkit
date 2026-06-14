@@ -9,10 +9,10 @@ import type { FfiLibrary } from "../ffi/backend.js";
  * Bindings for `discordpp::ActivityTimestamps` (`Discord_ActivityTimestamps_*`). Start/end are `uint64_t` by value, Unix epoch **milliseconds**.
  */
 const bindings = defineBindings({
-  init: `void Discord_ActivityTimestamps_Init(void *self)`,
-  drop: `void Discord_ActivityTimestamps_Drop(void *self)`,
-  setStart: `void Discord_ActivityTimestamps_SetStart(void *self, uint64_t value)`,
-  setEnd: `void Discord_ActivityTimestamps_SetEnd(void *self, uint64_t value)`
+  init: /* C */ `void Discord_ActivityTimestamps_Init(void *self)`,
+  drop: /* C */ `void Discord_ActivityTimestamps_Drop(void *self)`,
+  setStart: /* C */ `void Discord_ActivityTimestamps_SetStart(void *self, uint64_t value)`,
+  setEnd: /* C */ `void Discord_ActivityTimestamps_SetEnd(void *self, uint64_t value)`
 });
 
 /** Start/end of the activity, as Unix epoch **milliseconds**. A `start` renders "elapsed" (e.g. "02:34 elapsed"); an `end` renders "remaining". */
