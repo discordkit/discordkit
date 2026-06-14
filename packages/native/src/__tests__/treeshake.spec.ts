@@ -102,6 +102,17 @@ describe(`tree-shaking (built dist)`, () => {
     ]);
   });
 
+  it(`messaging imports users + lobby (types) but no presence/auth`, () => {
+    // Why: a message embeds an author (users) and shares the ChannelType table
+    // with lobby — both legitimate. Presence/auth/relationships must stay out.
+    expectNoCrossImport(`messaging`, [
+      `auth`,
+      `presence`,
+      `relationships`,
+      `activityInvites`
+    ]);
+  });
+
   it(`signal-polyfill ships as an external bare import, never inlined`, () => {
     // It's a legitimate core dep (the status signal), but must stay external so
     // it's a one-line removal once native signals exist — and so consumers

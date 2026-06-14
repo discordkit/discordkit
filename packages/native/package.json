@@ -63,6 +63,11 @@
       "types": "./dist/lobby/index.d.mts",
       "import": "./dist/lobby/index.mjs"
     },
+    "./messaging": {
+      "@discordkit/source": "./src/messaging/index.ts",
+      "types": "./dist/messaging/index.d.mts",
+      "import": "./dist/messaging/index.mjs"
+    },
     "./*": {
       "@discordkit/source": "./src/*.ts",
       "types": "./dist/*.d.mts",

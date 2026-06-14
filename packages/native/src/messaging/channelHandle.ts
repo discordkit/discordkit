@@ -1,0 +1,28 @@
+import { defineBindings } from "../ffi/bindings.js";
+import type { FfiLibrary, FfiOpaque } from "../ffi/backend.js";
+import { CHANNEL_TYPE_BY_CODE, type Channel } from "./types.js";
+
+/**
+ * Bindings + snapshot reader for `discordpp::ChannelHandle`. Read-only value → plain {@link Channel} snapshot. `Recipients` is a `Discord_UInt64Span` (the scalar-id list primitive); `Name` is a non-gated string.
+ */
+const bindings = defineBindings({
+  id: /* C */ `uint64_t Discord_ChannelHandle_Id(void *self)`,
+  type: /* C */ `int Discord_ChannelHandle_Type(void *self)`,
+  name: /* C */ `void Discord_ChannelHandle_Name(void *self, Discord_String *returnValue)`,
+  recipients: /* C */ `void Discord_ChannelHandle_Recipients(void *self, Discord_UInt64Span *returnValue)`
+});
+
+/** Read a native `ChannelHandle` into a plain {@link Channel} snapshot. */
+export const readChannel = (lib: FfiLibrary, handle: FfiOpaque): Channel => {
+  const b = bindings(lib);
+  const nameOut = lib.allocStringOut();
+  b.name(handle, nameOut);
+  const recipients = lib.allocSpanOut();
+  b.recipients(handle, recipients);
+  return {
+    id: b.id(handle) as bigint,
+    name: lib.decodeString(nameOut),
+    type: CHANNEL_TYPE_BY_CODE[Number(b.type(handle))] ?? `unknown`,
+    recipientIds: lib.readUInt64Span(recipients)
+  };
+};
