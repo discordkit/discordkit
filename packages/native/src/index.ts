@@ -9,6 +9,7 @@
  * - `@discordkit/native/presence` — `setActivity`, `clearActivity`
  * - `@discordkit/native/auth`     — `authorize`
  * - `@discordkit/native/users`    — `getCurrentUser`, `getUser`
+ * - `@discordkit/native/relationships` — friends list + management
  *
  * @example
  * ```ts

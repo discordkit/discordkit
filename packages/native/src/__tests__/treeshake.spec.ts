@@ -74,6 +74,22 @@ describe(`tree-shaking (built dist)`, () => {
     }
   });
 
+  it(`relationships imports users but no presence/auth`, () => {
+    // Why: a relationship embeds a user, so importing the users reader is
+    // expected and fine — but pulling in presence or the OAuth surface is not.
+    const relFiles = [
+      join(`relationships`, `index.mjs`),
+      join(`relationships`, `relationships.mjs`),
+      join(`relationships`, `relationshipHandle.mjs`)
+    ];
+    for (const file of relFiles) {
+      const imports = importsOf(file);
+      expect(imports).not.toContain(`../auth.mjs`);
+      expect(imports).not.toContain(`../presence/index.mjs`);
+      expect(imports).not.toContain(`../presence/richPresence.mjs`);
+    }
+  });
+
   it(`auth does not import the presence feature`, () => {
     // Why: the boundary holds both directions.
     expect(importsOf(`auth.mjs`)).not.toContain(`./presence/index.mjs`);

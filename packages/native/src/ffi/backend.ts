@@ -92,6 +92,25 @@ export interface FfiLibrary {
   allocStringOut: () => FfiOpaque;
 
   /**
+   * Allocate a span OUT-param buffer (`{ T* ptr; size_t size }`) for the SDK's
+   * list-returning getters (e.g. `GetRelationships`, `SearchFriendsByUsername`,
+   * lobby members, messages). The SDK writes a contiguous array of element
+   * handles + a count. Pass the result to the C function, then {@link readSpan}
+   * it to get one opaque handle per element. A span is two pointers wide, so —
+   * like {@link allocStringOut} — it must NOT use {@link allocHandle}.
+   */
+  allocSpanOut: () => FfiOpaque;
+
+  /**
+   * Read a span buffer (filled by a list-returning getter via
+   * {@link allocSpanOut}) into an array of opaque element handles — one per
+   * element, each usable wherever a `void *` handle is expected (e.g. passed to
+   * the element type's getters). Elements are inline handle structs
+   * (`{ void* opaque }`); this slices them out by index.
+   */
+  readSpan: (span: FfiOpaque) => FfiOpaque[];
+
+  /**
    * Decode a `Discord_String` — received by value in a callback, or written into
    * an {@link allocStringOut} buffer — into a JS string. Accepts any backend
    * value; guards for the `{ ptr, size }` shape and returns `""` otherwise.

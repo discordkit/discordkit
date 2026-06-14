@@ -63,6 +63,14 @@ export interface MockState {
    * `null`) to make those ops report an invalid/absent user.
    */
   scriptedUser: ScriptedUser | null;
+  /**
+   * Scripted relationships for the relationships domain. `GetRelationships`
+   * returns all of them (as a span); `GetRelationshipHandle` returns the first
+   * (or an empty one). The `Discord_RelationshipHandle_*` getters read these.
+   */
+  scriptedRelationships: ScriptedRelationship[];
+  /** Names of the relationship ACTION ops invoked (e.g. `block`), in order. */
+  readonly relationshipActions: string[];
   /** Force the next pump to advance the scripted status by one step. */
   readonly pump: () => void;
 }
@@ -78,6 +86,15 @@ export interface ScriptedUser {
   provisional: boolean;
 }
 
+/** Raw field values a test scripts for the mock's `RelationshipHandle` getters. */
+export interface ScriptedRelationship {
+  userId: bigint;
+  discordType: number;
+  gameType: number;
+  spamRequest: boolean;
+  user?: ScriptedUser;
+}
+
 const states = new WeakMap<FfiLibrary, MockState>();
 
 /** Retrieve the {@link MockState} for a mock-backed client's library. */
@@ -88,6 +105,24 @@ export const mockStateOf = (lib: FfiLibrary): MockState => {
 };
 
 const STATUS_SEQUENCE = [1, 2, 3]; // Connecting, Connected, Ready
+
+/** Relationship action ops the mock auto-acks (fires their result callback). */
+const RELATIONSHIP_ACTIONS = new Set([
+  `Discord_Client_AcceptDiscordFriendRequest`,
+  `Discord_Client_AcceptGameFriendRequest`,
+  `Discord_Client_RejectDiscordFriendRequest`,
+  `Discord_Client_RejectGameFriendRequest`,
+  `Discord_Client_CancelDiscordFriendRequest`,
+  `Discord_Client_CancelGameFriendRequest`,
+  `Discord_Client_RemoveDiscordAndGameFriend`,
+  `Discord_Client_RemoveGameFriend`,
+  `Discord_Client_BlockUser`,
+  `Discord_Client_UnblockUser`,
+  `Discord_Client_SendDiscordFriendRequest`,
+  `Discord_Client_SendGameFriendRequest`,
+  `Discord_Client_SendDiscordFriendRequestById`,
+  `Discord_Client_SendGameFriendRequestById`
+]);
 
 export const mockBackend: FfiBackend = (_libraryPath: string): FfiLibrary => {
   type Handler = (...args: any[]) => void;
@@ -256,9 +291,60 @@ export const mockBackend: FfiBackend = (_libraryPath: string): FfiLibrary => {
             (args[1] as MockString).__str = value;
             return true;
           }
+          // --- relationships: list/single reads + handle getters ---
+          case `Discord_Client_GetRelationships`: {
+            // Write one handle per scripted relationship into the span out-param.
+            const out = args[1] as { __span?: FfiOpaque[] };
+            out.__span = state.scriptedRelationships.map((rel) => ({
+              __rel: rel
+            }));
+            return undefined;
+          }
+          case `Discord_Client_GetRelationshipHandle`: {
+            const rel =
+              state.scriptedRelationships.find((r) => r.userId === args[1]) ??
+              null;
+            (args[2] as { __rel?: ScriptedRelationship | null }).__rel = rel;
+            return undefined;
+          }
+          case `Discord_RelationshipHandle_Id`:
+            return (
+              (args[0] as { __rel?: ScriptedRelationship }).__rel?.userId ?? 0n
+            );
+          case `Discord_RelationshipHandle_DiscordRelationshipType`:
+            return (
+              (args[0] as { __rel?: ScriptedRelationship }).__rel
+                ?.discordType ?? 0
+            );
+          case `Discord_RelationshipHandle_GameRelationshipType`:
+            return (
+              (args[0] as { __rel?: ScriptedRelationship }).__rel?.gameType ?? 0
+            );
+          case `Discord_RelationshipHandle_IsSpamRequest`:
+            return Boolean(
+              (args[0] as { __rel?: ScriptedRelationship }).__rel?.spamRequest
+            );
+          case `Discord_RelationshipHandle_User`: {
+            const rel = (args[0] as { __rel?: ScriptedRelationship }).__rel;
+            if (!rel?.user) return false;
+            (args[1] as { __user?: ScriptedUser }).__user = rel.user;
+            return true;
+          }
           case `Discord_ClientResult_Successful`:
             return true;
           default:
+            // Relationship ACTION ops: Discord_Client_<Action>(self, …, cb, …).
+            // Record the action, then fire its result callback as success.
+            if (
+              name.startsWith(`Discord_Client_`) &&
+              RELATIONSHIP_ACTIONS.has(name)
+            ) {
+              state.relationshipActions.push(name);
+              // The cb is the first registered-callback arg (a symbol).
+              const cb = args.find((a) => typeof a === `symbol`);
+              if (cb) registered.get(cb)?.(null);
+              return undefined;
+            }
             return undefined;
         }
       };
@@ -282,6 +368,11 @@ export const mockBackend: FfiBackend = (_libraryPath: string): FfiLibrary => {
     },
     allocHandle: handle,
     allocStringOut: handle,
+    // A mock span out-param is a plain object the list-getter writes `__span`
+    // (an array of element handles) onto; readSpan hands that array back.
+    allocSpanOut: (): FfiOpaque => ({ __span: [] as FfiOpaque[] }),
+    readSpan: (span): FfiOpaque[] =>
+      (span as { __span?: FfiOpaque[] }).__span ?? [],
     decodeString,
     encodeString,
     encodeStringPtr
@@ -293,6 +384,8 @@ export const mockBackend: FfiBackend = (_libraryPath: string): FfiLibrary => {
     dropped: false,
     cleared: false,
     scriptedUser: null,
+    scriptedRelationships: [],
+    relationshipActions: [],
     get liveCallbacks() {
       return registered.size;
     },

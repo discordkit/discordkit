@@ -35,6 +35,13 @@ koffi.struct(`Discord_String`, { ptr: `uint8_t *`, size: `size_t` });
 // All handle params/out-params are declared `void *`, so by-value handle structs
 // (e.g. the old SetCodeChallenge mistake) never need registering.
 koffi.struct(`Discord_Handle`, { opaque: `void *` });
+// A span OUT-param: `{ T* ptr; size_t size }`. The SDK writes a pointer to a
+// contiguous array of inline element handles + a count. We only need the two
+// fields generically — elements are all structurally `Discord_Handle`.
+koffi.struct(`Discord_Span`, { ptr: `void *`, size: `size_t` });
+
+/** Size (bytes) of one inline handle element in a span — a single `void*`. */
+const HANDLE_SIZE = 8;
 
 /** Read the UTF-8 bytes of a `{ ptr, size }` Discord_String into a JS string. */
 const readDiscordString = (s: {
@@ -93,6 +100,24 @@ export const koffiBackend: FfiBackend = (libraryPath: string): FfiLibrary => {
     },
     allocHandle: () => koffi.alloc(`Discord_Handle`, 1),
     allocStringOut: () => koffi.alloc(`Discord_String`, 1),
+    allocSpanOut: () => koffi.alloc(`Discord_Span`, 1),
+    readSpan: (span) => {
+      // Decode the {ptr,size} the SDK wrote. koffi represents pointers as
+      // bigints, so element i (inline handle structs, contiguous) is at
+      // base + i*HANDLE_SIZE — plain bigint arithmetic. Each element pointer is
+      // a `void*` the element type's getters accept (same as allocHandle()).
+      const { ptr, size } = koffi.decode(span, `Discord_Span`) as {
+        ptr: bigint | null;
+        size: number | bigint;
+      };
+      const count = Number(size);
+      if (!ptr || count === 0) return [];
+      const base = BigInt(ptr);
+      return Array.from(
+        { length: count },
+        (_, i) => base + BigInt(i * HANDLE_SIZE)
+      );
+    },
     decodeString,
     encodeStringPtr,
     encodeString
