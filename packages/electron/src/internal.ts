@@ -5,6 +5,14 @@
  * domain module's tree-shaking.
  */
 
+/**
+ * The teardown returned by every `on*` event subscription on the bridge: call it
+ * to stop receiving the event. (Renderer-side it's a plain function — unlike the
+ * native package's `Subscription`, it isn't `Disposable`, since the IPC listener
+ * has no native handle to release.)
+ */
+export type Unsubscribe = () => void;
+
 // --- main-process Electron slices (structural; no `electron` import) ---
 
 /** The slice of Electron's `ipcMain` the registrars use. */

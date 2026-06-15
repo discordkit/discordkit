@@ -1,4 +1,5 @@
 /** The relationships domain's IPC contract. Mirrors `@discordkit/native/relationships`. */
+import type { UserId } from "@discordkit/native";
 import type { Relationship } from "@discordkit/native/relationships";
 
 export const RELATIONSHIP_CHANNELS = {
@@ -23,19 +24,19 @@ export const RELATIONSHIP_CHANNELS = {
 /** The `window.discord.relationships` namespace. */
 export interface RelationshipsBridge {
   list: () => Promise<Relationship[]>;
-  get: (userId: bigint) => Promise<Relationship>;
+  get: (userId: UserId) => Promise<Relationship>;
   sendDiscordRequest: (username: string) => Promise<void>;
   sendGameRequest: (username: string) => Promise<void>;
-  sendDiscordRequestById: (userId: bigint) => Promise<void>;
-  sendGameRequestById: (userId: bigint) => Promise<void>;
-  acceptDiscordRequest: (userId: bigint) => Promise<void>;
-  acceptGameRequest: (userId: bigint) => Promise<void>;
-  rejectDiscordRequest: (userId: bigint) => Promise<void>;
-  rejectGameRequest: (userId: bigint) => Promise<void>;
-  cancelDiscordRequest: (userId: bigint) => Promise<void>;
-  cancelGameRequest: (userId: bigint) => Promise<void>;
-  remove: (userId: bigint) => Promise<void>;
-  removeGame: (userId: bigint) => Promise<void>;
-  block: (userId: bigint) => Promise<void>;
-  unblock: (userId: bigint) => Promise<void>;
+  sendDiscordRequestById: (userId: UserId) => Promise<void>;
+  sendGameRequestById: (userId: UserId) => Promise<void>;
+  acceptDiscordRequest: (userId: UserId) => Promise<void>;
+  acceptGameRequest: (userId: UserId) => Promise<void>;
+  rejectDiscordRequest: (userId: UserId) => Promise<void>;
+  rejectGameRequest: (userId: UserId) => Promise<void>;
+  cancelDiscordRequest: (userId: UserId) => Promise<void>;
+  cancelGameRequest: (userId: UserId) => Promise<void>;
+  remove: (userId: UserId) => Promise<void>;
+  removeGame: (userId: UserId) => Promise<void>;
+  block: (userId: UserId) => Promise<void>;
+  unblock: (userId: UserId) => Promise<void>;
 }

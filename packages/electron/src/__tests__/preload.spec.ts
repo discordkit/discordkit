@@ -1,4 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
+import { snowflake } from "@discordkit/native";
+import type { UserId, ChannelId } from "@discordkit/native";
 import { createFakeIpc } from "./fakeIpc.js";
 import { createCoreBridge } from "../preload.js";
 import { usersSlice } from "../preload/users.js";
@@ -68,7 +70,7 @@ describe(`domain slices`, () => {
 
     await expect(users.getCurrent()).resolves.toEqual(user);
     // Why: `get` must forward the id arg — a dropped arg fetches the wrong user.
-    await expect(users.get(7n)).resolves.toEqual({ id: 7n });
+    await expect(users.get(snowflake<UserId>(7n))).resolves.toEqual({ id: 7n });
   });
 
   it(`id-keyed voice controls forward channelId + value in order`, async () => {
@@ -77,8 +79,12 @@ describe(`domain slices`, () => {
     const mute = echo(VOICE_CHANNELS.callSetSelfMute);
     const vol = echo(VOICE_CHANNELS.callSetParticipantVolume);
 
-    await voice.setSelfMute(5000n, true);
-    await voice.setParticipantVolume(5000n, 11n, 175);
+    await voice.setSelfMute(snowflake<ChannelId>(5000n), true);
+    await voice.setParticipantVolume(
+      snowflake<ChannelId>(5000n),
+      snowflake<UserId>(11n),
+      175
+    );
 
     // Why: the live Call lives in main; the renderer addresses it by channelId —
     // a transposed arg targets the wrong call/participant.

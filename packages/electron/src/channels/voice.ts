@@ -1,10 +1,12 @@
 /** The voice/calls domain's IPC contract. Mirrors `@discordkit/native/voice`. */
+import type { UserId, ChannelId, GuildId } from "@discordkit/native";
 import type {
   AudioDevice,
   AudioMode,
   CallStatus,
   VADThreshold
 } from "@discordkit/native/voice";
+import type { Unsubscribe } from "../internal.js";
 
 export const VOICE_CHANNELS = {
   callStart: `discordkit:voice:start`,
@@ -41,10 +43,10 @@ export const VOICE_CHANNELS = {
  * wrapper. Reads return this; mutate the call with the id-keyed `voice.*` ops.
  */
 export interface CallSnapshot {
-  channelId: bigint;
-  guildId: bigint;
+  channelId: ChannelId;
+  guildId: GuildId;
   status: CallStatus;
-  participants: bigint[];
+  participants: UserId[];
   selfMute: boolean;
   selfDeaf: boolean;
   audioMode: AudioMode;
@@ -54,30 +56,30 @@ export interface CallSnapshot {
 /** The `window.discord.voice` namespace (calls + client-wide audio). */
 export interface VoiceBridge {
   /** Start a call in a lobby; resolves with its snapshot (or `undefined`). */
-  startCall: (channelId: bigint) => Promise<CallSnapshot | undefined>;
+  startCall: (channelId: ChannelId) => Promise<CallSnapshot | undefined>;
   /** Get a call snapshot by channel id, or `undefined`. */
-  getCall: (channelId: bigint) => Promise<CallSnapshot | undefined>;
+  getCall: (channelId: ChannelId) => Promise<CallSnapshot | undefined>;
   /** Get snapshots of every active call. */
   getCalls: () => Promise<CallSnapshot[]>;
-  endCall: (channelId: bigint) => Promise<void>;
+  endCall: (channelId: ChannelId) => Promise<void>;
   endCalls: () => Promise<void>;
   // id-keyed call controls (operate on the live Call in the main process)
-  setSelfMute: (channelId: bigint, mute: boolean) => Promise<void>;
-  setSelfDeaf: (channelId: bigint, deaf: boolean) => Promise<void>;
+  setSelfMute: (channelId: ChannelId, mute: boolean) => Promise<void>;
+  setSelfDeaf: (channelId: ChannelId, deaf: boolean) => Promise<void>;
   setLocalMute: (
-    channelId: bigint,
-    userId: bigint,
+    channelId: ChannelId,
+    userId: UserId,
     mute: boolean
   ) => Promise<void>;
   setParticipantVolume: (
-    channelId: bigint,
-    userId: bigint,
+    channelId: ChannelId,
+    userId: UserId,
     volume: number
   ) => Promise<void>;
-  setAudioMode: (channelId: bigint, mode: AudioMode) => Promise<void>;
-  setPushToTalkActive: (channelId: bigint, active: boolean) => Promise<void>;
+  setAudioMode: (channelId: ChannelId, mode: AudioMode) => Promise<void>;
+  setPushToTalkActive: (channelId: ChannelId, active: boolean) => Promise<void>;
   setVADThreshold: (
-    channelId: bigint,
+    channelId: ChannelId,
     automatic: boolean,
     threshold?: number
   ) => Promise<void>;
@@ -98,5 +100,5 @@ export interface VoiceBridge {
   setOutputDevice: (deviceId: string) => Promise<void>;
   onDeviceChange: (
     handler: (devices: { input: AudioDevice[]; output: AudioDevice[] }) => void
-  ) => () => void;
+  ) => Unsubscribe;
 }

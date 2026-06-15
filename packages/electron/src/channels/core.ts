@@ -15,6 +15,7 @@ import type {
 } from "@discordkit/native/presence";
 import type { ScopeSet } from "@discordkit/native/auth";
 import type { LogEntry, Status } from "@discordkit/native";
+import type { Unsubscribe } from "../internal.js";
 
 /** Core channel names (lifecycle / presence / auth / status / log). */
 export const CORE_CHANNELS = {
@@ -49,7 +50,7 @@ export interface CoreBridge {
   /** Read the current connection status. */
   getStatus: () => Promise<Status>;
   /** Subscribe to status changes. Returns an unsubscribe function. */
-  onStatus: (handler: (status: Status) => void) => () => void;
+  onStatus: (handler: (status: Status) => void) => Unsubscribe;
   /** Subscribe to SDK log lines. Returns an unsubscribe function. */
-  onLog: (handler: (entry: LogEntry) => void) => () => void;
+  onLog: (handler: (entry: LogEntry) => void) => Unsubscribe;
 }

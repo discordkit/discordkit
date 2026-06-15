@@ -1,9 +1,11 @@
 /** The messaging domain's IPC contract. Mirrors `@discordkit/native/messaging`. */
+import type { UserId, LobbyId, ChannelId, MessageId } from "@discordkit/native";
 import type {
   Channel,
   Message,
   UserMessageSummary
 } from "@discordkit/native/messaging";
+import type { Unsubscribe } from "../internal.js";
 
 export const MESSAGE_CHANNELS = {
   sendUser: `discordkit:messages:sendUser`,
@@ -26,32 +28,32 @@ export const MESSAGE_CHANNELS = {
 export interface MessagesBridge {
   /** Send a DM; resolves with the new message id. */
   sendUser: (
-    recipientId: bigint,
+    recipientId: UserId,
     content: string,
     metadata?: Record<string, string>
-  ) => Promise<bigint>;
+  ) => Promise<MessageId>;
   /** Send a lobby message; resolves with the new message id. */
   sendLobby: (
-    lobbyId: bigint,
+    lobbyId: LobbyId,
     content: string,
     metadata?: Record<string, string>
-  ) => Promise<bigint>;
+  ) => Promise<MessageId>;
   editUser: (
-    recipientId: bigint,
-    messageId: bigint,
+    recipientId: UserId,
+    messageId: MessageId,
     content: string
   ) => Promise<void>;
-  deleteUser: (recipientId: bigint, messageId: bigint) => Promise<void>;
-  get: (messageId: bigint) => Promise<Message | undefined>;
-  getChannel: (channelId: bigint) => Promise<Channel | undefined>;
-  getUserMessages: (recipientId: bigint, limit: number) => Promise<Message[]>;
-  getLobbyMessages: (lobbyId: bigint, limit: number) => Promise<Message[]>;
+  deleteUser: (recipientId: UserId, messageId: MessageId) => Promise<void>;
+  get: (messageId: MessageId) => Promise<Message | undefined>;
+  getChannel: (channelId: ChannelId) => Promise<Channel | undefined>;
+  getUserMessages: (recipientId: UserId, limit: number) => Promise<Message[]>;
+  getLobbyMessages: (lobbyId: LobbyId, limit: number) => Promise<Message[]>;
   getSummaries: () => Promise<UserMessageSummary[]>;
-  canOpenInDiscord: (messageId: bigint) => Promise<boolean>;
-  openInDiscord: (messageId: bigint) => Promise<void>;
-  onCreated: (handler: (messageId: bigint) => void) => () => void;
-  onUpdated: (handler: (messageId: bigint) => void) => () => void;
+  canOpenInDiscord: (messageId: MessageId) => Promise<boolean>;
+  openInDiscord: (messageId: MessageId) => Promise<void>;
+  onCreated: (handler: (messageId: MessageId) => void) => Unsubscribe;
+  onUpdated: (handler: (messageId: MessageId) => void) => Unsubscribe;
   onDeleted: (
-    handler: (messageId: bigint, channelId: bigint) => void
-  ) => () => void;
+    handler: (messageId: MessageId, channelId: ChannelId) => void
+  ) => Unsubscribe;
 }

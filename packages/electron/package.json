@@ -43,7 +43,8 @@
   ],
   "sideEffects": false,
   "dependencies": {
-    "@discordkit/native": "workspace:^"
+    "@discordkit/native": "workspace:^",
+    "signal-polyfill": "catalog:"
   },
   "peerDependencies": {
     "electron": ">= 30"

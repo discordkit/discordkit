@@ -1,4 +1,5 @@
 /** The lobbies domain's IPC contract. Mirrors `@discordkit/native/lobbies`. */
+import type { UserId, LobbyId, ChannelId, GuildId } from "@discordkit/native";
 import type {
   Guild,
   GuildChannel,
@@ -6,6 +7,7 @@ import type {
   LinkedChannel,
   LobbyMetadata
 } from "@discordkit/native/lobbies";
+import type { Unsubscribe } from "../internal.js";
 
 export const LOBBY_CHANNELS = {
   createOrJoin: `discordkit:lobbies:createOrJoin`,
@@ -30,8 +32,8 @@ export const LOBBY_CHANNELS = {
  * the lobby with the id-keyed `lobbies.*` ops.
  */
 export interface LobbySnapshot {
-  id: bigint;
-  memberIds: bigint[];
+  id: LobbyId;
+  memberIds: UserId[];
   members: LobbyMember[];
   metadata: LobbyMetadata;
   linkedChannel?: LinkedChannel;
@@ -45,26 +47,26 @@ export interface LobbiesBridge {
     metadata?: { lobby?: LobbyMetadata; member?: LobbyMetadata }
   ) => Promise<LobbySnapshot>;
   /** Get a lobby snapshot by id, or `undefined` if not a member. */
-  get: (lobbyId: bigint) => Promise<LobbySnapshot | undefined>;
+  get: (lobbyId: LobbyId) => Promise<LobbySnapshot | undefined>;
   /** The ids of every lobby the current user is in. */
-  getIds: () => Promise<bigint[]>;
-  leave: (lobbyId: bigint) => Promise<void>;
-  linkChannel: (lobbyId: bigint, channelId: bigint) => Promise<void>;
-  unlinkChannel: (lobbyId: bigint) => Promise<void>;
+  getIds: () => Promise<LobbyId[]>;
+  leave: (lobbyId: LobbyId) => Promise<void>;
+  linkChannel: (lobbyId: LobbyId, channelId: ChannelId) => Promise<void>;
+  unlinkChannel: (lobbyId: LobbyId) => Promise<void>;
   /** Servers with channels linkable to a lobby (for a picker UI). */
   getUserGuilds: () => Promise<Guild[]>;
   /** Linkable channels in a guild (for a picker UI). */
-  getGuildChannels: (guildId: bigint) => Promise<GuildChannel[]>;
-  onCreated: (handler: (lobbyId: bigint) => void) => () => void;
-  onDeleted: (handler: (lobbyId: bigint) => void) => () => void;
-  onUpdated: (handler: (lobbyId: bigint) => void) => () => void;
+  getGuildChannels: (guildId: GuildId) => Promise<GuildChannel[]>;
+  onCreated: (handler: (lobbyId: LobbyId) => void) => Unsubscribe;
+  onDeleted: (handler: (lobbyId: LobbyId) => void) => Unsubscribe;
+  onUpdated: (handler: (lobbyId: LobbyId) => void) => Unsubscribe;
   onMemberAdded: (
-    handler: (lobbyId: bigint, memberId: bigint) => void
-  ) => () => void;
+    handler: (lobbyId: LobbyId, memberId: UserId) => void
+  ) => Unsubscribe;
   onMemberRemoved: (
-    handler: (lobbyId: bigint, memberId: bigint) => void
-  ) => () => void;
+    handler: (lobbyId: LobbyId, memberId: UserId) => void
+  ) => Unsubscribe;
   onMemberUpdated: (
-    handler: (lobbyId: bigint, memberId: bigint) => void
-  ) => () => void;
+    handler: (lobbyId: LobbyId, memberId: UserId) => void
+  ) => Unsubscribe;
 }

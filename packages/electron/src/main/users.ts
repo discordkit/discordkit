@@ -1,3 +1,4 @@
+import type { UserId } from "@discordkit/native";
 import { getCurrentUser, getUser } from "@discordkit/native/users";
 import { USER_CHANNELS } from "../channels/users.js";
 import type { RegisterContext } from "../internal.js";
@@ -14,5 +15,5 @@ import type { RegisterContext } from "../internal.js";
  */
 export const registerUsers = ({ handle }: RegisterContext): void => {
   handle(USER_CHANNELS.getCurrent, () => getCurrentUser());
-  handle(USER_CHANNELS.get, (_e, userId: bigint) => getUser(userId));
+  handle(USER_CHANNELS.get, (_e, userId: UserId) => getUser(userId));
 };

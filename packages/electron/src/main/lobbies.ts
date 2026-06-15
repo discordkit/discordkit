@@ -12,6 +12,7 @@ import {
   onLobbyMemberUpdated,
   type Lobby
 } from "@discordkit/native/lobbies";
+import type { LobbyId, ChannelId, GuildId } from "@discordkit/native";
 import { LOBBY_CHANNELS, type LobbySnapshot } from "../channels/lobbies.js";
 import type { RegisterContext } from "../internal.js";
 
@@ -35,7 +36,7 @@ export const registerLobbies = ({
   track
 }: RegisterContext): void => {
   /** Re-resolve a live lobby by id or throw (it was left/deleted). */
-  const requireLobby = (lobbyId: bigint): Lobby => {
+  const requireLobby = (lobbyId: LobbyId): Lobby => {
     const lobby = getLobby(lobbyId);
     if (!lobby) {
       throw new Error(
@@ -63,24 +64,24 @@ export const registerLobbies = ({
         })
       )
   );
-  handle(LOBBY_CHANNELS.get, (_e, lobbyId: bigint) => {
+  handle(LOBBY_CHANNELS.get, (_e, lobbyId: LobbyId) => {
     const lobby = getLobby(lobbyId);
     return lobby ? snapshot(lobby) : undefined;
   });
   handle(LOBBY_CHANNELS.getIds, () => getLobbyIds());
-  handle(LOBBY_CHANNELS.leave, async (_e, lobbyId: bigint) =>
+  handle(LOBBY_CHANNELS.leave, async (_e, lobbyId: LobbyId) =>
     requireLobby(lobbyId).leave()
   );
   handle(
     LOBBY_CHANNELS.linkChannel,
-    async (_e, lobbyId: bigint, channelId: bigint) =>
+    async (_e, lobbyId: LobbyId, channelId: ChannelId) =>
       requireLobby(lobbyId).linkChannel(channelId)
   );
-  handle(LOBBY_CHANNELS.unlinkChannel, async (_e, lobbyId: bigint) =>
+  handle(LOBBY_CHANNELS.unlinkChannel, async (_e, lobbyId: LobbyId) =>
     requireLobby(lobbyId).unlinkChannel()
   );
   handle(LOBBY_CHANNELS.getUserGuilds, async () => getUserGuilds());
-  handle(LOBBY_CHANNELS.getGuildChannels, async (_e, guildId: bigint) =>
+  handle(LOBBY_CHANNELS.getGuildChannels, async (_e, guildId: GuildId) =>
     getGuildChannels(guildId)
   );
 

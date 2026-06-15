@@ -22,6 +22,7 @@ import {
   type AudioMode,
   type Call
 } from "@discordkit/native/voice";
+import type { UserId, ChannelId } from "@discordkit/native";
 import { VOICE_CHANNELS, type CallSnapshot } from "../channels/voice.js";
 import type { RegisterContext } from "../internal.js";
 
@@ -48,7 +49,7 @@ export const registerVoice = ({
   track
 }: RegisterContext): void => {
   /** Re-resolve a live call by channel id or throw (the call ended). */
-  const requireCall = (channelId: bigint): Call => {
+  const requireCall = (channelId: ChannelId): Call => {
     const call = getCall(channelId);
     if (!call) {
       throw new Error(
@@ -60,58 +61,58 @@ export const registerVoice = ({
   };
 
   // --- calls ---
-  handle(VOICE_CHANNELS.callStart, (_e, channelId: bigint) => {
+  handle(VOICE_CHANNELS.callStart, (_e, channelId: ChannelId) => {
     const call = startCall(channelId);
     return call ? snapshot(call) : undefined;
   });
-  handle(VOICE_CHANNELS.callGet, (_e, channelId: bigint) => {
+  handle(VOICE_CHANNELS.callGet, (_e, channelId: ChannelId) => {
     const call = getCall(channelId);
     return call ? snapshot(call) : undefined;
   });
   handle(VOICE_CHANNELS.callGetAll, () => getCalls().map(snapshot));
-  handle(VOICE_CHANNELS.callEnd, async (_e, channelId: bigint) =>
+  handle(VOICE_CHANNELS.callEnd, async (_e, channelId: ChannelId) =>
     endCall(channelId)
   );
   handle(VOICE_CHANNELS.callEndAll, async () => endCalls());
   handle(
     VOICE_CHANNELS.callSetSelfMute,
-    (_e, channelId: bigint, mute: boolean) => {
+    (_e, channelId: ChannelId, mute: boolean) => {
       requireCall(channelId).setSelfMute(mute);
     }
   );
   handle(
     VOICE_CHANNELS.callSetSelfDeaf,
-    (_e, channelId: bigint, deaf: boolean) => {
+    (_e, channelId: ChannelId, deaf: boolean) => {
       requireCall(channelId).setSelfDeaf(deaf);
     }
   );
   handle(
     VOICE_CHANNELS.callSetLocalMute,
-    (_e, channelId: bigint, userId: bigint, mute: boolean) => {
+    (_e, channelId: ChannelId, userId: UserId, mute: boolean) => {
       requireCall(channelId).setLocalMute(userId, mute);
     }
   );
   handle(
     VOICE_CHANNELS.callSetParticipantVolume,
-    (_e, channelId: bigint, userId: bigint, volume: number) => {
+    (_e, channelId: ChannelId, userId: UserId, volume: number) => {
       requireCall(channelId).setParticipantVolume(userId, volume);
     }
   );
   handle(
     VOICE_CHANNELS.callSetAudioMode,
-    (_e, channelId: bigint, mode: AudioMode) => {
+    (_e, channelId: ChannelId, mode: AudioMode) => {
       requireCall(channelId).setAudioMode(mode);
     }
   );
   handle(
     VOICE_CHANNELS.callSetPushToTalkActive,
-    (_e, channelId: bigint, active: boolean) => {
+    (_e, channelId: ChannelId, active: boolean) => {
       requireCall(channelId).setPushToTalkActive(active);
     }
   );
   handle(
     VOICE_CHANNELS.callSetVADThreshold,
-    (_e, channelId: bigint, automatic: boolean, threshold?: number) => {
+    (_e, channelId: ChannelId, automatic: boolean, threshold?: number) => {
       requireCall(channelId).setVADThreshold(automatic, threshold);
     }
   );
