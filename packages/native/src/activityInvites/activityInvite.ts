@@ -1,6 +1,12 @@
 import { defineBindings, subObjectHandle } from "../ffi/bindings.js";
 import type { SubObjectHandle } from "../ffi/bindings.js";
 import type { FfiLibrary, FfiOpaque } from "../ffi/backend.js";
+import type {
+  ApplicationId,
+  ChannelId,
+  MessageId,
+  UserId
+} from "../snowflake.js";
 import {
   ACTIVITY_ACTION_TYPE_BY_CODE,
   ACTIVITY_ACTION_TYPE_CODE,
@@ -58,11 +64,11 @@ export const readActivityInvite = (
 
   return {
     type: ACTIVITY_ACTION_TYPE_BY_CODE[Number(b.type(handle))] ?? `invalid`,
-    senderId: b.senderId(handle) as bigint,
-    channelId: b.channelId(handle) as bigint,
-    messageId: b.messageId(handle) as bigint,
-    applicationId: b.applicationId(handle) as bigint,
-    parentApplicationId: b.parentApplicationId(handle) as bigint,
+    senderId: b.senderId(handle) as UserId,
+    channelId: b.channelId(handle) as ChannelId,
+    messageId: b.messageId(handle) as MessageId,
+    applicationId: b.applicationId(handle) as ApplicationId,
+    parentApplicationId: b.parentApplicationId(handle) as ApplicationId,
     partyId: readString(b.partyId),
     sessionId: readString(b.sessionId),
     valid: Boolean(b.isValid(handle))

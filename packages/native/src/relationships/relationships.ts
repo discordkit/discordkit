@@ -2,6 +2,7 @@ import { useClient } from "../ambient.js";
 import type { DiscordClient } from "../client.js";
 import { awaitResult, defineBindings } from "../ffi/bindings.js";
 import type { FfiOpaque } from "../ffi/backend.js";
+import type { UserId } from "../snowflake.js";
 import { readRelationship } from "./relationshipHandle.js";
 import type { Relationship } from "./types.js";
 
@@ -72,7 +73,7 @@ export const getRelationships = (
  * Read the relationship with one user by ID as a {@link Relationship} snapshot. Synchronous; the returned snapshot's types are `none` when there's no relationship.
  */
 export const getRelationship = (
-  userId: bigint,
+  userId: UserId,
   options: { client?: DiscordClient } = {}
 ): Relationship => {
   const client = options.client ?? useClient();
@@ -86,7 +87,7 @@ const action =
   (
     fn: keyof ReturnType<typeof bindings>,
     label: string
-  ): ((userId: bigint, options?: RelationshipOptions) => Promise<void>) =>
+  ): ((userId: UserId, options?: RelationshipOptions) => Promise<void>) =>
   async (userId, options = {}) => {
     const client = options.client ?? useClient();
     const b = bindings(client.lib);

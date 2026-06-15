@@ -9,6 +9,7 @@ import {
 } from "./mock.js";
 import { getCall, onDeviceChange } from "../calls.js";
 import type { CallStatus } from "../types.js";
+import { channelId } from "../../__tests__/ids.js";
 
 const config = {
   applicationId: 123n,
@@ -21,7 +22,7 @@ describe(`call events (mock backend)`, () => {
     using client = createClient(config);
     const state = mockStateOf(client.lib);
     scriptCall(state, makeCall());
-    using call = getCall(5000n, { client })!;
+    using call = getCall(channelId(5000n), { client })!;
 
     const seen: CallStatus[] = [];
     call.onStatusChanged((s) => seen.push(s));
@@ -36,7 +37,7 @@ describe(`call events (mock backend)`, () => {
     using client = createClient(config);
     const state = mockStateOf(client.lib);
     scriptCall(state, makeCall());
-    using call = getCall(5000n, { client })!;
+    using call = getCall(channelId(5000n), { client })!;
 
     const joins: [bigint, boolean][] = [];
     call.onParticipantChanged((id, added) => joins.push([id, added]));
@@ -53,7 +54,7 @@ describe(`call events (mock backend)`, () => {
     using client = createClient(config);
     const state = mockStateOf(client.lib);
     scriptCall(state, makeCall());
-    using call = getCall(5000n, { client })!;
+    using call = getCall(channelId(5000n), { client })!;
 
     const speaking: [bigint, boolean][] = [];
     call.onSpeakingStatusChanged((id, on) => speaking.push([id, on]));
@@ -66,7 +67,7 @@ describe(`call events (mock backend)`, () => {
     using client = createClient(config);
     const state = mockStateOf(client.lib);
     scriptCall(state, makeCall());
-    const call = getCall(5000n, { client })!;
+    const call = getCall(channelId(5000n), { client })!;
 
     const seen: bigint[] = [];
     call.onVoiceStateChanged((id) => seen.push(id));

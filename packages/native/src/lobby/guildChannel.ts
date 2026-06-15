@@ -1,6 +1,12 @@
 import { defineBindings } from "../ffi/bindings.js";
 import { readString } from "../ffi/readers.js";
 import type { FfiLibrary, FfiOpaque } from "../ffi/backend.js";
+import type {
+  ApplicationId,
+  ChannelId,
+  GuildId,
+  LobbyId
+} from "../snowflake.js";
 import {
   CHANNEL_TYPE_BY_CODE,
   type GuildChannel,
@@ -38,19 +44,19 @@ export const readGuildChannel = (
   const b = channel(lib);
   const parentOut = lib.allocUInt64Out();
   const parentId = b.parentId(handle, parentOut)
-    ? lib.readUInt64Out(parentOut)
+    ? (lib.readUInt64Out(parentOut) as ChannelId)
     : undefined;
 
   const lobbyOut = lib.allocHandle();
   const linkedLobby = b.linkedLobby(handle, lobbyOut)
     ? {
-        lobbyId: b.linkedLobbyId(lobbyOut) as bigint,
-        applicationId: b.linkedLobbyAppId(lobbyOut) as bigint
+        lobbyId: b.linkedLobbyId(lobbyOut) as LobbyId,
+        applicationId: b.linkedLobbyAppId(lobbyOut) as ApplicationId
       }
     : undefined;
 
   return {
-    id: b.id(handle) as bigint,
+    id: b.id(handle) as ChannelId,
     name: readString(lib, handle, b.name),
     type: CHANNEL_TYPE_BY_CODE[Number(b.type(handle))] ?? `unknown`,
     position: Number(b.position(handle)),
@@ -64,5 +70,8 @@ export const readGuildChannel = (
 /** Read a native `GuildMinimal` handle into a plain {@link Guild} snapshot. */
 export const readGuild = (lib: FfiLibrary, handle: FfiOpaque): Guild => {
   const b = guild(lib);
-  return { id: b.id(handle) as bigint, name: readString(lib, handle, b.name) };
+  return {
+    id: b.id(handle) as GuildId,
+    name: readString(lib, handle, b.name)
+  };
 };

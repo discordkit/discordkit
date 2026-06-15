@@ -1,3 +1,10 @@
+import type {
+  ApplicationId,
+  ChannelId,
+  GuildId,
+  LobbyId,
+  UserId
+} from "../snowflake.js";
 import type { User } from "../users/types.js";
 
 /**
@@ -14,7 +21,7 @@ export type LobbyMetadata = Record<string, string>;
 /** A snapshot of one member of a lobby, read from a `LobbyMemberHandle`. */
 export interface LobbyMember {
   /** The member's user id. */
-  id: bigint;
+  id: UserId;
   /** Whether the user is actively connected to the lobby right now (vs. merely
    * added to it while offline). */
   connected: boolean;
@@ -29,11 +36,11 @@ export interface LobbyMember {
 /** A snapshot of the Discord channel a lobby is linked to, if any. */
 export interface LinkedChannel {
   /** The linked channel's id. */
-  id: bigint;
+  id: ChannelId;
   /** The channel's name. */
   name: string;
   /** The id of the guild (server) that owns the channel. */
-  guildId: bigint;
+  guildId: GuildId;
 }
 
 /** The kind of a Discord channel, the public string form of `Discord_ChannelType`. */
@@ -67,9 +74,9 @@ export const CHANNEL_TYPE_BY_CODE: Record<number, ChannelType> = {
 /** A snapshot of a lobby currently linked to a channel (from the channel's side). */
 export interface ChannelLinkedLobby {
   /** The linked lobby's id. */
-  lobbyId: bigint;
+  lobbyId: LobbyId;
   /** The id of the application that owns the lobby. */
-  applicationId: bigint;
+  applicationId: ApplicationId;
 }
 
 /**
@@ -77,7 +84,7 @@ export interface ChannelLinkedLobby {
  */
 export interface GuildChannel {
   /** The channel's id. */
-  id: bigint;
+  id: ChannelId;
   /** The channel's name. */
   name: string;
   /** The channel's type. */
@@ -85,7 +92,7 @@ export interface GuildChannel {
   /** The channel's position in the guild's channel list. */
   position: number;
   /** The parent category channel's id, if any. */
-  parentId?: bigint;
+  parentId?: ChannelId;
   /** Whether the current user can link this channel to a lobby (see the SDK's
    * linkability rules: text channel, not NSFW, not already linked, has perms). */
   linkable: boolean;
@@ -99,7 +106,7 @@ export interface GuildChannel {
 /** A snapshot of a guild (server) the current user belongs to (`getUserGuilds`). */
 export interface Guild {
   /** The guild's id. */
-  id: bigint;
+  id: GuildId;
   /** The guild's name. */
   name: string;
 }

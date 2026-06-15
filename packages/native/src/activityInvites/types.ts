@@ -2,6 +2,13 @@
  * Public types for the activity-invites domain — plain interfaces + an enum string-union, no FFI bindings (importing them costs nothing). An `ActivityInvite` arrives via the SDK's invite callbacks and is read into the {@link ActivityInvite} snapshot rather than surfaced as a live wrapper: it's read-only data, so a plain object is simpler and carries no dispose burden (the read-handle convention). The same snapshot is handed back to `acceptActivityInvite` / `replyToActivityJoinRequest`, which re-marshal it into a native handle to act on.
  */
 
+import type {
+  ApplicationId,
+  ChannelId,
+  MessageId,
+  UserId
+} from "../snowflake.js";
+
 /**
  * The kind of activity invite, the public string form of `Discord_ActivityActionTypes`. There are two: a user with an existing party can `join`-invite another user, or a user can request to join another's party (`joinRequest`). `invalid` is the SDK's uninitialized sentinel.
  */
@@ -31,18 +38,18 @@ export interface ActivityInvite {
   /** The type of invite — a `join` invite or a `joinRequest`. */
   type: ActivityActionType;
   /** The user id of the user who sent the invite. */
-  senderId: bigint;
+  senderId: UserId;
   /** The id of the Discord channel in which the invite was sent. */
-  channelId: bigint;
+  channelId: ChannelId;
   /** The id of the Discord message that contains the invite. */
-  messageId: bigint;
+  messageId: MessageId;
   /** The target application of the invite. */
-  applicationId: bigint;
+  applicationId: ApplicationId;
   /**
    * The application id of the parent — only set for a publisher's suite of
    * applications, otherwise `0n`.
    */
-  parentApplicationId: bigint;
+  parentApplicationId: ApplicationId;
   /** The id of the party the invite was sent for. */
   partyId: string;
   /** The session id of the user who sent the invite. */

@@ -1,3 +1,4 @@
+import type { UserId } from "../snowflake.js";
 import type { User } from "../users/types.js";
 
 /**
@@ -34,7 +35,7 @@ export const RELATIONSHIP_TYPE_BY_CODE: Record<number, RelationshipType> = {
  */
 export interface Relationship {
   /** The target user's ID. */
-  userId: bigint;
+  userId: UserId;
   /** Cross-game / Discord-client relationship type. Blocks always live here. */
   discordType: RelationshipType;
   /** Per-game relationship type. */

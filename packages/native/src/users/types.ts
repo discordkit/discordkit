@@ -2,6 +2,8 @@
  * Public types for the users domain — plain interfaces + enum string-unions, no FFI bindings (importing them costs nothing). The SDK's `UserHandle` is read into the {@link User} snapshot rather than surfaced as a live wrapper: it's a read-only value, so a plain object is simpler and carries no dispose burden (the default per the package's read-handle convention).
  */
 
+import type { UserId } from "../snowflake.js";
+
 /** A user's online presence, the public string form of `Discord_StatusType`. */
 export type StatusType =
   | `online`
@@ -41,7 +43,7 @@ export const AVATAR_TYPE: Record<AvatarType, number> = {
  */
 export interface User {
   /** The user's unique ID. (A handle reporting `0n` is no longer valid.) */
-  id: bigint;
+  id: UserId;
   /** Globally unique username. Auto-generated for provisional accounts. */
   username: string;
   /** Preferred name if set, otherwise the username. */

@@ -1,6 +1,7 @@
 import { useClient } from "../ambient.js";
 import type { DiscordClient } from "../client.js";
 import { defineBindings } from "../ffi/bindings.js";
+import type { UserId } from "../snowflake.js";
 import { readUser } from "./userHandle.js";
 import type { User } from "./types.js";
 
@@ -32,7 +33,7 @@ export const getCurrentUser = (options: UserOptions = {}): User | undefined => {
  * Read a known user by ID as a {@link User} snapshot, or `undefined` if the SDK doesn't have that user cached. Synchronous — this reads the SDK's local cache (populated via relationships, lobby membership, messages, …); it is NOT a REST fetch of an arbitrary user.
  */
 export const getUser = (
-  userId: bigint,
+  userId: UserId,
   options: UserOptions = {}
 ): User | undefined => {
   const client = options.client ?? useClient();

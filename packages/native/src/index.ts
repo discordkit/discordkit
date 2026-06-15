@@ -31,3 +31,13 @@ export { createClient } from "./client.js";
 export type { ClientConfig, DiscordClient, Subscription } from "./client.js";
 export { subscribe } from "./subscribe.js";
 export type { LogEntry, LogSeverity, Status } from "./types.js";
+export { snowflake } from "./snowflake.js";
+export type {
+  Snowflake,
+  UserId,
+  LobbyId,
+  ChannelId,
+  MessageId,
+  GuildId,
+  ApplicationId
+} from "./snowflake.js";

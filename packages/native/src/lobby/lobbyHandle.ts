@@ -2,6 +2,7 @@ import type { DiscordClient, Subscription } from "../client.js";
 import { awaitResult, defineBindings } from "../ffi/bindings.js";
 import { readPropertiesOf } from "../ffi/readers.js";
 import type { FfiOpaque } from "../ffi/backend.js";
+import type { ChannelId, LobbyId, UserId } from "../snowflake.js";
 import { readLinkedChannel } from "./linkedChannel.js";
 import { readLobbyMember } from "./lobbyMember.js";
 import {
@@ -69,26 +70,26 @@ const bindings = defineBindings({
 export class Lobby {
   readonly #client: DiscordClient;
   readonly #handle: FfiOpaque;
-  readonly #id: bigint;
+  readonly #id: LobbyId;
   readonly #subscriptions = new Set<Subscription>();
 
   /** @internal Construct from a fetched handle. Use the domain ops, not this. */
   constructor(client: DiscordClient, handle: FfiOpaque) {
     this.#client = client;
     this.#handle = handle;
-    this.#id = bindings(client.lib).id(handle) as bigint;
+    this.#id = bindings(client.lib).id(handle) as LobbyId;
   }
 
   /** The lobby's id. */
-  get id(): bigint {
+  get id(): LobbyId {
     return this.#id;
   }
 
   /** The current member user ids (re-read live from the SDK). */
-  get memberIds(): bigint[] {
+  get memberIds(): UserId[] {
     const span = this.#client.lib.allocSpanOut();
     bindings(this.#client.lib).memberIds(this.#handle, span);
-    return this.#client.lib.readUInt64Span(span);
+    return this.#client.lib.readUInt64Span(span) as UserId[];
   }
 
   /** The current lobby members as snapshots (re-read live from the SDK). */
@@ -118,7 +119,7 @@ export class Lobby {
   }
 
   /** Read one member by user id, if they belong to this lobby (live). */
-  member = (memberId: bigint): LobbyMember | undefined => {
+  member = (memberId: UserId): LobbyMember | undefined => {
     const out = this.#client.lib.allocHandle();
     return bindings(this.#client.lib).memberById(this.#handle, memberId, out)
       ? readLobbyMember(this.#client.lib, out)
@@ -138,7 +139,7 @@ export class Lobby {
   };
 
   /** Link a Discord channel to this lobby. Resolves when the SDK acks. */
-  linkChannel = async (channelId: bigint): Promise<void> => {
+  linkChannel = async (channelId: ChannelId): Promise<void> => {
     const b = bindings(this.#client.lib);
     await awaitResult(
       this.#client,
@@ -184,7 +185,7 @@ export class Lobby {
     );
 
   /** Subscribe to a member joining this lobby. */
-  onMemberAdded = (handler: (memberId: bigint) => void): Subscription =>
+  onMemberAdded = (handler: (memberId: UserId) => void): Subscription =>
     this.#track(
       onLobbyMemberAdded(
         (lobbyId, memberId) => {
@@ -195,7 +196,7 @@ export class Lobby {
     );
 
   /** Subscribe to a member leaving this lobby. */
-  onMemberRemoved = (handler: (memberId: bigint) => void): Subscription =>
+  onMemberRemoved = (handler: (memberId: UserId) => void): Subscription =>
     this.#track(
       onLobbyMemberRemoved(
         (lobbyId, memberId) => {
@@ -206,7 +207,7 @@ export class Lobby {
     );
 
   /** Subscribe to a member of this lobby being updated. */
-  onMemberUpdated = (handler: (memberId: bigint) => void): Subscription =>
+  onMemberUpdated = (handler: (memberId: UserId) => void): Subscription =>
     this.#track(
       onLobbyMemberUpdated(
         (lobbyId, memberId) => {

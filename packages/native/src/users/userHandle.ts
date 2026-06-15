@@ -1,6 +1,7 @@
 import { defineBindings } from "../ffi/bindings.js";
 import { readGatedString } from "../ffi/readers.js";
 import type { FfiLibrary, FfiOpaque } from "../ffi/backend.js";
+import type { UserId } from "../snowflake.js";
 import { STATUS_TYPE_BY_CODE, type User } from "./types.js";
 
 /**
@@ -31,7 +32,7 @@ export const readUser = (lib: FfiLibrary, handle: FfiOpaque): User => {
     readGatedString(lib, handle, getter);
 
   return {
-    id: b.id(handle) as bigint,
+    id: b.id(handle) as UserId,
     username: gated(b.username) ?? ``,
     displayName: gated(b.displayName) ?? ``,
     globalName: gated(b.globalName),

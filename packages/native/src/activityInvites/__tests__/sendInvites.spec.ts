@@ -8,6 +8,7 @@ import {
   replyToActivityJoinRequest
 } from "../activityInvites.js";
 import { readActivityInvite } from "../activityInvite.js";
+import { userId } from "../../__tests__/ids.js";
 
 const config = {
   applicationId: 123n,
@@ -19,8 +20,8 @@ describe(`send activity invites (mock backend)`, () => {
   it(`each send op resolves on the SDK ack via its own C function`, async () => {
     using client = createClient(config);
     const state = mockStateOf(client.lib);
-    await sendActivityInvite(555n, `join me`, { client });
-    await sendActivityJoinRequest(555n, { client });
+    await sendActivityInvite(userId(555n), `join me`, { client });
+    await sendActivityJoinRequest(userId(555n), { client });
     // Why: all three resolve through the same SendActivityInviteCallback bridge;
     // this proves each export wires to its own C function and acks correctly.
     expect(inviteActionsOf(state)).toEqual([
@@ -34,7 +35,7 @@ describe(`send activity invites (mock backend)`, () => {
     const state = mockStateOf(client.lib);
     // Why: the SDK explicitly allows empty content; the default must reach the
     // SDK as "" rather than undefined (which would mis-marshal the Discord_String).
-    await sendActivityInvite(555n, undefined, { client });
+    await sendActivityInvite(userId(555n), undefined, { client });
     expect(inviteActionsOf(state)).toContain(
       `Discord_Client_SendActivityInvite`
     );

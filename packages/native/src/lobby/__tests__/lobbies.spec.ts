@@ -3,6 +3,7 @@ import { createClient } from "../../client.js";
 import { mockBackend, mockStateOf } from "../../__tests__/mockBackend.js";
 import { scriptLobby, lobbyActionsOf, type ScriptedLobby } from "./mock.js";
 import { createOrJoinLobby, getLobby, getLobbyIds } from "../lobbies.js";
+import { userId, lobbyId } from "../../__tests__/ids.js";
 
 const config = {
   applicationId: 123n,
@@ -98,8 +99,8 @@ describe(`lobby entry ops (mock backend)`, () => {
       name: `general`,
       guildId: 800n
     });
-    expect(lobby.member(22n)?.connected).toBe(false);
-    expect(lobby.member(999n)).toBeUndefined();
+    expect(lobby.member(userId(22n))?.connected).toBe(false);
+    expect(lobby.member(userId(999n))).toBeUndefined();
   });
 
   it(`lobby.linkedChannel is undefined when the lobby isn't linked`, async () => {
@@ -118,8 +119,8 @@ describe(`lobby entry ops (mock backend)`, () => {
     scriptLobby(state, sampleLobby);
     // Why: GetLobbyHandle is bool-gated; a non-member must yield undefined, not a
     // wrapper around an invalid handle.
-    expect(getLobby(5000n, { client })?.id).toBe(5000n);
-    expect(getLobby(404n, { client })).toBeUndefined();
+    expect(getLobby(lobbyId(5000n), { client })?.id).toBe(5000n);
+    expect(getLobby(lobbyId(404n), { client })).toBeUndefined();
   });
 
   it(`getLobbyIds lists every joined lobby`, () => {

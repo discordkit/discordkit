@@ -17,6 +17,7 @@ import {
   canOpenMessageInDiscord,
   openMessageInDiscord
 } from "../messages.js";
+import { userId, lobbyId, channelId, messageId } from "../../__tests__/ids.js";
 
 const config = {
   applicationId: 123n,
@@ -50,7 +51,7 @@ describe(`read messages (mock backend)`, () => {
       })
     );
 
-    const msg = getMessage(7000n, { client });
+    const msg = getMessage(messageId(7000n), { client });
 
     // Why: a message is a read-once snapshot — every field must read out, including
     // the humanized vs raw content split, the embedded author/channel, the lobby
@@ -77,7 +78,7 @@ describe(`read messages (mock backend)`, () => {
     mockStateOf(client.lib);
     // Why: GetMessageHandle is bool-gated (SDK keeps only 25 per channel); a
     // missing message must yield undefined, not a wrapper around an invalid handle.
-    expect(getMessage(404n, { client })).toBeUndefined();
+    expect(getMessage(messageId(404n), { client })).toBeUndefined();
   });
 
   it(`getChannel reads a Channel snapshot with recipient ids`, () => {
@@ -89,7 +90,7 @@ describe(`read messages (mock backend)`, () => {
       type: 1,
       recipientIds: [11n, 22n]
     });
-    const channel = getChannel(900n, { client });
+    const channel = getChannel(channelId(900n), { client });
     // Why: recipientIds uses the scalar-id span primitive; type maps via the
     // shared ChannelType table.
     expect(channel).toEqual({
@@ -107,7 +108,7 @@ describe(`read messages (mock backend)`, () => {
       makeMessage({ id: 1n, content: `a` }),
       makeMessage({ id: 2n, content: `b` })
     ]);
-    const history = await getUserMessages(11n, 25, { client });
+    const history = await getUserMessages(userId(11n), 25, { client });
     // Why: history resolves with a message-handle span read into snapshots.
     expect(history.map((m) => m.content)).toEqual([`a`, `b`]);
   });
@@ -133,7 +134,7 @@ describe(`read messages (mock backend)`, () => {
     scriptHistory(state, [makeMessage({ id: 9n, content: `team up?` })]);
     // Why: lobby history is a distinct C function from DM history but shares the
     // message-span callback shape — it must read into the same snapshots.
-    const history = await getLobbyMessages(5000n, 25, { client });
+    const history = await getLobbyMessages(lobbyId(5000n), 25, { client });
     expect(history.map((m) => m.content)).toEqual([`team up?`]);
   });
 
@@ -143,8 +144,8 @@ describe(`read messages (mock backend)`, () => {
     // Why: OpenMessageInDiscord has a TWO-callback signature (a provisional-merge
     // cb + the result cb) — the op must fire the RESULT cb (not the merge one) to
     // resolve. canOpenMessageInDiscord is a separate sync gate.
-    expect(canOpenMessageInDiscord(7000n, { client })).toBe(true);
-    await openMessageInDiscord(7000n, { client });
+    expect(canOpenMessageInDiscord(messageId(7000n), { client })).toBe(true);
+    await openMessageInDiscord(messageId(7000n), { client });
     expect(state.calls).toContain(`Discord_Client_OpenMessageInDiscord`);
   });
 });

@@ -1,6 +1,7 @@
 import { defineBindings } from "../ffi/bindings.js";
 import { readPropertiesOf, readString } from "../ffi/readers.js";
 import type { FfiLibrary, FfiOpaque } from "../ffi/backend.js";
+import type { ChannelId, LobbyId, MessageId, UserId } from "../snowflake.js";
 import { readUser } from "../users/userHandle.js";
 import { readChannel } from "./channelHandle.js";
 import { readAdditionalContent } from "./additionalContent.js";
@@ -58,16 +59,16 @@ export const readMessage = (lib: FfiLibrary, handle: FfiOpaque): Message => {
 
   const lobbyOut = lib.allocHandle();
   const lobbyId = b.lobby(handle, lobbyOut)
-    ? (b.lobbyId(lobbyOut) as bigint)
+    ? (b.lobbyId(lobbyOut) as LobbyId)
     : undefined;
 
   return {
-    id: b.id(handle) as bigint,
+    id: b.id(handle) as MessageId,
     content: readString(lib, handle, b.content),
     rawContent: readString(lib, handle, b.rawContent),
-    authorId: b.authorId(handle) as bigint,
-    channelId: b.channelId(handle) as bigint,
-    recipientId: b.recipientId(handle) as bigint,
+    authorId: b.authorId(handle) as UserId,
+    channelId: b.channelId(handle) as ChannelId,
+    recipientId: b.recipientId(handle) as UserId,
     sentFromGame: Boolean(b.sentFromGame(handle)),
     sentTimestamp: b.sentTimestamp(handle) as bigint,
     editedTimestamp: b.editedTimestamp(handle) as bigint,

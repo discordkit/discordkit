@@ -2,6 +2,7 @@ import { useClient } from "../ambient.js";
 import { toSubscription } from "../client.js";
 import type { DiscordClient, Subscription } from "../client.js";
 import { awaitResult, defineBindings } from "../ffi/bindings.js";
+import type { UserId } from "../snowflake.js";
 import { buildActivityInvite, readActivityInvite } from "./activityInvite.js";
 import type { ActivityInvite } from "./types.js";
 
@@ -58,7 +59,7 @@ export interface ActivityInviteOptions {
  * Invite a user to join the current user's activity (party). Sent as a Discord message; succeeds if the users are in-game together, friends, or share a server and have DM'd. `content` is optional extra message text (`""` to omit).
  */
 export const sendActivityInvite = async (
-  userId: bigint,
+  userId: UserId,
   content = ``,
   options: ActivityInviteOptions = {}
 ): Promise<void> => {
@@ -85,7 +86,7 @@ export const sendActivityInvite = async (
  * Request to join a user's activity. Valid when that user has a rich-presence activity for this game with room to join. They receive an invite they can accept or reject.
  */
 export const sendActivityJoinRequest = async (
-  userId: bigint,
+  userId: UserId,
   options: ActivityInviteOptions = {}
 ): Promise<void> => {
   const client = options.client ?? useClient();

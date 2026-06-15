@@ -2,6 +2,7 @@ import { toSubscription } from "../client.js";
 import type { DiscordClient, Subscription } from "../client.js";
 import { defineBindings } from "../ffi/bindings.js";
 import type { FfiOpaque } from "../ffi/backend.js";
+import type { ChannelId, GuildId, UserId } from "../snowflake.js";
 import { readVADThreshold, readVoiceState } from "./voiceStateHandle.js";
 import {
   AUDIO_MODE_BY_CODE,
@@ -84,24 +85,24 @@ const bindings = defineBindings({
 export class Call {
   readonly #client: DiscordClient;
   readonly #handle: FfiOpaque;
-  readonly #channelId: bigint;
+  readonly #channelId: ChannelId;
   readonly #registered = new Set<FfiOpaque>();
 
   /** @internal Construct from a fetched/started handle. Use the voice ops, not this. */
   constructor(client: DiscordClient, handle: FfiOpaque) {
     this.#client = client;
     this.#handle = handle;
-    this.#channelId = bindings(client.lib).channelId(handle) as bigint;
+    this.#channelId = bindings(client.lib).channelId(handle) as ChannelId;
   }
 
   /** The id of the lobby/channel this call is in. */
-  get channelId(): bigint {
+  get channelId(): ChannelId {
     return this.#channelId;
   }
 
   /** The guild id this call is associated with. */
-  get guildId(): bigint {
-    return bindings(this.#client.lib).guildId(this.#handle) as bigint;
+  get guildId(): GuildId {
+    return bindings(this.#client.lib).guildId(this.#handle) as GuildId;
   }
 
   /** The current call status (re-read live). Not usable until `connected`. */
@@ -114,10 +115,10 @@ export class Call {
   }
 
   /** The participant user ids (re-read live). */
-  get participants(): bigint[] {
+  get participants(): UserId[] {
     const span = this.#client.lib.allocSpanOut();
     bindings(this.#client.lib).participants(this.#handle, span);
-    return this.#client.lib.readUInt64Span(span);
+    return this.#client.lib.readUInt64Span(span) as UserId[];
   }
 
   /** Whether the current user's mic is muted (re-read live). */
@@ -147,7 +148,7 @@ export class Call {
   }
 
   /** Read a participant's self-mute/deaf state, if they're in the call (live). */
-  voiceState = (userId: bigint): VoiceState | undefined => {
+  voiceState = (userId: UserId): VoiceState | undefined => {
     const out = this.#client.lib.allocHandle();
     return bindings(this.#client.lib).voiceState(this.#handle, userId, out)
       ? readVoiceState(this.#client.lib, out)
@@ -155,11 +156,11 @@ export class Call {
   };
 
   /** Whether the current user has locally muted `userId` for themselves. */
-  localMute = (userId: bigint): boolean =>
+  localMute = (userId: UserId): boolean =>
     Boolean(bindings(this.#client.lib).localMute(this.#handle, userId));
 
   /** The local playout volume set for `userId` (range 0..200, 100 = default). */
-  participantVolume = (userId: bigint): number =>
+  participantVolume = (userId: UserId): number =>
     Number(bindings(this.#client.lib).participantVolume(this.#handle, userId));
 
   /** Mute/unmute the current user's microphone for everyone in the call. */
@@ -173,12 +174,12 @@ export class Call {
   };
 
   /** Locally mute/unmute `userId` (only for the current user, not others). */
-  setLocalMute = (userId: bigint, mute: boolean): void => {
+  setLocalMute = (userId: UserId, mute: boolean): void => {
     bindings(this.#client.lib).setLocalMute(this.#handle, userId, mute);
   };
 
   /** Locally set `userId`'s playout volume (0..200, 100 = default). */
-  setParticipantVolume = (userId: bigint, volume: number): void => {
+  setParticipantVolume = (userId: UserId, volume: number): void => {
     bindings(this.#client.lib).setParticipantVolume(
       this.#handle,
       userId,
@@ -236,37 +237,37 @@ export class Call {
 
   /** Subscribe to participants joining/leaving. `added` is true on join. */
   onParticipantChanged = (
-    handler: (userId: bigint, added: boolean) => void
+    handler: (userId: UserId, added: boolean) => void
   ): Subscription => {
     const b = bindings(this.#client.lib);
     return this.#subscribe(
       (self, ptr) => b.setParticipantCb(self, ptr, null, null),
       b.participantChangedCb,
       (userId: unknown, added: unknown) =>
-        handler(BigInt(userId as bigint), Boolean(added))
+        handler(BigInt(userId as bigint) as UserId, Boolean(added))
     );
   };
 
   /** Subscribe to a participant starting/stopping speaking. */
   onSpeakingStatusChanged = (
-    handler: (userId: bigint, speaking: boolean) => void
+    handler: (userId: UserId, speaking: boolean) => void
   ): Subscription => {
     const b = bindings(this.#client.lib);
     return this.#subscribe(
       (self, ptr) => b.setSpeakingCb(self, ptr, null, null),
       b.speakingCb,
       (userId: unknown, speaking: unknown) =>
-        handler(BigInt(userId as bigint), Boolean(speaking))
+        handler(BigInt(userId as bigint) as UserId, Boolean(speaking))
     );
   };
 
   /** Subscribe to a participant's voice state (their self-mute/deaf) changing. */
-  onVoiceStateChanged = (handler: (userId: bigint) => void): Subscription => {
+  onVoiceStateChanged = (handler: (userId: UserId) => void): Subscription => {
     const b = bindings(this.#client.lib);
     return this.#subscribe(
       (self, ptr) => b.setVoiceStateCb(self, ptr, null, null),
       b.voiceStateChangedCb,
-      (userId: unknown) => handler(BigInt(userId as bigint))
+      (userId: unknown) => handler(BigInt(userId as bigint) as UserId)
     );
   };
 

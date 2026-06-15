@@ -1,3 +1,4 @@
+import type { ChannelId, LobbyId, MessageId, UserId } from "../snowflake.js";
 import type { User } from "../users/types.js";
 import { CHANNEL_TYPE_BY_CODE, type ChannelType } from "../lobby/types.js";
 
@@ -56,21 +57,21 @@ export interface AdditionalContent {
 /** A snapshot of the channel a message was sent in. */
 export interface Channel {
   /** The channel's id. */
-  id: bigint;
+  id: ChannelId;
   /** The channel's name (usually only server channels are named). */
   name: string;
   /** The channel's type — distinguishes DM / ephemeral DM / lobby / group DM. */
   type: ChannelType;
   /** For DMs/group DMs, the member user ids; empty for other channel types. */
-  recipientIds: bigint[];
+  recipientIds: UserId[];
 }
 
 /** A snapshot of a DM conversation summary (`getUserMessageSummaries`). */
 export interface UserMessageSummary {
   /** The other user in the DM. */
-  userId: bigint;
+  userId: UserId;
   /** The id of the last message in the conversation. */
-  lastMessageId: bigint;
+  lastMessageId: MessageId;
 }
 
 /**
@@ -78,24 +79,24 @@ export interface UserMessageSummary {
  */
 export interface Message {
   /** The message's id. */
-  id: bigint;
+  id: MessageId;
   /** The message content, with emoji/mention markup humanized (`@username`,
    * `:emoji:`). May be empty (e.g. a Discord message that's only an image). */
   content: string;
   /** The raw content, markup NOT humanized. */
   rawContent: string;
   /** The author's user id. */
-  authorId: bigint;
+  authorId: UserId;
   /** The author, if the SDK has their user handle. */
   author?: User;
   /** The channel id this message was sent in. */
-  channelId: bigint;
+  channelId: ChannelId;
   /** The channel, if the SDK has its handle. */
   channel?: Channel;
   /** When sent in a DM, the other user's id; else `0n`. */
-  recipientId: bigint;
+  recipientId: UserId;
   /** The lobby id this message was sent in, if it was a lobby message. */
-  lobbyId?: bigint;
+  lobbyId?: LobbyId;
   /** Whether the message was sent in-game (vs. from Discord itself). */
   sentFromGame: boolean;
   /** Sent time, ms since epoch. */

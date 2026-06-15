@@ -1,4 +1,5 @@
 import { clientEventFanout, type EventOptions } from "../ffi/eventFanout.js";
+import type { LobbyId, UserId } from "../snowflake.js";
 
 /**
  * The lobby domain's client-wide event streams, built on the shared
@@ -45,17 +46,17 @@ const events = clientEventFanout({
 export type LobbyEventOptions = EventOptions;
 
 /** Subscribe to any lobby being created. Handler gets the new lobby's id. */
-export const onLobbyCreated = events<(lobbyId: bigint) => void>(`created`);
+export const onLobbyCreated = events<(lobbyId: LobbyId) => void>(`created`);
 /** Subscribe to any lobby being deleted. Handler gets the deleted lobby's id. */
-export const onLobbyDeleted = events<(lobbyId: bigint) => void>(`deleted`);
+export const onLobbyDeleted = events<(lobbyId: LobbyId) => void>(`deleted`);
 /** Subscribe to any lobby being updated. Handler gets the lobby's id. */
-export const onLobbyUpdated = events<(lobbyId: bigint) => void>(`updated`);
+export const onLobbyUpdated = events<(lobbyId: LobbyId) => void>(`updated`);
 /** Subscribe to a member being added to any lobby. */
 export const onLobbyMemberAdded =
-  events<(lobbyId: bigint, memberId: bigint) => void>(`memberAdded`);
+  events<(lobbyId: LobbyId, memberId: UserId) => void>(`memberAdded`);
 /** Subscribe to a member being removed from any lobby. */
 export const onLobbyMemberRemoved =
-  events<(lobbyId: bigint, memberId: bigint) => void>(`memberRemoved`);
+  events<(lobbyId: LobbyId, memberId: UserId) => void>(`memberRemoved`);
 /** Subscribe to a member of any lobby being updated. */
 export const onLobbyMemberUpdated =
-  events<(lobbyId: bigint, memberId: bigint) => void>(`memberUpdated`);
+  events<(lobbyId: LobbyId, memberId: UserId) => void>(`memberUpdated`);

@@ -1,6 +1,7 @@
 import { defineBindings } from "../ffi/bindings.js";
 import { readString } from "../ffi/readers.js";
 import type { FfiLibrary, FfiOpaque } from "../ffi/backend.js";
+import type { ChannelId, UserId } from "../snowflake.js";
 import { CHANNEL_TYPE_BY_CODE, type Channel } from "./types.js";
 
 /**
@@ -19,9 +20,9 @@ export const readChannel = (lib: FfiLibrary, handle: FfiOpaque): Channel => {
   const recipients = lib.allocSpanOut();
   b.recipients(handle, recipients);
   return {
-    id: b.id(handle) as bigint,
+    id: b.id(handle) as ChannelId,
     name: readString(lib, handle, b.name),
     type: CHANNEL_TYPE_BY_CODE[Number(b.type(handle))] ?? `unknown`,
-    recipientIds: lib.readUInt64Span(recipients)
+    recipientIds: lib.readUInt64Span(recipients) as UserId[]
   };
 };

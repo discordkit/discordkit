@@ -2,6 +2,7 @@ import { useClient } from "../ambient.js";
 import type { DiscordClient } from "../client.js";
 import { awaitResult, defineBindings } from "../ffi/bindings.js";
 import type { FfiOpaque } from "../ffi/backend.js";
+import type { GuildId, LobbyId } from "../snowflake.js";
 import { Lobby } from "./lobbyHandle.js";
 import { readGuild, readGuildChannel } from "./guildChannel.js";
 import type { Guild, GuildChannel } from "./types.js";
@@ -48,7 +49,7 @@ export interface LobbyOptions {
 /** Fetch a lobby handle by id and wrap it, or `undefined` if not a member. */
 const wrapLobby = (
   client: DiscordClient,
-  lobbyId: bigint
+  lobbyId: LobbyId
 ): Lobby | undefined => {
   const out = client.lib.allocHandle();
   return bindings(client.lib).getLobbyHandle(client.handle, lobbyId, out)
@@ -71,7 +72,7 @@ export const createOrJoinLobby = async (
   const client = options.client ?? useClient();
   const b = bindings(client.lib);
   const hasMeta = options.metadata ?? options.memberMetadata;
-  const lobbyId = await awaitResult<bigint>(
+  const lobbyId = await awaitResult<LobbyId>(
     client,
     b.createCb,
     (ptr) =>
@@ -92,7 +93,7 @@ export const createOrJoinLobby = async (
             null,
             null
           ),
-    (id) => BigInt(id as bigint),
+    (id) => BigInt(id as bigint) as LobbyId,
     { timeoutMs: options.timeoutMs, label: `create or join lobby` }
   );
   const lobby = wrapLobby(client, lobbyId);
@@ -109,7 +110,7 @@ export const createOrJoinLobby = async (
  * Get a lobby the current user is a member of, by id, as a live {@link Lobby} — or `undefined` if they're not a member. Synchronous (reads the SDK's cache).
  */
 export const getLobby = (
-  lobbyId: bigint,
+  lobbyId: LobbyId,
   options: { client?: DiscordClient } = {}
 ): Lobby | undefined => wrapLobby(options.client ?? useClient(), lobbyId);
 
@@ -118,11 +119,11 @@ export const getLobby = (
  */
 export const getLobbyIds = (
   options: { client?: DiscordClient } = {}
-): bigint[] => {
+): LobbyId[] => {
   const client = options.client ?? useClient();
   const span = client.lib.allocSpanOut();
   bindings(client.lib).getLobbyIds(client.handle, span);
-  return client.lib.readUInt64Span(span);
+  return client.lib.readUInt64Span(span) as LobbyId[];
 };
 
 /**
@@ -146,7 +147,7 @@ export const getUserGuilds = async (
  * Fetch the channels of one guild the current user can see — the candidates for linking a lobby to a Discord channel. Inspect each {@link GuildChannel}'s `linkable` / `viewableByAll` before offering it (see the SDK's private-channel warning). Resolves with snapshots.
  */
 export const getGuildChannels = async (
-  guildId: bigint,
+  guildId: GuildId,
   options: LobbyOptions = {}
 ): Promise<GuildChannel[]> => {
   const client = options.client ?? useClient();

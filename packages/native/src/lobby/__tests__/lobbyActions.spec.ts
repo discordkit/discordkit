@@ -13,6 +13,7 @@ import {
   getUserGuilds,
   getGuildChannels
 } from "../lobbies.js";
+import { channelId, guildId } from "../../__tests__/ids.js";
 
 const config = {
   applicationId: 123n,
@@ -34,7 +35,7 @@ describe(`lobby actions + discovery (mock backend)`, () => {
     scriptLobby(state, lobby);
     const l = await createOrJoinLobby(`s`, { client });
 
-    await l.linkChannel(900n);
+    await l.linkChannel(channelId(900n));
     await l.unlinkChannel();
     await l.leave();
 
@@ -91,7 +92,7 @@ describe(`lobby actions + discovery (mock backend)`, () => {
       }
     ]);
 
-    const channels = await getGuildChannels(800n, { client });
+    const channels = await getGuildChannels(guildId(800n), { client });
 
     // Why: the picker must surface linkable/viewableByAll (to warn about private
     // channels) and the already-linked lobby — the optional parentId/linkedLobby

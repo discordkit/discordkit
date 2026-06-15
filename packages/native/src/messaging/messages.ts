@@ -1,6 +1,7 @@
 import { useClient } from "../ambient.js";
 import type { DiscordClient } from "../client.js";
 import { awaitResult, defineBindings } from "../ffi/bindings.js";
+import type { ChannelId, LobbyId, MessageId, UserId } from "../snowflake.js";
 import { readMessage } from "./messageHandle.js";
 import { readChannel } from "./channelHandle.js";
 import type { Channel, Message, UserMessageSummary } from "./types.js";
@@ -74,13 +75,13 @@ export interface MessageOptions {
  * ```
  */
 export const sendUserMessage = async (
-  recipientId: bigint,
+  recipientId: UserId,
   content: string,
   options: MessageOptions & { metadata?: Record<string, string> } = {}
-): Promise<bigint> => {
+): Promise<MessageId> => {
   const client = options.client ?? useClient();
   const b = bindings(client.lib);
-  return awaitResult<bigint>(
+  return awaitResult<MessageId>(
     client,
     b.sendCb,
     (ptr) =>
@@ -102,20 +103,20 @@ export const sendUserMessage = async (
             null,
             null
           ),
-    (messageId) => BigInt(messageId as bigint),
+    (messageId) => BigInt(messageId as bigint) as MessageId,
     { timeoutMs: options.timeoutMs, label: `send user message` }
   );
 };
 
 /** Send a message to a lobby, optionally with metadata. Resolves with the new message's id. */
 export const sendLobbyMessage = async (
-  lobbyId: bigint,
+  lobbyId: LobbyId,
   content: string,
   options: MessageOptions & { metadata?: Record<string, string> } = {}
-): Promise<bigint> => {
+): Promise<MessageId> => {
   const client = options.client ?? useClient();
   const b = bindings(client.lib);
-  return awaitResult<bigint>(
+  return awaitResult<MessageId>(
     client,
     b.sendCb,
     (ptr) =>
@@ -137,15 +138,15 @@ export const sendLobbyMessage = async (
             null,
             null
           ),
-    (messageId) => BigInt(messageId as bigint),
+    (messageId) => BigInt(messageId as bigint) as MessageId,
     { timeoutMs: options.timeoutMs, label: `send lobby message` }
   );
 };
 
 /** Edit a DM message (keyed by the DM recipient + message id). */
 export const editUserMessage = async (
-  recipientId: bigint,
-  messageId: bigint,
+  recipientId: UserId,
+  messageId: MessageId,
   content: string,
   options: MessageOptions = {}
 ): Promise<void> => {
@@ -171,8 +172,8 @@ export const editUserMessage = async (
 
 /** Delete a DM message (keyed by the DM recipient + message id). */
 export const deleteUserMessage = async (
-  recipientId: bigint,
-  messageId: bigint,
+  recipientId: UserId,
+  messageId: MessageId,
   options: MessageOptions = {}
 ): Promise<void> => {
   const client = options.client ?? useClient();
@@ -189,7 +190,7 @@ export const deleteUserMessage = async (
 
 /** Get one message by id as a {@link Message} snapshot, or `undefined` if the SDK no longer has it. Synchronous. */
 export const getMessage = (
-  messageId: bigint,
+  messageId: MessageId,
   options: { client?: DiscordClient } = {}
 ): Message | undefined => {
   const client = options.client ?? useClient();
@@ -201,7 +202,7 @@ export const getMessage = (
 
 /** Get one channel by id as a {@link Channel} snapshot, or `undefined`. Synchronous. */
 export const getChannel = (
-  channelId: bigint,
+  channelId: ChannelId,
   options: { client?: DiscordClient } = {}
 ): Channel | undefined => {
   const client = options.client ?? useClient();
@@ -217,7 +218,7 @@ const readMessages = (client: DiscordClient, span: unknown): Message[] =>
 
 /** Get the most recent messages in a DM with a user (newest-first, up to `limit`). */
 export const getUserMessages = async (
-  recipientId: bigint,
+  recipientId: UserId,
   limit: number,
   options: MessageOptions = {}
 ): Promise<Message[]> => {
@@ -235,7 +236,7 @@ export const getUserMessages = async (
 
 /** Get the most recent messages in a lobby (newest-first, up to `limit`). */
 export const getLobbyMessages = async (
-  lobbyId: bigint,
+  lobbyId: LobbyId,
   limit: number,
   options: MessageOptions = {}
 ): Promise<Message[]> => {
@@ -262,8 +263,8 @@ export const getUserMessageSummaries = async (
     (ptr) => b.getSummaries(client.handle, ptr, null, null),
     (span) =>
       client.lib.readSpan(span).map((h) => ({
-        userId: b.summaryUserId(h) as bigint,
-        lastMessageId: b.summaryLastMessageId(h) as bigint
+        userId: b.summaryUserId(h) as UserId,
+        lastMessageId: b.summaryLastMessageId(h) as MessageId
       })),
     { timeoutMs: options.timeoutMs, label: `get user message summaries` }
   );
@@ -271,7 +272,7 @@ export const getUserMessageSummaries = async (
 
 /** Whether a message can be opened in the Discord client (sync check). */
 export const canOpenMessageInDiscord = (
-  messageId: bigint,
+  messageId: MessageId,
   options: { client?: DiscordClient } = {}
 ): boolean => {
   const client = options.client ?? useClient();
@@ -284,7 +285,7 @@ export const canOpenMessageInDiscord = (
  * Open a message in the Discord client (e.g. to view unrenderable content). Resolves when the SDK acks. The SDK's provisional-user-merge callback is passed a no-op for now; the provisional-account merge flow will be handled when that slice lands.
  */
 export const openMessageInDiscord = async (
-  messageId: bigint,
+  messageId: MessageId,
   options: MessageOptions = {}
 ): Promise<void> => {
   const client = options.client ?? useClient();

@@ -1,6 +1,7 @@
 import { defineBindings } from "../ffi/bindings.js";
 import { readPropertiesOf } from "../ffi/readers.js";
 import type { FfiLibrary, FfiOpaque } from "../ffi/backend.js";
+import type { UserId } from "../snowflake.js";
 import { readUser } from "../users/userHandle.js";
 import type { LobbyMember } from "./types.js";
 
@@ -29,7 +30,7 @@ export const readLobbyMember = (
   const user = b.user(handle, userOut) ? readUser(lib, userOut) : undefined;
 
   return {
-    id: b.id(handle) as bigint,
+    id: b.id(handle) as UserId,
     connected: Boolean(b.connected(handle)),
     canLinkLobby: Boolean(b.canLinkLobby(handle)),
     metadata: readPropertiesOf(lib, handle, b.metadata),

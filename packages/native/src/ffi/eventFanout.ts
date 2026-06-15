@@ -61,7 +61,7 @@ export interface EventOptions {
  */
 export const clientEventFanout = <const E extends Record<string, FanoutEvent>>(
   events: E
-): (<H extends (...args: bigint[]) => void>(
+): (<H extends (...args: never[]) => void>(
   event: keyof E
 ) => (handler: H, options?: EventOptions) => Subscription) => {
   // One binding decl set: each event's setter + a deduped callback per prototype.
@@ -111,13 +111,17 @@ export const clientEventFanout = <const E extends Record<string, FanoutEvent>>(
     return subscribers;
   };
 
-  return <H extends (...args: bigint[]) => void>(event: keyof E) =>
+  return <H extends (...args: never[]) => void>(event: keyof E) =>
     (handler: H, options: EventOptions = {}): Subscription => {
       const client = options.client ?? useClient();
       const set = subscribersFor(client, event);
-      set.add(handler as Subscriber);
+      // The public handler is typed with branded id params (e.g. (id: LobbyId));
+      // the internal Subscriber set is raw (bigint[]) since the fanout produces
+      // raw ids and brands them at the call boundary — so this re-cast is sound.
+      const subscriber = handler as unknown as Subscriber;
+      set.add(subscriber);
       return toSubscription(() => {
-        set.delete(handler as Subscriber);
+        set.delete(subscriber);
       });
     };
 };

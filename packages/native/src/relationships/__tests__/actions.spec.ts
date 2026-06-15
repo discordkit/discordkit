@@ -18,6 +18,7 @@ import {
   sendDiscordFriendRequestById,
   sendGameFriendRequestById
 } from "../relationships.js";
+import { userId } from "../../__tests__/ids.js";
 
 const config = {
   applicationId: 123n,
@@ -29,11 +30,11 @@ describe(`relationship actions (mock backend)`, () => {
   it(`userId actions resolve when the SDK acks, calling the right C function`, async () => {
     using client = createClient(config);
     const state = mockStateOf(client.lib);
-    await blockUser(99n, { client });
-    await unblockUser(99n, { client });
-    await acceptDiscordFriendRequest(42n, { client });
-    await removeFriend(42n, { client });
-    await sendGameFriendRequestById(7n, { client });
+    await blockUser(userId(99n), { client });
+    await unblockUser(userId(99n), { client });
+    await acceptDiscordFriendRequest(userId(42n), { client });
+    await removeFriend(userId(42n), { client });
+    await sendGameFriendRequestById(userId(7n), { client });
     // Why: every action funnels through the same awaitResult bridge; this proves
     // each export wires to its own C function and resolves on the result ack.
     expect(relationshipActionsOf(state)).toEqual([
@@ -102,7 +103,7 @@ describe(`relationship actions (mock backend)`, () => {
     async (_name, op, cFunction) => {
       using client = createClient(config);
       const state = mockStateOf(client.lib);
-      await op(42n, { client });
+      await op(userId(42n), { client });
       expect(relationshipActionsOf(state)).toEqual([cFunction]);
     }
   );

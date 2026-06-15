@@ -1,4 +1,5 @@
 import { clientEventFanout, type EventOptions } from "../ffi/eventFanout.js";
+import type { ChannelId, MessageId } from "../snowflake.js";
 
 /**
  * The messaging domain's client-wide event streams, built on the shared
@@ -30,9 +31,11 @@ const events = clientEventFanout({
 export type MessageEventOptions = EventOptions;
 
 /** Subscribe to incoming messages. Handler gets the new message's id. */
-export const onMessageCreated = events<(messageId: bigint) => void>(`created`);
+export const onMessageCreated =
+  events<(messageId: MessageId) => void>(`created`);
 /** Subscribe to message edits. Handler gets the edited message's id. */
-export const onMessageUpdated = events<(messageId: bigint) => void>(`updated`);
+export const onMessageUpdated =
+  events<(messageId: MessageId) => void>(`updated`);
 /** Subscribe to message deletions. Handler gets the message id + its channel id. */
 export const onMessageDeleted =
-  events<(messageId: bigint, channelId: bigint) => void>(`deleted`);
+  events<(messageId: MessageId, channelId: ChannelId) => void>(`deleted`);

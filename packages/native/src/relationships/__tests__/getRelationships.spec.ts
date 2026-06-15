@@ -3,6 +3,7 @@ import { createClient } from "../../client.js";
 import { mockBackend, mockStateOf } from "../../__tests__/mockBackend.js";
 import { scriptRelationships, type ScriptedRelationship } from "./mock.js";
 import { getRelationships, getRelationship } from "../relationships.js";
+import { userId } from "../../__tests__/ids.js";
 
 const config = {
   applicationId: 123n,
@@ -62,7 +63,7 @@ describe(`getRelationships (mock backend)`, () => {
   it(`getRelationship reads a single relationship by id`, () => {
     using client = createClient(config);
     scriptRelationships(mockStateOf(client.lib), [FRIEND]);
-    const rel = getRelationship(42n, { client });
+    const rel = getRelationship(userId(42n), { client });
     expect(rel.userId).toBe(42n);
     expect(rel.discordType).toBe(`friend`);
   });

@@ -8,6 +8,7 @@ import {
   editUserMessage,
   deleteUserMessage
 } from "../messages.js";
+import { userId, lobbyId, messageId } from "../../__tests__/ids.js";
 
 const config = {
   applicationId: 123n,
@@ -22,7 +23,7 @@ describe(`send/edit/delete messages (mock backend)`, () => {
     scriptNextMessageId(state, 7777n);
     // Why: the send callback carries the new message id — the op must resolve with
     // it (so callers can getMessage it back), not void.
-    const id = await sendUserMessage(11n, `hello`, { client });
+    const id = await sendUserMessage(userId(11n), `hello`, { client });
     expect(id).toBe(7777n);
     expect(messageActionsOf(state)).toContain(`Discord_Client_SendUserMessage`);
   });
@@ -30,8 +31,11 @@ describe(`send/edit/delete messages (mock backend)`, () => {
   it(`metadata routes user + lobby sends to the WithMetadata C functions`, async () => {
     using client = createClient(config);
     const state = mockStateOf(client.lib);
-    await sendUserMessage(11n, `hi`, { client, metadata: { char: `mage` } });
-    await sendLobbyMessage(5000n, `hi all`, {
+    await sendUserMessage(userId(11n), `hi`, {
+      client,
+      metadata: { char: `mage` }
+    });
+    await sendLobbyMessage(lobbyId(5000n), `hi all`, {
       client,
       metadata: { channel: `team` }
     });
@@ -48,7 +52,7 @@ describe(`send/edit/delete messages (mock backend)`, () => {
   it(`sendLobbyMessage without metadata uses the plain C function`, async () => {
     using client = createClient(config);
     const state = mockStateOf(client.lib);
-    await sendLobbyMessage(5000n, `hi`, { client });
+    await sendLobbyMessage(lobbyId(5000n), `hi`, { client });
     expect(messageActionsOf(state)).toContain(
       `Discord_Client_SendLobbyMessage`
     );
@@ -60,8 +64,8 @@ describe(`send/edit/delete messages (mock backend)`, () => {
   it(`edit/delete are DM-keyed and resolve on ack`, async () => {
     using client = createClient(config);
     const state = mockStateOf(client.lib);
-    await editUserMessage(11n, 7000n, `edited`, { client });
-    await deleteUserMessage(11n, 7000n, { client });
+    await editUserMessage(userId(11n), messageId(7000n), `edited`, { client });
+    await deleteUserMessage(userId(11n), messageId(7000n), { client });
     // Why: edit/delete take (recipientId, messageId) — the C ABI only exposes
     // them for DMs — and ack via a result-only callback.
     expect(messageActionsOf(state)).toEqual([

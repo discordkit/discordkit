@@ -3,6 +3,7 @@ import { toSubscription } from "../client.js";
 import type { DiscordClient, Subscription } from "../client.js";
 import { awaitCallback, awaitResult, defineBindings } from "../ffi/bindings.js";
 import type { FfiOpaque } from "../ffi/backend.js";
+import type { ChannelId } from "../snowflake.js";
 import { Call } from "./call.js";
 import { readAudioDevice } from "./voiceStateHandle.js";
 import type { AudioDevice } from "./types.js";
@@ -75,7 +76,7 @@ export interface VoiceOptions {
  * Start (or join) a voice call in a lobby, returning the live {@link Call} synchronously. The call isn't usable until `call.status` reaches `connected` — subscribe with `call.onStatusChanged`. Returns `undefined` if the SDK couldn't start the call.
  */
 export const startCall = (
-  channelId: bigint,
+  channelId: ChannelId,
   options: { client?: DiscordClient } = {}
 ): Call | undefined => {
   const client = options.client ?? useClient();
@@ -87,7 +88,7 @@ export const startCall = (
 
 /** Get the active call in a lobby as a live {@link Call}, or `undefined`. Synchronous. */
 export const getCall = (
-  channelId: bigint,
+  channelId: ChannelId,
   options: { client?: DiscordClient } = {}
 ): Call | undefined => {
   const client = options.client ?? useClient();
@@ -107,7 +108,7 @@ export const getCalls = (options: { client?: DiscordClient } = {}): Call[] => {
 
 /** End the call in a lobby. Resolves when the SDK acks (no result to fail on). */
 export const endCall = async (
-  channelId: bigint,
+  channelId: ChannelId,
   options: VoiceOptions = {}
 ): Promise<void> => {
   const client = options.client ?? useClient();
