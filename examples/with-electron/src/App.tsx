@@ -1,4 +1,3 @@
-import "@discordkit/electron/renderer";
 import { valibotResolver } from "@hookform/resolvers/valibot";
 import { useMemo, useRef } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
@@ -292,9 +291,10 @@ export const App = (): React.JSX.Element => {
         </div>
 
         <p className="text-xs text-[#949ba4]">
-          SDK status: {status} — Rich Presence doesn&apos;t require an
-          authenticated connection, so this stays “Disconnected” unless you sign
-          in. Your presence still appears regardless.
+          SDK status: {status.charAt(0).toUpperCase() + status.slice(1)} — Rich
+          Presence doesn&apos;t require an authenticated connection, so this
+          stays “Disconnected” unless you sign in. Your presence still appears
+          regardless.
         </p>
       </aside>
     </main>

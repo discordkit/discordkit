@@ -2,20 +2,25 @@
  * `@discordkit/electron` — run the Discord Social SDK in Electron's main process
  * and reach it from the renderer over a typed IPC bridge.
  *
- * Import the piece for each Electron context (they live in subpaths so a context
- * only pulls in what it can use):
+ * The bridge is **composed per-domain**, mirroring `@discordkit/native`'s
+ * subpaths, so an app bundles only the native code for the features it wires
+ * (importing presence does not pull in voice). Import the piece for each Electron
+ * context + each domain you use:
  *
- * - `@discordkit/electron/main`     — `registerDiscord(ipcMain, opts)` (main process)
- * - `@discordkit/electron/preload`  — `exposeDiscord(contextBridge, ipcRenderer)`
- * - `@discordkit/electron/renderer` — ambient `window.discord` typing
+ * - `@discordkit/electron/main`            — `registerDiscord` (core)
+ * - `@discordkit/electron/main/<domain>`   — `registerUsers`, `registerLobbies`, …
+ * - `@discordkit/electron/preload`         — `exposeDiscord` (core)
+ * - `@discordkit/electron/preload/<domain>`— `usersSlice`, `lobbiesSlice`, …
+ * - `@discordkit/electron/renderer`        — `CoreBridge` / `FullBridge` typing
+ * - `@discordkit/electron/renderer/<domain>` — per-domain bridge typing
  *
- * The root entry re-exports only the shared IPC contract (channel names + types),
- * useful if you wire the bridge yourself.
+ * The root entry re-exports only the shared CORE IPC contract (channel names +
+ * core types), useful if you wire the bridge yourself.
  */
 
-export { CHANNELS } from "./channels.js";
+export { CORE_CHANNELS } from "./channels/core.js";
 export type {
-  DiscordBridge,
+  CoreBridge,
   ConnectMessage,
   ActivityMessage
-} from "./channels.js";
+} from "./channels/core.js";

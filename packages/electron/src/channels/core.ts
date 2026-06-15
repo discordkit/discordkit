@@ -1,8 +1,12 @@
 /**
- * The IPC contract shared by the main, preload, and renderer sides of the
- * adapter. Keeping channel names and payload shapes in one module is what makes
- * the bridge type-safe across the process boundary — main and renderer agree on
- * exactly these strings and types.
+ * The CORE IPC contract — lifecycle, presence, auth, status, log. Every
+ * integration uses these, so they live in the always-loaded core (unlike the
+ * opt-in feature domains under `channels/<domain>.ts`).
+ *
+ * Each domain owns its own channel names + payload types in its own module, so
+ * importing one domain's contract never drags in another's native type imports.
+ * Channel strings are namespaced `discordkit:<domain>:<op>` to avoid colliding
+ * with an app's own IPC.
  */
 
 import type {
@@ -12,19 +16,13 @@ import type {
 import type { ScopeSet } from "@discordkit/native/auth";
 import type { LogEntry, Status } from "@discordkit/native";
 
-/** Channel names. Namespaced to avoid collisions with an app's own IPC. */
-export const CHANNELS = {
-  /** renderer → main, invoke: run the OAuth2 flow + connect. */
+/** Core channel names (lifecycle / presence / auth / status / log). */
+export const CORE_CHANNELS = {
   connect: `discordkit:connect`,
-  /** renderer → main, invoke: set rich presence. */
   setActivity: `discordkit:setActivity`,
-  /** renderer → main, invoke: clear rich presence. */
   clearActivity: `discordkit:clearActivity`,
-  /** renderer → main, invoke: read the current status synchronously. */
   getStatus: `discordkit:getStatus`,
-  /** main → renderer, send: status changed. */
   status: `discordkit:status`,
-  /** main → renderer, send: a log line. */
   log: `discordkit:log`
 } as const;
 
@@ -33,16 +31,13 @@ export const CHANNELS = {
  * The renderer client re-offers the builder form and normalizes it before send. */
 export type ActivityMessage = ActivityInput;
 
-/** Payload for {@link CHANNELS.connect}. */
+/** Payload for {@link CORE_CHANNELS.connect}. */
 export interface ConnectMessage {
   scopes?: ScopeSet;
 }
 
-/**
- * The API exposed to the renderer on `window.discord` by the preload bridge.
- * The renderer-side client implements this; the preload wires it to IPC.
- */
-export interface DiscordBridge {
+/** The core surface on `window.discord` (before any domain slices are merged in). */
+export interface CoreBridge {
   /** Run the Discord OAuth2 flow (opens the system browser) and connect. */
   connect: (message?: ConnectMessage) => Promise<void>;
   /** Set rich presence. Accepts the object form, or a builder callback. */

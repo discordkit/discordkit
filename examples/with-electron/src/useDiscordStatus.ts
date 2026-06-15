@@ -13,7 +13,7 @@ interface StatusStore {
  * `useSyncExternalStore` needs a SYNCHRONOUS `getSnapshot`, but the bridge's `getStatus()` is async (an IPC round-trip). We bridge that by caching the latest status: `onStatus` updates the cache as events arrive, and the first subscriber seeds it once.
  */
 const createStatusStore = (): StatusStore => {
-  let current: Status = `Disconnected`;
+  let current: Status = `disconnected`;
   let seeded = false;
   const listeners = new Set<() => void>();
   const emit = (): void => {

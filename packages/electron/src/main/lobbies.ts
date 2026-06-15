@@ -1,0 +1,105 @@
+import {
+  createOrJoinLobby,
+  getLobby,
+  getLobbyIds,
+  getUserGuilds,
+  getGuildChannels,
+  onLobbyCreated,
+  onLobbyDeleted,
+  onLobbyUpdated,
+  onLobbyMemberAdded,
+  onLobbyMemberRemoved,
+  onLobbyMemberUpdated,
+  type Lobby
+} from "@discordkit/native/lobbies";
+import { LOBBY_CHANNELS, type LobbySnapshot } from "../channels/lobbies.js";
+import type { RegisterContext } from "../internal.js";
+
+/** Snapshot a live `Lobby` wrapper into the serializable shape sent over IPC. */
+const snapshot = (lobby: Lobby): LobbySnapshot => ({
+  id: lobby.id,
+  memberIds: lobby.memberIds,
+  members: lobby.members,
+  metadata: lobby.metadata,
+  ...(lobby.linkedChannel ? { linkedChannel: lobby.linkedChannel } : {})
+});
+
+/**
+ * Wire the lobbies domain: id-keyed RPC handlers (the live `Lobby` stays here and
+ * is re-resolved per action) + the lobby/member event broadcasts. Imports ONLY
+ * `@discordkit/native/lobbies`.
+ */
+export const registerLobbies = ({
+  handle,
+  broadcast,
+  track
+}: RegisterContext): void => {
+  /** Re-resolve a live lobby by id or throw (it was left/deleted). */
+  const requireLobby = (lobbyId: bigint): Lobby => {
+    const lobby = getLobby(lobbyId);
+    if (!lobby) {
+      throw new Error(
+        `No lobby ${lobbyId} for the current user — it may have been left or ` +
+          `deleted. Re-check membership with lobbies.getIds().`
+      );
+    }
+    return lobby;
+  };
+
+  handle(
+    LOBBY_CHANNELS.createOrJoin,
+    async (
+      _e,
+      secret: string,
+      metadata?: {
+        lobby?: Record<string, string>;
+        member?: Record<string, string>;
+      }
+    ) =>
+      snapshot(
+        await createOrJoinLobby(secret, {
+          metadata: metadata?.lobby,
+          memberMetadata: metadata?.member
+        })
+      )
+  );
+  handle(LOBBY_CHANNELS.get, (_e, lobbyId: bigint) => {
+    const lobby = getLobby(lobbyId);
+    return lobby ? snapshot(lobby) : undefined;
+  });
+  handle(LOBBY_CHANNELS.getIds, () => getLobbyIds());
+  handle(LOBBY_CHANNELS.leave, async (_e, lobbyId: bigint) =>
+    requireLobby(lobbyId).leave()
+  );
+  handle(
+    LOBBY_CHANNELS.linkChannel,
+    async (_e, lobbyId: bigint, channelId: bigint) =>
+      requireLobby(lobbyId).linkChannel(channelId)
+  );
+  handle(LOBBY_CHANNELS.unlinkChannel, async (_e, lobbyId: bigint) =>
+    requireLobby(lobbyId).unlinkChannel()
+  );
+  handle(LOBBY_CHANNELS.getUserGuilds, async () => getUserGuilds());
+  handle(LOBBY_CHANNELS.getGuildChannels, async (_e, guildId: bigint) =>
+    getGuildChannels(guildId)
+  );
+
+  track(onLobbyCreated((id) => broadcast(LOBBY_CHANNELS.created, id)));
+  track(onLobbyDeleted((id) => broadcast(LOBBY_CHANNELS.deleted, id)));
+  track(onLobbyUpdated((id) => broadcast(LOBBY_CHANNELS.updated, id)));
+  track(
+    onLobbyMemberAdded((lobbyId, memberId) =>
+      broadcast(LOBBY_CHANNELS.memberAdded, lobbyId, memberId)
+    )
+  );
+  track(
+    onLobbyMemberRemoved((lobbyId, memberId) =>
+      broadcast(LOBBY_CHANNELS.memberRemoved, lobbyId, memberId)
+    )
+  );
+  track(
+    onLobbyMemberUpdated((lobbyId, memberId) =>
+      broadcast(LOBBY_CHANNELS.memberUpdated, lobbyId, memberId)
+    )
+  );
+};

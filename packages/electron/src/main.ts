@@ -8,42 +8,46 @@ import {
 import { authorize } from "@discordkit/native/auth";
 import { setActivity, clearActivity } from "@discordkit/native/presence";
 import {
-  CHANNELS,
+  CORE_CHANNELS,
   type ConnectMessage,
   type ActivityMessage
-} from "./channels.js";
+} from "./channels/core.js";
+import type {
+  IpcMainLike,
+  RegisterContext,
+  WebContentsLike
+} from "./internal.js";
 
 /**
- * Minimal slices of Electron's main-process API we depend on, declared
- * structurally so the package doesn't hard-import `electron` (it's a peer, and
- * this keeps the types available without forcing the dependency at type-check).
+ * The CORE main-process registration — lifecycle, presence, auth, status, log.
+ * Importing this pulls in ONLY the presence + auth native subpaths, never the
+ * feature domains (users/relationships/lobbies/messaging/voice). Add a domain by
+ * importing its registrar from `@discordkit/electron/main/<domain>` and calling
+ * it with the {@link DiscordMainHandle.context} returned here — so an app's main
+ * bundle contains exactly the native code for the domains it actually wires.
  */
-interface IpcMainLike {
-  handle: (
-    channel: string,
-    listener: (event: unknown, ...args: any[]) => unknown
-  ) => void;
-}
-interface WebContentsLike {
-  send: (channel: string, ...args: any[]) => void;
-  isDestroyed: () => boolean;
-}
 
 /** Options for {@link registerDiscord}. */
 export interface RegisterDiscordOptions extends ClientConfig {
   /**
-   * The renderer targets that should receive status/log events. Pass your
-   * windows' `webContents` (e.g. `[mainWindow.webContents]`). You can also add
-   * more later via the returned handle's `addTarget`.
+   * The renderer targets that should receive status/log/event broadcasts. Pass
+   * your windows' `webContents` (e.g. `[mainWindow.webContents]`). Add more later
+   * via the returned handle's `addTarget`.
    */
   targets?: WebContentsLike[];
 }
 
-/** Handle returned by {@link registerDiscord} for lifecycle control. */
+/** Handle returned by {@link registerDiscord} for lifecycle + domain composition. */
 export interface DiscordMainHandle {
   /** Add another renderer target to receive events. */
   addTarget: (target: WebContentsLike) => void;
-  /** Tear down the client (stops the pump, drops the handle). */
+  /**
+   * The registration context to pass to per-domain registrars, e.g.
+   * `registerLobbies(handle.context)`. Lets each domain wire its handlers +
+   * broadcasts without importing the core or a sibling domain.
+   */
+  readonly context: RegisterContext;
+  /** Tear down the client (stops the pump, drops the handle, unsubscribes all). */
   dispose: () => void;
 }
 
@@ -52,7 +56,15 @@ export interface DiscordMainHandle {
  * renderer using the preload bridge can drive it. Call once during app startup,
  * after `app.whenReady()`, passing your `ipcMain` and window `webContents`.
  *
- * The SDK's ambient singleton is activated here; the renderer never touches FFI.
+ * This registers the core (presence/auth/status/log). For the feature domains,
+ * call their registrars with the returned `context`:
+ *
+ * ```ts
+ * import { registerDiscord } from "@discordkit/electron/main";
+ * import { registerLobbies } from "@discordkit/electron/main/lobbies";
+ * const discord = registerDiscord(ipcMain, { targets: [win.webContents] });
+ * registerLobbies(discord.context); // only now is the lobbies native code bundled
+ * ```
  */
 export const registerDiscord = (
   ipcMain: IpcMainLike,
@@ -62,41 +74,42 @@ export const registerDiscord = (
   const client = init(config);
 
   const sinks = new Set<WebContentsLike>(targets);
-  const broadcast = (channel: string, payload: unknown): void => {
+  const broadcast = (channel: string, ...payload: unknown[]): void => {
     for (const sink of sinks) {
-      if (!sink.isDestroyed()) sink.send(channel, payload);
+      if (!sink.isDestroyed()) sink.send(channel, ...payload);
     }
   };
 
-  // Forward the status signal + log stream to every renderer target.
-  const statusSub = subscribe(client.status, (status: Status) => {
-    broadcast(CHANNELS.status, status);
-  });
-  const logSub = client.onLog((entry) => {
-    broadcast(CHANNELS.log, entry);
-  });
+  const subs: Array<() => void> = [
+    subscribe(client.status, (status: Status) =>
+      broadcast(CORE_CHANNELS.status, status)
+    ),
+    client.onLog((entry) => broadcast(CORE_CHANNELS.log, entry))
+  ];
 
-  ipcMain.handle(CHANNELS.connect, async (_event, message?: ConnectMessage) => {
+  const handle = ipcMain.handle.bind(ipcMain);
+  handle(CORE_CHANNELS.connect, async (_e, message?: ConnectMessage) => {
     await authorize({ scopes: message?.scopes ?? `presence` });
   });
-  ipcMain.handle(
-    CHANNELS.setActivity,
-    async (_event, input: ActivityMessage) => {
-      await setActivity(input);
-    }
-  );
-  ipcMain.handle(CHANNELS.clearActivity, () => {
-    clearActivity();
+  handle(CORE_CHANNELS.setActivity, async (_e, input: ActivityMessage) => {
+    await setActivity(input);
   });
-  ipcMain.handle(CHANNELS.getStatus, () => client.status.get());
+  handle(CORE_CHANNELS.clearActivity, () => clearActivity());
+  handle(CORE_CHANNELS.getStatus, () => client.status.get());
+
+  const context: RegisterContext = {
+    handle,
+    broadcast,
+    track: (off) => subs.push(off)
+  };
 
   return {
     addTarget: (target) => {
       sinks.add(target);
     },
+    context,
     dispose: () => {
-      statusSub();
-      logSub();
+      for (const off of subs) off();
       shutdown();
     }
   };
