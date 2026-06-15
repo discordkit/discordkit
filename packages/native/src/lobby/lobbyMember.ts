@@ -1,4 +1,5 @@
 import { defineBindings } from "../ffi/bindings.js";
+import { readPropertiesOf } from "../ffi/readers.js";
 import type { FfiLibrary, FfiOpaque } from "../ffi/backend.js";
 import { readUser } from "../users/userHandle.js";
 import type { LobbyMember } from "./types.js";
@@ -23,9 +24,6 @@ export const readLobbyMember = (
 ): LobbyMember => {
   const b = bindings(lib);
 
-  const metaOut = lib.allocPropertiesOut();
-  b.metadata(handle, metaOut);
-
   // The member's user, when the SDK has the handle (bool-gated out-param).
   const userOut = lib.allocHandle();
   const user = b.user(handle, userOut) ? readUser(lib, userOut) : undefined;
@@ -34,7 +32,7 @@ export const readLobbyMember = (
     id: b.id(handle) as bigint,
     connected: Boolean(b.connected(handle)),
     canLinkLobby: Boolean(b.canLinkLobby(handle)),
-    metadata: lib.readProperties(metaOut),
+    metadata: readPropertiesOf(lib, handle, b.metadata),
     ...(user ? { user } : {})
   };
 };

@@ -102,6 +102,16 @@ describe(`lobby entry ops (mock backend)`, () => {
     expect(lobby.member(999n)).toBeUndefined();
   });
 
+  it(`lobby.linkedChannel is undefined when the lobby isn't linked`, async () => {
+    using client = createClient(config);
+    const state = mockStateOf(client.lib);
+    scriptLobby(state, { ...sampleLobby, id: 7000n, linkedChannel: undefined });
+    const lobby = await createOrJoinLobby(`s`, { client });
+    // Why: LinkedChannel is a bool-gated optional — an unlinked lobby must yield
+    // undefined, not a zeroed-out channel snapshot.
+    expect(lobby.linkedChannel).toBeUndefined();
+  });
+
   it(`getLobby returns undefined when the user is not a member`, () => {
     using client = createClient(config);
     const state = mockStateOf(client.lib);

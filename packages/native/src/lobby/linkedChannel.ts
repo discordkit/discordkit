@@ -1,4 +1,5 @@
 import { defineBindings } from "../ffi/bindings.js";
+import { readString } from "../ffi/readers.js";
 import type { FfiLibrary, FfiOpaque } from "../ffi/backend.js";
 import type { LinkedChannel } from "./types.js";
 
@@ -17,11 +18,9 @@ export const readLinkedChannel = (
   handle: FfiOpaque
 ): LinkedChannel => {
   const b = bindings(lib);
-  const nameOut = lib.allocStringOut();
-  b.name(handle, nameOut);
   return {
     id: b.id(handle) as bigint,
-    name: lib.decodeString(nameOut),
+    name: readString(lib, handle, b.name),
     guildId: b.guildId(handle) as bigint
   };
 };

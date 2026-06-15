@@ -1,4 +1,5 @@
 import { defineBindings } from "../ffi/bindings.js";
+import { readString } from "../ffi/readers.js";
 import type { FfiLibrary, FfiOpaque } from "../ffi/backend.js";
 import type { AudioDevice, VADThreshold, VoiceState } from "./types.js";
 
@@ -39,13 +40,9 @@ export const readAudioDevice = (
   handle: FfiOpaque
 ): AudioDevice => {
   const b = audioDevice(lib);
-  const idOut = lib.allocStringOut();
-  b.id(handle, idOut);
-  const nameOut = lib.allocStringOut();
-  b.name(handle, nameOut);
   return {
-    id: lib.decodeString(idOut),
-    name: lib.decodeString(nameOut),
+    id: readString(lib, handle, b.id),
+    name: readString(lib, handle, b.name),
     isDefault: Boolean(b.isDefault(handle))
   };
 };

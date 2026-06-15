@@ -1,4 +1,5 @@
 import { defineBindings } from "../ffi/bindings.js";
+import { readString } from "../ffi/readers.js";
 import type { FfiLibrary, FfiOpaque } from "../ffi/backend.js";
 import { CHANNEL_TYPE_BY_CODE, type Channel } from "./types.js";
 
@@ -15,13 +16,11 @@ const bindings = defineBindings({
 /** Read a native `ChannelHandle` into a plain {@link Channel} snapshot. */
 export const readChannel = (lib: FfiLibrary, handle: FfiOpaque): Channel => {
   const b = bindings(lib);
-  const nameOut = lib.allocStringOut();
-  b.name(handle, nameOut);
   const recipients = lib.allocSpanOut();
   b.recipients(handle, recipients);
   return {
     id: b.id(handle) as bigint,
-    name: lib.decodeString(nameOut),
+    name: readString(lib, handle, b.name),
     type: CHANNEL_TYPE_BY_CODE[Number(b.type(handle))] ?? `unknown`,
     recipientIds: lib.readUInt64Span(recipients)
   };

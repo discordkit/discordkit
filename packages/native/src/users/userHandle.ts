@@ -1,4 +1,5 @@
 import { defineBindings } from "../ffi/bindings.js";
+import { readGatedString } from "../ffi/readers.js";
 import type { FfiLibrary, FfiOpaque } from "../ffi/backend.js";
 import { STATUS_TYPE_BY_CODE, type User } from "./types.js";
 
@@ -20,34 +21,21 @@ const bindings = defineBindings({
 });
 
 /**
- * Read a string off a native handle whose C getter is `bool getter(self, Discord_String* out)` — the bool reports whether the value is present. Returns the decoded string, or `undefined` when absent. The shared shape for every optional-string field on a read handle.
- */
-const readOptionalString = (
-  lib: FfiLibrary,
-  present: unknown,
-  out: FfiOpaque
-): string | undefined => (present ? lib.decodeString(out) : undefined);
-
-/**
  * Read a native `UserHandle` into a plain {@link User} snapshot. The handle is not retained — every field is copied out now. A handle whose `Id()` is `0n` is no longer valid; callers that fetch a user should check validity before reading (see `getUser`).
+ *
+ * `username`/`displayName` are bool-gated like the optional strings, but the bool there is success (not optionality), so they fall back to `""`; `globalName`/`avatar` are genuinely optional and stay `undefined` when absent.
  */
 export const readUser = (lib: FfiLibrary, handle: FfiOpaque): User => {
   const b = bindings(lib);
-
-  const readString = (
-    getter: (self: FfiOpaque, out: FfiOpaque) => unknown
-  ): string | undefined => {
-    const out = lib.allocStringOut();
-    return readOptionalString(lib, getter(handle, out), out);
-  };
+  const gated = (getter: (self: FfiOpaque, out: FfiOpaque) => unknown) =>
+    readGatedString(lib, handle, getter);
 
   return {
     id: b.id(handle) as bigint,
-    // Required strings: the bool is success, not optionality — fall back to "".
-    username: readString(b.username) ?? ``,
-    displayName: readString(b.displayName) ?? ``,
-    globalName: readString(b.globalName),
-    avatar: readString(b.avatar),
+    username: gated(b.username) ?? ``,
+    displayName: gated(b.displayName) ?? ``,
+    globalName: gated(b.globalName),
+    avatar: gated(b.avatar),
     status: STATUS_TYPE_BY_CODE[Number(b.status(handle))] ?? `unknown`,
     provisional: Boolean(b.isProvisional(handle))
   };

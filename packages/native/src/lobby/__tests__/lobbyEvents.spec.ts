@@ -69,6 +69,46 @@ describe(`lobby events (mock backend)`, () => {
     expect(joined).toEqual([11n]);
   });
 
+  it(`lobby.onMemberRemoved / onMemberUpdated filter to their own lobby id`, async () => {
+    using client = createClient(config);
+    const state = mockStateOf(client.lib);
+    scriptLobby(state, { id: 5000n, metadata: {}, members: [] });
+    using lobby = await createOrJoinLobby(`s`, { client });
+
+    const removed: bigint[] = [];
+    const updated: bigint[] = [];
+    lobby.onMemberRemoved((id) => removed.push(id));
+    lobby.onMemberUpdated((id) => updated.push(id));
+
+    fireLobbyEvent(state, `LobbyMemberRemoved`, 9999n, 77n); // other lobby
+    fireLobbyEvent(state, `LobbyMemberRemoved`, 5000n, 22n);
+    fireLobbyEvent(state, `LobbyMemberUpdated`, 5000n, 33n);
+
+    // Why: each per-lobby member event must filter by this.id independently —
+    // proving the wrapper wires every member event, not just onMemberAdded.
+    expect(removed).toEqual([22n]);
+    expect(updated).toEqual([33n]);
+  });
+
+  it(`lobby.onUpdated fires only for this lobby`, async () => {
+    using client = createClient(config);
+    const state = mockStateOf(client.lib);
+    scriptLobby(state, { id: 5000n, metadata: {}, members: [] });
+    using lobby = await createOrJoinLobby(`s`, { client });
+
+    let count = 0;
+    lobby.onUpdated(() => {
+      count++;
+    });
+
+    fireLobbyEvent(state, `LobbyUpdated`, 9999n); // other lobby
+    fireLobbyEvent(state, `LobbyUpdated`, 5000n); // this lobby
+
+    // Why: onUpdated takes no id arg (it's "this lobby changed"), so the filter is
+    // the only thing scoping it — an unfiltered impl would fire for every lobby.
+    expect(count).toBe(1);
+  });
+
   it(`unsubscribing stops delivery`, () => {
     using client = createClient(config);
     const state = mockStateOf(client.lib);

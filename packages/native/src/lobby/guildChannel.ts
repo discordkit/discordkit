@@ -1,4 +1,5 @@
 import { defineBindings } from "../ffi/bindings.js";
+import { readString } from "../ffi/readers.js";
 import type { FfiLibrary, FfiOpaque } from "../ffi/backend.js";
 import {
   CHANNEL_TYPE_BY_CODE,
@@ -35,9 +36,6 @@ export const readGuildChannel = (
   handle: FfiOpaque
 ): GuildChannel => {
   const b = channel(lib);
-  const nameOut = lib.allocStringOut();
-  b.name(handle, nameOut);
-
   const parentOut = lib.allocUInt64Out();
   const parentId = b.parentId(handle, parentOut)
     ? lib.readUInt64Out(parentOut)
@@ -53,7 +51,7 @@ export const readGuildChannel = (
 
   return {
     id: b.id(handle) as bigint,
-    name: lib.decodeString(nameOut),
+    name: readString(lib, handle, b.name),
     type: CHANNEL_TYPE_BY_CODE[Number(b.type(handle))] ?? `unknown`,
     position: Number(b.position(handle)),
     linkable: Boolean(b.isLinkable(handle)),
@@ -66,7 +64,5 @@ export const readGuildChannel = (
 /** Read a native `GuildMinimal` handle into a plain {@link Guild} snapshot. */
 export const readGuild = (lib: FfiLibrary, handle: FfiOpaque): Guild => {
   const b = guild(lib);
-  const nameOut = lib.allocStringOut();
-  b.name(handle, nameOut);
-  return { id: b.id(handle) as bigint, name: lib.decodeString(nameOut) };
+  return { id: b.id(handle) as bigint, name: readString(lib, handle, b.name) };
 };

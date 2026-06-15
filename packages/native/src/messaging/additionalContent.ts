@@ -1,4 +1,5 @@
 import { defineBindings } from "../ffi/bindings.js";
+import { readGatedString } from "../ffi/readers.js";
 import type { FfiLibrary, FfiOpaque } from "../ffi/backend.js";
 import {
   ADDITIONAL_CONTENT_TYPE_BY_CODE,
@@ -20,10 +21,7 @@ export const readAdditionalContent = (
   handle: FfiOpaque
 ): AdditionalContent => {
   const b = bindings(lib);
-  const titleOut = lib.allocStringOut();
-  const title = b.title(handle, titleOut)
-    ? lib.decodeString(titleOut)
-    : undefined;
+  const title = readGatedString(lib, handle, b.title);
   return {
     type: ADDITIONAL_CONTENT_TYPE_BY_CODE[Number(b.type(handle))] ?? `other`,
     count: Number(b.count(handle)),

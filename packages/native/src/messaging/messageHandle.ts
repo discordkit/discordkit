@@ -1,4 +1,5 @@
 import { defineBindings } from "../ffi/bindings.js";
+import { readPropertiesOf, readString } from "../ffi/readers.js";
 import type { FfiLibrary, FfiOpaque } from "../ffi/backend.js";
 import { readUser } from "../users/userHandle.js";
 import { readChannel } from "./channelHandle.js";
@@ -35,21 +36,6 @@ const bindings = defineBindings({
 export const readMessage = (lib: FfiLibrary, handle: FfiOpaque): Message => {
   const b = bindings(lib);
 
-  const readString = (
-    getter: (self: FfiOpaque, out: FfiOpaque) => unknown
-  ): string => {
-    const out = lib.allocStringOut();
-    getter(handle, out);
-    return lib.decodeString(out);
-  };
-  const readMeta = (
-    getter: (self: FfiOpaque, out: FfiOpaque) => unknown
-  ): Record<string, string> => {
-    const out = lib.allocPropertiesOut();
-    getter(handle, out);
-    return lib.readProperties(out);
-  };
-
   const authorOut = lib.allocHandle();
   const author = b.author(handle, authorOut)
     ? readUser(lib, authorOut)
@@ -77,16 +63,16 @@ export const readMessage = (lib: FfiLibrary, handle: FfiOpaque): Message => {
 
   return {
     id: b.id(handle) as bigint,
-    content: readString(b.content),
-    rawContent: readString(b.rawContent),
+    content: readString(lib, handle, b.content),
+    rawContent: readString(lib, handle, b.rawContent),
     authorId: b.authorId(handle) as bigint,
     channelId: b.channelId(handle) as bigint,
     recipientId: b.recipientId(handle) as bigint,
     sentFromGame: Boolean(b.sentFromGame(handle)),
     sentTimestamp: b.sentTimestamp(handle) as bigint,
     editedTimestamp: b.editedTimestamp(handle) as bigint,
-    metadata: readMeta(b.metadata),
-    moderationMetadata: readMeta(b.moderationMetadata),
+    metadata: readPropertiesOf(lib, handle, b.metadata),
+    moderationMetadata: readPropertiesOf(lib, handle, b.moderationMetadata),
     ...(author ? { author } : {}),
     ...(channel ? { channel } : {}),
     ...(lobbyId !== undefined ? { lobbyId } : {}),

@@ -35,6 +35,12 @@ export interface ScriptedCall {
   selfDeaf: boolean;
   vad: { automatic: boolean; threshold: number };
   voiceStates: Record<string, ScriptedVoiceState>;
+  /** Per-user local-mute state, set by `SetLocalMute`, read by `GetLocalMute`. */
+  localMutes: Record<string, boolean>;
+  /** Per-user playout volume, set by `SetParticipantVolume`, read by its getter. */
+  volumes: Record<string, number>;
+  /** Whether push-to-talk is currently active (last `SetPTTActive`). */
+  pttActive: boolean;
 }
 
 interface VoiceDomainState {
@@ -86,6 +92,9 @@ export const makeCall = (
   selfDeaf: false,
   vad: { automatic: true, threshold: -60 },
   voiceStates: {},
+  localMutes: {},
+  volumes: {},
+  pttActive: false,
   ...overrides
 });
 
@@ -266,8 +275,10 @@ registerMockHandlers({
       callOf(ctx.args[0])?.participants ?? [];
     return undefined;
   },
-  Discord_Call_GetLocalMute: (ctx) => false,
-  Discord_Call_GetParticipantVolume: (ctx) => 100,
+  Discord_Call_GetLocalMute: (ctx) =>
+    Boolean(callOf(ctx.args[0])?.localMutes[String(ctx.args[1])]),
+  Discord_Call_GetParticipantVolume: (ctx) =>
+    callOf(ctx.args[0])?.volumes[String(ctx.args[1])] ?? 100,
   Discord_Call_GetVoiceStateHandle: (ctx) => {
     const vs = callOf(ctx.args[0])?.voiceStates[String(ctx.args[1])];
     if (!vs) return false;
@@ -296,9 +307,21 @@ registerMockHandlers({
     if (c) c.audioMode = ctx.args[1] as number;
     return undefined;
   },
-  Discord_Call_SetLocalMute: () => undefined,
-  Discord_Call_SetParticipantVolume: () => undefined,
-  Discord_Call_SetPTTActive: () => undefined,
+  Discord_Call_SetLocalMute: (ctx) => {
+    const c = callOf(ctx.args[0]);
+    if (c) c.localMutes[String(ctx.args[1])] = Boolean(ctx.args[2]);
+    return undefined;
+  },
+  Discord_Call_SetParticipantVolume: (ctx) => {
+    const c = callOf(ctx.args[0]);
+    if (c) c.volumes[String(ctx.args[1])] = ctx.args[2] as number;
+    return undefined;
+  },
+  Discord_Call_SetPTTActive: (ctx) => {
+    const c = callOf(ctx.args[0]);
+    if (c) c.pttActive = Boolean(ctx.args[1]);
+    return undefined;
+  },
   Discord_Call_SetVADThreshold: (ctx) => {
     const c = callOf(ctx.args[0]);
     if (c)

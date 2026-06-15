@@ -103,4 +103,35 @@ describe(`calls (mock backend)`, () => {
     await endCalls({ client });
     expect(voiceActionsOf(state)).toContain(`Discord_Client_EndCalls`);
   });
+
+  it(`per-participant local mute + volume round-trip through the SDK`, () => {
+    using client = createClient(config);
+    const state = mockStateOf(client.lib);
+    scriptCall(state, makeCall());
+    const call = getCall(5000n, { client })!;
+
+    // Why: local mute / volume are per-USER controls (keyed by userId), distinct
+    // from the call-wide self mute. They must marshal the userId + value and the
+    // getters must reflect the SDK state per user — a mis-keyed write would mute
+    // the wrong person.
+    expect(call.localMute(11n)).toBe(false);
+    expect(call.participantVolume(11n)).toBe(100); // SDK default
+    call.setLocalMute(11n, true);
+    call.setParticipantVolume(11n, 175);
+    expect(call.localMute(11n)).toBe(true);
+    expect(call.localMute(22n)).toBe(false); // unaffected
+    expect(call.participantVolume(11n)).toBe(175);
+  });
+
+  it(`setPushToTalkActive marshals to the SDK`, () => {
+    using client = createClient(config);
+    const state = mockStateOf(client.lib);
+    scriptCall(state, makeCall({ audioMode: 2 })); // push-to-talk
+    const call = getCall(5000n, { client })!;
+    // Why: PTT is keyed by the game on its own keybind; setPushToTalkActive(true)
+    // on press / (false) on release is the only way the SDK opens the mic in PTT
+    // mode — it must reach the SDK.
+    call.setPushToTalkActive(true);
+    expect(state.calls).toContain(`Discord_Call_SetPTTActive`);
+  });
 });

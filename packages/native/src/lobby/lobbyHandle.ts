@@ -1,5 +1,6 @@
 import type { DiscordClient, Subscription } from "../client.js";
 import { awaitResult, defineBindings } from "../ffi/bindings.js";
+import { readPropertiesOf } from "../ffi/readers.js";
 import type { FfiOpaque } from "../ffi/backend.js";
 import { readLinkedChannel } from "./linkedChannel.js";
 import { readLobbyMember } from "./lobbyMember.js";
@@ -101,9 +102,11 @@ export class Lobby {
 
   /** Developer metadata on the lobby (re-read live). */
   get metadata(): LobbyMetadata {
-    const out = this.#client.lib.allocPropertiesOut();
-    bindings(this.#client.lib).metadata(this.#handle, out);
-    return this.#client.lib.readProperties(out);
+    return readPropertiesOf(
+      this.#client.lib,
+      this.#handle,
+      bindings(this.#client.lib).metadata
+    );
   }
 
   /** The Discord channel this lobby is linked to, if any (re-read live). */
