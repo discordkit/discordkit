@@ -10,6 +10,8 @@ electron/preload.bundle.cjs
 test-results/
 playwright-report/
 
-# Local env (never commit real values)
+# local env files — real secrets stay out of git; .env.schema is the
+# committed contract varlock's typegen reads (CI has no real .env).
 .env
-.env.local
+.env*.local
+!.env.schema
