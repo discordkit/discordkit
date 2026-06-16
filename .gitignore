@@ -70,6 +70,7 @@ storybook-static/
 # dotenv environment variables file
 .env
 .env.*
+!.env.schema
 
 .next/
 .cache/

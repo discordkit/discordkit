@@ -5,7 +5,7 @@
 > the Tauri story) and `electron-bridge-composable` patterns proven in
 > `@discordkit/electron`. This document **settles the open Tauri questions** that
 > draft left (its §9 Q1/Q2) with research-backed decisions, and **supersedes the
-> draft's assumption** that we'd ship both a Node sidecar *and* a native
+> draft's assumption** that we'd ship both a Node sidecar _and_ a native
 > Rust-`bindgen` plugin. We ship **one** thing: a Tauri plugin whose backend is a
 > Node sidecar.
 
@@ -26,7 +26,7 @@ features.
 
 ## 2. Why a Node sidecar (and not Tauri's Rust core)
 
-`@discordkit/native` binds the SDK through **Koffi**, a *runtime* Node FFI that
+`@discordkit/native` binds the SDK through **Koffi**, a _runtime_ Node FFI that
 `dlopen`s the platform library and declares functions from signature strings. It
 cannot run inside Tauri's Rust core — that's a different runtime. So the keystone runs
 where Node runs: a **sidecar process** Tauri spawns and supervises.
@@ -44,8 +44,8 @@ runtime" requirement ever appears.
 
 Tauri gives us three plausible transports between webview and sidecar: a **localhost
 server**, **stdin/stdout**, or **local sockets**. The official docs are deliberately
-neutral between them but give one steer above the choice: *"The Rust↔Webview IPC in
-Tauri is pretty solid, and you should aim for that most of the time."* That is a vote
+neutral between them but give one steer above the choice: _"The Rust↔Webview IPC in
+Tauri is pretty solid, and you should aim for that most of the time."_ That is a vote
 against opening a raw network surface.
 
 We use **stdio JSON-RPC routed through Rust**, via `kkrpc`:
@@ -57,8 +57,8 @@ We use **stdio JSON-RPC routed through Rust**, via `kkrpc`:
   this boundary; voice is device control + events). Routing through Rust keeps the
   surface inside Tauri's permission model, where it belongs.
 - **Why `kkrpc` over hand-rolling a framer.** `kkrpc` independently converged on
-  *exactly* this architecture — *"Rust handles lifecycle and I/O transport, but the
-  RPC protocol remains end-to-end JavaScript; Rust just forwards the bytes"* with
+  _exactly_ this architecture — _"Rust handles lifecycle and I/O transport, but the
+  RPC protocol remains end-to-end JavaScript; Rust just forwards the bytes"_ with
   newline framing — and ships **first-class Tauri sidecar support** (its
   `TauriShellStdio` adapter + `RPCChannel`). It's Apache-2.0, dependency-light
   (transports live behind subpath exports, so we pull only the stdio adapter),
@@ -98,7 +98,7 @@ kkrpc spawns and talks to the sidecar entirely through the standard
 **`tauri-plugin-shell`** (`Command.sidecar` → spawn + stdio + `kill`), and the only
 app-side requirements are (a) registering `tauri_plugin_shell` and (b) granting the
 shell **capability permissions** scoped to the `discord-sidecar` binary. A
-`tauri-plugin-discordkit` crate would wrap *nothing* — there is no byte-pumping or
+`tauri-plugin-discordkit` crate would wrap _nothing_ — there is no byte-pumping or
 SDK logic for it to hold (all SDK logic is JS in the sidecar; the pump is the shell
 plugin). Publishing/version-syncing a crate that wraps a one-liner + a JSON snippet
 is upkeep with no payoff, so we don't.
@@ -114,7 +114,7 @@ So we ship:
   scaffolding seam, not new friction.
 
 This also corrects the original draft's "copy-in Rust template" framing: there's no
-Rust *to* copy in beyond the standard shell-plugin one-liner.
+Rust _to_ copy in beyond the standard shell-plugin one-liner.
 
 ## 5. The package mirrors `@discordkit/electron`, per-domain
 
@@ -150,20 +150,20 @@ packages/tauri/tauri/             # scaffolded config (capabilities.json) — NO
 The seam that makes this match Electron: `internal.ts` exposes a client-side
 `BridgeIo` (`call`/`on`) and a sidecar-side `RegisterContext` (`handle`/`broadcast`/
 `track`), so the per-domain slices/registrars are near-identical to Electron's. The
-one structural difference kkrpc forces: it's *one bidirectional channel*, so events
+one structural difference kkrpc forces: it's _one bidirectional channel_, so events
 flow back over the same channel (the webview exposes a single event-sink method the
 sidecar calls) rather than Electron's separate `webContents.send` push.
 
 ## 6. Tree-shaking — three surfaces, three mechanisms (the load-bearing constraint)
 
 "Ship only what you consume" is what differentiates discordkit, and a Tauri plugin has
-**three** consumed artifacts, each with a *different* mechanism. All three must hold.
+**three** consumed artifacts, each with a _different_ mechanism. All three must hold.
 
-| Surface | Mechanism | How it stays honest |
-| --- | --- | --- |
-| **npm** (client + sidecar host) | ESM tree-shaking | Per-domain subpaths (`@discordkit/tauri/client/<domain>`, `/sidecar/<domain>`), `sideEffects:false`, app composes only imported slices. The `kkrpc` dep sits behind the client subpath only. Built-dist tree-shake test, same as electron. |
-| **Rust crate** | DCE + `generate_handler!` (not tree-shaking) | **Non-issue *by design*.** The Rust is a fixed, **domain-blind** byte pump with zero per-domain code → constant tiny size regardless of how many domains an app uses. Choosing stdio-JSON-RPC (not a bindgen crate) sidesteps Rust tree-shaking entirely by keeping all feature-shaped code in JS. |
-| **Sidecar binary** | bundler tree-shaking | A prebuilt *fat* sidecar would kill this, so **we don't ship one.** The app composes + builds its **own** sidecar entry from opted-in registrars and points `externalBin` at it — the same scaffolding seam as the BYO SDK binary. |
+| Surface                         | Mechanism                                    | How it stays honest                                                                                                                                                                                                                                                                                |
+| ------------------------------- | -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **npm** (client + sidecar host) | ESM tree-shaking                             | Per-domain subpaths (`@discordkit/tauri/client/<domain>`, `/sidecar/<domain>`), `sideEffects:false`, app composes only imported slices. The `kkrpc` dep sits behind the client subpath only. Built-dist tree-shake test, same as electron.                                                         |
+| **Rust crate**                  | DCE + `generate_handler!` (not tree-shaking) | **Non-issue _by design_.** The Rust is a fixed, **domain-blind** byte pump with zero per-domain code → constant tiny size regardless of how many domains an app uses. Choosing stdio-JSON-RPC (not a bindgen crate) sidesteps Rust tree-shaking entirely by keeping all feature-shaped code in JS. |
+| **Sidecar binary**              | bundler tree-shaking                         | A prebuilt _fat_ sidecar would kill this, so **we don't ship one.** The app composes + builds its **own** sidecar entry from opted-in registrars and points `externalBin` at it — the same scaffolding seam as the BYO SDK binary.                                                                 |
 
 **Hard rule, everywhere: no monolithic "expose everything."** Not the `kkrpc` `expose`
 on the sidecar, not the webview proxy, not a barrel. The app composes registrars
@@ -204,13 +204,13 @@ app's own code, exactly like the Electron adapter.
 
 ## 7. What changed vs. the original bridge spec
 
-| Original draft (`social-sdk-native-bridge-spec.md`) | This decision |
-| --- | --- |
-| Ship **both** a Node sidecar **and** a `tauri-plugin-discordkit` Rust `bindgen` crate (two seams behind one UI) | Ship **one** thing: the Node-sidecar adapter. The bindgen crate is **dropped** (parallel SDK impl = sync burden). |
-| Transport: "JSON-over-stdio" (hand-wave) | **`kkrpc`** stdio JSON-RPC; the byte pump is the standard `tauri-plugin-shell` — the consensus community tooling for exactly this. |
-| Open Q2: "sidecar-first or Rust plugin?" | **Sidecar-only.** |
-| `tauri-plugin-discordkit` = a Rust crate we publish | **No crate at all.** kkrpc rides `tauri-plugin-shell`; we ship the npm package + a scaffolded `capabilities.json` snippet. There is no discordkit-specific Rust. |
-| Rust delivered as copy-in glue | The only Rust the app touches is the standard `tauri_plugin_shell::init()` one-liner; we scaffold the shell **permissions** scoped to the sidecar binary. |
+| Original draft (`social-sdk-native-bridge-spec.md`)                                                             | This decision                                                                                                                                                    |
+| --------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Ship **both** a Node sidecar **and** a `tauri-plugin-discordkit` Rust `bindgen` crate (two seams behind one UI) | Ship **one** thing: the Node-sidecar adapter. The bindgen crate is **dropped** (parallel SDK impl = sync burden).                                                |
+| Transport: "JSON-over-stdio" (hand-wave)                                                                        | **`kkrpc`** stdio JSON-RPC; the byte pump is the standard `tauri-plugin-shell` — the consensus community tooling for exactly this.                               |
+| Open Q2: "sidecar-first or Rust plugin?"                                                                        | **Sidecar-only.**                                                                                                                                                |
+| `tauri-plugin-discordkit` = a Rust crate we publish                                                             | **No crate at all.** kkrpc rides `tauri-plugin-shell`; we ship the npm package + a scaffolded `capabilities.json` snippet. There is no discordkit-specific Rust. |
+| Rust delivered as copy-in glue                                                                                  | The only Rust the app touches is the standard `tauri_plugin_shell::init()` one-liner; we scaffold the shell **permissions** scoped to the sidecar binary.        |
 
 ## 8. Build order
 
