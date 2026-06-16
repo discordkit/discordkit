@@ -532,6 +532,7 @@ __metadata:
   resolution: "@discordkit/electron@workspace:packages/electron"
   dependencies:
     "@discordkit/native": "workspace:^"
+    signal-polyfill: "catalog:"
   peerDependencies:
     electron: ">= 30"
   languageName: unknown
@@ -554,6 +555,21 @@ __metadata:
     "@discordkit/test-utils": "workspace:^"
   peerDependencies:
     valibot: ">= 1.4.0"
+  languageName: unknown
+  linkType: soft
+
+"@discordkit/tauri@workspace:packages/tauri":
+  version: 0.0.0-use.local
+  resolution: "@discordkit/tauri@workspace:packages/tauri"
+  dependencies:
+    "@discordkit/native": "workspace:^"
+    "@tauri-apps/api": "npm:2"
+    "@tauri-apps/plugin-shell": "npm:2"
+    kkrpc: "catalog:"
+    signal-polyfill: "catalog:"
+  peerDependencies:
+    "@tauri-apps/api": ">= 2"
+    "@tauri-apps/plugin-shell": ">= 2"
   languageName: unknown
   linkType: soft
 
@@ -2718,6 +2734,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tauri-apps/api@npm:2, @tauri-apps/api@npm:^2.10.1":
+  version: 2.11.0
+  resolution: "@tauri-apps/api@npm:2.11.0"
+  checksum: 10/7c3a90cd357b46c09eb639508a5feda4e695d26fdbddac36d16e7440f7e354c7523fd632f7cace017963d4e3b243d05df6423951f17d134b820025215caa0fb3
+  languageName: node
+  linkType: hard
+
+"@tauri-apps/plugin-shell@npm:2":
+  version: 2.3.5
+  resolution: "@tauri-apps/plugin-shell@npm:2.3.5"
+  dependencies:
+    "@tauri-apps/api": "npm:^2.10.1"
+  checksum: 10/761123075a00e999416d78837e88de7d2c9e7786c1c2d516cf21110d428abe142aa705cd68a1bfe75d7262037b9ab3f685317e21909f6c5a8e4a44ca6ca1d3df
+  languageName: node
+  linkType: hard
+
 "@testing-library/dom@npm:^10.4.1":
   version: 10.4.1
   resolution: "@testing-library/dom@npm:10.4.1"
@@ -3937,6 +3969,15 @@ __metadata:
   version: 1.1.1
   resolution: "cookie@npm:1.1.1"
   checksum: 10/85538153054791155cf4d38d2e807e3b9382d71bf71d92fc46fca348515ea574049d0d9ef8eb84d2d54a681ad1d7a7316b1989b901dace50a6c0f4c3858dbdb2
+  languageName: node
+  linkType: hard
+
+"copy-anything@npm:^4":
+  version: 4.0.5
+  resolution: "copy-anything@npm:4.0.5"
+  dependencies:
+    is-what: "npm:^5.2.0"
+  checksum: 10/1ee7e6f55c1016a47871ecd09aa765ca825c1ec89c46e6f58686016c80c6fe3d36452a6010d8498c766ea5d60bc5d892d9511b41310a7355b48ac10b39c90c9a
   languageName: node
   linkType: hard
 
@@ -5277,6 +5318,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"is-what@npm:^5.2.0":
+  version: 5.5.0
+  resolution: "is-what@npm:5.5.0"
+  checksum: 10/d53a6ea1aebf953f3bcf711a28e8463bfe79fc0e4e87575d77c692a30fd3d98f87b88d4c006c06753bf85f771c9d2c1d05b2c6b03c246883261fe190526195d9
+  languageName: node
+  linkType: hard
+
 "is-wsl@npm:^3.1.1":
   version: 3.1.1
   resolution: "is-wsl@npm:3.1.1"
@@ -5418,6 +5466,48 @@ __metadata:
   version: 3.3.1
   resolution: "jsonc-parser@npm:3.3.1"
   checksum: 10/9b0dc391f20b47378f843ef1e877e73ec652a5bdc3c5fa1f36af0f119a55091d147a86c1ee86a232296f55c929bba174538c2bf0312610e0817a22de131cc3f4
+  languageName: node
+  linkType: hard
+
+"kkrpc@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "kkrpc@npm:2.0.0"
+  dependencies:
+    superjson: "npm:^2.2.2"
+  peerDependencies:
+    "@nats-io/transport-node": ^3.3.0
+    "@tauri-apps/plugin-shell": ^2.2.0
+    amqplib: ^0.10.9
+    elysia: ^1.0.0
+    hono: ^4.10.4
+    ioredis: ^5.0.0
+    kafkajs: ^2.2.4
+    socket.io: ^4.0.0
+    socket.io-client: ^4.0.0
+    typescript: ^5.0.0 || ^6.0.0
+    ws: ^8.18.0
+  peerDependenciesMeta:
+    "@nats-io/transport-node":
+      optional: true
+    "@tauri-apps/plugin-shell":
+      optional: true
+    amqplib:
+      optional: true
+    elysia:
+      optional: true
+    hono:
+      optional: true
+    ioredis:
+      optional: true
+    kafkajs:
+      optional: true
+    socket.io:
+      optional: true
+    socket.io-client:
+      optional: true
+    ws:
+      optional: true
+  checksum: 10/ebb32d187b2ca334e215c5a21a77c83fa36a094f6f5826c05203e097da5064a194c480652c33be015f3c8f282faff776d3f840a98cbb01b679ddcefb574d31eb
   languageName: node
   linkType: hard
 
@@ -8316,6 +8406,15 @@ __metadata:
   dependencies:
     debug: "npm:^4.1.0"
   checksum: 10/5c69776ce2b53040c952cfbca0f7b487b1ee993c55b6d5523f674ec075f30e031fd84b6706dc8ccc4deb9761b58f9925be8806a316e5eedff2286bb48cb75044
+  languageName: node
+  linkType: hard
+
+"superjson@npm:^2.2.2":
+  version: 2.2.6
+  resolution: "superjson@npm:2.2.6"
+  dependencies:
+    copy-anything: "npm:^4"
+  checksum: 10/7bb6446b70e8a37ec9aa2f2d08295ae4e7e8268b86c89d83a306b3798cd0cc60d89016c0c5fa83b558db23e8de8863c585a4cf52d18c4834c48bad7d2b6ee25b
   languageName: node
   linkType: hard
 

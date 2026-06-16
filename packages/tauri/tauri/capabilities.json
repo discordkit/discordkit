@@ -1,0 +1,28 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "discordkit",
+  "description": "Permissions @discordkit/tauri needs to spawn + talk to the Discord SDK sidecar over stdio (via tauri-plugin-shell). Merge these permissions into your window's capability (e.g. src-tauri/capabilities/default.json), or add this file to your capabilities directory and include it for the relevant window.",
+  "windows": ["main"],
+  "permissions": [
+    {
+      "identifier": "shell:allow-execute",
+      "allow": [
+        {
+          "name": "binaries/discord-sidecar",
+          "sidecar": true
+        }
+      ]
+    },
+    {
+      "identifier": "shell:allow-spawn",
+      "allow": [
+        {
+          "name": "binaries/discord-sidecar",
+          "sidecar": true
+        }
+      ]
+    },
+    "shell:allow-kill",
+    "shell:allow-stdin-write"
+  ]
+}

@@ -1,0 +1,5 @@
+---
+"@discordkit/tauri": minor
+---
+
+Added @discordkit/tauri: a Tauri adapter that runs @discordkit/native (Discord Social SDK) in a Node sidecar and exposes it to the webview over a typed, bidirectional kkrpc bridge (createSidecar / createClient). The sidecar host and webview client are composed per-domain (mirroring @discordkit/native + @discordkit/electron) so an app bundles only the native code it wires; ids are branded snowflakes end to end, and live Lobby/Call entities cross as serializable snapshots driven by id-keyed RPC. No Rust crate — kkrpc rides tauri-plugin-shell; the package ships a scaffolded capabilities.json permissions snippet. Covers the full native surface: rich presence + auth + status/log (core) and the users, relationships, activity-invites, lobbies, messaging, and voice domains. Also ships @discordkit/tauri/signals — framework-agnostic TC39-signal conveniences (statusSignal, devicesSignal, logSignal, lobbyIdsSignal, lobbySignal, isConnectedSignal) plus asyncSignal for pull-only reads, in a separate subpath so signal-polyfill is only bundled when used.
