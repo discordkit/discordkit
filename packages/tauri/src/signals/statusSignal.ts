@@ -37,7 +37,7 @@ export const statusSignal = (bridge: StatusSource): Signal.State<Status> => {
   // Push updates from the live event stream.
   bridge.onStatus((status) => state.set(status));
   // Pull the current value once (a bridge round-trip) to seed.
-  void (async () => {
+  void (async (): Promise<void> => {
     state.set(await bridge.getStatus());
   })();
   return state;

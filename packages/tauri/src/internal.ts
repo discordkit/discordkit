@@ -71,7 +71,10 @@ export interface RegisterContext {
  */
 export type RemoteApi = Record<
   string,
-  (...args: unknown[]) => Promise<unknown>
+  // `| undefined`: an un-wired domain has no handler on the proxy. The honest
+  // index signature is what makes the runtime guard in `bridgeIo.call` (and its
+  // directed error) reachable rather than "always falsy".
+  ((...args: unknown[]) => Promise<unknown>) | undefined
 >;
 
 /**

@@ -7,8 +7,8 @@ import type { BridgeIo } from "../internal.js";
 /** The relationships client slice — adds the `relationships` namespace. */
 export const relationshipsSlice = (
   io: BridgeIo
-): { relationships: RelationshipsBridge } => ({
-  relationships: {
+): { relationships: RelationshipsBridge } => {
+  const relationships: RelationshipsBridge = {
     list: async () => io.call(RELATIONSHIP_CHANNELS.list),
     get: async (userId) => io.call(RELATIONSHIP_CHANNELS.get, userId),
     sendDiscordRequest: async (username) =>
@@ -36,5 +36,6 @@ export const relationshipsSlice = (
       io.call(RELATIONSHIP_CHANNELS.removeGame, userId),
     block: async (userId) => io.call(RELATIONSHIP_CHANNELS.block, userId),
     unblock: async (userId) => io.call(RELATIONSHIP_CHANNELS.unblock, userId)
-  }
-});
+  };
+  return { relationships };
+};

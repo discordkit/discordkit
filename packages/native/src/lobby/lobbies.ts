@@ -93,7 +93,7 @@ export const createOrJoinLobby = async (
             null,
             null
           ),
-    (id) => BigInt(id as bigint) as LobbyId,
+    (id) => BigInt(id as bigint | number) as LobbyId,
     { timeoutMs: options.timeoutMs, label: `create or join lobby` }
   );
   const lobby = wrapLobby(client, lobbyId);

@@ -28,8 +28,9 @@ const bindings = defineBindings({
  */
 export const readUser = (lib: FfiLibrary, handle: FfiOpaque): User => {
   const b = bindings(lib);
-  const gated = (getter: (self: FfiOpaque, out: FfiOpaque) => unknown) =>
-    readGatedString(lib, handle, getter);
+  const gated = (
+    getter: (self: FfiOpaque, out: FfiOpaque) => unknown
+  ): string | undefined => readGatedString(lib, handle, getter);
 
   return {
     id: b.id(handle) as UserId,

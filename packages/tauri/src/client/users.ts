@@ -6,9 +6,10 @@ import type { BridgeIo } from "../internal.js";
  * namespace to the webview bridge. Imports only the users channel contract
  * (type-only), so it adds no native code to the webview bundle.
  */
-export const usersSlice = (io: BridgeIo): { users: UsersBridge } => ({
-  users: {
+export const usersSlice = (io: BridgeIo): { users: UsersBridge } => {
+  const users: UsersBridge = {
     getCurrent: async () => io.call(USER_CHANNELS.getCurrent),
     get: async (userId) => io.call(USER_CHANNELS.get, userId)
-  }
-});
+  };
+  return { users };
+};

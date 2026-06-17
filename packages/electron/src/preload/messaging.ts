@@ -5,8 +5,8 @@ import {
 import type { BridgeIo } from "../internal.js";
 
 /** The messaging preload slice — adds `window.discord.messages`. */
-export const messagingSlice = (io: BridgeIo): { messages: MessagesBridge } => ({
-  messages: {
+export const messagingSlice = (io: BridgeIo): { messages: MessagesBridge } => {
+  const messages: MessagesBridge = {
     sendUser: async (recipientId, content, metadata) =>
       io.call(MESSAGE_CHANNELS.sendUser, recipientId, content, metadata),
     sendLobby: async (lobbyId, content, metadata) =>
@@ -30,5 +30,6 @@ export const messagingSlice = (io: BridgeIo): { messages: MessagesBridge } => ({
     onCreated: (handler) => io.on(MESSAGE_CHANNELS.created, handler),
     onUpdated: (handler) => io.on(MESSAGE_CHANNELS.updated, handler),
     onDeleted: (handler) => io.on(MESSAGE_CHANNELS.deleted, handler)
-  }
-});
+  };
+  return { messages };
+};

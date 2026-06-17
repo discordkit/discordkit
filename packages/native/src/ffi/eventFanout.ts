@@ -101,7 +101,10 @@ export const clientEventFanout = <const E extends Record<string, FanoutEvent>>(
     const cb = client.lib.registerCallback(
       b[`${String(event)}__cb`],
       (...args: unknown[]) => {
-        const ids = args.slice(0, arity).map((a) => BigInt(a as bigint));
+        // FFI callback args may arrive as `number` for small ids; coerce to bigint.
+        const ids = args
+          .slice(0, arity)
+          .map((a) => BigInt(a as bigint | number));
         for (const handler of subscribers) handler(...ids);
       }
     );

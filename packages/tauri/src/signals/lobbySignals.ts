@@ -31,7 +31,7 @@ export const lobbyIdsSignal = (
     if (!state.get().includes(id)) state.set([...state.get(), id]);
   });
   lobbies.onDeleted((id) => state.set(state.get().filter((x) => x !== id)));
-  void (async () => {
+  void (async (): Promise<void> => {
     state.set(await lobbies.getIds());
   })();
   return state;

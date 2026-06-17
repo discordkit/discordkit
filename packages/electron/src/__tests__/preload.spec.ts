@@ -117,7 +117,7 @@ describe(`domain slices`, () => {
   it(`snapshot-carrying events (device change) deliver the payload whole`, () => {
     const { ipc, io } = setup();
     const { voice } = voiceSlice(io);
-    const devices = vi.fn();
+    const devices = vi.fn<(payload: unknown) => void>();
     const off = voice.onDeviceChange(devices);
     const payload = { input: [{ id: `mic` }], output: [] };
 

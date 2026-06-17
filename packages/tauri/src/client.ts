@@ -40,15 +40,18 @@ const toActivity = (
 };
 
 /** Build the core bridge (presence/auth/status/log) over one {@link BridgeIo}. */
-export const createCoreBridge = (io: BridgeIo): CoreBridge => ({
-  connect: async (message) => io.call(CORE_CHANNELS.connect, message),
-  setActivity: async (input) =>
-    io.call(CORE_CHANNELS.setActivity, toActivity(input)),
-  clearActivity: async () => io.call(CORE_CHANNELS.clearActivity),
-  getStatus: async () => io.call(CORE_CHANNELS.getStatus),
-  onStatus: (handler) => io.on(CORE_CHANNELS.status, handler),
-  onLog: (handler) => io.on(CORE_CHANNELS.log, handler)
-});
+export const createCoreBridge = (io: BridgeIo): CoreBridge => {
+  const core: CoreBridge = {
+    connect: async (message) => io.call(CORE_CHANNELS.connect, message),
+    setActivity: async (input) =>
+      io.call(CORE_CHANNELS.setActivity, toActivity(input)),
+    clearActivity: async () => io.call(CORE_CHANNELS.clearActivity),
+    getStatus: async () => io.call(CORE_CHANNELS.getStatus),
+    onStatus: (handler) => io.on(CORE_CHANNELS.status, handler),
+    onLog: (handler) => io.on(CORE_CHANNELS.log, handler)
+  };
+  return core;
+};
 
 /**
  * The kkrpc connection a {@link createClient} call needs — abstracted so the

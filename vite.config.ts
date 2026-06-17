@@ -164,6 +164,31 @@ export default defineConfig({
         }
       },
       {
+        // The native bridge packages are boundary-cast surface, like core/client.
+        // Their casts are load-bearing at three seams the type system can't see
+        // into: (1) FFI reads brand opaque handle values at their single creation
+        // point (`b.id(handle) as UserId`), which is the whole branded-id design;
+        // (2) the `snowflake()` constructor (`BigInt(v) as T`); and (3) the IPC/
+        // kkrpc transport, where channel payloads cross as `unknown` and are
+        // re-narrowed to the bridge contract (`method(...args) as Promise<T>`).
+        // A genuinely wrong cast here is still caught by tsc; the rule only adds
+        // noise. (Same stance as core/client — see the block above.)
+        files: [
+          `packages/native/src/**/*.ts`,
+          `packages/electron/src/**/*.ts`,
+          `packages/tauri/src/**/*.ts`
+        ],
+        rules: {
+          "typescript/no-unsafe-type-assertion": `off`,
+          // Same boundary surface has intentional single-use type parameters the
+          // CALLER specifies: `snowflake<UserId>(v)` brands the return, `io.call<T>`
+          // / `io.on<A>` let a call site name its payload type, and the event
+          // fanout's `<H>` exists to satisfy handler contravariance. Each `T`/`A`/
+          // `H` appears once by design — that's the ergonomic, not a smell.
+          "typescript/no-unnecessary-type-parameters": `off`
+        }
+      },
+      {
         // `throw redirect(...)` is TanStack Router's documented control-flow API
         // (redirect() returns a throwable), not an error-handling antipattern.
         // (The `next` lint fragment is applied per-Next-example now, not

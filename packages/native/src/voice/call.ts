@@ -244,7 +244,7 @@ export class Call {
       (self, ptr) => b.setParticipantCb(self, ptr, null, null),
       b.participantChangedCb,
       (userId: unknown, added: unknown) =>
-        handler(BigInt(userId as bigint) as UserId, Boolean(added))
+        handler(BigInt(userId as bigint | number) as UserId, Boolean(added))
     );
   };
 
@@ -257,7 +257,7 @@ export class Call {
       (self, ptr) => b.setSpeakingCb(self, ptr, null, null),
       b.speakingCb,
       (userId: unknown, speaking: unknown) =>
-        handler(BigInt(userId as bigint) as UserId, Boolean(speaking))
+        handler(BigInt(userId as bigint | number) as UserId, Boolean(speaking))
     );
   };
 
@@ -267,7 +267,7 @@ export class Call {
     return this.#subscribe(
       (self, ptr) => b.setVoiceStateCb(self, ptr, null, null),
       b.voiceStateChangedCb,
-      (userId: unknown) => handler(BigInt(userId as bigint) as UserId)
+      (userId: unknown) => handler(BigInt(userId as bigint | number) as UserId)
     );
   };
 

@@ -2,8 +2,8 @@ import { LOBBY_CHANNELS, type LobbiesBridge } from "../channels/lobbies.js";
 import type { BridgeIo } from "../internal.js";
 
 /** The lobbies client slice — adds the `lobbies` namespace to the bridge. */
-export const lobbiesSlice = (io: BridgeIo): { lobbies: LobbiesBridge } => ({
-  lobbies: {
+export const lobbiesSlice = (io: BridgeIo): { lobbies: LobbiesBridge } => {
+  const lobbies: LobbiesBridge = {
     createOrJoin: async (secret, metadata) =>
       io.call(LOBBY_CHANNELS.createOrJoin, secret, metadata),
     get: async (lobbyId) => io.call(LOBBY_CHANNELS.get, lobbyId),
@@ -22,5 +22,6 @@ export const lobbiesSlice = (io: BridgeIo): { lobbies: LobbiesBridge } => ({
     onMemberAdded: (handler) => io.on(LOBBY_CHANNELS.memberAdded, handler),
     onMemberRemoved: (handler) => io.on(LOBBY_CHANNELS.memberRemoved, handler),
     onMemberUpdated: (handler) => io.on(LOBBY_CHANNELS.memberUpdated, handler)
-  }
-});
+  };
+  return { lobbies };
+};

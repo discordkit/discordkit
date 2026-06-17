@@ -11,8 +11,8 @@ import type { SidecarOptions } from "../sidecar.js";
 // the builder callback was normalized to a plain object before crossing the RPC
 // boundary (functions can't be serialized). `clearActivity` stays a no-op spy.
 vi.mock(`@discordkit/native/presence`, () => ({
-  setActivity: vi.fn(async () => undefined),
-  clearActivity: vi.fn(async () => undefined)
+  setActivity: vi.fn<(input: unknown) => Promise<void>>(async () => undefined),
+  clearActivity: vi.fn<() => Promise<void>>(async () => undefined)
 }));
 
 /**

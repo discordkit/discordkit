@@ -124,7 +124,7 @@ export const koffiBackend: FfiBackend = (libraryPath: string): FfiLibrary => {
       };
       const count = Number(size);
       if (!ptr || count === 0) return [];
-      const base = BigInt(ptr);
+      const base = ptr;
       return Array.from(
         { length: count },
         (_, i) => base + BigInt(i * HANDLE_SIZE)
@@ -140,16 +140,22 @@ export const koffiBackend: FfiBackend = (libraryPath: string): FfiLibrary => {
       };
       const count = Number(size);
       if (!ptr || count === 0) return [];
-      const base = BigInt(ptr);
+      const base = ptr;
       return Array.from({ length: count }, (_, i) =>
+        // koffi may decode a uint64 as `number` for small values, so the
+        // `BigInt()` is a runtime coercion, not just a type assertion.
         BigInt(
-          koffi.decode(base + BigInt(i * UINT64_SIZE), `uint64_t`) as bigint
+          koffi.decode(base + BigInt(i * UINT64_SIZE), `uint64_t`) as
+            | bigint
+            | number
         )
       );
     },
     allocPropertiesOut: () => koffi.alloc(`Discord_Properties`, 1),
     allocUInt64Out: () => koffi.alloc(`uint64_t`, 1),
-    readUInt64Out: (out) => BigInt(koffi.decode(out, `uint64_t`) as bigint),
+    readUInt64Out: (out) =>
+      // koffi may decode a uint64 as `number` for small values; coerce at runtime.
+      BigInt(koffi.decode(out, `uint64_t`) as bigint | number),
     readProperties: (out) => {
       // Decode the {size, keys*, values*} the SDK wrote; keys/values are parallel
       // arrays of inline Discord_String structs. Read element i from each by
@@ -164,8 +170,8 @@ export const koffiBackend: FfiBackend = (libraryPath: string): FfiLibrary => {
       };
       const count = Number(size);
       if (!keys || !values || count === 0) return {};
-      const keyBase = BigInt(keys);
-      const valBase = BigInt(values);
+      const keyBase = keys;
+      const valBase = values;
       const readAt = (base: bigint, i: number): string =>
         readDiscordString(
           koffi.decode(base + BigInt(i * STRING_SIZE), `Discord_String`) as {

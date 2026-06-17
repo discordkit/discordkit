@@ -81,8 +81,12 @@ export const buildSidecar = (
   setSink: (sink: (channel: string, ...payload: unknown[]) => void) => void;
   dispose: () => void;
 } => {
-  const { onError = (m) => process.stderr.write(`${m}\n`), ...config } =
-    options;
+  const {
+    onError = (m): void => {
+      process.stderr.write(`${m}\n`);
+    },
+    ...config
+  } = options;
   const client = init(config);
 
   // The webview's event sink, set once the RPC channel is connected. Until then

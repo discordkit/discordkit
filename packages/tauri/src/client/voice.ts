@@ -2,8 +2,8 @@ import { VOICE_CHANNELS, type VoiceBridge } from "../channels/voice.js";
 import type { BridgeIo } from "../internal.js";
 
 /** The voice client slice — adds the `voice` namespace (calls + audio). */
-export const voiceSlice = (io: BridgeIo): { voice: VoiceBridge } => ({
-  voice: {
+export const voiceSlice = (io: BridgeIo): { voice: VoiceBridge } => {
+  const voice: VoiceBridge = {
     startCall: async (channelId) =>
       io.call(VOICE_CHANNELS.callStart, channelId),
     getCall: async (channelId) => io.call(VOICE_CHANNELS.callGet, channelId),
@@ -57,5 +57,6 @@ export const voiceSlice = (io: BridgeIo): { voice: VoiceBridge } => ({
     setOutputDevice: async (deviceId) =>
       io.call(VOICE_CHANNELS.setOutputDevice, deviceId),
     onDeviceChange: (handler) => io.on(VOICE_CHANNELS.deviceChange, handler)
-  }
-});
+  };
+  return { voice };
+};

@@ -113,7 +113,7 @@ export const endCall = async (
 ): Promise<void> => {
   const client = options.client ?? useClient();
   const b = bindings(client.lib);
-  await awaitCallback<void>(
+  await awaitCallback(
     client,
     b.endCb,
     (ptr) => b.endCall(client.handle, channelId, ptr, null, null),
@@ -126,7 +126,7 @@ export const endCall = async (
 export const endCalls = async (options: VoiceOptions = {}): Promise<void> => {
   const client = options.client ?? useClient();
   const b = bindings(client.lib);
-  await awaitCallback<void>(
+  await awaitCallback(
     client,
     b.endCb,
     (ptr) => b.endCalls(client.handle, ptr, null, null),

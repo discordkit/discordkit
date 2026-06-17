@@ -103,7 +103,7 @@ export const sendUserMessage = async (
             null,
             null
           ),
-    (messageId) => BigInt(messageId as bigint) as MessageId,
+    (messageId) => BigInt(messageId as bigint | number) as MessageId,
     { timeoutMs: options.timeoutMs, label: `send user message` }
   );
 };
@@ -138,7 +138,7 @@ export const sendLobbyMessage = async (
             null,
             null
           ),
-    (messageId) => BigInt(messageId as bigint) as MessageId,
+    (messageId) => BigInt(messageId as bigint | number) as MessageId,
     { timeoutMs: options.timeoutMs, label: `send lobby message` }
   );
 };

@@ -38,7 +38,7 @@ export const devicesSignal = (
   // Push updates from the live device-change stream.
   voice.onDeviceChange((devices) => state.set(devices));
   // Pull the current device lists once to seed.
-  void (async () => {
+  void (async (): Promise<void> => {
     const [input, output] = await Promise.all([
       voice.getInputDevices(),
       voice.getOutputDevices()
