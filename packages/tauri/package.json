@@ -53,7 +53,7 @@
     "@tauri-apps/plugin-shell": ">= 2"
   },
   "devDependencies": {
-    "@tauri-apps/api": "2",
-    "@tauri-apps/plugin-shell": "2"
+    "@tauri-apps/api": "catalog:",
+    "@tauri-apps/plugin-shell": "catalog:"
   }
 }

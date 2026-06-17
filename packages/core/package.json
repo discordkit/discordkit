@@ -40,9 +40,6 @@
   "peerDependencies": {
     "valibot": ">= 1.4.0"
   },
-  "dependencies": {
-    "type-fest": "catalog:"
-  },
   "devDependencies": {
     "@discordkit/test-utils": "workspace:^"
   }

@@ -16,19 +16,19 @@
     "valibot": "catalog:"
   },
   "devDependencies": {
-    "@playwright/test": "^1.56.0",
-    "@tailwindcss/postcss": "^4.3.0",
+    "@playwright/test": "catalog:",
+    "@tailwindcss/postcss": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@vitejs/plugin-react": "^6.0.2",
+    "@vitejs/plugin-react": "catalog:",
     "electron": "^42.4.0",
     "playwright": "^1.56.0",
-    "postcss": "^8.5.15",
-    "tailwindcss": "^4.3.0",
+    "postcss": "catalog:",
+    "tailwindcss": "catalog:",
     "tailwindcss-react-aria-components": "^2.1.1",
     "typescript": "catalog:",
-    "varlock": "^1.5.1",
-    "vite-plus": "^0.1.24"
+    "varlock": "catalog:",
+    "vite-plus": "catalog:"
   }
 }

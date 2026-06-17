@@ -115,7 +115,7 @@ const replaceAtPath = (
 export const toMultipartBody = (
   body: unknown,
   // Loose enough to accept the real `toSnakeKeys` signature
-  // (`<T extends object>(o: T) => SnakeCasedPropertiesDeep<T>`).
+  // (`<T extends object>(o: T) => SnakeKeys<T>`).
   // We cast at the call site since the payload is structurally an object.
   toSnakeKeys: (val: object) => unknown
 ): FormData => {
