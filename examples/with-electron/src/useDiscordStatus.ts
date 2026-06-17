@@ -30,7 +30,7 @@ const createStatusStore = (): StatusStore => {
       // Seed the current value once (the first subscriber triggers the IPC read).
       if (!seeded) {
         seeded = true;
-        void (async () => {
+        void (async (): Promise<void> => {
           current = await window.discord.getStatus();
           emit();
         })();

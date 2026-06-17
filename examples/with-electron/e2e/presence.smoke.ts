@@ -34,6 +34,8 @@ test.describe(`Electron presence (real SDK, local)`, () => {
 
       // The preload bridge exposed the typed API to the renderer (proves the sandboxed-preload bundle ran and contextBridge wired up).
       const bridgeType = await window.evaluate(
+        // Runs in the browser context, where `globalThis.discord` isn't typed.
+        // oxlint-disable-next-line typescript/no-unsafe-type-assertion
         () => typeof (globalThis as { discord?: unknown }).discord
       );
       expect(bridgeType).toBe(`object`);
@@ -45,13 +47,14 @@ test.describe(`Electron presence (real SDK, local)`, () => {
 
       // The status read over IPC resolves to a real SDK lifecycle value
       // (renderer → preload → ipc → main → keystone → SDK → back).
-      const status = await window.evaluate(async () =>
-        (
-          globalThis as unknown as {
-            discord: { getStatus: () => Promise<string> };
-          }
-        ).discord.getStatus()
-      );
+      const status = await window.evaluate(async () => {
+        // Runs in the browser context, where `globalThis.discord` isn't typed.
+        // oxlint-disable-next-line typescript/no-unsafe-type-assertion
+        const bridge = globalThis as unknown as {
+          discord: { getStatus: () => Promise<string> };
+        };
+        return bridge.discord.getStatus();
+      });
       expect(typeof status).toBe(`string`);
     } finally {
       await app.close();

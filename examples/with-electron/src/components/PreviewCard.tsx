@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { dicebear } from "./samples.js";
-import type { FormValues } from "./schema.js";
+import { dicebear } from "../samples.js";
+import type { FormValues } from "../schema.js";
 
 /** Format elapsed ms as M:SS, like Discord's "X:XX elapsed". */
 const elapsed = (sinceMs: number): string => {
@@ -20,7 +20,10 @@ const imageUrl = (
 };
 
 /**
- * A simplified Discord-style "Playing a Game" card mirroring the Developer Portal visualizer's Full Profile preview. This is an approximation for the example — the real rendering happens in the Discord client.
+ * A simplified Discord-style "Playing a Game" card mirroring the Developer Portal
+ * visualizer's Full Profile preview. This is an approximation for the example —
+ * the real rendering happens in the Discord client. The card surface is the brand
+ * blurple by design, so it keeps white-on-brand text rather than theme tokens.
  */
 export const PreviewCard = ({
   values,
@@ -33,7 +36,7 @@ export const PreviewCard = ({
   const [, tick] = useState(0);
   useEffect(() => {
     const t = setInterval(() => tick((n) => n + 1), 1000);
-    return () => clearInterval(t);
+    return (): void => clearInterval(t);
   }, []);
 
   const a = values.activity;
@@ -50,7 +53,7 @@ export const PreviewCard = ({
   const buttons = a.buttons.filter((b) => b.label && b.url);
 
   return (
-    <div className="rounded-lg bg-[#5865f2] p-4 text-white">
+    <div className="rounded-lg bg-brand p-4 text-white">
       <p className="mb-3 text-xs font-bold uppercase tracking-wide opacity-80">
         Playing a Game
       </p>
@@ -71,10 +74,10 @@ export const PreviewCard = ({
             <img
               src={smallImage}
               alt={smallText}
-              className="absolute -bottom-1 -right-1 size-6 rounded-full object-cover ring-2 ring-[#5865f2]"
+              className="absolute -bottom-1 -right-1 size-6 rounded-full object-cover ring-2 ring-brand"
             />
           ) : smallText ? (
-            <div className="absolute -bottom-1 -right-1 flex size-6 items-center justify-center rounded-full bg-black/50 text-[8px] ring-2 ring-[#5865f2]">
+            <div className="absolute -bottom-1 -right-1 flex size-6 items-center justify-center rounded-full bg-black/50 text-[8px] ring-2 ring-brand">
               S
             </div>
           ) : null}
@@ -89,15 +92,15 @@ export const PreviewCard = ({
             </p>
           ) : null}
           {a.useTimestamp ? (
-            <p className="opacity-80">{elapsed(startedAt)}</p>
+            <p className="tabular-nums opacity-80">{elapsed(startedAt)}</p>
           ) : null}
         </div>
       </div>
       {buttons.length ? (
         <div className="mt-3 flex flex-col gap-2">
-          {buttons.map((b, i) => (
+          {buttons.map((b) => (
             <div
-              key={i}
+              key={`${b.label}:${b.url}`}
               className="rounded bg-white/15 px-3 py-1.5 text-center text-xs"
             >
               {b.label}

@@ -16,7 +16,7 @@ export const useDiscordPresence = (
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      void (async () => {
+      void (async (): Promise<void> => {
         try {
           if (activity) await window.discord.setActivity(activity);
           else await window.discord.clearActivity();
@@ -26,7 +26,7 @@ export const useDiscordPresence = (
         }
       })();
     }, delayMs);
-    return () => clearTimeout(timer);
+    return (): void => clearTimeout(timer);
   }, [activity, delayMs]);
 
   return { error };

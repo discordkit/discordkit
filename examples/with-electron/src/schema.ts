@@ -59,7 +59,10 @@ const resolveImage = (img: ImageValues, style: string): string => {
   return img.source === `sample` ? dicebear(style, img.seed) : img.url;
 };
 
-export const createActivitySchema = (partyId: string, startedAt: number) =>
+export const createActivitySchema = (
+  partyId: string,
+  startedAt: number
+): v.GenericSchema<FormValues, ActivityInput> =>
   // `transform` (not `rawTransform`): a pure value→value map. Validation already happened in FormShape; `transform` infers its output (ActivityInput) from the returned value. The `on` flags decide what ships.
   v.pipe(
     FormShape,

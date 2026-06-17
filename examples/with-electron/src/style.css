@@ -5,26 +5,116 @@
    plugin those variants silently no-op under Tailwind v4. */
 @plugin "tailwindcss-react-aria-components";
 
-:root {
-  color-scheme: dark;
+/* Class-based dark mode (the app defaults to dark; see <html class="dark">). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Design tokens (Tailwind v4 CSS-first `@theme`). Semantic names map to a
+ * Discord-flavored palette; components reference the tokens (bg-surface,
+ * text-muted, border-edge, …) rather than raw hex, so the whole app re-themes
+ * from one place. The DEFAULT values here are the dark theme (the app's primary
+ * look); `:root` below restates them and `.light` overrides for the light theme.
+ */
+@theme {
+  /* Surfaces — deepest app bg → raised surfaces → hover steps. */
+  --color-canvas: #1e1f22; /* app background */
+  --color-surface: #2b2d31; /* cards, inputs, panels */
+  --color-surface-hover: #232428; /* hovered/active surface */
+  --color-elevated: #4e5058; /* neutral/ghost buttons */
+  --color-elevated-hover: #6d6f78;
+  --color-elevated-active: #41434a;
+
+  /* Brand (Discord blurple). */
+  --color-brand: #5865f2;
+  --color-brand-hover: #4752c4;
+  --color-brand-active: #3c45a5;
+
+  /* Text. */
+  --color-text: #f2f3f5; /* primary */
+  --color-text-muted: #b5bac1; /* secondary / labels */
+  --color-text-subtle: #87898c; /* placeholders */
+
+  /* Controls. */
+  --color-switch-off: #80848e; /* switch track when off */
+
+  /* Borders. */
+  --color-edge: oklch(100% 0 0 / 12%); /* default border (white/12) */
+  --color-edge-soft: oklch(100% 0 0 / 10%); /* dividers (white/10) */
+
+  /* Feedback (warning banner). */
+  --color-warning: #fcd34d; /* amber-300 */
+  --color-warning-surface: oklch(76.9% 0.188 70.08 / 10%); /* amber-500/10 */
+  --color-warning-edge: oklch(76.9% 0.188 70.08 / 40%); /* amber-500/40 */
+
+  /* Overlays (tooltips). */
+  --color-overlay: oklch(0% 0 0 / 90%);
 }
 
-body {
-  margin: 0;
-  background: #1e1f22;
-  color: #f2f3f5;
-  font-family: system-ui, sans-serif;
+/*
+ * Light theme overrides. The example ships dark-first, but the token layer is
+ * theme-ready: add `class="light"` on <html> (or a toggle) to switch. Values
+ * mirror Discord's light palette closely enough for the demo.
+ */
+.light {
+  --color-canvas: #ffffff;
+  --color-surface: #f2f3f5;
+  --color-surface-hover: #e3e5e8;
+  --color-elevated: #e3e5e8;
+  --color-elevated-hover: #d4d7dc;
+  --color-elevated-active: #c7ccd1;
+
+  --color-text: #060607;
+  --color-text-muted: #4e5058;
+  --color-text-subtle: #87898c;
+
+  --color-switch-off: #b5bac1;
+
+  --color-edge: oklch(0% 0 0 / 12%);
+  --color-edge-soft: oklch(0% 0 0 / 8%);
+
+  --color-overlay: oklch(0% 0 0 / 80%);
 }
 
-/* React Aria sets data-* attributes for states; a couple of base resets so the
-   unstyled primitives behave well with Tailwind utilities. */
-input,
-button,
-select {
-  font: inherit;
-}
+@layer base {
+  /* Dark-first; flips to light under `.light` (native form controls + scrollbars
+     follow). */
+  :where(html) {
+    color-scheme: dark;
+  }
+  :where(html.light) {
+    color-scheme: light;
+  }
 
-[data-focus-visible] {
-  outline: 2px solid #5865f2;
-  outline-offset: 1px;
+  body {
+    margin: 0;
+    font-family: system-ui, sans-serif;
+    background: var(--color-canvas);
+    color: var(--color-text);
+    /* Skip the 300ms tap delay on touch input. */
+    touch-action: manipulation;
+  }
+
+  /* React Aria's unstyled primitives inherit the app font on form controls. */
+  input,
+  button,
+  select {
+    font: inherit;
+  }
+
+  /* Visible keyboard-focus ring on any focusable primitive (web-interface
+     guideline: keyboard focus must be clearly indicated). */
+  [data-focus-visible] {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 1px;
+  }
+
+  /* Honor reduced-motion: neutralize the switch/button/tab transitions. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+    }
+  }
 }
