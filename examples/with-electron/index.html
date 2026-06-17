@@ -1,9 +1,12 @@
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="color-scheme" content="dark light" />
+    <!-- No class on <html>: the theme follows the OS via prefers-color-scheme
+         (CSS `color-scheme: light dark` + `light-dark()` tokens in style.css).
+         Add class="light"/"dark" here (or via a toggle) to pin a mode. -->
+    <meta name="color-scheme" content="light dark" />
     <title>discordkit · Rich Presence Visualizer</title>
     <link rel="stylesheet" href="./src/style.css" />
   </head>

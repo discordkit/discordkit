@@ -169,8 +169,8 @@ export const App = (): React.JSX.Element => {
           control={control}
           name="activity.useTimestamp"
           render={({ field }) => (
-            <section className="flex items-center justify-between border-t border-white/10 pt-5">
-              <span className="text-xs font-bold uppercase tracking-wide text-[#b5bac1]">
+            <section className="flex items-center justify-between border-t border-edge-soft pt-5">
+              <span className="text-xs font-bold uppercase tracking-wide text-text-muted">
                 Elapsed timer
               </span>
               <Toggle isSelected={field.value} onChange={field.onChange}>
@@ -180,8 +180,8 @@ export const App = (): React.JSX.Element => {
           )}
         />
 
-        <section className="border-t border-white/10 pt-5">
-          <h2 className="mb-3 text-xs font-bold uppercase tracking-wide text-[#b5bac1]">
+        <section className="border-t border-edge-soft pt-5">
+          <h2 className="mb-3 text-xs font-bold uppercase tracking-wide text-text-muted">
             Buttons
           </h2>
           <div className="flex flex-col gap-3">

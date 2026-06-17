@@ -2391,6 +2391,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tailwindcss/vite@npm:^4.3.1":
+  version: 4.3.1
+  resolution: "@tailwindcss/vite@npm:4.3.1"
+  dependencies:
+    "@tailwindcss/node": "npm:4.3.1"
+    "@tailwindcss/oxide": "npm:4.3.1"
+    tailwindcss: "npm:4.3.1"
+  peerDependencies:
+    vite: ^5.2.0 || ^6 || ^7 || ^8
+  checksum: 10/82df34d30aeaf5c1e295745176988198b08b7eba188e577b974c0120dbd0dd06a49b55d1592a67d907f5946140b4fcc5b851bbd5498f23c67fe7786dc2265155
+  languageName: node
+  linkType: hard
+
 "@tanstack/history@npm:1.162.0":
   version: 1.162.0
   resolution: "@tanstack/history@npm:1.162.0"
@@ -10384,7 +10397,7 @@ __metadata:
     "@discordkit/native": "workspace:^"
     "@hookform/resolvers": "npm:^5.4.0"
     "@playwright/test": "catalog:"
-    "@tailwindcss/postcss": "catalog:"
+    "@tailwindcss/vite": "catalog:"
     "@types/node": "catalog:"
     "@types/react": "catalog:"
     "@types/react-dom": "catalog:"
@@ -10392,7 +10405,6 @@ __metadata:
     electron: "npm:^42.4.0"
     lucide-react: "npm:^1.17.0"
     playwright: "npm:^1.56.0"
-    postcss: "catalog:"
     react: "catalog:"
     react-aria-components: "npm:^1.18.0"
     react-dom: "catalog:"

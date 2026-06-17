@@ -66,7 +66,7 @@ export const PreviewCard = ({
               className="size-16 rounded-md object-cover"
             />
           ) : (
-            <div className="flex size-16 items-center justify-center rounded-md bg-black/30 text-[10px]">
+            <div className="flex size-16 items-center justify-center rounded-md bg-fill-strong text-[10px]">
               {largeText || `large`}
             </div>
           )}
@@ -77,7 +77,7 @@ export const PreviewCard = ({
               className="absolute -bottom-1 -right-1 size-6 rounded-full object-cover ring-2 ring-brand"
             />
           ) : smallText ? (
-            <div className="absolute -bottom-1 -right-1 flex size-6 items-center justify-center rounded-full bg-black/50 text-[8px] ring-2 ring-brand">
+            <div className="absolute -bottom-1 -right-1 flex size-6 items-center justify-center rounded-full bg-fill-stronger text-[8px] ring-2 ring-brand">
               S
             </div>
           ) : null}
@@ -101,7 +101,7 @@ export const PreviewCard = ({
           {buttons.map((b) => (
             <div
               key={`${b.label}:${b.url}`}
-              className="rounded bg-white/15 px-3 py-1.5 text-center text-xs"
+              className="rounded bg-fill px-3 py-1.5 text-center text-xs"
             >
               {b.label}
             </div>

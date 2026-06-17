@@ -1,11 +1,12 @@
 import { defineConfig } from "vite-plus";
 import { mergeLint, lint, react, fmt } from "@saeris/configs";
 import reactPlugin from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
   // Relative asset paths so the built renderer loads under Electron's `file://` protocol in production (see the vite-plus + Electron recipe).
   base: `./`,
-  plugins: [reactPlugin()],
+  plugins: [reactPlugin(), tailwindcss()],
   // `pack` only affects `vp pack` (the preload bundle), never the renderer's `vp build`/`vp dev`. The sandboxed preload must be a single self-contained CJS file (sandboxed preloads can't import/require from node_modules), so we bundle electron/preload.ts with ALL deps inlined.
   pack: {
     entry: [`electron/preload.ts`],

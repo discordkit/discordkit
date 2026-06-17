@@ -79,13 +79,13 @@ export const ImageField = <T extends FieldValues>({
                 <ListBox className="outline-none">
                   <ListBoxItem
                     id="sample"
-                    className="cursor-pointer rounded px-2 py-1.5 text-sm text-text outline-none selected:bg-brand hover:bg-white/5"
+                    className="cursor-pointer rounded px-2 py-1.5 text-sm text-text outline-none selected:bg-brand hover:bg-hover-tint"
                   >
                     Sample
                   </ListBoxItem>
                   <ListBoxItem
                     id="url"
-                    className="cursor-pointer rounded px-2 py-1.5 text-sm text-text outline-none selected:bg-brand hover:bg-white/5"
+                    className="cursor-pointer rounded px-2 py-1.5 text-sm text-text outline-none selected:bg-brand hover:bg-hover-tint"
                   >
                     URL
                   </ListBoxItem>
