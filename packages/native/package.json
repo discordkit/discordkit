@@ -85,6 +85,7 @@
   ],
   "sideEffects": false,
   "dependencies": {
+    "disposablestack": "catalog:",
     "koffi": "catalog:",
     "signal-polyfill": "catalog:"
   }

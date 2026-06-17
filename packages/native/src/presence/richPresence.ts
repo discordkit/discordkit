@@ -1,3 +1,8 @@
+// `DisposableStack` is a runtime global only on Node 24+; the package targets
+// Node 22 (the oldest LTS), so install the es-shims polyfill (no-op when the
+// global already exists). Side-effect import — must run before any `new
+// DisposableStack()` below.
+import "disposablestack/auto";
 import { useClient } from "../ambient.js";
 import type { DiscordClient } from "../client.js";
 import { awaitResult, defineBindings } from "../ffi/bindings.js";
