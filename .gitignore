@@ -104,3 +104,6 @@ cypress/e2e/build
 
 # Playwright MCP debugging artifacts (snapshots/console logs)
 .playwright-mcp
+
+# Figma design-reference scratch (short-lived MCP captures, not shipped)
+.figma-ref/
