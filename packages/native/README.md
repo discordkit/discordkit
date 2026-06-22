@@ -24,7 +24,8 @@ import { authorize } from "@discordkit/native/auth";
 import { setActivity } from "@discordkit/native/presence";
 
 // Configure + activate the ambient client (load the lib, init the handle, pump).
-const client = init({ applicationId: 123n });
+// applicationId can come from DISCORD_APPLICATION_ID instead of being passed here.
+const client = init({ applicationId: "1234567890" });
 
 // React to connection status (a TC39 signal: "disconnected" → … → "ready").
 using sub = subscribe(client.status, (status) => {
@@ -46,17 +47,17 @@ The ambient singleton mirrors `@discordkit/client`'s `discord`: feature operatio
 
 Each feature is its own subpath (`@discordkit/native/<name>`) — the tree-shaking boundary.
 
-| Subpath             | What it does                                                                                                                                        |
-| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `.` (root)          | Lifecycle (`init`, `configure`, `shutdown`, `createClient`), `client.status` signal, `client.onLog`, `subscribe`.                                   |
-| `/presence`         | `setActivity` (object or builder), `clearActivity`.                                                                                                 |
-| `/auth`             | `authorize` — the OAuth2 PKCE flow + connect.                                                                                                       |
-| `/users`            | `getCurrentUser`, `getUser` → plain `User` snapshots.                                                                                               |
-| `/relationships`    | Friends/blocked/pending list + management (send/accept/reject/cancel friend requests, block/unblock).                                               |
-| `/activity-invites` | Send/accept activity invites + join requests; subscribe to incoming invites. `acceptActivityInvite` resolves with the join secret.                  |
-| `/lobbies`          | `createOrJoinLobby` → a live **`Lobby`** (members, metadata, channel linking, per-lobby events); client-wide lobby events; guild/channel discovery. |
-| `/messaging`        | Send/edit/delete messages (user + lobby), read messages + history, DM summaries, message events.                                                    |
-| `/voice`            | `startCall` → a live **`Call`** (mute/deaf/volume, audio mode, VAD, per-call events); client-wide audio (devices, volume, mute/deaf-all).           |
+| Subpath             | What it does                                                                                                                                                                                                                                                                                              |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.` (root)          | Lifecycle (`init`, `configure`, `shutdown`, `createClient`), `client.status` signal, `client.onLog`, `subscribe`.                                                                                                                                                                                         |
+| `/presence`         | `setActivity` (object or builder), `clearActivity`.                                                                                                                                                                                                                                                       |
+| `/auth`             | `authorize` (OAuth2 PKCE flow + connect) + the full session lifecycle — `startSession`/`resumeSession`/`endSession` over a pluggable `TokenStore` (so users authorize once and reconnect silently). Ships `fileStore` (encrypted file); adapters add an OS-vault backend. Throws typed `AuthorizeError`s. |
+| `/users`            | `getCurrentUser`, `getUser` → plain `User` snapshots.                                                                                                                                                                                                                                                     |
+| `/relationships`    | Friends/blocked/pending list + management (send/accept/reject/cancel friend requests, block/unblock).                                                                                                                                                                                                     |
+| `/activity-invites` | Send/accept activity invites + join requests; subscribe to incoming invites. `acceptActivityInvite` resolves with the join secret.                                                                                                                                                                        |
+| `/lobbies`          | `createOrJoinLobby` → a live **`Lobby`** (members, metadata, channel linking, per-lobby events); client-wide lobby events; guild/channel discovery.                                                                                                                                                       |
+| `/messaging`        | Send/edit/delete messages (user + lobby), read messages + history, DM summaries, message events.                                                                                                                                                                                                          |
+| `/voice`            | `startCall` → a live **`Call`** (mute/deaf/volume, audio mode, VAD, per-call events); client-wide audio (devices, volume, mute/deaf-all).                                                                                                                                                                 |
 
 ### Snapshots vs. live wrappers
 
@@ -77,6 +78,32 @@ using s = call.onStatusChanged((status) => {
 ```
 
 Both wrappers are `using`-disposable; disposing tears down their event subscriptions (it does **not** end the call or leave the lobby — use `endCall` / `lobby.leave()` for that).
+
+The snapshot types are JSON-serializable as-is — **snowflake ids are branded `string`s** (matching `@discordkit/core` and Discord's wire convention, not `bigint`), and the live wrappers expose `toJSON()` — so a snapshot crosses any IPC/RPC bridge or `JSON.stringify` unchanged. This is what lets the Electron/Tauri adapters stay thin.
+
+## 🔐 Session persistence
+
+`@discordkit/native` owns the whole OAuth session lifecycle, so users authorize through the browser **once** and reconnect silently afterward:
+
+```ts
+import {
+  startSession,
+  resumeSession,
+  endSession,
+  fileStore
+} from "@discordkit/native/auth";
+
+const client = init({
+  applicationId: "1234567890",
+  tokenStore: fileStore("1234567890")
+});
+
+await resumeSession(); // on boot: silently reconnect from stored tokens
+await startSession(); // on a connect button: stored tokens or browser auth
+await endSession(); // on logout: end + clear the stored session
+```
+
+`TokenStore` is a `load`/`save`/`clear` seam; supply your own, or use the shipped `fileStore` (pure-Node AES-256-GCM, machine-derived key, SEA-safe). For an OS credential vault, the adapters ship a backend (e.g. `tauriKeyringStore` from `@discordkit/tauri/keyring`). Tokens refresh proactively via the SDK's expiration callback.
 
 ## 🔔 Events
 

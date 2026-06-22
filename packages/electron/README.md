@@ -42,7 +42,7 @@ import { registerDiscord } from "@discordkit/electron/main";
 import { registerLobbies } from "@discordkit/electron/main/lobbies";
 
 const discord = registerDiscord(ipcMain, {
-  applicationId: 123n,
+  applicationId: "1234567890",
   targets: [mainWindow.webContents] // who receives status/log/events
 });
 
@@ -101,7 +101,7 @@ await window.discord.lobbies.leave(lobby.id); // act on it by id
 await window.discord.voice.setSelfMute(channelId, true);
 ```
 
-Ids are **branded snowflakes** (`UserId`, `LobbyId`, `ChannelId`, …) inherited from `@discordkit/native` — an id returned by one call type-checks straight into another that wants the same kind, and the compiler rejects mixing them up. They're plain `bigint` at runtime and cross IPC intact.
+Ids are **branded snowflakes** (`UserId`, `LobbyId`, `ChannelId`, …) inherited from `@discordkit/native` — an id returned by one call type-checks straight into another that wants the same kind, and the compiler rejects mixing them up. They're plain **strings** at runtime (Discord's wire convention, matching the REST client) and cross IPC intact. Snapshots come from native's `Lobby.toJSON()` / `Call.toJSON()`, so the adapter never hand-writes serialization.
 
 ## 🔔 Events
 

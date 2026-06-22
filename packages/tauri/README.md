@@ -44,7 +44,7 @@ Create `discord.sidecar.ts`. Composing registrars here is what keeps the built b
 import { createSidecar } from "@discordkit/tauri/sidecar";
 import { registerUsers } from "@discordkit/tauri/sidecar/users";
 
-createSidecar([registerUsers], { applicationId: 123n });
+createSidecar([registerUsers], { applicationId: "1234567890" });
 // presence/auth/status/log are core (always present); add feature domains above
 ```
 
@@ -106,11 +106,32 @@ import type { UsersBridge } from "@discordkit/tauri/renderer/users";
 type Discord = CoreBridge & { users: UsersBridge };
 ```
 
+## 🔐 Session persistence (`@discordkit/tauri/keyring`)
+
+Session persistence is native-owned ([`@discordkit/native`][native]): `connect` resolves to a silent reconnect when a `tokenStore` is configured, `logout` ends the session, and `createSidecar` auto-resumes on boot — the integrator just supplies a `TokenStore`. For production, this package ships an **OS-vault** backend (Windows Credential Manager / macOS Keychain / Linux Secret Service) via [`tauri-plugin-keyring`][keyring]:
+
+```ts
+// sidecar entry — store tokens in the OS vault
+import { tauriKeyringStore } from "@discordkit/tauri/keyring";
+createSidecar([registerUsers], {
+  applicationId: "1234567890",
+  tokenStore: tauriKeyringStore()
+});
+
+// webview — expose the vault to the sidecar (only the shell can reach it)
+import { keyringRelay } from "@discordkit/tauri/keyring";
+const discord = await createClient([usersSlice], {
+  expose: keyringRelay("my-app")
+});
+```
+
+The sidecar can't touch the OS vault directly, so `tauriKeyringStore`'s reads/writes relay through the webview's `keyringRelay`. Setup adds the `tauri-plugin-keyring` crate to `src-tauri`, the `tauri-plugin-keyring-api` peer dep, and the `keyring:allow-*-password` capabilities. (Don't want a vault? Use native's addon-free `fileStore` — no extra setup.)
+
 ## 🪞 What crosses the bridge (snapshots + id-keyed RPC)
 
 `@discordkit/native` returns **live** `Lobby` / `Call` objects (native handles + methods) — those can't cross the process boundary. Over the bridge the webview instead gets serializable **snapshots** (`LobbySnapshot`, `CallSnapshot`) from reads, and drives those entities with **id-keyed RPC** — identical to the [`@discordkit/electron`][electron] model.
 
-Ids are **branded snowflakes** (`UserId`, `LobbyId`, `ChannelId`, …) inherited from `@discordkit/native` — an id returned by one call type-checks straight into another that wants the same kind, and the compiler rejects mixing them up. They're plain `bigint` at runtime and cross the bridge intact.
+Ids are **branded snowflakes** (`UserId`, `LobbyId`, `ChannelId`, …) inherited from `@discordkit/native` — an id returned by one call type-checks straight into another that wants the same kind, and the compiler rejects mixing them up. They're plain **strings** at runtime (Discord's wire convention, matching the REST client), so they serialize over kkrpc's JSON transport unchanged — this adapter does **no** id conversion. The snapshots come from native's `Lobby.toJSON()` / `Call.toJSON()`, so the adapter never hand-writes serialization.
 
 ## 🔔 Events
 
@@ -186,3 +207,4 @@ MIT © [Drake Costa](https://saeris.gg)
 [kkrpc]: https://github.com/kunkunsh/kkrpc
 [shell]: https://v2.tauri.app/plugin/shell/
 [signals]: https://github.com/tc39/proposal-signals
+[keyring]: https://github.com/HuakunShen/tauri-plugin-keyring

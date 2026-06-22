@@ -109,13 +109,9 @@ beside the executable, and the sidecar sets `process.resourcesPath` to its own d
 so koffi finds it. Tauri's `bundle.resources` carries the addon into packaged
 builds.
 
-## Tier 2 (optional): Steam reconciliation
+## Planned follow-up: Steam reconciliation
 
-Setting `STEAM_BACKEND_URL` enables a Steam panel that reconciles your Discord and
-Steam friend graphs — demonstrating the cross-platform unified list. Unset (the
-default), the panel is hidden and the app is exactly Tier 1. Steam **requires a
-small companion backend** (the Steam Web API key is a secret and Steam blocks CORS);
-see `docs/with-tauri-example-spec.md`. Not built yet — a later pass.
+A later PR will add an optional Steam panel that reconciles your Discord and Steam friend graphs — demonstrating the cross-platform unified list — behind a `STEAM_BACKEND_URL` flag (hidden by default). Steam needs a small companion backend (its Web API key is a secret and Steam blocks CORS), so it's deliberately out of scope here to keep the now-stable libraries shippable; the design is captured in `docs/with-tauri-example-spec.md`.
 
 [guidelines]: https://docs.discord.com/developers/discord-social-sdk/design-guidelines
 [electron]: ../with-electron
