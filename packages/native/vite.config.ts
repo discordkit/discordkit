@@ -6,20 +6,30 @@ export default defineConfig({
     tasks: {
       build: { command: `vp pack`, cache: true },
       dev: { command: `vp pack --watch`, cache: false },
-      // Real-SDK ABI smoke — needs the genuine binary (DISCORD_SDK_PATH), so it's
-      // a separate task, not part of the fork-safe `vp test` unit suite. Run by
-      // the `native` CI workflow after checking out the private SDK repo.
+      // Real-SDK ABI smoke — runs only the `real-sdk` Vitest project (the genuine
+      // binary, via DISCORD_SDK_PATH). The `native` CI workflow invokes this after
+      // checking out the private SDK repo. The smoke skips itself when no binary
+      // is present, so it's harmless in the default run too.
       smoke: {
-        command: `vitest run src/__smoke__/real-sdk.smoke.ts`,
+        command: `vp test run --project real-sdk`,
         cache: false
       }
     }
   },
   test: {
     globals: true,
-    // The real-SDK smoke is opt-in (`vp run smoke`); never part of the default
-    // unit suite (which runs on the mock backend, including on fork PRs).
-    exclude: [`**/node_modules/**`, `**/dist/**`, `**/*.smoke.ts`]
+    // Two Vitest projects: the mock-backend `unit` suite (the fork-safe default)
+    // and the `real-sdk` ABI smoke (opt-in via `vp run smoke` / `--project`).
+    projects: [
+      {
+        extends: true,
+        test: { name: `unit`, include: [`src/**/*.spec.ts`] }
+      },
+      {
+        extends: true,
+        test: { name: `real-sdk`, include: [`src/__smoke__/*.smoke.ts`] }
+      }
+    ]
   },
   pack: {
     // Build target derived from the root package.json `engines.node` — a
