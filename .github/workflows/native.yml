@@ -1,0 +1,72 @@
+name: Native
+
+# Real-SDK ABI verification for @discordkit/native: load the GENUINE Discord
+# Social SDK binary and confirm every Discord_* symbol our bindings declare
+# resolves and can be called without crashing at the FFI boundary. This catches
+# ABI drift on an SDK version bump — something the mock-backend unit suite can't.
+#
+# The SDK binary can't be redistributed, so it lives in a private repo we check
+# out with a read-only token. Fork PRs get no secrets (a GitHub security
+# boundary), so this job is GUARDED to not even start on them — it's an
+# enhancement for trusted runs, never a gate. (The mock-backend unit suite in
+# ci.yml covers fork PRs.) The smoke also skipIf(no binary) as defense in depth.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "packages/native/**"
+      - ".github/workflows/native.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "packages/native/**"
+      - ".github/workflows/native.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: native-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # The vendored SDK version to test against. Bump alongside vendor/ + the
+  # private social-sdk repo when upgrading the SDK.
+  SDK_VERSION: "1.9.16441"
+
+jobs:
+  abi:
+    name: Real-SDK ABI smoke
+    runs-on: ubuntu-latest
+    # Skip on fork PRs — they have no SOCIAL_SDK_TOKEN, so the checkout below
+    # would fail. Same-repo pushes/PRs and workflow_dispatch run normally.
+    if: >-
+      github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Fetch private Social SDK binaries
+        uses: actions/checkout@v6
+        with:
+          repository: discordkit/social-sdk
+          token: ${{ secrets.SOCIAL_SDK_TOKEN }}
+          path: .social-sdk
+
+      - uses: voidzero-dev/setup-vp@v1
+        with:
+          node-version: "lts"
+          cache: true
+
+      # No build needed — the smoke runs against TS source via Vitest (like the
+      # unit suite); it loads the real SDK shared library at runtime through koffi
+      # (installed by setup-vp), resolved from DISCORD_SDK_PATH below.
+      - name: Real-SDK ABI smoke
+        working-directory: packages/native
+        env:
+          # Point the resolver at the checked-out version root; it derives the
+          # per-platform file (here: lib/release/libdiscord_partner_sdk.so).
+          DISCORD_SDK_PATH: ${{ github.workspace }}/.social-sdk/discord-social-sdk/${{ env.SDK_VERSION }}
+        run: vp run smoke
