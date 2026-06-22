@@ -8,11 +8,11 @@ Publish **portable** (no-installer) builds of the example apps — `examples/wit
 
 CI shape (`apps` workflow): an **OS matrix** (single Node LTS per runner, not a Node-version matrix), publishing via bumpy. Targets to mirror plex-monitor:
 
-| Runner          | Targets                    |
-| --------------- | -------------------------- |
-| `ubuntu-latest` | `linux-x64`, `linux-arm64` |
-| `macos-latest`  | `darwin-x64`, `darwin-arm64` |
-| `windows-latest`| `win-x64`                  |
+| Runner           | Targets                      |
+| ---------------- | ---------------------------- |
+| `ubuntu-latest`  | `linux-x64`, `linux-arm64`   |
+| `macos-latest`   | `darwin-x64`, `darwin-arm64` |
+| `windows-latest` | `win-x64`                    |
 
 ## The three pieces (in dependency order)
 
@@ -47,7 +47,7 @@ Mirror plex-monitor's `release.yml` (`changes` → `pack` matrix → `publish` v
 
 ## Why it's a follow-up, not part of the libraries PR
 
-- **Unverifiable locally**: correct packaging + bundled-SDK resolution can only be confirmed by building *and running* the artifact on each OS — i.e. on the CI matrix itself. Expect several red iterations per OS while tuning; that churn doesn't belong in the stable-libraries PR.
+- **Unverifiable locally**: correct packaging + bundled-SDK resolution can only be confirmed by building _and running_ the artifact on each OS — i.e. on the CI matrix itself. Expect several red iterations per OS while tuning; that churn doesn't belong in the stable-libraries PR.
 - **Net-new infra**: Electron packaging from scratch (new tool + dep), Tauri target rework, and resolver changes — each independently reviewable.
 - The libraries + the `native` ABI job are complete and reviewable without it.
 
