@@ -1,7 +1,7 @@
 {
   "name": "@discordkit/native",
   "description": "Functional TypeScript bridge to the Discord Social SDK for Electron, Tauri, and other native desktop runtimes",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "license": "MIT",
   "author": "Drake Costa <drake@saeris.gg> (https://saeris.gg)",
   "keywords": [
