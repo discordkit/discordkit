@@ -41,6 +41,20 @@ koffi.struct(`Discord_Handle`, { opaque: `void *` });
 // struct also fits `Discord_UInt64Span` (`{ uint64_t* ptr; size_t size }`) — two
 // machine words either way — so `allocSpanOut` backs both readers.
 koffi.struct(`Discord_Span`, { ptr: `void *`, size: `size_t` });
+// The SDK's typed span aliases (`Discord_GuildMinimalSpan`, …) are ABI-identical
+// to `Discord_Span` — `{ T* ptr; size_t size }`, two machine words — and appear
+// by name in callback signatures (e.g. `GetUserGuildsCallback(..., Discord_
+// GuildMinimalSpan, ...)`). koffi must know each name, so alias them all to the
+// generic span; the readers decode elements by their known element size.
+for (const span of [
+  `Discord_GuildMinimalSpan`,
+  `Discord_GuildChannelSpan`,
+  `Discord_AudioDeviceSpan`,
+  `Discord_MessageHandleSpan`,
+  `Discord_UserMessageSummarySpan`
+]) {
+  koffi.alias(span, `Discord_Span`);
+}
 // A `Discord_Properties` map: parallel key/value Discord_String arrays + count.
 koffi.struct(`Discord_Properties`, {
   size: `size_t`,
