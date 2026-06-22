@@ -41,6 +41,8 @@ export {
   type AsyncSignal
 } from "./signals/asyncSignal.js";
 
-/** The "call me when it changes" helper for any signal (TC39-spec, framework-free). */
-export { subscribe } from "@discordkit/native";
-export type { Subscription } from "@discordkit/native";
+/** The "call me when it changes" helper for any signal (TC39-spec, framework-free).
+ * Imported from the isolated `/subscribe` subpath, NOT the package root — the root
+ * also exports the FFI client (koffi), which must never enter a renderer bundle. */
+export { subscribe } from "@discordkit/native/subscribe";
+export type { Subscription } from "@discordkit/native/subscription";

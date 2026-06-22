@@ -8,9 +8,9 @@
     "@discordkit/electron": "workspace:^",
     "@discordkit/native": "workspace:^",
     "@hookform/resolvers": "^5.4.0",
-    "lucide-react": "^1.17.0",
+    "lucide-react": "catalog:",
     "react": "catalog:",
-    "react-aria-components": "^1.18.0",
+    "react-aria-components": "catalog:",
     "react-dom": "catalog:",
     "react-hook-form": "^7.78.0",
     "valibot": "catalog:"
