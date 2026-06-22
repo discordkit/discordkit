@@ -38,7 +38,7 @@ export const Section = ({
       <div className="flex flex-col gap-0.5 p-1">
         {section.members.map((relationship) => (
           <FriendEntry
-            key={String(relationship.userId)}
+            key={relationship.userId}
             relationship={relationship}
             // The Discord badge marks online-elsewhere friends as reachable via
             // Discord; per spec it doesn't appear on the in-game section.

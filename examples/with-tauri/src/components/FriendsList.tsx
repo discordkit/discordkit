@@ -33,7 +33,7 @@ export const FriendsList = ({
       friends
         .filter((r) => isOnline(r.user?.status))
         .slice(0, options.simulatedInGame)
-        .map((r) => String(r.userId))
+        .map((r) => r.userId)
     );
     return sectionFriends(friends, {
       gameTitle: options.gameTitle,

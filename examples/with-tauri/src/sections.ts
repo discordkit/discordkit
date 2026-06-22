@@ -60,7 +60,7 @@ export const sectionFriends = (
 
   for (const r of friends) {
     if (!isOnline(r.user?.status)) offline.push(r);
-    else if (inGameIds.has(String(r.userId))) inGame.push(r);
+    else if (inGameIds.has(r.userId)) inGame.push(r);
     else elsewhere.push(r);
   }
 
@@ -81,7 +81,4 @@ export const sectionFriends = (
 
 /** Best display name for a relationship's user (per the identity-priority spec). */
 export const nameOf = (r: Relationship): string =>
-  r.user?.globalName ??
-  r.user?.displayName ??
-  r.user?.username ??
-  String(r.userId);
+  r.user?.globalName ?? r.user?.displayName ?? r.user?.username ?? r.userId;
