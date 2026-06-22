@@ -70,12 +70,16 @@ storybook-static/
 # dotenv environment variables file
 .env
 .env.*
+!.env.schema
 
 .next/
 .cache/
 .vite-hooks/
 .claude/settings.local.json
 .discord-docs/
+social-sdk-docs/
+# Discord Social SDK native binaries — license forbids redistribution; never commit
+vendor/
 audit/
 **/dist/
 coverage/
@@ -100,3 +104,6 @@ cypress/e2e/build
 
 # Playwright MCP debugging artifacts (snapshots/console logs)
 .playwright-mcp
+
+# Figma design-reference scratch (short-lived MCP captures, not shipped)
+.figma-ref/

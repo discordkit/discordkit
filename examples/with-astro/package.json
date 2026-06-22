@@ -13,14 +13,14 @@
     "@discordkit/oauth": "workspace:^",
     "@varlock/astro-integration": "^1.0.4",
     "astro": "6.4.4",
-    "jose": "^6.1.0",
+    "jose": "catalog:",
     "valibot": "catalog:",
-    "varlock": "^1.5.1"
+    "varlock": "catalog:"
   },
   "devDependencies": {
     "@discordkit/e2e": "workspace:^",
-    "@playwright/test": "^1.56.0",
+    "@playwright/test": "catalog:",
     "typescript": "catalog:",
-    "vite-plus": "^0.1.24"
+    "vite-plus": "catalog:"
   }
 }

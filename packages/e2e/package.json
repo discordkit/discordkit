@@ -15,9 +15,9 @@
     "@discordkit/client": "workspace:^",
     "@discordkit/core": "workspace:^",
     "@discordkit/oauth": "workspace:^",
-    "@playwright/test": "^1.56.0",
-    "msw": "^2.14.6",
+    "@playwright/test": "catalog:",
+    "msw": "catalog:",
     "valibot": "catalog:",
-    "valimock": "1.6.0"
+    "valimock": "catalog:"
   }
 }

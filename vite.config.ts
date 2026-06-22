@@ -61,7 +61,15 @@ export default defineConfig({
       // nested `vp run -r e2e` (its own task graph), which would race the
       // still-running build. `&&` guarantees the ordering across that boundary.
       e2e: { command: `vp run build && vp run -r e2e`, cache: false },
-      ci: { command: `vp lint && vp test && vp run build:all`, cache: false }
+      ci: { command: `vp lint && vp test && vp run build:all`, cache: false },
+      // Scrape the Discord Social SDK docs (guides + Doxygen API) into the
+      // gitignored social-sdk-docs/ cache, so we can reference them while
+      // building out @discordkit/native. Incremental by default; pass --force
+      // to re-fetch all. Output: structured per-member markdown under api/.
+      "scrape:sdk-docs": {
+        command: `node --experimental-strip-types scripts/docs/fetch-social-sdk.ts`,
+        cache: false
+      }
     }
   },
   // Resolve workspace packages to their TypeScript source via the private
@@ -153,6 +161,31 @@ export default defineConfig({
         rules: {
           "typescript/no-unsafe-type-assertion": `off`,
           "typescript/no-unnecessary-type-assertion": `off`
+        }
+      },
+      {
+        // The native bridge packages are boundary-cast surface, like core/client.
+        // Their casts are load-bearing at three seams the type system can't see
+        // into: (1) FFI reads brand opaque handle values at their single creation
+        // point (`b.id(handle) as UserId`), which is the whole branded-id design;
+        // (2) the `snowflake()` constructor (`BigInt(v) as T`); and (3) the IPC/
+        // kkrpc transport, where channel payloads cross as `unknown` and are
+        // re-narrowed to the bridge contract (`method(...args) as Promise<T>`).
+        // A genuinely wrong cast here is still caught by tsc; the rule only adds
+        // noise. (Same stance as core/client — see the block above.)
+        files: [
+          `packages/native/src/**/*.ts`,
+          `packages/electron/src/**/*.ts`,
+          `packages/tauri/src/**/*.ts`
+        ],
+        rules: {
+          "typescript/no-unsafe-type-assertion": `off`,
+          // Same boundary surface has intentional single-use type parameters the
+          // CALLER specifies: `snowflake<UserId>(v)` brands the return, `io.call<T>`
+          // / `io.on<A>` let a call site name its payload type, and the event
+          // fanout's `<H>` exists to satisfy handler contravariance. Each `T`/`A`/
+          // `H` appears once by design — that's the ergonomic, not a smell.
+          "typescript/no-unnecessary-type-parameters": `off`
         }
       },
       {

@@ -1,0 +1,22 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Default permissions + the shell permissions @discordkit/tauri needs to spawn and talk to the Discord sidecar over stdio (merged from @discordkit/tauri/tauri/capabilities.json).",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    {
+      "identifier": "shell:allow-execute",
+      "allow": [{ "name": "binaries/discord-sidecar", "sidecar": true }]
+    },
+    {
+      "identifier": "shell:allow-spawn",
+      "allow": [{ "name": "binaries/discord-sidecar", "sidecar": true }]
+    },
+    "shell:allow-kill",
+    "shell:allow-stdin-write",
+    "keyring:allow-get-password",
+    "keyring:allow-set-password",
+    "keyring:allow-delete-password"
+  ]
+}

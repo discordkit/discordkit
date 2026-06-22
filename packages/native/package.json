@@ -1,0 +1,93 @@
+{
+  "name": "@discordkit/native",
+  "description": "Functional TypeScript bridge to the Discord Social SDK for Electron, Tauri, and other native desktop runtimes",
+  "version": "0.0.0",
+  "license": "MIT",
+  "author": "Drake Costa <drake@saeris.gg> (https://saeris.gg)",
+  "keywords": [
+    "discord",
+    "social-sdk",
+    "rich-presence",
+    "electron",
+    "tauri",
+    "ffi",
+    "native"
+  ],
+  "homepage": "https://github.com/discordkit/discordkit#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/discordkit/discordkit.git",
+    "directory": "packages/native"
+  },
+  "bugs": {
+    "url": "https://github.com/discordkit/discordkit/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "@discordkit/source": "./src/index.ts",
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    },
+    "./auth": {
+      "@discordkit/source": "./src/auth/index.ts",
+      "types": "./dist/auth/index.d.mts",
+      "import": "./dist/auth/index.mjs"
+    },
+    "./presence": {
+      "@discordkit/source": "./src/presence/index.ts",
+      "types": "./dist/presence/index.d.mts",
+      "import": "./dist/presence/index.mjs"
+    },
+    "./users": {
+      "@discordkit/source": "./src/users/index.ts",
+      "types": "./dist/users/index.d.mts",
+      "import": "./dist/users/index.mjs"
+    },
+    "./relationships": {
+      "@discordkit/source": "./src/relationships/index.ts",
+      "types": "./dist/relationships/index.d.mts",
+      "import": "./dist/relationships/index.mjs"
+    },
+    "./activity-invites": {
+      "@discordkit/source": "./src/activityInvites/index.ts",
+      "types": "./dist/activityInvites/index.d.mts",
+      "import": "./dist/activityInvites/index.mjs"
+    },
+    "./lobbies": {
+      "@discordkit/source": "./src/lobby/index.ts",
+      "types": "./dist/lobby/index.d.mts",
+      "import": "./dist/lobby/index.mjs"
+    },
+    "./messaging": {
+      "@discordkit/source": "./src/messaging/index.ts",
+      "types": "./dist/messaging/index.d.mts",
+      "import": "./dist/messaging/index.mjs"
+    },
+    "./voice": {
+      "@discordkit/source": "./src/voice/index.ts",
+      "types": "./dist/voice/index.d.mts",
+      "import": "./dist/voice/index.mjs"
+    },
+    "./*": {
+      "@discordkit/source": "./src/*.ts",
+      "types": "./dist/*.d.mts",
+      "import": "./dist/*.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist/**/*"
+  ],
+  "sideEffects": false,
+  "dependencies": {
+    "@napi-rs/keyring": "catalog:",
+    "disposablestack": "catalog:",
+    "koffi": "catalog:",
+    "signal-polyfill": "catalog:"
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "name": "@discordkit/tauri",
+  "description": "Tauri adapter for @discordkit/native — run the Discord Social SDK in a Node sidecar and reach it from the webview over a typed kkrpc bridge",
+  "version": "0.0.0",
+  "license": "MIT",
+  "author": "Drake Costa <drake@saeris.gg> (https://saeris.gg)",
+  "keywords": [
+    "discord",
+    "social-sdk",
+    "rich-presence",
+    "tauri",
+    "sidecar",
+    "kkrpc"
+  ],
+  "homepage": "https://github.com/discordkit/discordkit#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/discordkit/discordkit.git",
+    "directory": "packages/tauri"
+  },
+  "bugs": {
+    "url": "https://github.com/discordkit/discordkit/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "@discordkit/source": "./src/index.ts",
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    },
+    "./*": {
+      "@discordkit/source": "./src/*.ts",
+      "types": "./dist/*.d.mts",
+      "import": "./dist/*.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist/**/*"
+  ],
+  "sideEffects": false,
+  "dependencies": {
+    "@discordkit/native": "workspace:^",
+    "kkrpc": "catalog:",
+    "signal-polyfill": "catalog:"
+  },
+  "peerDependencies": {
+    "@tauri-apps/api": ">= 2",
+    "@tauri-apps/plugin-shell": ">= 2",
+    "tauri-plugin-keyring-api": ">= 0.1"
+  },
+  "peerDependenciesMeta": {
+    "tauri-plugin-keyring-api": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@tauri-apps/api": "catalog:",
+    "@tauri-apps/plugin-shell": "catalog:",
+    "tauri-plugin-keyring-api": "catalog:"
+  }
+}

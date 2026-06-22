@@ -1,0 +1,130 @@
+@import "tailwindcss";
+
+/* Registers React Aria's data-attribute variants (selected:, pressed:,
+   hover:, focus-within:, group-selected:, …) so they compile. Without this
+   plugin those variants silently no-op under Tailwind v4. */
+@plugin "tailwindcss-react-aria-components";
+
+/*
+ * Design tokens (Tailwind v4 CSS-first `@theme`), shared with the with-electron
+ * example. Semantic names map to a Discord-flavored palette; components reference
+ * the tokens (bg-surface, text-muted, …) rather than raw colors. All values are
+ * oklch; mode-varying tokens use `light-dark()` (first = light, second = dark),
+ * resolved from the element's `color-scheme` — `:root` sets `light dark` so it
+ * follows the OS automatically; `.light` / `.dark` pin a mode for a future toggle.
+ */
+@theme {
+  /* Surfaces — deepest app bg → raised surfaces → hover steps. */
+  --color-canvas: light-dark(oklch(100% 0 0), oklch(23.95% 0.0059 271.17));
+  --color-surface: light-dark(
+    oklch(96.4% 0.0029 264.54),
+    oklch(29.67% 0.0078 264.45)
+  );
+  --color-surface-hover: light-dark(
+    oklch(92.12% 0.0046 258.33),
+    oklch(26.09% 0.0076 274.66)
+  );
+  --color-elevated: light-dark(
+    oklch(92.12% 0.0046 258.33),
+    oklch(43.23% 0.0134 274.64)
+  );
+  --color-elevated-hover: light-dark(
+    oklch(87.83% 0.0076 260.73),
+    oklch(54.3% 0.0141 275.91)
+  );
+  --color-elevated-active: light-dark(
+    oklch(84.28% 0.0089 247.93),
+    oklch(38.36% 0.0121 273.09)
+  );
+
+  /* Section / header surface — the raised row-group bg in the friends list
+     (Figma `background/surface/highest`). */
+  --color-section: light-dark(
+    oklch(92.12% 0.0046 258.33),
+    oklch(29.81% 0.0091 276.82)
+  );
+
+  /* Brand (Discord blurple) — constant across themes. */
+  --color-brand: oklch(57.74% 0.2091 273.85);
+  --color-brand-hover: oklch(49.67% 0.176 273.91);
+  --color-brand-active: oklch(44.04% 0.153 274.22);
+
+  /* Text. */
+  --color-text: light-dark(
+    oklch(12.28% 0.0029 285.97),
+    oklch(96.4% 0.0029 264.54)
+  );
+  --color-text-muted: light-dark(
+    oklch(43.23% 0.0134 274.64),
+    oklch(78.71% 0.0114 256.71)
+  );
+  --color-text-subtle: oklch(62.94% 0.0051 258.33);
+
+  /* Switch track when off (Studio toggle controls). */
+  --color-switch-off: light-dark(
+    oklch(78.71% 0.0114 256.71),
+    oklch(61.33% 0.0158 268.4)
+  );
+
+  /* Status matrix (Discord canonical) — constant across themes; the design spec
+     requires green/amber/red/gray to read consistently in-game and in Discord. */
+  --color-status-online: oklch(63.7% 0.1551 152.26);
+  --color-status-idle: oklch(80.11% 0.1515 80.55);
+  --color-status-dnd: oklch(63.73% 0.215 24.73);
+  --color-status-offline: oklch(61.33% 0.0158 268.4);
+
+  /* Borders — a translucent ink that reads on either surface. */
+  --color-edge: light-dark(oklch(0% 0 0 / 12%), oklch(100% 0 0 / 12%));
+  --color-edge-soft: light-dark(oklch(0% 0 0 / 8%), oklch(100% 0 0 / 10%));
+
+  /* Translucent ink fills — a wash that sits on whatever surface is behind it. */
+  --color-hover-tint: light-dark(oklch(0% 0 0 / 5%), oklch(100% 0 0 / 5%));
+  --color-fill: light-dark(oklch(0% 0 0 / 12%), oklch(100% 0 0 / 15%));
+
+  /* Module corner radius (Figma) — used by sections/cards. */
+  --radius-module: 12px;
+}
+
+@layer base {
+  /* Follow the OS preference automatically; `light-dark()` resolves from this.
+     `.light` / `.dark` pin a mode for a future in-app toggle. */
+  :where(html) {
+    color-scheme: light dark;
+  }
+  :where(html.light) {
+    color-scheme: light;
+  }
+  :where(html.dark) {
+    color-scheme: dark;
+  }
+
+  body {
+    margin: 0;
+    font-family: system-ui, sans-serif;
+    background: var(--color-canvas);
+    color: var(--color-text);
+    /* Skip the 300ms tap delay on touch input. */
+    touch-action: manipulation;
+  }
+
+  input,
+  button,
+  select {
+    font: inherit;
+  }
+
+  /* Visible keyboard-focus ring on any focusable primitive. */
+  [data-focus-visible] {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 1px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+    }
+  }
+}

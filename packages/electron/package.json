@@ -1,0 +1,52 @@
+{
+  "name": "@discordkit/electron",
+  "description": "Electron adapter for @discordkit/native — run the Discord Social SDK in the main process and reach it from the renderer over a typed IPC bridge",
+  "version": "0.0.0",
+  "license": "MIT",
+  "author": "Drake Costa <drake@saeris.gg> (https://saeris.gg)",
+  "keywords": [
+    "discord",
+    "social-sdk",
+    "rich-presence",
+    "electron",
+    "ipc"
+  ],
+  "homepage": "https://github.com/discordkit/discordkit#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/discordkit/discordkit.git",
+    "directory": "packages/electron"
+  },
+  "bugs": {
+    "url": "https://github.com/discordkit/discordkit/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "@discordkit/source": "./src/index.ts",
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    },
+    "./*": {
+      "@discordkit/source": "./src/*.ts",
+      "types": "./dist/*.d.mts",
+      "import": "./dist/*.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist/**/*"
+  ],
+  "sideEffects": false,
+  "dependencies": {
+    "@discordkit/native": "workspace:^",
+    "signal-polyfill": "catalog:"
+  },
+  "peerDependencies": {
+    "electron": ">= 30"
+  }
+}

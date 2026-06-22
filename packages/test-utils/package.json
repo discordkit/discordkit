@@ -11,9 +11,9 @@
   },
   "dependencies": {
     "@faker-js/faker": "^10.4.0",
-    "msw": "^2.14.6",
+    "msw": "catalog:",
     "nodejs-snowflake": "^2.0.1",
     "valibot": "catalog:",
-    "valimock": "1.6.0"
+    "valimock": "catalog:"
   }
 }

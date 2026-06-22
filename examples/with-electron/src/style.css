@@ -1,0 +1,155 @@
+@import "tailwindcss";
+
+/* Registers React Aria's data-attribute variants (selected:, pressed:,
+   hover:, focus-within:, group-selected:, …) so they compile. Without this
+   plugin those variants silently no-op under Tailwind v4. */
+@plugin "tailwindcss-react-aria-components";
+
+/*
+ * Design tokens (Tailwind v4 CSS-first `@theme`). Semantic names map to a
+ * Discord-flavored palette; components reference the tokens (bg-surface,
+ * text-muted, border-edge, …) rather than raw colors, so the whole app re-themes
+ * from one place.
+ *
+ * All values are oklch. Each token that differs by mode uses CSS `light-dark()`
+ * — first arg = light, second = dark — so a single declaration carries both
+ * themes. Which one resolves is driven by the element's `color-scheme`: `:root`
+ * sets `color-scheme: light dark` so it follows the OS `prefers-color-scheme`
+ * automatically. The `.light` / `.dark` classes below pin `color-scheme` to
+ * force a mode (for a future in-app theme toggle); they don't need to restate
+ * tokens since `light-dark()` already resolves from whichever scheme is active.
+ */
+@theme {
+  /* Surfaces — deepest app bg → raised surfaces → hover steps. */
+  --color-canvas: light-dark(
+    oklch(100% 0 0),
+    oklch(23.95% 0.0059 271.17)
+  ); /* app background */
+  --color-surface: light-dark(
+    oklch(96.4% 0.0029 264.54),
+    oklch(29.67% 0.0078 264.45)
+  ); /* cards, inputs, panels */
+  --color-surface-hover: light-dark(
+    oklch(92.12% 0.0046 258.33),
+    oklch(26.09% 0.0076 274.66)
+  ); /* hovered/active surface */
+  --color-elevated: light-dark(
+    oklch(92.12% 0.0046 258.33),
+    oklch(43.23% 0.0134 274.64)
+  ); /* neutral/ghost buttons */
+  --color-elevated-hover: light-dark(
+    oklch(87.83% 0.0076 260.73),
+    oklch(54.3% 0.0141 275.91)
+  );
+  --color-elevated-active: light-dark(
+    oklch(84.28% 0.0089 247.93),
+    oklch(38.36% 0.0121 273.09)
+  );
+
+  /* Brand (Discord blurple) — constant across themes. */
+  --color-brand: oklch(57.74% 0.2091 273.85);
+  --color-brand-hover: oklch(49.67% 0.176 273.91);
+  --color-brand-active: oklch(44.04% 0.153 274.22);
+
+  /* Text. */
+  --color-text: light-dark(
+    oklch(12.28% 0.0029 285.97),
+    oklch(96.4% 0.0029 264.54)
+  ); /* primary */
+  --color-text-muted: light-dark(
+    oklch(43.23% 0.0134 274.64),
+    oklch(78.71% 0.0114 256.71)
+  ); /* secondary / labels */
+  --color-text-subtle: oklch(62.94% 0.0051 258.33); /* placeholders */
+
+  /* Controls. */
+  --color-switch-off: light-dark(
+    oklch(78.71% 0.0114 256.71),
+    oklch(61.33% 0.0158 268.4)
+  ); /* switch track when off */
+
+  /* Borders — a translucent ink that reads on either surface. */
+  --color-edge: light-dark(
+    oklch(0% 0 0 / 12%),
+    oklch(100% 0 0 / 12%)
+  ); /* default border */
+  --color-edge-soft: light-dark(
+    oklch(0% 0 0 / 8%),
+    oklch(100% 0 0 / 10%)
+  ); /* dividers */
+
+  /* Translucent ink fills — a wash that sits on whatever surface is behind it.
+     Dark uses a light ink (white-ish), light uses a dark ink (black-ish). */
+  --color-hover-tint: light-dark(
+    oklch(0% 0 0 / 5%),
+    oklch(100% 0 0 / 5%)
+  ); /* listbox-item hover wash */
+  --color-fill: light-dark(
+    oklch(0% 0 0 / 12%),
+    oklch(100% 0 0 / 15%)
+  ); /* chip / pill background */
+  --color-fill-strong: light-dark(
+    oklch(0% 0 0 / 30%),
+    oklch(0% 0 0 / 30%)
+  ); /* placeholder image swatch */
+  --color-fill-stronger: light-dark(
+    oklch(0% 0 0 / 50%),
+    oklch(0% 0 0 / 50%)
+  ); /* placeholder badge swatch */
+
+  /* Feedback (warning banner) — amber, constant across themes. */
+  --color-warning: oklch(87.9% 0.1534 91.61); /* amber-300 */
+  --color-warning-surface: oklch(76.9% 0.188 70.08 / 10%); /* amber-500/10 */
+  --color-warning-edge: oklch(76.9% 0.188 70.08 / 40%); /* amber-500/40 */
+
+  /* Overlays (tooltips). */
+  --color-overlay: light-dark(oklch(0% 0 0 / 80%), oklch(0% 0 0 / 90%));
+}
+
+@layer base {
+  /* Follow the OS preference automatically; `light-dark()` resolves from this.
+     `.light` / `.dark` pin a mode for a future in-app toggle (native form
+     controls + scrollbars follow `color-scheme`). */
+  :where(html) {
+    color-scheme: light dark;
+  }
+  :where(html.light) {
+    color-scheme: light;
+  }
+  :where(html.dark) {
+    color-scheme: dark;
+  }
+
+  body {
+    margin: 0;
+    font-family: system-ui, sans-serif;
+    background: var(--color-canvas);
+    color: var(--color-text);
+    /* Skip the 300ms tap delay on touch input. */
+    touch-action: manipulation;
+  }
+
+  /* React Aria's unstyled primitives inherit the app font on form controls. */
+  input,
+  button,
+  select {
+    font: inherit;
+  }
+
+  /* Visible keyboard-focus ring on any focusable primitive (web-interface
+     guideline: keyboard focus must be clearly indicated). */
+  [data-focus-visible] {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 1px;
+  }
+
+  /* Honor reduced-motion: neutralize the switch/button/tab transitions. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+    }
+  }
+}
