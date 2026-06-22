@@ -541,6 +541,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@discordkit/native@workspace:packages/native"
   dependencies:
+    "@napi-rs/keyring": "catalog:"
     disposablestack: "catalog:"
     koffi: "catalog:"
     signal-polyfill: "catalog:"
@@ -558,7 +559,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@discordkit/tauri@workspace:packages/tauri":
+"@discordkit/tauri@workspace:^, @discordkit/tauri@workspace:packages/tauri":
   version: 0.0.0-use.local
   resolution: "@discordkit/tauri@workspace:packages/tauri"
   dependencies:
@@ -567,9 +568,14 @@ __metadata:
     "@tauri-apps/plugin-shell": "catalog:"
     kkrpc: "catalog:"
     signal-polyfill: "catalog:"
+    tauri-plugin-keyring-api: "catalog:"
   peerDependencies:
     "@tauri-apps/api": ">= 2"
     "@tauri-apps/plugin-shell": ">= 2"
+    tauri-plugin-keyring-api: ">= 0.1"
+  peerDependenciesMeta:
+    tauri-plugin-keyring-api:
+      optional: true
   languageName: unknown
   linkType: soft
 
@@ -1375,6 +1381,135 @@ __metadata:
     outvariant: "npm:^1.4.3"
     strict-event-emitter: "npm:^0.5.1"
   checksum: 10/aed6a80913d345e37a0cd58f1318736d765d5295cefae35ea104f6bfc5b224f96eb71635593f470579c1251efb1d18ad426e884ba01f85cfe3ff135e3b82e7a2
+  languageName: node
+  linkType: hard
+
+"@napi-rs/keyring-darwin-arm64@npm:1.3.0":
+  version: 1.3.0
+  resolution: "@napi-rs/keyring-darwin-arm64@npm:1.3.0"
+  conditions: os=darwin & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@napi-rs/keyring-darwin-x64@npm:1.3.0":
+  version: 1.3.0
+  resolution: "@napi-rs/keyring-darwin-x64@npm:1.3.0"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@napi-rs/keyring-freebsd-x64@npm:1.3.0":
+  version: 1.3.0
+  resolution: "@napi-rs/keyring-freebsd-x64@npm:1.3.0"
+  conditions: os=freebsd & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@napi-rs/keyring-linux-arm-gnueabihf@npm:1.3.0":
+  version: 1.3.0
+  resolution: "@napi-rs/keyring-linux-arm-gnueabihf@npm:1.3.0"
+  conditions: os=linux & cpu=arm
+  languageName: node
+  linkType: hard
+
+"@napi-rs/keyring-linux-arm64-gnu@npm:1.3.0":
+  version: 1.3.0
+  resolution: "@napi-rs/keyring-linux-arm64-gnu@npm:1.3.0"
+  conditions: os=linux & cpu=arm64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@napi-rs/keyring-linux-arm64-musl@npm:1.3.0":
+  version: 1.3.0
+  resolution: "@napi-rs/keyring-linux-arm64-musl@npm:1.3.0"
+  conditions: os=linux & cpu=arm64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@napi-rs/keyring-linux-riscv64-gnu@npm:1.3.0":
+  version: 1.3.0
+  resolution: "@napi-rs/keyring-linux-riscv64-gnu@npm:1.3.0"
+  conditions: os=linux & cpu=riscv64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@napi-rs/keyring-linux-x64-gnu@npm:1.3.0":
+  version: 1.3.0
+  resolution: "@napi-rs/keyring-linux-x64-gnu@npm:1.3.0"
+  conditions: os=linux & cpu=x64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@napi-rs/keyring-linux-x64-musl@npm:1.3.0":
+  version: 1.3.0
+  resolution: "@napi-rs/keyring-linux-x64-musl@npm:1.3.0"
+  conditions: os=linux & cpu=x64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@napi-rs/keyring-win32-arm64-msvc@npm:1.3.0":
+  version: 1.3.0
+  resolution: "@napi-rs/keyring-win32-arm64-msvc@npm:1.3.0"
+  conditions: os=win32 & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@napi-rs/keyring-win32-ia32-msvc@npm:1.3.0":
+  version: 1.3.0
+  resolution: "@napi-rs/keyring-win32-ia32-msvc@npm:1.3.0"
+  conditions: os=win32 & cpu=ia32
+  languageName: node
+  linkType: hard
+
+"@napi-rs/keyring-win32-x64-msvc@npm:1.3.0":
+  version: 1.3.0
+  resolution: "@napi-rs/keyring-win32-x64-msvc@npm:1.3.0"
+  conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@napi-rs/keyring@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "@napi-rs/keyring@npm:1.3.0"
+  dependencies:
+    "@napi-rs/keyring-darwin-arm64": "npm:1.3.0"
+    "@napi-rs/keyring-darwin-x64": "npm:1.3.0"
+    "@napi-rs/keyring-freebsd-x64": "npm:1.3.0"
+    "@napi-rs/keyring-linux-arm-gnueabihf": "npm:1.3.0"
+    "@napi-rs/keyring-linux-arm64-gnu": "npm:1.3.0"
+    "@napi-rs/keyring-linux-arm64-musl": "npm:1.3.0"
+    "@napi-rs/keyring-linux-riscv64-gnu": "npm:1.3.0"
+    "@napi-rs/keyring-linux-x64-gnu": "npm:1.3.0"
+    "@napi-rs/keyring-linux-x64-musl": "npm:1.3.0"
+    "@napi-rs/keyring-win32-arm64-msvc": "npm:1.3.0"
+    "@napi-rs/keyring-win32-ia32-msvc": "npm:1.3.0"
+    "@napi-rs/keyring-win32-x64-msvc": "npm:1.3.0"
+  dependenciesMeta:
+    "@napi-rs/keyring-darwin-arm64":
+      optional: true
+    "@napi-rs/keyring-darwin-x64":
+      optional: true
+    "@napi-rs/keyring-freebsd-x64":
+      optional: true
+    "@napi-rs/keyring-linux-arm-gnueabihf":
+      optional: true
+    "@napi-rs/keyring-linux-arm64-gnu":
+      optional: true
+    "@napi-rs/keyring-linux-arm64-musl":
+      optional: true
+    "@napi-rs/keyring-linux-riscv64-gnu":
+      optional: true
+    "@napi-rs/keyring-linux-x64-gnu":
+      optional: true
+    "@napi-rs/keyring-linux-x64-musl":
+      optional: true
+    "@napi-rs/keyring-win32-arm64-msvc":
+      optional: true
+    "@napi-rs/keyring-win32-ia32-msvc":
+      optional: true
+    "@napi-rs/keyring-win32-x64-msvc":
+      optional: true
+  checksum: 10/bfef7fe1dfcfc29a5cf0988ce3dad06a19850351598b6a8f2b8ccd6a8f64540a80f66ae3eb018112bdabb366dbb421c026c418756ffe93d2ea19518aa87c0440
   languageName: node
   linkType: hard
 
@@ -2747,10 +2882,138 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tauri-apps/api@npm:>=2.1.1":
+  version: 2.11.1
+  resolution: "@tauri-apps/api@npm:2.11.1"
+  checksum: 10/95ff573095f03fee3cef9a6a52dbb4e27fd25de8793a2f5d7f2f9850ba85b56777f8fa697e6e863927345432a0c6af0649e55dafbc0de4f84a34f0c08637a662
+  languageName: node
+  linkType: hard
+
 "@tauri-apps/api@npm:^2.10.1, @tauri-apps/api@npm:^2.11.0":
   version: 2.11.0
   resolution: "@tauri-apps/api@npm:2.11.0"
   checksum: 10/7c3a90cd357b46c09eb639508a5feda4e695d26fdbddac36d16e7440f7e354c7523fd632f7cace017963d4e3b243d05df6423951f17d134b820025215caa0fb3
+  languageName: node
+  linkType: hard
+
+"@tauri-apps/cli-darwin-arm64@npm:2.11.2":
+  version: 2.11.2
+  resolution: "@tauri-apps/cli-darwin-arm64@npm:2.11.2"
+  conditions: os=darwin & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@tauri-apps/cli-darwin-x64@npm:2.11.2":
+  version: 2.11.2
+  resolution: "@tauri-apps/cli-darwin-x64@npm:2.11.2"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@tauri-apps/cli-linux-arm-gnueabihf@npm:2.11.2":
+  version: 2.11.2
+  resolution: "@tauri-apps/cli-linux-arm-gnueabihf@npm:2.11.2"
+  conditions: os=linux & cpu=arm
+  languageName: node
+  linkType: hard
+
+"@tauri-apps/cli-linux-arm64-gnu@npm:2.11.2":
+  version: 2.11.2
+  resolution: "@tauri-apps/cli-linux-arm64-gnu@npm:2.11.2"
+  conditions: os=linux & cpu=arm64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@tauri-apps/cli-linux-arm64-musl@npm:2.11.2":
+  version: 2.11.2
+  resolution: "@tauri-apps/cli-linux-arm64-musl@npm:2.11.2"
+  conditions: os=linux & cpu=arm64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@tauri-apps/cli-linux-riscv64-gnu@npm:2.11.2":
+  version: 2.11.2
+  resolution: "@tauri-apps/cli-linux-riscv64-gnu@npm:2.11.2"
+  conditions: os=linux & cpu=riscv64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@tauri-apps/cli-linux-x64-gnu@npm:2.11.2":
+  version: 2.11.2
+  resolution: "@tauri-apps/cli-linux-x64-gnu@npm:2.11.2"
+  conditions: os=linux & cpu=x64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@tauri-apps/cli-linux-x64-musl@npm:2.11.2":
+  version: 2.11.2
+  resolution: "@tauri-apps/cli-linux-x64-musl@npm:2.11.2"
+  conditions: os=linux & cpu=x64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@tauri-apps/cli-win32-arm64-msvc@npm:2.11.2":
+  version: 2.11.2
+  resolution: "@tauri-apps/cli-win32-arm64-msvc@npm:2.11.2"
+  conditions: os=win32 & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@tauri-apps/cli-win32-ia32-msvc@npm:2.11.2":
+  version: 2.11.2
+  resolution: "@tauri-apps/cli-win32-ia32-msvc@npm:2.11.2"
+  conditions: os=win32 & cpu=ia32
+  languageName: node
+  linkType: hard
+
+"@tauri-apps/cli-win32-x64-msvc@npm:2.11.2":
+  version: 2.11.2
+  resolution: "@tauri-apps/cli-win32-x64-msvc@npm:2.11.2"
+  conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@tauri-apps/cli@npm:^2.11.2":
+  version: 2.11.2
+  resolution: "@tauri-apps/cli@npm:2.11.2"
+  dependencies:
+    "@tauri-apps/cli-darwin-arm64": "npm:2.11.2"
+    "@tauri-apps/cli-darwin-x64": "npm:2.11.2"
+    "@tauri-apps/cli-linux-arm-gnueabihf": "npm:2.11.2"
+    "@tauri-apps/cli-linux-arm64-gnu": "npm:2.11.2"
+    "@tauri-apps/cli-linux-arm64-musl": "npm:2.11.2"
+    "@tauri-apps/cli-linux-riscv64-gnu": "npm:2.11.2"
+    "@tauri-apps/cli-linux-x64-gnu": "npm:2.11.2"
+    "@tauri-apps/cli-linux-x64-musl": "npm:2.11.2"
+    "@tauri-apps/cli-win32-arm64-msvc": "npm:2.11.2"
+    "@tauri-apps/cli-win32-ia32-msvc": "npm:2.11.2"
+    "@tauri-apps/cli-win32-x64-msvc": "npm:2.11.2"
+  dependenciesMeta:
+    "@tauri-apps/cli-darwin-arm64":
+      optional: true
+    "@tauri-apps/cli-darwin-x64":
+      optional: true
+    "@tauri-apps/cli-linux-arm-gnueabihf":
+      optional: true
+    "@tauri-apps/cli-linux-arm64-gnu":
+      optional: true
+    "@tauri-apps/cli-linux-arm64-musl":
+      optional: true
+    "@tauri-apps/cli-linux-riscv64-gnu":
+      optional: true
+    "@tauri-apps/cli-linux-x64-gnu":
+      optional: true
+    "@tauri-apps/cli-linux-x64-musl":
+      optional: true
+    "@tauri-apps/cli-win32-arm64-msvc":
+      optional: true
+    "@tauri-apps/cli-win32-ia32-msvc":
+      optional: true
+    "@tauri-apps/cli-win32-x64-msvc":
+      optional: true
+  bin:
+    tauri: tauri.js
+  checksum: 10/cb79edb62b539e79bcac98fd3934323f9038a3c1cdf9d92f692e1a6d123a33cebaa540a78b47eaf4b32447beae23f1074fe4a492add6aa76e9b04b56464c66f5
   languageName: node
   linkType: hard
 
@@ -2807,6 +3070,19 @@ __metadata:
   bin:
     intent: bin/intent.js
   checksum: 10/4659fac2ae8c8a166132daa76b9163cf8ab56abcb27867162ecec45eb1d43042633868760ad7d948f9becc006524acf106c41a905b830ee0e17290a1cdaa7102
+  languageName: node
+  linkType: hard
+
+"@tsdown/exe@npm:^0.22.3":
+  version: 0.22.3
+  resolution: "@tsdown/exe@npm:0.22.3"
+  dependencies:
+    obug: "npm:^2.1.3"
+    semver: "npm:^7.8.4"
+    tinyexec: "npm:^1.2.4"
+  peerDependencies:
+    tsdown: 0.22.3
+  checksum: 10/88eab8c881ec9e1600c0b684c044a793183860d66f710dda20126d96eb74a1394dcf0d90bb5e3c6f093ca8633c19369da7ae29b3f37baf302e0962bcac5ced97
   languageName: node
   linkType: hard
 
@@ -3372,6 +3648,22 @@ __metadata:
   version: 0.1.24
   resolution: "@voidzero-dev/vite-plus-win32-x64-msvc@npm:0.1.24"
   conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@xstate/react@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "@xstate/react@npm:6.1.0"
+  dependencies:
+    use-isomorphic-layout-effect: "npm:^1.1.2"
+    use-sync-external-store: "npm:^1.2.0"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    xstate: ^5.28.0
+  peerDependenciesMeta:
+    xstate:
+      optional: true
+  checksum: 10/9991312ca6b938a9390aa7d051e42fcd784286b1edeaccb1aaa1c27333fd368ef2c78377d76e4fae6f07597f33e2b6888dd3160a81b6e0711886752855171701
   languageName: node
   linkType: hard
 
@@ -7664,6 +7956,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"obug@npm:^2.1.3":
+  version: 2.1.3
+  resolution: "obug@npm:2.1.3"
+  checksum: 10/574e5c3d3def75440c54c29ce8a6d82a5698116962d2f9f28fb13f6fd5dbcc01b7df1b8e02a95f816c8dba482dcf315d9c5c97d9e718516cfea8bd6c896dcf67
+  languageName: node
+  linkType: hard
+
 "ocache@npm:^0.1.4":
   version: 0.1.4
   resolution: "ocache@npm:0.1.4"
@@ -8782,7 +9081,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:^7.6.3":
+"semver@npm:^7.6.3, semver@npm:^7.8.4":
   version: 7.8.4
   resolution: "semver@npm:7.8.4"
   bin:
@@ -9435,6 +9734,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tauri-plugin-keyring-api@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "tauri-plugin-keyring-api@npm:0.1.1"
+  dependencies:
+    "@tauri-apps/api": "npm:>=2.1.1"
+  checksum: 10/e5f14bbff59b4bcf818c10bfcd075079d061c993029b247daab7a744b82098c4ca48393645d8bfe20ace96a8245ddb313a3fcb3dbeae62172575da1379b41f6a
+  languageName: node
+  linkType: hard
+
 "tiny-inflate@npm:^1.0.3":
   version: 1.0.3
   resolution: "tiny-inflate@npm:1.0.3"
@@ -9463,7 +9771,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tinyexec@npm:^1.0.4":
+"tinyexec@npm:^1.0.4, tinyexec@npm:^1.2.4":
   version: 1.2.4
   resolution: "tinyexec@npm:1.2.4"
   checksum: 10/f20b3e6f56f24c3ebe0129d0b6e657e561d225df2cf93c1a10362996232dd6ad4b8af8c9e81d258a64d09020e723772baf6fe0be26512dba7c61bb366d67b1f9
@@ -10040,7 +10348,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"use-sync-external-store@npm:^1.6.0":
+"use-isomorphic-layout-effect@npm:^1.1.2":
+  version: 1.2.1
+  resolution: "use-isomorphic-layout-effect@npm:1.2.1"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 10/a52155ffa7d67a5107ef2033ae2c63f5290c3e3b198de30d4d4f78cd7921e1ab1ea31eeec387defb67ef61adb672d3b8d25b54b7dcc089bacc4f885abde96e9d
+  languageName: node
+  linkType: hard
+
+"use-sync-external-store@npm:^1.2.0, use-sync-external-store@npm:^1.6.0":
   version: 1.6.0
   resolution: "use-sync-external-store@npm:1.6.0"
   peerDependencies:
@@ -10403,10 +10723,10 @@ __metadata:
     "@types/react-dom": "catalog:"
     "@vitejs/plugin-react": "catalog:"
     electron: "npm:^42.4.0"
-    lucide-react: "npm:^1.17.0"
+    lucide-react: "catalog:"
     playwright: "npm:^1.56.0"
     react: "catalog:"
-    react-aria-components: "npm:^1.18.0"
+    react-aria-components: "catalog:"
     react-dom: "catalog:"
     react-hook-form: "npm:^7.78.0"
     tailwindcss: "catalog:"
@@ -10505,6 +10825,38 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"with-tauri@workspace:examples/with-tauri":
+  version: 0.0.0-use.local
+  resolution: "with-tauri@workspace:examples/with-tauri"
+  dependencies:
+    "@discordkit/client": "workspace:^"
+    "@discordkit/native": "workspace:^"
+    "@discordkit/tauri": "workspace:^"
+    "@playwright/test": "catalog:"
+    "@tailwindcss/vite": "catalog:"
+    "@tauri-apps/api": "catalog:"
+    "@tauri-apps/cli": "catalog:"
+    "@tauri-apps/plugin-shell": "catalog:"
+    "@tsdown/exe": "catalog:"
+    "@types/react": "catalog:"
+    "@types/react-dom": "catalog:"
+    "@vitejs/plugin-react": "catalog:"
+    "@xstate/react": "catalog:"
+    lucide-react: "catalog:"
+    react: "catalog:"
+    react-aria-components: "catalog:"
+    react-dom: "catalog:"
+    signal-polyfill: "catalog:"
+    tailwindcss: "catalog:"
+    tailwindcss-react-aria-components: "npm:^2.1.1"
+    tauri-plugin-keyring-api: "catalog:"
+    typescript: "catalog:"
+    varlock: "catalog:"
+    vite-plus: "catalog:"
+    xstate: "catalog:"
+  languageName: unknown
+  linkType: soft
+
 "with-waku@workspace:examples/with-waku":
   version: 0.0.0-use.local
   resolution: "with-waku@workspace:examples/with-waku"
@@ -10575,6 +10927,13 @@ __metadata:
     "@oozcitak/util": "npm:^10.0.0"
     js-yaml: "npm:^4.1.1"
   checksum: 10/17a2bac5b9263d991148bd0d657f5b08fd4bd6e67ce7fb4a7333b85ef3b729cdab9cb606feabb25f893454db902945ed20e81cf32be964bbb20b4657ad4573df
+  languageName: node
+  linkType: hard
+
+"xstate@npm:^5.32.1":
+  version: 5.32.1
+  resolution: "xstate@npm:5.32.1"
+  checksum: 10/897d47af06560bdcd798f51a4a6c92a7e22a7c3df68a385b894cf77e917a311bffdf919f4156ff64656d9c3c942561a760b40a2e03771e68b9248a74292d16f1
   languageName: node
   linkType: hard
 
