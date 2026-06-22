@@ -10,20 +10,15 @@ import {
   onLobbyMemberAdded,
   onLobbyMemberRemoved,
   onLobbyMemberUpdated,
-  type Lobby
+  type Lobby,
+  type LobbySnapshot
 } from "@discordkit/native/lobbies";
 import type { LobbyId, ChannelId, GuildId } from "@discordkit/native";
-import { LOBBY_CHANNELS, type LobbySnapshot } from "../channels/lobbies.js";
+import { LOBBY_CHANNELS } from "../channels/lobbies.js";
 import type { RegisterContext } from "../internal.js";
 
-/** Snapshot a live `Lobby` wrapper into the serializable shape sent over IPC. */
-const snapshot = (lobby: Lobby): LobbySnapshot => ({
-  id: lobby.id,
-  memberIds: lobby.memberIds,
-  members: lobby.members,
-  metadata: lobby.metadata,
-  ...(lobby.linkedChannel ? { linkedChannel: lobby.linkedChannel } : {})
-});
+/** Serialize a live `Lobby` into the IPC shape (native owns the snapshot). */
+const snapshot = (lobby: Lobby): LobbySnapshot => lobby.toJSON();
 
 /**
  * Wire the lobbies domain: id-keyed RPC handlers (the live `Lobby` stays here and

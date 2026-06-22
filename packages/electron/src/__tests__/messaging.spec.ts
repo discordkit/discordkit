@@ -34,15 +34,15 @@ describe(`messaging slice`, () => {
   it(`sendUser forwards recipient + content + metadata and returns the new id`, async () => {
     const { ipc, io } = setup();
     const { messages } = messagingSlice(io);
-    ipc.ipcMain.handle(MESSAGE_CHANNELS.sendUser, () => 7777n);
+    ipc.ipcMain.handle(MESSAGE_CHANNELS.sendUser, () => `7777`);
 
-    const id = await messages.sendUser(snowflake<UserId>(11n), `gg`, {
+    const id = await messages.sendUser(snowflake<UserId>(`11`), `gg`, {
       character: `mage`
     });
 
     // Why: send must return the new message id (so the caller can getMessage it
     // back); a lost return breaks any read-after-send flow.
-    expect(id).toBe(7777n);
+    expect(id).toBe(`7777`);
   });
 
   it(`sendUser routes the args in order`, async () => {
@@ -50,11 +50,11 @@ describe(`messaging slice`, () => {
     const { messages } = messagingSlice(io);
     const calls = echo(MESSAGE_CHANNELS.sendUser);
 
-    await messages.sendUser(snowflake<UserId>(11n), `hi`, { team: `blue` });
+    await messages.sendUser(snowflake<UserId>(`11`), `hi`, { team: `blue` });
 
     // Why: arg order across IPC is positional — a transposed (content, recipient)
     // would send the wrong person the wrong text.
-    expect(calls).toEqual([[11n, `hi`, { team: `blue` }]]);
+    expect(calls).toEqual([[`11`, `hi`, { team: `blue` }]]);
   });
 
   it(`get / getUserMessages forward their ids and return the reply`, async () => {
@@ -62,47 +62,47 @@ describe(`messaging slice`, () => {
     const { messages } = messagingSlice(io);
     ipc.ipcMain.handle(MESSAGE_CHANNELS.get, (_e, id) => ({ id }));
     ipc.ipcMain.handle(MESSAGE_CHANNELS.getUserMessages, (_e, recipientId) => [
-      { id: 1n, authorId: recipientId }
+      { id: `1`, authorId: recipientId }
     ]);
 
     // Why: reads must forward the id and return the snapshot(s) intact.
-    await expect(messages.get(snowflake<MessageId>(7000n))).resolves.toEqual({
-      id: 7000n
+    await expect(messages.get(snowflake<MessageId>(`7000`))).resolves.toEqual({
+      id: `7000`
     });
     await expect(
-      messages.getUserMessages(snowflake<UserId>(11n), 25)
-    ).resolves.toEqual([{ id: 1n, authorId: 11n }]);
+      messages.getUserMessages(snowflake<UserId>(`11`), 25)
+    ).resolves.toEqual([{ id: `1`, authorId: `11` }]);
   });
 
   it(`onCreated delivers the message id and unsubscribes`, () => {
     const { ipc, io } = setup();
     const { messages } = messagingSlice(io);
-    const seen: bigint[] = [];
+    const seen: string[] = [];
     const off = messages.onCreated((id) => seen.push(id));
 
-    ipc.emit(MESSAGE_CHANNELS.created, 7000n);
+    ipc.emit(MESSAGE_CHANNELS.created, `7000`);
     off();
-    ipc.emit(MESSAGE_CHANNELS.created, 8000n);
+    ipc.emit(MESSAGE_CHANNELS.created, `8000`);
 
     // Why: the created stream is how a chat UI appends new messages; the
     // unsubscribe must detach or the renderer leaks handlers.
-    expect(seen).toEqual([7000n]);
+    expect(seen).toEqual([`7000`]);
   });
 
   it(`onDeleted delivers both the message id and its channel id`, () => {
     const { ipc, io } = setup();
     const { messages } = messagingSlice(io);
-    const seen: [bigint, bigint][] = [];
+    const seen: [string, string][] = [];
     const off = messages.onDeleted((messageId, channelId) =>
       seen.push([messageId, channelId])
     );
 
-    ipc.emit(MESSAGE_CHANNELS.deleted, 7000n, 900n);
+    ipc.emit(MESSAGE_CHANNELS.deleted, `7000`, `900`);
     off();
 
     // Why: a deleted message is gone, so the channel id is the only way to locate
     // where it was — both ids must arrive.
-    expect(seen).toEqual([[7000n, 900n]]);
+    expect(seen).toEqual([[`7000`, `900`]]);
   });
 });
 

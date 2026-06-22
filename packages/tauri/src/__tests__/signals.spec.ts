@@ -137,13 +137,13 @@ describe(`lobbyIdsSignal`, () => {
     const ids = lobbyIdsSignal(lobbies);
 
     await flush();
-    expect(ids.get()).toEqual([5000n]);
+    expect(ids.get()).toEqual([`5000`]);
 
     t.emit(LOBBY_CHANNELS.created, snowflake<LobbyId>(6000n));
     t.emit(LOBBY_CHANNELS.deleted, snowflake<LobbyId>(5000n));
     // Why: the lobby-list UI must stay in sync as the user joins/leaves — without
     // the event wiring it would show a stale set.
-    expect(ids.get()).toEqual([6000n]);
+    expect(ids.get()).toEqual([`6000`]);
   });
 });
 
@@ -151,7 +151,7 @@ describe(`lobbySignal`, () => {
   it(`seeds one lobby then re-fetches on a scoped event`, async () => {
     const t = fakeIo();
     const { lobbies } = lobbiesSlice(t.io);
-    let members: bigint[] = [11n];
+    let members: string[] = [`11`];
     t.handle(LOBBY_CHANNELS.get, (id) => ({
       id,
       memberIds: members,
@@ -161,22 +161,22 @@ describe(`lobbySignal`, () => {
     const lobby = lobbySignal(lobbies, snowflake<LobbyId>(5000n));
 
     await flush();
-    expect(lobby.get()?.memberIds).toEqual([11n]);
+    expect(lobby.get()?.memberIds).toEqual([`11`]);
 
     // A member joins THIS lobby → the snapshot is re-pulled (events carry only
     // ids, so the data must be re-fetched).
-    members = [11n, 22n];
-    t.emit(LOBBY_CHANNELS.memberAdded, snowflake<LobbyId>(5000n), 22n);
+    members = [`11`, `22`];
+    t.emit(LOBBY_CHANNELS.memberAdded, snowflake<LobbyId>(5000n), `22`);
     await flush();
-    expect(lobby.get()?.memberIds).toEqual([11n, 22n]);
+    expect(lobby.get()?.memberIds).toEqual([`11`, `22`]);
 
     // An event for a DIFFERENT lobby must NOT trigger a re-fetch.
-    members = [99n];
-    t.emit(LOBBY_CHANNELS.memberAdded, snowflake<LobbyId>(9999n), 99n);
+    members = [`99`];
+    t.emit(LOBBY_CHANNELS.memberAdded, snowflake<LobbyId>(9999n), `99`);
     await flush();
     // Why: lobbySignal filters to its own id — an unrelated lobby's churn must not
     // clobber this one's snapshot.
-    expect(lobby.get()?.memberIds).toEqual([11n, 22n]);
+    expect(lobby.get()?.memberIds).toEqual([`11`, `22`]);
   });
 });
 

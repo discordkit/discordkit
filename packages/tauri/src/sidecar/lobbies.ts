@@ -13,17 +13,8 @@ import {
   type Lobby
 } from "@discordkit/native/lobbies";
 import type { LobbyId, ChannelId, GuildId } from "@discordkit/native";
-import { LOBBY_CHANNELS, type LobbySnapshot } from "../channels/lobbies.js";
+import { LOBBY_CHANNELS } from "../channels/lobbies.js";
 import type { RegisterContext } from "../internal.js";
-
-/** Snapshot a live `Lobby` wrapper into the serializable shape sent over the bridge. */
-const snapshot = (lobby: Lobby): LobbySnapshot => ({
-  id: lobby.id,
-  memberIds: lobby.memberIds,
-  members: lobby.members,
-  metadata: lobby.metadata,
-  ...(lobby.linkedChannel ? { linkedChannel: lobby.linkedChannel } : {})
-});
 
 /**
  * Wire the lobbies domain: id-keyed RPC handlers (the live `Lobby` stays in the
@@ -56,17 +47,14 @@ export const registerLobbies = ({
         member?: Record<string, string>;
       }
     ) =>
-      snapshot(
+      (
         await createOrJoinLobby(secret, {
           metadata: metadata?.lobby,
           memberMetadata: metadata?.member
         })
-      )
+      ).toJSON()
   );
-  handle(LOBBY_CHANNELS.get, (lobbyId: LobbyId) => {
-    const lobby = getLobby(lobbyId);
-    return lobby ? snapshot(lobby) : undefined;
-  });
+  handle(LOBBY_CHANNELS.get, (lobbyId: LobbyId) => getLobby(lobbyId)?.toJSON());
   handle(LOBBY_CHANNELS.getIds, () => getLobbyIds());
   handle(LOBBY_CHANNELS.leave, async (lobbyId: LobbyId) =>
     requireLobby(lobbyId).leave()

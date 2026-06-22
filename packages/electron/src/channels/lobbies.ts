@@ -3,11 +3,12 @@ import type { UserId, LobbyId, ChannelId, GuildId } from "@discordkit/native";
 import type {
   Guild,
   GuildChannel,
-  LobbyMember,
-  LinkedChannel,
-  LobbyMetadata
+  LobbyMetadata,
+  LobbySnapshot
 } from "@discordkit/native/lobbies";
 import type { Unsubscribe } from "../internal.js";
+
+export type { LobbySnapshot };
 
 export const LOBBY_CHANNELS = {
   createOrJoin: `discordkit:lobbies:createOrJoin`,
@@ -25,19 +26,6 @@ export const LOBBY_CHANNELS = {
   memberRemoved: `discordkit:lobbies:memberRemoved`,
   memberUpdated: `discordkit:lobbies:memberUpdated`
 } as const;
-
-/**
- * A serializable snapshot of a lobby — the IPC stand-in for the live `Lobby`
- * wrapper (native handles + methods can't cross IPC). Reads return this; mutate
- * the lobby with the id-keyed `lobbies.*` ops.
- */
-export interface LobbySnapshot {
-  id: LobbyId;
-  memberIds: UserId[];
-  members: LobbyMember[];
-  metadata: LobbyMetadata;
-  linkedChannel?: LinkedChannel;
-}
 
 /** The `window.discord.lobbies` namespace. */
 export interface LobbiesBridge {

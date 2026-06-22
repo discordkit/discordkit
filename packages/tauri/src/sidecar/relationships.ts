@@ -16,17 +16,17 @@ import {
   blockUser,
   unblockUser
 } from "@discordkit/native/relationships";
-import { snowflake, type UserId } from "@discordkit/native";
+import type { UserId } from "@discordkit/native";
 import { RELATIONSHIP_CHANNELS } from "../channels/relationships.js";
 import type { RegisterContext } from "../internal.js";
 
-/** Coerce a wire (string) user id back to native's branded `bigint`. */
-const uid = (value: unknown): UserId => snowflake<UserId>(value as string);
+/** Brand a kkrpc-boundary `unknown` arg as a `UserId` (already a string). */
+const uid = (value: unknown): UserId => value as UserId;
 
 /**
  * Wire the relationships domain's RPC handlers. Imports ONLY
- * `@discordkit/native/relationships`. Snowflake ids arrive from the webview as
- * strings (Discord's wire format); `uid()` coerces them to native's bigint.
+ * `@discordkit/native/relationships`. Snowflake ids are strings end-to-end
+ * (webview ↔ native), so `uid()` is just the boundary brand-cast — no coercion.
  */
 export const registerRelationships = ({ handle }: RegisterContext): void => {
   handle(RELATIONSHIP_CHANNELS.list, () => getRelationships());

@@ -1,12 +1,9 @@
 /** Webview typing for the users namespace. See `@discordkit/tauri/renderer`. */
-import type { User as NativeUser } from "@discordkit/native/users";
-import type { Wire } from "../wire.js";
-
 export type { UsersBridge } from "../channels/users.js";
 
 /**
- * The webview-facing `User`: native's `User` with snowflake ids as strings (the
- * form they cross the bridge in — Discord's wire convention). Use this for typing
- * values you read off the `users` bridge.
+ * The webview-facing `User` — identical to native's `User`. Snowflake ids are
+ * strings throughout `@discordkit/native` (Discord's wire convention), so they
+ * cross the bridge unchanged; no adapter-side rewriting is needed.
  */
-export type User = Wire<NativeUser>;
+export type { User } from "@discordkit/native/users";

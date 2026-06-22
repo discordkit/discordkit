@@ -131,17 +131,17 @@ describe(`lobbyIdsSignal`, () => {
   it(`seeds the joined set then tracks created/deleted`, async () => {
     const ipc = createFakeIpc();
     const { lobbies } = lobbiesSlice(bridgeIo(ipc.ipcRenderer));
-    ipc.ipcMain.handle(LOBBY_CHANNELS.getIds, () => [5000n]);
+    ipc.ipcMain.handle(LOBBY_CHANNELS.getIds, () => [`5000`]);
     const ids = lobbyIdsSignal(lobbies);
 
     await flush();
-    expect(ids.get()).toEqual([5000n]);
+    expect(ids.get()).toEqual([`5000`]);
 
-    ipc.emit(LOBBY_CHANNELS.created, 6000n);
-    ipc.emit(LOBBY_CHANNELS.deleted, 5000n);
+    ipc.emit(LOBBY_CHANNELS.created, `6000`);
+    ipc.emit(LOBBY_CHANNELS.deleted, `5000`);
     // Why: the lobby-list UI must stay in sync as the user joins/leaves — without
     // the event wiring it would show a stale set.
-    expect(ids.get()).toEqual([6000n]);
+    expect(ids.get()).toEqual([`6000`]);
   });
 });
 
@@ -149,32 +149,32 @@ describe(`lobbySignal`, () => {
   it(`seeds one lobby then re-fetches on a scoped event`, async () => {
     const ipc = createFakeIpc();
     const { lobbies } = lobbiesSlice(bridgeIo(ipc.ipcRenderer));
-    let members: bigint[] = [11n];
+    let members: string[] = [`11`];
     ipc.ipcMain.handle(LOBBY_CHANNELS.get, (_e, id) => ({
       id,
       memberIds: members,
       members: [],
       metadata: {}
     }));
-    const lobby = lobbySignal(lobbies, snowflake<LobbyId>(5000n));
+    const lobby = lobbySignal(lobbies, snowflake<LobbyId>(`5000`));
 
     await flush();
-    expect(lobby.get()?.memberIds).toEqual([11n]);
+    expect(lobby.get()?.memberIds).toEqual([`11`]);
 
     // A member joins THIS lobby → the snapshot is re-pulled (events carry only
     // ids, so the data must be re-fetched).
-    members = [11n, 22n];
-    ipc.emit(LOBBY_CHANNELS.memberAdded, 5000n, 22n);
+    members = [`11`, `22`];
+    ipc.emit(LOBBY_CHANNELS.memberAdded, `5000`, `22`);
     await flush();
-    expect(lobby.get()?.memberIds).toEqual([11n, 22n]);
+    expect(lobby.get()?.memberIds).toEqual([`11`, `22`]);
 
     // An event for a DIFFERENT lobby must NOT trigger a re-fetch.
-    members = [99n];
-    ipc.emit(LOBBY_CHANNELS.memberAdded, 9999n, 99n);
+    members = [`99`];
+    ipc.emit(LOBBY_CHANNELS.memberAdded, `9999`, `99`);
     await flush();
     // Why: lobbySignal filters to its own id — an unrelated lobby's churn must not
     // clobber this one's snapshot.
-    expect(lobby.get()?.memberIds).toEqual([11n, 22n]);
+    expect(lobby.get()?.memberIds).toEqual([`11`, `22`]);
   });
 });
 

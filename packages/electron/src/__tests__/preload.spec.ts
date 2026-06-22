@@ -64,13 +64,15 @@ describe(`domain slices`, () => {
   it(`usersSlice maps each method to its channel + returns the reply`, async () => {
     const { ipc, io } = setup();
     const { users } = usersSlice(io);
-    const user = { id: 42n, username: `ada` };
+    const user = { id: `42`, username: `ada` };
     ipc.ipcMain.handle(USER_CHANNELS.getCurrent, () => user);
     ipc.ipcMain.handle(USER_CHANNELS.get, (_e, id) => ({ id }));
 
     await expect(users.getCurrent()).resolves.toEqual(user);
     // Why: `get` must forward the id arg — a dropped arg fetches the wrong user.
-    await expect(users.get(snowflake<UserId>(7n))).resolves.toEqual({ id: 7n });
+    await expect(users.get(snowflake<UserId>(`7`))).resolves.toEqual({
+      id: `7`
+    });
   });
 
   it(`id-keyed voice controls forward channelId + value in order`, async () => {
@@ -79,39 +81,40 @@ describe(`domain slices`, () => {
     const mute = echo(VOICE_CHANNELS.callSetSelfMute);
     const vol = echo(VOICE_CHANNELS.callSetParticipantVolume);
 
-    await voice.setSelfMute(snowflake<ChannelId>(5000n), true);
+    await voice.setSelfMute(snowflake<ChannelId>(`5000`), true);
     await voice.setParticipantVolume(
-      snowflake<ChannelId>(5000n),
-      snowflake<UserId>(11n),
+      snowflake<ChannelId>(`5000`),
+      snowflake<UserId>(`11`),
       175
     );
 
     // Why: the live Call lives in main; the renderer addresses it by channelId —
     // a transposed arg targets the wrong call/participant.
-    expect(mute).toEqual([[5000n, true]]);
-    expect(vol).toEqual([[5000n, 11n, 175]]);
+    expect(mute).toEqual([[`5000`, true]]);
+    expect(vol).toEqual([[`5000`, `11`, 175]]);
   });
 
-  it(`bigint ids survive the round-trip intact`, async () => {
+  it(`snowflake ids survive the round-trip intact`, async () => {
     const { ipc, io } = setup();
     const { lobbies } = lobbiesSlice(io);
-    ipc.ipcMain.handle(LOBBY_CHANNELS.getIds, () => [5000n, 6000n]);
+    ipc.ipcMain.handle(LOBBY_CHANNELS.getIds, () => [`5000`, `6000`]);
 
     const ids = await lobbies.getIds();
-    // Why: ids are snowflakes (exceed 2^53) — they must stay bigint, not coerce.
-    expect(ids).toEqual([5000n, 6000n]);
-    expect(typeof ids[0]).toBe(`bigint`);
+    // Why: snowflakes cross as strings (Discord's wire convention, matching the
+    // REST client) — they must pass through IPC unchanged, not coerce to number.
+    expect(ids).toEqual([`5000`, `6000`]);
+    expect(typeof ids[0]).toBe(`string`);
   });
 
   it(`multi-arg events (lobby member) deliver every id`, () => {
     const { ipc, io } = setup();
     const { lobbies } = lobbiesSlice(io);
-    const seen: [bigint, bigint][] = [];
+    const seen: [string, string][] = [];
     const off = lobbies.onMemberAdded((l, m) => seen.push([l, m]));
 
-    ipc.emit(LOBBY_CHANNELS.memberAdded, 5000n, 11n);
+    ipc.emit(LOBBY_CHANNELS.memberAdded, `5000`, `11`);
     off();
-    expect(seen).toEqual([[5000n, 11n]]);
+    expect(seen).toEqual([[`5000`, `11`]]);
   });
 
   it(`snapshot-carrying events (device change) deliver the payload whole`, () => {

@@ -137,8 +137,8 @@ describe(`lobbies (snapshot + event path)`, () => {
     discord.lobbies.onCreated((id) => seen.push(id));
 
     // Push the event the way the SDK would (the stub doesn't fire lobby events).
-    // The SDK side emits a bigint id; the bridge serializes it to a string for
-    // the webview (Discord's wire format).
+    // Native emits snowflake ids as strings (Discord's wire format), so the id
+    // crosses the bridge unchanged.
     harness.broadcast(LOBBY_CHANNELS.created, snowflake<LobbyId>(42n));
     await flush();
 

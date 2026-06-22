@@ -20,23 +20,15 @@ import {
   setOutputDevice,
   onDeviceChange,
   type AudioMode,
-  type Call
+  type Call,
+  type CallSnapshot
 } from "@discordkit/native/voice";
 import type { UserId, ChannelId } from "@discordkit/native";
-import { VOICE_CHANNELS, type CallSnapshot } from "../channels/voice.js";
+import { VOICE_CHANNELS } from "../channels/voice.js";
 import type { RegisterContext } from "../internal.js";
 
-/** Snapshot a live `Call` wrapper into the serializable shape sent over the bridge. */
-const snapshot = (call: Call): CallSnapshot => ({
-  channelId: call.channelId,
-  guildId: call.guildId,
-  status: call.status,
-  participants: call.participants,
-  selfMute: call.selfMute,
-  selfDeaf: call.selfDeaf,
-  audioMode: call.audioMode,
-  vadThreshold: call.vadThreshold
-});
+/** Serialize a live `Call` into the bridge shape (native owns the snapshot). */
+const snapshot = (call: Call): CallSnapshot => call.toJSON();
 
 /**
  * Wire the voice domain: id-keyed call RPC (the live `Call` stays in the sidecar

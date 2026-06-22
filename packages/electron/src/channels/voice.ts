@@ -1,12 +1,13 @@
 /** The voice/calls domain's IPC contract. Mirrors `@discordkit/native/voice`. */
-import type { UserId, ChannelId, GuildId } from "@discordkit/native";
+import type { UserId, ChannelId } from "@discordkit/native";
 import type {
   AudioDevice,
   AudioMode,
-  CallStatus,
-  VADThreshold
+  CallSnapshot
 } from "@discordkit/native/voice";
 import type { Unsubscribe } from "../internal.js";
+
+export type { CallSnapshot };
 
 export const VOICE_CHANNELS = {
   callStart: `discordkit:voice:start`,
@@ -37,21 +38,6 @@ export const VOICE_CHANNELS = {
   setOutputDevice: `discordkit:voice:setOutputDevice`,
   deviceChange: `discordkit:voice:deviceChange`
 } as const;
-
-/**
- * A serializable snapshot of a call — the IPC stand-in for the live `Call`
- * wrapper. Reads return this; mutate the call with the id-keyed `voice.*` ops.
- */
-export interface CallSnapshot {
-  channelId: ChannelId;
-  guildId: GuildId;
-  status: CallStatus;
-  participants: UserId[];
-  selfMute: boolean;
-  selfDeaf: boolean;
-  audioMode: AudioMode;
-  vadThreshold: VADThreshold;
-}
 
 /** The `window.discord.voice` namespace (calls + client-wide audio). */
 export interface VoiceBridge {

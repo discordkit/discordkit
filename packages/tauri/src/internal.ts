@@ -146,8 +146,8 @@ export const bridgeIo = (remote: RemoteApi, router: EventRouter): BridgeIo => ({
           `(e.g. registerPresence), rebuild the sidecar binary, and restart.`
       );
     }
-    // Snowflakes cross the bridge as strings (sidecar serializes results; the
-    // webview passes string ids), so args + results need no transform here.
+    // Snowflakes are strings end-to-end (native ↔ webview), so args + results
+    // cross the bridge as-is — no transform here.
     return method(...args) as Promise<T>;
   },
   on: <A extends unknown[]>(

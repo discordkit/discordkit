@@ -24,7 +24,6 @@ import {
   type HandlerMap,
   type RegisterContext
 } from "./internal.js";
-import { serialize, serializeArgs } from "./bigint.js";
 
 /**
  * The CORE sidecar host — the Node process that runs the Discord Social SDK
@@ -106,12 +105,12 @@ export const buildSidecar = (
   const client = init(config);
 
   // The webview's event sink, set once the RPC channel is connected. Until then
-  // events are dropped (no webview is listening yet anyway). Event payloads carry
-  // branded snowflakes (bigint); serialize them to strings for kkrpc's JSON
-  // transport (Discord's wire convention — see ./bigint.ts).
+  // events are dropped (no webview is listening yet anyway). Every payload is
+  // JSON-serializable as-is — snowflakes are strings and timestamps are numbers —
+  // so nothing needs converting for kkrpc's JSON transport.
   let sink: ((channel: string, ...payload: unknown[]) => void) | undefined;
   const broadcast = (channel: string, ...payload: unknown[]): void => {
-    sink?.(channel, ...serializeArgs(payload));
+    sink?.(channel, ...payload);
   };
 
   const handlers: HandlerMap = {};
@@ -123,13 +122,9 @@ export const buildSidecar = (
   ];
 
   const context: RegisterContext = {
-    // Serialize each handler's result so the kkrpc boundary is bigint-safe:
-    // snowflakes are bigint, which kkrpc's JSON.stringify can't carry — they
-    // cross as strings. Incoming string id args are coerced back to bigint by
-    // each registrar via `snowflake()` (it knows which args are ids).
     handle: (channel, handler) => {
       handlers[channel] = async (...args: unknown[]): Promise<unknown> =>
-        serialize(await handler(...args));
+        await handler(...args);
     },
     broadcast,
     track: (off) => subs.push(off)

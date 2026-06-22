@@ -35,7 +35,7 @@ describe(`relationships slice`, () => {
   it(`list reads with no args and returns the reply`, async () => {
     const { ipc, io } = setup();
     const { relationships } = relationshipsSlice(io);
-    const all = [{ user: { id: 1n } }, { user: { id: 2n } }];
+    const all = [{ user: { id: `1` } }, { user: { id: `2` } }];
     ipc.ipcMain.handle(RELATIONSHIP_CHANNELS.list, () => all);
 
     // Why: `list` is the no-arg read — the whole roster must come back intact, or
@@ -51,8 +51,8 @@ describe(`relationships slice`, () => {
     }));
 
     // Why: `get` must forward the id — a dropped arg fetches the wrong person.
-    await expect(relationships.get(snowflake<UserId>(7n))).resolves.toEqual({
-      user: { id: 7n }
+    await expect(relationships.get(snowflake<UserId>(`7`))).resolves.toEqual({
+      user: { id: `7` }
     });
   });
 
@@ -63,15 +63,15 @@ describe(`relationships slice`, () => {
     const accept = echo(RELATIONSHIP_CHANNELS.acceptDiscord);
     const send = echo(RELATIONSHIP_CHANNELS.sendDiscord);
 
-    await relationships.block(snowflake<UserId>(11n));
-    await relationships.acceptDiscordRequest(snowflake<UserId>(22n));
+    await relationships.block(snowflake<UserId>(`11`));
+    await relationships.acceptDiscordRequest(snowflake<UserId>(`22`));
     await relationships.sendDiscordRequest(`ada#0001`);
 
     // Why: these share the same arity but mean very different things — a
     // mis-routed channel would block someone instead of friending them, or send a
     // request to the wrong identifier shape (username vs id).
-    expect(block).toEqual([[11n]]);
-    expect(accept).toEqual([[22n]]);
+    expect(block).toEqual([[`11`]]);
+    expect(accept).toEqual([[`22`]]);
     expect(send).toEqual([[`ada#0001`]]);
   });
 });

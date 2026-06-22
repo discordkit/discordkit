@@ -33,11 +33,11 @@ describe(`invites slice`, () => {
       calls.push(args);
     });
 
-    await invites.send(snowflake<UserId>(7n), `join me`);
+    await invites.send(snowflake<UserId>(`7`), `join me`);
 
     // Why: an invite must reach the right user with the right message — dropping
     // either arg invites the wrong person or strips the note.
-    expect(calls).toEqual([[7n, `join me`]]);
+    expect(calls).toEqual([[`7`, `join me`]]);
   });
 
   it(`accept resolves with the join secret`, async () => {
