@@ -22,8 +22,8 @@ import type { Guild, GuildChannel } from "./types.js";
 const bindings = defineBindings({
   createOrJoin: /* C */ `void Discord_Client_CreateOrJoinLobby(void *self, Discord_String secret, void *cb, void *cbFree, void *cbUserData)`,
   createOrJoinWithMetadata: /* C */ `void Discord_Client_CreateOrJoinLobbyWithMetadata(void *self, Discord_String secret, Discord_Properties lobbyMetadata, Discord_Properties memberMetadata, void *cb, void *cbFree, void *cbUserData)`,
-  getLobbyHandle: /* C */ `bool Discord_Client_GetLobbyHandle(void *self, uint64_t lobbyId, Discord_LobbyHandle *returnValue)`,
-  getLobbyIds: /* C */ `void Discord_Client_GetLobbyIds(void *self, Discord_UInt64Span *returnValue)`,
+  getLobbyHandle: /* C */ `bool Discord_Client_GetLobbyHandle(void *self, uint64_t lobbyId, void *returnValue)`,
+  getLobbyIds: /* C */ `void Discord_Client_GetLobbyIds(void *self, Discord_Span *returnValue)`,
   getUserGuilds: /* C */ `void Discord_Client_GetUserGuilds(void *self, void *cb, void *cbFree, void *cbUserData)`,
   getGuildChannels: /* C */ `void Discord_Client_GetGuildChannels(void *self, uint64_t guildId, void *cb, void *cbFree, void *cbUserData)`,
   // result(, lobbyId) — CreateOrJoinLobby yields the joined lobby's id

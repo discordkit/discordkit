@@ -11,7 +11,7 @@ const bindings = defineBindings({
   id: /* C */ `uint64_t Discord_ChannelHandle_Id(void *self)`,
   type: /* C */ `int Discord_ChannelHandle_Type(void *self)`,
   name: /* C */ `void Discord_ChannelHandle_Name(void *self, Discord_String *returnValue)`,
-  recipients: /* C */ `void Discord_ChannelHandle_Recipients(void *self, Discord_UInt64Span *returnValue)`
+  recipients: /* C */ `void Discord_ChannelHandle_Recipients(void *self, Discord_Span *returnValue)`
 });
 
 /** Read a native `ChannelHandle` into a plain {@link Channel} snapshot. */

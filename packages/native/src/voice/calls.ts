@@ -25,9 +25,9 @@ import type { AudioDevice } from "./types.js";
  * - volume + mute/deaf-all are synchronous direct calls.
  */
 const bindings = defineBindings({
-  startCall: /* C */ `bool Discord_Client_StartCall(void *self, uint64_t channelId, Discord_Call *returnValue)`,
-  getCall: /* C */ `bool Discord_Client_GetCall(void *self, uint64_t channelId, Discord_Call *returnValue)`,
-  getCalls: /* C */ `void Discord_Client_GetCalls(void *self, Discord_CallSpan *returnValue)`,
+  startCall: /* C */ `bool Discord_Client_StartCall(void *self, uint64_t channelId, void *returnValue)`,
+  getCall: /* C */ `bool Discord_Client_GetCall(void *self, uint64_t channelId, void *returnValue)`,
+  getCalls: /* C */ `void Discord_Client_GetCalls(void *self, Discord_Span *returnValue)`,
   endCall: /* C */ `void Discord_Client_EndCall(void *self, uint64_t channelId, void *cb, void *cbFree, void *cbUserData)`,
   endCalls: /* C */ `void Discord_Client_EndCalls(void *self, void *cb, void *cbFree, void *cbUserData)`,
   getInputVolume: /* C */ `float Discord_Client_GetInputVolume(void *self)`,

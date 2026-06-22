@@ -26,7 +26,7 @@ const channel = defineBindings({
   viewableByAll: /* C */ `bool Discord_GuildChannel_IsViewableAndWriteableByAllMembers(void *self)`,
   name: /* C */ `void Discord_GuildChannel_Name(void *self, Discord_String *returnValue)`,
   parentId: /* C */ `bool Discord_GuildChannel_ParentId(void *self, uint64_t *returnValue)`,
-  linkedLobby: /* C */ `bool Discord_GuildChannel_LinkedLobby(void *self, Discord_LinkedLobby *returnValue)`,
+  linkedLobby: /* C */ `bool Discord_GuildChannel_LinkedLobby(void *self, void *returnValue)`,
   linkedLobbyId: /* C */ `uint64_t Discord_LinkedLobby_LobbyId(void *self)`,
   linkedLobbyAppId: /* C */ `uint64_t Discord_LinkedLobby_ApplicationId(void *self)`
 });

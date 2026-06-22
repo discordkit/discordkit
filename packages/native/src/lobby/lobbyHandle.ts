@@ -49,11 +49,11 @@ import type { LinkedChannel, LobbyMember, LobbyMetadata } from "./types.js";
  */
 const bindings = defineBindings({
   id: /* C */ `uint64_t Discord_LobbyHandle_Id(void *self)`,
-  memberIds: /* C */ `void Discord_LobbyHandle_LobbyMemberIds(void *self, Discord_UInt64Span *returnValue)`,
-  members: /* C */ `void Discord_LobbyHandle_LobbyMembers(void *self, Discord_LobbyMemberHandleSpan *returnValue)`,
-  memberById: /* C */ `bool Discord_LobbyHandle_GetLobbyMemberHandle(void *self, uint64_t memberId, Discord_LobbyMemberHandle *returnValue)`,
+  memberIds: /* C */ `void Discord_LobbyHandle_LobbyMemberIds(void *self, Discord_Span *returnValue)`,
+  members: /* C */ `void Discord_LobbyHandle_LobbyMembers(void *self, Discord_Span *returnValue)`,
+  memberById: /* C */ `bool Discord_LobbyHandle_GetLobbyMemberHandle(void *self, uint64_t memberId, void *returnValue)`,
   metadata: /* C */ `void Discord_LobbyHandle_Metadata(void *self, Discord_Properties *returnValue)`,
-  linkedChannel: /* C */ `bool Discord_LobbyHandle_LinkedChannel(void *self, Discord_LinkedChannel *returnValue)`,
+  linkedChannel: /* C */ `bool Discord_LobbyHandle_LinkedChannel(void *self, void *returnValue)`,
   // Client-level ops keyed by lobby id (the lobby domain owns these declarations).
   leave: /* C */ `void Discord_Client_LeaveLobby(void *self, uint64_t lobbyId, void *cb, void *cbFree, void *cbUserData)`,
   link: /* C */ `void Discord_Client_LinkChannelToLobby(void *self, uint64_t lobbyId, uint64_t channelId, void *cb, void *cbFree, void *cbUserData)`,

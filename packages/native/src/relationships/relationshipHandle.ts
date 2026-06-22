@@ -14,7 +14,7 @@ const bindings = defineBindings({
   discordType: /* C */ `int Discord_RelationshipHandle_DiscordRelationshipType(void *self)`,
   gameType: /* C */ `int Discord_RelationshipHandle_GameRelationshipType(void *self)`,
   isSpamRequest: /* C */ `bool Discord_RelationshipHandle_IsSpamRequest(void *self)`,
-  user: /* C */ `bool Discord_RelationshipHandle_User(void *self, Discord_UserHandle *returnValue)`
+  user: /* C */ `bool Discord_RelationshipHandle_User(void *self, void *returnValue)`
 });
 
 /** Read a native `RelationshipHandle` into a plain {@link Relationship} snapshot. */

@@ -62,8 +62,49 @@ export const defineBindings = <const T extends Record<string, BindingDecl>>(
 /** Bindings shared by every result-returning async op (every feature needs this). */
 const resultBindings = defineBindings({
   successful: /* C */ `bool Discord_ClientResult_Successful(void *self)`,
-  errorToString: /* C */ `void Discord_ClientResult_ToString(void *self, Discord_String *returnValue)`
+  errorToString: /* C */ `void Discord_ClientResult_ToString(void *self, Discord_String *returnValue)`,
+  errorType: /* C */ `int Discord_ClientResult_Type(void *self)`
 });
+
+/**
+ * `Discord_ErrorType` values (mirrors the SDK enum). The ones we branch on:
+ * `Aborted` is a user-cancelled prompt; `ClientNotReady` is the local Discord
+ * client not being up.
+ */
+export const ERROR_TYPE = {
+  none: 0,
+  networkError: 1,
+  httpError: 2,
+  clientNotReady: 3,
+  disabled: 4,
+  clientDestroyed: 5,
+  validationError: 6,
+  aborted: 7,
+  authorizationFailed: 8,
+  rpcError: 9
+} as const;
+
+/**
+ * The error an SDK async op rejects with. `timedOut` means the callback never
+ * fired (the local Discord client didn't respond); otherwise `errorType` is the
+ * `Discord_ErrorType` the failed `ClientResult` reported, for typed branching.
+ */
+export class ResultError extends Error {
+  readonly timedOut: boolean;
+  readonly errorType: number;
+  constructor(
+    message: string,
+    {
+      timedOut = false,
+      errorType = ERROR_TYPE.none
+    }: { timedOut?: boolean; errorType?: number } = {}
+  ) {
+    super(message);
+    this.name = `ResultError`;
+    this.timedOut = timedOut;
+    this.errorType = errorType;
+  }
+}
 
 /** Whether a `Discord_ClientResult*` (from an SDK callback) reports success. */
 export const isResultSuccessful = (
@@ -80,6 +121,12 @@ export const resultErrorMessage = (
   resultBindings(client.lib).errorToString(result, out);
   return client.lib.decodeString(out);
 };
+
+/** Read the `Discord_ErrorType` enum off an unsuccessful `Discord_ClientResult*`. */
+export const resultErrorType = (
+  client: DiscordClient,
+  result: unknown
+): number => Number(resultBindings(client.lib).errorType(result));
 
 /**
  * Drive one SDK async operation that completes via a result-bearing callback, as a promise. Registers `callbackType`, invokes `start(cb)` (which calls the SDK function passing `cb`), and resolves/rejects when the callback fires — extracting a value via `onResult`, or rejecting with the result's error string. Rejects (never hangs) after `timeoutMs`, since these complete over an RPC link to the local Discord client that may not be up.
@@ -99,9 +146,10 @@ export const awaitResult = async <T = void>(
       if (settled) return;
       settled = true;
       reject(
-        new Error(
+        new ResultError(
           `Discord ${label} timed out after ${timeoutMs}ms with no response ` +
-            `from the local Discord client. Is the Discord desktop app running?`
+            `from the local Discord client. Is the Discord desktop app running?`,
+          { timedOut: true }
         )
       );
     }, timeoutMs);
@@ -120,8 +168,9 @@ export const awaitResult = async <T = void>(
           return;
         }
         reject(
-          new Error(
-            `Discord ${label} failed: ${resultErrorMessage(client, result)}`
+          new ResultError(
+            `Discord ${label} failed: ${resultErrorMessage(client, result)}`,
+            { errorType: resultErrorType(client, result) }
           )
         );
       }

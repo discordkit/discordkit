@@ -24,11 +24,11 @@ const bindings = defineBindings({
   rawContent: /* C */ `void Discord_MessageHandle_RawContent(void *self, Discord_String *returnValue)`,
   metadata: /* C */ `void Discord_MessageHandle_Metadata(void *self, Discord_Properties *returnValue)`,
   moderationMetadata: /* C */ `void Discord_MessageHandle_ModerationMetadata(void *self, Discord_Properties *returnValue)`,
-  author: /* C */ `bool Discord_MessageHandle_Author(void *self, Discord_UserHandle *returnValue)`,
-  channel: /* C */ `bool Discord_MessageHandle_Channel(void *self, Discord_ChannelHandle *returnValue)`,
-  additionalContent: /* C */ `bool Discord_MessageHandle_AdditionalContent(void *self, Discord_AdditionalContent *returnValue)`,
+  author: /* C */ `bool Discord_MessageHandle_Author(void *self, void *returnValue)`,
+  channel: /* C */ `bool Discord_MessageHandle_Channel(void *self, void *returnValue)`,
+  additionalContent: /* C */ `bool Discord_MessageHandle_AdditionalContent(void *self, void *returnValue)`,
   disclosureType: /* C */ `bool Discord_MessageHandle_DisclosureType(void *self, int *returnValue)`,
-  lobby: /* C */ `bool Discord_MessageHandle_Lobby(void *self, Discord_LobbyHandle *returnValue)`,
+  lobby: /* C */ `bool Discord_MessageHandle_Lobby(void *self, void *returnValue)`,
   // Read the lobby's id WITHOUT wrapping it as a live Lobby (snapshot rule).
   lobbyId: /* C */ `uint64_t Discord_LobbyHandle_Id(void *self)`
 });

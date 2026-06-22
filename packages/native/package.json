@@ -85,6 +85,7 @@
   ],
   "sideEffects": false,
   "dependencies": {
+    "@napi-rs/keyring": "catalog:",
     "disposablestack": "catalog:",
     "koffi": "catalog:",
     "signal-polyfill": "catalog:"

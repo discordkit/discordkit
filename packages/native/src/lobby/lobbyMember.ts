@@ -15,7 +15,7 @@ const bindings = defineBindings({
   connected: /* C */ `bool Discord_LobbyMemberHandle_Connected(void *self)`,
   canLinkLobby: /* C */ `bool Discord_LobbyMemberHandle_CanLinkLobby(void *self)`,
   metadata: /* C */ `void Discord_LobbyMemberHandle_Metadata(void *self, Discord_Properties *returnValue)`,
-  user: /* C */ `bool Discord_LobbyMemberHandle_User(void *self, Discord_UserHandle *returnValue)`
+  user: /* C */ `bool Discord_LobbyMemberHandle_User(void *self, void *returnValue)`
 });
 
 /** Read a native `LobbyMemberHandle` into a plain {@link LobbyMember} snapshot. */

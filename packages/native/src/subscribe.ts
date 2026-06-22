@@ -1,5 +1,5 @@
 import { Signal } from "signal-polyfill";
-import { toSubscription, type Subscription } from "./client.js";
+import { toSubscription, type Subscription } from "./subscription.js";
 
 /**
  * Ergonomic subscription over a TC39 signal. The proposal deliberately omits a

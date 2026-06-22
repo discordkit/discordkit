@@ -2,6 +2,8 @@ import { Signal } from "signal-polyfill";
 import { koffiBackend } from "./ffi/koffi-backend.js";
 import type { FfiBackend, FfiLibrary, FfiOpaque } from "./ffi/backend.js";
 import { resolveLibraryPath } from "./resolveLibrary.js";
+import type { Subscription } from "./subscription.js";
+import type { TokenStore } from "./auth/tokenStore.js";
 import {
   LOG_SEVERITY_CODE,
   LOG_SEVERITY_BY_CODE,
@@ -32,34 +34,20 @@ export interface ClientConfig {
   pumpIntervalMs?: number;
   /** FFI backend. Defaults to Koffi; injectable for tests / future node:ffi. */
   backend?: FfiBackend;
+  /**
+   * Where to persist OAuth tokens for silent reconnect across launches. When set,
+   * the session layer (`startSession`) reloads + refreshes tokens on launch and
+   * saves them after authorize — so the player isn't sent through the browser
+   * every time. Omit for no persistence (re-auth each launch). A cross-platform
+   * OS-keychain backend ships at `@discordkit/native/auth/keyring`. See {@link TokenStore}.
+   */
+  tokenStore?: TokenStore;
 }
 
-/** Unsubscribe handle that is also a {@link Disposable} for `using`. */
-export type Subscription = (() => void) & Disposable;
-
-/**
- * Wrap a teardown function as a {@link Subscription}: idempotent (safe to call
- * more than once) and `Disposable` (works with `using`). The single place the
- * "unsubscribe + `[Symbol.dispose]`" shape is defined, so every event/listener
- * API across the package returns the exact same object shape.
- *
- * @example
- * ```ts
- * const off = toSubscription(() => lib.unregisterCallback(cb));
- * // later: off();  // or: using sub = toSubscription(...)
- * ```
- */
-export const toSubscription = (teardown: () => void): Subscription => {
-  let done = false;
-  const unsubscribe = (): void => {
-    if (done) return;
-    done = true;
-    teardown();
-  };
-  return Object.assign(unsubscribe, {
-    [Symbol.dispose]: unsubscribe
-  }) as Subscription;
-};
+// `Subscription` + `toSubscription` live in their own koffi-free module so
+// reactive/webview consumers don't pull the FFI backend; re-exported here so the
+// public API (import from `@discordkit/native`) is unchanged.
+export { toSubscription, type Subscription } from "./subscription.js";
 
 /**
  * A live client over one native `Discord_Client` handle. Created by
@@ -83,6 +71,8 @@ export interface DiscordClient extends Disposable {
   readonly handle: FfiOpaque;
   /** @internal Resolved application ID for token/auth calls. */
   readonly applicationId: bigint;
+  /** @internal The configured token store (session persistence), if any. */
+  readonly tokenStore?: TokenStore;
   /** @internal Register a callback handle to be unregistered on close. */
   trackCallback: (handle: FfiOpaque) => void;
 }
@@ -120,6 +110,7 @@ class DiscordClientImpl implements DiscordClient {
   readonly lib: FfiLibrary;
   readonly handle: FfiOpaque;
   readonly applicationId: bigint;
+  readonly tokenStore?: TokenStore;
 
   #closed = false;
   readonly #pump: ReturnType<typeof setInterval>;
@@ -138,6 +129,7 @@ class DiscordClientImpl implements DiscordClient {
     const lib = backend(libraryPath);
     this.lib = lib;
     this.applicationId = resolveApplicationId(config);
+    this.tokenStore = config.tokenStore;
 
     // --- lifecycle + status bindings (every consumer needs these) ---
     const init = lib.func(/* C */ `void Discord_Client_Init(void *self)`);
