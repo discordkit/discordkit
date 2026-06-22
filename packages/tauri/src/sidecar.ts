@@ -5,7 +5,12 @@ import {
   type ClientConfig,
   type Status
 } from "@discordkit/native";
-import { authorize } from "@discordkit/native/auth";
+import {
+  authorize,
+  startSession,
+  resumeSession,
+  endSession
+} from "@discordkit/native/auth";
 import { setActivity, clearActivity } from "@discordkit/native/presence";
 import { RPCChannel } from "kkrpc";
 import { nodeStdioTransport } from "kkrpc/stdio";
@@ -19,6 +24,7 @@ import {
   type HandlerMap,
   type RegisterContext
 } from "./internal.js";
+import { serialize, serializeArgs } from "./bigint.js";
 
 /**
  * The CORE sidecar host — the Node process that runs the Discord Social SDK
@@ -67,6 +73,16 @@ export interface SidecarHost {
 }
 
 /**
+ * A token store that needs the webview remote API to function (its bytes live in
+ * the webview/shell — e.g. the keyring store). `createSidecar` calls
+ * `bindTransport` with the remote once the bridge connects.
+ */
+const hasBindTransport = (
+  store: object
+): store is { bindTransport: (remote: unknown) => void } =>
+  `bindTransport` in store && typeof store.bindTransport === `function`;
+
+/**
  * Build the host without binding stdio — the testable core. Returns the flat
  * {@link HandlerMap} the webview calls, the local API to expose, and a dispose.
  * `createSidecar` wraps this with the kkrpc stdio transport; tests drive the map
@@ -90,10 +106,12 @@ export const buildSidecar = (
   const client = init(config);
 
   // The webview's event sink, set once the RPC channel is connected. Until then
-  // events are dropped (no webview is listening yet anyway).
+  // events are dropped (no webview is listening yet anyway). Event payloads carry
+  // branded snowflakes (bigint); serialize them to strings for kkrpc's JSON
+  // transport (Discord's wire convention — see ./bigint.ts).
   let sink: ((channel: string, ...payload: unknown[]) => void) | undefined;
   const broadcast = (channel: string, ...payload: unknown[]): void => {
-    sink?.(channel, ...payload);
+    sink?.(channel, ...serializeArgs(payload));
   };
 
   const handlers: HandlerMap = {};
@@ -105,17 +123,28 @@ export const buildSidecar = (
   ];
 
   const context: RegisterContext = {
+    // Serialize each handler's result so the kkrpc boundary is bigint-safe:
+    // snowflakes are bigint, which kkrpc's JSON.stringify can't carry — they
+    // cross as strings. Incoming string id args are coerced back to bigint by
+    // each registrar via `snowflake()` (it knows which args are ids).
     handle: (channel, handler) => {
-      handlers[channel] = handler;
+      handlers[channel] = async (...args: unknown[]): Promise<unknown> =>
+        serialize(await handler(...args));
     },
     broadcast,
     track: (off) => subs.push(off)
   };
 
-  // Core handlers (always present).
+  // Core handlers (always present). Auth is native-owned: with a token store
+  // configured, `startSession` reconnects silently from stored tokens (refreshing
+  // as needed) and only opens the browser on first sign-in; without one, fall back
+  // to a one-off `authorize`. `logout` ends the session + clears stored tokens.
   context.handle(CORE_CHANNELS.connect, async (message?: ConnectMessage) => {
-    await authorize({ scopes: message?.scopes ?? `presence` });
+    const scopes = message?.scopes ?? `presence`;
+    if (client.tokenStore) await startSession({ scopes });
+    else await authorize({ scopes });
   });
+  context.handle(CORE_CHANNELS.logout, async () => endSession());
   context.handle(CORE_CHANNELS.setActivity, async (input: ActivityMessage) => {
     await setActivity(input);
   });
@@ -167,6 +196,28 @@ export const createSidecar = (
   host.setSink((eventChannel, ...payload) => {
     remote[EVENT_SINK](eventChannel, ...payload);
   });
+
+  // A token store that talks back to the webview (e.g. the keyring store, whose
+  // bytes live in the shell's OS vault) gets the remote API once the channel is
+  // up — it can't capture it at config time, before this channel exists.
+  const store = options.tokenStore;
+  if (store && hasBindTransport(store)) store.bindTransport(remote);
+
+  // With a token store configured, reconnect silently on boot from stored tokens
+  // (no browser, no webview involvement) — the status flows to the webview over
+  // the bridge as usual. Fire-and-forget so boot isn't blocked; a missing/expired
+  // grant is a no-op (the UI then shows the connect point).
+  if (options.tokenStore) {
+    void (async (): Promise<void> => {
+      try {
+        await resumeSession();
+      } catch (error) {
+        options.onError?.(
+          `discordkit sidecar: session resume failed: ${String(error)}`
+        );
+      }
+    })();
+  }
 
   const dispose = (): void => {
     host.dispose();

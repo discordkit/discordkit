@@ -52,7 +52,7 @@ describe(`createClient`, () => {
     it(`forwards a native status change to an onStatus subscriber`, async () => {
       const harness = fakeConnection([], bootOptions);
       dispose = harness.dispose;
-      const discord = await createClient([], harness.connection);
+      const discord = await createClient([], { connect: harness.connection });
 
       const seen: string[] = [];
       const off = discord.onStatus((s) => seen.push(s));
@@ -69,7 +69,7 @@ describe(`createClient`, () => {
     it(`stops delivering events after unsubscribe`, async () => {
       const harness = fakeConnection([], bootOptions);
       dispose = harness.dispose;
-      const discord = await createClient([], harness.connection);
+      const discord = await createClient([], { connect: harness.connection });
 
       const seen: string[] = [];
       const off = discord.onStatus((s) => seen.push(s));
@@ -86,7 +86,7 @@ describe(`createClient`, () => {
     it(`getStatus reads the current value over the bridge`, async () => {
       const harness = fakeConnection([], bootOptions);
       dispose = harness.dispose;
-      const discord = await createClient([], harness.connection);
+      const discord = await createClient([], { connect: harness.connection });
 
       emitStatus(3);
       await flush();
@@ -99,7 +99,7 @@ describe(`createClient`, () => {
     it(`normalizes a setActivity builder callback to a plain object before send`, async () => {
       const harness = fakeConnection([], bootOptions);
       dispose = harness.dispose;
-      const discord = await createClient([], harness.connection);
+      const discord = await createClient([], { connect: harness.connection });
 
       await discord.setActivity((b) => {
         b.state = `In Match`;
@@ -118,7 +118,9 @@ describe(`createClient`, () => {
     it(`exposes a composed domain namespace and round-trips its calls`, async () => {
       const harness = fakeConnection([registerUsers], bootOptions);
       dispose = harness.dispose;
-      const discord = await createClient([usersSlice], harness.connection);
+      const discord = await createClient([usersSlice], {
+        connect: harness.connection
+      });
 
       // Why: per-domain composition is the package's core contract — a wired domain
       // must appear as its namespace AND its calls must reach the native op. (The
@@ -132,7 +134,9 @@ describe(`createClient`, () => {
       // Core only — users NOT registered on the sidecar, but composed on the client.
       const harness = fakeConnection([], bootOptions);
       dispose = harness.dispose;
-      const discord = await createClient([usersSlice], harness.connection);
+      const discord = await createClient([usersSlice], {
+        connect: harness.connection
+      });
 
       // Why: composing a client slice whose sidecar registrar was forgotten is the
       // most likely setup mistake; the error must name the fix (add the registrar),

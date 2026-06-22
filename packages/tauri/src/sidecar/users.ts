@@ -1,4 +1,4 @@
-import type { UserId } from "@discordkit/native";
+import { snowflake, type UserId } from "@discordkit/native";
 import { getCurrentUser, getUser } from "@discordkit/native/users";
 import { USER_CHANNELS } from "../channels/users.js";
 import type { RegisterContext } from "../internal.js";
@@ -17,5 +17,8 @@ import type { RegisterContext } from "../internal.js";
  */
 export const registerUsers = ({ handle }: RegisterContext): void => {
   handle(USER_CHANNELS.getCurrent, () => getCurrentUser());
-  handle(USER_CHANNELS.get, (userId: UserId) => getUser(userId));
+  // The webview sends the id as a string (Discord's wire format); coerce to bigint.
+  handle(USER_CHANNELS.get, (userId: unknown) =>
+    getUser(snowflake<UserId>(userId as string))
+  );
 };

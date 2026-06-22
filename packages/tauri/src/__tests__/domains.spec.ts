@@ -71,7 +71,7 @@ describe(`feature domains`, () => {
         messagingSlice,
         voiceSlice
       ],
-      harness.connection
+      { connect: harness.connection }
     );
 
     // Why: the package's whole value is opt-in per-domain composition — every
@@ -88,10 +88,9 @@ describe(`feature domains`, () => {
   it(`round-trips a pull read through a composed domain (relationships.list)`, async () => {
     const harness = fakeConnection([registerRelationships], bootOptions);
     dispose = harness.dispose;
-    const discord = await createClient(
-      [relationshipsSlice],
-      harness.connection
-    );
+    const discord = await createClient([relationshipsSlice], {
+      connect: harness.connection
+    });
 
     // Why: proves the call reaches the native op and the reply crosses the seam
     // back (the stub yields an empty list — we assert the shape/round-trip, not
@@ -102,7 +101,9 @@ describe(`feature domains`, () => {
   it(`getCalls round-trips an empty snapshot list`, async () => {
     const harness = fakeConnection([registerVoice], bootOptions);
     dispose = harness.dispose;
-    const discord = await createClient([voiceSlice], harness.connection);
+    const discord = await createClient([voiceSlice], {
+      connect: harness.connection
+    });
 
     // Why: snapshot reads must serialize across the bridge; an empty list is the
     // baseline (no active calls under the stub) that confirms the path is wired.
@@ -116,7 +117,9 @@ describe(`lobbies (snapshot + event path)`, () => {
   it(`getIds round-trips the (empty) id list`, async () => {
     const harness = fakeConnection([registerLobbies], bootOptions);
     dispose = harness.dispose;
-    const discord = await createClient([lobbiesSlice], harness.connection);
+    const discord = await createClient([lobbiesSlice], {
+      connect: harness.connection
+    });
 
     await expect(discord.lobbies.getIds()).resolves.toEqual([]);
   });
@@ -126,18 +129,22 @@ describe(`lobbies (snapshot + event path)`, () => {
     // lobby events, but the bridge's job is to relay whatever the SDK broadcasts.
     const harness = fakeConnection([registerLobbies], bootOptions);
     dispose = harness.dispose;
-    const discord = await createClient([lobbiesSlice], harness.connection);
+    const discord = await createClient([lobbiesSlice], {
+      connect: harness.connection
+    });
 
-    const seen: LobbyId[] = [];
+    const seen: unknown[] = [];
     discord.lobbies.onCreated((id) => seen.push(id));
 
     // Push the event the way the SDK would (the stub doesn't fire lobby events).
+    // The SDK side emits a bigint id; the bridge serializes it to a string for
+    // the webview (Discord's wire format).
     harness.broadcast(LOBBY_CHANNELS.created, snowflake<LobbyId>(42n));
     await flush();
 
     // Why: lobby events carry only ids over the bridge (live handles can't cross);
     // the webview re-fetches the snapshot. This proves the id reaches the handler
-    // branded and intact.
-    expect(seen).toEqual([snowflake<LobbyId>(42n)]);
+    // as the wire string the webview expects.
+    expect(seen).toEqual([`42`]);
   });
 });

@@ -22,6 +22,7 @@ import type { Unsubscribe } from "../internal.js";
 /** Core channel names (lifecycle / presence / auth / status / log). */
 export const CORE_CHANNELS = {
   connect: `discordkit:connect`,
+  logout: `discordkit:logout`,
   setActivity: `discordkit:setActivity`,
   clearActivity: `discordkit:clearActivity`,
   getStatus: `discordkit:getStatus`,
@@ -44,8 +45,15 @@ export interface ConnectMessage {
 
 /** The core surface on the webview bridge (before any domain slices are merged in). */
 export interface CoreBridge {
-  /** Run the Discord OAuth2 flow (opens the system browser) and connect. */
+  /**
+   * Begin or resume the Discord session. With a token store configured (the
+   * default in this example), the sidecar reconnects silently from stored tokens
+   * — only opening the browser on first sign-in or after logout. The whole token
+   * lifecycle (persistence, refresh) is handled natively; watch {@link onStatus}.
+   */
   connect: (message?: ConnectMessage) => Promise<void>;
+  /** End the session: clear stored tokens and disconnect (next connect re-auths). */
+  logout: () => Promise<void>;
   /** Set rich presence. Accepts the object form, or a builder callback. */
   setActivity: (
     input: ActivityMessage | ((builder: ActivityBuilder) => void)

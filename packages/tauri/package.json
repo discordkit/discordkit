@@ -50,10 +50,17 @@
   },
   "peerDependencies": {
     "@tauri-apps/api": ">= 2",
-    "@tauri-apps/plugin-shell": ">= 2"
+    "@tauri-apps/plugin-shell": ">= 2",
+    "tauri-plugin-keyring-api": ">= 0.1"
+  },
+  "peerDependenciesMeta": {
+    "tauri-plugin-keyring-api": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@tauri-apps/api": "catalog:",
-    "@tauri-apps/plugin-shell": "catalog:"
+    "@tauri-apps/plugin-shell": "catalog:",
+    "tauri-plugin-keyring-api": "catalog:"
   }
 }

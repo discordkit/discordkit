@@ -43,6 +43,7 @@ const toActivity = (
 export const createCoreBridge = (io: BridgeIo): CoreBridge => {
   const core: CoreBridge = {
     connect: async (message) => io.call(CORE_CHANNELS.connect, message),
+    logout: async () => io.call(CORE_CHANNELS.logout),
     setActivity: async (input) =>
       io.call(CORE_CHANNELS.setActivity, toActivity(input)),
     clearActivity: async () => io.call(CORE_CHANNELS.clearActivity),
@@ -65,6 +66,23 @@ export type SidecarConnection = (localApi: Record<string, unknown>) => Promise<{
   /** Tear down the channel + kill the sidecar process. */
   close: () => void | Promise<void>;
 }>;
+
+/**
+ * Thrown when the sidecar process dies during startup (e.g. the Discord SDK
+ * library is missing, the library path is wrong, or the App ID is unset) — before
+ * it can answer RPC. `stderr` carries what the sidecar wrote to its error stream,
+ * which is where `@discordkit/native` puts its actionable "couldn't locate the
+ * SDK…" guidance. Surface `stderr` to the user rather than letting the first RPC
+ * call hang until it times out.
+ */
+export class SidecarStartupError extends Error {
+  readonly stderr: string;
+  constructor(message: string, stderr: string) {
+    super(stderr.trim() ? `${message}\n\n${stderr.trim()}` : message);
+    this.name = `SidecarStartupError`;
+    this.stderr = stderr;
+  }
+}
 
 /** The composed webview bridge: the core surface plus whatever slices were passed. */
 export type Client<S extends BridgeSlice[]> = CoreBridge &
@@ -95,15 +113,26 @@ type UnionToIntersection<U> = (
  * ```
  *
  * @param slices the domain slices to compose onto the bridge.
- * @param connect the sidecar connection; defaults to the real Tauri+kkrpc wiring
- *   (`tauriSidecarConnection`). Tests pass a fake to drive the bridge in-memory.
+ * @param options.connect the sidecar connection; defaults to the real Tauri+kkrpc
+ *   wiring (`tauriSidecarConnection`). Tests pass a fake to drive in-memory.
+ * @param options.expose extra methods the webview exposes to the sidecar (reverse
+ *   RPC) — e.g. `keyringRelay(...)` so the sidecar's token store can reach the OS
+ *   keychain. Merged alongside the event sink.
  */
 export const createClient = async <S extends BridgeSlice[]>(
   slices: S = [] as unknown as S,
-  connect: SidecarConnection = tauriSidecarConnection()
+  options: {
+    connect?: SidecarConnection;
+    // Dynamically-typed RPC methods (like the HandlerMap on the sidecar side); a
+    // caller passes a typed record (e.g. KeyringRelay) which is structurally fine.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expose?: Record<string, (...args: any[]) => unknown>;
+  } = {}
 ): Promise<Client<S>> => {
+  const connect = options.connect ?? tauriSidecarConnection();
   const router = eventRouter();
-  const { remote, close } = await connect(router.localApi);
+  const localApi = { ...router.localApi, ...options.expose };
+  const { remote, close } = await connect(localApi);
   const io = bridgeIo(remote, router);
   const bridge = Object.assign(
     createCoreBridge(io),
@@ -119,11 +148,14 @@ export const createClient = async <S extends BridgeSlice[]>(
  * the core module graph until an app actually connects (and tests can inject a
  * fake without them installed).
  *
- * @param binary the sidecar binary name registered in `tauri.conf` `externalBin`;
- *   defaults to `"discord-sidecar"`.
+ * @param binary the sidecar name registered in `tauri.conf` `externalBin`. Must
+ *   match an `externalBin` entry exactly, including the `binaries/` path prefix —
+ *   Tauri's `Command.sidecar` matches by the configured string, not the bare name.
+ *   Defaults to `"binaries/discord-sidecar"` (the name the package's shipped
+ *   `tauri/capabilities.json` grants).
  */
 export const tauriSidecarConnection =
-  (binary = `discord-sidecar`): SidecarConnection =>
+  (binary = `binaries/discord-sidecar`): SidecarConnection =>
   async (localApi) => {
     // kkrpc v2: `RPCChannel` from the main entry; the Tauri stdio transport is a
     // factory (`tauriShellStdioTransport({ stdout, child })`) from `kkrpc/tauri`,
@@ -135,17 +167,93 @@ export const tauriSidecarConnection =
         import(`kkrpc/tauri`)
       ]);
     const command = Command.sidecar(binary);
+
+    // Capture stderr + watch for an early exit so a sidecar that dies during
+    // startup (missing SDK, bad path, unset App ID) surfaces a clear error
+    // instead of a hung first RPC. `@discordkit/native` writes its actionable
+    // guidance to stderr, so we relay that verbatim.
+    let stderr = ``;
+    let exited: { code: number | null } | undefined;
+    const exitWaiters = new Set<(value: { code: number | null }) => void>();
+    command.stderr.on(`data`, (line: string) => {
+      stderr += line;
+    });
+    command.on(`close`, (data: { code: number | null }) => {
+      exited = data;
+      for (const resolve of exitWaiters) resolve(data);
+    });
+
     const child = await command.spawn();
     const transport = tauriShellStdioTransport({
       stdout: command.stdout,
       child
     });
     const channel = new RPCChannel(transport, { expose: localApi });
+    const remote = channel.getAPI() as RemoteApi;
+
+    // Wrap remote calls so the FIRST awaited call rejects immediately if the
+    // sidecar has already exited (or exits while the call is in flight), rather
+    // than waiting out kkrpc's RPC timeout.
+    const guardedRemote = guardRemote(remote, {
+      hasExited: () => exited,
+      onExit: (resolve) => {
+        exitWaiters.add(resolve);
+        return (): boolean => exitWaiters.delete(resolve);
+      },
+      stderr: () => stderr
+    });
+
     return {
-      remote: channel.getAPI() as RemoteApi,
+      remote: guardedRemote,
       close: async () => {
         channel.destroy();
         await child.kill();
       }
     };
   };
+
+/**
+ * Wrap the kkrpc remote proxy so each method races the RPC against the sidecar
+ * process exiting. If the process is already dead (or dies mid-call), reject with
+ * a {@link SidecarStartupError} carrying its stderr — turning a 30s hang into an
+ * immediate, actionable failure.
+ */
+const guardRemote = (
+  remote: RemoteApi,
+  process: {
+    hasExited: () => { code: number | null } | undefined;
+    onExit: (resolve: (value: { code: number | null }) => void) => () => void;
+    stderr: () => string;
+  }
+): RemoteApi => {
+  const fail = (code: number | null): SidecarStartupError =>
+    new SidecarStartupError(
+      `The Discord sidecar exited (code ${code ?? `unknown`}) before it could ` +
+        `respond. It usually means the Discord Social SDK couldn't be loaded.`,
+      process.stderr()
+    );
+  // The remote API is a FLAT record of channel methods (`remote[channel](...)`),
+  // so guard each function-valued property directly.
+  return new Proxy(remote, {
+    get: (obj, key) => {
+      const value = (obj as Record<string | symbol, unknown>)[key];
+      if (typeof value !== `function`) return value;
+      return async (...args: unknown[]): Promise<unknown> => {
+        const dead = process.hasExited();
+        if (dead) throw fail(dead.code);
+        let off: (() => void) | undefined;
+        const exitRace = new Promise<never>((_resolve, reject) => {
+          off = process.onExit((data) => reject(fail(data.code)));
+        });
+        try {
+          return await Promise.race([
+            (value as (...a: unknown[]) => unknown).apply(obj, args),
+            exitRace
+          ]);
+        } finally {
+          off?.();
+        }
+      };
+    }
+  });
+};
