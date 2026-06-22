@@ -1,0 +1,31 @@
+[package]
+name = "app"
+version = "0.1.0"
+description = "A Tauri App"
+authors = ["you"]
+license = ""
+repository = ""
+edition = "2021"
+rust-version = "1.77.2"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+name = "app_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2.6.2", features = [] }
+
+[dependencies]
+serde_json = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+log = "0.4"
+tauri = { version = "2.11.2", features = [] }
+tauri-plugin-log = "2"
+# Spawns the Discord sidecar + pumps its stdio for kkrpc (see @discordkit/tauri).
+tauri-plugin-shell = "2"
+# OS credential vault (Credential Manager / Keychain / Secret Service). The
+# webview's keyringRelay invokes it; the sidecar's tauriKeyringStore stores tokens
+# there over the bridge. Pairs with the `tauri-plugin-keyring-api` npm bindings.
+tauri-plugin-keyring = "0.1"

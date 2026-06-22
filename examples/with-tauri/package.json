@@ -1,0 +1,35 @@
+{
+  "name": "with-tauri",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@discordkit/client": "workspace:^",
+    "@discordkit/native": "workspace:^",
+    "@discordkit/tauri": "workspace:^",
+    "@tauri-apps/api": "catalog:",
+    "@tauri-apps/plugin-shell": "catalog:",
+    "@xstate/react": "catalog:",
+    "lucide-react": "catalog:",
+    "react": "catalog:",
+    "react-aria-components": "catalog:",
+    "react-dom": "catalog:",
+    "signal-polyfill": "catalog:",
+    "tauri-plugin-keyring-api": "catalog:",
+    "xstate": "catalog:"
+  },
+  "devDependencies": {
+    "@playwright/test": "catalog:",
+    "@tailwindcss/vite": "catalog:",
+    "@tauri-apps/cli": "catalog:",
+    "@tsdown/exe": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "tailwindcss": "catalog:",
+    "tailwindcss-react-aria-components": "^2.1.1",
+    "typescript": "catalog:",
+    "varlock": "catalog:",
+    "vite-plus": "catalog:"
+  }
+}

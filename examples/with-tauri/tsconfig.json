@@ -1,0 +1,19 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "types": ["node"],
+    "checkJs": true,
+    "allowJs": true,
+    "noEmit": true
+  },
+  "include": [
+    "src/**/*.ts",
+    "sidecar/**/*.ts",
+    "e2e/**/*.ts",
+    "vite.config.ts",
+    "playwright.config.ts",
+    "scripts/**/*.mjs",
+    "env.d.ts"
+  ]
+}
