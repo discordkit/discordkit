@@ -60,6 +60,13 @@ jobs:
           node-version: "lts"
           cache: true
 
+      # The SDK's Linux .so dynamically links PulseAudio (audio/Krisp), which a
+      # bare runner doesn't have — koffi.load() fails without it. Install the
+      # runtime libs the .so NEEDs so it can load (we only load + resolve symbols,
+      # we don't drive audio).
+      - name: Install SDK runtime deps (Linux)
+        run: sudo apt-get update && sudo apt-get install -y libpulse0
+
       # No build needed — the smoke runs against TS source via Vitest (like the
       # unit suite); it loads the real SDK shared library at runtime through koffi
       # (installed by setup-vp), resolved from DISCORD_SDK_PATH below.
