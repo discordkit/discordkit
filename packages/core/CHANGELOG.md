@@ -1,6 +1,13 @@
 # @discordkit/core
 
 
+
+## 4.0.1
+<sub>2026-06-22</sub>
+
+- [#60](https://github.com/discordkit/discordkit/pull/60)  *(patch)* Thanks [@Saeris](https://github.com/Saeris)!
+  Dropped the `type-fest` dependency. `toCamelKeys`/`toSnakeKeys` now use local `CamelKeys`/`SnakeKeys` types instead of type-fest's `CamelCasedPropertiesDeep`/`SnakeCasedPropertiesDeep` — behaviorally identical for the underscore-delimited Discord API keys these convert, with one fewer runtime dependency.
+
 ## 4.0.0
 <sub>2026-06-04</sub>
 

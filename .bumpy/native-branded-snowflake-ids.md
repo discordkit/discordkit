@@ -1,5 +1,0 @@
----
-"@discordkit/native": minor
----
-
-Added branded **snowflake id types** (`UserId`, `LobbyId`, `ChannelId`, `MessageId`, `GuildId`, `ApplicationId` — all `Snowflake<Tag>`) so the compiler enforces that an id produced by one operation only flows into another expecting the same kind. Each is a branded **string** at runtime (a decimal id), matching `@discordkit/core`/the REST client — Discord's own wire convention for 64-bit ids — so snowflakes are interoperable across the whole library and cross any transport (FFI, IPC, JSON, kkrpc) unchanged. The `uint64` ↔ string conversion is confined to native's FFI boundary (`brandId`/`brandIds` on every id read, `BigInt(id)` on every write into the SDK), so the public type is always a string. Ids returned by the SDK are branded at the read boundary, so they pass between operations with no casts; to brand a raw value you supply yourself, use the new `snowflake<T>(value)` helper. Applied across every snapshot interface, op signature, live-wrapper getter (`Lobby`/`Call`), and event callback. The `client.applicationId` (resolved from config/`DISCORD_APPLICATION_ID`) is likewise an `ApplicationId` string.
