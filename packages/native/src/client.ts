@@ -2,6 +2,7 @@ import { Signal } from "signal-polyfill";
 import { koffiBackend } from "./ffi/koffi-backend.js";
 import type { FfiBackend, FfiLibrary, FfiOpaque } from "./ffi/backend.js";
 import { resolveLibraryPath } from "./resolveLibrary.js";
+import { snowflake, type ApplicationId } from "./snowflake.js";
 import type { Subscription } from "./subscription.js";
 import type { TokenStore } from "./auth/tokenStore.js";
 import {
@@ -70,14 +71,14 @@ export interface DiscordClient extends Disposable {
   /** @internal Pointer to the `Discord_Client` opaque handle. */
   readonly handle: FfiOpaque;
   /** @internal Resolved application ID for token/auth calls. */
-  readonly applicationId: bigint;
+  readonly applicationId: ApplicationId;
   /** @internal The configured token store (session persistence), if any. */
   readonly tokenStore?: TokenStore;
   /** @internal Register a callback handle to be unregistered on close. */
   trackCallback: (handle: FfiOpaque) => void;
 }
 
-const resolveApplicationId = (config: ClientConfig): bigint => {
+const resolveApplicationId = (config: ClientConfig): ApplicationId => {
   const raw = config.applicationId ?? process.env.DISCORD_APPLICATION_ID;
   if (raw === undefined || raw === ``) {
     throw new Error(
@@ -86,7 +87,10 @@ const resolveApplicationId = (config: ClientConfig): bigint => {
     );
   }
   try {
-    return BigInt(raw);
+    // Validate it's a well-formed snowflake (throws on garbage), but keep it as
+    // a string — the application ID is a snowflake like every other id.
+    BigInt(raw);
+    return snowflake<ApplicationId>(raw);
   } catch {
     throw new Error(`Invalid Discord application ID: ${String(raw)}`);
   }
@@ -109,7 +113,7 @@ class DiscordClientImpl implements DiscordClient {
   readonly status = new Signal.State<Status>(`disconnected`);
   readonly lib: FfiLibrary;
   readonly handle: FfiOpaque;
-  readonly applicationId: bigint;
+  readonly applicationId: ApplicationId;
   readonly tokenStore?: TokenStore;
 
   #closed = false;
@@ -155,7 +159,7 @@ class DiscordClientImpl implements DiscordClient {
     // --- allocate + init the opaque handle ---
     this.handle = lib.allocHandle();
     init(this.handle);
-    setAppId(this.handle, this.applicationId);
+    setAppId(this.handle, BigInt(this.applicationId));
 
     // --- status signal + log stream, driven by the SDK's persistent callbacks ---
     const statusCb = lib.registerCallback(OnStatusChanged, (code: number) => {

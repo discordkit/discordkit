@@ -78,7 +78,7 @@ export const getRelationship = (
 ): Relationship => {
   const client = options.client ?? useClient();
   const handle = client.lib.allocHandle();
-  bindings(client.lib).getRelationship(client.handle, userId, handle);
+  bindings(client.lib).getRelationship(client.handle, BigInt(userId), handle);
   return readRelationship(client.lib, handle);
 };
 
@@ -95,7 +95,7 @@ const action =
     return awaitResult(
       client,
       b.updateCb,
-      (ptr) => call(client.handle, userId, ptr, null, null),
+      (ptr) => call(client.handle, BigInt(userId), ptr, null, null),
       () => undefined,
       { timeoutMs: options.timeoutMs, label }
     );

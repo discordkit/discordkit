@@ -28,7 +28,7 @@ describe(`getCurrentUser (mock backend)`, () => {
     // Why: getCurrentUser must read every field off the handle into a plain
     // snapshot — a missing field means a getter wasn't wired or marshaled right.
     expect(user).toEqual({
-      id: 42n,
+      id: `42`,
       username: `ada`,
       displayName: `Ada L.`,
       globalName: `Ada Lovelace`,

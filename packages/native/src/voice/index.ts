@@ -49,5 +49,6 @@ export type {
   VADThreshold,
   CallStatus,
   CallError,
-  AudioMode
+  AudioMode,
+  CallSnapshot
 } from "./types.js";

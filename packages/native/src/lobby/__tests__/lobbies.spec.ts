@@ -55,7 +55,7 @@ describe(`lobby entry ops (mock backend)`, () => {
 
     // Why: create/join yields a lobbyId via callback; the op must then fetch the
     // handle and wrap it — returning a Lobby, not the raw id.
-    expect(lobby.id).toBe(5000n);
+    expect(lobby.id).toBe(`5000`);
     expect(lobbyActionsOf(state)).toContain(`Discord_Client_CreateOrJoinLobby`);
   });
 
@@ -86,7 +86,7 @@ describe(`lobby entry ops (mock backend)`, () => {
     // Why: a lobby is a LIVE wrapper — getters read the SDK on each access and
     // return plain snapshots of the read-only sub-objects (members embed users,
     // metadata is a plain map, linkedChannel is optional).
-    expect(lobby.memberIds).toEqual([11n, 22n]);
+    expect(lobby.memberIds).toEqual([`11`, `22`]);
     expect(lobby.metadata).toEqual({ mode: `ranked` });
     expect(lobby.members.map((m) => m.user?.username)).toEqual([
       `ada`,
@@ -95,9 +95,9 @@ describe(`lobby entry ops (mock backend)`, () => {
     expect(lobby.members[0]?.connected).toBe(true);
     expect(lobby.members[0]?.metadata).toEqual({ team: `blue` });
     expect(lobby.linkedChannel).toEqual({
-      id: 900n,
+      id: `900`,
       name: `general`,
-      guildId: 800n
+      guildId: `800`
     });
     expect(lobby.member(userId(22n))?.connected).toBe(false);
     expect(lobby.member(userId(999n))).toBeUndefined();
@@ -119,7 +119,7 @@ describe(`lobby entry ops (mock backend)`, () => {
     scriptLobby(state, sampleLobby);
     // Why: GetLobbyHandle is bool-gated; a non-member must yield undefined, not a
     // wrapper around an invalid handle.
-    expect(getLobby(lobbyId(5000n), { client })?.id).toBe(5000n);
+    expect(getLobby(lobbyId(5000n), { client })?.id).toBe(`5000`);
     expect(getLobby(lobbyId(404n), { client })).toBeUndefined();
   });
 
@@ -130,6 +130,6 @@ describe(`lobby entry ops (mock backend)`, () => {
     scriptLobby(state, { ...sampleLobby, id: 6000n });
     // Why: the scalar-id span primitive (readUInt64Span) must decode raw uint64s,
     // not handle pointers.
-    expect(getLobbyIds({ client })).toEqual([5000n, 6000n]);
+    expect(getLobbyIds({ client })).toEqual([`5000`, `6000`]);
   });
 });

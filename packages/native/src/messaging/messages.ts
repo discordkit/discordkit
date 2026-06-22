@@ -1,7 +1,13 @@
 import { useClient } from "../ambient.js";
 import type { DiscordClient } from "../client.js";
 import { awaitResult, defineBindings } from "../ffi/bindings.js";
-import type { ChannelId, LobbyId, MessageId, UserId } from "../snowflake.js";
+import {
+  brandId,
+  type ChannelId,
+  type LobbyId,
+  type MessageId,
+  type UserId
+} from "../snowflake.js";
 import { readMessage } from "./messageHandle.js";
 import { readChannel } from "./channelHandle.js";
 import type { Channel, Message, UserMessageSummary } from "./types.js";
@@ -88,7 +94,7 @@ export const sendUserMessage = async (
       options.metadata
         ? b.sendUserWithMetadata(
             client.handle,
-            recipientId,
+            BigInt(recipientId),
             client.lib.encodeString(content),
             client.lib.encodeProperties(options.metadata),
             ptr,
@@ -97,13 +103,13 @@ export const sendUserMessage = async (
           )
         : b.sendUser(
             client.handle,
-            recipientId,
+            BigInt(recipientId),
             client.lib.encodeString(content),
             ptr,
             null,
             null
           ),
-    (messageId) => BigInt(messageId as bigint | number) as MessageId,
+    (messageId) => brandId<MessageId>(messageId),
     { timeoutMs: options.timeoutMs, label: `send user message` }
   );
 };
@@ -123,7 +129,7 @@ export const sendLobbyMessage = async (
       options.metadata
         ? b.sendLobbyWithMetadata(
             client.handle,
-            lobbyId,
+            BigInt(lobbyId),
             client.lib.encodeString(content),
             client.lib.encodeProperties(options.metadata),
             ptr,
@@ -132,13 +138,13 @@ export const sendLobbyMessage = async (
           )
         : b.sendLobby(
             client.handle,
-            lobbyId,
+            BigInt(lobbyId),
             client.lib.encodeString(content),
             ptr,
             null,
             null
           ),
-    (messageId) => BigInt(messageId as bigint | number) as MessageId,
+    (messageId) => brandId<MessageId>(messageId),
     { timeoutMs: options.timeoutMs, label: `send lobby message` }
   );
 };
@@ -158,8 +164,8 @@ export const editUserMessage = async (
     (ptr) =>
       b.edit(
         client.handle,
-        recipientId,
-        messageId,
+        BigInt(recipientId),
+        BigInt(messageId),
         client.lib.encodeString(content),
         ptr,
         null,
@@ -182,7 +188,14 @@ export const deleteUserMessage = async (
     client,
     b.ackCb,
     (ptr) =>
-      b.deleteMsg(client.handle, recipientId, messageId, ptr, null, null),
+      b.deleteMsg(
+        client.handle,
+        BigInt(recipientId),
+        BigInt(messageId),
+        ptr,
+        null,
+        null
+      ),
     () => undefined,
     { timeoutMs: options.timeoutMs, label: `delete user message` }
   );
@@ -195,7 +208,7 @@ export const getMessage = (
 ): Message | undefined => {
   const client = options.client ?? useClient();
   const out = client.lib.allocHandle();
-  return bindings(client.lib).getMessage(client.handle, messageId, out)
+  return bindings(client.lib).getMessage(client.handle, BigInt(messageId), out)
     ? readMessage(client.lib, out)
     : undefined;
 };
@@ -207,7 +220,7 @@ export const getChannel = (
 ): Channel | undefined => {
   const client = options.client ?? useClient();
   const out = client.lib.allocHandle();
-  return bindings(client.lib).getChannel(client.handle, channelId, out)
+  return bindings(client.lib).getChannel(client.handle, BigInt(channelId), out)
     ? readChannel(client.lib, out)
     : undefined;
 };
@@ -228,7 +241,14 @@ export const getUserMessages = async (
     client,
     b.messagesCb,
     (ptr) =>
-      b.getUserMessages(client.handle, recipientId, limit, ptr, null, null),
+      b.getUserMessages(
+        client.handle,
+        BigInt(recipientId),
+        limit,
+        ptr,
+        null,
+        null
+      ),
     (span) => readMessages(client, span),
     { timeoutMs: options.timeoutMs, label: `get user messages` }
   );
@@ -245,7 +265,15 @@ export const getLobbyMessages = async (
   return awaitResult<Message[]>(
     client,
     b.messagesCb,
-    (ptr) => b.getLobbyMessages(client.handle, lobbyId, limit, ptr, null, null),
+    (ptr) =>
+      b.getLobbyMessages(
+        client.handle,
+        BigInt(lobbyId),
+        limit,
+        ptr,
+        null,
+        null
+      ),
     (span) => readMessages(client, span),
     { timeoutMs: options.timeoutMs, label: `get lobby messages` }
   );
@@ -263,8 +291,8 @@ export const getUserMessageSummaries = async (
     (ptr) => b.getSummaries(client.handle, ptr, null, null),
     (span) =>
       client.lib.readSpan(span).map((h) => ({
-        userId: b.summaryUserId(h) as UserId,
-        lastMessageId: b.summaryLastMessageId(h) as MessageId
+        userId: brandId<UserId>(b.summaryUserId(h)),
+        lastMessageId: brandId<MessageId>(b.summaryLastMessageId(h))
       })),
     { timeoutMs: options.timeoutMs, label: `get user message summaries` }
   );
@@ -277,7 +305,7 @@ export const canOpenMessageInDiscord = (
 ): boolean => {
   const client = options.client ?? useClient();
   return Boolean(
-    bindings(client.lib).canOpenInDiscord(client.handle, messageId)
+    bindings(client.lib).canOpenInDiscord(client.handle, BigInt(messageId))
   );
 };
 
@@ -296,7 +324,7 @@ export const openMessageInDiscord = async (
     (ptr) =>
       b.openInDiscord(
         client.handle,
-        messageId,
+        BigInt(messageId),
         null,
         null,
         null,

@@ -18,6 +18,22 @@ import type { User } from "../users/types.js";
 /** Developer-supplied string→string metadata on a lobby or lobby member. */
 export type LobbyMetadata = Record<string, string>;
 
+/**
+ * A serializable, plain-object view of a {@link ../lobby/lobbyHandle.js | Lobby} at one moment — the live wrapper's getters read into a flat object. Produced by `lobby.toJSON()` (so `JSON.stringify(lobby)` works too); the canonical shape for any transport that can't carry the live wrapper (e.g. an IPC/RPC bridge to a UI process). Since snowflakes are strings, it serializes with no special handling.
+ */
+export interface LobbySnapshot {
+  /** The lobby's id. */
+  id: LobbyId;
+  /** The member user ids. */
+  memberIds: UserId[];
+  /** The members as snapshots. */
+  members: LobbyMember[];
+  /** Developer metadata on the lobby. */
+  metadata: LobbyMetadata;
+  /** The linked Discord channel, if any. */
+  linkedChannel?: LinkedChannel;
+}
+
 /** A snapshot of one member of a lobby, read from a `LobbyMemberHandle`. */
 export interface LobbyMember {
   /** The member's user id. */

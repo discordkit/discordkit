@@ -34,7 +34,7 @@ describe(`activity invite subscriptions (mock backend)`, () => {
     expect(received).toHaveLength(1);
     expect(received[0]).toMatchObject({
       type: `joinRequest`,
-      senderId: 42n,
+      senderId: `42`,
       partyId: `p-99`
     });
   });

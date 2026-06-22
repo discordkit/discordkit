@@ -71,7 +71,7 @@ export const sendActivityInvite = async (
     (ptr) =>
       b.send(
         client.handle,
-        userId,
+        BigInt(userId),
         client.lib.encodeString(content),
         ptr,
         null,
@@ -94,7 +94,7 @@ export const sendActivityJoinRequest = async (
   return awaitResult(
     client,
     b.sendCb,
-    (ptr) => b.sendJoinRequest(client.handle, userId, ptr, null, null),
+    (ptr) => b.sendJoinRequest(client.handle, BigInt(userId), ptr, null, null),
     () => undefined,
     { timeoutMs: options.timeoutMs, label: `send activity join request` }
   );

@@ -1,6 +1,6 @@
 import { defineBindings } from "../ffi/bindings.js";
 import type { FfiLibrary, FfiOpaque } from "../ffi/backend.js";
-import type { UserId } from "../snowflake.js";
+import { brandId, type UserId } from "../snowflake.js";
 import { readUser } from "../users/userHandle.js";
 import { RELATIONSHIP_TYPE_BY_CODE, type Relationship } from "./types.js";
 
@@ -31,7 +31,7 @@ export const readRelationship = (
   const user = b.user(handle, userOut) ? readUser(lib, userOut) : undefined;
 
   return {
-    userId: b.id(handle) as UserId,
+    userId: brandId<UserId>(b.id(handle)),
     discordType: RELATIONSHIP_TYPE_BY_CODE[code(b.discordType)] ?? `none`,
     gameType: RELATIONSHIP_TYPE_BY_CODE[code(b.gameType)] ?? `none`,
     spamRequest: Boolean(b.isSpamRequest(handle)),

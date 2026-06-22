@@ -57,12 +57,12 @@ describe(`read messages (mock backend)`, () => {
     // the humanized vs raw content split, the embedded author/channel, the lobby
     // id (read WITHOUT wrapping a live Lobby), and unrenderable additionalContent.
     expect(msg).toMatchObject({
-      id: 7000n,
+      id: `7000`,
       content: `gg @ada`,
       rawContent: `gg <@11>`,
-      authorId: 11n,
-      channelId: 900n,
-      lobbyId: 5000n,
+      authorId: `11`,
+      channelId: `900`,
+      lobbyId: `5000`,
       metadata: { char: `mage` }
     });
     expect(msg?.author?.username).toBe(`ada`);
@@ -94,10 +94,10 @@ describe(`read messages (mock backend)`, () => {
     // Why: recipientIds uses the scalar-id span primitive; type maps via the
     // shared ChannelType table.
     expect(channel).toEqual({
-      id: 900n,
+      id: `900`,
       name: `dm`,
       type: `dm`,
-      recipientIds: [11n, 22n]
+      recipientIds: [`11`, `22`]
     });
   });
 
@@ -123,8 +123,8 @@ describe(`read messages (mock backend)`, () => {
     const summaries = await getUserMessageSummaries({ client });
     // Why: summaries read off a distinct span element type (UserMessageSummary).
     expect(summaries).toEqual([
-      { userId: 11n, lastMessageId: 100n },
-      { userId: 22n, lastMessageId: 200n }
+      { userId: `11`, lastMessageId: `100` },
+      { userId: `22`, lastMessageId: `200` }
     ]);
   });
 

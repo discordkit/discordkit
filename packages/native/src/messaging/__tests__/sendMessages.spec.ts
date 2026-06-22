@@ -24,7 +24,7 @@ describe(`send/edit/delete messages (mock backend)`, () => {
     // Why: the send callback carries the new message id — the op must resolve
     // with that id (so callers can re-fetch via getMessage), not void.
     const id = await sendUserMessage(userId(11n), `hello`, { client });
-    expect(id).toBe(7777n);
+    expect(id).toBe(`7777`);
     expect(messageActionsOf(state)).toContain(`Discord_Client_SendUserMessage`);
   });
 

@@ -63,8 +63,8 @@ describe(`lobby actions + discovery (mock backend)`, () => {
     // Why: discovery ops resolve with a span read in the callback — the picker UI
     // needs the full list of servers the user belongs to.
     expect(guilds).toEqual([
-      { id: 800n, name: `Saeris HQ` },
-      { id: 801n, name: `Discordkit` }
+      { id: `800`, name: `Saeris HQ` },
+      { id: `801`, name: `Discordkit` }
     ]);
   });
 
@@ -98,17 +98,17 @@ describe(`lobby actions + discovery (mock backend)`, () => {
     // channels) and the already-linked lobby — the optional parentId/linkedLobby
     // out-params (uint64* and nested struct) must read correctly.
     expect(channels[0]).toMatchObject({
-      id: 900n,
+      id: `900`,
       type: `guildText`,
       linkable: true,
       viewableByAll: true,
-      parentId: 950n
+      parentId: `950`
     });
     expect(channels[0]?.linkedLobby).toBeUndefined();
     expect(channels[1]).toMatchObject({
       linkable: false,
       viewableByAll: false,
-      linkedLobby: { lobbyId: 5000n, applicationId: 123n }
+      linkedLobby: { lobbyId: `5000`, applicationId: `123` }
     });
     expect(channels[1]?.parentId).toBeUndefined();
   });

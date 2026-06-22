@@ -17,8 +17,10 @@ import { defineBindings } from "./bindings.js";
  * `Set`. It mirrors `DiscordClient.onLog`, generalized across a domain's events.
  *
  * These events all deliver `uint64` ids (never handles) — `lobbyId`, `memberId`,
- * `messageId`, `channelId` — so handlers receive `bigint`s. An `arity` per event
- * says how many leading id args to forward (the rest is the SDK's `userData`).
+ * `messageId`, `channelId` — which this stringifies, so handlers receive branded
+ * snowflake strings (Discord's wire convention; see {@link ../snowflake.js}). An
+ * `arity` per event says how many leading id args to forward (the rest is the
+ * SDK's `userData`).
  *
  * NOTE: this is for client-wide setters only. Per-INSTANCE event setters (e.g.
  * `Discord_Call_Set*Callback`, which live on a `Call` handle) are owned by that
@@ -34,7 +36,7 @@ import { defineBindings } from "./bindings.js";
  *              callback: `void LobbyMemberCallback(uint64_t lobbyId, uint64_t memberId, void *userData)`,
  *              arity: 2 }
  * });
- * export const onLobbyCreated = events<(lobbyId: bigint) => void>(`created`);
+ * export const onLobbyCreated = events<(lobbyId: LobbyId) => void>(`created`);
  * ```
  */
 
@@ -76,7 +78,7 @@ export const clientEventFanout = <const E extends Record<string, FanoutEvent>>(
   );
   const bindings = defineBindings({ ...setterDecls, ...callbackDecls });
 
-  type Subscriber = (...args: bigint[]) => void;
+  type Subscriber = (...args: string[]) => void;
   const registries = new WeakMap<
     DiscordClient,
     Partial<Record<keyof E, Set<Subscriber>>>
@@ -101,10 +103,9 @@ export const clientEventFanout = <const E extends Record<string, FanoutEvent>>(
     const cb = client.lib.registerCallback(
       b[`${String(event)}__cb`],
       (...args: unknown[]) => {
-        // FFI callback args may arrive as `number` for small ids; coerce to bigint.
-        const ids = args
-          .slice(0, arity)
-          .map((a) => BigInt(a as bigint | number));
+        // Snowflakes are strings (Discord's wire convention); the FFI delivers
+        // them as bigint/number, so stringify each id at this read boundary.
+        const ids = args.slice(0, arity).map((a) => String(a));
         for (const handler of subscribers) handler(...ids);
       }
     );
@@ -119,8 +120,8 @@ export const clientEventFanout = <const E extends Record<string, FanoutEvent>>(
       const client = options.client ?? useClient();
       const set = subscribersFor(client, event);
       // The public handler is typed with branded id params (e.g. (id: LobbyId));
-      // the internal Subscriber set is raw (bigint[]) since the fanout produces
-      // raw ids and brands them at the call boundary — so this re-cast is sound.
+      // the internal Subscriber set is raw (string[]) since the fanout produces
+      // string ids and the brand is a phantom — so this re-cast is sound.
       const subscriber = handler as unknown as Subscriber;
       set.add(subscriber);
       return toSubscription(() => {

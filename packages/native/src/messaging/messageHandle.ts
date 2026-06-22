@@ -1,7 +1,13 @@
 import { defineBindings } from "../ffi/bindings.js";
 import { readPropertiesOf, readString } from "../ffi/readers.js";
 import type { FfiLibrary, FfiOpaque } from "../ffi/backend.js";
-import type { ChannelId, LobbyId, MessageId, UserId } from "../snowflake.js";
+import {
+  brandId,
+  type ChannelId,
+  type LobbyId,
+  type MessageId,
+  type UserId
+} from "../snowflake.js";
 import { readUser } from "../users/userHandle.js";
 import { readChannel } from "./channelHandle.js";
 import { readAdditionalContent } from "./additionalContent.js";
@@ -59,19 +65,21 @@ export const readMessage = (lib: FfiLibrary, handle: FfiOpaque): Message => {
 
   const lobbyOut = lib.allocHandle();
   const lobbyId = b.lobby(handle, lobbyOut)
-    ? (b.lobbyId(lobbyOut) as LobbyId)
+    ? brandId<LobbyId>(b.lobbyId(lobbyOut))
     : undefined;
 
   return {
-    id: b.id(handle) as MessageId,
+    id: brandId<MessageId>(b.id(handle)),
     content: readString(lib, handle, b.content),
     rawContent: readString(lib, handle, b.rawContent),
-    authorId: b.authorId(handle) as UserId,
-    channelId: b.channelId(handle) as ChannelId,
-    recipientId: b.recipientId(handle) as UserId,
+    authorId: brandId<UserId>(b.authorId(handle)),
+    channelId: brandId<ChannelId>(b.channelId(handle)),
+    recipientId: brandId<UserId>(b.recipientId(handle)),
     sentFromGame: Boolean(b.sentFromGame(handle)),
-    sentTimestamp: b.sentTimestamp(handle) as bigint,
-    editedTimestamp: b.editedTimestamp(handle) as bigint,
+    // Epoch ms fit losslessly in a JS number (< 2^53), so timestamps are numbers
+    // (not snowflakes/bigint) — JSON-safe and `new Date(ts)`-friendly.
+    sentTimestamp: Number(b.sentTimestamp(handle)),
+    editedTimestamp: Number(b.editedTimestamp(handle)),
     metadata: readPropertiesOf(lib, handle, b.metadata),
     moderationMetadata: readPropertiesOf(lib, handle, b.moderationMetadata),
     ...(author ? { author } : {}),

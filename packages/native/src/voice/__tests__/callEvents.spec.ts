@@ -39,14 +39,14 @@ describe(`call events (mock backend)`, () => {
     scriptCall(state, makeCall());
     using call = getCall(channelId(5000n), { client })!;
 
-    const joins: [bigint, boolean][] = [];
+    const joins: [string, boolean][] = [];
     call.onParticipantChanged((id, added) => joins.push([id, added]));
     fireCallEvent(state, `ParticipantChanged`, 11n, true);
     fireCallEvent(state, `ParticipantChanged`, 22n, false);
 
     expect(joins).toEqual([
-      [11n, true],
-      [22n, false]
+      [`11`, true],
+      [`22`, false]
     ]);
   });
 
@@ -56,11 +56,11 @@ describe(`call events (mock backend)`, () => {
     scriptCall(state, makeCall());
     using call = getCall(channelId(5000n), { client })!;
 
-    const speaking: [bigint, boolean][] = [];
+    const speaking: [string, boolean][] = [];
     call.onSpeakingStatusChanged((id, on) => speaking.push([id, on]));
     fireCallEvent(state, `SpeakingStatusChanged`, 11n, true);
 
-    expect(speaking).toEqual([[11n, true]]);
+    expect(speaking).toEqual([[`11`, true]]);
   });
 
   it(`disposing a Call unregisters its event callbacks`, () => {
@@ -69,7 +69,7 @@ describe(`call events (mock backend)`, () => {
     scriptCall(state, makeCall());
     const call = getCall(channelId(5000n), { client })!;
 
-    const seen: bigint[] = [];
+    const seen: string[] = [];
     call.onVoiceStateChanged((id) => seen.push(id));
     fireCallEvent(state, `VoiceStateChanged`, 11n);
     call[Symbol.dispose]();
@@ -77,7 +77,7 @@ describe(`call events (mock backend)`, () => {
 
     // Why: a Call owns its per-call callbacks; dispose must unregister them so a
     // post-dispose event doesn't reach a stale handler.
-    expect(seen).toEqual([11n]);
+    expect(seen).toEqual([`11`]);
   });
 
   it(`onDeviceChange delivers the new input + output device lists`, () => {

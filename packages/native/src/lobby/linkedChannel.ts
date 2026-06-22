@@ -1,7 +1,7 @@
 import { defineBindings } from "../ffi/bindings.js";
 import { readString } from "../ffi/readers.js";
 import type { FfiLibrary, FfiOpaque } from "../ffi/backend.js";
-import type { ChannelId, GuildId } from "../snowflake.js";
+import { brandId, type ChannelId, type GuildId } from "../snowflake.js";
 import type { LinkedChannel } from "./types.js";
 
 /**
@@ -20,8 +20,8 @@ export const readLinkedChannel = (
 ): LinkedChannel => {
   const b = bindings(lib);
   return {
-    id: b.id(handle) as ChannelId,
+    id: brandId<ChannelId>(b.id(handle)),
     name: readString(lib, handle, b.name),
-    guildId: b.guildId(handle) as GuildId
+    guildId: brandId<GuildId>(b.guildId(handle))
   };
 };

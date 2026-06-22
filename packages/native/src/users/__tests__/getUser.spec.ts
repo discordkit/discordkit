@@ -27,7 +27,7 @@ describe(`getUser (mock backend)`, () => {
     // Why: optional fields the SDK doesn't report (globalName, avatar) must be
     // undefined, not "" — the snapshot distinguishes "unset" from "empty".
     expect(user).toEqual({
-      id: 7n,
+      id: `7`,
       username: `grace`,
       displayName: `grace`,
       globalName: undefined,

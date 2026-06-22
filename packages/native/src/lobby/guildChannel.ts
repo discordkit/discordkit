@@ -1,11 +1,12 @@
 import { defineBindings } from "../ffi/bindings.js";
 import { readString } from "../ffi/readers.js";
 import type { FfiLibrary, FfiOpaque } from "../ffi/backend.js";
-import type {
-  ApplicationId,
-  ChannelId,
-  GuildId,
-  LobbyId
+import {
+  brandId,
+  type ApplicationId,
+  type ChannelId,
+  type GuildId,
+  type LobbyId
 } from "../snowflake.js";
 import {
   CHANNEL_TYPE_BY_CODE,
@@ -44,19 +45,19 @@ export const readGuildChannel = (
   const b = channel(lib);
   const parentOut = lib.allocUInt64Out();
   const parentId = b.parentId(handle, parentOut)
-    ? (lib.readUInt64Out(parentOut) as ChannelId)
+    ? brandId<ChannelId>(lib.readUInt64Out(parentOut))
     : undefined;
 
   const lobbyOut = lib.allocHandle();
   const linkedLobby = b.linkedLobby(handle, lobbyOut)
     ? {
-        lobbyId: b.linkedLobbyId(lobbyOut) as LobbyId,
-        applicationId: b.linkedLobbyAppId(lobbyOut) as ApplicationId
+        lobbyId: brandId<LobbyId>(b.linkedLobbyId(lobbyOut)),
+        applicationId: brandId<ApplicationId>(b.linkedLobbyAppId(lobbyOut))
       }
     : undefined;
 
   return {
-    id: b.id(handle) as ChannelId,
+    id: brandId<ChannelId>(b.id(handle)),
     name: readString(lib, handle, b.name),
     type: CHANNEL_TYPE_BY_CODE[Number(b.type(handle))] ?? `unknown`,
     position: Number(b.position(handle)),
@@ -71,7 +72,7 @@ export const readGuildChannel = (
 export const readGuild = (lib: FfiLibrary, handle: FfiOpaque): Guild => {
   const b = guild(lib);
   return {
-    id: b.id(handle) as GuildId,
+    id: brandId<GuildId>(b.id(handle)),
     name: readString(lib, handle, b.name)
   };
 };

@@ -2,7 +2,13 @@ import type { DiscordClient, Subscription } from "../client.js";
 import { awaitResult, defineBindings } from "../ffi/bindings.js";
 import { readPropertiesOf } from "../ffi/readers.js";
 import type { FfiOpaque } from "../ffi/backend.js";
-import type { ChannelId, LobbyId, UserId } from "../snowflake.js";
+import {
+  brandId,
+  brandIds,
+  type ChannelId,
+  type LobbyId,
+  type UserId
+} from "../snowflake.js";
 import { readLinkedChannel } from "./linkedChannel.js";
 import { readLobbyMember } from "./lobbyMember.js";
 import {
@@ -11,7 +17,12 @@ import {
   onLobbyMemberUpdated,
   onLobbyUpdated
 } from "./lobbyEvents.js";
-import type { LinkedChannel, LobbyMember, LobbyMetadata } from "./types.js";
+import type {
+  LinkedChannel,
+  LobbyMember,
+  LobbyMetadata,
+  LobbySnapshot
+} from "./types.js";
 
 /**
  * A live wrapper over a native `discordpp::LobbyHandle` — the package's first
@@ -77,7 +88,7 @@ export class Lobby {
   constructor(client: DiscordClient, handle: FfiOpaque) {
     this.#client = client;
     this.#handle = handle;
-    this.#id = bindings(client.lib).id(handle) as LobbyId;
+    this.#id = brandId<LobbyId>(bindings(client.lib).id(handle));
   }
 
   /** The lobby's id. */
@@ -89,7 +100,7 @@ export class Lobby {
   get memberIds(): UserId[] {
     const span = this.#client.lib.allocSpanOut();
     bindings(this.#client.lib).memberIds(this.#handle, span);
-    return this.#client.lib.readUInt64Span(span) as UserId[];
+    return brandIds<UserId>(this.#client.lib.readUInt64Span(span));
   }
 
   /** The current lobby members as snapshots (re-read live from the SDK). */
@@ -118,10 +129,25 @@ export class Lobby {
       : undefined;
   }
 
+  /**
+   * A plain, serializable {@link LobbySnapshot} of this lobby's current state — for sending across a process/transport boundary that can't carry the live wrapper (an IPC/RPC bridge). Named `toJSON` so `JSON.stringify(lobby)` produces the same shape.
+   */
+  toJSON = (): LobbySnapshot => ({
+    id: this.id,
+    memberIds: this.memberIds,
+    members: this.members,
+    metadata: this.metadata,
+    ...(this.linkedChannel ? { linkedChannel: this.linkedChannel } : {})
+  });
+
   /** Read one member by user id, if they belong to this lobby (live). */
   member = (memberId: UserId): LobbyMember | undefined => {
     const out = this.#client.lib.allocHandle();
-    return bindings(this.#client.lib).memberById(this.#handle, memberId, out)
+    return bindings(this.#client.lib).memberById(
+      this.#handle,
+      BigInt(memberId),
+      out
+    )
       ? readLobbyMember(this.#client.lib, out)
       : undefined;
   };
@@ -132,7 +158,7 @@ export class Lobby {
     await awaitResult(
       this.#client,
       b.leaveCb,
-      (ptr) => b.leave(this.#client.handle, this.#id, ptr, null, null),
+      (ptr) => b.leave(this.#client.handle, BigInt(this.#id), ptr, null, null),
       () => undefined,
       { label: `leave lobby` }
     );
@@ -145,7 +171,14 @@ export class Lobby {
       this.#client,
       b.linkCb,
       (ptr) =>
-        b.link(this.#client.handle, this.#id, channelId, ptr, null, null),
+        b.link(
+          this.#client.handle,
+          BigInt(this.#id),
+          BigInt(channelId),
+          ptr,
+          null,
+          null
+        ),
       () => undefined,
       { label: `link channel to lobby` }
     );
@@ -157,7 +190,7 @@ export class Lobby {
     await awaitResult(
       this.#client,
       b.linkCb,
-      (ptr) => b.unlink(this.#client.handle, this.#id, ptr, null, null),
+      (ptr) => b.unlink(this.#client.handle, BigInt(this.#id), ptr, null, null),
       () => undefined,
       { label: `unlink channel from lobby` }
     );

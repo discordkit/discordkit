@@ -40,15 +40,15 @@ describe(`getRelationships (mock backend)`, () => {
     // cross-domain embed must read the target user via the users domain reader.
     expect(rels).toHaveLength(2);
     expect(rels[0]).toEqual({
-      userId: 42n,
+      userId: `42`,
       discordType: `friend`,
       gameType: `none`,
       spamRequest: false,
-      user: expect.objectContaining({ id: 42n, username: `ada` })
+      user: expect.objectContaining({ id: `42`, username: `ada` })
     });
     // A relationship the SDK has no user handle for omits `user`.
     expect(rels[1]).toEqual({
-      userId: 7n,
+      userId: `7`,
       discordType: `pendingIncoming`,
       gameType: `none`,
       spamRequest: true
@@ -64,7 +64,7 @@ describe(`getRelationships (mock backend)`, () => {
     using client = createClient(config);
     scriptRelationships(mockStateOf(client.lib), [FRIEND]);
     const rel = getRelationship(userId(42n), { client });
-    expect(rel.userId).toBe(42n);
+    expect(rel.userId).toBe(`42`);
     expect(rel.discordType).toBe(`friend`);
   });
 });

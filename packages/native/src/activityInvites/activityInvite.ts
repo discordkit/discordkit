@@ -1,11 +1,12 @@
 import { defineBindings, subObjectHandle } from "../ffi/bindings.js";
 import type { SubObjectHandle } from "../ffi/bindings.js";
 import type { FfiLibrary, FfiOpaque } from "../ffi/backend.js";
-import type {
-  ApplicationId,
-  ChannelId,
-  MessageId,
-  UserId
+import {
+  brandId,
+  type ApplicationId,
+  type ChannelId,
+  type MessageId,
+  type UserId
 } from "../snowflake.js";
 import {
   ACTIVITY_ACTION_TYPE_BY_CODE,
@@ -64,11 +65,11 @@ export const readActivityInvite = (
 
   return {
     type: ACTIVITY_ACTION_TYPE_BY_CODE[Number(b.type(handle))] ?? `invalid`,
-    senderId: b.senderId(handle) as UserId,
-    channelId: b.channelId(handle) as ChannelId,
-    messageId: b.messageId(handle) as MessageId,
-    applicationId: b.applicationId(handle) as ApplicationId,
-    parentApplicationId: b.parentApplicationId(handle) as ApplicationId,
+    senderId: brandId<UserId>(b.senderId(handle)),
+    channelId: brandId<ChannelId>(b.channelId(handle)),
+    messageId: brandId<MessageId>(b.messageId(handle)),
+    applicationId: brandId<ApplicationId>(b.applicationId(handle)),
+    parentApplicationId: brandId<ApplicationId>(b.parentApplicationId(handle)),
     partyId: readString(b.partyId),
     sessionId: readString(b.sessionId),
     valid: Boolean(b.isValid(handle))
@@ -86,11 +87,12 @@ export const buildActivityInvite = (
   const handle = lib.allocHandle();
   b.init(handle);
   b.setType(handle, ACTIVITY_ACTION_TYPE_CODE[invite.type]);
-  b.setSenderId(handle, invite.senderId);
-  b.setChannelId(handle, invite.channelId);
-  b.setMessageId(handle, invite.messageId);
-  b.setApplicationId(handle, invite.applicationId);
-  b.setParentApplicationId(handle, invite.parentApplicationId);
+  // Snowflakes are strings; the FFI setters take uint64 — convert at the boundary.
+  b.setSenderId(handle, BigInt(invite.senderId));
+  b.setChannelId(handle, BigInt(invite.channelId));
+  b.setMessageId(handle, BigInt(invite.messageId));
+  b.setApplicationId(handle, BigInt(invite.applicationId));
+  b.setParentApplicationId(handle, BigInt(invite.parentApplicationId));
   b.setIsValid(handle, invite.valid);
   b.setPartyId(handle, lib.encodeString(invite.partyId));
   b.setSessionId(handle, lib.encodeString(invite.sessionId));

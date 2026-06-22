@@ -100,9 +100,9 @@ export interface Message {
   /** Whether the message was sent in-game (vs. from Discord itself). */
   sentFromGame: boolean;
   /** Sent time, ms since epoch. */
-  sentTimestamp: bigint;
-  /** Last edit time, ms since epoch; `0n` if never edited. */
-  editedTimestamp: bigint;
+  sentTimestamp: number;
+  /** Last edit time, ms since epoch; `0` if never edited. */
+  editedTimestamp: number;
   /** Developer metadata included with the message. */
   metadata: MessageMetadata;
   /** Developer moderation metadata set on the message. */

@@ -4,6 +4,8 @@
  * The `Call` is surfaced as a LIVE wrapper class ({@link ../voice/call.js | Call}) — the §1.4 case: a call is long-lived, richly interactive (mute/deaf/volume/audio-mode), and has its own per-call events. Its read-only sub-objects (a participant's voice state, audio devices, the VAD config) follow the read-handle→snapshot convention.
  */
 
+import type { ChannelId, GuildId, UserId } from "../snowflake.js";
+
 /** A call's network connection state, the public form of `Discord_Call_Status`. */
 export type CallStatus =
   | `disconnected`
@@ -85,4 +87,26 @@ export interface VADThreshold {
   automatic: boolean;
   /** The manual threshold (dBFS, range -100..0, default -60) when not automatic. */
   threshold: number;
+}
+
+/**
+ * A serializable, plain-object view of a {@link ../voice/call.js | Call} at one moment — the live wrapper's getters read into a flat object. Produced by `call.toJSON()` (so `JSON.stringify(call)` works too); the canonical shape for any transport that can't carry the live wrapper. Per-participant volume/local-mute and the live event streams are NOT in the snapshot (they're per-id queries / subscriptions on the live wrapper).
+ */
+export interface CallSnapshot {
+  /** The lobby/channel id this call is in. */
+  channelId: ChannelId;
+  /** The guild id this call is associated with. */
+  guildId: GuildId;
+  /** The current connection status. */
+  status: CallStatus;
+  /** The participant user ids. */
+  participants: UserId[];
+  /** Whether the current user's mic is muted. */
+  selfMute: boolean;
+  /** Whether the current user is deafened. */
+  selfDeaf: boolean;
+  /** How the current user's mic is keyed (VAD vs push-to-talk). */
+  audioMode: AudioMode;
+  /** The current VAD threshold configuration. */
+  vadThreshold: VADThreshold;
 }

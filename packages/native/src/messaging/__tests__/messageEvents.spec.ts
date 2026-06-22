@@ -18,8 +18,8 @@ describe(`message events (mock backend)`, () => {
   it(`created/updated deliver the message id to subscribers`, () => {
     using client = createClient(config);
     const state = mockStateOf(client.lib);
-    const created: bigint[] = [];
-    const updated: bigint[] = [];
+    const created: string[] = [];
+    const updated: string[] = [];
     using _c = onMessageCreated((id) => created.push(id), { client });
     using _u = onMessageUpdated((id) => updated.push(id), { client });
 
@@ -28,14 +28,14 @@ describe(`message events (mock backend)`, () => {
 
     // Why: created/updated are single-id events; the two subscriptions register
     // distinct callbacks and must not cross-fire.
-    expect(created).toEqual([7000n]);
-    expect(updated).toEqual([7000n]);
+    expect(created).toEqual([`7000`]);
+    expect(updated).toEqual([`7000`]);
   });
 
   it(`deleted carries both the message id and its channel id`, () => {
     using client = createClient(config);
     const state = mockStateOf(client.lib);
-    const seen: [bigint, bigint][] = [];
+    const seen: [string, string][] = [];
     using _s = onMessageDeleted(
       (messageId, channelId) => seen.push([messageId, channelId]),
       { client }
@@ -45,14 +45,14 @@ describe(`message events (mock backend)`, () => {
 
     // Why: the deleted callback prototype has two uint64 args (the message is gone,
     // so the channel id is the only way to locate where it was).
-    expect(seen).toEqual([[7000n, 900n]]);
+    expect(seen).toEqual([[`7000`, `900`]]);
   });
 
   it(`fans out to multiple subscribers and stops on unsubscribe`, () => {
     using client = createClient(config);
     const state = mockStateOf(client.lib);
-    const a: bigint[] = [];
-    const b: bigint[] = [];
+    const a: string[] = [];
+    const b: string[] = [];
     const offA = onMessageCreated((id) => a.push(id), { client });
     using _b = onMessageCreated((id) => b.push(id), { client });
 
@@ -62,7 +62,7 @@ describe(`message events (mock backend)`, () => {
 
     // Why: SetMessageCreatedCallback is one client-wide setter — the domain fans
     // out to all subscribers, and an unsubscribe removes only that handler.
-    expect(a).toEqual([1n]);
-    expect(b).toEqual([1n, 2n]);
+    expect(a).toEqual([`1`]);
+    expect(b).toEqual([`1`, `2`]);
   });
 });

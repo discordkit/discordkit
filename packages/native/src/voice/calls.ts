@@ -81,7 +81,7 @@ export const startCall = (
 ): Call | undefined => {
   const client = options.client ?? useClient();
   const out = client.lib.allocHandle();
-  return bindings(client.lib).startCall(client.handle, channelId, out)
+  return bindings(client.lib).startCall(client.handle, BigInt(channelId), out)
     ? new Call(client, out)
     : undefined;
 };
@@ -93,7 +93,7 @@ export const getCall = (
 ): Call | undefined => {
   const client = options.client ?? useClient();
   const out = client.lib.allocHandle();
-  return bindings(client.lib).getCall(client.handle, channelId, out)
+  return bindings(client.lib).getCall(client.handle, BigInt(channelId), out)
     ? new Call(client, out)
     : undefined;
 };
@@ -116,7 +116,7 @@ export const endCall = async (
   await awaitCallback(
     client,
     b.endCb,
-    (ptr) => b.endCall(client.handle, channelId, ptr, null, null),
+    (ptr) => b.endCall(client.handle, BigInt(channelId), ptr, null, null),
     () => undefined,
     { timeoutMs: options.timeoutMs, label: `end call` }
   );

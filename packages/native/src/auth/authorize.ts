@@ -168,7 +168,7 @@ export const authorize = async (
       (ptr) =>
         b.getToken(
           client.handle,
-          client.applicationId,
+          BigInt(client.applicationId),
           lib.encodeString(code),
           lib.encodeString(verifier),
           lib.encodeString(redirectUri),
@@ -214,7 +214,7 @@ export const refreshToken = async (
       (ptr) =>
         b.refreshToken(
           client.handle,
-          client.applicationId,
+          BigInt(client.applicationId),
           lib.encodeString(refreshTokenValue),
           ptr,
           null,

@@ -38,6 +38,11 @@ export const getUser = (
 ): User | undefined => {
   const client = options.client ?? useClient();
   const handle = client.lib.allocHandle();
-  const valid = bindings(client.lib).getUser(client.handle, userId, handle);
+  // The FFI takes a uint64; convert the string id back to bigint at the boundary.
+  const valid = bindings(client.lib).getUser(
+    client.handle,
+    BigInt(userId),
+    handle
+  );
   return valid ? readUser(client.lib, handle) : undefined;
 };

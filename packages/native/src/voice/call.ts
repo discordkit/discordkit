@@ -2,13 +2,20 @@ import { toSubscription } from "../client.js";
 import type { DiscordClient, Subscription } from "../client.js";
 import { defineBindings } from "../ffi/bindings.js";
 import type { FfiOpaque } from "../ffi/backend.js";
-import type { ChannelId, GuildId, UserId } from "../snowflake.js";
+import {
+  brandId,
+  brandIds,
+  type ChannelId,
+  type GuildId,
+  type UserId
+} from "../snowflake.js";
 import { readVADThreshold, readVoiceState } from "./voiceStateHandle.js";
 import {
   AUDIO_MODE_BY_CODE,
   AUDIO_MODE_CODE,
   CALL_STATUS_BY_CODE,
   type AudioMode,
+  type CallSnapshot,
   type CallStatus,
   type VADThreshold,
   type VoiceState
@@ -92,7 +99,9 @@ export class Call {
   constructor(client: DiscordClient, handle: FfiOpaque) {
     this.#client = client;
     this.#handle = handle;
-    this.#channelId = bindings(client.lib).channelId(handle) as ChannelId;
+    this.#channelId = brandId<ChannelId>(
+      bindings(client.lib).channelId(handle)
+    );
   }
 
   /** The id of the lobby/channel this call is in. */
@@ -102,7 +111,7 @@ export class Call {
 
   /** The guild id this call is associated with. */
   get guildId(): GuildId {
-    return bindings(this.#client.lib).guildId(this.#handle) as GuildId;
+    return brandId<GuildId>(bindings(this.#client.lib).guildId(this.#handle));
   }
 
   /** The current call status (re-read live). Not usable until `connected`. */
@@ -118,7 +127,7 @@ export class Call {
   get participants(): UserId[] {
     const span = this.#client.lib.allocSpanOut();
     bindings(this.#client.lib).participants(this.#handle, span);
-    return this.#client.lib.readUInt64Span(span) as UserId[];
+    return brandIds<UserId>(this.#client.lib.readUInt64Span(span));
   }
 
   /** Whether the current user's mic is muted (re-read live). */
@@ -147,21 +156,41 @@ export class Call {
     return readVADThreshold(this.#client.lib, out);
   }
 
+  /**
+   * A plain, serializable {@link CallSnapshot} of this call's current state — for sending across a process/transport boundary that can't carry the live wrapper. Named `toJSON` so `JSON.stringify(call)` produces the same shape. Per-participant queries (volume, local mute) and the live event streams are not included.
+   */
+  toJSON = (): CallSnapshot => ({
+    channelId: this.channelId,
+    guildId: this.guildId,
+    status: this.status,
+    participants: this.participants,
+    selfMute: this.selfMute,
+    selfDeaf: this.selfDeaf,
+    audioMode: this.audioMode,
+    vadThreshold: this.vadThreshold
+  });
+
   /** Read a participant's self-mute/deaf state, if they're in the call (live). */
   voiceState = (userId: UserId): VoiceState | undefined => {
     const out = this.#client.lib.allocHandle();
-    return bindings(this.#client.lib).voiceState(this.#handle, userId, out)
+    return bindings(this.#client.lib).voiceState(
+      this.#handle,
+      BigInt(userId),
+      out
+    )
       ? readVoiceState(this.#client.lib, out)
       : undefined;
   };
 
   /** Whether the current user has locally muted `userId` for themselves. */
   localMute = (userId: UserId): boolean =>
-    Boolean(bindings(this.#client.lib).localMute(this.#handle, userId));
+    Boolean(bindings(this.#client.lib).localMute(this.#handle, BigInt(userId)));
 
   /** The local playout volume set for `userId` (range 0..200, 100 = default). */
   participantVolume = (userId: UserId): number =>
-    Number(bindings(this.#client.lib).participantVolume(this.#handle, userId));
+    Number(
+      bindings(this.#client.lib).participantVolume(this.#handle, BigInt(userId))
+    );
 
   /** Mute/unmute the current user's microphone for everyone in the call. */
   setSelfMute = (mute: boolean): void => {
@@ -175,14 +204,14 @@ export class Call {
 
   /** Locally mute/unmute `userId` (only for the current user, not others). */
   setLocalMute = (userId: UserId, mute: boolean): void => {
-    bindings(this.#client.lib).setLocalMute(this.#handle, userId, mute);
+    bindings(this.#client.lib).setLocalMute(this.#handle, BigInt(userId), mute);
   };
 
   /** Locally set `userId`'s playout volume (0..200, 100 = default). */
   setParticipantVolume = (userId: UserId, volume: number): void => {
     bindings(this.#client.lib).setParticipantVolume(
       this.#handle,
-      userId,
+      BigInt(userId),
       volume
     );
   };
@@ -244,7 +273,7 @@ export class Call {
       (self, ptr) => b.setParticipantCb(self, ptr, null, null),
       b.participantChangedCb,
       (userId: unknown, added: unknown) =>
-        handler(BigInt(userId as bigint | number) as UserId, Boolean(added))
+        handler(brandId<UserId>(userId), Boolean(added))
     );
   };
 
@@ -257,7 +286,7 @@ export class Call {
       (self, ptr) => b.setSpeakingCb(self, ptr, null, null),
       b.speakingCb,
       (userId: unknown, speaking: unknown) =>
-        handler(BigInt(userId as bigint | number) as UserId, Boolean(speaking))
+        handler(brandId<UserId>(userId), Boolean(speaking))
     );
   };
 
@@ -267,7 +296,7 @@ export class Call {
     return this.#subscribe(
       (self, ptr) => b.setVoiceStateCb(self, ptr, null, null),
       b.voiceStateChangedCb,
-      (userId: unknown) => handler(BigInt(userId as bigint | number) as UserId)
+      (userId: unknown) => handler(brandId<UserId>(userId))
     );
   };
 

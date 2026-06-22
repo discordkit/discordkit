@@ -37,6 +37,7 @@ export type {
   LobbyMember,
   LinkedChannel,
   LobbyMetadata,
+  LobbySnapshot,
   GuildChannel,
   Guild,
   ChannelType,

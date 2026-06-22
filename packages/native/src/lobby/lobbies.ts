@@ -2,7 +2,7 @@ import { useClient } from "../ambient.js";
 import type { DiscordClient } from "../client.js";
 import { awaitResult, defineBindings } from "../ffi/bindings.js";
 import type { FfiOpaque } from "../ffi/backend.js";
-import type { GuildId, LobbyId } from "../snowflake.js";
+import { brandId, brandIds, type GuildId, type LobbyId } from "../snowflake.js";
 import { Lobby } from "./lobbyHandle.js";
 import { readGuild, readGuildChannel } from "./guildChannel.js";
 import type { Guild, GuildChannel } from "./types.js";
@@ -52,7 +52,11 @@ const wrapLobby = (
   lobbyId: LobbyId
 ): Lobby | undefined => {
   const out = client.lib.allocHandle();
-  return bindings(client.lib).getLobbyHandle(client.handle, lobbyId, out)
+  return bindings(client.lib).getLobbyHandle(
+    client.handle,
+    BigInt(lobbyId),
+    out
+  )
     ? new Lobby(client, out)
     : undefined;
 };
@@ -93,7 +97,7 @@ export const createOrJoinLobby = async (
             null,
             null
           ),
-    (id) => BigInt(id as bigint | number) as LobbyId,
+    (id) => brandId<LobbyId>(id as bigint | number),
     { timeoutMs: options.timeoutMs, label: `create or join lobby` }
   );
   const lobby = wrapLobby(client, lobbyId);
@@ -123,7 +127,7 @@ export const getLobbyIds = (
   const client = options.client ?? useClient();
   const span = client.lib.allocSpanOut();
   bindings(client.lib).getLobbyIds(client.handle, span);
-  return client.lib.readUInt64Span(span) as LobbyId[];
+  return brandIds<LobbyId>(client.lib.readUInt64Span(span));
 };
 
 /**
@@ -155,7 +159,8 @@ export const getGuildChannels = async (
   return awaitResult<GuildChannel[]>(
     client,
     b.channelsCb,
-    (ptr) => b.getGuildChannels(client.handle, guildId, ptr, null, null),
+    (ptr) =>
+      b.getGuildChannels(client.handle, BigInt(guildId), ptr, null, null),
     (span) =>
       client.lib.readSpan(span).map((h) => readGuildChannel(client.lib, h)),
     { timeoutMs: options.timeoutMs, label: `get guild channels` }

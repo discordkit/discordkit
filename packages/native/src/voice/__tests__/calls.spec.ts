@@ -21,7 +21,7 @@ describe(`calls (mock backend)`, () => {
 
     // Why: StartCall is sync (bool + out-param), unlike createOrJoinLobby — it
     // must return a Call immediately, not a promise.
-    expect(call?.channelId).toBe(5000n);
+    expect(call?.channelId).toBe(`5000`);
     expect(voiceActionsOf(state)).toContain(`Discord_Client_StartCall`);
   });
 
@@ -49,7 +49,7 @@ describe(`calls (mock backend)`, () => {
     // Why: a Call is a live wrapper — every getter reads the SDK on access and
     // maps the ABI enums to public string forms.
     expect(call?.status).toBe(`connected`);
-    expect(call?.participants).toEqual([11n, 22n, 33n]);
+    expect(call?.participants).toEqual([`11`, `22`, `33`]);
     expect(call?.audioMode).toBe(`pushToTalk`);
     expect(call?.vadThreshold).toEqual({ automatic: false, threshold: -45 });
     expect(call?.voiceState(userId(11n))).toEqual({
@@ -84,8 +84,8 @@ describe(`calls (mock backend)`, () => {
     scriptCall(state, makeCall({ channelId: 5000n }));
     scriptCall(state, makeCall({ channelId: 6000n }));
     expect(getCalls({ client }).map((c) => c.channelId)).toEqual([
-      5000n,
-      6000n
+      `5000`,
+      `6000`
     ]);
   });
 

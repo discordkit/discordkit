@@ -22,8 +22,8 @@ describe(`lobby events (mock backend)`, () => {
   it(`client-wide events fan out to multiple subscribers`, () => {
     using client = createClient(config);
     const state = mockStateOf(client.lib);
-    const a: bigint[] = [];
-    const b: bigint[] = [];
+    const a: string[] = [];
+    const b: string[] = [];
     using _sa = onLobbyCreated((id) => a.push(id), { client });
     using _sb = onLobbyCreated((id) => b.push(id), { client });
 
@@ -32,14 +32,14 @@ describe(`lobby events (mock backend)`, () => {
     // Why: SetLobbyCreatedCallback is a single client-wide setter — registering
     // per-subscriber would clobber. The domain owns ONE native callback and fans
     // out, so both subscribers must receive the event.
-    expect(a).toEqual([5000n]);
-    expect(b).toEqual([5000n]);
+    expect(a).toEqual([`5000`]);
+    expect(b).toEqual([`5000`]);
   });
 
   it(`member events carry both lobby id and member id`, () => {
     using client = createClient(config);
     const state = mockStateOf(client.lib);
-    const seen: [bigint, bigint][] = [];
+    const seen: [string, string][] = [];
     using _s = onLobbyMemberAdded(
       (lobbyId, memberId) => seen.push([lobbyId, memberId]),
       { client }
@@ -48,8 +48,8 @@ describe(`lobby events (mock backend)`, () => {
     fireLobbyEvent(state, `LobbyMemberAdded`, 5000n, 11n);
 
     // Why: the member-event callback prototype has two uint64 args; both must be
-    // delivered as bigints.
-    expect(seen).toEqual([[5000n, 11n]]);
+    // delivered as snowflake strings.
+    expect(seen).toEqual([[`5000`, `11`]]);
   });
 
   it(`lobby.onMemberAdded filters to its own lobby id`, async () => {
@@ -58,7 +58,7 @@ describe(`lobby events (mock backend)`, () => {
     scriptLobby(state, { id: 5000n, metadata: {}, members: [] });
     using lobby = await createOrJoinLobby(`s`, { client });
 
-    const joined: bigint[] = [];
+    const joined: string[] = [];
     lobby.onMemberAdded((memberId) => joined.push(memberId));
 
     fireLobbyEvent(state, `LobbyMemberAdded`, 9999n, 77n); // other lobby
@@ -66,7 +66,7 @@ describe(`lobby events (mock backend)`, () => {
 
     // Why: the per-lobby sugar rides the client-wide fan-out but must filter by
     // this.id — a member joining a different lobby must not fire this handler.
-    expect(joined).toEqual([11n]);
+    expect(joined).toEqual([`11`]);
   });
 
   it(`lobby.onMemberRemoved / onMemberUpdated filter to their own lobby id`, async () => {
@@ -75,8 +75,8 @@ describe(`lobby events (mock backend)`, () => {
     scriptLobby(state, { id: 5000n, metadata: {}, members: [] });
     using lobby = await createOrJoinLobby(`s`, { client });
 
-    const removed: bigint[] = [];
-    const updated: bigint[] = [];
+    const removed: string[] = [];
+    const updated: string[] = [];
     lobby.onMemberRemoved((id) => removed.push(id));
     lobby.onMemberUpdated((id) => updated.push(id));
 
@@ -86,8 +86,8 @@ describe(`lobby events (mock backend)`, () => {
 
     // Why: each per-lobby member event must filter by this.id independently —
     // proving the wrapper wires every member event, not just onMemberAdded.
-    expect(removed).toEqual([22n]);
-    expect(updated).toEqual([33n]);
+    expect(removed).toEqual([`22`]);
+    expect(updated).toEqual([`33`]);
   });
 
   it(`lobby.onUpdated fires only for this lobby`, async () => {
@@ -112,7 +112,7 @@ describe(`lobby events (mock backend)`, () => {
   it(`unsubscribing stops delivery`, () => {
     using client = createClient(config);
     const state = mockStateOf(client.lib);
-    const seen: bigint[] = [];
+    const seen: string[] = [];
     const off = onLobbyCreated((id) => seen.push(id), { client });
 
     fireLobbyEvent(state, `LobbyCreated`, 1n);
@@ -120,35 +120,35 @@ describe(`lobby events (mock backend)`, () => {
     fireLobbyEvent(state, `LobbyCreated`, 2n);
 
     // Why: the Subscription must remove the handler from the fan-out set.
-    expect(seen).toEqual([1n]);
+    expect(seen).toEqual([`1`]);
   });
 
   // Why: all six events flow through the shared clientEventFanout config; this
   // pins each export to the right event key + arity, catching a config typo that
   // would silently route an event to the wrong handler set.
   it.each([
-    [`onLobbyDeleted`, onLobbyDeleted, `LobbyDeleted`, [7n], [7n]],
-    [`onLobbyUpdated`, onLobbyUpdated, `LobbyUpdated`, [7n], [7n]],
+    [`onLobbyDeleted`, onLobbyDeleted, `LobbyDeleted`, [7n], [`7`]],
+    [`onLobbyUpdated`, onLobbyUpdated, `LobbyUpdated`, [7n], [`7`]],
     [
       `onLobbyMemberRemoved`,
       onLobbyMemberRemoved,
       `LobbyMemberRemoved`,
       [7n, 11n],
-      [7n, 11n]
+      [`7`, `11`]
     ],
     [
       `onLobbyMemberUpdated`,
       onLobbyMemberUpdated,
       `LobbyMemberUpdated`,
       [7n, 11n],
-      [7n, 11n]
+      [`7`, `11`]
     ]
   ] as const)(`%s delivers its ids`, (_name, on, event, fireArgs, expected) => {
     using client = createClient(config);
     const state = mockStateOf(client.lib);
-    const seen: bigint[][] = [];
-    using _s = (on as (h: (...a: bigint[]) => void, o: object) => Disposable)(
-      (...ids: bigint[]) => seen.push(ids),
+    const seen: string[][] = [];
+    using _s = (on as (h: (...a: string[]) => void, o: object) => Disposable)(
+      (...ids: string[]) => seen.push(ids),
       { client }
     );
     fireLobbyEvent(
