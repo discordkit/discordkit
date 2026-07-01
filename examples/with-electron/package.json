@@ -25,7 +25,7 @@
     "electron": "^42.4.0",
     "playwright": "^1.56.0",
     "tailwindcss": "catalog:",
-    "tailwindcss-react-aria-components": "^2.1.1",
+    "tailwindcss-react-aria-components": "^2.2.0",
     "typescript": "catalog:",
     "varlock": "catalog:",
     "vite-plus": "catalog:"
