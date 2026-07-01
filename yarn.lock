@@ -3062,14 +3062,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@trpc/server@npm:^11.17.0":
-  version: 11.17.0
-  resolution: "@trpc/server@npm:11.17.0"
+"@trpc/server@npm:^11.18.0":
+  version: 11.18.0
+  resolution: "@trpc/server@npm:11.18.0"
   peerDependencies:
     typescript: ">=5.7.2"
   bin:
     intent: bin/intent.js
-  checksum: 10/4659fac2ae8c8a166132daa76b9163cf8ab56abcb27867162ecec45eb1d43042633868760ad7d948f9becc006524acf106c41a905b830ee0e17290a1cdaa7102
+  checksum: 10/a633cc8ef1296eb99ab742a97a563056fe31320fbca2ed2e97dce4af06168080cfd4fe12923857d5fb622660009ddeba4361ff37f97226369126a26836800806
   languageName: node
   linkType: hard
 
@@ -4652,7 +4652,7 @@ __metadata:
     "@stylistic/eslint-plugin": "npm:^5.10.0"
     "@testing-library/dom": "npm:^10.4.1"
     "@testing-library/react": "npm:^16.3.2"
-    "@trpc/server": "npm:^11.17.0"
+    "@trpc/server": "npm:^11.18.0"
     "@types/node": "catalog:"
     "@types/react": "catalog:"
     "@types/react-dom": "catalog:"

@@ -28,7 +28,7 @@
     "@faker-js/faker": "^10.4.0",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/react": "^16.3.2",
-    "@trpc/server": "^11.17.0",
+    "@trpc/server": "^11.18.0",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
