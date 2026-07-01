@@ -9697,12 +9697,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tailwindcss-react-aria-components@npm:^2.1.1":
-  version: 2.1.1
-  resolution: "tailwindcss-react-aria-components@npm:2.1.1"
+"tailwindcss-react-aria-components@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "tailwindcss-react-aria-components@npm:2.2.0"
   peerDependencies:
     tailwindcss: ^4.0.0
-  checksum: 10/65c24fdeca9939333dace1a4d250df047d5810e8b4fa9929da8de35b3faa50ddecde46fe9e70256f1f6ab002907c9d448369100359edc9781d7251ba58b71861
+  checksum: 10/f272dd042b1e0df1252c9156674f49847ce7011afb44f66c782ea2d92b8542b08444dec7e8c2298145dfbb73ac1ac6c6e783629af568e850c74e619607794cd4
   languageName: node
   linkType: hard
 
@@ -10730,7 +10730,7 @@ __metadata:
     react-dom: "catalog:"
     react-hook-form: "npm:^7.78.0"
     tailwindcss: "catalog:"
-    tailwindcss-react-aria-components: "npm:^2.1.1"
+    tailwindcss-react-aria-components: "npm:^2.2.0"
     typescript: "catalog:"
     valibot: "catalog:"
     varlock: "catalog:"
@@ -10848,7 +10848,7 @@ __metadata:
     react-dom: "catalog:"
     signal-polyfill: "catalog:"
     tailwindcss: "catalog:"
-    tailwindcss-react-aria-components: "npm:^2.1.1"
+    tailwindcss-react-aria-components: "npm:^2.2.0"
     tauri-plugin-keyring-api: "catalog:"
     typescript: "catalog:"
     varlock: "catalog:"
