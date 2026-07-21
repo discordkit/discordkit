@@ -7,7 +7,7 @@ import { useClient } from "../ambient.js";
 import type { DiscordClient } from "../client.js";
 import { awaitResult, defineBindings } from "../ffi/bindings.js";
 import type { FfiLibrary, FfiOpaque } from "../ffi/backend.js";
-import { ACTIVITY_TYPE, activityBindings, createActivity } from "./activity.js";
+import { ACTIVITY_TYPE, activityBindings, createActivity, STATUS_DISPLAY_TYPE } from "./activity.js";
 import { buildAssets } from "./activityAssets.js";
 import { buildButton } from "./activityButton.js";
 import { buildParty } from "./activityParty.js";
@@ -76,6 +76,36 @@ const buildActivity = (
     .slice(0, 2)) {
     b.addButton(handle, stack.use(buildButton(lib, button)).handle);
   }
+  
+  // statusDisplayType: accept either a known key or a numeric code. Validate
+  // against the allowed set (0,1,2) and pass an int32 pointer, or NULL to clear.
+  if (a.statusDisplayType === undefined) {
+  } else if (a.statusDisplayType === null) {
+    // null (explicit clear) => pass NULL pointer to native API
+    b.setStatusDisplayType(handle, null);
+  } else {
+    // accept either number or string key
+    let numeric: number;
+    if (typeof a.statusDisplayType === "number") {
+      numeric = Number(a.statusDisplayType);
+      if (![0, 1, 2].includes(numeric)) {
+        throw new TypeError(
+          `statusDisplayType must be one of 0 (name), 1 (state), or 2 (details)`
+        );
+      }
+    } else {
+      const mapped = STATUS_DISPLAY_TYPE[a.statusDisplayType as keyof typeof STATUS_DISPLAY_TYPE];
+      if (mapped === undefined) {
+        throw new TypeError(
+          `statusDisplayType must be one of "name", "state", or "details"`
+        );
+      }
+      numeric = mapped;
+    }
+    // encode an int32 pointer and pass it; backend must implement encodeInt32Ptr.
+    b.setStatusDisplayType(handle, lib.encodeInt32Ptr(numeric));
+  }
+
 
   return handle;
 };
