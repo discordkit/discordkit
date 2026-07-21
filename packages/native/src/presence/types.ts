@@ -35,7 +35,7 @@ export interface ActivityInput {
    * If omitted the SDK default remains in effect; `null`/`undefined` will clear it
    * (native setter accepts NULL to clear).
    */
-  statusDisplayType?: StatusDisplayType | number;
+  statusDisplayType?: StatusDisplayType | number | null;
 }
 
 /** Mutable builder passed to the callback form of `setActivity`. Same shape as {@link ActivityInput} but with `type` required, for in-place edits. */
