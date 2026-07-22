@@ -30,12 +30,11 @@ export interface ActivityInput {
   /** Up to two clickable buttons. */
   buttons?: ActivityButton[];
   /**
-   * Status display type controls what shows in the user's text status.
-   * Accepts either a string key (`"name"|"state"|"details"`) or a numeric code (0|1|2).
-   * If omitted the SDK default remains in effect; `null`/`undefined` will clear it
-   * (native setter accepts NULL to clear).
+   * Which activity field Discord surfaces in the user's text status —
+   * `name` (the app name, the default), `state`, or `details`. Omit to leave the
+   * SDK default.
    */
-  statusDisplayType?: StatusDisplayType | number | null;
+  statusDisplayType?: StatusDisplayType;
 }
 
 /** Mutable builder passed to the callback form of `setActivity`. Same shape as {@link ActivityInput} but with `type` required, for in-place edits. */
