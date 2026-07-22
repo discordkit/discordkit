@@ -1,7 +1,7 @@
 {
   "name": "@discordkit/electron",
   "description": "Electron adapter for @discordkit/native — run the Discord Social SDK in the main process and reach it from the renderer over a typed IPC bridge",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "MIT",
   "author": "Drake Costa <drake@saeris.gg> (https://saeris.gg)",
   "keywords": [
