@@ -34,7 +34,7 @@ concurrency:
 env:
   # The vendored SDK version to test against. Bump alongside vendor/ + the
   # private social-sdk repo when upgrading the SDK.
-  SDK_VERSION: "1.9.16441"
+  SDK_VERSION: "1.9.17379"
 
 jobs:
   abi:

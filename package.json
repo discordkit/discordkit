@@ -6,7 +6,7 @@
   "engines": {
     "node": ">=22"
   },
-  "packageManager": "yarn@4.16.0",
+  "packageManager": "yarn@4.17.1",
   "private": true,
   "workspaces": [
     "apps/*",
@@ -34,7 +34,7 @@
     "@types/react-dom": "catalog:",
     "@vitest/coverage-v8": "^4.1.7",
     "happy-dom": "^20.9.0",
-    "msw": "^2.14.6",
+    "msw": "catalog:",
     "nodejs-snowflake": "^2.0.1",
     "react": "catalog:",
     "react-dom": "catalog:",
