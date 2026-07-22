@@ -121,6 +121,8 @@ export const mockBackend: FfiBackend = (_libraryPath: string): FfiLibrary => {
     return tagged as unknown as DiscordStringValue;
   };
   const encodeStringPtr = (value: string): unknown => ({ __str: value });
+  const encodeInt32Ptr = (value: number): unknown => ({ __int32: value });
+
   const writeString = (out: unknown, value: string): void => {
     (out as MockString).__str = value;
   };
@@ -218,7 +220,8 @@ export const mockBackend: FfiBackend = (_libraryPath: string): FfiLibrary => {
     readUInt64Out: (out): bigint => (out as { __u64?: bigint }).__u64 ?? 0n,
     decodeString,
     encodeString,
-    encodeStringPtr
+    encodeStringPtr,
+    encodeInt32Ptr
   };
 
   const state: MockState = {

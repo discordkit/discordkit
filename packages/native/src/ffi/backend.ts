@@ -168,6 +168,9 @@ export interface FfiLibrary {
    * by-value struct where a pointer is expected silently mis-sets the field.
    */
   encodeStringPtr: (value: string) => FfiOpaque;
+
+  /** Encode an int32 as a pointer to pass to APIs that expect `int *`. */
+  encodeInt32Ptr: (value: number) => FfiOpaque;
 }
 
 /** A backend is just a function that opens a shared library. */

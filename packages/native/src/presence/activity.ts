@@ -22,7 +22,8 @@ const bindings = defineBindings({
   setAssets: /* C */ `void Discord_Activity_SetAssets(void *self, void *value)`,
   setTimestamps: /* C */ `void Discord_Activity_SetTimestamps(void *self, void *value)`,
   setParty: /* C */ `void Discord_Activity_SetParty(void *self, void *value)`,
-  addButton: /* C */ `void Discord_Activity_AddButton(void *self, void *button)`
+  addButton: /* C */ `void Discord_Activity_AddButton(void *self, void *button)`,
+  setStatusDisplayType: /* C */ `void Discord_Activity_SetStatusDisplayType(void *self, int *value)`
 });
 
 /** Rich-presence activity type. Mirrors `discordpp::ActivityTypes`. */
@@ -41,6 +42,21 @@ export const ACTIVITY_TYPE: Record<ActivityType, number> = {
   watching: 3,
   // 4 = CustomStatus (not settable via rich presence), 6 = HangStatus.
   competing: 5
+};
+
+/**
+ * Status display types: maps the human-friendly keys to the SDK ABI numeric values.
+ * Per the SDK/docs:
+ *  - Name (0)    -> uses the game's name in the status text (default)
+ *  - State (1)   -> uses the activity's state field
+ *  - Details (2) -> uses the activity's details field
+ */
+export type StatusDisplayType = `name` | `state` | `details`;
+
+export const STATUS_DISPLAY_TYPE: Record<StatusDisplayType, number> = {
+  name: 0,
+  state: 1,
+  details: 2
 };
 
 /** Accessor for the `discordpp::Activity` bindings, bound lazily per library. */

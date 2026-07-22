@@ -31,6 +31,7 @@ export interface ScriptedActivity {
   partyId?: string;
   partyCurrent?: number;
   partyMax?: number;
+  statusDisplayType?: number;
   buttons: { label?: string; url?: string }[];
   attached: string[];
   /** Whether `ClearRichPresence` was called. */
@@ -80,6 +81,13 @@ const attach =
 registerMockHandlers({
   Discord_Activity_SetType: (ctx) => {
     presenceOf(ctx.state).type = ctx.args[1] as number;
+    return undefined;
+  },
+  Discord_Activity_SetStatusDisplayType: (ctx) => {
+    // The setter takes an int pointer (`encodeInt32Ptr` → `{ __int32 }`).
+    presenceOf(ctx.state).statusDisplayType = (
+      ctx.args[1] as { __int32: number }
+    ).__int32;
     return undefined;
   },
   Discord_Activity_SetName: (ctx) => {

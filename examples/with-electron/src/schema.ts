@@ -32,6 +32,10 @@ const FormShape = v.object({
   activity: v.object({
     details: v.object({ on: v.boolean(), value: v.string() }),
     state: v.object({ on: v.boolean(), value: v.string() }),
+    // Which field Discord surfaces in the user's status text. Always applies —
+    // `name` (the app name) is the SDK default, so no on/off toggle; the
+    // transform simply omits it when it's the default.
+    statusDisplayType: v.picklist([`name`, `state`, `details`]),
     largeImage: ImageShape,
     smallImage: ImageShape,
     party: v.object({
@@ -81,6 +85,11 @@ export const createActivitySchema = (
           ? { details: a.details.value }
           : {}),
         ...(a.state.on && a.state.value ? { state: a.state.value } : {}),
+        // `name` is the SDK default, so only ship the field when it differs —
+        // keeps the "Show Code" output clean (omitting it == choosing name).
+        ...(a.statusDisplayType !== `name`
+          ? { statusDisplayType: a.statusDisplayType }
+          : {}),
         ...(Object.keys(assets).length ? { assets } : {}),
         ...(a.party.on && (a.party.currentSize || a.party.maxSize)
           ? {
@@ -103,6 +112,9 @@ export const DEFAULT_VALUES: FormValues = {
     // Defaults that explain themselves: a discordkit demo. "what / where".
     details: { on: true, value: `Building with discordkit` },
     state: { on: true, value: `Editing Rich Presence` },
+    // `name` = the SDK default (shows the app name); switch to state/details to
+    // surface those fields in the status text instead.
+    statusDisplayType: `name`,
     // DiceBear samples so the card shows delightful art out of the box: an abstract "scene" large image + a robot "character" small badge.
     largeImage: {
       on: true,

@@ -62,6 +62,32 @@ describe(`setActivity (mock backend)`, () => {
     }
   });
 
+  it(`maps each statusDisplayType key to its ABI enum value`, async () => {
+    for (const [statusDisplayType, code] of [
+      [`name`, 0],
+      [`state`, 1],
+      [`details`, 2]
+    ] as const) {
+      using client = createClient(config);
+      const state = mockStateOf(client.lib);
+      await setActivity({ type: `playing`, statusDisplayType }, { client });
+      // Why: a wrong mapping surfaces the wrong field in the user's status text
+      // for every viewer — the same off-by-one risk as the activity-type table.
+      expect(presenceOf(state).statusDisplayType).toBe(code);
+      expect(state.calls).toContain(`Discord_Activity_SetStatusDisplayType`);
+    }
+  });
+
+  it(`omits statusDisplayType when unset (leaves the SDK default)`, async () => {
+    using client = createClient(config);
+    const state = mockStateOf(client.lib);
+    await setActivity({ type: `playing`, state: `In Match` }, { client });
+    // Why: not passing the field must NOT call the setter — otherwise every
+    // activity would override the user's chosen default.
+    expect(presenceOf(state).statusDisplayType).toBeUndefined();
+    expect(state.calls).not.toContain(`Discord_Activity_SetStatusDisplayType`);
+  });
+
   it(`marshals the full rich-presence surface (assets, timestamps, party, buttons)`, async () => {
     using client = createClient(config);
     const state = mockStateOf(client.lib);

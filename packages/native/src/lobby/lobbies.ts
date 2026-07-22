@@ -1,7 +1,6 @@
 import { useClient } from "../ambient.js";
 import type { DiscordClient } from "../client.js";
 import { awaitResult, defineBindings } from "../ffi/bindings.js";
-import type { FfiOpaque } from "../ffi/backend.js";
 import { brandId, brandIds, type GuildId, type LobbyId } from "../snowflake.js";
 import { Lobby } from "./lobbyHandle.js";
 import { readGuild, readGuildChannel } from "./guildChannel.js";

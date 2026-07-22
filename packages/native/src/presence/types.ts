@@ -1,5 +1,5 @@
 import type { DiscordClient } from "../client.js";
-import type { ActivityType } from "./activity.js";
+import type { ActivityType, StatusDisplayType } from "./activity.js";
 import type { ActivityAssets } from "./activityAssets.js";
 import type { ActivityButton } from "./activityButton.js";
 import type { ActivityParty } from "./activityParty.js";
@@ -29,6 +29,12 @@ export interface ActivityInput {
   party?: ActivityParty;
   /** Up to two clickable buttons. */
   buttons?: ActivityButton[];
+  /**
+   * Which activity field Discord surfaces in the user's text status —
+   * `name` (the app name, the default), `state`, or `details`. Omit to leave the
+   * SDK default.
+   */
+  statusDisplayType?: StatusDisplayType;
 }
 
 /** Mutable builder passed to the callback form of `setActivity`. Same shape as {@link ActivityInput} but with `type` required, for in-place edits. */

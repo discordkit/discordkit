@@ -43,6 +43,13 @@ export default defineConfig({
         cache: false,
         dependsOn: [`build:examples`]
       },
+      // One-command HMR dev loop: starts the renderer dev server (which builds
+      // the preload + env types first) and launches Electron against it, hot-
+      // reloading renderer edits. See scripts/dev.mjs.
+      "start:dev": {
+        command: `node scripts/dev.mjs`,
+        cache: false
+      },
       // Local, maintainer-driven Electron smoke (skips without DISCORD_* env). Not wired into the workspace e2e aggregator — it needs the real SDK.
       smoke: {
         command: `playwright test`,

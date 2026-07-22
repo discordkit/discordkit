@@ -109,6 +109,14 @@ const encodeStringPtr = (value: string): unknown => {
   return ptr;
 };
 
+const encodeInt32Ptr = (value: number): unknown => {
+  // allocate one int32 and write value into it
+  const ptr = koffi.alloc(`int32_t`, 1);
+  // koffi.encode requires the type name; for primitives pass the raw value.
+  koffi.encode(ptr, `int32_t`, value);
+  return ptr;
+};
+
 /** Open the SDK shared library and expose the seam primitives. */
 export const koffiBackend: FfiBackend = (libraryPath: string): FfiLibrary => {
   const lib = koffi.load(libraryPath);
@@ -221,6 +229,7 @@ export const koffiBackend: FfiBackend = (libraryPath: string): FfiLibrary => {
     },
     decodeString,
     encodeStringPtr,
-    encodeString
+    encodeString,
+    encodeInt32Ptr
   };
 };

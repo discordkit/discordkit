@@ -4,10 +4,14 @@
 // DisposableStack()` below.
 import "disposablestack/auto";
 import { useClient } from "../ambient.js";
-import type { DiscordClient } from "../client.js";
 import { awaitResult, defineBindings } from "../ffi/bindings.js";
 import type { FfiLibrary, FfiOpaque } from "../ffi/backend.js";
-import { ACTIVITY_TYPE, activityBindings, createActivity } from "./activity.js";
+import {
+  ACTIVITY_TYPE,
+  activityBindings,
+  createActivity,
+  STATUS_DISPLAY_TYPE
+} from "./activity.js";
 import { buildAssets } from "./activityAssets.js";
 import { buildButton } from "./activityButton.js";
 import { buildParty } from "./activityParty.js";
@@ -75,6 +79,15 @@ const buildActivity = (
     .filter((x) => x.label && x.url)
     .slice(0, 2)) {
     b.addButton(handle, stack.use(buildButton(lib, button)).handle);
+  }
+
+  // The SDK setter takes a `Discord_StatusDisplayTypes*` (an int), so encode the
+  // mapped code as an int32 pointer. Omitted → leave the SDK default.
+  if (a.statusDisplayType !== undefined) {
+    b.setStatusDisplayType(
+      handle,
+      lib.encodeInt32Ptr(STATUS_DISPLAY_TYPE[a.statusDisplayType])
+    );
   }
 
   return handle;

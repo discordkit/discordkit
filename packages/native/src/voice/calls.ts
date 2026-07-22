@@ -2,7 +2,6 @@ import { useClient } from "../ambient.js";
 import { toSubscription } from "../client.js";
 import type { DiscordClient, Subscription } from "../client.js";
 import { awaitCallback, awaitResult, defineBindings } from "../ffi/bindings.js";
-import type { FfiOpaque } from "../ffi/backend.js";
 import type { ChannelId } from "../snowflake.js";
 import { Call } from "./call.js";
 import { readAudioDevice } from "./voiceStateHandle.js";

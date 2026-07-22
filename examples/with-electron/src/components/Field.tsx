@@ -4,7 +4,14 @@ import {
   type FieldPath,
   type FieldValues
 } from "react-hook-form";
-import { Input, Label, NumberField, TextField } from "react-aria-components";
+import {
+  Input,
+  Label,
+  NumberField,
+  TextField,
+  ToggleButton,
+  ToggleButtonGroup
+} from "react-aria-components";
 
 /**
  * Form-field family. React Aria's fields are controlled, so they integrate with
@@ -49,6 +56,46 @@ export const TextControl = <T extends FieldValues>({
         <Label className={fieldStyles.label}>{label}</Label>
         <Input className={fieldStyles.input} ref={field.ref} />
       </TextField>
+    )}
+  />
+);
+
+/** A single-choice segmented control (ToggleButtonGroup) wired to React Hook Form. */
+export const ChoiceControl = <T extends FieldValues>({
+  control,
+  name,
+  label,
+  options
+}: {
+  control: AnyControl<T>;
+  name: FieldPath<T>;
+  label: string;
+  options: ReadonlyArray<{ value: string; label: string }>;
+}): React.JSX.Element => (
+  <Controller
+    control={control}
+    name={name}
+    render={({ field }) => (
+      <div className={fieldStyles.wrapper}>
+        <span className={fieldStyles.label}>{label}</span>
+        <ToggleButtonGroup
+          selectionMode="single"
+          disallowEmptySelection
+          selectedKeys={[field.value]}
+          onSelectionChange={(keys) => field.onChange([...keys][0])}
+          className="flex gap-1 rounded-md bg-canvas p-1"
+        >
+          {options.map((option) => (
+            <ToggleButton
+              key={option.value}
+              id={option.value}
+              className="flex-1 cursor-pointer rounded px-2 py-1.5 text-center text-sm text-text-muted outline-none transition-colors selected:bg-elevated selected:text-text focus-visible:ring-2 focus-visible:ring-brand"
+            >
+              {option.label}
+            </ToggleButton>
+          ))}
+        </ToggleButtonGroup>
+      </div>
     )}
   />
 );

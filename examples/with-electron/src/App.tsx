@@ -5,9 +5,14 @@ import { Tab, TabList, TabPanel, Tabs } from "react-aria-components";
 import { Info, Plus, RotateCcw, Trash2 } from "lucide-react";
 import * as v from "valibot";
 import type { ActivityInput } from "@discordkit/native/presence";
-import { NumberControl, TextControl } from "./components/Field.js";
+import {
+  ChoiceControl,
+  NumberControl,
+  TextControl
+} from "./components/Field.js";
 import { ImageField } from "./components/ImageField.js";
 import { PreviewCard } from "./components/PreviewCard.js";
+import { StatusPreview } from "./components/StatusPreview.js";
 import { CopyButton, GhostButton } from "./components/Button.js";
 import { SectionToggle, Toggle } from "./components/Switch.js";
 import { showCode } from "./showCode.js";
@@ -78,6 +83,24 @@ export const App = (): React.JSX.Element => {
 
         <Controller
           control={control}
+          name="activity.state.on"
+          render={({ field }) => (
+            <SectionToggle
+              title="State"
+              isSelected={field.value}
+              onChange={field.onChange}
+            >
+              <TextControl
+                control={control}
+                name="activity.state.value"
+                label="state (second line)"
+              />
+            </SectionToggle>
+          )}
+        />
+
+        <Controller
+          control={control}
           name="activity.details.on"
           render={({ field }) => (
             <SectionToggle
@@ -94,23 +117,18 @@ export const App = (): React.JSX.Element => {
           )}
         />
 
-        <Controller
-          control={control}
-          name="activity.state.on"
-          render={({ field }) => (
-            <SectionToggle
-              title="State"
-              isSelected={field.value}
-              onChange={field.onChange}
-            >
-              <TextControl
-                control={control}
-                name="activity.state.value"
-                label="state (second line)"
-              />
-            </SectionToggle>
-          )}
-        />
+        <section className="border-t border-edge-soft pt-5">
+          <ChoiceControl
+            control={control}
+            name="activity.statusDisplayType"
+            label="Status display type (which field shows in your status text)"
+            options={[
+              { value: `name`, label: `Name` },
+              { value: `state`, label: `State` },
+              { value: `details`, label: `Details` }
+            ]}
+          />
+        </section>
 
         <Controller
           control={control}
@@ -240,7 +258,7 @@ export const App = (): React.JSX.Element => {
               id="profile"
               className="flex-1 cursor-pointer rounded-md px-3 py-1.5 text-center text-text-muted outline-none transition-colors selected:bg-elevated selected:text-text focus-visible:ring-2 focus-visible:ring-brand"
             >
-              Full Profile
+              Preview
             </Tab>
             <Tab
               id="code"
@@ -249,8 +267,19 @@ export const App = (): React.JSX.Element => {
               Show Code
             </Tab>
           </TabList>
-          <TabPanel id="profile">
-            <PreviewCard values={values} startedAt={startedAt} />
+          <TabPanel id="profile" className="flex flex-col gap-4">
+            <div>
+              <h2 className="mb-2 text-xs font-bold uppercase tracking-wide text-text-muted">
+                Full Profile
+              </h2>
+              <PreviewCard values={values} startedAt={startedAt} />
+            </div>
+            <div>
+              <h2 className="mb-2 text-xs font-bold uppercase tracking-wide text-text-muted">
+                Member list
+              </h2>
+              <StatusPreview values={values} />
+            </div>
           </TabPanel>
           <TabPanel id="code">
             <div className="relative">
