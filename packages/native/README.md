@@ -16,6 +16,10 @@ npm install @discordkit/native
 
 You must also supply the Discord Social SDK shared library yourself — it can't be redistributed. Download it from the Developer Portal and either pass `libraryPath` to `init`/`createClient`, set `DISCORD_SDK_PATH`, or place it at `./lib/discord_social_sdk`.
 
+### Supported SDK versions
+
+There's no npm-style version constraint we can enforce on a library you bring yourself, so instead: this release is **verified against Discord Social SDK `1.9.17379`**, and is compatible with any `1.9.x` build. Discord ships `1.9.x` as ABI-stable, drop-in binary updates (same C ABI, same archive layout), so newer patch builds work without a package upgrade — grab the latest `1.9.x` from the Developer Portal to pick up SDK bug fixes. A new SDK **minor** (e.g. `1.10`) may add or change API surface; those are validated and pinned here per release.
+
 ## 🔧 Quick start
 
 ```ts

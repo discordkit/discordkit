@@ -4,10 +4,10 @@ import { dirname, join } from "node:path";
 /**
  * Per-platform Discord Social SDK shared-library file name.
  *
- * From the SDK archive layout (verified against 1.9.16441): Windows ships
+ * From the SDK archive layout (verified against 1.9.17379): Windows ships
  * `discord_partner_sdk.dll` under `bin/release`; macOS/Linux ship
  * `libdiscord_partner_sdk.{dylib,so}` under `lib/release`. ARM64 builds live in
- * an `arm64/` subdirectory of those.
+ * an `arm64/` subdirectory of those. The layout is stable across 1.9.x builds.
  */
 const platformFile = (): string => {
   if (process.platform === `win32`) return `discord_partner_sdk.dll`;

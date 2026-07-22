@@ -6,217 +6,95 @@
 [![npm version][npm_badge]][npm]
 [![CI status][ci_badge]][ci]
 
-TypeScript SDK for [Discord's API][discord_api]
+A TypeScript SDK for Discord, with support for the [REST API][discord_api] and the native [Social SDK][social-sdk].
 
 </div>
 
 ---
 
-## 📦 Installation
+## What is Discordkit?
+
+Discordkit is a monorepo of small, focused, tree-shakeable packages for building apps and integrations for Discord using TypeScript. It presently covers these surfaces:
+
+- **The REST/HTTP API** — a fully-typed Fetcher and a [`valibot`][valibot] schema for every Discord endpoint, plus composition helpers (runtime validation, [react-query][react_query], [tRPC][trpc]) and framework-agnostic OAuth2 utilities.
+- **The native Social SDK** — a functional bridge to Discord's [Social SDK][social-sdk] for desktop runtimes (rich presence, OAuth, relationships, lobbies, messaging, voice), with adapters that run it in an Electron main process or a Tauri sidecar and expose it to the UI over a typed bridge.
+
+Every package ships ESM, generated `.d.ts` types, and `sideEffects: false` — you only pay for what you import.
+
+> [!NOTE]
+> Discordkit recently published its first stable releases. The REST surface is complete; the native Social SDK packages and the examples below are actively evolving. Expect the occasional rough edge, and see each package's own README for the current, detailed usage.
+
+## What it ships
+
+Usage documentation lives in each package's README — this table is the map.
+
+### REST / HTTP API
+
+| Package                                   | What it does                                                                                                                                                                          |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`@discordkit/client`](./packages/client) | A Fetcher + `valibot` schema for every Discord REST endpoint. The main entry point for the HTTP API.                                                                                  |
+| [`@discordkit/core`](./packages/core)     | The runtime that powers `client`: session/token management, the request layer, validation primitives, and the composition helpers `toValidated`, `toQuery`, and `toProcedure` (tRPC). |
+| [`@discordkit/oauth`](./packages/oauth)   | Framework-agnostic Discord OAuth2 utilities (PKCE authorize, token exchange/refresh) with no framework or storage assumptions.                                                        |
+
+### Native / Social SDK
+
+| Package                                       | What it does                                                                                                                                                                            |
+| --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`@discordkit/native`](./packages/native)     | Functional TypeScript bridge to the Discord [Social SDK][social-sdk] for Electron, Tauri, and headless Node — rich presence, auth, users, relationships, lobbies, messaging, and voice. |
+| [`@discordkit/electron`](./packages/electron) | Electron adapter for `native` — run the Social SDK in the main process and reach it from the renderer over a typed IPC bridge.                                                          |
+| [`@discordkit/tauri`](./packages/tauri)       | Tauri adapter for `native` — run the Social SDK in a Node sidecar and reach it from the webview over a typed [kkrpc][kkrpc] bridge.                                                     |
+
+> The Social SDK shared library can't be redistributed, so you supply it yourself. See [`@discordkit/native`](./packages/native#-installation) for how to point the packages at it and which SDK versions are supported.
+
+## Examples
+
+Runnable apps in [`examples/`](./examples), each wiring one or more packages into a real framework.
+
+| Example                                                         | Highlights                                                                                                           |
+| --------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| [`with-electron`](./examples/with-electron)                     | Rich Presence live editor (Social SDK via `native` + `electron`), modelled on Discord's Developer Portal visualizer. |
+| [`with-tauri`](./examples/with-tauri)                           | A live, tunable unified friends list built on your real Discord relationships (Social SDK via `native` + `tauri`).   |
+| [`with-nextjs`](./examples/with-nextjs)                         | Discord OAuth2 login + authenticated API calls in Next.js (App Router).                                              |
+| [`with-nextjs-better-auth`](./examples/with-nextjs-better-auth) | The same, but with [Better Auth][better-auth] owning the OAuth2 flow.                                                |
+| [`with-astro`](./examples/with-astro)                           | OAuth2 login + authenticated calls in Astro (SSR).                                                                   |
+| [`with-tanstack-start`](./examples/with-tanstack-start)         | OAuth2 login + authenticated calls in TanStack Start.                                                                |
+| [`with-waku`](./examples/with-waku)                             | OAuth2 login + authenticated calls in [Waku][waku].                                                                  |
+
+## Repository layout
+
+```
+packages/    published packages (client, core, oauth, native, electron, tauri)
+examples/    runnable example apps, one per framework/runtime
+docs/        design notes and architecture specs
+static/      logo + brand assets
+```
+
+## Working locally
+
+Discordkit uses [Vite+][viteplus] as a unified toolchain (Oxlint + Oxfmt + tsdown + Vitest, driven by the global `vp` CLI) and [Bumpy][bumpy] for versioning and release.
 
 ```bash
-npm install --save-dev @discordkit/client valibot
-# or
-yarn add -D @discordkit/client valibot
+vp install           # install dependencies (run after every pull)
+vp check --fix       # format + lint + typecheck, with autofixes
+vp test              # run the Vitest suites
 ```
 
-> [!WARNING]
->
-> 🚧 Additional documentation and examples are currently under construction! 🚧
->
-> Discordkit only recently published it's first stable version. Priority is being given to stablizing the CI/CD infrastructure for this monorepo while use-cases are explored and examples are built.
-
-## 🔧 Usage
-
-Discordkit ships a Fetcher (`async (input) => Promise<output>`) and a `valibot` schema for every Discord REST endpoint. Use them directly, or compose them with the helpers in `@discordkit/core` to layer on runtime validation, tRPC procedures, or react-query.
-
-Each endpoint exports two symbols:
-
-```ts
-import {
-  // Input validation schema
-  getGuildSchema,
-  // Request handler — calls Discord's REST API
-  getGuild
-} from "@discordkit/client";
-```
-
-In order to make requests, you must first set your access token on the Discord session provider.
-
-```ts
-import { discord } from "@discordkit/client";
-
-discord.setToken(`Bearer <access-token>`, true);
-```
-
-#### Direct use:
-
-```ts
-import { getGuild } from "@discordkit/client";
-
-const guild = await getGuild({ guild: `123456789012345678` });
-```
-
-#### With runtime validation:
-
-`@discordkit/core` exports `toValidated`, a Proxy wrapper that validates the input and output of any Fetcher at runtime. It's framework-agnostic — useful any time you want strong guarantees when accepting external input.
-
-```ts
-import { toValidated } from "@discordkit/core";
-import { getGuild, getGuildSchema } from "@discordkit/client";
-import { guildSchema } from "@discordkit/client";
-
-const getGuildSafe = toValidated(getGuild, getGuildSchema, guildSchema);
-
-const guild = await getGuildSafe({ guild: `123456789012345678` });
-// throws if input doesn't match getGuildSchema, or the response doesn't match guildSchema
-```
-
-#### With [react-query][react_query]:
-
-For `GET` endpoints, use `toQuery` from `@discordkit/core` to produce a queryFn compatible with [`useQuery`][use_query]:
-
-```ts
-import { useQuery } from "@tanstack/react-query";
-import { toQuery } from "@discordkit/core";
-import { getUser } from "@discordkit/client";
-
-const getUserQuery = toQuery(getUser);
-
-export const UserProfile = ({ user }) => {
-  const { isLoading, isError, data, error } = useQuery({
-    queryKey: [`user`, user.id],
-    queryFn: getUserQuery({ id: user.id })
-  });
-
-  // ...
-};
-```
-
-For mutations, pass the Fetcher straight to [`useMutation`][use_mutation] — schemas can validate input in `onMutate`:
-
-```ts
-import { useMutation } from "@tanstack/react-query";
-import { modifyGuild, modifyGuildSchema } from "@discordkit/client";
-
-export const RenameGuild = ({ guild }) => {
-  const [name, setName] = useState(guild.name);
-  const mutation = useMutation({
-    mutationFn: modifyGuild,
-    onMutate: (variables) => {
-      // Will throw if invalid input is given
-      modifyGuildSchema.parse(variables);
-    }
-  });
-
-  const onSubmit = (e) => {
-    e.preventDefault();
-    mutation.mutate({ guild: guild.id, body: { name } });
-  };
-
-  return (
-    <form onSubmit={onSubmit}>
-      {mutation.error && (
-        <h5 onClick={() => mutation.reset()}>{mutation.error.message}</h5>
-      )}
-      <input
-        type="text"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-      <br />
-      <button type="submit">Rename Guild</button>
-    </form>
-  );
-};
-```
-
-#### With [tRPC][trpc]:
-
-Use `toProcedure` from `@discordkit/core` to wrap a Fetcher + schemas into a tRPC procedure builder. You assemble each procedure where you need it — no per-endpoint imports of pre-wired procedures.
-
-```ts
-import { initTRPC } from "@trpc/server";
-import { createHTTPServer } from "@trpc/server/adapters/standalone";
-import { toProcedure } from "@discordkit/core";
-import {
-  discord,
-  getCurrentApplication,
-  applicationSchema,
-  getGuild,
-  getGuildSchema,
-  guildSchema
-} from "@discordkit/client";
-
-const botToken = process.env.DISCORD_BOT_AUTH_TOKEN;
-
-// Configure your client to use a Bot token by default
-discord.setToken(botToken, Boolean(botToken));
-
-const t = initTRPC.context<{ user: string | null }>().create();
-const baseProcedure = t.procedure;
-
-// Create a reusable procedure to use a User's auth token when available
-const authorizedProcedure = baseProcedure.use((opts) => {
-  if (opts.ctx.user) {
-    discord.setToken(`Bearer ${opts.ctx.user}`);
-  } else {
-    discord.setToken(`Bot ${botToken}`);
-  }
-
-  return opts.next();
-});
-
-const getCurrentApplicationProcedure = toProcedure(
-  `query`,
-  getCurrentApplication,
-  null,
-  applicationSchema
-);
-
-const getGuildProcedure = toProcedure(
-  `query`,
-  getGuild,
-  getGuildSchema,
-  guildSchema
-);
-
-const router = t.router({
-  getCurrentApplication: getCurrentApplicationProcedure(baseProcedure),
-  getGuild: getGuildProcedure(authorizedProcedure)
-});
-
-createHTTPServer({
-  router,
-  createContext({ req }) {
-    // Extract a user's auth token from the incoming request headers
-    async function getUserTokenFromHeader() {
-      if (req.headers.authorization) {
-        const user = await decodeAndVerifyJwtToken(
-          req.headers.authorization.split(` `)[1]
-        );
-        return user;
-      }
-      return null;
-    }
-
-    return {
-      user: await getUserTokenFromHeader()
-    };
-  }
-}).listen(1337);
-```
-
-## 🤝 Contributing
-
-The project uses [Vite+][viteplus] as a unified toolchain (Oxlint + Oxfmt + tsdown + Vitest) and [Bumpy][bumpy] for versioning and release.
+To run an example, install at the root, then start it from its directory — each example's README lists its own dev command and the `.env` values it needs:
 
 ```bash
-vp install           # install dependencies
-vp check --fix       # format + lint + typecheck (with autofixes)
-vp test              # run Vitest
-yarn bumpy add       # create a bump file for your PR
+vp install
+cd examples/with-nextjs
+vp dev
 ```
+
+The native Social SDK packages are unit-tested against a mock FFI backend, so `vp test` needs no SDK binary. A separate CI job additionally loads the real SDK to verify the ABI; it's a maintainer-only enhancement (it needs the non-redistributable binary) and never gates contributions.
+
+## Contributing
+
+1. Branch off `main` and make your change.
+2. Run `vp check --fix` and `vp test` until green.
+3. Add a bump file describing what changed: `yarn bumpy add` (or the `/bumpy-add-change` skill). This drives the version bump and changelog for your PR.
+4. Open a pull request.
 
 ## 📣 Acknowledgements
 
@@ -233,10 +111,13 @@ Released under the [MIT license][license] © [Drake Costa][personal-website].
 [ci_badge]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml/badge.svg
 [ci]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml
 [discord_api]: https://discord.com/developers/docs
+[social-sdk]: https://discord.com/developers/docs/discord-social-sdk/overview
+[valibot]: https://valibot.dev/
 [react_query]: https://tanstack.com/query/latest
-[use_query]: https://tanstack.com/query/latest/docs/react/reference/useQuery
-[use_mutation]: https://tanstack.com/query/latest/docs/react/reference/useMutation
 [trpc]: https://trpc.io/
+[better-auth]: https://better-auth.com
+[waku]: https://waku.gg
+[kkrpc]: https://github.com/kunkunsh/kkrpc
 [viteplus]: https://viteplus.dev/
 [bumpy]: https://bumpy.varlock.dev/
 [license]: ./LICENSE.md
