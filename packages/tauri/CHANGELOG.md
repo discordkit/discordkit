@@ -1,6 +1,13 @@
 # Changelog
 
 
+
+## 0.1.2
+<sub>2026-07-22</sub>
+
+- [#69](https://github.com/discordkit/discordkit/pull/69)  *(patch)* Thanks [@Saeris](https://github.com/Saeris)!
+  Documented the supported Discord Social SDK versions — verified against `1.9.17379`, compatible with any `1.9.x` build (ABI-stable, drop-in binaries) — and refreshed dependencies: `koffi` 3.1.1 (native) and `kkrpc` 2.1.0 (tauri).
+
 ## 0.1.1
 <sub>2026-07-22</sub>
 

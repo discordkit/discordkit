@@ -1,7 +1,7 @@
 {
   "name": "@discordkit/tauri",
   "description": "Tauri adapter for @discordkit/native — run the Discord Social SDK in a Node sidecar and reach it from the webview over a typed kkrpc bridge",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "license": "MIT",
   "author": "Drake Costa <drake@saeris.gg> (https://saeris.gg)",
   "keywords": [
