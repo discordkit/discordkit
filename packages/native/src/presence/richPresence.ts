@@ -4,7 +4,6 @@
 // DisposableStack()` below.
 import "disposablestack/auto";
 import { useClient } from "../ambient.js";
-import type { DiscordClient } from "../client.js";
 import { awaitResult, defineBindings } from "../ffi/bindings.js";
 import type { FfiLibrary, FfiOpaque } from "../ffi/backend.js";
 import {
