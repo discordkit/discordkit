@@ -8536,15 +8536,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.60.0":
-  version: 1.60.0
-  resolution: "playwright-core@npm:1.60.0"
-  bin:
-    playwright-core: cli.js
-  checksum: 10/66c0f83d627e673261c848dd6fe1f2856d5b5b6859268acb61a45c00f5bf926e596a351a9c481a3a4e82a45022c7c6b5d99ebc3906fc6876ac582ed6f7e16190
-  languageName: node
-  linkType: hard
-
 "playwright-core@npm:1.61.1":
   version: 1.61.1
   resolution: "playwright-core@npm:1.61.1"
@@ -8554,7 +8545,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright@npm:1.61.1":
+"playwright@npm:1.61.1, playwright@npm:^1.61.1":
   version: 1.61.1
   resolution: "playwright@npm:1.61.1"
   dependencies:
@@ -8566,21 +8557,6 @@ __metadata:
   bin:
     playwright: cli.js
   checksum: 10/0cd1a8a7e106202e785450763973bf326d4aa112ed195bbd78b17af43dcfd12e29bc8204ae61c88f748dd0f2bdf69a7827bc3bbf8c1ec4c71b8e35586e05f13c
-  languageName: node
-  linkType: hard
-
-"playwright@npm:^1.56.0":
-  version: 1.60.0
-  resolution: "playwright@npm:1.60.0"
-  dependencies:
-    fsevents: "npm:2.3.2"
-    playwright-core: "npm:1.60.0"
-  dependenciesMeta:
-    fsevents:
-      optional: true
-  bin:
-    playwright: cli.js
-  checksum: 10/8569770637ee35d08cca3b53a5b56c21e9236bd1ac4718456d5988fb8acd51c5b3cc2cf90748363a36199529e870a9b6c68d6fc9e19571261cd867005d6331c1
   languageName: node
   linkType: hard
 
@@ -10952,7 +10928,7 @@ __metadata:
     "@vitejs/plugin-react": "catalog:"
     electron: "npm:^42.4.0"
     lucide-react: "catalog:"
-    playwright: "npm:^1.56.0"
+    playwright: "npm:^1.61.1"
     react: "catalog:"
     react-aria-components: "catalog:"
     react-dom: "catalog:"
