@@ -1,5 +1,11 @@
 # Changelog
 
+
+## 0.1.1
+<sub>2026-07-22</sub>
+
+- *(patch)* Updated dependency `@discordkit/native` v0.2.0
+
 ## 0.1.0
 <sub>2026-06-22</sub>
 
