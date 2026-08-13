@@ -73,6 +73,27 @@ describe(`read messages (mock backend)`, () => {
     });
   });
 
+  it(`reads the optional additionalName only when the SDK reports one`, () => {
+    using client = createClient(config);
+    const state = mockStateOf(client.lib);
+    scriptMessage(
+      state,
+      makeMessage({ id: 42n, content: `hp`, additionalName: `Gandalf` })
+    );
+    scriptMessage(state, makeMessage({ id: 43n, content: `no name` }));
+
+    // Why: AdditionalName is a bool-gated getter (SDK 1.10) — present only when a
+    // lobby integration set it. A wrong binding would either drop the name that IS
+    // set or surface an empty string where the SDK reported none, so both branches
+    // of the gate must be asserted.
+    expect(getMessage(messageId(42n), { client })?.additionalName).toBe(
+      `Gandalf`
+    );
+    expect(getMessage(messageId(43n), { client })).not.toHaveProperty(
+      `additionalName`
+    );
+  });
+
   it(`getMessage returns undefined when the SDK no longer has the message`, () => {
     using client = createClient(config);
     mockStateOf(client.lib);

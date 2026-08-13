@@ -48,7 +48,9 @@ export const resolvedDataSchema = v.object({
           /** the name of the channel (1-100 characters) */
           name: v.nullish(boundedString({ max: 100 })),
           /** computed permissions for the invoking user in the channel, including overwrites, only included when part of the resolved data received on a slash command interaction */
-          permissions: asDigits(permissionFlag)
+          permissions: asDigits(permissionFlag),
+          /** Bitwise set of permissions the app has in the source location of the interaction */
+          appPermissions: v.exactOptional(asDigits(permissionFlag))
         }),
         v.variant(`type`, [
           v.object({

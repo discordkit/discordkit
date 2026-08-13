@@ -40,7 +40,9 @@ const _commonChannelSchema = v.object({
   /** computed permissions for the invoking user in the channel, including overwrites, only included when part of the resolved data received on a slash command interaction */
   permissions: v.exactOptional(asDigits(permissionFlag)),
   /** channel flags combined as a bitfield */
-  flags: v.exactOptional(asInteger(channelFlag))
+  flags: v.exactOptional(asInteger(channelFlag)),
+  /** application id associated with the channel. for group DMs, this is the application that created the group */
+  applicationId: v.nullish(snowflake)
 });
 
 type CommonChannelFields = v.InferOutput<typeof _commonChannelSchema>;
@@ -225,8 +227,6 @@ const _groupDirectMessageChannelVariantSchema = v.object({
   icon: v.nullish(boundedString()),
   /** id of the creator of the group DM or thread */
   ownerId: v.exactOptional(snowflake),
-  /** application id of the group DM creator if it is bot-created */
-  applicationId: v.exactOptional(snowflake),
   /** for group DM channels: whether the channel is managed by an application via the gdm.join OAuth2 scope */
   managed: v.exactOptional(v.boolean())
 });

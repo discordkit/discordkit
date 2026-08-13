@@ -34,6 +34,7 @@ export interface ScriptedMessage {
   id: bigint;
   content: string;
   rawContent: string;
+  additionalName?: string;
   authorId: bigint;
   author?: ScriptedUser;
   channelId: bigint;
@@ -253,6 +254,12 @@ registerMockHandlers({
   Discord_MessageHandle_RawContent: (ctx) => {
     ctx.writeString(ctx.args[1], msgOf(ctx.args[0])?.rawContent ?? ``);
     return undefined;
+  },
+  Discord_MessageHandle_AdditionalName: (ctx) => {
+    const additionalName = msgOf(ctx.args[0])?.additionalName;
+    if (additionalName === undefined) return false;
+    ctx.writeString(ctx.args[1], additionalName);
+    return true;
   },
   Discord_MessageHandle_Metadata: (ctx) => {
     (ctx.args[1] as { __props?: Record<string, string> }).__props =

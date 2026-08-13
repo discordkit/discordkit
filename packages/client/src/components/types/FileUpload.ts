@@ -1,4 +1,5 @@
 import * as v from "valibot";
+import { boundedArray } from "@discordkit/core/validations/boundedArray";
 import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
 import { boundedString } from "@discordkit/core/validations/boundedString";
 import { schema } from "@discordkit/core/validations/schema";
@@ -16,7 +17,9 @@ const _fileUploadSchema = v.object({
   /** Maximum number of items that can be uploaded (defaults to 1); max 10 */
   maxValues: v.exactOptional(boundedInteger({ min: 1, max: 10 })),
   /** Whether the file upload requires files to be uploaded before submitting the modal (defaults to `true`) */
-  required: v.exactOptional(v.boolean())
+  required: v.exactOptional(v.boolean()),
+  /** File types to filter for; can be `image`, `video`, `audio`, or any dot-prefixed extension such as `.pdf`; max 10 */
+  fileTypes: v.exactOptional(boundedArray(v.string(), { max: 10 }))
 });
 
 export interface FileUpload extends v.InferOutput<typeof _fileUploadSchema> {}

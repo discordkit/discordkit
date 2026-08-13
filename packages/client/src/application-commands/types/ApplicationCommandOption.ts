@@ -44,10 +44,10 @@ export const applicationCommandOptionSchema = v.intersect([
     autocomplete: v.nullish(v.boolean())
   }),
   v.union([
-    v.object({
-      /** Type of option */
-      type: applicationCommandOptionTypeSchema
-    }),
+    // Specific-typed variants first: v.union is first-match, so the catch-all
+    // below must come LAST or it would shadow these and strip their type-only
+    // fields (minLength, minValue, fileTypes). Types not covered here (BOOLEAN,
+    // USER, …) fall through to the catch-all.
     v.variant(`type`, [
       v.object({
         type: v.union([
@@ -80,8 +80,17 @@ export const applicationCommandOptionSchema = v.intersect([
         minValue: v.nullable(v.number()),
         /** If the option is an INTEGER or NUMBER type, the maximum value permitted */
         maxValue: v.nullable(v.number())
+      }),
+      v.object({
+        type: v.literal(ApplicationCommandOptionType.ATTACHMENT),
+        /** File types to filter for; can be `image`, `video`, `audio`, or any dot-prefixed extension such as `.pdf`; max 10 */
+        fileTypes: v.nullish(boundedArray(v.string(), { max: 10 }))
       })
-    ])
+    ]),
+    v.object({
+      /** Type of option */
+      type: applicationCommandOptionTypeSchema
+    })
   ])
 ]);
 
