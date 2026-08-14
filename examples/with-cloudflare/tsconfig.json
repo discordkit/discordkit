@@ -1,6 +1,11 @@
 {
   "extends": "../../tsconfig.json",
   "include": ["src/**/*.ts", "*.ts", "scripts/**/*.mjs"],
+  // `exclude` is inherited from the parent unless redeclared, and the parent
+  // excludes this directory (so editors don't bind these files to the root
+  // config, which lacks the Workers types). Inheriting that here would exclude
+  // the example from itself, leaving zero input files.
+  "exclude": ["node_modules", "dist", ".wrangler"],
   "compilerOptions": {
     // `cloudflare:workers` and `cloudflare:test` are virtual modules the
     // runtime provides — not npm packages — so they only resolve with these

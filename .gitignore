@@ -93,7 +93,14 @@ packages/client/README.md
 results
 yarn-error.log
 .idea
-.vscode
+# Ignore .vscode CONTENTS rather than the directory itself: git won't re-include
+# a file whose parent directory is excluded, so `.vscode` + `!.vscode/x` fails.
+.vscode/*
+# ...but share the workspace TypeScript setting. Without it the editor
+# typechecks with its own bundled compiler instead of the pinned one, which
+# disagrees with `vp check` — notably reporting phantom "Cannot find package
+# 'cloudflare:workers'" errors in the Cloudflare example.
+!.vscode/settings.json
 schema.json
 
 cypress/e2e/build

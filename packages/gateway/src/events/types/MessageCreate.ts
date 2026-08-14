@@ -11,7 +11,7 @@ import {
   type Message,
   messageSchema
 } from "@discordkit/client/messages/types/Message";
-import { type User, userSchema } from "@discordkit/client/user/types/User";
+import { userSchema } from "@discordkit/client/user/types/User";
 
 /**
  * The extra fields `MESSAGE_CREATE` adds on top of a

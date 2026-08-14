@@ -6,7 +6,14 @@
     ".yarn",
     ".claude",
     "./**/.next/**/*.*",
-    "./**/dist"
+    "./**/dist",
+    // The Cloudflare example needs Workers types instead of Node's, and
+    // declares them in its own tsconfig. Without this exclusion the root
+    // `include` glob also claims those files, so editors can bind them to this
+    // config — where `cloudflare:workers`/`cloudflare:test` (virtual modules,
+    // not packages) don't resolve. `vp check` reads the nearest tsconfig and is
+    // unaffected, which is why it passes while the editor reports errors.
+    "./examples/with-cloudflare"
   ],
   "compilerOptions": {
     // Add DOM on top of the base's ESNext lib for verifyKey's

@@ -1,4 +1,4 @@
-import { env } from "cloudflare:test";
+import { env } from "cloudflare:workers";
 import { describe, it, expect } from "vitest";
 import { GatewayOpcode } from "@discordkit/gateway";
 import type { GatewayInspector } from "../inspector.js";

@@ -57,7 +57,7 @@ Your bot token never leaves your machine in local mode and is never committed.
 
 **The test suite alone is not enough.** The Vitest pool runs inside workerd but with permissive module resolution — Vitest itself needs Node interop — so `node:fs` and `node:net` resolve happily there. Verified by injecting `import { Buffer } from "node:buffer"` into the gateway's `connection.ts`: the suite stayed green while the bundle check failed with wrangler's warning. Run both.
 
-> **Note:** WebSockets in Durable Objects are [unsupported with the pool's per-file storage isolation](https://docs.cloudflare.com/workers/testing/vitest-integration/known-issues/), and holding a WebSocket is this DO's entire job — so `isolatedStorage` is off in `vite.config.ts`. Without that the suite fails with an opaque storage error.
+> **Note:** Cloudflare documents WebSockets in Durable Objects as [unsupported with per-file storage isolation](https://docs.cloudflare.com/workers/testing/vitest-integration/known-issues/), workaround `--max-workers=1 --no-isolate`. That applied to the Vitest 3-era pool — in v4 the `isolatedStorage` and `singleWorker` options no longer exist, and this suite passes with no workaround. Most guides still show the older `defineWorkersConfig` + `poolOptions.workers` shape, which fails here with `Missing "./config" specifier`; the pool is now a `cloudflareTest()` plugin.
 
 ## Related
 

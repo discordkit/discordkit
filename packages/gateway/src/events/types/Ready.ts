@@ -4,7 +4,7 @@ import * as v from "valibot";
 import { schema } from "@discordkit/core/validations/schema";
 import { snowflake } from "@discordkit/core/validations/snowflake";
 import { applicationFlag } from "@discordkit/client/application/types/ApplicationFlags";
-import { type User, userSchema } from "@discordkit/client/user/types/User";
+import { userSchema } from "@discordkit/client/user/types/User";
 
 /**
  * ### [Unavailable Guild](https://discord.com/developers/docs/resources/guild#unavailable-guild-object)
