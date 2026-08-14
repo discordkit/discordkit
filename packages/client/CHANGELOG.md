@@ -2,6 +2,16 @@
 
 
 
+
+## 4.2.0
+<sub>2026-08-14</sub>
+
+- [#72](https://github.com/discordkit/discordkit/pull/72)  *(minor)* Thanks [@Saeris](https://github.com/Saeris)!
+  Integrate the Social SDK 1.10 + Discord's July–Aug 2026 REST changelog.
+
+  - native: expose `Message.additionalName` — the optional game-provided author display name (e.g. a character name) added by the SDK's new `MessageHandle::AdditionalName()`. Flows through the electron/tauri message snapshots unchanged.
+  - client: `Channel.application_id` is now nullable (and modeled as a common channel field); `file_types` added to File Upload components and the `ATTACHMENT` command option; resolved channel objects in interactions gain `app_permissions`. Also fixed the application-command-option union so per-type fields (min/max, file types) are no longer stripped by the catch-all.
+
 ## 4.1.0
 <sub>2026-06-12</sub>
 
