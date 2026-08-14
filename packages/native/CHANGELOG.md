@@ -2,6 +2,24 @@
 
 
 
+
+## 0.3.0
+<sub>2026-08-14</sub>
+
+- [#72](https://github.com/discordkit/discordkit/pull/72)  *(minor)* Thanks [@Saeris](https://github.com/Saeris)!
+  Integrate the Social SDK 1.10 + Discord's July–Aug 2026 REST changelog.
+
+  - native: expose `Message.additionalName` — the optional game-provided author display name (e.g. a character name) added by the SDK's new `MessageHandle::AdditionalName()`. Flows through the electron/tauri message snapshots unchanged.
+  - client: `Channel.application_id` is now nullable (and modeled as a common channel field); `file_types` added to File Upload components and the `ATTACHMENT` command option; resolved channel objects in interactions gain `app_permissions`. Also fixed the application-command-option union so per-type fields (min/max, file types) are no longer stripped by the catch-all.
+- [#73](https://github.com/discordkit/discordkit/pull/73)  *(patch)* Thanks [@Saeris](https://github.com/Saeris)!
+  Refresh dependencies to their latest settled versions to shore up the toolchain foundations, and fix the CI E2E flake.
+
+  - Bump `varlock` (1.11 → 1.16) so CI stops resolving a drifted, stricter version than the lockfile — the source of the `with-nextjs-better-auth` E2E failure — and update `better-auth` (1.6.15 → 1.6.26) alongside.
+  - Re-dedupe Playwright after bumping `@playwright/test` to 1.62 (align `with-electron`'s direct `playwright` pin), so the shared runner stays a single instance.
+  - Refresh the rest of the catalog (React 19.2.8, Next 16.3, TypeScript-native-bridge bridge.12, koffi 3.1.4, jose 6.2.8, and other minor/patch updates).
+
+  Only `@discordkit/native`'s published dependency range changes (koffi); the rest is dev/example/CI tooling.
+
 ## 0.2.1
 <sub>2026-07-22</sub>
 

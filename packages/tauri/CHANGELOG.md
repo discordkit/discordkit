@@ -2,6 +2,12 @@
 
 
 
+
+## 0.1.3
+<sub>2026-08-14</sub>
+
+- *(patch)* Updated dependency `@discordkit/native` v0.3.0
+
 ## 0.1.2
 <sub>2026-07-22</sub>
 
