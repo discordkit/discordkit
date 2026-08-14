@@ -3571,55 +3571,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-native-bridge/darwin-arm64@npm:6.0.3-bridge.12.tsgo.7.0.2":
-  version: 6.0.3-bridge.12.tsgo.7.0.2
-  resolution: "@typescript-native-bridge/darwin-arm64@npm:6.0.3-bridge.12.tsgo.7.0.2"
-  conditions: os=darwin & cpu=arm64
-  languageName: node
-  linkType: hard
-
-"@typescript-native-bridge/darwin-x64@npm:6.0.3-bridge.12.tsgo.7.0.2":
-  version: 6.0.3-bridge.12.tsgo.7.0.2
-  resolution: "@typescript-native-bridge/darwin-x64@npm:6.0.3-bridge.12.tsgo.7.0.2"
-  conditions: os=darwin & cpu=x64
-  languageName: node
-  linkType: hard
-
-"@typescript-native-bridge/linux-arm64@npm:6.0.3-bridge.12.tsgo.7.0.2":
-  version: 6.0.3-bridge.12.tsgo.7.0.2
-  resolution: "@typescript-native-bridge/linux-arm64@npm:6.0.3-bridge.12.tsgo.7.0.2"
-  conditions: os=linux & cpu=arm64
-  languageName: node
-  linkType: hard
-
-"@typescript-native-bridge/linux-arm@npm:6.0.3-bridge.12.tsgo.7.0.2":
-  version: 6.0.3-bridge.12.tsgo.7.0.2
-  resolution: "@typescript-native-bridge/linux-arm@npm:6.0.3-bridge.12.tsgo.7.0.2"
-  conditions: os=linux & cpu=arm
-  languageName: node
-  linkType: hard
-
-"@typescript-native-bridge/linux-x64@npm:6.0.3-bridge.12.tsgo.7.0.2":
-  version: 6.0.3-bridge.12.tsgo.7.0.2
-  resolution: "@typescript-native-bridge/linux-x64@npm:6.0.3-bridge.12.tsgo.7.0.2"
-  conditions: os=linux & cpu=x64
-  languageName: node
-  linkType: hard
-
-"@typescript-native-bridge/win32-arm64@npm:6.0.3-bridge.12.tsgo.7.0.2":
-  version: 6.0.3-bridge.12.tsgo.7.0.2
-  resolution: "@typescript-native-bridge/win32-arm64@npm:6.0.3-bridge.12.tsgo.7.0.2"
-  conditions: os=win32 & cpu=arm64
-  languageName: node
-  linkType: hard
-
-"@typescript-native-bridge/win32-x64@npm:6.0.3-bridge.12.tsgo.7.0.2":
-  version: 6.0.3-bridge.12.tsgo.7.0.2
-  resolution: "@typescript-native-bridge/win32-x64@npm:6.0.3-bridge.12.tsgo.7.0.2"
-  conditions: os=win32 & cpu=x64
-  languageName: node
-  linkType: hard
-
 "@ungap/structured-clone@npm:^1.0.0":
   version: 1.3.1
   resolution: "@ungap/structured-clone@npm:1.3.1"
@@ -10423,69 +10374,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:typescript-native-bridge@6.0.3-bridge.12.tsgo.7.0.2":
-  version: 6.0.3-bridge.12.tsgo.7.0.2
-  resolution: "typescript-native-bridge@npm:6.0.3-bridge.12.tsgo.7.0.2"
-  dependencies:
-    "@typescript-native-bridge/darwin-arm64": "npm:6.0.3-bridge.12.tsgo.7.0.2"
-    "@typescript-native-bridge/darwin-x64": "npm:6.0.3-bridge.12.tsgo.7.0.2"
-    "@typescript-native-bridge/linux-arm": "npm:6.0.3-bridge.12.tsgo.7.0.2"
-    "@typescript-native-bridge/linux-arm64": "npm:6.0.3-bridge.12.tsgo.7.0.2"
-    "@typescript-native-bridge/linux-x64": "npm:6.0.3-bridge.12.tsgo.7.0.2"
-    "@typescript-native-bridge/win32-arm64": "npm:6.0.3-bridge.12.tsgo.7.0.2"
-    "@typescript-native-bridge/win32-x64": "npm:6.0.3-bridge.12.tsgo.7.0.2"
-  dependenciesMeta:
-    "@typescript-native-bridge/darwin-arm64":
-      optional: true
-    "@typescript-native-bridge/darwin-x64":
-      optional: true
-    "@typescript-native-bridge/linux-arm":
-      optional: true
-    "@typescript-native-bridge/linux-arm64":
-      optional: true
-    "@typescript-native-bridge/linux-x64":
-      optional: true
-    "@typescript-native-bridge/win32-arm64":
-      optional: true
-    "@typescript-native-bridge/win32-x64":
-      optional: true
+"typescript@npm:^6.0.3":
+  version: 6.0.3
+  resolution: "typescript@npm:6.0.3"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10/b55c5fd40d85e0d6168178924de7e2aec7d0c030d41a13dbeedbabb3f44f091c2b6074292f114258231528aa33c7459a510836277b094869c4e1eaab4508cea6
+  checksum: 10/0ef2357a4cffd916b52b683a021cdab0f81eea4e9aa35f2d254581c9a5106da02224e3392e1b0ed42b7a48f80c966e5f52b8e1a27941fa0523c1705a9c2e0330
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3Atypescript-native-bridge@6.0.3-bridge.12.tsgo.7.0.2#optional!builtin<compat/typescript>":
-  version: 6.0.3-bridge.12.tsgo.7.0.2
-  resolution: "typescript@patch:typescript-native-bridge@npm%3A6.0.3-bridge.12.tsgo.7.0.2#optional!builtin<compat/typescript>::version=6.0.3-bridge.12.tsgo.7.0.2&hash=5786d5"
-  dependencies:
-    "@typescript-native-bridge/darwin-arm64": "npm:6.0.3-bridge.12.tsgo.7.0.2"
-    "@typescript-native-bridge/darwin-x64": "npm:6.0.3-bridge.12.tsgo.7.0.2"
-    "@typescript-native-bridge/linux-arm": "npm:6.0.3-bridge.12.tsgo.7.0.2"
-    "@typescript-native-bridge/linux-arm64": "npm:6.0.3-bridge.12.tsgo.7.0.2"
-    "@typescript-native-bridge/linux-x64": "npm:6.0.3-bridge.12.tsgo.7.0.2"
-    "@typescript-native-bridge/win32-arm64": "npm:6.0.3-bridge.12.tsgo.7.0.2"
-    "@typescript-native-bridge/win32-x64": "npm:6.0.3-bridge.12.tsgo.7.0.2"
-  dependenciesMeta:
-    "@typescript-native-bridge/darwin-arm64":
-      optional: true
-    "@typescript-native-bridge/darwin-x64":
-      optional: true
-    "@typescript-native-bridge/linux-arm":
-      optional: true
-    "@typescript-native-bridge/linux-arm64":
-      optional: true
-    "@typescript-native-bridge/linux-x64":
-      optional: true
-    "@typescript-native-bridge/win32-arm64":
-      optional: true
-    "@typescript-native-bridge/win32-x64":
-      optional: true
+"typescript@patch:typescript@npm%3A^6.0.3#optional!builtin<compat/typescript>":
+  version: 6.0.3
+  resolution: "typescript@patch:typescript@npm%3A6.0.3#optional!builtin<compat/typescript>::version=6.0.3&hash=5786d5"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10/5cd36e09211d824bb14c25874b541925448236b8d7d9601b5581a6af2c2d18e40e92f848a57c22a3153099a2a9f78bf44512ec469088daef4badd3765ebde8b0
+  checksum: 10/22b67a18dafedf9b1468b64ca20d9aa02ea61d449b65413d8aa6552aeb63f52ef369e86beb25b6b4c91a803d9726ee5c196f391a9b64201263263410a4223ee6
   languageName: node
   linkType: hard
 
