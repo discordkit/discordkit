@@ -560,6 +560,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@discordkit/gateway@workspace:packages/gateway":
+  version: 0.0.0-use.local
+  resolution: "@discordkit/gateway@workspace:packages/gateway"
+  dependencies:
+    "@discordkit/core": "workspace:^"
+    msw: "catalog:"
+  peerDependencies:
+    valibot: ">= 1.4.0"
+  languageName: unknown
+  linkType: soft
+
 "@discordkit/native@workspace:^, @discordkit/native@workspace:packages/native":
   version: 0.0.0-use.local
   resolution: "@discordkit/native@workspace:packages/native"
