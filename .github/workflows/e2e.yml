@@ -55,7 +55,10 @@ jobs:
 
       # Build the workspace packages so the example resolves @discordkit/* to
       # dist (Next/Turbopack can't resolve our .js-on-.ts source imports).
-      - run: vp run -r build
+      # `--concurrency-limit 1`: sequential build avoids the intermittent
+      # `fork()` "Resource temporarily unavailable" failures the default
+      # 4-wide build hits on small runners (see ci.yml for the full note).
+      - run: vp run -r build --concurrency-limit 1
 
       # Cache the Playwright browser binaries, keyed on the resolved Playwright
       # version (from the lockfile). On a cache miss we install browsers + OS
