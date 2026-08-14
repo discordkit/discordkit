@@ -1,4 +1,4 @@
-import { describe, it, expect, afterEach, vi } from "vitest";
+import { describe, it, expect, afterEach, vi } from "vite-plus/test";
 import { setActivity } from "@discordkit/native/presence";
 import { stubBackend, emitStatus } from "./stubBackend.js";
 import { fakeConnection } from "./fakeConnection.js";

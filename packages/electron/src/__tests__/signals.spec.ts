@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect } from "vite-plus/test";
 import { snowflake, subscribe } from "@discordkit/native";
 import type { LobbyId } from "@discordkit/native";
 import { createFakeIpc } from "./fakeIpc.js";

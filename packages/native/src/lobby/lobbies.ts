@@ -96,7 +96,7 @@ export const createOrJoinLobby = async (
             null,
             null
           ),
-    (id) => brandId<LobbyId>(id as bigint | number),
+    (id) => brandId<LobbyId>(id),
     { timeoutMs: options.timeoutMs, label: `create or join lobby` }
   );
   const lobby = wrapLobby(client, lobbyId);

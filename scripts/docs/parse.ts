@@ -701,7 +701,7 @@ function synthBoldParagraph(text: string): RootContent {
 }
 
 function findRouteMdx(node: RootContent): MdxJsxElement | null {
-  if (isMdxElement(node, `Route`)) return node as unknown as MdxJsxElement;
+  if (isMdxElement(node, `Route`)) return node;
   if (node.type === `paragraph`) {
     for (const c of node.children) {
       // Inside a paragraph, only inline MDX elements (mdxJsxTextElement) appear.
@@ -962,7 +962,7 @@ function phrasingToMarkdown(node: PhrasingContent): string {
     default: {
       const maybeChildren = (node as { children?: PhrasingContent[] }).children;
       if (maybeChildren) return maybeChildren.map(phrasingToMarkdown).join(``);
-      return mdToString(node as unknown as PhrasingContent);
+      return mdToString(node as unknown);
     }
   }
 }
@@ -1004,7 +1004,7 @@ function parseTypeCell(cell: RootContent | undefined): DocFieldType {
     const wrapped: RootContent = {
       type: `tableCell`,
       children: [fakeCell]
-    } as RootContent;
+    };
     return { kind: `array`, element: parseTypeCell(wrapped), nullable };
   }
 
@@ -1103,7 +1103,7 @@ function phrasingForJsDoc(node: PhrasingContent): string {
   if (node.type === `break`) return `\n`;
   const maybeChildren = (node as { children?: PhrasingContent[] }).children;
   if (maybeChildren) return maybeChildren.map(phrasingForJsDoc).join(``);
-  return mdToString(node as unknown as PhrasingContent);
+  return mdToString(node as unknown);
 }
 
 function normalizePath(rawPath: string): string {

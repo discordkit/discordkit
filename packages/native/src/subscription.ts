@@ -32,5 +32,5 @@ export const toSubscription = (teardown: () => void): Subscription => {
   };
   return Object.assign(unsubscribe, {
     [Symbol.dispose]: unsubscribe
-  }) as Subscription;
+  });
 };
