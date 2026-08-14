@@ -1,5 +1,9 @@
 import { defineBindings } from "../ffi/bindings.js";
-import { readPropertiesOf, readString } from "../ffi/readers.js";
+import {
+  readGatedString,
+  readPropertiesOf,
+  readString
+} from "../ffi/readers.js";
 import type { FfiLibrary, FfiOpaque } from "../ffi/backend.js";
 import {
   brandId,
@@ -28,6 +32,7 @@ const bindings = defineBindings({
   editedTimestamp: /* C */ `uint64_t Discord_MessageHandle_EditedTimestamp(void *self)`,
   content: /* C */ `void Discord_MessageHandle_Content(void *self, Discord_String *returnValue)`,
   rawContent: /* C */ `void Discord_MessageHandle_RawContent(void *self, Discord_String *returnValue)`,
+  additionalName: /* C */ `bool Discord_MessageHandle_AdditionalName(void *self, Discord_String *returnValue)`,
   metadata: /* C */ `void Discord_MessageHandle_Metadata(void *self, Discord_Properties *returnValue)`,
   moderationMetadata: /* C */ `void Discord_MessageHandle_ModerationMetadata(void *self, Discord_Properties *returnValue)`,
   author: /* C */ `bool Discord_MessageHandle_Author(void *self, void *returnValue)`,
@@ -68,6 +73,10 @@ export const readMessage = (lib: FfiLibrary, handle: FfiOpaque): Message => {
     ? brandId<LobbyId>(b.lobbyId(lobbyOut))
     : undefined;
 
+  // Optional game-provided display name for the author (e.g. a character name),
+  // added in Social SDK 1.10. Bool-gated: absent unless a lobby integration set it.
+  const additionalName = readGatedString(lib, handle, b.additionalName);
+
   return {
     id: brandId<MessageId>(b.id(handle)),
     content: readString(lib, handle, b.content),
@@ -82,6 +91,7 @@ export const readMessage = (lib: FfiLibrary, handle: FfiOpaque): Message => {
     editedTimestamp: Number(b.editedTimestamp(handle)),
     metadata: readPropertiesOf(lib, handle, b.metadata),
     moderationMetadata: readPropertiesOf(lib, handle, b.moderationMetadata),
+    ...(additionalName !== undefined ? { additionalName } : {}),
     ...(author ? { author } : {}),
     ...(channel ? { channel } : {}),
     ...(lobbyId !== undefined ? { lobbyId } : {}),

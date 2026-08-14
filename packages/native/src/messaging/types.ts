@@ -85,6 +85,12 @@ export interface Message {
   content: string;
   /** The raw content, markup NOT humanized. */
   rawContent: string;
+  /**
+   * An optional game-provided display name for the author (e.g. a character
+   * name) that a lobby integration associated with this message. Added in
+   * Social SDK 1.10; absent unless the integration set one.
+   */
+  additionalName?: string;
   /** The author's user id. */
   authorId: UserId;
   /** The author, if the SDK has their user handle. */
