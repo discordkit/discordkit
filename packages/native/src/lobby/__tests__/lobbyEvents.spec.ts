@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect } from "vite-plus/test";
 import { createClient } from "../../client.js";
 import { mockBackend, mockStateOf } from "../../__tests__/mockBackend.js";
 import { scriptLobby, fireLobbyEvent } from "./mock.js";
@@ -151,11 +151,7 @@ describe(`lobby events (mock backend)`, () => {
       (...ids: string[]) => seen.push(ids),
       { client }
     );
-    fireLobbyEvent(
-      state,
-      event as Parameters<typeof fireLobbyEvent>[1],
-      ...fireArgs
-    );
+    fireLobbyEvent(state, event, ...fireArgs);
     expect(seen).toEqual([[...expected]]);
   });
 });

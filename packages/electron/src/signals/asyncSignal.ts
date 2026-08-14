@@ -73,5 +73,5 @@ export const asyncSignal = <T>(read: () => Promise<T>): AsyncSignal<T> => {
   };
 
   void reload();
-  return Object.assign(state, { reload }) as AsyncSignal<T>;
+  return Object.assign(state, { reload });
 };

@@ -34,7 +34,7 @@ export const stubBackend = (): unknown => {
       registered.set(key, fn);
       const decl =
         typeof type === `object` && type && `__proto` in type
-          ? String((type as { __proto: unknown }).__proto)
+          ? String(type.__proto)
           : ``;
       if (decl.includes(`OnStatusChanged`)) statusCallback = fn;
       return key;

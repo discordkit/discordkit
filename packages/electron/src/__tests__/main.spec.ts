@@ -1,4 +1,4 @@
-import { describe, it, expect, afterEach } from "vitest";
+import { describe, it, expect, afterEach } from "vite-plus/test";
 import { createFakeIpc } from "./fakeIpc.js";
 import { stubBackend, emitStatus } from "./stubBackend.js";
 import { createCoreBridge } from "../preload.js";

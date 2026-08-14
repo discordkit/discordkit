@@ -68,7 +68,7 @@ export const ImageField = <T extends FieldValues>({
               aria-label="Image source"
               // RAC's `selectedKey`/`onSelectionChange` is deprecated in favor of
               // the unified `value`/`onChange` (single mode → the item id directly).
-              value={field.value as Key}
+              value={field.value}
               onChange={(value) => field.onChange(value)}
             >
               <Button className="flex h-full shrink-0 items-center gap-1 border-r border-edge bg-canvas px-3 text-sm text-text outline-none focus:bg-surface-hover">

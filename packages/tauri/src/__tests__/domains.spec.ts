@@ -1,4 +1,4 @@
-import { describe, it, expect, afterEach } from "vitest";
+import { describe, it, expect, afterEach } from "vite-plus/test";
 import { snowflake, type LobbyId } from "@discordkit/native";
 import { stubBackend } from "./stubBackend.js";
 import { fakeConnection } from "./fakeConnection.js";

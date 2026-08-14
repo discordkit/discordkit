@@ -55,9 +55,8 @@ export const applicationCommandOptionSchema = v.intersect([
           v.literal(ApplicationCommandOptionType.SUB_COMMAND_GROUP)
         ]),
         /** If the option is a subcommand or subcommand group type, these nested options will be the parameters */
-        options: v.lazy(
-          (): v.GenericSchema<unknown[] | null | undefined> =>
-            v.nullish(v.array(applicationCommandOptionSchema))
+        options: v.lazy((): v.GenericSchema<unknown[] | null | undefined> =>
+          v.nullish(v.array(applicationCommandOptionSchema))
         )
       }),
       v.object({

@@ -580,7 +580,7 @@ function htmlToMarkdown(root: Element | null | undefined): string {
       } else if (tag === `ul` || tag === `ol`) {
         const items = [...e.querySelectorAll(`:scope > li`)].map((li, i) => {
           const marker = tag === `ol` ? `${i + 1}.` : `-`;
-          return `${marker} ${renderInline(li as unknown as Element).trim()}`;
+          return `${marker} ${renderInline(li).trim()}`;
         });
         if (items.length) blocks.push(items.join(`\n`));
       } else if (tag === `pre`) {

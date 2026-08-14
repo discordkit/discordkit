@@ -203,7 +203,7 @@ export class Lobby {
       sub();
       this.#subscriptions.delete(sub);
     };
-    return Object.assign(off, { [Symbol.dispose]: off }) as Subscription;
+    return Object.assign(off, { [Symbol.dispose]: off });
   };
 
   /** Subscribe to this lobby being updated (metadata/link changes). */

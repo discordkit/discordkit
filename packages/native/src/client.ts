@@ -206,7 +206,7 @@ class DiscordClientImpl implements DiscordClient {
     };
     return Object.assign(unsubscribe, {
       [Symbol.dispose]: unsubscribe
-    }) as Subscription;
+    });
   };
 
   close = (): void => {

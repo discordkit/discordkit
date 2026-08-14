@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect } from "vite-plus/test";
 import { snowflake } from "@discordkit/native";
 import type { UserId } from "@discordkit/native";
 import type { ActivityInvite } from "@discordkit/native/activity-invites";

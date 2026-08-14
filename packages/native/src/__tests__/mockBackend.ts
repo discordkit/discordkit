@@ -194,7 +194,7 @@ export const mockBackend: FfiBackend = (_libraryPath: string): FfiLibrary => {
       registered.set(key, fn);
       const decl =
         typeof type === `object` && type !== null && `__proto` in type
-          ? String((type as { __proto: unknown }).__proto)
+          ? String(type.__proto)
           : ``;
       if (decl.includes(`OnStatusChanged`)) statusCb = fn;
       if (decl.includes(`LogCallback`)) logCb = fn;
