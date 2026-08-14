@@ -10,15 +10,6 @@ jobs:
   ci:
     name: Check & Test (Node ${{ matrix.node-version }})
     runs-on: ubuntu-latest
-    # Cap the build tools' thread pools to the runner's core count. Rolldown/Oxc
-    # (Rust/rayon) and the tsgo compiler behind typescript-native-bridge (Go)
-    # otherwise size their pools to the host's logical CPUs, and on a small
-    # runner the combined thread count trips the process limit — `fork()` fails
-    # intermittently with "Resource temporarily unavailable (os error 11)"
-    # mid-build. Bounding them keeps the spawn count under the limit.
-    env:
-      RAYON_NUM_THREADS: "2"
-      GOMAXPROCS: "2"
     strategy:
       fail-fast: false
       matrix:
@@ -41,20 +32,14 @@ jobs:
       # conditions, which require `dist/` to exist. Bare `tsc --noEmit`
       # works either way because it does honor `customConditions`.
       #
-      # The build spawns many short-lived threads/processes (Rolldown, and the
-      # tsgo compiler behind typescript-native-bridge for the .d.ts emit). On a
-      # small runner the default soft process limit is low enough that `fork()`
-      # fails intermittently with "Resource temporarily unavailable (os error
-      # 11)" mid-build. Raise the soft limit to the hard max, and keep the build
-      # sequential (`--concurrency-limit 1`) so peak concurrency stays low.
-      - run: |
-          ulimit -u "$(ulimit -Hu)" || true
-          vp run --concurrency-limit 1 -r build
+      # `--concurrency-limit 1` builds packages sequentially. The default (4)
+      # over-subscribes the 2-core runner — four package builds at once spawn
+      # enough processes to intermittently trip `fork()` ("Resource temporarily
+      # unavailable"). Sequential build costs a few seconds and is reliable.
+      - run: vp run --concurrency-limit 1 -r build
       # Generate per-package codegen the type-check depends on (e.g. the
       # examples' Varlock `env.d.ts`, which is gitignored like `next-env.d.ts`).
-      - run: |
-          ulimit -u "$(ulimit -Hu)" || true
-          vp run --concurrency-limit 1 -r typegen
+      - run: vp run --concurrency-limit 1 -r typegen
       - run: vp check
       - run: vp test
 
