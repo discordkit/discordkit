@@ -31,10 +31,15 @@ jobs:
       # local dev relies on — they fall through to the `import`/`types`
       # conditions, which require `dist/` to exist. Bare `tsc --noEmit`
       # works either way because it does honor `customConditions`.
-      - run: vp run -r build
+      #
+      # `--concurrency-limit 1` builds packages sequentially. The default (4)
+      # over-subscribes the 2-core runner — four package builds at once spawn
+      # enough processes to intermittently trip `fork()` ("Resource temporarily
+      # unavailable"). Sequential build costs a few seconds and is reliable.
+      - run: vp run --concurrency-limit 1 -r build
       # Generate per-package codegen the type-check depends on (e.g. the
       # examples' Varlock `env.d.ts`, which is gitignored like `next-env.d.ts`).
-      - run: vp run -r typegen
+      - run: vp run --concurrency-limit 1 -r typegen
       - run: vp check
       - run: vp test
 
