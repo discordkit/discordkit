@@ -10,6 +10,7 @@ export * from "./components/index.js";
 export * from "./emoji/index.js";
 export * from "./entitlements/index.js";
 export * from "./event/index.js";
+export * from "./gateway/index.js";
 export * from "./guild/index.js";
 export * from "./images/index.js";
 export * from "./interactions/index.js";
