@@ -1,3 +1,5 @@
+import { isObject } from "@discordkit/core/utils/isObject";
+import { toCamelKeys } from "@discordkit/core/utils/toCamelKeys";
 import { GatewayCloseCode, isReconnectable } from "./types/GatewayCloseCode.js";
 import { GatewayOpcode } from "./types/GatewayOpcode.js";
 import type { GatewayPayload } from "./types/GatewayPayload.js";
@@ -213,13 +215,21 @@ export const createConnection = (
     const type = payload.t;
     if (typeof type !== `string`) return;
 
+    // Camelize at the transport boundary, exactly as the REST layer does in
+    // core's `request.ts`. Discord sends snake_case on the wire, but every
+    // discordkit schema is authored in camelCase — so without this, reusing
+    // `messageSchema` & co. for dispatch payloads fails on every multi-word
+    // field (`channel_id`, `mention_everyone`). Doing it here rather than
+    // per-event means one consistent shape for everything downstream.
+    const data = isObject(payload.d) ? toCamelKeys(payload.d) : payload.d;
+
     if (type === `READY`) {
-      const data = payload.d as {
-        session_id?: string;
-        resume_gateway_url?: string;
+      const ready = data as {
+        sessionId?: string;
+        resumeGatewayUrl?: string;
       };
-      sessionId = data.session_id ?? null;
-      resumeUrl = data.resume_gateway_url ?? null;
+      sessionId = ready.sessionId ?? null;
+      resumeUrl = ready.resumeGatewayUrl ?? null;
       attempts = 0;
       setState(`ready`);
     } else if (type === `RESUMED`) {
@@ -228,7 +238,7 @@ export const createConnection = (
     }
 
     for (const handler of dispatchHandlers) {
-      handler({ type, data: payload.d });
+      handler({ type, data });
     }
   };
 

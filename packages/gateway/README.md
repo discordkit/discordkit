@@ -4,7 +4,7 @@ A tree-shakeable Discord **Gateway** (WebSocket) client for Cloudflare Workers, 
 
 The Gateway is how a Discord app receives real-time events — messages, interactions, guild updates — as they happen. HTTP Interactions can deliver component and command callbacks, but only a Gateway connection can see ordinary channel messages, which is what makes "watch the channel and react" bots possible.
 
-> **Status: v0.** Connection lifecycle and dispatch subscription are implemented and tested. Typed per-event modules land next; today you subscribe to dispatch events by wire name.
+> **Status: v0.** Connection lifecycle, dispatch subscription, and the lifecycle-critical typed events are implemented and tested. The remaining ~79 dispatch events land in reviewed batches; until then, `connection.onDispatch` gives you every event by wire name.
 
 ## Installation
 
@@ -53,17 +53,55 @@ connection.connect();
 
 Every subscription accepts `{ connection }` to target a specific instance.
 
-### Subscribing
+### Subscribing to events
+
+Each event is its own module and its own export:
+
+```ts
+import { onMessageCreate, onReady } from "@discordkit/gateway";
+
+using ready = onReady(({ user }) => {
+  console.log(`Logged in as ${user.username}`);
+});
+
+using messages = onMessageCreate((message) => {
+  if (message.author.bot) return;
+  console.log(message.content);
+});
+```
+
+Subscriptions are `(() => void) & Disposable` — the same shape `@discordkit/native` returns, so `using` cleans them up at scope exit, or call the returned function yourself.
+
+For an event that doesn't have a typed module yet, `connection.onDispatch` delivers all of them by wire name:
 
 ```ts
 using sub = connection.onDispatch((event) => {
-  if (event.type === `MESSAGE_CREATE`) {
+  if (event.type === `TYPING_START`) {
     // …
   }
 });
 ```
 
-Subscriptions are `(() => void) & Disposable` — the same shape `@discordkit/native` returns, so `using` cleans them up at scope exit, or call the returned function yourself.
+### Letting your handlers declare your intents
+
+Each subscriber carries the intents Discord requires for that event, so the connection can request exactly what the bot uses — no more, no less:
+
+```ts
+import {
+  connect,
+  intentsFor,
+  onMessageCreate,
+  onGuildCreate
+} from "@discordkit/gateway";
+
+connect({
+  token,
+  intents: intentsFor(onMessageCreate, onGuildCreate)
+  // => ["GUILD_MESSAGES", "DIRECT_MESSAGES", "GUILDS"]
+});
+```
+
+This matters in both directions: under-requesting fails **silently** (the events simply never arrive), and over-requesting a privileged intent you haven't been granted is a fatal `4014`.
 
 ### Intents
 

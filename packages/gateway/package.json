@@ -45,6 +45,7 @@
   ],
   "sideEffects": false,
   "dependencies": {
+    "@discordkit/client": "workspace:^",
     "@discordkit/core": "workspace:^"
   },
   "devDependencies": {

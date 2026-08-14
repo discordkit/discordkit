@@ -244,6 +244,57 @@ describe(`createConnection`, () => {
     });
   });
 
+  it(`camelizes dispatch payloads so client schemas match`, async () => {
+    let sendEvent!: (raw: string) => void;
+    harness = withGateway((ctx) => {
+      sendEvent = ctx.client.send;
+      ctx.client.send(hello());
+      afterFrame(ctx.capture, GatewayOpcode.IDENTIFY, () => {
+        ctx.client.send(ready());
+      });
+    });
+
+    connection = createConnection({ token: `t`, intents: [`GUILD_MESSAGES`] });
+    connection.connect();
+    await vi.waitFor(() => {
+      expect(connection?.state).toBe(`ready`);
+    });
+
+    const received: unknown[] = [];
+    using _sub = connection.onDispatch((event) => {
+      received.push(event.data);
+    });
+
+    // Discord sends snake_case on the wire, but every discordkit schema is
+    // authored in camelCase (the REST layer camelizes in core's request.ts).
+    // Without the same transform here, reusing `messageSchema` for a dispatch
+    // payload fails on every multi-word field — and it fails SILENTLY, since
+    // the payload is typed `unknown` until a schema parses it.
+    sendEvent(
+      JSON.stringify({
+        op: GatewayOpcode.DISPATCH,
+        t: `MESSAGE_CREATE`,
+        s: 3,
+        d: {
+          channel_id: `123`,
+          mention_everyone: false,
+          author: { global_name: `nested` }
+        }
+      })
+    );
+
+    await vi.waitFor(() => {
+      expect(received).toHaveLength(1);
+    });
+    expect(received[0]).toEqual({
+      channelId: `123`,
+      mentionEveryone: false,
+      // Nested objects are camelized too — `author.global_name` is as much a
+      // schema field as the top-level ones.
+      author: { globalName: `nested` }
+    });
+  });
+
   it(`responds immediately to a server-requested heartbeat`, async () => {
     let requestHeartbeat!: () => void;
     harness = withGateway((ctx) => {

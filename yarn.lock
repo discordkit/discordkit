@@ -564,6 +564,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@discordkit/gateway@workspace:packages/gateway"
   dependencies:
+    "@discordkit/client": "workspace:^"
     "@discordkit/core": "workspace:^"
     msw: "catalog:"
   peerDependencies:
