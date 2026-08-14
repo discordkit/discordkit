@@ -43,6 +43,12 @@ jobs:
     name: OAuth example E2E
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    # Cap the build tools' thread pools to the runner's core count — see ci.yml
+    # for the full rationale (Rolldown/Oxc rayon + tsgo Go pools otherwise trip
+    # the process limit and `fork()` fails with os error 11 mid-build).
+    env:
+      RAYON_NUM_THREADS: "2"
+      GOMAXPROCS: "2"
     steps:
       - uses: actions/checkout@v6
 

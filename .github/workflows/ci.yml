@@ -10,6 +10,15 @@ jobs:
   ci:
     name: Check & Test (Node ${{ matrix.node-version }})
     runs-on: ubuntu-latest
+    # Cap the build tools' thread pools to the runner's core count. Rolldown/Oxc
+    # (Rust/rayon) and the tsgo compiler behind typescript-native-bridge (Go)
+    # otherwise size their pools to the host's logical CPUs, and on a small
+    # runner the combined thread count trips the process limit — `fork()` fails
+    # intermittently with "Resource temporarily unavailable (os error 11)"
+    # mid-build. Bounding them keeps the spawn count under the limit.
+    env:
+      RAYON_NUM_THREADS: "2"
+      GOMAXPROCS: "2"
     strategy:
       fail-fast: false
       matrix:
