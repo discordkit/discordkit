@@ -11,7 +11,7 @@
     "@discordkit/oauth": "workspace:^",
     "@tanstack/react-query": "catalog:",
     "@tanstack/react-query-devtools": "catalog:",
-    "better-auth": "1.6.15",
+    "better-auth": "1.6.26",
     "next": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
