@@ -534,20 +534,39 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cloudflare/vitest-pool-workers@npm:0.21.0":
-  version: 0.21.0
-  resolution: "@cloudflare/vitest-pool-workers@npm:0.21.0"
+"@cloudflare/vite-plugin@npm:1.51.3":
+  version: 1.51.3
+  resolution: "@cloudflare/vite-plugin@npm:1.51.3"
+  dependencies:
+    "@cloudflare/unenv-preset": "npm:2.16.1"
+    miniflare: "npm:5.20260804.1-alpha"
+    unenv: "npm:2.0.0-rc.24"
+    workerd: "npm:1.20260804.1"
+    wrangler: "npm:4.121.0"
+    ws: "npm:8.21.0"
+  peerDependencies:
+    vite: ^6.1.0 || ^7.0.0 || ^8.0.0
+    wrangler: ^4.121.0
+  bin:
+    cf-vite: bin/cf-vite
+  checksum: 10/9a672d3c5870485eb9358ee85aa40a4ad93fa0e39d59d8c05c25234dc7858fc61bf5ee1da22c684b35a5dafab1ff7fd793656f658c5d9239196b4109e213c6c7
+  languageName: node
+  linkType: hard
+
+"@cloudflare/vitest-pool-workers@npm:0.21.1":
+  version: 0.21.1
+  resolution: "@cloudflare/vitest-pool-workers@npm:0.21.1"
   dependencies:
     cjs-module-lexer: "npm:1.2.3"
     esbuild: "npm:0.28.1"
-    miniflare: "npm:5.20260804.0-alpha"
-    wrangler: "npm:4.120.1"
+    miniflare: "npm:5.20260804.1-alpha"
+    wrangler: "npm:4.121.0"
     zod: "npm:4.4.3"
   peerDependencies:
     "@vitest/runner": ^4.1.0
     "@vitest/snapshot": ^4.1.0
     vitest: ^4.1.0
-  checksum: 10/8515f60071e6848caf07550f35c063a688bebff58d15cd1e1d86367a6e6edda5b5e025080c5e7c1325ff8f4392d18ba6ca9be55a1495ed18ca07dfe60ae2737d
+  checksum: 10/953d448d48030c746badfd551f9bab765188e8330a34c2a389b7dec827681b5ebf71aea8ba0dc2f3551ee836da7be34f17115a7cc5cfa3c8ca1711d34f408355
   languageName: node
   linkType: hard
 
@@ -8778,9 +8797,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"miniflare@npm:5.20260804.0-alpha":
-  version: 5.20260804.0-alpha
-  resolution: "miniflare@npm:5.20260804.0-alpha"
+"miniflare@npm:5.20260804.1-alpha":
+  version: 5.20260804.1-alpha
+  resolution: "miniflare@npm:5.20260804.1-alpha"
   dependencies:
     "@cspotcode/source-map-support": "npm:0.8.1"
     sharp: "npm:0.35.2"
@@ -8788,7 +8807,7 @@ __metadata:
     workerd: "npm:1.20260804.1"
     ws: "npm:8.21.0"
     youch: "npm:4.1.0-beta.10"
-  checksum: 10/40fa7e9f3afb3816f995ff9df38304202567137b0349af50abd831d4242fe0050c940d18680d81cc0909e65a597a76a6917447d572e24f1f85ad02aa880ef8b3
+  checksum: 10/ab66cfb3251bc3145e55ba9fc6a57fe6a31d8a06f6db0a518778b1a053f65d46401d87510e8252e3a30670a340e55c73d2984c4a4c054a32ca881522c00bdddf
   languageName: node
   linkType: hard
 
@@ -12300,14 +12319,25 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "with-cloudflare@workspace:examples/with-cloudflare"
   dependencies:
-    "@cloudflare/vitest-pool-workers": "npm:0.21.0"
+    "@cloudflare/vite-plugin": "npm:1.51.3"
+    "@cloudflare/vitest-pool-workers": "npm:0.21.1"
     "@cloudflare/workers-types": "npm:5.20260811.1"
     "@discordkit/client": "workspace:^"
     "@discordkit/core": "workspace:^"
     "@discordkit/gateway": "workspace:^"
+    "@tailwindcss/vite": "catalog:"
+    "@types/react": "catalog:"
+    "@types/react-dom": "catalog:"
+    "@vitejs/plugin-react": "catalog:"
+    lucide-react: "catalog:"
+    react: "catalog:"
+    react-aria-components: "catalog:"
+    react-dom: "catalog:"
+    tailwindcss: "catalog:"
+    tailwindcss-react-aria-components: "npm:^2.1.1"
     typescript: "catalog:"
     vite-plus: "catalog:"
-    wrangler: "npm:4.120.1"
+    wrangler: "npm:4.121.0"
   languageName: unknown
   linkType: soft
 
@@ -12509,16 +12539,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wrangler@npm:4.120.1":
-  version: 4.120.1
-  resolution: "wrangler@npm:4.120.1"
+"wrangler@npm:4.121.0":
+  version: 4.121.0
+  resolution: "wrangler@npm:4.121.0"
   dependencies:
     "@cloudflare/kv-asset-handler": "npm:0.5.0"
     "@cloudflare/unenv-preset": "npm:2.16.1"
     blake3-wasm: "npm:2.1.5"
     esbuild: "npm:0.28.1"
     fsevents: "npm:2.3.3"
-    miniflare: "npm:5.20260804.0-alpha"
+    miniflare: "npm:5.20260804.1-alpha"
     path-to-regexp: "npm:6.3.0"
     unenv: "npm:2.0.0-rc.24"
     workerd: "npm:1.20260804.1"
@@ -12534,7 +12564,7 @@ __metadata:
     cf-wrangler: bin/cf-wrangler.js
     wrangler: bin/wrangler.js
     wrangler2: bin/wrangler.js
-  checksum: 10/5b8c7391e6937610a06fd06957933bf1381fb7e290da0b9fca3b382dbabecae16fc313040fba55e3313f01bc47d9e5999439075e607650ea6b066ce3e05c19aa
+  checksum: 10/88c7fa3d8685b6119628fec3a5ef21669b2a3d3491f95cedc67233960a46b5285f5886703c5dc59c773f28dcca0090da678592182d483867300e746b11c9178a
   languageName: node
   linkType: hard
 

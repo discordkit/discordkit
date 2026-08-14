@@ -1,12 +1,24 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["src/**/*.ts", "*.ts", "scripts/**/*.mjs"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.d.ts",
+    "*.ts",
+    "scripts/**/*.mjs"
+  ],
   // `exclude` is inherited from the parent unless redeclared, and the parent
   // excludes this directory (so editors don't bind these files to the root
   // config, which lacks the Workers types). Inheriting that here would exclude
   // the example from itself, leaving zero input files.
   "exclude": ["node_modules", "dist", ".wrangler"],
   "compilerOptions": {
+    // The client half is a React SPA, so it needs JSX and the DOM lib on top
+    // of the Workers types the Worker half uses. Both halves live in one
+    // project because they share `src/shared/protocol.ts` — the wire contract
+    // between them, which is exactly the thing a split would let drift.
+    "jsx": "react-jsx",
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
     // `cloudflare:workers` and `cloudflare:test` are virtual modules the
     // runtime provides — not npm packages — so they only resolve with these
     // type packages loaded. The root config's `types: ["node"]` doesn't

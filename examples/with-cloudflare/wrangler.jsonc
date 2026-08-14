@@ -1,13 +1,23 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "discordkit-gateway-inspector",
-  "main": "src/inspector.ts",
+  "main": "src/worker/index.ts",
   "compatibility_date": "2026-08-11",
   // `nodejs_compat` is NOT enabled: proving @discordkit/gateway runs on the bare
   // Workers runtime — Web-standard WebSocket, no Node builtins — is the point of
   // this example. If something here ever needs a Node shim, that's a finding
-  // about the package, not a flag to quietly turn on.
+  // about the package, not a flag to quietly turn on. `vp run check:bundle`
+  // enforces it.
   "compatibility_flags": [],
+  "assets": {
+    // `directory` is omitted deliberately: the Cloudflare Vite plugin points it
+    // at the client build output for us.
+    "not_found_handling": "single-page-application",
+    "binding": "ASSETS",
+    // Everything under /api (including the /api/stream WebSocket upgrade) must
+    // reach the Worker rather than being answered by the asset server.
+    "run_worker_first": ["/api/*"]
+  },
   "durable_objects": {
     "bindings": [
       {

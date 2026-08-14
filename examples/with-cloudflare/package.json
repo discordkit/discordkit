@@ -6,13 +6,24 @@
   "dependencies": {
     "@discordkit/client": "workspace:^",
     "@discordkit/core": "workspace:^",
-    "@discordkit/gateway": "workspace:^"
+    "@discordkit/gateway": "workspace:^",
+    "lucide-react": "catalog:",
+    "react": "catalog:",
+    "react-aria-components": "catalog:",
+    "react-dom": "catalog:"
   },
   "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "0.21.0",
+    "@cloudflare/vite-plugin": "1.51.3",
+    "@cloudflare/vitest-pool-workers": "0.21.1",
     "@cloudflare/workers-types": "5.20260811.1",
+    "@tailwindcss/vite": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "tailwindcss": "catalog:",
+    "tailwindcss-react-aria-components": "^2.1.1",
     "typescript": "catalog:",
     "vite-plus": "catalog:",
-    "wrangler": "4.120.1"
+    "wrangler": "4.121.0"
   }
 }

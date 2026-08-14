@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+/* Registers React Aria's data-attribute variants (selected:, pressed:,
+   hover:, focus-within:, …) so they compile. Without this plugin those
+   variants silently no-op under Tailwind v4 — no error, just missing styles. */
+@plugin "tailwindcss-react-aria-components";
+
+/* The inspector is a dev tool that sits next to a terminal, so it commits to a
+   dark palette rather than following the OS. */
+:root {
+  color-scheme: dark;
+}

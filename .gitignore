@@ -117,3 +117,6 @@ cypress/e2e/build
 
 # Cloudflare Workers local state (miniflare storage, dry-run output)
 .wrangler/
+
+# Cloudflare Vite plugin build output
+examples/with-cloudflare/dist/
