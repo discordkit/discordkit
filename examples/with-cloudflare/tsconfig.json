@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.json",
+  "include": ["src/**/*.ts", "*.ts", "scripts/**/*.mjs"],
+  "compilerOptions": {
+    // `cloudflare:workers` and `cloudflare:test` are virtual modules the
+    // runtime provides — not npm packages — so they only resolve with these
+    // type packages loaded. The root config's `types: ["node"]` doesn't
+    // include them, and this Worker must NOT see Node's globals anyway: the
+    // whole point is that it runs on the bare Workers runtime.
+    "types": [
+      "@cloudflare/workers-types",
+      "@cloudflare/vitest-pool-workers/types"
+    ]
+  }
+}

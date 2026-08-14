@@ -61,12 +61,25 @@ persistence beyond a session, sharding. It is a **read-only observation tool**.
    real deployment. celld remains what the package spec called it: a self-hosting escape
    hatch to re-verify if we ever need it, not a development dependency.
 
-5. **⚠️ WebSockets in DOs break `vitest-pool-workers`' default isolation.** Per
-   [Cloudflare's known issues](https://docs.cloudflare.com/workers/testing/vitest-integration/known-issues/),
-   WebSockets are unsupported with per-file storage isolation; the documented workaround
-   is `--max-workers=1 --no-isolate`. Since holding a WebSocket is this DO's entire job,
-   the example's `test` task must encode that from the start, with a comment — otherwise
-   it surfaces as a mystery CI failure.
+5. **~~WebSockets in DOs break `vitest-pool-workers`' isolation.~~ — obsolete, corrected
+   during the spike.** [Cloudflare's known issues](https://docs.cloudflare.com/workers/testing/vitest-integration/known-issues/)
+   documents WebSockets as unsupported under per-file storage isolation, workaround
+   `--max-workers=1 --no-isolate`. That applied to the **Vitest 3-era pool**. In the v4
+   pool (`@cloudflare/vitest-pool-workers` ≥ 0.21) the `isolatedStorage` and
+   `singleWorker` options **no longer exist** — the pool moved from
+   `test.poolOptions.workers` to a `cloudflareTest()` plugin (the package ships a
+   `codemods/vitest-v3-to-v4` for the migration). The suite passes with no workaround.
+   → Left recorded rather than deleted: a stale caveat invites cargo-culted config, and
+   most guides online still show the old shape.
+
+5b. **⚠️ The test suite does NOT prove the bundle is Node-free.** The pool runs inside
+workerd but with permissive module resolution, because Vitest itself needs Node
+interop — `node:fs` and `node:net` both resolve there. Verified by injecting
+`import { Buffer } from "node:buffer"` into the gateway's `connection.ts`: the suite
+stayed green. `wrangler deploy --dry-run` catches it (warning: _"may throw errors at
+runtime unless you enable the nodejs_compat compatibility flag"_).
+→ The example needs **both** checks, and `check:bundle` exists for exactly this. The
+check itself was falsified in both directions before being trusted.
 
 6. **Our examples' shared DNA: collapse a painful feedback loop.** Rich presence normally
    needs a second account to observe; a friends list needs a populated social graph. Each
@@ -164,10 +177,12 @@ Incidental to being useful, it exercises the claims the package makes:
 
 ## 7. Open questions
 
-1. **Does `@discordkit/gateway` run unmodified on workerd?** Everything says yes (Web
-   standard `WebSocket`, no Node builtins on the hot path), but **this is unverified** —
-   it is the first thing to test, before any UI work, because a negative result changes
-   the package, not just the example.
+1. ~~**Does `@discordkit/gateway` run unmodified on workerd?**~~ **ANSWERED — yes.**
+   The spike stands as `examples/with-cloudflare`: a Durable Object imports the package,
+   constructs a connection, and computes its intent mask via `intentsFor` inside workerd,
+   with `nodejs_compat` off. `wrangler deploy --dry-run` produces a **26.28 KiB / 6.89 KiB
+   gzipped** bundle with zero Node-builtin warnings, and injecting one produces a warning —
+   so the check is falsifiable, not merely green. No package changes were needed.
 2. **Buffer size.** How many events to retain in DO SQLite before rolling. Pick something
    small and defensible; a busy guild produces a lot of `TYPING_START`.
 3. **Does the free tier comfortably cover an on-demand inspector?** The package spec

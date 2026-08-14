@@ -116,7 +116,12 @@ export default defineConfig({
       // Playwright E2E specs (examples/*/e2e/**) import @playwright/test and
       // run under the Playwright runner, not Vitest. Keep them out of the unit
       // test discovery.
-      `**/e2e/**`
+      `**/e2e/**`,
+      // The Cloudflare example's specs run inside workerd via
+      // @cloudflare/vitest-pool-workers, which the root runner doesn't load.
+      // They import the virtual `cloudflare:test` module, so collecting them
+      // here fails at import. Run them with `vp test` in that package.
+      `**/examples/with-cloudflare/**`
     ]
   },
   lint: mergeLint(lint, {
