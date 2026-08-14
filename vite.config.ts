@@ -69,6 +69,14 @@ export default defineConfig({
       "scrape:sdk-docs": {
         command: `node --experimental-strip-types scripts/docs/fetch-social-sdk.ts`,
         cache: false
+      },
+      // Summarize the Gateway protocol constructs parsed out of the cached
+      // Discord docs (opcodes, close codes, intents, events). Read-only — it
+      // reports what the docs currently say so a refresh diff is reviewable
+      // before any codegen runs. Pass --json for machine-readable output.
+      "docs:gateway": {
+        command: `node --experimental-strip-types scripts/docs/parse-gateway.ts`,
+        cache: false
       }
     }
   },
