@@ -37,10 +37,10 @@ jobs:
       # threads — on a small GitHub runner that exceeds the process/thread limit
       # and `fork()` fails intermittently with "Resource temporarily unavailable
       # (os error 11)". Sequential build trades a few seconds for reliability.
-      - run: vp run -r build --concurrency-limit 1
+      - run: vp run --concurrency-limit 1 -r build
       # Generate per-package codegen the type-check depends on (e.g. the
       # examples' Varlock `env.d.ts`, which is gitignored like `next-env.d.ts`).
-      - run: vp run -r typegen --concurrency-limit 1
+      - run: vp run --concurrency-limit 1 -r typegen
       - run: vp check
       - run: vp test
 
