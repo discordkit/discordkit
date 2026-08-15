@@ -120,3 +120,6 @@ cypress/e2e/build
 
 # Cloudflare Vite plugin build output
 examples/with-cloudflare/dist/
+
+# Local secrets for the Cloudflare example (schema is committed, values are not)
+examples/with-cloudflare/.env

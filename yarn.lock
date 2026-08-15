@@ -12336,6 +12336,7 @@ __metadata:
     tailwindcss: "catalog:"
     tailwindcss-react-aria-components: "npm:^2.1.1"
     typescript: "catalog:"
+    varlock: "catalog:"
     vite-plus: "catalog:"
     wrangler: "npm:4.121.0"
   languageName: unknown

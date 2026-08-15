@@ -23,6 +23,7 @@
     "tailwindcss": "catalog:",
     "tailwindcss-react-aria-components": "^2.1.1",
     "typescript": "catalog:",
+    "varlock": "catalog:",
     "vite-plus": "catalog:",
     "wrangler": "4.121.0"
   }

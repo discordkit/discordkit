@@ -44,9 +44,22 @@ const connection = createConnection({
 | Bundle check | `vp run check:bundle` | packages built      |
 | Deploy       | `wrangler deploy`     | your own CF account |
 
-`wrangler dev` runs the Durable Object locally through Miniflare, which executes the **real workerd runtime** — so local development is genuinely offline and needs no Cloudflare account. SQLite-backed DO storage in fact works _only_ locally; `wrangler dev --remote` rejects it.
+`vp run dev` runs the Durable Object locally through Miniflare, which executes the **real workerd runtime**, while Vite serves the SPA with HMR — one server, genuinely offline, no Cloudflare account needed. SQLite-backed DO storage in fact works _only_ locally; `wrangler dev --remote` rejects it.
 
-Your bot token never leaves your machine in local mode and is never committed.
+### Your bot token
+
+The inspector takes a token in the UI, so **you can run it with no setup at all** — paste a token, hit Connect. The token goes to the Durable Object, which opens the Gateway connection server-side; it is never stored in the browser.
+
+If you'd rather not paste it each time, put it in a local `.env`:
+
+```sh
+# examples/with-cloudflare/.env  (gitignored)
+DISCORD_BOT_TOKEN=your-token-here
+```
+
+`.env.schema` is committed and declares the shape; `.env` holds real values and is gitignored. The dev task runs through `varlock run`, which validates against the schema and injects the values as Worker bindings.
+
+> **Note:** this deliberately skips `@varlock/cloudflare-integration`'s in-Worker `ENV` import, which would require the `nodejs_compat` flag — and proving the Gateway runs on the _bare_ Workers runtime is this example's whole point. The CLI runs in Node outside the Worker, so we get schema validation and `.env` watching without the runtime dependency. (`varlock-wrangler` doesn't fit either, since it shells out to `wrangler` while our dev server is Vite plus the Cloudflare plugin.)
 
 ## Two checks, and why both are needed
 

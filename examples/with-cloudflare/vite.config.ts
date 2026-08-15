@@ -13,7 +13,17 @@ export default defineConfig({
       // `vite dev` through the Cloudflare plugin runs the Worker and the
       // Durable Object in workerd while serving the SPA with HMR — one server,
       // real runtime, no Cloudflare account needed.
-      dev: { command: `vp dev`, cache: false },
+      //
+      // Wrapped in `varlock run` so secrets come from the repo's usual `.env` +
+      // `.env.schema` convention: it resolves and validates them in Node, then
+      // injects them into the dev server's environment, where the Cloudflare
+      // plugin surfaces them to the Worker as bindings.
+      //
+      // NOT `varlock-wrangler`: that wrapper shells out to `wrangler` directly,
+      // but the Cloudflare Vite plugin means our dev server is `vp dev`. And we
+      // deliberately skip varlock's in-Worker `ENV` import, which would require
+      // `nodejs_compat` — see .env.schema for why that matters here.
+      dev: { command: `varlock run -- vp dev`, cache: false },
       build: { command: `vp build`, cache: true },
       // The Vitest pool proves the code RUNS on workerd; this proves it
       // DEPLOYS — the pool's module resolution is permissive enough that a

@@ -74,7 +74,17 @@ export const useInspector = (): Inspector => {
     });
 
     return (): void => {
-      socket.close();
+      // StrictMode mounts effects twice in development, so this cleanup can run
+      // while the socket is still CONNECTING. Calling close() then is legal but
+      // logs "WebSocket is closed before the connection is established" — wait
+      // for `open` and close after, so the teardown is clean either way.
+      if (socket.readyState === WebSocket.CONNECTING) {
+        socket.addEventListener(`open`, () => {
+          socket.close();
+        });
+      } else {
+        socket.close();
+      }
       socketRef.current = null;
     };
   }, []);
