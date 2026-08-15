@@ -10,5 +10,6 @@ import { dispatchEvent } from "../dispatch.js";
  * Gated by `GUILDS`.
  */
 export const onChannelCreate = dispatchEvent<Channel, `CHANNEL_CREATE`>(
-  `CHANNEL_CREATE`
+  `CHANNEL_CREATE`,
+  [`GUILDS`]
 );

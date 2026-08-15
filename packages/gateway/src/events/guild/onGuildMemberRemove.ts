@@ -11,4 +11,4 @@ import type { GuildMemberRemove } from "./types/GuildMemberEvents.js";
 export const onGuildMemberRemove = dispatchEvent<
   GuildMemberRemove,
   `GUILD_MEMBER_REMOVE`
->(`GUILD_MEMBER_REMOVE`);
+>(`GUILD_MEMBER_REMOVE`, [`GUILD_MEMBERS`]);

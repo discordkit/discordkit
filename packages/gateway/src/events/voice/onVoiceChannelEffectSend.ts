@@ -11,4 +11,4 @@ import type { VoiceChannelEffectSend } from "./types/VoiceEvents.js";
 export const onVoiceChannelEffectSend = dispatchEvent<
   VoiceChannelEffectSend,
   `VOICE_CHANNEL_EFFECT_SEND`
->(`VOICE_CHANNEL_EFFECT_SEND`);
+>(`VOICE_CHANNEL_EFFECT_SEND`, [`GUILD_VOICE_STATES`]);

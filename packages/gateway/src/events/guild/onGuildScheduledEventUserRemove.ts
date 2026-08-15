@@ -11,4 +11,4 @@ import type { GuildScheduledEventUser } from "./types/GuildResourceEvents.js";
 export const onGuildScheduledEventUserRemove = dispatchEvent<
   GuildScheduledEventUser,
   `GUILD_SCHEDULED_EVENT_USER_REMOVE`
->(`GUILD_SCHEDULED_EVENT_USER_REMOVE`);
+>(`GUILD_SCHEDULED_EVENT_USER_REMOVE`, [`GUILD_SCHEDULED_EVENTS`]);

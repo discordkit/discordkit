@@ -17,4 +17,4 @@ import type { UnavailableGuild } from "../lifecycle/types/Ready.js";
 export const onGuildDelete = dispatchEvent<
   Partial<UnavailableGuild>,
   `GUILD_DELETE`
->(`GUILD_DELETE`);
+>(`GUILD_DELETE`, [`GUILDS`]);

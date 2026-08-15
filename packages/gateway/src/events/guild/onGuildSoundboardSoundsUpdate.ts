@@ -11,4 +11,4 @@ import type { SoundboardSounds } from "./types/GuildResourceEvents.js";
 export const onGuildSoundboardSoundsUpdate = dispatchEvent<
   SoundboardSounds,
   `GUILD_SOUNDBOARD_SOUNDS_UPDATE`
->(`GUILD_SOUNDBOARD_SOUNDS_UPDATE`);
+>(`GUILD_SOUNDBOARD_SOUNDS_UPDATE`, [`GUILD_EXPRESSIONS`]);

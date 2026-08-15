@@ -12,4 +12,4 @@ import { dispatchEvent } from "../dispatch.js";
 export const onAutoModerationRuleCreate = dispatchEvent<
   ModerationRule,
   `AUTO_MODERATION_RULE_CREATE`
->(`AUTO_MODERATION_RULE_CREATE`);
+>(`AUTO_MODERATION_RULE_CREATE`, [`AUTO_MODERATION_CONFIGURATION`]);

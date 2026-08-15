@@ -11,4 +11,4 @@ import type { ModerationActionExecution } from "./types/ModerationActionExecutio
 export const onAutoModerationActionExecution = dispatchEvent<
   ModerationActionExecution,
   `AUTO_MODERATION_ACTION_EXECUTION`
->(`AUTO_MODERATION_ACTION_EXECUTION`);
+>(`AUTO_MODERATION_ACTION_EXECUTION`, [`AUTO_MODERATION_EXECUTION`]);

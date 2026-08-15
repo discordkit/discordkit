@@ -14,4 +14,4 @@ import type { PresenceUpdate } from "./types/PresenceEvents.js";
 export const onPresenceUpdate = dispatchEvent<
   PresenceUpdate,
   `PRESENCE_UPDATE`
->(`PRESENCE_UPDATE`);
+>(`PRESENCE_UPDATE`, [`GUILD_PRESENCES`]);

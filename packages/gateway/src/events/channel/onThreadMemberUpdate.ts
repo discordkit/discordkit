@@ -25,4 +25,4 @@ export interface ThreadMemberUpdate extends ThreadMember {
 export const onThreadMemberUpdate = dispatchEvent<
   ThreadMemberUpdate,
   `THREAD_MEMBER_UPDATE`
->(`THREAD_MEMBER_UPDATE`);
+>(`THREAD_MEMBER_UPDATE`, [`GUILDS`]);

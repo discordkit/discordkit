@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from "vite-plus/test";
 import * as v from "valibot";
+import { resolveIntents } from "../../connection.js";
 import type { DispatchEvent, GatewayConnection } from "../../connection.js";
 import { toSubscription, type Subscription } from "../../subscription.js";
 import { dispatchEvent, intentsFor } from "../dispatch.js";
@@ -94,6 +95,55 @@ describe(`dispatchEvent`, () => {
     expect(handler).not.toHaveBeenCalled();
   });
 
+  it(`camelizes the payload it hands to a typed handler`, () => {
+    const connection = fakeConnection();
+    const handler = vi.fn();
+    using _sub = onMessageCreate(handler, { connection });
+
+    // The connection delivers Discord's raw snake_case; the fan-out camelizes
+    // so client's schemas match. Without it, reusing `messageSchema` fails on
+    // every multi-word field — silently, since the payload is `unknown` until
+    // a schema parses it.
+    connection.emit({
+      type: `MESSAGE_CREATE`,
+      data: { channel_id: `1`, author: { global_name: `nested` } }
+    });
+
+    expect(handler).toHaveBeenCalledWith({
+      channelId: `1`,
+      // Nested objects too — `author.global_name` is as much a schema field.
+      author: { globalName: `nested` }
+    });
+  });
+
+  it(`does not camelize an event nobody subscribed to`, () => {
+    const connection = fakeConnection();
+    using _sub = onMessageCreate(vi.fn(), { connection });
+
+    // The performance property: a busy guild floods PRESENCE_UPDATE and
+    // TYPING_START that most bots never subscribe to. Transforming those was
+    // ~79% of dispatch CPU at a realistic subscribe ratio, so the fan-out must
+    // bail BEFORE the deep-clone rather than after.
+    //
+    // Detected via a getter: camelizing walks the payload with Object.entries,
+    // so a read proves the transform ran. Asserting the input is "unchanged"
+    // would prove nothing — toCamelKeys returns a copy and never mutates.
+    const read = vi.fn(() => `1`);
+    const payload = {} as { user_id: string };
+    Object.defineProperty(payload, `user_id`, {
+      get: read,
+      enumerable: true
+    });
+
+    connection.emit({ type: `PRESENCE_UPDATE`, data: payload });
+    expect(read).not.toHaveBeenCalled();
+
+    // Sanity check the probe itself: a SUBSCRIBED event must read it, or the
+    // assertion above would pass for the wrong reason.
+    connection.emit({ type: `MESSAGE_CREATE`, data: payload });
+    expect(read).toHaveBeenCalledWith();
+  });
+
   it(`delivers to every subscriber of the same event`, () => {
     const connection = fakeConnection();
     const first = vi.fn();
@@ -141,6 +191,40 @@ describe(`event intent metadata`, () => {
       `NOT_A_REAL_EVENT`
     );
     expect(custom.intents).toEqual([]);
+  });
+});
+
+describe(`resolveIntents`, () => {
+  it(`accepts handlers directly, so the mask can't drift`, () => {
+    // The ergonomic win: `createConnection({ intents: [onMessageCreate] })`
+    // derives the mask from what the bot actually consumes, rather than a
+    // hand-maintained list that silently rots as handlers change.
+    expect(resolveIntents([onMessageCreate, onGuildCreate])).toEqual([
+      `GUILD_MESSAGES`,
+      `DIRECT_MESSAGES`,
+      `GUILDS`
+    ]);
+  });
+
+  it(`still accepts plain intent names`, () => {
+    expect(resolveIntents([`GUILDS`, `MESSAGE_CONTENT`])).toEqual([
+      `GUILDS`,
+      `MESSAGE_CONTENT`
+    ]);
+  });
+
+  it(`mixes names and handlers in one list`, () => {
+    // MESSAGE_CONTENT gates message FIELDS rather than an event, so no handler
+    // reports it — mixing is how you add it alongside derived intents.
+    expect(resolveIntents([onMessageCreate, `MESSAGE_CONTENT`])).toEqual([
+      `GUILD_MESSAGES`,
+      `DIRECT_MESSAGES`,
+      `MESSAGE_CONTENT`
+    ]);
+  });
+
+  it(`deduplicates an intent several sources share`, () => {
+    expect(resolveIntents([onGuildCreate, `GUILDS`])).toEqual([`GUILDS`]);
   });
 });
 

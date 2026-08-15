@@ -12,4 +12,4 @@ import { dispatchEvent } from "../dispatch.js";
 export const onGuildScheduledEventUpdate = dispatchEvent<
   ScheduledEvent,
   `GUILD_SCHEDULED_EVENT_UPDATE`
->(`GUILD_SCHEDULED_EVENT_UPDATE`);
+>(`GUILD_SCHEDULED_EVENT_UPDATE`, [`GUILD_SCHEDULED_EVENTS`]);

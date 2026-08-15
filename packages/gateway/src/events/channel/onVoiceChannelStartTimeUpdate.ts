@@ -11,4 +11,4 @@ import type { VoiceChannelStartTimeUpdate } from "./types/ChannelEvents.js";
 export const onVoiceChannelStartTimeUpdate = dispatchEvent<
   VoiceChannelStartTimeUpdate,
   `VOICE_CHANNEL_START_TIME_UPDATE`
->(`VOICE_CHANNEL_START_TIME_UPDATE`);
+>(`VOICE_CHANNEL_START_TIME_UPDATE`, [`GUILDS`]);

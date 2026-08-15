@@ -11,4 +11,4 @@ import type { GuildStickersUpdate } from "./types/GuildResourceEvents.js";
 export const onGuildStickersUpdate = dispatchEvent<
   GuildStickersUpdate,
   `GUILD_STICKERS_UPDATE`
->(`GUILD_STICKERS_UPDATE`);
+>(`GUILD_STICKERS_UPDATE`, [`GUILD_EXPRESSIONS`]);

@@ -28,4 +28,4 @@ export interface GuildAuditLogEntryCreate extends AuditLogEntry {
 export const onGuildAuditLogEntryCreate = dispatchEvent<
   GuildAuditLogEntryCreate,
   `GUILD_AUDIT_LOG_ENTRY_CREATE`
->(`GUILD_AUDIT_LOG_ENTRY_CREATE`);
+>(`GUILD_AUDIT_LOG_ENTRY_CREATE`, [`GUILD_MODERATION`]);

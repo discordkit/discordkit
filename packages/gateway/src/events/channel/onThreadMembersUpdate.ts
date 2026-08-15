@@ -11,4 +11,4 @@ import type { ThreadMembersUpdate } from "./types/ChannelEvents.js";
 export const onThreadMembersUpdate = dispatchEvent<
   ThreadMembersUpdate,
   `THREAD_MEMBERS_UPDATE`
->(`THREAD_MEMBERS_UPDATE`);
+>(`THREAD_MEMBERS_UPDATE`, [`GUILDS`, `GUILD_MEMBERS`]);

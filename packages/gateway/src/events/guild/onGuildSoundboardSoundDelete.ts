@@ -11,4 +11,4 @@ import type { GuildSoundboardSoundDelete } from "./types/GuildResourceEvents.js"
 export const onGuildSoundboardSoundDelete = dispatchEvent<
   GuildSoundboardSoundDelete,
   `GUILD_SOUNDBOARD_SOUND_DELETE`
->(`GUILD_SOUNDBOARD_SOUND_DELETE`);
+>(`GUILD_SOUNDBOARD_SOUND_DELETE`, [`GUILD_EXPRESSIONS`]);

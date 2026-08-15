@@ -12,4 +12,4 @@ import { dispatchEvent } from "../dispatch.js";
 export const onGuildScheduledEventDelete = dispatchEvent<
   ScheduledEvent,
   `GUILD_SCHEDULED_EVENT_DELETE`
->(`GUILD_SCHEDULED_EVENT_DELETE`);
+>(`GUILD_SCHEDULED_EVENT_DELETE`, [`GUILD_SCHEDULED_EVENTS`]);

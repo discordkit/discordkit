@@ -11,4 +11,4 @@ import type { ThreadListSync } from "./types/ChannelEvents.js";
 export const onThreadListSync = dispatchEvent<
   ThreadListSync,
   `THREAD_LIST_SYNC`
->(`THREAD_LIST_SYNC`);
+>(`THREAD_LIST_SYNC`, [`GUILDS`]);

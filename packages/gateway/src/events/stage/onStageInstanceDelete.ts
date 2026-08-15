@@ -11,4 +11,4 @@ import { dispatchEvent } from "../dispatch.js";
 export const onStageInstanceDelete = dispatchEvent<
   Stage,
   `STAGE_INSTANCE_DELETE`
->(`STAGE_INSTANCE_DELETE`);
+>(`STAGE_INSTANCE_DELETE`, [`GUILDS`]);

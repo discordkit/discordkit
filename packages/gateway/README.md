@@ -86,24 +86,27 @@ using sub = connection.onDispatch((event) => {
 
 ### Letting your handlers declare your intents
 
-Each subscriber carries the intents Discord requires for that event, so the connection can request exactly what the bot uses — no more, no less:
+Each subscriber carries the intents Discord requires for that event, so the connection can request exactly what the bot uses — no more, no less. Pass the handlers themselves and it derives the mask:
 
 ```ts
-import {
-  connect,
-  intentsFor,
-  onMessageCreate,
-  onGuildCreate
-} from "@discordkit/gateway";
+import { connect, onMessageCreate, onGuildCreate } from "@discordkit/gateway";
 
 connect({
   token,
-  intents: intentsFor(onMessageCreate, onGuildCreate)
-  // => ["GUILD_MESSAGES", "DIRECT_MESSAGES", "GUILDS"]
+  intents: [onMessageCreate, onGuildCreate]
+  // => GUILD_MESSAGES | DIRECT_MESSAGES | GUILDS
 });
 ```
 
-This matters in both directions: under-requesting fails **silently** (the events simply never arrive), and over-requesting a privileged intent you haven't been granted is a fatal `4014`.
+Names and handlers mix freely, which you need for `MESSAGE_CONTENT` — it gates message _fields_ rather than an event, so no handler reports it:
+
+```ts
+connect({ token, intents: [onMessageCreate, `MESSAGE_CONTENT`] });
+```
+
+This matters in both directions: under-requesting fails **silently** (the events simply never arrive), and over-requesting a privileged intent you haven't been granted is a fatal `4014`. Deriving the mask from the handlers means it can't drift as you add or remove them.
+
+`intentsFor(...)` is still exported if you want the resolved list as a value.
 
 ### Intents
 

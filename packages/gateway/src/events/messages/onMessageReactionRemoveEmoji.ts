@@ -12,4 +12,7 @@ import type { MessageReactionRemoveEmoji } from "./types/MessageReaction.js";
 export const onMessageReactionRemoveEmoji = dispatchEvent<
   MessageReactionRemoveEmoji,
   `MESSAGE_REACTION_REMOVE_EMOJI`
->(`MESSAGE_REACTION_REMOVE_EMOJI`);
+>(`MESSAGE_REACTION_REMOVE_EMOJI`, [
+  `GUILD_MESSAGE_REACTIONS`,
+  `DIRECT_MESSAGE_REACTIONS`
+]);

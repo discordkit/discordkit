@@ -9,5 +9,6 @@ import type { InviteCreate } from "./types/InviteEvents.js";
  * Gated by `GUILD_INVITES`.
  */
 export const onInviteCreate = dispatchEvent<InviteCreate, `INVITE_CREATE`>(
-  `INVITE_CREATE`
+  `INVITE_CREATE`,
+  [`GUILD_INVITES`]
 );

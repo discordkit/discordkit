@@ -29,5 +29,6 @@ export interface ThreadDelete extends Pick<Channel, `id` | `type`> {
  * Gated by `GUILDS`.
  */
 export const onThreadDelete = dispatchEvent<ThreadDelete, `THREAD_DELETE`>(
-  `THREAD_DELETE`
+  `THREAD_DELETE`,
+  [`GUILDS`]
 );

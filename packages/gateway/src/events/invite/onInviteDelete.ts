@@ -9,5 +9,6 @@ import type { InviteDelete } from "./types/InviteEvents.js";
  * Gated by `GUILD_INVITES`.
  */
 export const onInviteDelete = dispatchEvent<InviteDelete, `INVITE_DELETE`>(
-  `INVITE_DELETE`
+  `INVITE_DELETE`,
+  [`GUILD_INVITES`]
 );

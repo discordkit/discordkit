@@ -12,4 +12,4 @@ import { dispatchEvent } from "../dispatch.js";
 export const onGuildSoundboardSoundCreate = dispatchEvent<
   SoundboardSound,
   `GUILD_SOUNDBOARD_SOUND_CREATE`
->(`GUILD_SOUNDBOARD_SOUND_CREATE`);
+>(`GUILD_SOUNDBOARD_SOUND_CREATE`, [`GUILD_EXPRESSIONS`]);

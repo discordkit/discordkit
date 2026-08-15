@@ -12,4 +12,7 @@ import type { MessageReactionRemove } from "./types/MessageReaction.js";
 export const onMessageReactionRemove = dispatchEvent<
   MessageReactionRemove,
   `MESSAGE_REACTION_REMOVE`
->(`MESSAGE_REACTION_REMOVE`);
+>(`MESSAGE_REACTION_REMOVE`, [
+  `GUILD_MESSAGE_REACTIONS`,
+  `DIRECT_MESSAGE_REACTIONS`
+]);

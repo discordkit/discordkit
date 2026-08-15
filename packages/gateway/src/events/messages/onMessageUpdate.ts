@@ -18,5 +18,6 @@ import type { MessageCreate } from "./types/MessageCreate.js";
  * > erroring.
  */
 export const onMessageUpdate = dispatchEvent<MessageCreate, `MESSAGE_UPDATE`>(
-  `MESSAGE_UPDATE`
+  `MESSAGE_UPDATE`,
+  [`GUILD_MESSAGES`, `DIRECT_MESSAGES`]
 );

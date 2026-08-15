@@ -12,4 +12,4 @@ import { dispatchEvent } from "../dispatch.js";
 export const onVoiceStateUpdate = dispatchEvent<
   VoiceState,
   `VOICE_STATE_UPDATE`
->(`VOICE_STATE_UPDATE`);
+>(`VOICE_STATE_UPDATE`, [`GUILD_VOICE_STATES`]);

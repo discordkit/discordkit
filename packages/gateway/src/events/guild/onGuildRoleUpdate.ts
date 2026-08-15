@@ -9,5 +9,6 @@ import type { GuildRole } from "./types/GuildResourceEvents.js";
  * Gated by `GUILDS`.
  */
 export const onGuildRoleUpdate = dispatchEvent<GuildRole, `GUILD_ROLE_UPDATE`>(
-  `GUILD_ROLE_UPDATE`
+  `GUILD_ROLE_UPDATE`,
+  [`GUILDS`]
 );

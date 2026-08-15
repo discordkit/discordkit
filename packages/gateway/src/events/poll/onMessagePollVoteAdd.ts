@@ -12,4 +12,4 @@ import type { MessagePollVote } from "./types/MessagePollVote.js";
 export const onMessagePollVoteAdd = dispatchEvent<
   MessagePollVote,
   `MESSAGE_POLL_VOTE_ADD`
->(`MESSAGE_POLL_VOTE_ADD`);
+>(`MESSAGE_POLL_VOTE_ADD`, [`GUILD_MESSAGE_POLLS`, `DIRECT_MESSAGE_POLLS`]);

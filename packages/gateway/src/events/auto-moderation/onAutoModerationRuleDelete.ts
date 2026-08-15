@@ -12,4 +12,4 @@ import { dispatchEvent } from "../dispatch.js";
 export const onAutoModerationRuleDelete = dispatchEvent<
   ModerationRule,
   `AUTO_MODERATION_RULE_DELETE`
->(`AUTO_MODERATION_RULE_DELETE`);
+>(`AUTO_MODERATION_RULE_DELETE`, [`AUTO_MODERATION_CONFIGURATION`]);

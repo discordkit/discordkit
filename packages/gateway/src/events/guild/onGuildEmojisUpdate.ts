@@ -11,4 +11,4 @@ import type { GuildEmojisUpdate } from "./types/GuildResourceEvents.js";
 export const onGuildEmojisUpdate = dispatchEvent<
   GuildEmojisUpdate,
   `GUILD_EMOJIS_UPDATE`
->(`GUILD_EMOJIS_UPDATE`);
+>(`GUILD_EMOJIS_UPDATE`, [`GUILD_EXPRESSIONS`]);

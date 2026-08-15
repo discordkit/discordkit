@@ -32,4 +32,4 @@ export const webhooksUpdateSchema = schema<WebhooksUpdate>(
 export const onWebhooksUpdate = dispatchEvent<
   WebhooksUpdate,
   `WEBHOOKS_UPDATE`
->(`WEBHOOKS_UPDATE`);
+>(`WEBHOOKS_UPDATE`, [`GUILD_WEBHOOKS`]);

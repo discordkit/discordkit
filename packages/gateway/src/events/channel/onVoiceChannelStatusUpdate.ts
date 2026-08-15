@@ -11,4 +11,4 @@ import type { VoiceChannelStatusUpdate } from "./types/ChannelEvents.js";
 export const onVoiceChannelStatusUpdate = dispatchEvent<
   VoiceChannelStatusUpdate,
   `VOICE_CHANNEL_STATUS_UPDATE`
->(`VOICE_CHANNEL_STATUS_UPDATE`);
+>(`VOICE_CHANNEL_STATUS_UPDATE`, [`GUILDS`]);

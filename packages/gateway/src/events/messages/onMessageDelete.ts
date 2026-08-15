@@ -11,5 +11,6 @@ import type { MessageDelete } from "./types/MessageDelete.js";
  * Gated by `GUILD_MESSAGES` or `DIRECT_MESSAGES`.
  */
 export const onMessageDelete = dispatchEvent<MessageDelete, `MESSAGE_DELETE`>(
-  `MESSAGE_DELETE`
+  `MESSAGE_DELETE`,
+  [`GUILD_MESSAGES`, `DIRECT_MESSAGES`]
 );

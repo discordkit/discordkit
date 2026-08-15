@@ -11,4 +11,4 @@ import type { GuildMemberUpdate } from "./types/GuildMemberEvents.js";
 export const onGuildMemberUpdate = dispatchEvent<
   GuildMemberUpdate,
   `GUILD_MEMBER_UPDATE`
->(`GUILD_MEMBER_UPDATE`);
+>(`GUILD_MEMBER_UPDATE`, [`GUILD_MEMBERS`]);

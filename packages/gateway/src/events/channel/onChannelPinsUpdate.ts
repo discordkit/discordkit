@@ -11,4 +11,4 @@ import type { ChannelPinsUpdate } from "./types/ChannelEvents.js";
 export const onChannelPinsUpdate = dispatchEvent<
   ChannelPinsUpdate,
   `CHANNEL_PINS_UPDATE`
->(`CHANNEL_PINS_UPDATE`);
+>(`CHANNEL_PINS_UPDATE`, [`GUILDS`, `DIRECT_MESSAGES`]);

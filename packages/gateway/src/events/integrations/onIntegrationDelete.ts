@@ -34,4 +34,4 @@ export const integrationDeleteSchema = schema<IntegrationDelete>(
 export const onIntegrationDelete = dispatchEvent<
   IntegrationDelete,
   `INTEGRATION_DELETE`
->(`INTEGRATION_DELETE`);
+>(`INTEGRATION_DELETE`, [`GUILD_INTEGRATIONS`]);

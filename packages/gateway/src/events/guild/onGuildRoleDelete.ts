@@ -11,4 +11,4 @@ import type { GuildRoleDelete } from "./types/GuildResourceEvents.js";
 export const onGuildRoleDelete = dispatchEvent<
   GuildRoleDelete,
   `GUILD_ROLE_DELETE`
->(`GUILD_ROLE_DELETE`);
+>(`GUILD_ROLE_DELETE`, [`GUILDS`]);

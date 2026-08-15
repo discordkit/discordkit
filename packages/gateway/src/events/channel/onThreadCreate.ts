@@ -10,5 +10,6 @@ import { dispatchEvent } from "../dispatch.js";
  * Gated by `GUILDS`.
  */
 export const onThreadCreate = dispatchEvent<Channel, `THREAD_CREATE`>(
-  `THREAD_CREATE`
+  `THREAD_CREATE`,
+  [`GUILDS`]
 );

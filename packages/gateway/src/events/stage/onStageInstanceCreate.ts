@@ -11,4 +11,4 @@ import { dispatchEvent } from "../dispatch.js";
 export const onStageInstanceCreate = dispatchEvent<
   Stage,
   `STAGE_INSTANCE_CREATE`
->(`STAGE_INSTANCE_CREATE`);
+>(`STAGE_INSTANCE_CREATE`, [`GUILDS`]);

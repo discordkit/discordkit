@@ -10,5 +10,6 @@ import { dispatchEvent } from "../dispatch.js";
  * Gated by `GUILDS`.
  */
 export const onChannelDelete = dispatchEvent<Channel, `CHANNEL_DELETE`>(
-  `CHANNEL_DELETE`
+  `CHANNEL_DELETE`,
+  [`GUILDS`]
 );

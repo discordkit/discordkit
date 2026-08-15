@@ -21,5 +21,6 @@ import { dispatchEvent } from "../dispatch.js";
  * ```
  */
 export const onGuildCreate = dispatchEvent<Guild, `GUILD_CREATE`>(
-  `GUILD_CREATE`
+  `GUILD_CREATE`,
+  [`GUILDS`]
 );

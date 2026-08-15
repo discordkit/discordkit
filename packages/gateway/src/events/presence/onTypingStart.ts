@@ -11,5 +11,6 @@ import type { TypingStart } from "./types/PresenceEvents.js";
  * Gated by `GUILD_MESSAGE_TYPING` or `DIRECT_MESSAGE_TYPING`.
  */
 export const onTypingStart = dispatchEvent<TypingStart, `TYPING_START`>(
-  `TYPING_START`
+  `TYPING_START`,
+  [`GUILD_MESSAGE_TYPING`, `DIRECT_MESSAGE_TYPING`]
 );

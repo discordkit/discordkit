@@ -9,5 +9,6 @@ import type { GuildRole } from "./types/GuildResourceEvents.js";
  * Gated by `GUILDS`.
  */
 export const onGuildRoleCreate = dispatchEvent<GuildRole, `GUILD_ROLE_CREATE`>(
-  `GUILD_ROLE_CREATE`
+  `GUILD_ROLE_CREATE`,
+  [`GUILDS`]
 );

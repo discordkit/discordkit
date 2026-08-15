@@ -12,4 +12,4 @@ import type { MessageDeleteBulk } from "./types/MessageDelete.js";
 export const onMessageDeleteBulk = dispatchEvent<
   MessageDeleteBulk,
   `MESSAGE_DELETE_BULK`
->(`MESSAGE_DELETE_BULK`);
+>(`MESSAGE_DELETE_BULK`, [`GUILD_MESSAGES`]);

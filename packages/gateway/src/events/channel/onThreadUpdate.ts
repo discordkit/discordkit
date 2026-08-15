@@ -11,5 +11,6 @@ import { dispatchEvent } from "../dispatch.js";
  * Gated by `GUILDS`.
  */
 export const onThreadUpdate = dispatchEvent<Channel, `THREAD_UPDATE`>(
-  `THREAD_UPDATE`
+  `THREAD_UPDATE`,
+  [`GUILDS`]
 );

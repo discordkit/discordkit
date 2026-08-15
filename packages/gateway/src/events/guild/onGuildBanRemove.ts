@@ -9,5 +9,6 @@ import type { GuildBan } from "./types/GuildMemberEvents.js";
  * Gated by `GUILD_MODERATION`.
  */
 export const onGuildBanRemove = dispatchEvent<GuildBan, `GUILD_BAN_REMOVE`>(
-  `GUILD_BAN_REMOVE`
+  `GUILD_BAN_REMOVE`,
+  [`GUILD_MODERATION`]
 );

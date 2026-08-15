@@ -13,5 +13,6 @@ import { dispatchEvent } from "../dispatch.js";
  * Gated by `GUILDS`.
  */
 export const onChannelUpdate = dispatchEvent<Channel, `CHANNEL_UPDATE`>(
-  `CHANNEL_UPDATE`
+  `CHANNEL_UPDATE`,
+  [`GUILDS`]
 );

@@ -11,4 +11,4 @@ import type { GuildIntegrationsUpdate } from "./types/GuildResourceEvents.js";
 export const onGuildIntegrationsUpdate = dispatchEvent<
   GuildIntegrationsUpdate,
   `GUILD_INTEGRATIONS_UPDATE`
->(`GUILD_INTEGRATIONS_UPDATE`);
+>(`GUILD_INTEGRATIONS_UPDATE`, [`GUILD_INTEGRATIONS`]);

@@ -12,4 +12,7 @@ import type { MessageReactionAdd } from "./types/MessageReaction.js";
 export const onMessageReactionAdd = dispatchEvent<
   MessageReactionAdd,
   `MESSAGE_REACTION_ADD`
->(`MESSAGE_REACTION_ADD`);
+>(`MESSAGE_REACTION_ADD`, [
+  `GUILD_MESSAGE_REACTIONS`,
+  `DIRECT_MESSAGE_REACTIONS`
+]);

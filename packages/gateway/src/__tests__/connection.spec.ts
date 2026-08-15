@@ -244,7 +244,7 @@ describe(`createConnection`, () => {
     });
   });
 
-  it(`camelizes dispatch payloads so client schemas match`, async () => {
+  it(`delivers raw wire-shaped payloads to onDispatch`, async () => {
     let sendEvent!: (raw: string) => void;
     harness = withGateway((ctx) => {
       sendEvent = ctx.client.send;
@@ -265,11 +265,11 @@ describe(`createConnection`, () => {
       received.push(event.data);
     });
 
-    // Discord sends snake_case on the wire, but every discordkit schema is
-    // authored in camelCase (the REST layer camelizes in core's request.ts).
-    // Without the same transform here, reusing `messageSchema` for a dispatch
-    // payload fails on every multi-word field — and it fails SILENTLY, since
-    // the payload is typed `unknown` until a schema parses it.
+    // `onDispatch` is the raw firehose and hands back exactly what Discord
+    // sent, in snake_case. Camelizing here would mean paying a recursive
+    // deep-clone for every event whether or not anything consumed it; the
+    // typed-event fan-out does it lazily instead (see dispatch.spec.ts).
+    // It is also the honest contract for a tool inspecting wire traffic.
     sendEvent(
       JSON.stringify({
         op: GatewayOpcode.DISPATCH,
@@ -287,11 +287,9 @@ describe(`createConnection`, () => {
       expect(received).toHaveLength(1);
     });
     expect(received[0]).toEqual({
-      channelId: `123`,
-      mentionEveryone: false,
-      // Nested objects are camelized too — `author.global_name` is as much a
-      // schema field as the top-level ones.
-      author: { globalName: `nested` }
+      channel_id: `123`,
+      mention_everyone: false,
+      author: { global_name: `nested` }
     });
   });
 

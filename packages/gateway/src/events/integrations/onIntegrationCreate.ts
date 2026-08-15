@@ -12,4 +12,4 @@ import type { IntegrationEvent } from "./types/IntegrationEvent.js";
 export const onIntegrationCreate = dispatchEvent<
   IntegrationEvent,
   `INTEGRATION_CREATE`
->(`INTEGRATION_CREATE`);
+>(`INTEGRATION_CREATE`, [`GUILD_INTEGRATIONS`]);

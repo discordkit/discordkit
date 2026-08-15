@@ -11,4 +11,4 @@ import type { GuildScheduledEventUser } from "./types/GuildResourceEvents.js";
 export const onGuildScheduledEventUserAdd = dispatchEvent<
   GuildScheduledEventUser,
   `GUILD_SCHEDULED_EVENT_USER_ADD`
->(`GUILD_SCHEDULED_EVENT_USER_ADD`);
+>(`GUILD_SCHEDULED_EVENT_USER_ADD`, [`GUILD_SCHEDULED_EVENTS`]);

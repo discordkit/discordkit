@@ -11,4 +11,4 @@ import { dispatchEvent } from "../dispatch.js";
 export const onStageInstanceUpdate = dispatchEvent<
   Stage,
   `STAGE_INSTANCE_UPDATE`
->(`STAGE_INSTANCE_UPDATE`);
+>(`STAGE_INSTANCE_UPDATE`, [`GUILDS`]);

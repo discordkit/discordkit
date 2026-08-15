@@ -12,4 +12,4 @@ import type { MessagePollVote } from "./types/MessagePollVote.js";
 export const onMessagePollVoteRemove = dispatchEvent<
   MessagePollVote,
   `MESSAGE_POLL_VOTE_REMOVE`
->(`MESSAGE_POLL_VOTE_REMOVE`);
+>(`MESSAGE_POLL_VOTE_REMOVE`, [`GUILD_MESSAGE_POLLS`, `DIRECT_MESSAGE_POLLS`]);

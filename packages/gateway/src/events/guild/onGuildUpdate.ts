@@ -9,5 +9,6 @@ import { dispatchEvent } from "../dispatch.js";
  * Gated by `GUILDS`.
  */
 export const onGuildUpdate = dispatchEvent<Guild, `GUILD_UPDATE`>(
-  `GUILD_UPDATE`
+  `GUILD_UPDATE`,
+  [`GUILDS`]
 );
