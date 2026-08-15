@@ -109,6 +109,50 @@ the code. **These are the load-bearing facts; if any turns out wrong, the plan c
    → **Target the Cloudflare DO contract because it is a good portable contract.** Record celld
    as insurance to re-verify if self-hosting is ever needed. Do not design _for_ it.
 
+9. **Connection-lifecycle timing cannot be externalised — but application scheduling must be.**
+   Surveyed after the package landed, prompted by a concern that documenting only in-process
+   timers would lead users into scaling problems. The concern is right; the remedy isn't where
+   it first appears:
+   - **Cron cannot drive a heartbeat.** Discord's interval is **~41s**; cron's floor is
+     **one minute** (Inngest, Trigger.dev, Vercel Cron are all cron-expression based —
+     Inngest's only sub-minute concept is _jitter_, 1s–5min, which spreads rather than
+     schedules).
+   - **Durable-execution engines cannot hold a socket.** Temporal, Inngest, Trigger.dev and
+     Vercel Workflow all replay _steps_ deterministically; a live connection can't survive
+     replay or suspension. Temporal's own guidance that long histories "may bog down" and need
+     `Continue-As-New` is that same constraint. Notably **Cloudflare Workflows is itself built
+     on DOs**, so alarms sit _under_ the durable-execution layer rather than beside it.
+   - **The named "heartbeat pattern"** (cron wakes a process, it works, it sleeps) assumes the
+     process is _stateless between wakes_. Here the socket **is** the state.
+     → Keep lifecycle timers in-process behind a `Scheduler` seam (justified by DO-eviction
+     resilience and testability, **not** external scheduling). Ship **no** application-level
+     scheduling helpers, and document the split — a `setTimeout` per session is exactly the
+     in-memory bloat that bites at scale.
+
+10. **`crossws` — the ecosystem's cross-runtime WebSocket layer — does not cover us.** Nitro/UnJS
+    ships it with Node/Bun/Deno/Workers adapters, and Elysia's Node adapter delegates to it
+    entirely. But it abstracts **inbound servers only**; our Gateway socket is an **outbound
+    client**. There is no established abstraction to conform to. Hono's model is the useful
+    precedent instead: nine first-class targets, each with an adapter, and it abstracts the
+    **entry point — not scheduling**. No surveyed framework abstracts timers, because WinterTC
+    already guarantees them everywhere.
+
+11. **Not every "serverless" host can hold a Gateway connection, and the middle tier is a trap.**
+
+    | Host                                             | Connection lifetime                            | Verdict                   |
+    | ------------------------------------------------ | ---------------------------------------------- | ------------------------- |
+    | Cloudflare DO, celld, a container                | unbounded                                      | ✅ real targets           |
+    | Vercel Fluid Services                            | capped by `maxDuration` — **800s**, 1800s beta | ⚠️ cycles every 13–30 min |
+    | Vercel Functions, Inngest, Trigger.dev, Temporal | invocation-scoped / replay                     | ❌ cannot hold a socket   |
+
+    Vercel Fluid **does** keep WebSockets open (a real change from invocation-scoped Functions),
+    but the cap forces a reconnect every 13–30 minutes forever. Each cycle is likely a fresh
+    `IDENTIFY` rather than a `RESUME`, against a budget of **1000 session starts/day** — the
+    whole budget spent on staying connected, with dropped events in each gap. Vercel's guidance
+    also says to keep state out of memory (offload to Redis), the inverse of the DO model.
+    ⚠️ Assessed from documentation, **not** a running spike; outbound-specific persistence is
+    undocumented either way.
+
 ## 3. Architecture (the central decision)
 
 **Consumption mirrors `@discordkit/native`. Schemas and JSDoc mirror `@discordkit/client`.**

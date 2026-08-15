@@ -13,6 +13,7 @@ import type {
   InspectorStatus,
   ServerMessage
 } from "../shared/protocol.js";
+import { alarmScheduler } from "./alarmScheduler.js";
 
 export interface Env {
   INSPECTOR: DurableObjectNamespace<GatewayInspector>;
@@ -56,6 +57,18 @@ export class GatewayInspector extends DurableObject<Env> {
   #nextId = 1;
   #intents: readonly GatewayIntentName[] = [];
   #connectedAt: number | null = null;
+  /**
+   * Connection timers run on Durable Object alarms rather than `setTimeout`.
+   * A DO's JS timers die with its isolate, so an evicted object would stop
+   * heartbeating and silently lose the Discord session; an alarm survives
+   * eviction and wakes the object back up.
+   */
+  #scheduler = alarmScheduler(this.ctx);
+
+  /** Drives every connection timer that has come due. */
+  override async alarm(): Promise<void> {
+    await this.#scheduler.onAlarm();
+  }
 
   override fetch(request: Request): Response {
     if (request.headers.get(`Upgrade`) !== `websocket`) {
@@ -123,6 +136,7 @@ export class GatewayInspector extends DurableObject<Env> {
     const connection = createConnection({
       token,
       intents,
+      scheduler: this.#scheduler,
       ...(this.env.GATEWAY_URL === undefined
         ? {}
         : { url: this.env.GATEWAY_URL })

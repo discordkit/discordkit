@@ -5,6 +5,7 @@ import { GatewayOpcode } from "./types/GatewayOpcode.js";
 import type { GatewayPayload } from "./types/GatewayPayload.js";
 import type { GatewayIntentName } from "./types/GatewayIntents.js";
 import { intents as toIntentMask } from "./types/GatewayIntents.js";
+import { globalScheduler, type Scheduler } from "./scheduler.js";
 import { toSubscription, type Subscription } from "./subscription.js";
 
 /** The Gateway API version this client speaks. */
@@ -44,6 +45,17 @@ export interface ConnectionConfig {
     browser?: string;
     device?: string;
   };
+  /**
+   * How connection-lifecycle timers are scheduled. Defaults to the platform's
+   * global timers, which is correct on every runtime that can host a Gateway
+   * connection.
+   *
+   * Override it only when the host can schedule more durably than an in-memory
+   * timer — a Cloudflare Durable Object loses its JS timers on eviction, so an
+   * alarm-backed scheduler keeps the heartbeat alive across one. Also useful
+   * for driving timing deterministically in tests.
+   */
+  scheduler?: Scheduler;
 }
 
 /** A dispatch event as delivered to subscribers: its name plus its `d` payload. */
@@ -107,16 +119,19 @@ export const createConnection = (
   let resumeUrl: string | null = null;
   /** Last sequence number seen; sent when heartbeating and resuming. */
   let sequence: number | null = null;
-  let heartbeatTimer: ReturnType<typeof setInterval> | null = null;
-  let ackTimer: ReturnType<typeof setTimeout> | null = null;
-  let jitterTimer: ReturnType<typeof setTimeout> | null = null;
-  let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+  // Timer handles are opaque: the scheduler may back them with global timers,
+  // Durable Object alarms, or a fake clock in tests.
+  let heartbeatTimer: unknown = null;
+  let ackTimer: unknown = null;
+  let reconnectTimer: unknown = null;
   let heartbeatInterval = 0;
   let awaitingAck = false;
   /** Consecutive failed attempts, used for exponential backoff. */
   let attempts = 0;
   /** Set by `close()` so an intentional shutdown doesn't reconnect. */
   let stopped = false;
+
+  const scheduler = config.scheduler ?? globalScheduler;
 
   const setState = (next: ConnectionState): void => {
     if (state === next) return;
@@ -125,12 +140,10 @@ export const createConnection = (
   };
 
   const clearTimers = (): void => {
-    if (heartbeatTimer !== null) clearInterval(heartbeatTimer);
-    if (ackTimer !== null) clearTimeout(ackTimer);
-    if (jitterTimer !== null) clearTimeout(jitterTimer);
+    if (heartbeatTimer !== null) scheduler.clearTimeout(heartbeatTimer);
+    if (ackTimer !== null) scheduler.clearTimeout(ackTimer);
     heartbeatTimer = null;
     ackTimer = null;
-    jitterTimer = null;
     awaitingAck = false;
   };
 
@@ -154,21 +167,29 @@ export const createConnection = (
     }
     awaitingAck = true;
     send({ op: GatewayOpcode.HEARTBEAT, d: sequence });
-    ackTimer = setTimeout(() => {
+    ackTimer = scheduler.setTimeout(() => {
       if (!awaitingAck) return;
       socket?.close(4000, `Heartbeat ACK timed out`);
     }, heartbeatInterval * ACK_TIMEOUT_FACTOR);
+
+    // Re-arm from inside the callback rather than using a repeating timer.
+    // `setInterval` would queue overlapping runs if a tick outlasts its own
+    // interval, and a one-shot chain is the only shape a Durable Object alarm
+    // (a single slot, re-armed on each fire) can express.
+    heartbeatTimer = scheduler.setTimeout(sendHeartbeat, heartbeatInterval);
   };
 
   const startHeartbeat = (interval: number): void => {
     heartbeatInterval = interval;
     // The first heartbeat is delayed by `interval * random()`. Discord asks for
     // this explicitly so that every bot reconnecting after one of their deploys
-    // doesn't heartbeat in lockstep and stampede the gateway.
-    jitterTimer = setTimeout(() => {
-      sendHeartbeat();
-      heartbeatTimer = setInterval(sendHeartbeat, interval);
-    }, interval * Math.random());
+    // doesn't heartbeat in lockstep and stampede the gateway. The same handle
+    // is reused for the jitter delay and the steady-state beats, since only one
+    // heartbeat is ever pending.
+    heartbeatTimer = scheduler.setTimeout(
+      sendHeartbeat,
+      interval * Math.random()
+    );
   };
 
   const identify = (): void => {
@@ -205,7 +226,7 @@ export const createConnection = (
     if (stopped) return;
     const delay = Math.min(BACKOFF_MIN * 2 ** attempts, BACKOFF_MAX);
     attempts++;
-    reconnectTimer = setTimeout(() => {
+    reconnectTimer = scheduler.setTimeout(() => {
       open();
     }, delay);
   };
@@ -276,7 +297,7 @@ export const createConnection = (
         break;
       case GatewayOpcode.HEARTBEAT_ACK:
         awaitingAck = false;
-        if (ackTimer !== null) clearTimeout(ackTimer);
+        if (ackTimer !== null) scheduler.clearTimeout(ackTimer);
         ackTimer = null;
         break;
       case GatewayOpcode.RECONNECT:
@@ -379,7 +400,7 @@ export const createConnection = (
     },
     close: (): void => {
       stopped = true;
-      if (reconnectTimer !== null) clearTimeout(reconnectTimer);
+      if (reconnectTimer !== null) scheduler.clearTimeout(reconnectTimer);
       reconnectTimer = null;
       clearTimers();
       // 1000 tells Discord this is intentional, invalidating the session so it

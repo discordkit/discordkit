@@ -125,6 +125,52 @@ Three intents are **privileged** and must be enabled in the Developer Portal (an
 
 Requesting a privileged intent you haven't been granted closes the connection with `4014`, which is fatal — the client stops rather than reconnecting, because retrying would fail identically forever and burn the daily session start limit.
 
+## Scheduling: two timescales, two mechanisms
+
+This is the distinction most likely to bite you at scale, so it's worth being explicit about.
+
+**Connection-lifecycle timing is in-process, and has to be.** The heartbeat (~41s), its ACK timeout, the identify jitter, and reconnect backoff all run on timers inside the process holding the socket. That isn't a shortcut — it's forced:
+
+- **Cron's floor is one minute.** Inngest, Trigger.dev, and Vercel Cron are all cron-expression based; none schedule sub-minute. A 41-second heartbeat is simply not expressible.
+- **Durable execution engines can't hold a socket.** Temporal, Inngest, Trigger.dev, and Vercel Workflow all work by deterministic replay of _steps_. A live connection cannot survive being replayed or suspended, which is why none of them document doing it.
+- **The "heartbeat pattern" you'll read about is a different thing.** Cron waking a process to do work and sleep again assumes the process is _stateless between wakes_. Here the socket **is** the state.
+
+**Application scheduling belongs on your platform, not in this library.** Session cleanup, leaderboard rollups, scheduled posts, digest jobs, supervision after an outage — anything on the minutes-to-months timescale — should run on cron or a durable-execution platform. This package deliberately ships no helpers for it: a `setTimeout` per quiz session or per pending cleanup is exactly the in-memory bloat that bites once you have more than a handful, and it dies with the process.
+
+| Timescale                            | Examples                                          | Mechanism                                          |
+| ------------------------------------ | ------------------------------------------------- | -------------------------------------------------- |
+| Sub-minute, connection lifecycle     | heartbeat, ACK timeout, jitter, reconnect backoff | in-process timers (this package)                   |
+| Minutes to months, application logic | cleanup, rollups, scheduled posts, retries        | cron / Inngest / Trigger.dev / Temporal / Workflow |
+
+### Customising connection timers
+
+The `Scheduler` seam exists for hosts that can schedule **more durably** than an in-memory timer — not to move heartbeats off-process, which isn't possible.
+
+```ts
+export interface Scheduler {
+  setTimeout: (callback: () => void, ms: number) => unknown;
+  clearTimeout: (handle: unknown) => void;
+}
+```
+
+The default uses the platform's global timers, which [WinterTC's Minimum Common API](https://wintertc.org/) guarantees on every runtime that can host a Gateway connection. **Most consumers never touch this.**
+
+The motivating override is a Cloudflare Durable Object: a DO loses its JS timers on eviction, so a `setTimeout`-driven heartbeat silently stops and the session dies. A DO alarm survives eviction and wakes the object back up. [`examples/with-cloudflare`](../../examples/with-cloudflare) implements that in ~40 lines — including the bit that isn't obvious, multiplexing several pending timers onto a DO's single, non-repeating alarm slot.
+
+It's also what makes timing testable: a fake scheduler drives heartbeat and backoff behaviour without waiting in real time.
+
+## Where a Gateway connection can actually live
+
+Not every "serverless" host can hold one, and the differences are sharper than they look:
+
+| Host                                                             | Connection lifetime                            | Verdict                                                  |
+| ---------------------------------------------------------------- | ---------------------------------------------- | -------------------------------------------------------- |
+| Cloudflare Durable Objects, celld, a container (Railway/Fly/VPS) | unbounded                                      | ✅ the real targets                                      |
+| Vercel Fluid Services                                            | bounded by `maxDuration` — 800s, 1800s in beta | ⚠️ works, but cycles every 13–30 min                     |
+| Vercel Functions, Inngest, Trigger.dev, Temporal                 | invocation-scoped or replay-based              | ❌ can't hold a socket — ideal for the work _around_ one |
+
+The middle row is the trap. Vercel Fluid genuinely keeps WebSockets open, but every connection is capped by `maxDuration`, so a Gateway session gets cycled every 13–30 minutes forever. Each cycle likely means a fresh `IDENTIFY` rather than a `RESUME`, and Discord allows **1000 session starts per day** — that's your whole budget spent on merely staying connected, before any real reconnect, deploy, or Discord-side outage. Events drop in each gap too.
+
 ## Connection lifecycle
 
 The client implements the full documented lifecycle:
