@@ -8,6 +8,30 @@ import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
+  // Resolve the workspace packages to their TS source rather than built dist,
+  // matching the root vite config and `with-waku`. Without it the Worker
+  // environment resolves `@discordkit/gateway` through the `import` condition
+  // to `dist/index.mjs`, which the Cloudflare plugin's module runner can't
+  // serve from outside the example's root — a 500 on every request with
+  // "Failed to load url …/dist/index.mjs. Does the file exist?" even though it
+  // does. It also means editing the gateway package is picked up immediately,
+  // with no rebuild.
+  //
+  // This has to be declared per-environment, not just at the root: the
+  // Cloudflare plugin defines its own Worker environment, and that environment's
+  // resolve config does not inherit the root `conditions`. Setting only the root
+  // fixes the client while the Worker keeps resolving to dist — which fails
+  // *silently* on a WebSocket upgrade, since a module-load error has no HTTP
+  // response to render and workerd just drops the connection.
+  // `worker` is not the plugin's default environment name — it derives one from
+  // the wrangler `name` (hyphens to underscores). We pin it via
+  // `viteEnvironment.name` below so this key stays stable if the Worker is
+  // renamed.
+  resolve: { conditions: [`@discordkit/source`] },
+  environments: {
+    client: { resolve: { conditions: [`@discordkit/source`] } },
+    worker: { resolve: { conditions: [`@discordkit/source`] } }
+  },
   run: {
     tasks: {
       // `vite dev` through the Cloudflare plugin runs the Worker and the
@@ -47,7 +71,16 @@ export default defineConfig({
       ? [
           // Serves the SPA and runs the Worker + DO in workerd during dev, so
           // local development exercises the same runtime as production.
-          cloudflare({ configPath: `./wrangler.jsonc` })
+          // `viteEnvironment.name` pins the Worker's Vite environment to
+          // `worker`. Without it the plugin derives the name from the wrangler
+          // `name` field (`discordkit-gateway-inspector` →
+          // `discordkit_gateway_inspector`), which would silently detach the
+          // `environments.worker` resolve config above if the Worker is ever
+          // renamed.
+          cloudflare({
+            configPath: `./wrangler.jsonc`,
+            viteEnvironment: { name: `worker` }
+          })
         ]
       : [
           // Vitest 4 moved the Workers pool from `test.poolOptions.workers` to

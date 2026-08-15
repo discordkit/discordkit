@@ -121,5 +121,8 @@ cypress/e2e/build
 # Cloudflare Vite plugin build output
 examples/with-cloudflare/dist/
 
-# Local secrets for the Cloudflare example (schema is committed, values are not)
+# Local secrets for the Cloudflare example (schema is committed, values are not).
+# `.dev.vars` is Cloudflare's own mechanism for local Worker bindings and holds
+# secrets the same way `.env` does — it must never be committed.
 examples/with-cloudflare/.env
+examples/with-cloudflare/.dev.vars

@@ -51,10 +51,17 @@ export const ConnectionBar = ({
   };
 
   return (
-    <section className="border-b border-slate-800 bg-slate-900/60 p-4">
+    // `shrink-0` so the bar keeps its natural height inside the flex column
+    // rather than being squeezed, and the chip list below is capped + scrollable
+    // so 21 intents wrapping on a narrow viewport can't starve the event panes.
+    <section className="shrink-0 border-b border-slate-800 bg-slate-900/60 p-4">
       <div className="flex flex-wrap items-end gap-3">
         <TextField
-          className="flex min-w-64 flex-1 flex-col gap-1"
+          // `min-w-0` rather than `min-w-64`: combined with `flex-1` the old
+          // floor meant the field absorbed all remaining width and pushed the
+          // Connect button flush against (and past) the viewport edge. It can
+          // now shrink, and `basis-64` keeps a sensible default width.
+          className="flex min-w-0 flex-1 basis-64 flex-col gap-1"
           value={token}
           onChange={setToken}
           type="password"
@@ -71,7 +78,7 @@ export const ConnectionBar = ({
 
         {connected ? (
           <Button
-            className="flex items-center gap-2 rounded bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-500 pressed:bg-rose-700"
+            className="flex shrink-0 items-center gap-2 rounded bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-500 pressed:bg-rose-700"
             onPress={onDisconnect}
           >
             <PlugZap size={16} aria-hidden />
@@ -79,7 +86,7 @@ export const ConnectionBar = ({
           </Button>
         ) : (
           <Button
-            className="flex items-center gap-2 rounded bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500 disabled:opacity-40 pressed:bg-indigo-700"
+            className="flex shrink-0 items-center gap-2 rounded bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500 disabled:opacity-40 pressed:bg-indigo-700"
             isDisabled={!online || token.trim() === ``}
             onPress={() => {
               onConnect(token, intents);
@@ -91,7 +98,7 @@ export const ConnectionBar = ({
         )}
       </div>
 
-      <div className="mt-3 flex flex-wrap gap-1.5">
+      <div className="mt-3 flex max-h-24 flex-wrap gap-1.5 overflow-y-auto">
         {ALL_INTENTS.map((intent) => {
           const selected = intents.includes(intent);
           const privileged = PRIVILEGED.has(intent);

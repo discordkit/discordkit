@@ -4,11 +4,8 @@ import * as v from "valibot";
 import { partialSchema, schema } from "@discordkit/core/validations/schema";
 import { snowflake } from "@discordkit/core/validations/snowflake";
 import { type Emoji, emojiSchema } from "@discordkit/client/emoji/types/Emoji";
-import {
-  type Member,
-  memberSchema
-} from "@discordkit/client/guild/types/Member";
-import { reactionTypeSchema, type ReactionType } from "./ReactionType.js";
+import { memberSchema } from "@discordkit/client/guild/types/Member";
+import { reactionTypeSchema } from "./ReactionType.js";
 
 /**
  * Reaction events carry a **partial** emoji — the docs say only `id`, `name`,

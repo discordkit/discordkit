@@ -7,7 +7,6 @@ import { timestamp } from "@discordkit/core/validations/timestamp";
 import { memberSchema } from "@discordkit/client/guild/types/Member";
 import { userSchema } from "@discordkit/client/user/types/User";
 import type { Member } from "@discordkit/client/guild/types/Member";
-import type { User } from "@discordkit/client/user/types/User";
 
 /**
  * `GUILD_MEMBER_ADD` — a guild member plus the guild it joined.

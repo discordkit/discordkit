@@ -32,7 +32,7 @@ export const EventList = ({
       : events.filter((event) => event.type.includes(normalized));
 
   return (
-    <div className="flex min-h-0 flex-col border-r border-slate-800">
+    <div className="flex min-h-0 min-w-0 flex-col border-r border-slate-800">
       <div className="flex items-center gap-2 border-b border-slate-800 p-2">
         <input
           value={filter}
@@ -59,7 +59,11 @@ export const EventList = ({
           const [first] = [...(keys as Set<Key>)];
           if (typeof first === `number`) onSelect(first);
         }}
-        className="min-h-0 flex-1 overflow-y-auto"
+        // `min-w-0` lets the list shrink below its content so rows truncate
+        // rather than widening the column. Scrolls on both axes rather than
+        // clipping: `overflow-x-hidden` would hide content with no way to
+        // reach it.
+        className="min-h-0 min-w-0 flex-1 overflow-auto"
         renderEmptyState={() => (
           <p className="p-4 text-xs text-slate-600">
             {events.length === 0
@@ -73,7 +77,7 @@ export const EventList = ({
             key={event.id}
             id={event.id}
             textValue={event.type}
-            className="flex cursor-pointer items-center gap-2 border-b border-slate-800/50 px-3 py-1.5 text-xs outline-none selected:bg-indigo-500/15 hover:bg-slate-800/40 focus-visible:bg-slate-800/60"
+            className="flex min-w-0 cursor-pointer items-center gap-2 border-b border-slate-800/50 px-3 py-1.5 text-xs outline-none selected:bg-indigo-500/15 hover:bg-slate-800/40 focus-visible:bg-slate-800/60"
           >
             {event.warnings.length > 0 ? (
               <AlertTriangle

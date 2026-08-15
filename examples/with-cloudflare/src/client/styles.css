@@ -10,3 +10,22 @@
 :root {
   color-scheme: dark;
 }
+
+/* Give the app shell a real height to fill.
+   Sizing it with a viewport unit on a nested div (`h-dvh`) left a gap below the
+   UI whenever the resolved unit disagreed with the actual viewport — and a hard
+   `h-dvh` also caps the shell, so overflowing content clips instead of
+   scrolling. Anchoring to html/body means the shell inherits the true layout
+   height and `h-full` just works. */
+html,
+body,
+#root {
+  height: 100%;
+}
+
+/* The shell manages its own internal scrolling regions, so the page itself
+   should never scroll horizontally — that only ever happens when something has
+   escaped its container, and a scrollbar hides the bug rather than fixing it. */
+body {
+  overflow-x: hidden;
+}
