@@ -1,15 +1,15 @@
 import { describe, it, expect } from "vite-plus/test";
 import { EVENT_INTENTS } from "../../types/GatewayIntents.js";
-import { onChannelCreate } from "../onChannelCreate.js";
-import { onGuildAuditLogEntryCreate } from "../onGuildAuditLogEntryCreate.js";
-import { onGuildDelete } from "../onGuildDelete.js";
-import { onGuildUpdate } from "../onGuildUpdate.js";
-import { onIntegrationCreate } from "../onIntegrationCreate.js";
-import { onIntegrationUpdate } from "../onIntegrationUpdate.js";
-import { onMessageUpdate } from "../onMessageUpdate.js";
-import { onThreadDelete } from "../onThreadDelete.js";
-import { onThreadMemberUpdate } from "../onThreadMemberUpdate.js";
-import { onUserUpdate } from "../onUserUpdate.js";
+import { onChannelCreate } from "../channel/onChannelCreate.js";
+import { onGuildAuditLogEntryCreate } from "../guild/onGuildAuditLogEntryCreate.js";
+import { onGuildDelete } from "../guild/onGuildDelete.js";
+import { onGuildUpdate } from "../guild/onGuildUpdate.js";
+import { onIntegrationCreate } from "../integrations/onIntegrationCreate.js";
+import { onIntegrationUpdate } from "../integrations/onIntegrationUpdate.js";
+import { onMessageUpdate } from "../messages/onMessageUpdate.js";
+import { onThreadDelete } from "../channel/onThreadDelete.js";
+import { onThreadMemberUpdate } from "../channel/onThreadMemberUpdate.js";
+import { onUserUpdate } from "../presence/onUserUpdate.js";
 
 /**
  * Most of this batch was generated from the cached docs, so these specs guard

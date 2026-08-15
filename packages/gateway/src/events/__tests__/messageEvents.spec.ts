@@ -1,17 +1,17 @@
 import { describe, it, expect } from "vite-plus/test";
 import * as v from "valibot";
-import { onMessageDelete } from "../onMessageDelete.js";
-import { onMessageDeleteBulk } from "../onMessageDeleteBulk.js";
-import { onMessagePollVoteAdd } from "../onMessagePollVoteAdd.js";
-import { onMessageReactionAdd } from "../onMessageReactionAdd.js";
-import { onMessageReactionRemove } from "../onMessageReactionRemove.js";
-import { messageDeleteSchema } from "../types/MessageDelete.js";
-import { messagePollVoteSchema } from "../types/MessagePollVote.js";
+import { onMessageDelete } from "../messages/onMessageDelete.js";
+import { onMessageDeleteBulk } from "../messages/onMessageDeleteBulk.js";
+import { onMessagePollVoteAdd } from "../poll/onMessagePollVoteAdd.js";
+import { onMessageReactionAdd } from "../messages/onMessageReactionAdd.js";
+import { onMessageReactionRemove } from "../messages/onMessageReactionRemove.js";
+import { messageDeleteSchema } from "../messages/types/MessageDelete.js";
+import { messagePollVoteSchema } from "../poll/types/MessagePollVote.js";
 import {
   messageReactionAddSchema,
   messageReactionRemoveSchema
-} from "../types/MessageReaction.js";
-import { ReactionType } from "../types/ReactionType.js";
+} from "../messages/types/MessageReaction.js";
+import { ReactionType } from "../messages/types/ReactionType.js";
 
 /**
  * Unlike the alias events, these payloads are hand-written from the docs' field

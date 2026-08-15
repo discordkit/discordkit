@@ -3,11 +3,11 @@ import * as v from "valibot";
 import type { DispatchEvent, GatewayConnection } from "../../connection.js";
 import { toSubscription, type Subscription } from "../../subscription.js";
 import { dispatchEvent, intentsFor } from "../dispatch.js";
-import { onGuildCreate } from "../onGuildCreate.js";
-import { onInteractionCreate } from "../onInteractionCreate.js";
-import { onMessageCreate } from "../onMessageCreate.js";
-import { onReady } from "../onReady.js";
-import { messageCreateSchema } from "../types/MessageCreate.js";
+import { onGuildCreate } from "../guild/onGuildCreate.js";
+import { onInteractionCreate } from "../interactions/onInteractionCreate.js";
+import { onMessageCreate } from "../messages/onMessageCreate.js";
+import { onReady } from "../lifecycle/onReady.js";
+import { messageCreateSchema } from "../messages/types/MessageCreate.js";
 
 /**
  * A minimal fake connection. The real socket lifecycle is covered by
