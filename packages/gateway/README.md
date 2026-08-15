@@ -4,7 +4,7 @@ A tree-shakeable Discord **Gateway** (WebSocket) client for Cloudflare Workers, 
 
 The Gateway is how a Discord app receives real-time events — messages, interactions, guild updates — as they happen. HTTP Interactions can deliver component and command callbacks, but only a Gateway connection can see ordinary channel messages, which is what makes "watch the channel and react" bots possible.
 
-> **Status: v0.** Connection lifecycle, dispatch subscription, and **32 typed events** are implemented and tested — every event Discord documents as a direct alias over a REST resource, plus the lifecycle-critical ones. The remaining ~52 have bespoke payloads that each need a hand-written schema, and land in reviewed batches. Until then, `connection.onDispatch` gives you every event by wire name.
+> **Status: v0.** Connection lifecycle, dispatch subscription, and **40 typed events** are implemented and tested — every event Discord documents as a direct alias over a REST resource, the lifecycle-critical ones, and the message/reaction/poll family. The remaining ~44 have bespoke payloads that each need a hand-written schema, and land in reviewed batches. Until then, `connection.onDispatch` gives you every event by wire name.
 
 ## Installation
 
