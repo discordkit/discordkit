@@ -1,8 +1,4 @@
-import {
-  createConnection,
-  type ConnectionConfig,
-  type GatewayConnection
-} from "./connection.js";
+import { GatewayConnection, type ConnectionConfig } from "./connection.js";
 
 /**
  * The ambient singleton connection. Mirrors `@discordkit/native`'s ambient
@@ -45,7 +41,7 @@ export const useConnection = (): GatewayConnection => {
       `No ambient Gateway connection has been configured. Call configure({ token, intents }) before subscribing, or pass an explicit { connection } to this subscription.`
     );
   }
-  ambient = createConnection(storedConfig);
+  ambient = new GatewayConnection(storedConfig);
   return ambient;
 };
 

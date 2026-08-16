@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vite-plus/test";
 import * as v from "valibot";
 import { resolveIntents } from "../../connection.js";
-import type { DispatchEvent, GatewayConnection } from "../../connection.js";
+import type { ConnectionLike, DispatchEvent } from "../../connection.js";
 import { toSubscription, type Subscription } from "../../subscription.js";
 import { dispatchEvent, intentsFor } from "../dispatch.js";
 import { onGuildCreate } from "../guild/onGuildCreate.js";
@@ -15,7 +15,7 @@ import { messageCreateSchema } from "../messages/types/MessageCreate.js";
  * `connection.spec.ts` against MSW; here we only need to drive `onDispatch`,
  * so a stub keeps these tests about routing rather than about the transport.
  */
-const fakeConnection = (): GatewayConnection & {
+const fakeConnection = (): ConnectionLike & {
   emit: (event: DispatchEvent) => void;
   dispatchSubscriptions: () => number;
 } => {
@@ -196,7 +196,7 @@ describe(`event intent metadata`, () => {
 
 describe(`resolveIntents`, () => {
   it(`accepts handlers directly, so the mask can't drift`, () => {
-    // The ergonomic win: `createConnection({ intents: [onMessageCreate] })`
+    // The ergonomic win: `new GatewayConnection({ intents: [onMessageCreate] })`
     // derives the mask from what the bot actually consumes, rather than a
     // hand-maintained list that silently rots as handlers change.
     expect(resolveIntents([onMessageCreate, onGuildCreate])).toEqual([

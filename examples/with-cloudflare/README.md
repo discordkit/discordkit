@@ -29,7 +29,7 @@ flowchart LR
 The DO passes an **explicit** `connection` to each subscription rather than using the package's ambient singleton — module globals are per-isolate, so ambient state is the wrong shape here. It's also where the handlers declare the intents:
 
 ```ts
-const connection = createConnection({
+const connection = new GatewayConnection({
   token,
   intents: intentsFor(onMessageCreate)
 });

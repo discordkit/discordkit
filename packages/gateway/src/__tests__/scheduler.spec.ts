@@ -5,7 +5,7 @@
 import { describe, it, expect, vi } from "vite-plus/test";
 import { ws } from "msw";
 import { setupServer } from "msw/node";
-import { createConnection } from "../connection.js";
+import { GatewayConnection } from "../connection.js";
 import { globalScheduler, type Scheduler } from "../scheduler.js";
 import { GatewayOpcode } from "../types/GatewayOpcode.js";
 
@@ -79,7 +79,7 @@ describe(`globalScheduler`, () => {
   });
 });
 
-describe(`createConnection with a custom scheduler`, () => {
+describe(`GatewayConnection with a custom scheduler`, () => {
   it(`routes heartbeat timing through the injected scheduler`, async () => {
     const scheduler = fakeScheduler();
     const server = setupServer(
@@ -89,7 +89,7 @@ describe(`createConnection with a custom scheduler`, () => {
     );
     server.listen({ onUnhandledRequest: `error` });
 
-    const connection = createConnection({
+    const connection = new GatewayConnection({
       token: `t`,
       intents: [`GUILDS`],
       scheduler
@@ -116,7 +116,7 @@ describe(`createConnection with a custom scheduler`, () => {
     );
     server.listen({ onUnhandledRequest: `error` });
 
-    const connection = createConnection({
+    const connection = new GatewayConnection({
       token: `t`,
       intents: [`GUILDS`],
       scheduler
@@ -147,7 +147,7 @@ describe(`createConnection with a custom scheduler`, () => {
     );
     server.listen({ onUnhandledRequest: `error` });
 
-    const connection = createConnection({
+    const connection = new GatewayConnection({
       token: `t`,
       intents: [`GUILDS`],
       scheduler
@@ -173,7 +173,10 @@ describe(`createConnection with a custom scheduler`, () => {
     // The seam must stay invisible to the overwhelming majority of consumers:
     // WinterTC guarantees these timers on every runtime that can host a
     // Gateway connection.
-    const connection = createConnection({ token: `t`, intents: [`GUILDS`] });
+    const connection = new GatewayConnection({
+      token: `t`,
+      intents: [`GUILDS`]
+    });
     expect(connection.state).toBe(`idle`);
   });
 });

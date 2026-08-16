@@ -47,13 +47,20 @@ Importing this package never opens a connection. Nothing dials Discord until you
 In a Durable Object, skip the ambient singleton — module globals are per-isolate, so each instance should own its socket:
 
 ```ts
-import { createConnection } from "@discordkit/gateway";
+import { GatewayConnection } from "@discordkit/gateway";
 
-const connection = createConnection({ token, intents: [`GUILDS`] });
+const connection = new GatewayConnection({ token, intents: [`GUILDS`] });
 connection.connect();
 ```
 
 Every subscription accepts `{ connection }` to target a specific instance.
+
+A connection is disposable, so it can be scoped to a block and cleaned up even if that block throws — the socket closes, timers are cleared, and no reconnect is scheduled:
+
+```ts
+using connection = new GatewayConnection({ token, intents: [`GUILDS`] });
+connection.connect();
+```
 
 ### Subscribing to events
 

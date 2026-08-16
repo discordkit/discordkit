@@ -1,7 +1,8 @@
 import { describe, it, expect, afterEach, vi } from "vite-plus/test";
 import { ws } from "msw";
 import { setupServer } from "msw/node";
-import { createConnection, type GatewayConnection } from "../connection.js";
+import { GatewayConnection, backoffDelay, closeAction } from "../connection.js";
+import { GatewayCloseCode } from "../types/GatewayCloseCode.js";
 import { GatewayOpcode } from "../types/GatewayOpcode.js";
 
 /**
@@ -153,7 +154,7 @@ const ready = (sessionId = `session-abc`): string =>
 let harness: Harness | null = null;
 let connection: GatewayConnection | null = null;
 
-describe(`createConnection`, () => {
+describe(`GatewayConnection`, () => {
   afterEach(() => {
     connection?.close();
     connection = null;
@@ -167,7 +168,7 @@ describe(`createConnection`, () => {
       ctx.client.send(hello());
     });
 
-    connection = createConnection({
+    connection = new GatewayConnection({
       token: `test-token`,
       intents: [`GUILDS`, `GUILD_MESSAGES`]
     });
@@ -190,7 +191,7 @@ describe(`createConnection`, () => {
       });
     });
 
-    connection = createConnection({
+    connection = new GatewayConnection({
       token: `test-token`,
       intents: [`GUILDS`]
     });
@@ -215,7 +216,10 @@ describe(`createConnection`, () => {
       });
     });
 
-    connection = createConnection({ token: `t`, intents: [`GUILD_MESSAGES`] });
+    connection = new GatewayConnection({
+      token: `t`,
+      intents: [`GUILD_MESSAGES`]
+    });
     connection.connect();
     await vi.waitFor(() => {
       expect(connection?.state).toBe(`ready`);
@@ -254,7 +258,10 @@ describe(`createConnection`, () => {
       });
     });
 
-    connection = createConnection({ token: `t`, intents: [`GUILD_MESSAGES`] });
+    connection = new GatewayConnection({
+      token: `t`,
+      intents: [`GUILD_MESSAGES`]
+    });
     connection.connect();
     await vi.waitFor(() => {
       expect(connection?.state).toBe(`ready`);
@@ -307,7 +314,7 @@ describe(`createConnection`, () => {
       });
     });
 
-    connection = createConnection({ token: `t`, intents: [`GUILDS`] });
+    connection = new GatewayConnection({ token: `t`, intents: [`GUILDS`] });
     connection.connect();
     await vi.waitFor(() => {
       expect(connection?.state).toBe(`ready`);
@@ -339,7 +346,7 @@ describe(`createConnection`, () => {
       }
     });
 
-    connection = createConnection({ token: `t`, intents: [`GUILDS`] });
+    connection = new GatewayConnection({ token: `t`, intents: [`GUILDS`] });
     connection.connect();
 
     // The second connection is the reconnect.
@@ -359,7 +366,7 @@ describe(`createConnection`, () => {
       ctx.client.close(4014, `Disallowed intent(s)`);
     });
 
-    connection = createConnection({
+    connection = new GatewayConnection({
       token: `t`,
       intents: [`MESSAGE_CONTENT`]
     });
@@ -375,11 +382,127 @@ describe(`createConnection`, () => {
   });
 
   it(`refuses to send before the socket is open`, () => {
-    connection = createConnection({ token: `t`, intents: [`GUILDS`] });
+    connection = new GatewayConnection({ token: `t`, intents: [`GUILDS`] });
     // Sending into a dead socket would throw an opaque DOM error; the message
     // should say what to do instead.
     expect(() =>
       connection?.send({ op: GatewayOpcode.HEARTBEAT, d: null })
     ).toThrow(/connect\(\)/);
+  });
+
+  it(`closes the socket when a \`using\` scope exits`, async () => {
+    harness = withGateway((ctx) => {
+      ctx.client.send(hello());
+      afterFrame(ctx.capture, GatewayOpcode.IDENTIFY, () => {
+        ctx.client.send(ready(`session-disposed`));
+      });
+    });
+
+    // The point of Disposable: a connection scoped to a block must not outlive
+    // it. Without dispose the socket stays open and the heartbeat keeps firing
+    // after the code that owned it is gone — a leak that only shows up as a
+    // stuck session much later.
+    let observed: GatewayConnection | null = null;
+    {
+      using scoped = new GatewayConnection({
+        token: `t`,
+        intents: [`GUILDS`]
+      });
+      observed = scoped;
+      scoped.connect();
+      await vi.waitFor(() => {
+        expect(scoped.state).toBe(`ready`);
+      });
+    }
+
+    expect(observed.state).toBe(`closed`);
+  });
+
+  it(`stops reconnecting after being disposed`, async () => {
+    harness = withGateway((ctx) => {
+      // An unclean close would normally schedule a reconnect.
+      ctx.client.close(4000, `Unknown error`);
+    });
+
+    {
+      using scoped = new GatewayConnection({
+        token: `t`,
+        intents: [`GUILDS`]
+      });
+      scoped.connect();
+      await vi.waitFor(() => {
+        expect(harness?.count).toBe(1);
+      });
+    }
+
+    // Dispose must cancel the pending reconnect, not merely close the socket —
+    // otherwise the connection resurrects itself after the scope that owned it
+    // has exited. Wait past the 1s minimum backoff.
+    await new Promise((resolve) => setTimeout(resolve, 1200));
+    expect(harness.count).toBe(1);
+  });
+});
+
+describe(`backoffDelay`, () => {
+  it(`grows exponentially and then caps`, () => {
+    // Exact values, because the growth curve is the contract: too shallow and
+    // a reconnect storm hammers Discord during an outage, too steep and a bot
+    // sits idle for minutes after a blip.
+    expect(backoffDelay(0)).toBe(1_000);
+    expect(backoffDelay(1)).toBe(2_000);
+    expect(backoffDelay(4)).toBe(16_000);
+    // Capped, so a long outage settles into steady retries rather than
+    // backing off toward hours.
+    expect(backoffDelay(5)).toBe(30_000);
+    expect(backoffDelay(50)).toBe(30_000);
+  });
+});
+
+describe(`closeAction`, () => {
+  it(`keeps the session across an unclean drop so it can resume`, () => {
+    // The whole point of resuming: a dropped socket replays missed events and
+    // costs no session start. Discarding here would silently downgrade every
+    // network blip into a fresh IDENTIFY.
+    expect(closeAction(4000)).toEqual({
+      reconnect: true,
+      discardSession: false
+    });
+  });
+
+  it(`discards the session on a clean close`, () => {
+    // 1000/1001 mean the session is gone server-side; resuming against it
+    // would be rejected, so the next connection must IDENTIFY.
+    expect(closeAction(1000)).toEqual({
+      reconnect: true,
+      discardSession: true
+    });
+    expect(closeAction(1001)).toEqual({
+      reconnect: true,
+      discardSession: true
+    });
+  });
+
+  it(`discards the session when it timed out`, () => {
+    expect(closeAction(GatewayCloseCode.SESSION_TIMED_OUT)).toEqual({
+      reconnect: true,
+      discardSession: true
+    });
+  });
+
+  it(`stops entirely on a fatal close`, () => {
+    // These fail identically on every retry. Reconnecting is an infinite loop
+    // that burns the 1000/day session start limit — the most expensive bug
+    // this module can have.
+    for (const code of [
+      GatewayCloseCode.AUTHENTICATION_FAILED,
+      GatewayCloseCode.INVALID_INTENTS,
+      GatewayCloseCode.DISALLOWED_INTENTS,
+      GatewayCloseCode.INVALID_SHARD
+    ]) {
+      expect(closeAction(code)).toEqual({
+        reconnect: false,
+        discardSession: true
+      });
+    }
   });
 });

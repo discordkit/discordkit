@@ -20,6 +20,54 @@ const BACKOFF_MIN = 1_000;
 const BACKOFF_MAX = 30_000;
 
 /**
+ * Exponential backoff for the nth consecutive failed attempt, capped so a long
+ * outage settles into steady retries rather than growing unboundedly.
+ *
+ * Pure, and exported, because the cap and growth curve are the parts worth
+ * asserting directly — testing them through a live connection would mean
+ * driving N reconnects to observe one arithmetic decision.
+ */
+export const backoffDelay = (attempts: number): number =>
+  Math.min(BACKOFF_MIN * 2 ** attempts, BACKOFF_MAX);
+
+/** What a socket close means for the session, independent of any connection. */
+export interface CloseAction {
+  /** Whether to attempt another connection at all. */
+  reconnect: boolean;
+  /**
+   * Whether the session is dead and must be discarded. A discarded session
+   * forces the next connection to IDENTIFY instead of RESUME, which costs one
+   * of the limited daily session starts.
+   */
+  discardSession: boolean;
+}
+
+/**
+ * Decide what a close code means: retry-and-resume, retry-fresh, or give up.
+ *
+ * Pure and exported so the close-code policy can be asserted per code rather
+ * than by driving a socket into each state. This is the highest-consequence
+ * branch in the client — getting it wrong either burns the daily session-start
+ * limit in a reconnect loop or silently stops a bot forever.
+ */
+export const closeAction = (code: number): CloseAction => {
+  // A fatal close (bad token, invalid or disallowed intents, invalid shard)
+  // fails identically on every retry, so reconnecting is an infinite loop.
+  if (!isReconnectable(code)) {
+    return { reconnect: false, discardSession: true };
+  }
+
+  // A session survives only an unclean drop. 1000/1001 are the WHATWG "clean
+  // close" codes — plain numbers, not GatewayCloseCode members.
+  const cleanClose = code === 1000 || code === 1001;
+  const sessionTimedOut: number = GatewayCloseCode.SESSION_TIMED_OUT;
+  return {
+    reconnect: true,
+    discardSession: cleanClose || code === sessionTimedOut
+  };
+};
+
+/**
  * Anything that knows which intents it needs — in practice an event handler
  * like `onMessageCreate`.
  *
@@ -60,7 +108,7 @@ export interface ConnectionConfig {
    * actually consumes, so it can't drift as handlers are added or removed:
    *
    * ```ts
-   * createConnection({ token, intents: [onMessageCreate, onGuildCreate] });
+   * new GatewayConnection({ token, intents: [onMessageCreate, onGuildCreate] });
    * ```
    */
   intents: ReadonlyArray<GatewayIntentName | IntentSource>;
@@ -111,7 +159,18 @@ export type ConnectionState =
   | `resuming`
   | `closed`;
 
-export interface GatewayConnection {
+/**
+ * The connection surface consumers depend on.
+ *
+ * Kept as a structural interface alongside {@link GatewayConnection} so callers
+ * can accept "anything that behaves like a connection" — the event fan-out
+ * takes one by parameter and tests substitute a fake, neither of which should
+ * be forced to construct a real socket owner.
+ *
+ * Note it does **not** extend `Disposable`: a fake has nothing to dispose, and
+ * requiring it would make every stub carry a no-op `[Symbol.dispose]`.
+ */
+export interface ConnectionLike {
   /** Current lifecycle state. */
   readonly state: ConnectionState;
   /** The active session id, once `READY` has been received. */
@@ -132,7 +191,7 @@ export interface GatewayConnection {
 }
 
 /**
- * Create a Gateway connection.
+ * A Gateway connection: owns one WebSocket and the session state around it.
  *
  * Uses the **global** `WebSocket` rather than a Node-specific library, which is
  * what keeps this runnable on Workers/Durable Objects as well as Node 22+. It
@@ -140,135 +199,225 @@ export interface GatewayConnection {
  * production code path is the one under test — there is no injected transport
  * seam to diverge from reality.
  *
- * Nothing happens until {@link GatewayConnection.connect} is called, so building
- * a connection at module scope is side-effect free.
+ * Nothing happens until {@link connect} is called, so constructing one at module
+ * scope is side-effect free.
+ *
+ * Disposable, so a connection can be scoped to a block and cleaned up even if
+ * that block throws:
+ *
+ * ```ts
+ * using connection = new GatewayConnection({ token, intents: [onMessageCreate] });
+ * connection.connect();
+ * ``` *
+ * ## On the mutable state
+ *
+ * The `#private` fields below are the Gateway's session state machine, not
+ * incidental bookkeeping: RESUME is impossible without the last sequence number
+ * Discord sent, and heartbeat health is defined by whether the previous ACK
+ * arrived. That state is inherent to the protocol. What the class adds over the
+ * previous closure-based factory is that it is now genuinely *private* — it was
+ * reachable through the returned object's getters before — and that the pure
+ * decisions ({@link backoffDelay}, {@link closeAction}) are lifted out where
+ * they can be tested without driving a socket.
+ *
+ * Methods are arrow-function properties, matching `DiscordSession`, so `this`
+ * survives destructuring (`const { connect } = connection`).
  */
-export const createConnection = (
-  config: ConnectionConfig
-): GatewayConnection => {
-  const dispatchHandlers = new Set<(event: DispatchEvent) => void>();
-  const stateHandlers = new Set<(state: ConnectionState) => void>();
+export class GatewayConnection implements ConnectionLike, Disposable {
+  readonly #config: ConnectionConfig;
+  readonly #scheduler: Scheduler;
+  readonly #dispatchHandlers = new Set<(event: DispatchEvent) => void>();
+  readonly #stateHandlers = new Set<(state: ConnectionState) => void>();
 
-  let socket: WebSocket | null = null;
-  let state: ConnectionState = `idle`;
-  let sessionId: string | null = null;
-  let resumeUrl: string | null = null;
+  #socket: WebSocket | null = null;
+  #state: ConnectionState = `idle`;
+  #sessionId: string | null = null;
+  #resumeUrl: string | null = null;
   /** Last sequence number seen; sent when heartbeating and resuming. */
-  let sequence: number | null = null;
+  #sequence: number | null = null;
   // Timer handles are opaque: the scheduler may back them with global timers,
   // Durable Object alarms, or a fake clock in tests.
-  let heartbeatTimer: unknown = null;
-  let ackTimer: unknown = null;
-  let reconnectTimer: unknown = null;
-  let heartbeatInterval = 0;
-  let awaitingAck = false;
+  #heartbeatTimer: unknown = null;
+  #ackTimer: unknown = null;
+  #reconnectTimer: unknown = null;
+  #heartbeatInterval = 0;
+  #awaitingAck = false;
   /** Consecutive failed attempts, used for exponential backoff. */
-  let attempts = 0;
+  #attempts = 0;
   /** Set by `close()` so an intentional shutdown doesn't reconnect. */
-  let stopped = false;
+  #stopped = false;
 
-  const scheduler = config.scheduler ?? globalScheduler;
+  constructor(config: ConnectionConfig) {
+    this.#config = config;
+    this.#scheduler = config.scheduler ?? globalScheduler;
+  }
 
-  const setState = (next: ConnectionState): void => {
-    if (state === next) return;
-    state = next;
-    for (const handler of stateHandlers) handler(next);
+  /** Current lifecycle state. */
+  get state(): ConnectionState {
+    return this.#state;
+  }
+
+  /** The active session id, once `READY` has been received. */
+  get sessionId(): string | null {
+    return this.#sessionId;
+  }
+
+  /** Open the socket. Idempotent — a second call while live is a no-op. */
+  connect = (): void => {
+    if (this.#socket !== null) return;
+    this.#stopped = false;
+    this.#open();
   };
 
-  const clearTimers = (): void => {
-    if (heartbeatTimer !== null) scheduler.clearTimeout(heartbeatTimer);
-    if (ackTimer !== null) scheduler.clearTimeout(ackTimer);
-    heartbeatTimer = null;
-    ackTimer = null;
-    awaitingAck = false;
+  /**
+   * Close the socket and stop reconnecting. Uses close code `1000`, which
+   * invalidates the session server-side (a deliberate "I'm done", not a drop).
+   */
+  close = (): void => {
+    this.#stopped = true;
+    if (this.#reconnectTimer !== null) {
+      this.#scheduler.clearTimeout(this.#reconnectTimer);
+    }
+    this.#reconnectTimer = null;
+    this.#clearTimers();
+    // 1000 tells Discord this is intentional, invalidating the session so it
+    // isn't held open waiting for a resume that will never come.
+    this.#socket?.close(1000, `Client closed the connection`);
+    this.#socket = null;
+    this.#setState(`closed`);
   };
 
-  const send = (payload: Pick<GatewayPayload, `op` | `d`>): void => {
-    if (socket?.readyState !== 1) {
+  /**
+   * Leaving a `using` scope means "I'm done with this connection", which is
+   * exactly {@link close}'s contract — so dispose is an alias rather than a
+   * second, subtly different teardown path.
+   */
+  [Symbol.dispose] = (): void => {
+    this.close();
+  };
+
+  /** Send a payload. Throws if the socket isn't open. */
+  send = (payload: Pick<GatewayPayload, `op` | `d`>): void => {
+    if (this.#socket?.readyState !== 1) {
       throw new Error(
-        `Cannot send a Gateway payload while the connection is "${state}". Call connect() and wait for the "ready" state before sending.`
+        `Cannot send a Gateway payload while the connection is "${this.#state}". Call connect() and wait for the "ready" state before sending.`
       );
     }
-    socket.send(JSON.stringify(payload));
+    this.#socket.send(JSON.stringify(payload));
   };
 
-  const sendHeartbeat = (): void => {
+  /** Subscribe to every dispatch event. Used by the per-event fan-out. */
+  onDispatch = (handler: (event: DispatchEvent) => void): Subscription => {
+    this.#dispatchHandlers.add(handler);
+    return toSubscription(() => {
+      this.#dispatchHandlers.delete(handler);
+    });
+  };
+
+  /** Subscribe to lifecycle state changes. */
+  onStateChange = (handler: (state: ConnectionState) => void): Subscription => {
+    this.#stateHandlers.add(handler);
+    return toSubscription(() => {
+      this.#stateHandlers.delete(handler);
+    });
+  };
+
+  #setState = (next: ConnectionState): void => {
+    if (this.#state === next) return;
+    this.#state = next;
+    for (const handler of this.#stateHandlers) handler(next);
+  };
+
+  #clearTimers = (): void => {
+    if (this.#heartbeatTimer !== null) {
+      this.#scheduler.clearTimeout(this.#heartbeatTimer);
+    }
+    if (this.#ackTimer !== null) this.#scheduler.clearTimeout(this.#ackTimer);
+    this.#heartbeatTimer = null;
+    this.#ackTimer = null;
+    this.#awaitingAck = false;
+  };
+
+  #sendHeartbeat = (): void => {
     // A heartbeat sent while the previous one is unacknowledged means the
     // connection is zombied: Discord stopped responding but the socket never
     // errored. The docs prescribe closing and resuming rather than continuing
     // to send into the void. 4000 (not 1000) keeps the session resumable.
-    if (awaitingAck) {
-      socket?.close(4000, `Heartbeat ACK not received`);
+    if (this.#awaitingAck) {
+      this.#socket?.close(4000, `Heartbeat ACK not received`);
       return;
     }
-    awaitingAck = true;
-    send({ op: GatewayOpcode.HEARTBEAT, d: sequence });
-    ackTimer = scheduler.setTimeout(() => {
-      if (!awaitingAck) return;
-      socket?.close(4000, `Heartbeat ACK timed out`);
-    }, heartbeatInterval * ACK_TIMEOUT_FACTOR);
+    this.#awaitingAck = true;
+    this.send({ op: GatewayOpcode.HEARTBEAT, d: this.#sequence });
+    this.#ackTimer = this.#scheduler.setTimeout(() => {
+      if (!this.#awaitingAck) return;
+      this.#socket?.close(4000, `Heartbeat ACK timed out`);
+    }, this.#heartbeatInterval * ACK_TIMEOUT_FACTOR);
 
     // Re-arm from inside the callback rather than using a repeating timer.
     // `setInterval` would queue overlapping runs if a tick outlasts its own
     // interval, and a one-shot chain is the only shape a Durable Object alarm
     // (a single slot, re-armed on each fire) can express.
-    heartbeatTimer = scheduler.setTimeout(sendHeartbeat, heartbeatInterval);
+    this.#heartbeatTimer = this.#scheduler.setTimeout(
+      this.#sendHeartbeat,
+      this.#heartbeatInterval
+    );
   };
 
-  const startHeartbeat = (interval: number): void => {
-    heartbeatInterval = interval;
+  #startHeartbeat = (interval: number): void => {
+    this.#heartbeatInterval = interval;
     // The first heartbeat is delayed by `interval * random()`. Discord asks for
     // this explicitly so that every bot reconnecting after one of their deploys
     // doesn't heartbeat in lockstep and stampede the gateway. The same handle
     // is reused for the jitter delay and the steady-state beats, since only one
     // heartbeat is ever pending.
-    heartbeatTimer = scheduler.setTimeout(
-      sendHeartbeat,
+    this.#heartbeatTimer = this.#scheduler.setTimeout(
+      this.#sendHeartbeat,
       interval * Math.random()
     );
   };
 
-  const identify = (): void => {
-    setState(`identifying`);
-    send({
+  #identify = (): void => {
+    this.#setState(`identifying`);
+    this.send({
       op: GatewayOpcode.IDENTIFY,
       d: {
-        token: config.token,
-        intents: toIntentMask(...resolveIntents(config.intents)),
+        token: this.#config.token,
+        intents: toIntentMask(...resolveIntents(this.#config.intents)),
         properties: {
-          os: config.properties?.os ?? `linux`,
-          browser: config.properties?.browser ?? `discordkit`,
-          device: config.properties?.device ?? `discordkit`
+          os: this.#config.properties?.os ?? `linux`,
+          browser: this.#config.properties?.browser ?? `discordkit`,
+          device: this.#config.properties?.device ?? `discordkit`
         },
-        ...(config.shard ? { shard: config.shard } : {})
+        ...(this.#config.shard ? { shard: this.#config.shard } : {})
       }
     });
   };
 
-  const resume = (): void => {
-    setState(`resuming`);
-    send({
+  #resume = (): void => {
+    this.#setState(`resuming`);
+    this.send({
       op: GatewayOpcode.RESUME,
       d: {
-        token: config.token,
-        session_id: sessionId,
-        seq: sequence
+        token: this.#config.token,
+        session_id: this.#sessionId,
+        seq: this.#sequence
       }
     });
   };
 
-  /** Reconnect after `delay`, unless `close()` was called. */
-  const scheduleReconnect = (): void => {
-    if (stopped) return;
-    const delay = Math.min(BACKOFF_MIN * 2 ** attempts, BACKOFF_MAX);
-    attempts++;
-    reconnectTimer = scheduler.setTimeout(() => {
-      open();
+  /** Reconnect after a backoff delay, unless `close()` was called. */
+  #scheduleReconnect = (): void => {
+    if (this.#stopped) return;
+    const delay = backoffDelay(this.#attempts);
+    this.#attempts++;
+    this.#reconnectTimer = this.#scheduler.setTimeout(() => {
+      this.#open();
     }, delay);
   };
 
-  const handleDispatch = (payload: GatewayPayload): void => {
-    if (typeof payload.s === `number`) sequence = payload.s;
+  #handleDispatch = (payload: GatewayPayload): void => {
+    if (typeof payload.s === `number`) this.#sequence = payload.s;
     const type = payload.t;
     if (typeof type !== `string`) return;
 
@@ -292,21 +441,21 @@ export const createConnection = (
         session_id?: string;
         resume_gateway_url?: string;
       };
-      sessionId = ready.session_id ?? null;
-      resumeUrl = ready.resume_gateway_url ?? null;
-      attempts = 0;
-      setState(`ready`);
+      this.#sessionId = ready.session_id ?? null;
+      this.#resumeUrl = ready.resume_gateway_url ?? null;
+      this.#attempts = 0;
+      this.#setState(`ready`);
     } else if (type === `RESUMED`) {
-      attempts = 0;
-      setState(`ready`);
+      this.#attempts = 0;
+      this.#setState(`ready`);
     }
 
-    for (const handler of dispatchHandlers) {
+    for (const handler of this.#dispatchHandlers) {
       handler({ type, data });
     }
   };
 
-  const handleMessage = (raw: string): void => {
+  #handleMessage = (raw: string): void => {
     let payload: GatewayPayload;
     try {
       payload = JSON.parse(raw) as GatewayPayload;
@@ -319,42 +468,44 @@ export const createConnection = (
 
     switch (payload.op) {
       case GatewayOpcode.DISPATCH:
-        handleDispatch(payload);
+        this.#handleDispatch(payload);
         break;
       case GatewayOpcode.HELLO: {
         const { heartbeat_interval: interval } = payload.d as {
           heartbeat_interval: number;
         };
-        startHeartbeat(interval);
+        this.#startHeartbeat(interval);
         // A live session id means this socket is a reconnect, so resume rather
         // than identify — resuming replays missed events, identifying loses them
         // and burns one of the (limited) daily session starts.
-        if (sessionId !== null && sequence !== null) resume();
-        else identify();
+        if (this.#sessionId !== null && this.#sequence !== null) this.#resume();
+        else this.#identify();
         break;
       }
       case GatewayOpcode.HEARTBEAT:
         // Discord can ask for an immediate heartbeat, out of band of our timer.
-        awaitingAck = false;
-        send({ op: GatewayOpcode.HEARTBEAT, d: sequence });
+        this.#awaitingAck = false;
+        this.send({ op: GatewayOpcode.HEARTBEAT, d: this.#sequence });
         break;
       case GatewayOpcode.HEARTBEAT_ACK:
-        awaitingAck = false;
-        if (ackTimer !== null) scheduler.clearTimeout(ackTimer);
-        ackTimer = null;
+        this.#awaitingAck = false;
+        if (this.#ackTimer !== null) {
+          this.#scheduler.clearTimeout(this.#ackTimer);
+        }
+        this.#ackTimer = null;
         break;
       case GatewayOpcode.RECONNECT:
         // 4000 keeps the session resumable, unlike 1000.
-        socket?.close(4000, `Reconnect requested`);
+        this.#socket?.close(4000, `Reconnect requested`);
         break;
       case GatewayOpcode.INVALID_SESSION: {
         // `d` is a boolean: whether the invalidated session can still be resumed.
         const resumable = payload.d === true;
         if (!resumable) {
-          sessionId = null;
-          sequence = null;
+          this.#sessionId = null;
+          this.#sequence = null;
         }
-        socket?.close(4000, `Invalid session`);
+        this.#socket?.close(4000, `Invalid session`);
         break;
       }
       // Send-only opcodes. Discord never sends these to us, so receiving one
@@ -371,99 +522,60 @@ export const createConnection = (
     }
   };
 
-  const handleClose = (code: number): void => {
-    clearTimers();
-    socket = null;
+  #handleClose = (code: number): void => {
+    this.#clearTimers();
+    this.#socket = null;
 
-    if (stopped) {
-      setState(`closed`);
+    if (this.#stopped) {
+      this.#setState(`closed`);
       return;
     }
 
-    // A fatal close (bad token, invalid or disallowed intents, invalid shard)
-    // will fail identically on every retry, so reconnecting is an infinite loop
-    // that burns the daily session start limit. Stop and surface it instead.
-    if (!isReconnectable(code)) {
-      stopped = true;
-      setState(`closed`);
+    const { reconnect, discardSession } = closeAction(code);
+
+    // A session that can't be resumed must be dropped, so the next connection
+    // IDENTIFYs cleanly instead of RESUMEing against a session Discord has
+    // already forgotten.
+    if (discardSession) {
+      this.#sessionId = null;
+      this.#sequence = null;
+    }
+
+    // A fatal close fails identically on every retry, so reconnecting is an
+    // infinite loop that burns the daily session start limit. Stop instead.
+    if (!reconnect) {
+      this.#stopped = true;
+      this.#setState(`closed`);
       return;
     }
 
-    // A session is only resumable for a few minutes and only if the close
-    // wasn't a clean 1000/1001; otherwise start fresh.
-    // 1000/1001 are the WHATWG "clean close" codes, not Discord close codes —
-    // they're plain numbers rather than GatewayCloseCode members.
-    const cleanClose = code === 1000 || code === 1001;
-    if (cleanClose || code === GatewayCloseCode.SESSION_TIMED_OUT) {
-      sessionId = null;
-      sequence = null;
-    }
-
-    scheduleReconnect();
+    this.#scheduleReconnect();
   };
 
-  function open(): void {
-    setState(`connecting`);
+  #open = (): void => {
+    this.#setState(`connecting`);
     // Resume against the URL READY handed us; it points at the gateway node
     // holding the session. Falling back to the default URL would land on a node
     // that has never heard of this session.
     const base =
-      sessionId !== null && resumeUrl !== null
-        ? resumeUrl
-        : (config.url ?? DEFAULT_GATEWAY_URL);
+      this.#sessionId !== null && this.#resumeUrl !== null
+        ? this.#resumeUrl
+        : (this.#config.url ?? DEFAULT_GATEWAY_URL);
     const url = new URL(base);
     url.searchParams.set(`v`, String(GATEWAY_VERSION));
     url.searchParams.set(`encoding`, `json`);
 
     const ws = new WebSocket(url.toString());
-    socket = ws;
+    this.#socket = ws;
 
     ws.addEventListener(`message`, (event: MessageEvent) => {
-      if (typeof event.data === `string`) handleMessage(event.data);
+      if (typeof event.data === `string`) this.#handleMessage(event.data);
     });
     ws.addEventListener(`close`, (event: CloseEvent) => {
-      handleClose(event.code);
+      this.#handleClose(event.code);
     });
     // No `error` listener: the WebSocket spec fires `error` immediately before
     // `close`, and `close` owns the reconnect decision. Handling both would
     // schedule two reconnects for a single failure.
-  }
-
-  return {
-    get state(): ConnectionState {
-      return state;
-    },
-    get sessionId(): string | null {
-      return sessionId;
-    },
-    connect: (): void => {
-      if (socket !== null) return;
-      stopped = false;
-      open();
-    },
-    close: (): void => {
-      stopped = true;
-      if (reconnectTimer !== null) scheduler.clearTimeout(reconnectTimer);
-      reconnectTimer = null;
-      clearTimers();
-      // 1000 tells Discord this is intentional, invalidating the session so it
-      // isn't held open waiting for a resume that will never come.
-      socket?.close(1000, `Client closed the connection`);
-      socket = null;
-      setState(`closed`);
-    },
-    send,
-    onDispatch: (handler): Subscription => {
-      dispatchHandlers.add(handler);
-      return toSubscription(() => {
-        dispatchHandlers.delete(handler);
-      });
-    },
-    onStateChange: (handler): Subscription => {
-      stateHandlers.add(handler);
-      return toSubscription(() => {
-        stateHandlers.delete(handler);
-      });
-    }
   };
-};
+}

@@ -25,7 +25,7 @@ import type { Scheduler } from "@discordkit/gateway";
  * @example
  * ```ts
  * const scheduler = alarmScheduler(this.ctx);
- * createConnection({ token, intents, scheduler });
+ * new GatewayConnection({ token, intents, scheduler });
  *
  * // and on the Durable Object:
  * override async alarm(): Promise<void> {

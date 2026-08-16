@@ -1,7 +1,7 @@
 import { isObject } from "@discordkit/core/utils/isObject";
 import { toCamelKeys } from "@discordkit/core/utils/toCamelKeys";
 import { useConnection } from "../ambient.js";
-import type { DispatchEvent, GatewayConnection } from "../connection.js";
+import type { ConnectionLike, DispatchEvent } from "../connection.js";
 import { toSubscription, type Subscription } from "../subscription.js";
 // Both type-only, deliberately. `IntentsFor` needs the SHAPE of EVENT_INTENTS,
 // not its value — a runtime import would drag the whole 107-entry map back into
@@ -17,7 +17,7 @@ export interface EventOptions {
    * Target a specific connection instead of the ambient singleton. Durable
    * Objects should always pass this — module globals are per-isolate.
    */
-  connection?: GatewayConnection;
+  connection?: ConnectionLike;
 }
 
 /**
@@ -37,9 +37,9 @@ interface Registry {
   byEvent: Map<string, Set<(data: never) => void>>;
   detach: Subscription;
 }
-const registries = new WeakMap<GatewayConnection, Registry>();
+const registries = new WeakMap<ConnectionLike, Registry>();
 
-const registryFor = (connection: GatewayConnection): Registry => {
+const registryFor = (connection: ConnectionLike): Registry => {
   const existing = registries.get(connection);
   if (existing) return existing;
 

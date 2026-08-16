@@ -212,7 +212,7 @@ Mirrors `native` exactly (user decision). Every subscription accepts an optional
 using sub = onMessageCreate((msg) => { … });
 
 // Durable Object — explicit, no module-global state across isolates.
-const connection = createConnection({ token, intents });
+const connection = new GatewayConnection({ token, intents });
 using sub = onMessageCreate((msg) => { … }, { connection });
 ```
 

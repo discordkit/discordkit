@@ -1,9 +1,8 @@
 import { DurableObject } from "cloudflare:workers";
 import {
   EVENT_INTENTS,
+  GatewayConnection,
   PRIVILEGED_INTENTS,
-  createConnection,
-  type GatewayConnection,
   type GatewayIntentName
 } from "@discordkit/gateway";
 import type {
@@ -133,7 +132,7 @@ export class GatewayInspector extends DurableObject<Env> {
     }
 
     this.#intents = intents;
-    const connection = createConnection({
+    const connection = new GatewayConnection({
       token,
       intents,
       scheduler: this.#scheduler,
