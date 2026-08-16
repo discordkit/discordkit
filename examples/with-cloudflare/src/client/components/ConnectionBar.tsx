@@ -13,6 +13,7 @@ import { GatewayIntents, type GatewayIntentName } from "@discordkit/gateway";
 import {
   AlertTriangle,
   ChevronRight,
+  ExternalLink,
   Plug,
   PlugZap,
   RefreshCw
@@ -33,6 +34,46 @@ const DEFAULT_INTENTS: GatewayIntentName[] = [
 ];
 
 const ALL_INTENTS = Object.keys(GatewayIntents) as GatewayIntentName[];
+
+/**
+ * The two groups, derived from `PRIVILEGED` rather than hand-listed, so a new
+ * intent in the generated `GatewayIntents` can't silently go missing from the
+ * UI — it lands in the standard group and is at least visible.
+ */
+const STANDARD_INTENTS = ALL_INTENTS.filter(
+  (intent) => !PRIVILEGED.has(intent)
+);
+const PRIVILEGED_ORDER = ALL_INTENTS.filter((intent) => PRIVILEGED.has(intent));
+
+const IntentChip = ({
+  intent,
+  isSelected,
+  privileged,
+  onToggle
+}: {
+  intent: GatewayIntentName;
+  isSelected: boolean;
+  privileged: boolean;
+  onToggle: (intent: GatewayIntentName) => void;
+}): React.JSX.Element => (
+  <ToggleButton
+    isSelected={isSelected}
+    // Editable while connected. The change is staged, not applied — see the
+    // "Apply & reconnect" button above.
+    onChange={() => {
+      onToggle(intent);
+    }}
+    className={`rounded-full border px-2.5 py-1 font-mono text-[11px] transition-colors ${
+      isSelected
+        ? privileged
+          ? `border-amber-500/60 bg-amber-500/15 text-amber-300`
+          : `border-indigo-500/60 bg-indigo-500/15 text-indigo-300`
+        : `border-slate-700 text-slate-500 hover:border-slate-600`
+    }`}
+  >
+    {intent}
+  </ToggleButton>
+);
 
 interface ConnectionBarProps {
   status: InspectorStatus;
@@ -202,48 +243,62 @@ export const ConnectionBar = ({
         </Heading>
 
         <DisclosurePanel>
+          {/* Split into two groups rather than one mixed list. The three
+              privileged intents behave differently in a way colour alone
+              didn't convey: they need a toggle flipped in the Developer
+              Portal, and Discord refuses the whole connection with 4014 if
+              they aren't — so selecting one without knowing that is the most
+              common first-run failure. */}
           <div className="mt-2 flex flex-wrap gap-1.5">
-            {ALL_INTENTS.map((intent) => {
-              const selected = intents.includes(intent);
-              const privileged = PRIVILEGED.has(intent);
-              return (
-                <ToggleButton
-                  key={intent}
-                  isSelected={selected}
-                  // Editable while connected. The change is staged, not
-                  // applied — see the "Apply & reconnect" button below.
-                  onChange={() => {
-                    toggle(intent);
-                  }}
-                  className={`rounded-full border px-2.5 py-1 font-mono text-[11px] transition-colors disabled:opacity-50 ${
-                    selected
-                      ? privileged
-                        ? `border-amber-500/60 bg-amber-500/15 text-amber-300`
-                        : `border-indigo-500/60 bg-indigo-500/15 text-indigo-300`
-                      : `border-slate-700 text-slate-500 hover:border-slate-600`
-                  }`}
-                >
-                  {privileged && selected ? (
-                    <AlertTriangle
-                      size={10}
-                      className="mr-1 inline align-[-1px]"
-                      aria-label="Privileged intent"
-                    />
-                  ) : null}
-                  {intent}
-                </ToggleButton>
-              );
-            })}
+            {STANDARD_INTENTS.map((intent) => (
+              <IntentChip
+                key={intent}
+                intent={intent}
+                isSelected={intents.includes(intent)}
+                privileged={false}
+                onToggle={toggle}
+              />
+            ))}
           </div>
 
-          <p className="mt-2 text-xs text-slate-500">
-            Amber intents are{` `}
-            <strong className="font-medium text-amber-400">
-              privileged
-            </strong> —
-            they must be enabled in the Developer Portal, or Discord closes the
-            connection with <code className="font-mono">4014</code>.
-          </p>
+          <div className="mt-3 rounded border border-amber-500/25 bg-amber-500/5 p-2.5">
+            <div className="mb-2 flex flex-wrap items-center gap-x-2 gap-y-1">
+              <span className="flex items-center gap-1.5 text-[11px] font-medium text-amber-400">
+                <AlertTriangle size={11} aria-hidden />
+                Privileged
+              </span>
+              <span className="text-[11px] text-slate-500">
+                must be enabled in the Developer Portal, or Discord closes the
+                connection with <code className="font-mono">4014</code>
+              </span>
+              {/* Straight to the Bot tab, which is where the three toggles
+                  live — the portal's navigation makes this genuinely hard to
+                  find otherwise. `applications` (no id) lands on the app
+                  picker, since we don't know which app this token belongs
+                  to. */}
+              <a
+                href="https://discord.com/developers/applications"
+                target="_blank"
+                rel="noreferrer"
+                className="ml-auto flex shrink-0 items-center gap-1 rounded px-1.5 py-0.5 text-[11px] text-amber-300 underline decoration-amber-500/40 underline-offset-2 hover:bg-amber-500/10 hover:decoration-amber-400"
+              >
+                Open Developer Portal
+                <ExternalLink size={10} aria-hidden />
+              </a>
+            </div>
+
+            <div className="flex flex-wrap gap-1.5">
+              {PRIVILEGED_ORDER.map((intent) => (
+                <IntentChip
+                  key={intent}
+                  intent={intent}
+                  isSelected={intents.includes(intent)}
+                  privileged
+                  onToggle={toggle}
+                />
+              ))}
+            </div>
+          </div>
         </DisclosurePanel>
       </Disclosure>
     </section>

@@ -170,7 +170,16 @@ export class GatewayInspector extends DurableObject<Env> {
   }
 
   #connect(token: string, intents: readonly GatewayIntentName[]): void {
-    if (this.#connection) return;
+    // A dead connection is still a non-null object, so testing for presence
+    // alone wedges the inspector permanently: after any failed attempt (bad
+    // token, 4014 disallowed intents, a dropped socket) `#connection` stays
+    // set in state `closed`, and every later Connect silently returns. Only
+    // an already-live connection should short-circuit; a spent one gets
+    // cleared so the click can build a fresh one.
+    if (this.#connection) {
+      if (this.#connection.state !== `closed`) return;
+      this.#disconnect();
+    }
     // Fall back to the configured token so local dev doesn't require pasting
     // one on every reload. The typed value wins when present, so a deployed
     // instance stays usable by someone who isn't the operator.
@@ -316,6 +325,17 @@ export class GatewayInspector extends DurableObject<Env> {
   /** Apply a client message directly, for tests. */
   applyMessage(message: ClientMessage): void {
     this.#handle(message);
+  }
+
+  /**
+   * Close the Gateway connection without clearing it, for tests.
+   *
+   * Reproduces the post-failure state Discord leaves behind — a connection
+   * object that exists but is spent. `disconnect` nulls the field, so it
+   * cannot exercise the guard that this state used to defeat.
+   */
+  forceClose(): void {
+    this.#connection?.close();
   }
 }
 

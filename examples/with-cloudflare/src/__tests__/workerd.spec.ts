@@ -78,6 +78,60 @@ describe(`@discordkit/gateway on workerd`, () => {
   });
 });
 
+describe(`connection lifecycle`, () => {
+  it(`can reconnect after a connection has closed`, async () => {
+    // The wedge: a closed connection is still a non-null object, so a
+    // presence-only guard made every later Connect a silent no-op. Once a
+    // session failed — bad token, 4014, dropped socket — the inspector could
+    // never reconnect without evicting the Durable Object.
+    const probe = inspector(`reconnect-after-close`);
+
+    await probe.applyMessage({
+      type: `connect`,
+      token: `fake-token`,
+      intents: [`GUILDS`]
+    });
+
+    // Close the Gateway socket the way Discord does — WITHOUT going through
+    // `disconnect`, which nulls the field and so hides the bug. This leaves
+    // `#connection` set but spent, which is the real post-failure state.
+    await probe.forceClose();
+    await expect(probe.status()).resolves.toMatchObject({ state: `closed` });
+
+    // Connecting again must build a new connection rather than returning early
+    // because a (dead) one is still assigned.
+    await probe.applyMessage({
+      type: `connect`,
+      token: `fake-token`,
+      intents: [`GUILD_MESSAGES`]
+    });
+
+    const status = await probe.status();
+    expect(status.state).not.toBe(`closed`);
+    expect(status.intents).toEqual([`GUILD_MESSAGES`]);
+  });
+
+  it(`applies the new intents on reconnect`, async () => {
+    // "Apply & reconnect" exists to change intents, which Discord only accepts
+    // in IDENTIFY. If the reconnect silently kept the old set, the button
+    // would appear to work while changing nothing.
+    const probe = inspector(`reconnect-intents`);
+    await probe.applyMessage({
+      type: `connect`,
+      token: `fake-token`,
+      intents: [`GUILDS`]
+    });
+    await probe.applyMessage({
+      type: `reconnect`,
+      intents: [`GUILDS`, `GUILD_VOICE_STATES`]
+    });
+
+    await expect(probe.status()).resolves.toMatchObject({
+      intents: [`GUILDS`, `GUILD_VOICE_STATES`]
+    });
+  });
+});
+
 describe(`recording`, () => {
   it(`stops buffering while paused`, async () => {
     const probe = inspector(`pause-probe`);
