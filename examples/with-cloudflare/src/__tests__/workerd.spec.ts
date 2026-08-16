@@ -77,3 +77,72 @@ describe(`@discordkit/gateway on workerd`, () => {
     expect(GatewayOpcode.HEARTBEAT_ACK).toBe(11);
   });
 });
+
+describe(`recording`, () => {
+  it(`stops buffering while paused`, async () => {
+    const probe = inspector(`pause-probe`);
+    await probe.simulateEvent(`MESSAGE_CREATE`);
+    await expect(probe.status()).resolves.toMatchObject({ eventCount: 1 });
+
+    await probe.applyMessage({ type: `record`, recording: false });
+    await probe.simulateEvent(`MESSAGE_CREATE`);
+    await probe.simulateEvent(`TYPING_START`);
+
+    // The buffer must not grow while paused — that is the entire feature.
+    await expect(probe.status()).resolves.toMatchObject({
+      eventCount: 1,
+      recording: false
+    });
+  });
+
+  it(`keeps discovering event types while paused`, async () => {
+    // Pausing must not hide which events are arriving, or you could never
+    // learn a type exists in order to add it to the capture filter.
+    const probe = inspector(`paused-types-probe`);
+    await probe.applyMessage({ type: `record`, recording: false });
+    await probe.simulateEvent(`GUILD_CREATE`);
+
+    const status = await probe.status();
+    expect(status.eventCount).toBe(0);
+    expect(status.seenTypes).toContain(`GUILD_CREATE`);
+  });
+
+  it(`records only the allowlisted types`, async () => {
+    const probe = inspector(`filter-probe`);
+    await probe.applyMessage({
+      type: `recordFilter`,
+      types: [`MESSAGE_CREATE`]
+    });
+
+    await probe.simulateEvent(`MESSAGE_CREATE`);
+    await probe.simulateEvent(`TYPING_START`);
+    await probe.simulateEvent(`PRESENCE_UPDATE`);
+
+    // Only the allowlisted type is buffered, but every type is still
+    // discoverable — the filter decides what is KEPT, not what arrives.
+    const status = await probe.status();
+    expect(status.eventCount).toBe(1);
+    expect(status.seenTypes).toEqual(
+      expect.arrayContaining([
+        `MESSAGE_CREATE`,
+        `TYPING_START`,
+        `PRESENCE_UPDATE`
+      ])
+    );
+  });
+
+  it(`resumes buffering when recording is turned back on`, async () => {
+    // The pause must be reversible without reconnecting: the whole point is
+    // that capture is a local decision, not a Gateway one.
+    const probe = inspector(`resume-probe`);
+    await probe.applyMessage({ type: `record`, recording: false });
+    await probe.simulateEvent(`MESSAGE_CREATE`);
+    await probe.applyMessage({ type: `record`, recording: true });
+    await probe.simulateEvent(`MESSAGE_CREATE`);
+
+    await expect(probe.status()).resolves.toMatchObject({
+      eventCount: 1,
+      recording: true
+    });
+  });
+});

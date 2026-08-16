@@ -51,6 +51,31 @@ export interface InspectorStatus {
   missingIntents: readonly GatewayIntentName[];
   /** Events seen since the connection opened. */
   eventCount: number;
+  /**
+   * Whether the server has a `DISCORD_BOT_TOKEN` configured, so the UI can
+   * enable Connect without a typed token and say where it came from.
+   *
+   * A boolean, never the token itself — the value must not reach the browser.
+   */
+  tokenFromEnv: boolean;
+  /**
+   * Whether the inspector is capturing events into the buffer.
+   *
+   * Separate from the connection: pausing keeps the Gateway session alive and
+   * the heartbeat running, and only stops recording. Reconnecting to change
+   * this would cost a session start for a purely local decision.
+   */
+  recording: boolean;
+  /**
+   * Event types being recorded, or `null` for "everything".
+   *
+   * An allowlist, not an intent change: Discord still sends every event the
+   * identified intents cover. This only decides what gets kept, so narrowing
+   * it is free where narrowing intents means a reconnect.
+   */
+  recordFilter: readonly string[] | null;
+  /** Event types seen this session, so the UI can offer a filter list. */
+  seenTypes: readonly string[];
   /** Epoch ms the socket opened, or `null` when disconnected. */
   connectedAt: number | null;
 }
@@ -66,5 +91,16 @@ export type ServerMessage =
 /** Messages browsers send to the Durable Object. */
 export type ClientMessage =
   | { type: `connect`; token: string; intents: readonly GatewayIntentName[] }
+  /**
+   * Re-IDENTIFY with a new intent set. Distinct from `connect` because it
+   * tears down a live session — Discord only accepts intents in IDENTIFY, so
+   * this necessarily costs one of the 1000 daily session starts. The UI makes
+   * it an explicit action for that reason.
+   */
+  | { type: `reconnect`; intents: readonly GatewayIntentName[] }
   | { type: `disconnect` }
+  /** Start/stop capturing. Does not touch the Gateway connection. */
+  | { type: `record`; recording: boolean }
+  /** Set the recorded-type allowlist; `null` records everything. */
+  | { type: `recordFilter`; types: readonly string[] | null }
   | { type: `clear` };

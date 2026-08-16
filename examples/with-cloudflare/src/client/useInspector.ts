@@ -13,6 +13,12 @@ const IDLE_STATUS: InspectorStatus = {
   intents: [],
   missingIntents: [],
   eventCount: 0,
+  tokenFromEnv: false,
+  // Recording is on by default: the inspector's job is to capture, and a tool
+  // that silently starts paused looks broken.
+  recording: true,
+  recordFilter: null,
+  seenTypes: [],
   connectedAt: null
 };
 
@@ -23,7 +29,13 @@ export interface Inspector {
   /** Whether the browser's own socket to the Worker is open. */
   online: boolean;
   connect: (token: string, intents: readonly GatewayIntentName[]) => void;
+  /** Re-IDENTIFY with a new intent set. Costs a session start. */
+  reconnect: (intents: readonly GatewayIntentName[]) => void;
   disconnect: () => void;
+  /** Start/stop capturing without touching the Gateway connection. */
+  setRecording: (recording: boolean) => void;
+  /** Limit recorded types; `null` records everything. */
+  setRecordFilter: (types: readonly string[] | null) => void;
   clear: () => void;
 }
 
@@ -103,14 +115,47 @@ export const useInspector = (): Inspector => {
     [send]
   );
 
+  const reconnect = useCallback(
+    (intents: readonly GatewayIntentName[]): void => {
+      setError(null);
+      send({ type: `reconnect`, intents });
+    },
+    [send]
+  );
+
   const disconnect = useCallback((): void => {
     send({ type: `disconnect` });
   }, [send]);
+
+  const setRecording = useCallback(
+    (recording: boolean): void => {
+      send({ type: `record`, recording });
+    },
+    [send]
+  );
+
+  const setRecordFilter = useCallback(
+    (types: readonly string[] | null): void => {
+      send({ type: `recordFilter`, types });
+    },
+    [send]
+  );
 
   const clear = useCallback((): void => {
     setEvents([]);
     send({ type: `clear` });
   }, [send]);
 
-  return { status, events, error, online, connect, disconnect, clear };
+  return {
+    status,
+    events,
+    error,
+    online,
+    connect,
+    reconnect,
+    disconnect,
+    setRecording,
+    setRecordFilter,
+    clear
+  };
 };

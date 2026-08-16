@@ -3,12 +3,23 @@ import { ConnectionBar } from "./components/ConnectionBar.js";
 import { EventList } from "./components/EventList.js";
 import { TimeRange, type TimeSelection } from "./components/TimeRange.js";
 import { PayloadPanel } from "./components/PayloadPanel.js";
+import { RecordControls } from "./components/RecordControls.js";
 import { StatusStrip } from "./components/StatusStrip.js";
 import { useInspector } from "./useInspector.js";
 
 export const App = (): React.JSX.Element => {
-  const { status, events, error, online, connect, disconnect, clear } =
-    useInspector();
+  const {
+    status,
+    events,
+    error,
+    online,
+    connect,
+    reconnect,
+    disconnect,
+    setRecording,
+    setRecordFilter,
+    clear
+  } = useInspector();
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [filter, setFilter] = useState(``);
   const [raw, setRaw] = useState(false);
@@ -47,6 +58,7 @@ export const App = (): React.JSX.Element => {
         status={status}
         online={online}
         onConnect={connect}
+        onReconnect={reconnect}
         onDisconnect={disconnect}
       />
       <StatusStrip status={status} eventCount={events.length} />
@@ -77,6 +89,13 @@ export const App = (): React.JSX.Element => {
           onSelect={setSelectedId}
           filter={filter}
           onFilterChange={setFilter}
+          recordControls={
+            <RecordControls
+              status={status}
+              onRecordingChange={setRecording}
+              onFilterChange={setRecordFilter}
+            />
+          }
           onClear={() => {
             clear();
             setSelectedId(null);

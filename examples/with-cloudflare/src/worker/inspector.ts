@@ -19,6 +19,16 @@ export interface Env {
   ASSETS: Fetcher;
   /** Overrides the Gateway URL. Used by tests to point at a mock. */
   GATEWAY_URL?: string;
+  /**
+   * Optional bot token, so local dev doesn't require pasting one into the UI
+   * every reload. Used only when the browser sends an empty token — the input
+   * field still wins, which keeps the deployed app usable by someone who isn't
+   * the operator.
+   *
+   * Server-side only. It is never sent to the browser: the client learns
+   * whether one exists (see `tokenFromEnv` on the status) but never its value.
+   */
+  DISCORD_BOT_TOKEN?: string;
 }
 
 /**
@@ -56,6 +66,23 @@ export class GatewayInspector extends DurableObject<Env> {
   #nextId = 1;
   #intents: readonly GatewayIntentName[] = [];
   #connectedAt: number | null = null;
+  /**
+   * Whether events are being captured. Independent of the connection: pausing
+   * leaves the Gateway session and its heartbeat untouched, so resuming costs
+   * nothing. Making this a reconnect would spend a session start to change a
+   * purely local decision.
+   */
+  #recording = true;
+  /** Recorded-type allowlist; `null` records everything Discord sends. */
+  #recordFilter: readonly string[] | null = null;
+  /**
+   * Every event type seen since connecting, so the UI can offer a filter list
+   * built from real traffic rather than all 84 documented types.
+   *
+   * Tracked even while paused — otherwise pausing would hide the very types
+   * you paused in order to go filter for.
+   */
+  #seenTypes = new Set<string>();
   /**
    * Connection timers run on Durable Object alarms rather than `setTimeout`.
    * A DO's JS timers die with its isolate, so an evicted object would stop
@@ -99,12 +126,33 @@ export class GatewayInspector extends DurableObject<Env> {
       return;
     }
 
+    this.#handle(message);
+  }
+
+  /** Apply a decoded client message. Split out so tests can drive it. */
+  #handle(message: ClientMessage): void {
     switch (message.type) {
       case `connect`:
         this.#connect(message.token, message.intents);
         break;
+      case `reconnect`:
+        // Intents are only accepted in IDENTIFY, so a change means a fresh
+        // session. Tear down first so the old socket can't outlive it.
+        this.#disconnect();
+        // An empty token falls back to the env var inside #connect, which is
+        // what makes this work when the browser never held one.
+        this.#connect(``, message.intents);
+        break;
       case `disconnect`:
         this.#disconnect();
+        break;
+      case `record`:
+        this.#recording = message.recording;
+        this.#broadcast({ type: `status`, status: this.#status() });
+        break;
+      case `recordFilter`:
+        this.#recordFilter = message.types;
+        this.#broadcast({ type: `status`, status: this.#status() });
         break;
       case `clear`:
         this.#events = [];
@@ -123,17 +171,22 @@ export class GatewayInspector extends DurableObject<Env> {
 
   #connect(token: string, intents: readonly GatewayIntentName[]): void {
     if (this.#connection) return;
-    if (token.trim() === ``) {
+    // Fall back to the configured token so local dev doesn't require pasting
+    // one on every reload. The typed value wins when present, so a deployed
+    // instance stays usable by someone who isn't the operator.
+    const resolved =
+      token.trim() === `` ? (this.env.DISCORD_BOT_TOKEN ?? ``) : token;
+    if (resolved.trim() === ``) {
       this.#broadcast({
         type: `error`,
-        message: `A bot token is required to open a Gateway connection.`
+        message: `A bot token is required to open a Gateway connection. Enter one above, or set DISCORD_BOT_TOKEN in .env and restart the dev server.`
       });
       return;
     }
 
     this.#intents = intents;
     const connection = new GatewayConnection({
-      token,
+      token: resolved,
       intents,
       scheduler: this.#scheduler,
       ...(this.env.GATEWAY_URL === undefined
@@ -175,6 +228,25 @@ export class GatewayInspector extends DurableObject<Env> {
     category: `dispatch` | `lifecycle`,
     data: unknown
   ): void {
+    // Track the type before any filtering, so the UI's filter list is built
+    // from what Discord is actually sending — otherwise you could never
+    // discover a type in order to add it to the allowlist.
+    const isNewType = !this.#seenTypes.has(type);
+    this.#seenTypes.add(type);
+
+    if (!this.#recording) {
+      // Still tell viewers about a newly-seen type while paused, so the filter
+      // list keeps filling in. Only new types, to avoid a broadcast per event.
+      if (isNewType)
+        this.#broadcast({ type: `status`, status: this.#status() });
+      return;
+    }
+    if (this.#recordFilter !== null && !this.#recordFilter.includes(type)) {
+      if (isNewType)
+        this.#broadcast({ type: `status`, status: this.#status() });
+      return;
+    }
+
     const event: InspectedEvent = {
       id: this.#nextId++,
       type,
@@ -201,6 +273,12 @@ export class GatewayInspector extends DurableObject<Env> {
         (intent) => !this.#intents.includes(intent)
       ),
       eventCount: this.#events.length,
+      // Deliberately a boolean: the client needs to know a token is available
+      // to enable Connect, and must never receive the token itself.
+      tokenFromEnv: (this.env.DISCORD_BOT_TOKEN ?? ``).trim() !== ``,
+      recording: this.#recording,
+      recordFilter: this.#recordFilter,
+      seenTypes: [...this.#seenTypes].sort(),
       connectedAt: this.#connectedAt
     };
   }
@@ -222,6 +300,22 @@ export class GatewayInspector extends DurableObject<Env> {
   /** Current connection state, for the spike's assertions. */
   status(): InspectorStatus {
     return this.#status();
+  }
+
+  /**
+   * Drive the capture path directly, for tests.
+   *
+   * Exercises `#record` without a live Gateway socket, so the recording rules
+   * (pause, allowlist, seen-type tracking) can be asserted without scripting a
+   * whole Discord session.
+   */
+  simulateEvent(type: string, data: unknown = {}): void {
+    this.#record(type, `dispatch`, data);
+  }
+
+  /** Apply a client message directly, for tests. */
+  applyMessage(message: ClientMessage): void {
+    this.#handle(message);
   }
 }
 

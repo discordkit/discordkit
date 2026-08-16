@@ -32,6 +32,14 @@ interface EventListProps {
   filter: string;
   onFilterChange: (value: string) => void;
   onClear: () => void;
+  /**
+   * Record/pause + capture-filter controls, rendered above the search row.
+   *
+   * Passed in rather than constructed here so this component stays a pure
+   * view over a list of events — it has no reason to know about the socket
+   * that produces them.
+   */
+  recordControls?: React.ReactNode;
 }
 
 export const EventList = ({
@@ -41,7 +49,8 @@ export const EventList = ({
   onSelect,
   filter,
   onFilterChange,
-  onClear
+  onClear,
+  recordControls
 }: EventListProps): React.JSX.Element => {
   const normalized = filter.trim().toUpperCase();
 
@@ -57,6 +66,7 @@ export const EventList = ({
 
   return (
     <div className="flex min-h-0 min-w-0 flex-col border-r border-slate-800">
+      {recordControls}
       <div className="flex items-center gap-2 border-b border-slate-800 p-2">
         <input
           value={filter}
