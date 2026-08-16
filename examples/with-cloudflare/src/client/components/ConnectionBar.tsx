@@ -1,13 +1,16 @@
 import { useState } from "react";
 import {
   Button,
+  Disclosure,
+  DisclosurePanel,
+  Heading,
   Input,
   Label,
   TextField,
   ToggleButton
 } from "react-aria-components";
 import { GatewayIntents, type GatewayIntentName } from "@discordkit/gateway";
-import { AlertTriangle, Plug, PlugZap } from "lucide-react";
+import { AlertTriangle, ChevronRight, Plug, PlugZap } from "lucide-react";
 import type { InspectorStatus } from "../../shared/protocol.js";
 
 const PRIVILEGED = new Set<GatewayIntentName>([
@@ -41,6 +44,10 @@ export const ConnectionBar = ({
   const [token, setToken] = useState(``);
   const [intents, setIntents] = useState<GatewayIntentName[]>(DEFAULT_INTENTS);
   const connected = status.state !== `idle` && status.state !== `closed`;
+  // Surfaced on the collapsed summary: the 4014 close is the single most
+  // common way a first connection fails, and folding the chips away must not
+  // hide the warning that explains it.
+  const privilegedSelected = intents.filter((intent) => PRIVILEGED.has(intent));
 
   const toggle = (intent: GatewayIntentName): void => {
     setIntents((current) =>
@@ -98,45 +105,82 @@ export const ConnectionBar = ({
         )}
       </div>
 
-      <div className="mt-3 flex max-h-24 flex-wrap gap-1.5 overflow-y-auto">
-        {ALL_INTENTS.map((intent) => {
-          const selected = intents.includes(intent);
-          const privileged = PRIVILEGED.has(intent);
-          return (
-            <ToggleButton
-              key={intent}
-              isSelected={selected}
-              isDisabled={connected}
-              onChange={() => {
-                toggle(intent);
-              }}
-              className={`rounded-full border px-2.5 py-1 font-mono text-[11px] transition-colors disabled:opacity-50 ${
-                selected
-                  ? privileged
-                    ? `border-amber-500/60 bg-amber-500/15 text-amber-300`
-                    : `border-indigo-500/60 bg-indigo-500/15 text-indigo-300`
-                  : `border-slate-700 text-slate-500 hover:border-slate-600`
-              }`}
-            >
-              {privileged && selected ? (
-                <AlertTriangle
-                  size={10}
-                  className="mr-1 inline align-[-1px]"
-                  aria-label="Privileged intent"
-                />
-              ) : null}
-              {intent}
-            </ToggleButton>
-          );
-        })}
-      </div>
+      {/* Collapsed by default. 21 chips wrapped to three rows plus a help
+          paragraph took roughly a quarter of the viewport permanently, to
+          configure something you set once before connecting. The summary line
+          keeps the current selection visible while folded, so collapsing costs
+          no information. */}
+      <Disclosure className="mt-3">
+        <Heading level={2}>
+          <Button
+            slot="trigger"
+            className="group flex w-full min-w-0 items-center gap-1.5 rounded px-1 py-1 text-left text-xs text-slate-400 hover:text-slate-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500"
+          >
+            <ChevronRight
+              size={14}
+              aria-hidden
+              className="shrink-0 transition-transform group-expanded:rotate-90"
+            />
+            <span className="shrink-0 font-medium">Intents</span>
+            <span className="truncate font-mono text-[11px] text-slate-500">
+              {intents.length === 0 ? `none selected` : intents.join(`, `)}
+            </span>
+            {privilegedSelected.length > 0 ? (
+              <span
+                className="ml-auto flex shrink-0 items-center gap-1 text-[11px] text-amber-400"
+                title="Privileged intents must be enabled in the Developer Portal"
+              >
+                <AlertTriangle size={11} aria-hidden />
+                {privilegedSelected.length} privileged
+              </span>
+            ) : null}
+          </Button>
+        </Heading>
 
-      <p className="mt-2 text-xs text-slate-500">
-        Amber intents are{` `}
-        <strong className="font-medium text-amber-400">privileged</strong> —
-        they must be enabled in the Developer Portal, or Discord closes the
-        connection with <code className="font-mono">4014</code>.
-      </p>
+        <DisclosurePanel>
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {ALL_INTENTS.map((intent) => {
+              const selected = intents.includes(intent);
+              const privileged = PRIVILEGED.has(intent);
+              return (
+                <ToggleButton
+                  key={intent}
+                  isSelected={selected}
+                  isDisabled={connected}
+                  onChange={() => {
+                    toggle(intent);
+                  }}
+                  className={`rounded-full border px-2.5 py-1 font-mono text-[11px] transition-colors disabled:opacity-50 ${
+                    selected
+                      ? privileged
+                        ? `border-amber-500/60 bg-amber-500/15 text-amber-300`
+                        : `border-indigo-500/60 bg-indigo-500/15 text-indigo-300`
+                      : `border-slate-700 text-slate-500 hover:border-slate-600`
+                  }`}
+                >
+                  {privileged && selected ? (
+                    <AlertTriangle
+                      size={10}
+                      className="mr-1 inline align-[-1px]"
+                      aria-label="Privileged intent"
+                    />
+                  ) : null}
+                  {intent}
+                </ToggleButton>
+              );
+            })}
+          </div>
+
+          <p className="mt-2 text-xs text-slate-500">
+            Amber intents are{` `}
+            <strong className="font-medium text-amber-400">
+              privileged
+            </strong> —
+            they must be enabled in the Developer Portal, or Discord closes the
+            connection with <code className="font-mono">4014</code>.
+          </p>
+        </DisclosurePanel>
+      </Disclosure>
     </section>
   );
 };

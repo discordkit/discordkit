@@ -1,24 +1,8 @@
 import { AlertTriangle } from "lucide-react";
+import { isObject } from "@discordkit/core/utils/isObject";
+import { toCamelKeys } from "@discordkit/core/utils/toCamelKeys";
 import type { InspectedEvent } from "../../shared/protocol.js";
-
-/**
- * Turn the camelized payload discordkit hands your handler back into Discord's
- * snake_case wire shape, so the two can be compared side by side.
- *
- * This is presentation-only — the point is to make the transform legible, since
- * "why doesn't `channel_id` exist on my object?" is a real question the
- * boundary raises.
- */
-const toSnake = (value: unknown): unknown => {
-  if (Array.isArray(value)) return value.map(toSnake);
-  if (typeof value !== `object` || value === null) return value;
-  return Object.fromEntries(
-    Object.entries(value).map(([key, nested]) => [
-      key.replace(/[A-Z]/g, (char) => `_${char.toLowerCase()}`),
-      toSnake(nested)
-    ])
-  );
-};
+import { JsonTree } from "./JsonTree.js";
 
 export const PayloadPanel = ({
   event,
@@ -39,7 +23,19 @@ export const PayloadPanel = ({
     );
   }
 
-  const payload = raw ? toSnake(event.data) : event.data;
+  // `event.data` is stored exactly as Discord sent it: the inspector subscribes
+  // via `onDispatch`, which deliberately delivers WIRE-shaped payloads (the
+  // typed fan-out is what camelizes, and only for events with a subscriber).
+  //
+  // So "wire" is the stored value and "discordkit" is the transformed one —
+  // the opposite of what this panel used to assume. It previously ran a
+  // hand-rolled snake_case conversion over data that was *already* snake_case,
+  // which is a no-op, so the toggle appeared to do nothing.
+  //
+  // Using the package's own `toCamelKeys` rather than an inverse means this
+  // shows the exact transform your handlers receive, and can't drift from it.
+  const payload =
+    raw || !isObject(event.data) ? event.data : toCamelKeys(event.data);
 
   return (
     // `min-w-0` matters as much as `min-h-0`: a flex item defaults to
@@ -103,9 +99,11 @@ export const PayloadPanel = ({
         )}
       </div>
 
-      <pre className="min-h-0 min-w-0 flex-1 overflow-auto p-4 font-mono text-xs leading-relaxed text-slate-300">
-        {JSON.stringify(payload, null, 2)}
-      </pre>
+      {/* `overflow-y-auto` only — the tree wraps long values instead of
+          scrolling sideways, so there is no horizontal axis to scroll. */}
+      <div className="min-h-0 min-w-0 flex-1 overflow-y-auto">
+        <JsonTree data={payload} />
+      </div>
     </div>
   );
 };

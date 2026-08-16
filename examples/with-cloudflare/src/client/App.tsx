@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ConnectionBar } from "./components/ConnectionBar.js";
 import { EventList } from "./components/EventList.js";
+import { TimeRange, type TimeSelection } from "./components/TimeRange.js";
 import { PayloadPanel } from "./components/PayloadPanel.js";
 import { StatusStrip } from "./components/StatusStrip.js";
 import { useInspector } from "./useInspector.js";
@@ -11,8 +12,23 @@ export const App = (): React.JSX.Element => {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [filter, setFilter] = useState(``);
   const [raw, setRaw] = useState(false);
+  const [range, setRange] = useState<TimeSelection>({ from: null, to: null });
 
   const selected = events.find((event) => event.id === selectedId) ?? null;
+
+  // The brush narrows what the list shows. Applied here rather than inside the
+  // list because the timeline spans the full window, above both panes.
+  const inRange = useMemo(
+    () =>
+      range.from === null && range.to === null
+        ? events
+        : events.filter(
+            (event) =>
+              (range.from === null || event.at >= range.from) &&
+              (range.to === null || event.at <= range.to)
+          ),
+    [events, range.from, range.to]
+  );
 
   return (
     // `h-full` off the html/body chain (see styles.css) rather than a viewport
@@ -34,6 +50,7 @@ export const App = (): React.JSX.Element => {
         onDisconnect={disconnect}
       />
       <StatusStrip status={status} eventCount={events.length} />
+      <TimeRange events={events} range={range} onChange={setRange} />
 
       {error ? (
         <p
@@ -54,7 +71,8 @@ export const App = (): React.JSX.Element => {
             navigation. */}
       <main className="grid min-h-0 flex-1 grid-cols-[minmax(180px,clamp(180px,32vw,320px))_minmax(0,1fr)]">
         <EventList
-          events={events}
+          events={inRange}
+          totalCount={events.length}
           selectedId={selectedId}
           onSelect={setSelectedId}
           filter={filter}
@@ -62,6 +80,9 @@ export const App = (): React.JSX.Element => {
           onClear={() => {
             clear();
             setSelectedId(null);
+            // Clearing the buffer invalidates the timeline the range was drawn
+            // against, so a stale window would silently hide incoming events.
+            setRange({ from: null, to: null });
           }}
         />
         <PayloadPanel event={selected} raw={raw} onToggleRaw={setRaw} />

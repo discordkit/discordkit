@@ -28,7 +28,12 @@ export interface InspectedEvent {
   at: number;
   /** Sequence number from the payload, when the event carried one. */
   seq: number | null;
-  /** The camelized payload discordkit hands your handler. */
+  /**
+   * The payload exactly as Discord sent it, in snake_case. The inspector
+   * subscribes via `onDispatch`, which delivers the raw wire shape — the typed
+   * fan-out is what camelizes, and only for events with a subscriber. The
+   * payload panel applies `toCamelKeys` itself to show the discordkit view.
+   */
   data: unknown;
   /** Intents that gate this event; empty when Discord always delivers it. */
   intents: readonly GatewayIntentName[];
