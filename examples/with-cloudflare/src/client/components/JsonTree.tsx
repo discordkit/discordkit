@@ -11,6 +11,10 @@ import {
 } from "react-aria-components";
 import type { Key, Selection } from "react-aria-components";
 import { ChevronRight } from "lucide-react";
+import {
+  DISCORD_EPOCH,
+  snowflakeToDate
+} from "@discordkit/core/validations/snowflake";
 
 /**
  * A collapsible JSON viewer modelled on Chrome DevTools' "Preview" tab, built
@@ -77,22 +81,126 @@ const preview = (value: Json): string => {
   return ``;
 };
 
-/** A leaf value, coloured by type the way DevTools does. */
+/**
+ * Recognise values by what they MEAN to Discord, not just by JSON type.
+ *
+ * Generic JSON colouring tells you `"1157272423910084608"` is a string, which
+ * you could see. Recognising it as a snowflake — and showing when it was
+ * created — answers the question you actually had. These are the fields you
+ * chase through a Gateway payload, so they are the ones worth annotating.
+ */
+const isSnowflake = (value: string): boolean => {
+  // Cheap structural check first: snowflakes are 17-20 digits. Without this
+  // every short numeric string would go through BigInt parsing.
+  if (!/^\d{17,20}$/.test(value)) return false;
+  try {
+    return snowflakeToDate(value).getTime() >= Number(DISCORD_EPOCH);
+  } catch {
+    return false;
+  }
+};
+
+/** ISO-8601, the shape Discord uses for `timestamp`/`joined_at` and friends. */
+const ISO_DATE =
+  /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/;
+
+/** Relative age, so a timestamp reads as "when" rather than as digits. */
+const ago = (at: Date): string => {
+  const seconds = Math.round((Date.now() - at.getTime()) / 1000);
+  if (!Number.isFinite(seconds)) return ``;
+  const future = seconds < 0;
+  const abs = Math.abs(seconds);
+  const [value, unit] =
+    abs < 60
+      ? [abs, `s`]
+      : abs < 3600
+        ? [Math.round(abs / 60), `m`]
+        : abs < 86400
+          ? [Math.round(abs / 3600), `h`]
+          : [Math.round(abs / 86400), `d`];
+  return future ? `in ${value}${unit}` : `${value}${unit} ago`;
+};
+
+/** An annotation shown after a value, e.g. a snowflake's creation time. */
+const Note = ({
+  children
+}: {
+  children: React.ReactNode;
+}): React.JSX.Element => (
+  <span className="ml-1.5 text-ink-muted">{children}</span>
+);
+
 const Leaf = ({ value }: { value: Json }): React.JSX.Element => {
   if (typeof value === `string`) {
-    return (
-      <span className="break-all text-amber-300">&quot;{value}&quot;</span>
-    );
+    if (isSnowflake(value)) {
+      // A snowflake embeds its creation time in the high bits, so the id
+      // itself says when the thing was made — no lookup needed.
+      const created = snowflakeToDate(value);
+      return (
+        <span className="break-all text-ok">
+          &quot;{value}&quot;
+          <Note>id · {ago(created)}</Note>
+        </span>
+      );
+    }
+    if (ISO_DATE.test(value)) {
+      return (
+        <span className="break-all text-accent">
+          &quot;{value}&quot;
+          <Note>{ago(new Date(value))}</Note>
+        </span>
+      );
+    }
+    if (/^https?:\/\//.test(value)) {
+      // Opens in a new tab: following a link out of the inspector would drop
+      // the session you are inspecting.
+      return (
+        <a
+          href={value}
+          target="_blank"
+          rel="noreferrer"
+          className="break-all text-accent underline decoration-ink-line-strong underline-offset-2 hover:decoration-current"
+        >
+          &quot;{value}&quot;
+        </a>
+      );
+    }
+    if (value === ``) {
+      // An empty string is usually the MESSAGE_CONTENT intent silently not
+      // being granted, which is invisible if it renders as `""`.
+      return (
+        <span className="text-ink-muted italic">&quot;&quot; (empty)</span>
+      );
+    }
+    return <span className="break-all text-warn">&quot;{value}&quot;</span>;
   }
   if (typeof value === `number`) {
-    return <span className="text-sky-300">{String(value)}</span>;
+    // Unix seconds/ms in a plausible range read as a time rather than a
+    // magnitude — TYPING_START's `timestamp` (seconds) and our own lifecycle
+    // `at` (milliseconds) are both common.
+    //
+    // Milliseconds MUST be tested first: a ms value also satisfies the
+    // seconds bound, so checking seconds first multiplied it again and
+    // produced "178694264910447m ago".
+    const asMs =
+      value > 1_000_000_000_000 && value < 4_000_000_000_000
+        ? value
+        : value > 1_000_000_000 && value < 4_000_000_000
+          ? value * 1000
+          : null;
+    return (
+      <span className="text-accent">
+        {String(value)}
+        {asMs === null ? null : <Note>{ago(new Date(asMs))}</Note>}
+      </span>
+    );
   }
   if (typeof value === `boolean`) {
-    return <span className="text-purple-300">{String(value)}</span>;
+    return <span className="text-accent">{String(value)}</span>;
   }
-  if (value === null) return <span className="text-slate-500">null</span>;
-  if (Array.isArray(value)) return <span className="text-slate-500">[]</span>;
-  return <span className="text-slate-500">{`{}`}</span>;
+  if (value === null) return <span className="text-ink-muted">null</span>;
+  if (Array.isArray(value)) return <span className="text-ink-muted">[]</span>;
+  return <span className="text-ink-muted">{`{}`}</span>;
 };
 
 /**
@@ -109,7 +217,7 @@ const copy = async (text: string): Promise<void> => {
   }
 };
 
-const menuItemClass = `cursor-default px-3 py-1.5 text-slate-300 outline-none focus:bg-indigo-500/20 focus:text-slate-100`;
+const menuItemClass = `cursor-default px-3 py-1.5 text-ink-body outline-none focus:bg-indigo-500/20 focus:text-ink-text`;
 
 const Row = ({ node }: { node: Node }): React.JSX.Element => {
   const branch = node.children.length > 0;
@@ -131,7 +239,7 @@ const Row = ({ node }: { node: Node }): React.JSX.Element => {
       <TreeItemContent>
         <>
           <div
-            className="flex min-w-0 items-start gap-1 rounded px-1 py-px hover:bg-slate-800/40 group-focus-visible:bg-slate-800/60"
+            className="flex min-w-0 items-start gap-1 rounded px-1 py-px hover:bg-ink-line/40 group-focus-visible:bg-ink-line/60"
             // RAC's Tree tracks depth for ARIA but does not indent visually,
             // so nested fields would otherwise sit flush with their parent's
             // siblings and the structure would be unreadable.
@@ -147,7 +255,7 @@ const Row = ({ node }: { node: Node }): React.JSX.Element => {
             <Button
               slot="chevron"
               className={`mt-0.75 shrink-0 rounded outline-none focus-visible:ring-1 focus-visible:ring-indigo-500 ${
-                branch ? `text-slate-500` : `invisible`
+                branch ? `text-ink-muted` : `invisible`
               }`}
             >
               <ChevronRight
@@ -158,14 +266,14 @@ const Row = ({ node }: { node: Node }): React.JSX.Element => {
             </Button>
 
             <span className="min-w-0 break-all">
-              <span className="text-slate-400">{node.name}</span>
-              <span className="text-slate-600">: </span>
+              <span className="text-ink-body">{node.name}</span>
+              <span className="text-ink-muted">: </span>
               {branch ? (
                 <>
-                  <span className="text-slate-500 group-expanded:hidden">
+                  <span className="text-ink-muted group-expanded:hidden">
                     {preview(node.value)}
                   </span>
-                  <span className="hidden text-slate-600 group-expanded:inline">
+                  <span className="hidden text-ink-muted group-expanded:inline">
                     {Array.isArray(node.value) ? `[` : `{`}
                   </span>
                 </>
@@ -190,7 +298,7 @@ const Row = ({ node }: { node: Node }): React.JSX.Element => {
               if (!open) setMenuAt(null);
             }}
             placement="bottom start"
-            className="rounded border border-slate-700 bg-slate-900 py-1 shadow-lg"
+            className="rounded border border-ink-line-strong bg-ink-panel py-1 shadow-lg"
           >
             <Menu
               className="min-w-44 text-xs outline-none"
@@ -266,7 +374,7 @@ export const JsonTree = ({ data }: { data: Json }): React.JSX.Element => {
   };
 
   if (nodes.length === 0) {
-    return <p className="p-4 text-xs text-slate-600">Empty payload.</p>;
+    return <p className="p-4 text-xs text-ink-muted">Empty payload.</p>;
   }
 
   return (

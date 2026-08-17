@@ -45,15 +45,17 @@ export const RecordControls = ({
   };
 
   return (
-    <div className="flex shrink-0 items-center gap-1.5 border-b border-slate-800 px-2 py-1.5">
+    // Inline in the timeline header: no border or padding of its own, since it
+    // sits alongside the panel's other controls rather than owning a strip.
+    <div className="flex shrink-0 items-center gap-1.5">
       <ToggleButton
         isSelected={recording}
         onChange={onRecordingChange}
         aria-label={recording ? `Pause recording` : `Resume recording`}
         className={`flex items-center gap-1.5 rounded px-2 py-1 text-xs transition-colors ${
           recording
-            ? `bg-rose-500/15 text-rose-300 hover:bg-rose-500/25`
-            : `text-slate-400 hover:bg-slate-800 hover:text-slate-200`
+            ? `bg-rose-500/15 text-danger hover:bg-rose-500/25`
+            : `text-ink-body hover:bg-ink-line hover:text-ink-text`
         }`}
       >
         {recording ? (
@@ -74,20 +76,24 @@ export const RecordControls = ({
           isDisabled={seenTypes.length === 0}
           className={`flex items-center gap-1.5 rounded px-2 py-1 text-xs transition-colors disabled:opacity-40 ${
             filtering
-              ? `bg-indigo-500/15 text-indigo-300`
-              : `text-slate-400 hover:bg-slate-800 hover:text-slate-200`
+              ? `bg-indigo-500/15 text-accent`
+              : `text-ink-body hover:bg-ink-line hover:text-ink-text`
           }`}
         >
           <Filter size={11} aria-hidden />
-          {filtering
-            ? `${recordFilter.length} of ${seenTypes.length}`
-            : `All types`}
+          {/* Fixed width for the same reason as the guild trigger: it anchors
+              a popover, and a reflowing label drags the panel with it. */}
+          <span className="w-20 text-left tabular-nums">
+            {filtering
+              ? `${recordFilter.length} of ${seenTypes.length}`
+              : `All types`}
+          </span>
         </Button>
 
-        <Popover className="rounded border border-slate-700 bg-slate-900 shadow-lg">
+        <Popover className="rounded border border-ink-line-strong bg-ink-panel shadow-lg">
           <Dialog className="max-h-80 w-64 overflow-y-auto p-2 outline-none">
-            <div className="mb-1.5 flex items-center justify-between gap-2 border-b border-slate-800 pb-1.5">
-              <span className="text-[11px] font-medium text-slate-300">
+            <div className="mb-1.5 flex items-center justify-between gap-2 border-b border-ink-line pb-1.5">
+              <span className="text-2xs font-medium text-ink-body">
                 Record these events
               </span>
               <Button
@@ -95,7 +101,7 @@ export const RecordControls = ({
                   onFilterChange(null);
                 }}
                 isDisabled={!filtering}
-                className="rounded px-1.5 py-0.5 text-[10px] text-slate-400 hover:bg-slate-800 hover:text-slate-200 disabled:opacity-40"
+                className="rounded px-1.5 py-0.5 text-2xs text-ink-body hover:bg-ink-line hover:text-ink-text disabled:opacity-40"
               >
                 Select all
               </Button>
@@ -112,9 +118,9 @@ export const RecordControls = ({
                 onChange={() => {
                   toggleType(type);
                 }}
-                className="flex cursor-default items-center gap-2 rounded px-1.5 py-1 font-mono text-[11px] text-slate-300 hover:bg-slate-800/60"
+                className="group flex cursor-default items-center gap-2 rounded px-1.5 py-1 font-mono text-2xs text-ink-body hover:bg-ink-line/60"
               >
-                <span className="flex size-3.5 shrink-0 items-center justify-center rounded-sm border border-slate-600 selected:border-indigo-500 selected:bg-indigo-500">
+                <span className="flex size-3.5 shrink-0 items-center justify-center rounded-sm border border-ink-line-strong group-selected:border-indigo-500 group-selected:bg-indigo-500">
                   <svg
                     viewBox="0 0 12 12"
                     className="size-2.5 text-white opacity-0 group-selected:opacity-100"
@@ -137,9 +143,7 @@ export const RecordControls = ({
       </DialogTrigger>
 
       {!recording ? (
-        <span className="ml-auto text-[10px] text-slate-500">
-          connection still live
-        </span>
+        <span className="text-2xs text-ink-muted">connection still live</span>
       ) : null}
     </div>
   );

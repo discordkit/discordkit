@@ -7,10 +7,12 @@
     "@discordkit/client": "workspace:^",
     "@discordkit/core": "workspace:^",
     "@discordkit/gateway": "workspace:^",
+    "@xstate/react": "catalog:",
     "lucide-react": "catalog:",
     "react": "catalog:",
     "react-aria-components": "catalog:",
-    "react-dom": "catalog:"
+    "react-dom": "catalog:",
+    "xstate": "catalog:"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "1.51.3",

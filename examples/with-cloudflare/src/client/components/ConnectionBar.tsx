@@ -1,22 +1,23 @@
 import { useState } from "react";
 import {
   Button,
-  Disclosure,
-  DisclosurePanel,
+  Dialog,
+  DialogTrigger,
   Heading,
   Input,
   Label,
+  Popover,
   TextField,
   ToggleButton
 } from "react-aria-components";
 import { GatewayIntents, type GatewayIntentName } from "@discordkit/gateway";
 import {
   AlertTriangle,
-  ChevronRight,
   ExternalLink,
   Plug,
   PlugZap,
-  RefreshCw
+  RefreshCw,
+  Sliders
 } from "lucide-react";
 import type { InspectorStatus } from "../../shared/protocol.js";
 
@@ -27,33 +28,52 @@ const PRIVILEGED = new Set<GatewayIntentName>([
 ]);
 
 /** Sensible starting point: guild events plus message traffic. */
-const DEFAULT_INTENTS: GatewayIntentName[] = [
+const DEFAULT_INTENTS = new Set<GatewayIntentName>([
   `GUILDS`,
   `GUILD_MESSAGES`,
   `MESSAGE_CONTENT`
-];
+]);
 
-const ALL_INTENTS = Object.keys(GatewayIntents) as GatewayIntentName[];
+const ALL_INTENTS = new Set(Object.keys(GatewayIntents) as GatewayIntentName[]);
 
 /**
  * The two groups, derived from `PRIVILEGED` rather than hand-listed, so a new
  * intent in the generated `GatewayIntents` can't silently go missing from the
  * UI — it lands in the standard group and is at least visible.
  */
-const STANDARD_INTENTS = ALL_INTENTS.filter(
-  (intent) => !PRIVILEGED.has(intent)
-);
-const PRIVILEGED_ORDER = ALL_INTENTS.filter((intent) => PRIVILEGED.has(intent));
+const STANDARD_INTENTS = ALL_INTENTS.difference(PRIVILEGED);
+const PRIVILEGED_ORDER = ALL_INTENTS.intersection(PRIVILEGED);
+
+/**
+ * Intents that do nothing on their own.
+ *
+ * Intents have no dependencies on each other in general — each gates its own
+ * events independently. `MESSAGE_CONTENT` is the exception that looks like one:
+ * it gates no EVENT at all, it decides whether `content`/`embeds`/`attachments`
+ * are populated on message events you are already receiving. Selected without a
+ * message intent, it silently does nothing, which is a confusing way to spend a
+ * privileged intent.
+ */
+const REQUIRES: Partial<Record<GatewayIntentName, GatewayIntentName[]>> = {
+  MESSAGE_CONTENT: [`GUILD_MESSAGES`, `DIRECT_MESSAGES`]
+};
 
 const IntentChip = ({
   intent,
   isSelected,
   privileged,
+  /**
+   * For privileged intents: whether the Developer Portal actually grants it.
+   * `null` means unknown (application not fetched yet), which renders neutrally
+   * rather than accusing a correct setup of being broken.
+   */
+  granted,
   onToggle
 }: {
   intent: GatewayIntentName;
   isSelected: boolean;
   privileged: boolean;
+  granted?: boolean | null;
   onToggle: (intent: GatewayIntentName) => void;
 }): React.JSX.Element => (
   <ToggleButton
@@ -63,14 +83,25 @@ const IntentChip = ({
     onChange={() => {
       onToggle(intent);
     }}
-    className={`rounded-full border px-2.5 py-1 font-mono text-[11px] transition-colors ${
+    className={`flex items-center gap-1 rounded-full border px-2.5 py-1 font-mono text-2xs transition-colors ${
       isSelected
         ? privileged
-          ? `border-amber-500/60 bg-amber-500/15 text-amber-300`
-          : `border-indigo-500/60 bg-indigo-500/15 text-indigo-300`
-        : `border-slate-700 text-slate-500 hover:border-slate-600`
+          ? granted === false
+            ? // Selected but NOT enabled in the portal: this exact combination
+              // is what Discord closes with 4014, so it gets the error colour
+              // rather than the generic privileged amber.
+              `border-rose-500/60 bg-rose-500/15 text-danger hover:bg-rose-500/25`
+            : `border-amber-500/60 bg-amber-500/15 text-warn hover:bg-amber-500/25`
+          : `border-indigo-500/60 bg-indigo-500/15 text-accent hover:bg-indigo-500/25`
+        : `border-ink-line-strong text-ink-muted hover:border-accent/60 hover:bg-ink-line hover:text-ink-body`
     }`}
   >
+    {privileged && isSelected && granted === false ? (
+      <AlertTriangle
+        size={10}
+        aria-label="Not enabled in the Developer Portal"
+      />
+    ) : null}
     {intent}
   </ToggleButton>
 );
@@ -83,12 +114,6 @@ interface ConnectionBarProps {
   onDisconnect: () => void;
 }
 
-/** Same members, ignoring order — intents are a set, not a sequence. */
-const sameIntents = (
-  a: readonly GatewayIntentName[],
-  b: readonly GatewayIntentName[]
-): boolean => a.length === b.length && a.every((intent) => b.includes(intent));
-
 export const ConnectionBar = ({
   status,
   online,
@@ -97,87 +122,87 @@ export const ConnectionBar = ({
   onDisconnect
 }: ConnectionBarProps): React.JSX.Element => {
   const [token, setToken] = useState(``);
-  const [intents, setIntents] = useState<GatewayIntentName[]>(DEFAULT_INTENTS);
+  // A Set, because intents genuinely are one: membership is all that matters,
+  // duplicates are meaningless, and the wire format ORs them into a bitfield
+  // where order cannot survive anyway.
+  //
+  // `null` means "not touched since the server last told us what it is". The
+  // server's intents are the source of truth for a live connection, so a page
+  // refresh adopts them rather than snapping back to DEFAULT_INTENTS — which
+  // previously showed the wrong selection AND a spurious "changed — not
+  // applied", since the stale defaults differed from what was actually
+  // identified.
+  const [staged, setStaged] = useState<ReadonlySet<GatewayIntentName> | null>(
+    null
+  );
   const connected = status.state !== `idle` && status.state !== `closed`;
+  const intents =
+    staged ??
+    (status.intents.length > 0 ? new Set(status.intents) : DEFAULT_INTENTS);
   // Intents stay editable while connected, but Discord only accepts them in
   // IDENTIFY — so a change is staged until you explicitly apply it, rather
   // than silently costing a session start per toggle.
-  const dirty = connected && !sameIntents(intents, status.intents);
+  //
+  // `symmetricDifference` is the natural spelling of "do these differ at all":
+  // empty means identical, and it needs no length check or manual scan.
+  const dirty =
+    connected && intents.symmetricDifference(new Set(status.intents)).size > 0;
   // Surfaced on the collapsed summary: the 4014 close is the single most
   // common way a first connection fails, and folding the chips away must not
   // hide the warning that explains it.
-  const privilegedSelected = intents.filter((intent) => PRIVILEGED.has(intent));
+  const privilegedSelected = intents.intersection(PRIVILEGED);
+  // Intents selected that need a companion intent to have any effect. See
+  // REQUIRES: this is about MESSAGE_CONTENT gating FIELDS rather than events.
+  const inert = [...intents].filter((intent) => {
+    const needs = REQUIRES[intent];
+    return needs !== undefined && !needs.some((dep) => intents.has(dep));
+  });
 
   const toggle = (intent: GatewayIntentName): void => {
-    setIntents((current) =>
-      current.includes(intent)
-        ? current.filter((name) => name !== intent)
-        : [...current, intent]
+    // Seeds from the effective set on first edit, so toggling one chip after a
+    // refresh doesn't discard the other server-side intents.
+    setStaged((current) =>
+      (current ?? intents).symmetricDifference(new Set([intent]))
     );
   };
 
   return (
-    // `shrink-0` so the bar keeps its natural height inside the flex column
-    // rather than being squeezed, and the chip list below is capped + scrollable
-    // so 21 intents wrapping on a narrow viewport can't starve the event panes.
-    <section className="shrink-0 border-b border-slate-800 bg-slate-900/60 p-4">
-      <div className="flex flex-wrap items-end gap-3">
-        <TextField
-          // `min-w-0` rather than `min-w-64`: combined with `flex-1` the old
-          // floor meant the field absorbed all remaining width and pushed the
-          // Connect button flush against (and past) the viewport edge. It can
-          // now shrink, and `basis-64` keeps a sensible default width.
-          className="flex min-w-0 flex-1 basis-64 flex-col gap-1"
-          value={token}
-          onChange={setToken}
-          type="password"
-          isDisabled={connected}
-        >
-          <Label className="text-xs font-medium text-slate-400">
-            Bot token
-            {status.tokenFromEnv ? (
-              <span className="ml-2 font-normal text-emerald-400">
-                using DISCORD_BOT_TOKEN — type to override
-              </span>
-            ) : null}
-          </Label>
-          <Input
-            className="rounded border border-slate-700 bg-slate-950 px-3 py-2 font-mono text-sm text-slate-100 placeholder:text-slate-600 focus:border-indigo-500 focus:outline-none disabled:opacity-50"
-            placeholder={
-              status.tokenFromEnv
-                ? `Loaded from the server`
-                : `Never leaves your machine in local dev`
-            }
-          />
-        </TextField>
-
+    // A row segment, not a band: these controls live inside the app header
+    // (see App.tsx) because they are configured once and then ignored, and a
+    // dedicated strip spent ~120px of permanent height on them.
+    <>
+      {/* Fixed width, sized for BOTH buttons. "Apply & reconnect" appears only
+          when intents are staged, and letting the row reflow at that moment
+          shifted every control beside it — including the one you were about to
+          click. */}
+      <div className="ml-auto flex w-[19.5rem] shrink-0 items-center justify-end gap-2">
         {connected ? (
           <>
-            {/* Only rendered once the staged intents differ, so the cost of a
-                re-IDENTIFY is always a deliberate click rather than a
-                side effect of toggling a chip. */}
             {dirty ? (
               <Button
-                className="flex shrink-0 items-center gap-2 rounded bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-500 pressed:bg-amber-700"
+                className="flex items-center gap-1.5 rounded bg-amber-600 px-2.5 py-1 text-xs font-medium text-white hover:bg-amber-500 pressed:bg-amber-700"
                 onPress={() => {
-                  onReconnect(intents);
+                  onReconnect([...intents]);
+                  // Hand authority back to the server: once it re-identifies,
+                  // `status.intents` is the truth again.
+                  setStaged(null);
                 }}
               >
-                <RefreshCw size={16} aria-hidden />
+                <RefreshCw size={13} aria-hidden />
                 Apply &amp; reconnect
               </Button>
             ) : null}
             <Button
-              className="flex shrink-0 items-center gap-2 rounded bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-500 pressed:bg-rose-700"
+              className="flex items-center gap-1.5 rounded bg-rose-600 px-2.5 py-1 text-xs font-medium text-white hover:bg-rose-500 pressed:bg-rose-700"
               onPress={onDisconnect}
             >
-              <PlugZap size={16} aria-hidden />
+              <PlugZap size={13} aria-hidden />
               Disconnect
             </Button>
           </>
         ) : (
           <Button
-            className="flex shrink-0 items-center gap-2 rounded bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500 disabled:opacity-40 pressed:bg-indigo-700"
+            className="flex items-center gap-1.5 rounded bg-indigo-600 px-2.5 py-1 text-xs font-medium text-white hover:bg-indigo-500 disabled:opacity-40 pressed:bg-indigo-700"
             // A server-side DISCORD_BOT_TOKEN is enough on its own — requiring
             // a typed one made the env var useless, since the field was the
             // only way to supply a token at all.
@@ -185,122 +210,160 @@ export const ConnectionBar = ({
               !online || (token.trim() === `` && !status.tokenFromEnv)
             }
             onPress={() => {
-              onConnect(token, intents);
+              onConnect(token, [...intents]);
             }}
           >
-            <Plug size={16} aria-hidden />
+            <Plug size={13} aria-hidden />
             Connect
           </Button>
         )}
       </div>
 
-      {/* The button is also disabled while the browser's socket to the Worker
-          is down, which is otherwise invisible: you type a token, nothing
-          happens, and there is no way to tell why. Most often the dev server
-          restarted on a different port, or isn't running. */}
+      <TextField
+        className="flex min-w-0 shrink items-center gap-2"
+        value={token}
+        onChange={setToken}
+        type="password"
+        isDisabled={connected}
+      >
+        <Label className="shrink-0 text-xs font-medium text-ink-body">
+          Token
+        </Label>
+        <Input
+          className="w-[74ch] min-w-0 max-w-full rounded border border-ink-line-strong bg-ink-bg px-2 py-1 font-mono text-xs text-ink-text placeholder:text-ink-faint focus:border-indigo-500 focus:outline-none disabled:opacity-50"
+          placeholder={
+            status.tokenFromEnv
+              ? `Using DISCORD_BOT_TOKEN — type to override`
+              : `Never leaves your machine in local dev`
+          }
+        />
+      </TextField>
+
+      {/* Intents move into a popover: 21 chips plus the privileged panel is a
+          lot of resident surface for something configured once, and it does
+          not need to be visible to be reachable. */}
+      <DialogTrigger>
+        <Button
+          className={`flex shrink-0 items-center gap-1.5 rounded border px-2 py-1 text-xs transition-colors ${
+            dirty
+              ? `border-amber-500/60 bg-amber-500/10 text-warn`
+              : `border-ink-line-strong text-ink-body hover:bg-ink-line hover:text-ink-text`
+          }`}
+        >
+          <Sliders size={12} aria-hidden />
+          <span className="tabular-nums">{intents.size}</span>
+          <span className="text-ink-muted">intents</span>
+          {/* Reserved rather than conditional: letting "changed" grow the
+              button moved the button itself, which is the shift this layout
+              exists to avoid. */}
+          <span className="w-16 text-left text-warn">
+            {dirty ? `• changed` : ``}
+          </span>
+          <AlertTriangle
+            size={11}
+            className={`text-warn ${privilegedSelected.size > 0 ? `` : `invisible`}`}
+            aria-hidden
+          />
+        </Button>
+
+        <Popover className="rounded border border-ink-line-strong bg-ink-panel shadow-lg">
+          <Dialog className="w-[44rem] max-w-[92vw] p-3 outline-none">
+            <div className="mb-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+              <Heading
+                slot="title"
+                className="shrink-0 text-xs font-medium text-ink-text"
+              >
+                Gateway intents
+              </Heading>
+              {/* Wraps to its own line rather than being squeezed against the
+                  heading: `justify-between` on a fixed-width popover pushed
+                  this into the title at narrow widths. */}
+              <span className="text-2xs text-ink-muted">
+                Applied on connect — changing them re-IDENTIFYs
+              </span>
+            </div>
+
+            <div className="flex flex-wrap gap-1.5">
+              {[...STANDARD_INTENTS].map((intent) => (
+                <IntentChip
+                  key={intent}
+                  intent={intent}
+                  isSelected={intents.has(intent)}
+                  privileged={false}
+                  onToggle={toggle}
+                />
+              ))}
+            </div>
+
+            <div className="mt-3 rounded border border-amber-500/25 bg-amber-500/5 p-2.5">
+              <div className="mb-2 flex flex-wrap items-center gap-x-2 gap-y-1">
+                <span className="flex items-center gap-1.5 text-2xs font-medium text-warn">
+                  <AlertTriangle size={11} aria-hidden />
+                  Privileged
+                </span>
+                <span className="min-w-0 text-2xs text-ink-muted">
+                  must be enabled in the Developer Portal, or Discord closes
+                  with <code className="font-mono">4014</code>
+                </span>
+                {/* Deep-links to this bot's Bot tab once the application has
+                    been fetched; the app picker until then, since without an
+                    id there is nothing to link to. */}
+                <a
+                  href={
+                    status.application
+                      ? `https://discord.com/developers/applications/${status.application.id}/bot`
+                      : `https://discord.com/developers/applications`
+                  }
+                  target="_blank"
+                  rel="noreferrer"
+                  className="ml-auto flex shrink-0 items-center gap-1 rounded px-1.5 py-0.5 text-2xs text-warn underline decoration-amber-500/40 underline-offset-2 hover:bg-amber-500/10 hover:decoration-amber-400"
+                >
+                  Open Developer Portal
+                  <ExternalLink size={10} aria-hidden />
+                </a>
+              </div>
+
+              <div className="flex flex-wrap gap-1.5">
+                {[...PRIVILEGED_ORDER].map((intent) => (
+                  <IntentChip
+                    key={intent}
+                    intent={intent}
+                    isSelected={intents.has(intent)}
+                    privileged
+                    granted={
+                      status.application === null
+                        ? null
+                        : status.application.enabledPrivileged.includes(intent)
+                    }
+                    onToggle={toggle}
+                  />
+                ))}
+              </div>
+
+              {inert.length > 0 ? (
+                <p className="mt-2 text-xs text-warn">
+                  <span className="font-mono">{inert.join(`, `)}</span> gates
+                  message FIELDS, not events — without{` `}
+                  <span className="font-mono">GUILD_MESSAGES</span> or{` `}
+                  <span className="font-mono">DIRECT_MESSAGES</span> selected it
+                  has nothing to populate.
+                </p>
+              ) : null}
+            </div>
+          </Dialog>
+        </Popover>
+      </DialogTrigger>
+
+      {/* The Connect button is also disabled while the browser's socket to the
+          Worker is down, which is otherwise invisible: you type a token,
+          nothing happens, and there is no way to tell why. */}
       {!online ? (
-        <p role="status" className="mt-2 text-xs text-amber-400">
+        <p role="status" className="text-xs text-warn">
           Not connected to the inspector server, so Connect is disabled. Check
           that <code className="font-mono">vp run dev</code> is running, and
           that this page is open on the port it printed.
         </p>
       ) : null}
-
-      {/* Collapsed by default. 21 chips wrapped to three rows plus a help
-          paragraph took roughly a quarter of the viewport permanently, to
-          configure something you set once before connecting. The summary line
-          keeps the current selection visible while folded, so collapsing costs
-          no information. */}
-      <Disclosure className="mt-3">
-        <Heading level={2}>
-          <Button
-            slot="trigger"
-            className="group flex w-full min-w-0 items-center gap-1.5 rounded px-1 py-1 text-left text-xs text-slate-400 hover:text-slate-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500"
-          >
-            <ChevronRight
-              size={14}
-              aria-hidden
-              className="shrink-0 transition-transform group-expanded:rotate-90"
-            />
-            <span className="shrink-0 font-medium">Intents</span>
-            <span className="truncate font-mono text-[11px] text-slate-500">
-              {intents.length === 0 ? `none selected` : intents.join(`, `)}
-            </span>
-            {dirty ? (
-              <span className="ml-auto shrink-0 text-[11px] text-amber-400">
-                changed — not applied
-              </span>
-            ) : privilegedSelected.length > 0 ? (
-              <span
-                className="ml-auto flex shrink-0 items-center gap-1 text-[11px] text-amber-400"
-                title="Privileged intents must be enabled in the Developer Portal"
-              >
-                <AlertTriangle size={11} aria-hidden />
-                {privilegedSelected.length} privileged
-              </span>
-            ) : null}
-          </Button>
-        </Heading>
-
-        <DisclosurePanel>
-          {/* Split into two groups rather than one mixed list. The three
-              privileged intents behave differently in a way colour alone
-              didn't convey: they need a toggle flipped in the Developer
-              Portal, and Discord refuses the whole connection with 4014 if
-              they aren't — so selecting one without knowing that is the most
-              common first-run failure. */}
-          <div className="mt-2 flex flex-wrap gap-1.5">
-            {STANDARD_INTENTS.map((intent) => (
-              <IntentChip
-                key={intent}
-                intent={intent}
-                isSelected={intents.includes(intent)}
-                privileged={false}
-                onToggle={toggle}
-              />
-            ))}
-          </div>
-
-          <div className="mt-3 rounded border border-amber-500/25 bg-amber-500/5 p-2.5">
-            <div className="mb-2 flex flex-wrap items-center gap-x-2 gap-y-1">
-              <span className="flex items-center gap-1.5 text-[11px] font-medium text-amber-400">
-                <AlertTriangle size={11} aria-hidden />
-                Privileged
-              </span>
-              <span className="text-[11px] text-slate-500">
-                must be enabled in the Developer Portal, or Discord closes the
-                connection with <code className="font-mono">4014</code>
-              </span>
-              {/* Straight to the Bot tab, which is where the three toggles
-                  live — the portal's navigation makes this genuinely hard to
-                  find otherwise. `applications` (no id) lands on the app
-                  picker, since we don't know which app this token belongs
-                  to. */}
-              <a
-                href="https://discord.com/developers/applications"
-                target="_blank"
-                rel="noreferrer"
-                className="ml-auto flex shrink-0 items-center gap-1 rounded px-1.5 py-0.5 text-[11px] text-amber-300 underline decoration-amber-500/40 underline-offset-2 hover:bg-amber-500/10 hover:decoration-amber-400"
-              >
-                Open Developer Portal
-                <ExternalLink size={10} aria-hidden />
-              </a>
-            </div>
-
-            <div className="flex flex-wrap gap-1.5">
-              {PRIVILEGED_ORDER.map((intent) => (
-                <IntentChip
-                  key={intent}
-                  intent={intent}
-                  isSelected={intents.includes(intent)}
-                  privileged
-                  onToggle={toggle}
-                />
-              ))}
-            </div>
-          </div>
-        </DisclosurePanel>
-      </Disclosure>
-    </section>
+    </>
   );
 };

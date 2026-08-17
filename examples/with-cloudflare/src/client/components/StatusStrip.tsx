@@ -1,7 +1,8 @@
 import type { InspectorStatus } from "../../shared/protocol.js";
+import { CopyButton } from "./CopyButton.js";
 
 const STATE_COLORS: Record<string, string> = {
-  idle: `bg-slate-600`,
+  idle: `bg-ink-line-strong`,
   connecting: `bg-amber-500 animate-pulse`,
   identifying: `bg-amber-500 animate-pulse`,
   resuming: `bg-sky-500 animate-pulse`,
@@ -17,10 +18,10 @@ const Field = ({
   value: string;
 }): React.JSX.Element => (
   <div className="flex flex-col">
-    <span className="text-[10px] uppercase tracking-wide text-slate-500">
+    <span className="text-2xs uppercase tracking-wide text-ink-muted">
       {label}
     </span>
-    <span className="font-mono text-xs text-slate-200">{value}</span>
+    <span className="font-mono text-xs text-ink-text">{value}</span>
   </div>
 );
 
@@ -38,31 +39,37 @@ export const StatusStrip = ({
    */
   eventCount: number;
 }): React.JSX.Element => (
-  <section className="flex shrink-0 flex-wrap items-center gap-6 border-b border-slate-800 bg-slate-900/30 px-4 py-2.5">
+  <section className="flex shrink-0 flex-wrap items-center gap-6 border-b border-ink-line bg-ink-panel/50 px-4 py-2.5">
     <div className="flex items-center gap-2">
       <span
-        className={`size-2.5 rounded-full ${STATE_COLORS[status.state] ?? `bg-slate-600`}`}
+        className={`size-2.5 rounded-full ${STATE_COLORS[status.state] ?? `bg-ink-line-strong`}`}
         aria-hidden
       />
-      <span className="text-sm font-medium text-slate-200">{status.state}</span>
+      <span className="text-sm font-medium text-ink-text">{status.state}</span>
     </div>
 
-    <Field
-      label="Session"
-      value={status.sessionId ? `${status.sessionId.slice(0, 8)}…` : `—`}
-    />
+    {/* Truncated to fit, so the full id is only reachable by copying it —
+        which is also the only thing you would do with a session id. */}
+    <div className="flex flex-col">
+      <span className="text-2xs uppercase tracking-wide text-ink-muted">
+        Session
+      </span>
+      {status.sessionId === null ? (
+        <span className="font-mono text-xs text-ink-text">—</span>
+      ) : (
+        <CopyButton
+          value={status.sessionId}
+          label="Copy session id"
+          className="-mx-1 flex items-center gap-1 rounded px-1 font-mono text-xs text-ink-text hover:bg-ink-line"
+        >
+          {`${status.sessionId.slice(0, 8)}…`}
+        </CopyButton>
+      )}
+    </div>
     <Field label="Events" value={String(eventCount)} />
     <Field
       label="Intents"
       value={status.intents.length === 0 ? `—` : String(status.intents.length)}
     />
-
-    {status.missingIntents.length > 0 && status.state === `ready` ? (
-      <p className="text-xs text-amber-400">
-        Not requested:{` `}
-        <span className="font-mono">{status.missingIntents.join(`, `)}</span>
-        {` `}— events gated behind these will never arrive.
-      </p>
-    ) : null}
   </section>
 );

@@ -6,6 +6,7 @@ import {
   type GatewayIntentName
 } from "@discordkit/gateway";
 import type {
+  ApplicationInfo,
   ClientMessage,
   EventWarning,
   InspectedEvent,
@@ -37,6 +38,82 @@ export interface Env {
  * sees recent history — not to be a durable log.
  */
 const BUFFER_SIZE = 500;
+
+/**
+ * How long the Gateway session survives with no viewers attached.
+ *
+ * Long enough to outlast a page refresh (sub-second in practice), short enough
+ * that a closed tab doesn't hold a Discord session — and the session start it
+ * cost — for meaningfully longer than the tab was open.
+ */
+const IDLE_GRACE_MS = 30_000;
+
+/**
+ * Application flag bits that mean "this privileged intent is enabled".
+ *
+ * Each intent has two bits: the full grant and a `_LIMITED` variant, which
+ * unverified bots (under 100 guilds) get automatically. Both mean the intent
+ * will be accepted in IDENTIFY, so both count as enabled — treating only the
+ * full grant as valid would warn about a perfectly working setup.
+ */
+const PRIVILEGED_FLAGS: Record<string, GatewayIntentName> = {
+  [String(1 << 12)]: `GUILD_PRESENCES`, // GATEWAY_PRESENCE
+  [String(1 << 13)]: `GUILD_PRESENCES`, // GATEWAY_PRESENCE_LIMITED
+  [String(1 << 14)]: `GUILD_MEMBERS`, // GATEWAY_GUILD_MEMBERS
+  [String(1 << 15)]: `GUILD_MEMBERS`, // GATEWAY_GUILD_MEMBERS_LIMITED
+  [String(1 << 18)]: `MESSAGE_CONTENT`, // GATEWAY_MESSAGE_CONTENT
+  [String(1 << 19)]: `MESSAGE_CONTENT` // GATEWAY_MESSAGE_CONTENT_LIMITED
+};
+
+/** Which privileged intents a bot's application flags actually grant. */
+const privilegedFrom = (flags: number): GatewayIntentName[] => [
+  ...new Set(
+    Object.entries(PRIVILEGED_FLAGS)
+      .filter(([bit]) => (flags & Number(bit)) !== 0)
+      .map(([, intent]) => intent)
+  )
+];
+
+/**
+ * Fetch the bot's application over REST.
+ *
+ * A direct `fetch` rather than `@discordkit/client`'s `getCurrentApplication`,
+ * because that fetcher authenticates through the module-global `discord`
+ * session. Module globals are per-ISOLATE in Workers, and one isolate can host
+ * several Durable Objects — so setting a token there would leak one
+ * inspector's credentials into another's requests. Passing the header
+ * explicitly keeps the token scoped to this call.
+ *
+ * Failures are swallowed: this is an enhancement (a deep link and a warning),
+ * and a bot with no `applications.commands` reach or a transient 5xx should
+ * not block connecting.
+ */
+const fetchApplication = async (
+  token: string
+): Promise<ApplicationInfo | null> => {
+  try {
+    const response = await fetch(
+      `https://discord.com/api/v10/applications/@me`,
+      {
+        headers: { Authorization: `Bot ${token}` }
+      }
+    );
+    if (!response.ok) return null;
+    const app = (await response.json()) as {
+      id?: string;
+      name?: string;
+      flags?: number;
+    };
+    if (typeof app.id !== `string`) return null;
+    return {
+      id: app.id,
+      name: app.name ?? `Unknown application`,
+      enabledPrivileged: privilegedFrom(app.flags ?? 0)
+    };
+  } catch {
+    return null;
+  }
+};
 
 /**
  * Holds the single outbound Gateway connection and fans events out to every
@@ -83,6 +160,8 @@ export class GatewayInspector extends DurableObject<Env> {
    * you paused in order to go filter for.
    */
   #seenTypes = new Set<string>();
+  /** The bot's application, fetched once per token on connect. */
+  #application: ApplicationInfo | null = null;
   /**
    * Connection timers run on Durable Object alarms rather than `setTimeout`.
    * A DO's JS timers die with its isolate, so an evicted object would stop
@@ -90,6 +169,17 @@ export class GatewayInspector extends DurableObject<Env> {
    * eviction and wakes the object back up.
    */
   #scheduler = alarmScheduler(this.ctx);
+  /**
+   * Pending "last viewer left" timer, or `null`.
+   *
+   * A page refresh closes the browser socket and reopens it about a second
+   * later. Dropping the Gateway session the instant the last viewer leaves
+   * therefore punished a refresh exactly as hard as closing the tab: you came
+   * back to a disconnected inspector and had to spend another session start.
+   * The grace period keeps the session alive just long enough for a reload to
+   * reclaim it, while still releasing it when someone really has gone.
+   */
+  #idleTimer: unknown = null;
 
   /** Drives every connection timer that has come due. */
   override async alarm(): Promise<void> {
@@ -106,6 +196,13 @@ export class GatewayInspector extends DurableObject<Env> {
     // this is the required pattern, and it's what lets the runtime manage the
     // connection rather than pinning it to this isolate's event listeners.
     this.ctx.acceptWebSocket(server);
+
+    // A viewer arrived, so cancel any pending teardown — this is the refresh
+    // case the grace period exists for.
+    if (this.#idleTimer !== null) {
+      this.#scheduler.clearTimeout(this.#idleTimer);
+      this.#idleTimer = null;
+    }
 
     // Hand a new viewer the current state plus recent history, so opening the
     // page mid-session isn't an empty screen.
@@ -154,19 +251,38 @@ export class GatewayInspector extends DurableObject<Env> {
         this.#recordFilter = message.types;
         this.#broadcast({ type: `status`, status: this.#status() });
         break;
+      case `simulate`:
+        // Synthetic traffic for driving the UI without a live Gateway. Goes
+        // through the same `#record` path as real events, so what the timeline
+        // renders is what it would render for Discord's own dispatches.
+        this.#record(message.event, `dispatch`, {
+          simulated: true,
+          at: Date.now()
+        });
+        break;
       case `clear`:
         this.#events = [];
+        this.#seenTypes.clear();
         this.#broadcast({ type: `status`, status: this.#status() });
         break;
     }
   }
 
   override webSocketClose(): void {
-    // The last viewer leaving closes the Gateway socket. Cost is proportional
-    // to watch time, and an unwatched inspector holding a Discord session is
-    // pure waste — Discord allows only one, and daily session starts are
-    // limited.
-    if (this.ctx.getWebSockets().length === 0) this.#disconnect();
+    // The last viewer leaving eventually closes the Gateway socket: an
+    // unwatched inspector holding a Discord session is pure waste, and daily
+    // session starts are limited. But it waits out a grace period first, so a
+    // page refresh — which closes and reopens this socket a second apart —
+    // reclaims the existing session instead of paying for a new one.
+    if (this.ctx.getWebSockets().length === 0) {
+      if (this.#idleTimer !== null)
+        this.#scheduler.clearTimeout(this.#idleTimer);
+      this.#idleTimer = this.#scheduler.setTimeout(() => {
+        this.#idleTimer = null;
+        // Re-check: a viewer may have arrived while the timer was pending.
+        if (this.ctx.getWebSockets().length === 0) this.#disconnect();
+      }, IDLE_GRACE_MS);
+    }
   }
 
   #connect(token: string, intents: readonly GatewayIntentName[]): void {
@@ -205,7 +321,22 @@ export class GatewayInspector extends DurableObject<Env> {
     this.#connection = connection;
     this.#connectedAt = Date.now();
 
-    const offState = connection.onStateChange(() => {
+    const offState = connection.onStateChange((state) => {
+      // Record the lifecycle transition as an event of its own, so the list
+      // shows WHERE a session ended and the next began. Without it, a
+      // reconnect looks like an unexplained gap in the stream — and a resumed
+      // session looks identical to a fresh one.
+      //
+      // Only the settled states: `connecting`/`identifying` are steps on the
+      // way to `ready`, and recording each would bury the dispatch events the
+      // list exists to show.
+      if (state === `ready` || state === `closed` || state === `resuming`) {
+        this.#record(state.toUpperCase(), `lifecycle`, {
+          state,
+          sessionId: connection.sessionId,
+          at: Date.now()
+        });
+      }
       this.#broadcast({ type: `status`, status: this.#status() });
     });
     // Subscribe to the raw dispatch stream rather than typed per-event
@@ -221,9 +352,34 @@ export class GatewayInspector extends DurableObject<Env> {
 
     connection.connect();
     this.#broadcast({ type: `status`, status: this.#status() });
+
+    // Fetch the application alongside the Gateway handshake rather than before
+    // it: it only enriches the UI, so making the connection wait on a REST
+    // round-trip would delay the thing you actually came for.
+    void (async (): Promise<void> => {
+      const application = await fetchApplication(resolved);
+      if (application === null) return;
+      this.#application = application;
+      this.#broadcast({ type: `status`, status: this.#status() });
+    })();
   }
 
   #disconnect(): void {
+    // Record the marker BEFORE unsubscribing. `close()` drives the connection
+    // to `closed`, but the state listener is what turns that into a marker —
+    // detaching first meant a deliberate disconnect left no trace in the log,
+    // which is why only "connected" separators were showing up.
+    //
+    // Labelled distinctly from a drop: "you disconnected" and "the connection
+    // died" are different stories, and the log should not conflate them.
+    if (this.#connection !== null) {
+      this.#record(`DISCONNECTED`, `lifecycle`, {
+        state: `closed`,
+        sessionId: this.#connection.sessionId,
+        deliberate: true,
+        at: Date.now()
+      });
+    }
     this.#unsubscribe?.();
     this.#unsubscribe = null;
     this.#connection?.close();
@@ -237,6 +393,15 @@ export class GatewayInspector extends DurableObject<Env> {
     category: `dispatch` | `lifecycle`,
     data: unknown
   ): void {
+    // Lifecycle markers bypass recording rules entirely: they explain gaps in
+    // the stream, so suppressing them via a pause or a type allowlist would
+    // hide exactly the context needed to read what remains. They are also not
+    // offered in the type filter, for the same reason.
+    if (category === `lifecycle`) {
+      this.#push({ type, category, data });
+      return;
+    }
+
     // Track the type before any filtering, so the UI's filter list is built
     // from what Discord is actually sending — otherwise you could never
     // discover a type in order to add it to the allowlist.
@@ -256,6 +421,19 @@ export class GatewayInspector extends DurableObject<Env> {
       return;
     }
 
+    this.#push({ type, category, data });
+  }
+
+  /** Append to the buffer and fan out. Shared by both record paths. */
+  #push({
+    type,
+    category,
+    data
+  }: {
+    type: string;
+    category: `dispatch` | `lifecycle`;
+    data: unknown;
+  }): void {
     const event: InspectedEvent = {
       id: this.#nextId++,
       type,
@@ -288,6 +466,7 @@ export class GatewayInspector extends DurableObject<Env> {
       recording: this.#recording,
       recordFilter: this.#recordFilter,
       seenTypes: [...this.#seenTypes].sort(),
+      application: this.#application,
       connectedAt: this.#connectedAt
     };
   }
@@ -336,6 +515,30 @@ export class GatewayInspector extends DurableObject<Env> {
    */
   forceClose(): void {
     this.#connection?.close();
+  }
+
+  /**
+   * Run the last-viewer-left path, for tests.
+   *
+   * The pool has no browser to close a real socket, and `getWebSockets()` is
+   * empty in these tests anyway — so this drives the same branch `webSocketClose`
+   * takes when the final viewer disconnects.
+   */
+  simulateViewerClose(): void {
+    this.webSocketClose();
+  }
+
+  /** Record a lifecycle marker directly, for tests. */
+  simulateLifecycle(type: string): void {
+    this.#record(type, `lifecycle`, { simulated: true });
+  }
+
+  /** Run the viewer-arrived path (cancels a pending teardown), for tests. */
+  simulateViewerOpen(): void {
+    if (this.#idleTimer !== null) {
+      this.#scheduler.clearTimeout(this.#idleTimer);
+      this.#idleTimer = null;
+    }
   }
 }
 

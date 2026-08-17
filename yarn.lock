@@ -12329,6 +12329,7 @@ __metadata:
     "@types/react": "catalog:"
     "@types/react-dom": "catalog:"
     "@vitejs/plugin-react": "catalog:"
+    "@xstate/react": "catalog:"
     lucide-react: "catalog:"
     react: "catalog:"
     react-aria-components: "catalog:"
@@ -12339,6 +12340,7 @@ __metadata:
     varlock: "catalog:"
     vite-plus: "catalog:"
     wrangler: "npm:4.121.0"
+    xstate: "catalog:"
   languageName: unknown
   linkType: soft
 

@@ -111,6 +111,30 @@ describe(`connection lifecycle`, () => {
     expect(status.intents).toEqual([`GUILD_MESSAGES`]);
   });
 
+  it(`keeps the Gateway session when a viewer reconnects within the grace period`, async () => {
+    // A page refresh closes the browser socket and reopens it a moment later.
+    // Tearing the Gateway session down on the first close meant a refresh cost
+    // a session start and dropped every incoming event — the reported bug.
+    const probe = inspector(`refresh-grace`);
+    await probe.applyMessage({
+      type: `connect`,
+      token: `fake-token`,
+      intents: [`GUILDS`]
+    });
+    const before = await probe.status();
+    expect(before.state).not.toBe(`idle`);
+
+    // Simulate the refresh: last viewer leaves, a new one arrives immediately.
+    await probe.simulateViewerClose();
+    await probe.simulateViewerOpen();
+
+    // Session intact, and its intents still reported so the UI can restore the
+    // selection instead of snapping back to defaults.
+    const after = await probe.status();
+    expect(after.state).toBe(before.state);
+    expect(after.intents).toEqual([`GUILDS`]);
+  });
+
   it(`applies the new intents on reconnect`, async () => {
     // "Apply & reconnect" exists to change intents, which Discord only accepts
     // in IDENTIFY. If the reconnect silently kept the old set, the button
@@ -183,6 +207,26 @@ describe(`recording`, () => {
         `PRESENCE_UPDATE`
       ])
     );
+  });
+
+  it(`records lifecycle markers even while paused or filtered`, async () => {
+    // These mark where a session ended and the next began. Suppressing them
+    // via a pause or a type allowlist would hide exactly the context needed to
+    // read the surrounding gap — a reconnect would look like silence.
+    const probe = inspector(`lifecycle-markers`);
+    await probe.applyMessage({ type: `record`, recording: false });
+    await probe.applyMessage({
+      type: `recordFilter`,
+      types: [`MESSAGE_CREATE`]
+    });
+
+    await probe.simulateLifecycle(`CLOSED`);
+
+    const status = await probe.status();
+    expect(status.eventCount).toBe(1);
+    // And they stay out of the capture filter's list, which offers only the
+    // dispatch types a bot can actually subscribe to.
+    expect(status.seenTypes).not.toContain(`CLOSED`);
   });
 
   it(`resumes buffering when recording is turned back on`, async () => {

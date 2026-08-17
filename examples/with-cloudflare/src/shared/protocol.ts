@@ -41,6 +41,20 @@ export interface InspectedEvent {
   warnings: readonly EventWarning[];
 }
 
+/**
+ * What the UI needs from `GET /applications/@me`.
+ *
+ * Deliberately narrow: the full Application object is large and mostly
+ * irrelevant here, and the token-adjacent parts of it have no business
+ * reaching the browser.
+ */
+export interface ApplicationInfo {
+  id: string;
+  name: string;
+  /** Privileged intents enabled in the Developer Portal, from `flags`. */
+  enabledPrivileged: readonly GatewayIntentName[];
+}
+
 /** Connection status, mirrored to every viewer. */
 export interface InspectorStatus {
   state: string;
@@ -76,6 +90,15 @@ export interface InspectorStatus {
   recordFilter: readonly string[] | null;
   /** Event types seen this session, so the UI can offer a filter list. */
   seenTypes: readonly string[];
+  /**
+   * The bot's application, once fetched over REST.
+   *
+   * Carries the app id (so the Developer Portal link can deep-link to this
+   * bot's settings) and which privileged intents are actually enabled there —
+   * turning a 4014 close from a post-hoc mystery into something the UI can
+   * warn about before you connect.
+   */
+  application: ApplicationInfo | null;
   /** Epoch ms the socket opened, or `null` when disconnected. */
   connectedAt: number | null;
 }
@@ -103,4 +126,13 @@ export type ClientMessage =
   | { type: `record`; recording: boolean }
   /** Set the recorded-type allowlist; `null` records everything. */
   | { type: `recordFilter`; types: readonly string[] | null }
+  /**
+   * Inject a synthetic event, for exercising the UI without a live Gateway.
+   *
+   * Kept in the protocol rather than hidden behind an RPC because the browser
+   * drives it: filling the timeline with dense, multi-type traffic is how the
+   * lanes, brush, and zoom get tested at all, and a real session is too sparse
+   * and too slow to serve as a fixture.
+   */
+  | { type: `simulate`; event: string }
   | { type: `clear` };
