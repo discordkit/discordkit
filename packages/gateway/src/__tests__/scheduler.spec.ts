@@ -59,7 +59,7 @@ const hello = (interval = 45_000): string =>
 
 describe(`globalScheduler`, () => {
   it(`schedules and cancels through the platform timers`, async () => {
-    const ran = vi.fn();
+    const ran = vi.fn<() => void>();
     const handle = globalScheduler.setTimeout(ran, 1);
     globalScheduler.clearTimeout(handle);
 
@@ -71,7 +71,7 @@ describe(`globalScheduler`, () => {
   });
 
   it(`runs the callback when not cancelled`, async () => {
-    const ran = vi.fn();
+    const ran = vi.fn<() => void>();
     globalScheduler.setTimeout(ran, 1);
     await vi.waitFor(() => {
       expect(ran).toHaveBeenCalledOnce();
@@ -79,7 +79,7 @@ describe(`globalScheduler`, () => {
   });
 });
 
-describe(`GatewayConnection with a custom scheduler`, () => {
+describe(`gateway connection with a custom scheduler`, () => {
   it(`routes heartbeat timing through the injected scheduler`, async () => {
     const scheduler = fakeScheduler();
     const server = setupServer(

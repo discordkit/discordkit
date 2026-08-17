@@ -202,7 +202,7 @@ export const TimeRange = ({
           type: event.type,
           count: 0,
           warnings: 0,
-          buckets: new Array<number>(BUCKETS).fill(0),
+          buckets: Array.from<number>({ length: BUCKETS }).fill(0),
           peak: 0
         };
         byType.set(event.type, lane);
@@ -473,18 +473,18 @@ export const TimeRange = ({
                   >
                     {(
                       [
-                        [`0.25`, `25%`, ``],
-                        [`0.5`, `50%`, ``],
-                        [`1`, `100%`, ``],
-                        [`2`, `200%`, ``],
-                        [`5`, `500%`, ``],
-                        [`10`, `1000%`, ``],
-                        [`fit`, `Fit to activity`, ``],
-                        [`selection`, `Zoom to selection`, ``],
-                        [`clear`, `Clear selection`, ``],
-                        [`reset`, `Reset view`, ``]
+                        [`0.25`, `25%`],
+                        [`0.5`, `50%`],
+                        [`1`, `100%`],
+                        [`2`, `200%`],
+                        [`5`, `500%`],
+                        [`10`, `1000%`],
+                        [`fit`, `Fit to activity`],
+                        [`selection`, `Zoom to selection`],
+                        [`clear`, `Clear selection`],
+                        [`reset`, `Reset view`]
                       ] as const
-                    ).map(([key, text, hint]) => (
+                    ).map(([key, text]) => (
                       <MenuItem
                         key={key}
                         id={key}
@@ -494,11 +494,6 @@ export const TimeRange = ({
                         className="flex cursor-default items-center justify-between gap-6 px-3 py-1.5 text-ink-body outline-none focus:bg-accent/20 focus:text-ink-text disabled:opacity-40"
                       >
                         <span>{text}</span>
-                        {hint ? (
-                          <span className="font-mono text-ink-faint">
-                            {hint}
-                          </span>
-                        ) : null}
                       </MenuItem>
                     ))}
                   </Menu>
@@ -619,7 +614,7 @@ export const TimeRange = ({
                 shadeTo !== null &&
                 at >= shadeFrom &&
                 at <= shadeTo;
-              if (inside && shadeFrom !== null && shadeTo !== null) {
+              if (inside) {
                 setDraft({ from: shadeFrom, to: shadeTo });
                 setDrag({
                   kind: `pan`,

@@ -154,7 +154,7 @@ const ready = (sessionId = `session-abc`): string =>
 let harness: Harness | null = null;
 let connection: GatewayConnection | null = null;
 
-describe(`GatewayConnection`, () => {
+describe(`gateway connection`, () => {
   afterEach(() => {
     connection?.close();
     connection = null;

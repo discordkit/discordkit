@@ -9,6 +9,9 @@ import { onInteractionCreate } from "../interactions/onInteractionCreate.js";
 import { onMessageCreate } from "../messages/onMessageCreate.js";
 import { onReady } from "../lifecycle/onReady.js";
 import { messageCreateSchema } from "../messages/types/MessageCreate.js";
+import type { MessageCreate } from "../messages/types/MessageCreate.js";
+import type { Guild } from "@discordkit/client/guild/types/Guild";
+import type { Ready } from "../lifecycle/types/Ready.js";
 
 /**
  * A minimal fake connection. The real socket lifecycle is covered by
@@ -43,8 +46,8 @@ const fakeConnection = (): ConnectionLike & {
 describe(`dispatchEvent`, () => {
   it(`routes only its own event to a handler`, () => {
     const connection = fakeConnection();
-    const messages = vi.fn();
-    const guilds = vi.fn();
+    const messages = vi.fn<(data: MessageCreate) => void>();
+    const guilds = vi.fn<(data: Guild) => void>();
 
     using _m = onMessageCreate(messages, { connection });
     using _g = onGuildCreate(guilds, { connection });
@@ -60,9 +63,11 @@ describe(`dispatchEvent`, () => {
   it(`opens exactly one dispatch subscription per connection`, () => {
     const connection = fakeConnection();
 
-    using _a = onMessageCreate(vi.fn(), { connection });
-    using _b = onGuildCreate(vi.fn(), { connection });
-    using _c = onReady(vi.fn(), { connection });
+    using _a = onMessageCreate(vi.fn<(data: MessageCreate) => void>(), {
+      connection
+    });
+    using _b = onGuildCreate(vi.fn<(data: Guild) => void>(), { connection });
+    using _c = onReady(vi.fn<(data: Ready) => void>(), { connection });
 
     // Three event types, ONE upstream subscription. Registering one per
     // subscriber would multiply the per-message work by the handler count.
@@ -71,7 +76,7 @@ describe(`dispatchEvent`, () => {
 
   it(`stops delivering after unsubscribe`, () => {
     const connection = fakeConnection();
-    const handler = vi.fn();
+    const handler = vi.fn<(data: MessageCreate) => void>();
 
     const off = onMessageCreate(handler, { connection });
     connection.emit({ type: `MESSAGE_CREATE`, data: { content: `first` } });
@@ -85,7 +90,7 @@ describe(`dispatchEvent`, () => {
 
   it(`is idempotent on repeated unsubscribe`, () => {
     const connection = fakeConnection();
-    const handler = vi.fn();
+    const handler = vi.fn<(data: MessageCreate) => void>();
     const off = onMessageCreate(handler, { connection });
 
     off();
@@ -97,7 +102,7 @@ describe(`dispatchEvent`, () => {
 
   it(`camelizes the payload it hands to a typed handler`, () => {
     const connection = fakeConnection();
-    const handler = vi.fn();
+    const handler = vi.fn<(data: MessageCreate) => void>();
     using _sub = onMessageCreate(handler, { connection });
 
     // The connection delivers Discord's raw snake_case; the fan-out camelizes
@@ -118,7 +123,9 @@ describe(`dispatchEvent`, () => {
 
   it(`does not camelize an event nobody subscribed to`, () => {
     const connection = fakeConnection();
-    using _sub = onMessageCreate(vi.fn(), { connection });
+    using _sub = onMessageCreate(vi.fn<(data: MessageCreate) => void>(), {
+      connection
+    });
 
     // The performance property: a busy guild floods PRESENCE_UPDATE and
     // TYPING_START that most bots never subscribe to. Transforming those was
@@ -128,7 +135,7 @@ describe(`dispatchEvent`, () => {
     // Detected via a getter: camelizing walks the payload with Object.entries,
     // so a read proves the transform ran. Asserting the input is "unchanged"
     // would prove nothing — toCamelKeys returns a copy and never mutates.
-    const read = vi.fn(() => `1`);
+    const read = vi.fn<() => string>(() => `1`);
     const payload = {} as { user_id: string };
     Object.defineProperty(payload, `user_id`, {
       get: read,
@@ -146,8 +153,8 @@ describe(`dispatchEvent`, () => {
 
   it(`delivers to every subscriber of the same event`, () => {
     const connection = fakeConnection();
-    const first = vi.fn();
-    const second = vi.fn();
+    const first = vi.fn<(data: MessageCreate) => void>();
+    const second = vi.fn<(data: MessageCreate) => void>();
 
     using _a = onMessageCreate(first, { connection });
     using _b = onMessageCreate(second, { connection });

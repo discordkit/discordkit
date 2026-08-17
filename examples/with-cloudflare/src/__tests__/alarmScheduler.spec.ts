@@ -46,8 +46,8 @@ describe(`alarmScheduler`, () => {
   it(`runs only the timers that are due`, async () => {
     await withState(`run-due`, async (ctx) => {
       const scheduler = alarmScheduler(ctx);
-      const due = vi.fn();
-      const notDue = vi.fn();
+      const due = vi.fn<() => void>();
+      const notDue = vi.fn<() => void>();
 
       scheduler.setTimeout(due, 0);
       scheduler.setTimeout(notDue, 60_000);
@@ -80,7 +80,7 @@ describe(`alarmScheduler`, () => {
   it(`supports a callback scheduling its own next run`, async () => {
     await withState(`self-reschedule`, async (ctx) => {
       const scheduler = alarmScheduler(ctx);
-      const beat = vi.fn(() => {
+      const beat = vi.fn<() => void>(() => {
         scheduler.setTimeout(beat, 45_000);
       });
 
@@ -114,7 +114,7 @@ describe(`alarmScheduler`, () => {
   it(`is idempotent when an alarm fires twice`, async () => {
     await withState(`idempotent`, async (ctx) => {
       const scheduler = alarmScheduler(ctx);
-      const ran = vi.fn();
+      const ran = vi.fn<() => void>();
       scheduler.setTimeout(ran, 0);
 
       await scheduler.onAlarm();

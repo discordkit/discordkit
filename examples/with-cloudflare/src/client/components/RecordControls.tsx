@@ -1,6 +1,7 @@
 import {
   Button,
-  Checkbox,
+  CheckboxButton,
+  CheckboxField,
   Dialog,
   DialogTrigger,
   Popover,
@@ -110,7 +111,7 @@ export const RecordControls = ({
             {/* Built from types actually seen, not all 84 documented ones —
                 a list of events this bot never receives is noise. */}
             {seenTypes.map((type) => (
-              <Checkbox
+              <CheckboxField
                 key={type}
                 isSelected={
                   recordFilter === null || recordFilter.includes(type)
@@ -118,25 +119,26 @@ export const RecordControls = ({
                 onChange={() => {
                   toggleType(type);
                 }}
-                className="group flex cursor-default items-center gap-2 rounded px-1.5 py-1 font-mono text-2xs text-ink-body hover:bg-ink-line/60"
               >
-                <span className="flex size-3.5 shrink-0 items-center justify-center rounded-sm border border-ink-line-strong group-selected:border-indigo-500 group-selected:bg-indigo-500">
-                  <svg
-                    viewBox="0 0 12 12"
-                    className="size-2.5 text-white opacity-0 group-selected:opacity-100"
-                    aria-hidden
-                  >
-                    <path
-                      d="M2 6l3 3 5-6"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                </span>
-                <span className="truncate">{type}</span>
-              </Checkbox>
+                <CheckboxButton className="group flex w-full cursor-default items-center gap-2 rounded px-1.5 py-1 font-mono text-2xs text-ink-body hover:bg-ink-line/60">
+                  <span className="flex size-3.5 shrink-0 items-center justify-center rounded-sm border border-ink-line-strong group-selected:border-indigo-500 group-selected:bg-indigo-500">
+                    <svg
+                      viewBox="0 0 12 12"
+                      className="size-2.5 text-white opacity-0 group-selected:opacity-100"
+                      aria-hidden
+                    >
+                      <path
+                        d="M2 6l3 3 5-6"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                      />
+                    </svg>
+                  </span>
+                  <span className="truncate">{type}</span>
+                </CheckboxButton>
+              </CheckboxField>
             ))}
           </Dialog>
         </Popover>

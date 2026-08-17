@@ -29,21 +29,22 @@ const ROW_SIZE = 29;
  * dying under you, the other is you ending it. Conflating them would make a
  * log of a flaky session unreadable.
  */
-const LIFECYCLE: Record<string, { label: string; text: string; rule: string }> =
-  {
-    READY: { label: `connected`, text: `text-ok`, rule: `bg-ok/40` },
-    RESUMING: { label: `resuming`, text: `text-warn`, rule: `bg-warn/40` },
-    CLOSED: {
-      label: `connection lost`,
-      text: `text-danger`,
-      rule: `bg-danger/40`
-    },
-    DISCONNECTED: {
-      label: `disconnected`,
-      text: `text-ink-muted`,
-      rule: `bg-ink-line-strong`
-    }
-  };
+const LIFECYCLE: Partial<
+  Record<string, { label: string; text: string; rule: string }>
+> = {
+  READY: { label: `connected`, text: `text-ok`, rule: `bg-ok/40` },
+  RESUMING: { label: `resuming`, text: `text-warn`, rule: `bg-warn/40` },
+  CLOSED: {
+    label: `connection lost`,
+    text: `text-danger`,
+    rule: `bg-danger/40`
+  },
+  DISCONNECTED: {
+    label: `disconnected`,
+    text: `text-ink-muted`,
+    rule: `bg-ink-line-strong`
+  }
+};
 
 interface EventListProps {
   /** Events already narrowed by the timeline brush. */

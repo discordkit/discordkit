@@ -12,6 +12,20 @@ export const GATEWAY_VERSION = 10;
 /** Default Gateway URL, used when none is supplied via {@link ConnectionConfig.url}. */
 export const DEFAULT_GATEWAY_URL = `wss://gateway.discord.gg/`;
 
+/** Read a string field off an unknown payload, or `null` if absent. */
+const readString = (source: unknown, key: string): string | null => {
+  if (typeof source !== `object` || source === null) return null;
+  const value: unknown = Reflect.get(source, key);
+  return typeof value === `string` ? value : null;
+};
+
+/** Read a number field off an unknown payload, or `null` if absent. */
+const readNumber = (source: unknown, key: string): number | null => {
+  if (typeof source !== `object` || source === null) return null;
+  const value: unknown = Reflect.get(source, key);
+  return typeof value === `number` ? value : null;
+};
+
 /** How long to wait for a `HEARTBEAT_ACK` before treating the socket as zombied. */
 const ACK_TIMEOUT_FACTOR = 1;
 
@@ -432,15 +446,11 @@ export class GatewayConnection implements ConnectionLike, Disposable {
     const data = payload.d;
 
     if (type === `READY`) {
-      // Read the wire names, since this runs before any camelization. Using
-      // the camelCase names here would silently leave `sessionId` null, and
-      // every reconnect would degrade from RESUME to a fresh IDENTIFY.
-      const ready = data as {
-        session_id?: string;
-        resume_gateway_url?: string;
-      };
-      this.#sessionId = ready.session_id ?? null;
-      this.#resumeUrl = ready.resume_gateway_url ?? null;
+      // Wire names: this runs before camelization, and reading the camelCase
+      // spellings would leave `sessionId` null, degrading every reconnect from
+      // RESUME to a fresh IDENTIFY.
+      this.#sessionId = readString(data, `session_id`);
+      this.#resumeUrl = readString(data, `resume_gateway_url`);
       this.#attempts = 0;
       this.#setState(`ready`);
     } else if (type === `RESUMED`) {
@@ -469,9 +479,8 @@ export class GatewayConnection implements ConnectionLike, Disposable {
         this.#handleDispatch(payload);
         break;
       case GatewayOpcode.HELLO: {
-        const { heartbeat_interval: interval } = payload.d as {
-          heartbeat_interval: number;
-        };
+        const interval = readNumber(payload.d, `heartbeat_interval`);
+        if (interval === null) break;
         this.#startHeartbeat(interval);
         // A live session id means this socket is a reconnect, so resume rather
         // than identify — resuming replays missed events, identifying loses them

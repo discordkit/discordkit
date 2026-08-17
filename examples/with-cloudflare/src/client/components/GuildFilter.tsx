@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import {
   Button,
-  Checkbox,
+  CheckboxButton,
+  CheckboxField,
   Dialog,
   DialogTrigger,
   Input,
@@ -155,36 +156,37 @@ export const GuildFilter = ({
               </p>
             ) : (
               shown.map((guild) => (
-                <Checkbox
+                <CheckboxField
                   key={guild.id}
                   isSelected={!hidden.has(guild.id)}
                   onChange={() => {
                     onToggle(guild.id);
                   }}
-                  className="group flex cursor-default items-center gap-2 rounded px-2 py-1.5 text-xs text-ink-body hover:bg-ink-line/60"
                 >
-                  <span className="flex size-3.5 shrink-0 items-center justify-center rounded-sm border border-ink-line-strong group-selected:border-indigo-500 group-selected:bg-indigo-500">
-                    <svg
-                      viewBox="0 0 12 12"
-                      className="size-2.5 text-white opacity-0 group-selected:opacity-100"
-                      aria-hidden
-                    >
-                      <path
-                        d="M2 6l3 3 5-6"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                      />
-                    </svg>
-                  </span>
-                  <span className="min-w-0 flex-1 truncate" title={guild.id}>
-                    {guild.name}
-                  </span>
-                  <span className="shrink-0 font-mono text-2xs text-ink-muted">
-                    {guild.count}
-                  </span>
-                </Checkbox>
+                  <CheckboxButton className="group flex w-full cursor-default items-center gap-2 rounded px-2 py-1.5 text-xs text-ink-body hover:bg-ink-line/60">
+                    <span className="flex size-3.5 shrink-0 items-center justify-center rounded-sm border border-ink-line-strong group-selected:border-indigo-500 group-selected:bg-indigo-500">
+                      <svg
+                        viewBox="0 0 12 12"
+                        className="size-2.5 text-white opacity-0 group-selected:opacity-100"
+                        aria-hidden
+                      >
+                        <path
+                          d="M2 6l3 3 5-6"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                    </span>
+                    <span className="min-w-0 flex-1 truncate" title={guild.id}>
+                      {guild.name}
+                    </span>
+                    <span className="shrink-0 font-mono text-2xs text-ink-muted">
+                      {guild.count}
+                    </span>
+                  </CheckboxButton>
+                </CheckboxField>
               ))
             )}
           </div>
