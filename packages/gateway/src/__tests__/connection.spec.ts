@@ -454,6 +454,8 @@ describe(`backoffDelay`, () => {
     // Capped, so a long outage settles into steady retries rather than
     // backing off toward hours.
     expect(backoffDelay(5)).toBe(30_000);
+    // Quoted in the package README.
+    expect(backoffDelay(9)).toBe(30_000);
     expect(backoffDelay(50)).toBe(30_000);
   });
 });

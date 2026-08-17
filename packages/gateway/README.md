@@ -55,6 +55,8 @@ connection.connect();
 
 Every subscription accepts `{ connection }` to target a specific instance.
 
+Code that only _uses_ a connection should accept `ConnectionLike` rather than the class — it's the structural surface (`state`, `sessionId`, `connect`, `close`, `send`, `onDispatch`, `onStateChange`), so a test can pass a stub without constructing a real socket owner.
+
 A connection is disposable, so it can be scoped to a block and cleaned up even if that block throws — the socket closes, timers are cleared, and no reconnect is scheduled:
 
 ```ts
@@ -190,6 +192,21 @@ The client implements the full documented lifecycle:
 - **Identify / Resume** — resumes with the session id and sequence number when a socket drops recoverably, which replays missed events instead of losing them.
 - **Heartbeat** — first beat delayed by `heartbeat_interval * random()` (Discord asks for this jitter so bots don't stampede after a deploy), and a missing `HEARTBEAT_ACK` is treated as a zombied connection.
 - **Reconnect** — exponential backoff from 1s to 30s, and **no** reconnect after a fatal close (`4004` bad token, `4010` invalid shard, `4013`/`4014` intents).
+
+Both decisions are exported as pure functions, so you can assert the policy without driving a socket into each state:
+
+```ts
+import { backoffDelay, closeAction } from "@discordkit/gateway";
+
+backoffDelay(0); // 1000
+backoffDelay(9); // 30000 — capped
+
+closeAction(4000); // { reconnect: true,  discardSession: false } — resume
+closeAction(1000); // { reconnect: true,  discardSession: true  } — fresh identify
+closeAction(4014); // { reconnect: false, discardSession: true  } — give up
+```
+
+`closeAction` is the highest-consequence branch in the client: wrong one way it reconnect-loops through the 1000/day session-start budget, wrong the other it silently stops a bot forever.
 
 ## Related packages
 

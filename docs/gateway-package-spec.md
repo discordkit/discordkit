@@ -1,6 +1,11 @@
 # Spec — `@discordkit/gateway`, a tree-shakeable Discord Gateway client
 
-> Status: **Draft for review** · Owner: Drake Costa · Date: 2026-08-14
+> Status: **Implemented** · Owner: Drake Costa · Spec dated 2026-08-14
+>
+> Kept as the design record for `@discordkit/gateway`. Where the shipped code
+> differs, the code is authoritative — notably `GatewayConnection` is a
+> disposable class rather than the `createConnection` factory this spec
+> describes.
 > Scope of v0: **connection lifecycle + typed event subscription**, targeting the
 > **Cloudflare Workers / Durable Object** runtime contract.
 

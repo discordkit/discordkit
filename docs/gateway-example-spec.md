@@ -1,6 +1,10 @@
 # Spec — `with-cloudflare`, the Gateway Event Inspector
 
-> Status: **Draft for review** · Owner: Drake Costa · Date: 2026-08-14
+> Status: **Implemented** · Owner: Drake Costa · Spec dated 2026-08-14
+>
+> Kept as the design record for the Gateway Event Inspector. The shipped UI
+> goes beyond this spec (multi-track timeline, guild filter, intent
+> pre-flight); see the [example README](../examples/with-cloudflare/README.md).
 > Scope of v0: a **live Gateway event inspector** — "DevTools for the Discord Gateway" —
 > running on a **Cloudflare Worker + Durable Object**, runnable locally and in CI.
 

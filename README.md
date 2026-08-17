@@ -36,6 +36,12 @@ Usage documentation lives in each package's README — this table is the map.
 | [`@discordkit/core`](./packages/core)     | The runtime that powers `client`: session/token management, the request layer, validation primitives, and the composition helpers `toValidated`, `toQuery`, and `toProcedure` (tRPC). |
 | [`@discordkit/oauth`](./packages/oauth)   | Framework-agnostic Discord OAuth2 utilities (PKCE authorize, token exchange/refresh) with no framework or storage assumptions.                                                        |
 
+### Realtime / Gateway
+
+| Package                                     | What it does                                                                                                                                               |
+| ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`@discordkit/gateway`](./packages/gateway) | A tree-shakeable Gateway (WebSocket) client for Cloudflare Workers, Durable Objects, and Node. Every dispatch event is its own import, with typed intents. |
+
 ### Native / Social SDK
 
 | Package                                       | What it does                                                                                                                                                                            |
@@ -52,6 +58,7 @@ Runnable apps in [`examples/`](./examples), each wiring one or more packages int
 
 | Example                                                         | Highlights                                                                                                           |
 | --------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| [`with-cloudflare`](./examples/with-cloudflare)                 | Gateway Event Inspector — DevTools for the Gateway, on a Worker + Durable Object (`gateway`).                        |
 | [`with-electron`](./examples/with-electron)                     | Rich Presence live editor (Social SDK via `native` + `electron`), modelled on Discord's Developer Portal visualizer. |
 | [`with-tauri`](./examples/with-tauri)                           | A live, tunable unified friends list built on your real Discord relationships (Social SDK via `native` + `tauri`).   |
 | [`with-nextjs`](./examples/with-nextjs)                         | Discord OAuth2 login + authenticated API calls in Next.js (App Router).                                              |

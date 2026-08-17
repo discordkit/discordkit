@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from "vite-plus/test";
 import * as v from "valibot";
+import type { Guild } from "@discordkit/client/guild/types/Guild";
 import { resolveIntents } from "../../connection.js";
 import type { ConnectionLike, DispatchEvent } from "../../connection.js";
 import { toSubscription, type Subscription } from "../../subscription.js";
@@ -10,7 +11,6 @@ import { onMessageCreate } from "../messages/onMessageCreate.js";
 import { onReady } from "../lifecycle/onReady.js";
 import { messageCreateSchema } from "../messages/types/MessageCreate.js";
 import type { MessageCreate } from "../messages/types/MessageCreate.js";
-import type { Guild } from "@discordkit/client/guild/types/Guild";
 import type { Ready } from "../lifecycle/types/Ready.js";
 
 /**

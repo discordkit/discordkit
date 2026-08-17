@@ -2,7 +2,7 @@
 
 **DevTools for the Discord Gateway.** Connect with a bot token and watch every event Discord sends you — the dispatches _and_ the connection lifecycle that every library hides.
 
-> **Status: spike.** The Worker + Durable Object runtime is proven and tested; the inspector UI is next. See [the spec](../../docs/gateway-example-spec.md).
+> **Status: complete.** Runtime and UI both shipped. See [the spec](../../docs/gateway-example-spec.md).
 
 Built on [`@discordkit/gateway`](../../packages/gateway), running on a **Cloudflare Worker + Durable Object** — the only serverless primitive that offers what the Gateway needs: a persistent, singleton, outbound WebSocket.
 
@@ -11,6 +11,15 @@ Built on [`@discordkit/gateway`](../../packages/gateway), running on a **Cloudfl
 Discord's own sample app doesn't use the Gateway at all (it's HTTP interactions), and the community examples are all "here's how to connect." **Nobody has built a tool for _seeing_ Gateway traffic** — developers debug it with `console.log` archaeology.
 
 The Gateway's most notorious failure is silent. Without the privileged `MESSAGE_CONTENT` intent, your bot still receives every `MESSAGE_CREATE` — with `content` as an empty string. Your command matching compares `""` against `"!help"`, finds nothing, and does nothing: no error, no exception, no log line. This tool makes that visible, naming the intent you're missing.
+
+## What it does
+
+- **Multi-track timeline** — a lane per event type rather than one histogram, so a burst tells you _what_ burst. Zoom 25%–1000%, drag to select a time slice, pan a selection, and toggle a track's visibility to drop it from the list.
+- **Payloads read as Discord data** — a collapsible tree where snowflakes show their creation time (decoded from the id), timestamps show relative age, URLs are links, and an empty string is called out. Right-click any node to copy its value, path, or JSON. Toggle `camel`/`snake` to see the exact transform discordkit applies.
+- **Recording is separate from the connection** — pause capture while the Gateway session stays alive, or record only the event types you care about. Neither costs a reconnect.
+- **Intent pre-flight** — the inspector reads your application's flags over REST, so a privileged intent you selected but _haven't_ enabled in the Developer Portal is flagged before you connect, rather than surfacing as a `4014` close.
+- **Guild filter** — built from the `GUILD_CREATE` events already in the buffer, so a bot in many guilds can be narrowed to the one you're testing.
+- **Lifecycle separators** — `connected` / `disconnected` / `connection lost` rules in the event list, so a gap in the stream reads as a reconnect rather than silence.
 
 ## Architecture
 
@@ -24,6 +33,7 @@ flowchart LR
   Browser <-->|inbound WebSocket| Worker
   Worker <-->|stub fetch| DO
   DO <-->|outbound WebSocket| Discord
+  DO -->|GET /applications/@me| Discord
 ```
 
 The DO passes an **explicit** `connection` to each subscription rather than using the package's ambient singleton — module globals are per-isolate, so ambient state is the wrong shape here. It's also where the handlers declare the intents:
