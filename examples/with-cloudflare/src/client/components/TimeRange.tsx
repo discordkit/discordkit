@@ -268,20 +268,16 @@ export const TimeRange = ({
         if (drag.kind === `to`) return { ...current, to: at };
         if (drag.kind === `pan`) {
           const width = drag.originTo - drag.originFrom;
-          // Shift from the RAW pointer delta rather than the difference of two
-          // `toFraction` results: that helper clamps to the visible window, so
-          // deriving the shift from it clamped the drag a second time and made
-          // the selection stick near the edges instead of following the
-          // cursor.
+          // Raw pointer delta, not the difference of two `toFraction`
+          // results — that helper clamps, which would clamp the drag twice.
           const rect = trackRef.current?.getBoundingClientRect();
           const usable = rect ? rect.width - TRACK_GUTTER * 2 : 0;
           const shift =
             usable > 0
               ? ((event.clientX - drag.originClientX) / usable) * windowSpan
               : 0;
-          // Clamped so the window stays over the session, but the selection
-          // itself may sit anywhere inside it — including past the last event,
-          // which is where a live recording is about to add more.
+          // The selection may sit anywhere in the session, including past
+          // the last event where a live recording will extend.
           const from = Math.min(
             Math.max(drag.originFrom + shift, 0),
             Math.max(0, 1 - width)
@@ -351,13 +347,11 @@ export const TimeRange = ({
   };
 
   /**
-   * Zoom to the most recent burst of activity.
+   * Zoom to the most recent burst of activity, so a long idle stretch doesn't
+   * squeeze every event into an unclickable sliver.
    *
-   * A Gateway session is open-ended, so leaving one connected over lunch
-   * squeezes every event into an unclickable sliver against an hour of dead
-   * air. This is deliberately an explicit, undoable zoom rather than an
-   * automatic axis crop: cropping would make the timeline lie, since events
-   * still in the buffer would become invisible and unselectable.
+   * Explicit and undoable rather than an automatic axis crop: cropping would
+   * hide events that are still in the buffer.
    */
   const fitToActivity = (): void => {
     if (events.length < 2) return;
@@ -789,9 +783,8 @@ export const TimeRange = ({
             {ticks.map((tick) => (
               <span
                 key={tick.at}
-                // Clamped instead of centred at the extremes: a label
-                // centred on 100% extends half its width past the track and
-                // is cut off by the panel edge.
+                // Clamped at the extremes: a label centred on 100% would
+                // extend past the track and be clipped.
                 className="absolute font-mono text-2xs leading-none text-ink-muted"
                 style={{
                   left: `clamp(0px, calc(${tick.left}% - 2rem), calc(100% - 4rem))`,

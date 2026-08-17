@@ -65,6 +65,13 @@ const PRIVILEGED_FLAGS: Record<string, GatewayIntentName> = {
   [String(1 << 19)]: `MESSAGE_CONTENT` // GATEWAY_MESSAGE_CONTENT_LIMITED
 };
 
+/**
+ * Connection states worth a marker in the event log. The transitional states
+ * (`connecting`, `identifying`) are steps toward `ready`, so recording them
+ * would bury the dispatch events the log exists to show.
+ */
+const LOGGED_STATES = new Set([`ready`, `closed`, `resuming`]);
+
 /** Which privileged intents a bot's application flags actually grant. */
 const privilegedFrom = (flags: number): GatewayIntentName[] => [
   ...new Set(
@@ -252,10 +259,9 @@ export class GatewayInspector extends DurableObject<Env> {
         this.#broadcast({ type: `status`, status: this.#status() });
         break;
       case `simulate`:
-        // Synthetic traffic for driving the UI without a live Gateway. Goes
-        // through the same `#record` path as real events, so what the timeline
-        // renders is what it would render for Discord's own dispatches.
-        this.#record(message.event, `dispatch`, {
+        // Synthetic traffic for driving the UI without a live Gateway, on
+        // the same path real events take.
+        this.#recordDispatch(message.event, {
           simulated: true,
           at: Date.now()
         });
@@ -296,9 +302,8 @@ export class GatewayInspector extends DurableObject<Env> {
       if (this.#connection.state !== `closed`) return;
       this.#disconnect();
     }
-    // Fall back to the configured token so local dev doesn't require pasting
-    // one on every reload. The typed value wins when present, so a deployed
-    // instance stays usable by someone who isn't the operator.
+    // A typed token wins over the configured one, so a deployed instance
+    // stays usable by someone who isn't the operator.
     const resolved =
       token.trim() === `` ? (this.env.DISCORD_BOT_TOKEN ?? ``) : token;
     if (resolved.trim() === ``) {
@@ -322,16 +327,8 @@ export class GatewayInspector extends DurableObject<Env> {
     this.#connectedAt = Date.now();
 
     const offState = connection.onStateChange((state) => {
-      // Record the lifecycle transition as an event of its own, so the list
-      // shows WHERE a session ended and the next began. Without it, a
-      // reconnect looks like an unexplained gap in the stream — and a resumed
-      // session looks identical to a fresh one.
-      //
-      // Only the settled states: `connecting`/`identifying` are steps on the
-      // way to `ready`, and recording each would bury the dispatch events the
-      // list exists to show.
-      if (state === `ready` || state === `closed` || state === `resuming`) {
-        this.#record(state.toUpperCase(), `lifecycle`, {
+      if (LOGGED_STATES.has(state)) {
+        this.#recordLifecycle(state.toUpperCase(), {
           state,
           sessionId: connection.sessionId,
           at: Date.now()
@@ -339,11 +336,10 @@ export class GatewayInspector extends DurableObject<Env> {
       }
       this.#broadcast({ type: `status`, status: this.#status() });
     });
-    // Subscribe to the raw dispatch stream rather than typed per-event
-    // handlers: an inspector wants EVERY event, including ones this package
-    // doesn't have a typed module for yet.
+    // The raw stream, not typed handlers: an inspector wants every event,
+    // including ones with no typed module yet.
     const offDispatch = connection.onDispatch((event) => {
-      this.#record(event.type, `dispatch`, event.data);
+      this.#recordDispatch(event.type, event.data);
     });
     this.#unsubscribe = (): void => {
       offState();
@@ -365,15 +361,12 @@ export class GatewayInspector extends DurableObject<Env> {
   }
 
   #disconnect(): void {
-    // Record the marker BEFORE unsubscribing. `close()` drives the connection
-    // to `closed`, but the state listener is what turns that into a marker —
-    // detaching first meant a deliberate disconnect left no trace in the log,
-    // which is why only "connected" separators were showing up.
-    //
-    // Labelled distinctly from a drop: "you disconnected" and "the connection
-    // died" are different stories, and the log should not conflate them.
+    // Before unsubscribing: the state listener is what turns `close()` into a
+    // marker, so detaching first would leave a deliberate disconnect untraced.
+    // Labelled apart from a drop — "you disconnected" and "it died" are
+    // different stories.
     if (this.#connection !== null) {
-      this.#record(`DISCONNECTED`, `lifecycle`, {
+      this.#recordLifecycle(`DISCONNECTED`, {
         state: `closed`,
         sessionId: this.#connection.sessionId,
         deliberate: true,
@@ -388,43 +381,36 @@ export class GatewayInspector extends DurableObject<Env> {
     this.#broadcast({ type: `status`, status: this.#status() });
   }
 
-  #record(
-    type: string,
-    category: `dispatch` | `lifecycle`,
-    data: unknown
-  ): void {
-    // Lifecycle markers bypass recording rules entirely: they explain gaps in
-    // the stream, so suppressing them via a pause or a type allowlist would
-    // hide exactly the context needed to read what remains. They are also not
-    // offered in the type filter, for the same reason.
-    if (category === `lifecycle`) {
-      this.#push({ type, category, data });
-      return;
-    }
+  /**
+   * Lifecycle markers are always kept: they explain gaps in the stream, so a
+   * pause or a type filter that hid them would remove the context needed to
+   * read the events around them.
+   */
+  #recordLifecycle(type: string, data: unknown): void {
+    this.#push({ type, category: `lifecycle`, data });
+  }
 
-    // Track the type before any filtering, so the UI's filter list is built
-    // from what Discord is actually sending — otherwise you could never
-    // discover a type in order to add it to the allowlist.
+  /** A dispatch event, subject to the pause and type-allowlist rules. */
+  #recordDispatch(type: string, data: unknown): void {
+    // Tracked before filtering: the UI builds its filter list from this, so a
+    // type you never record is a type you could never choose to record.
     const isNewType = !this.#seenTypes.has(type);
     this.#seenTypes.add(type);
 
-    if (!this.#recording) {
-      // Still tell viewers about a newly-seen type while paused, so the filter
-      // list keeps filling in. Only new types, to avoid a broadcast per event.
-      if (isNewType)
-        this.#broadcast({ type: `status`, status: this.#status() });
-      return;
+    if (this.#shouldCapture(type)) {
+      this.#push({ type, category: `dispatch`, data });
+    } else if (isNewType) {
+      // The buffer didn't change, but the filter list did.
+      this.#broadcast({ type: `status`, status: this.#status() });
     }
-    if (this.#recordFilter !== null && !this.#recordFilter.includes(type)) {
-      if (isNewType)
-        this.#broadcast({ type: `status`, status: this.#status() });
-      return;
-    }
-
-    this.#push({ type, category, data });
   }
 
-  /** Append to the buffer and fan out. Shared by both record paths. */
+  #shouldCapture(type: string): boolean {
+    if (!this.#recording) return false;
+    return this.#recordFilter === null || this.#recordFilter.includes(type);
+  }
+
+  /** Append to the buffer and fan out. */
   #push({
     type,
     category,
@@ -493,12 +479,10 @@ export class GatewayInspector extends DurableObject<Env> {
   /**
    * Drive the capture path directly, for tests.
    *
-   * Exercises `#record` without a live Gateway socket, so the recording rules
-   * (pause, allowlist, seen-type tracking) can be asserted without scripting a
-   * whole Discord session.
+   * Exercises the capture rules without scripting a whole Discord session.
    */
   simulateEvent(type: string, data: unknown = {}): void {
-    this.#record(type, `dispatch`, data);
+    this.#recordDispatch(type, data);
   }
 
   /** Apply a client message directly, for tests. */
@@ -530,7 +514,7 @@ export class GatewayInspector extends DurableObject<Env> {
 
   /** Record a lifecycle marker directly, for tests. */
   simulateLifecycle(type: string): void {
-    this.#record(type, `lifecycle`, { simulated: true });
+    this.#recordLifecycle(type, { simulated: true });
   }
 
   /** Run the viewer-arrived path (cancels a pending teardown), for tests. */

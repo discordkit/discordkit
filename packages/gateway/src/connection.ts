@@ -15,6 +15,13 @@ export const DEFAULT_GATEWAY_URL = `wss://gateway.discord.gg/`;
 /** How long to wait for a `HEARTBEAT_ACK` before treating the socket as zombied. */
 const ACK_TIMEOUT_FACTOR = 1;
 
+/**
+ * Close codes we send. Discord treats 1000 as "this session is finished" and
+ * invalidates it; anything in the 4000s leaves it resumable.
+ */
+const CLOSE_DONE = 1000;
+const CLOSE_RESUMABLE = 4000;
+
 /** Bounds for the reconnect backoff, in milliseconds. */
 const BACKOFF_MIN = 1_000;
 const BACKOFF_MAX = 30_000;
@@ -196,29 +203,22 @@ export interface ConnectionLike {
  * Uses the **global** `WebSocket` rather than a Node-specific library, which is
  * what keeps this runnable on Workers/Durable Objects as well as Node 22+. It
  * also means MSW can intercept it in tests by patching that same global, so the
- * production code path is the one under test — there is no injected transport
- * seam to diverge from reality.
+ * production code path is the one under test.
  *
- * Nothing happens until {@link connect} is called, so constructing one at module
- * scope is side-effect free.
- *
- * Disposable, so a connection can be scoped to a block and cleaned up even if
- * that block throws:
+ * Nothing happens until {@link connect} is called, so constructing one at
+ * module scope is side-effect free. Disposable, so a connection can be scoped
+ * to a block and cleaned up even if that block throws:
  *
  * ```ts
  * using connection = new GatewayConnection({ token, intents: [onMessageCreate] });
  * connection.connect();
- * ``` *
- * ## On the mutable state
+ * ```
  *
- * The `#private` fields below are the Gateway's session state machine, not
- * incidental bookkeeping: RESUME is impossible without the last sequence number
- * Discord sent, and heartbeat health is defined by whether the previous ACK
- * arrived. That state is inherent to the protocol. What the class adds over the
- * previous closure-based factory is that it is now genuinely *private* — it was
- * reachable through the returned object's getters before — and that the pure
- * decisions ({@link backoffDelay}, {@link closeAction}) are lifted out where
- * they can be tested without driving a socket.
+ * The `#private` fields are the Gateway's session state machine rather than
+ * incidental bookkeeping: RESUME needs the last sequence number Discord sent,
+ * and heartbeat health is defined by whether the previous ACK arrived. The
+ * decisions that *are* pure — {@link backoffDelay} and {@link closeAction} —
+ * are lifted out so they can be tested without driving a socket.
  *
  * Methods are arrow-function properties, matching `DiscordSession`, so `this`
  * survives destructuring (`const { connect } = connection`).
@@ -280,9 +280,7 @@ export class GatewayConnection implements ConnectionLike, Disposable {
     }
     this.#reconnectTimer = null;
     this.#clearTimers();
-    // 1000 tells Discord this is intentional, invalidating the session so it
-    // isn't held open waiting for a resume that will never come.
-    this.#socket?.close(1000, `Client closed the connection`);
+    this.#socket?.close(CLOSE_DONE, `Client closed the connection`);
     this.#socket = null;
     this.#setState(`closed`);
   };
@@ -342,16 +340,16 @@ export class GatewayConnection implements ConnectionLike, Disposable {
     // A heartbeat sent while the previous one is unacknowledged means the
     // connection is zombied: Discord stopped responding but the socket never
     // errored. The docs prescribe closing and resuming rather than continuing
-    // to send into the void. 4000 (not 1000) keeps the session resumable.
+    // to send into the void.
     if (this.#awaitingAck) {
-      this.#socket?.close(4000, `Heartbeat ACK not received`);
+      this.#socket?.close(CLOSE_RESUMABLE, `Heartbeat ACK not received`);
       return;
     }
     this.#awaitingAck = true;
     this.send({ op: GatewayOpcode.HEARTBEAT, d: this.#sequence });
     this.#ackTimer = this.#scheduler.setTimeout(() => {
       if (!this.#awaitingAck) return;
-      this.#socket?.close(4000, `Heartbeat ACK timed out`);
+      this.#socket?.close(CLOSE_RESUMABLE, `Heartbeat ACK timed out`);
     }, this.#heartbeatInterval * ACK_TIMEOUT_FACTOR);
 
     // Re-arm from inside the callback rather than using a repeating timer.
@@ -495,8 +493,7 @@ export class GatewayConnection implements ConnectionLike, Disposable {
         this.#ackTimer = null;
         break;
       case GatewayOpcode.RECONNECT:
-        // 4000 keeps the session resumable, unlike 1000.
-        this.#socket?.close(4000, `Reconnect requested`);
+        this.#socket?.close(CLOSE_RESUMABLE, `Reconnect requested`);
         break;
       case GatewayOpcode.INVALID_SESSION: {
         // `d` is a boolean: whether the invalidated session can still be resumed.
@@ -505,7 +502,7 @@ export class GatewayConnection implements ConnectionLike, Disposable {
           this.#sessionId = null;
           this.#sequence = null;
         }
-        this.#socket?.close(4000, `Invalid session`);
+        this.#socket?.close(CLOSE_RESUMABLE, `Invalid session`);
         break;
       }
       // Send-only opcodes. Discord never sends these to us, so receiving one

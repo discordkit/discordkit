@@ -126,12 +126,9 @@ export const ConnectionBar = ({
   // duplicates are meaningless, and the wire format ORs them into a bitfield
   // where order cannot survive anyway.
   //
-  // `null` means "not touched since the server last told us what it is". The
-  // server's intents are the source of truth for a live connection, so a page
-  // refresh adopts them rather than snapping back to DEFAULT_INTENTS — which
-  // previously showed the wrong selection AND a spurious "changed — not
-  // applied", since the stale defaults differed from what was actually
-  // identified.
+  // `null` means "untouched since the server last reported". The server's
+  // intents are the truth for a live connection, so a refresh adopts them
+  // rather than snapping back to DEFAULT_INTENTS.
   const [staged, setStaged] = useState<ReadonlySet<GatewayIntentName> | null>(
     null
   );
@@ -171,10 +168,9 @@ export const ConnectionBar = ({
     // (see App.tsx) because they are configured once and then ignored, and a
     // dedicated strip spent ~120px of permanent height on them.
     <>
-      {/* Fixed width, sized for BOTH buttons. "Apply & reconnect" appears only
-          when intents are staged, and letting the row reflow at that moment
-          shifted every control beside it — including the one you were about to
-          click. */}
+      {/* Fixed width, sized for both buttons: "Apply & reconnect" appears
+          only when intents are staged, and a reflow would shift the controls
+          beside it. */}
       <div className="ml-auto flex w-[19.5rem] shrink-0 items-center justify-end gap-2">
         {connected ? (
           <>
