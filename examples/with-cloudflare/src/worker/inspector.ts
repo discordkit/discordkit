@@ -5,6 +5,8 @@ import {
   PRIVILEGED_INTENTS,
   type GatewayIntentName
 } from "@discordkit/gateway";
+import * as v from "valibot";
+import { clientMessageSchema } from "../shared/protocol.js";
 import type {
   ApplicationInfo,
   ClientMessage,
@@ -65,12 +67,42 @@ const PRIVILEGED_FLAGS: Record<string, GatewayIntentName> = {
   [String(1 << 19)]: `MESSAGE_CONTENT` // GATEWAY_MESSAGE_CONTENT_LIMITED
 };
 
+const send = (ws: WebSocket, message: ServerMessage): void => {
+  ws.send(JSON.stringify(message));
+};
+
+/** The `type` field of a rejected message, for a message that names it. */
+const describe = (json: unknown): string => {
+  const type =
+    typeof json === `object` && json !== null
+      ? Reflect.get(json, `type`)
+      : undefined;
+  return typeof type === `string` ? `"${type}" message` : `message`;
+};
+
+/** Valibot issues as one line: `field: expected X, received Y`. */
+const summarize = (issues: ReadonlyArray<v.BaseIssue<unknown>>): string =>
+  issues
+    .slice(0, 3)
+    .map((issue) => {
+      const path = issue.path?.map((p) => String(p.key)).join(`.`);
+      return path ? `${path}: ${issue.message}` : issue.message;
+    })
+    .join(`; `);
+
 /**
  * Connection states worth a marker in the event log. The transitional states
  * (`connecting`, `identifying`) are steps toward `ready`, so recording them
  * would bury the dispatch events the log exists to show.
  */
 const LOGGED_STATES = new Set([`ready`, `closed`, `resuming`]);
+
+/** Only the fields the UI needs from `GET /applications/@me`. */
+const applicationSchema = v.object({
+  id: v.string(),
+  name: v.optional(v.string()),
+  flags: v.optional(v.number())
+});
 
 /** Which privileged intents a bot's application flags actually grant. */
 const privilegedFrom = (flags: number): GatewayIntentName[] => [
@@ -106,16 +138,12 @@ const fetchApplication = async (
       }
     );
     if (!response.ok) return null;
-    const app = (await response.json()) as {
-      id?: string;
-      name?: string;
-      flags?: number;
-    };
-    if (typeof app.id !== `string`) return null;
+    const app = v.safeParse(applicationSchema, await response.json());
+    if (!app.success) return null;
     return {
-      id: app.id,
-      name: app.name ?? `Unknown application`,
-      enabledPrivileged: privilegedFrom(app.flags ?? 0)
+      id: app.output.id,
+      name: app.output.name ?? `Unknown application`,
+      enabledPrivileged: privilegedFrom(app.output.flags ?? 0)
     };
   } catch {
     return null;
@@ -213,8 +241,8 @@ export class GatewayInspector extends DurableObject<Env> {
 
     // Hand a new viewer the current state plus recent history, so opening the
     // page mid-session isn't an empty screen.
-    this.#send(server, { type: `status`, status: this.#status() });
-    this.#send(server, { type: `backlog`, events: this.#events });
+    send(server, { type: `status`, status: this.#status() });
+    send(server, { type: `backlog`, events: this.#events });
 
     return new Response(null, { status: 101, webSocket: client });
   }
@@ -222,15 +250,29 @@ export class GatewayInspector extends DurableObject<Env> {
   override webSocketMessage(ws: WebSocket, raw: string | ArrayBuffer): void {
     if (typeof raw !== `string`) return;
 
-    let message: ClientMessage;
+    let json: unknown;
     try {
-      message = JSON.parse(raw) as ClientMessage;
+      json = JSON.parse(raw);
     } catch {
-      this.#send(ws, { type: `error`, message: `Malformed message.` });
+      send(ws, {
+        type: `error`,
+        message: `Message was not valid JSON.`
+      });
       return;
     }
 
-    this.#handle(message);
+    // Parsed rather than asserted: this is a public WebSocket endpoint, so a
+    // cast would let any shape through to be read as a message it isn't.
+    const result = v.safeParse(clientMessageSchema, json);
+    if (!result.success) {
+      send(ws, {
+        type: `error`,
+        message: `Rejected ${describe(json)}: ${summarize(result.issues)}`
+      });
+      return;
+    }
+
+    this.#handle(result.output);
   }
 
   /** Apply a decoded client message. Split out so tests can drive it. */
@@ -455,10 +497,6 @@ export class GatewayInspector extends DurableObject<Env> {
       application: this.#application,
       connectedAt: this.#connectedAt
     };
-  }
-
-  #send(ws: WebSocket, message: ServerMessage): void {
-    ws.send(JSON.stringify(message));
   }
 
   #broadcast(message: ServerMessage): void {

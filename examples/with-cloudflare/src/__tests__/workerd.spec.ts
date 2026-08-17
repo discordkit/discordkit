@@ -1,10 +1,12 @@
 import { env } from "cloudflare:workers";
 import { describe, it, expect } from "vitest";
+import * as v from "valibot";
 import {
   EVENT_INTENTS,
   GatewayOpcode,
   PRIVILEGED_INTENTS
 } from "@discordkit/gateway";
+import { clientMessageSchema } from "../shared/protocol.js";
 import type { GatewayInspector } from "../worker/inspector.js";
 
 /**
@@ -75,6 +77,48 @@ describe(`@discordkit/gateway on workerd`, () => {
     expect(GatewayOpcode.IDENTIFY).toBe(2);
     expect(GatewayOpcode.HELLO).toBe(10);
     expect(GatewayOpcode.HEARTBEAT_ACK).toBe(11);
+  });
+});
+
+describe(`inbound message validation`, () => {
+  it(`accepts every message the protocol defines`, async () => {
+    // The schema is the type's source of truth, so a shape the UI sends must
+    // parse — otherwise validation would break the app rather than protect it.
+    for (const message of [
+      { type: `connect`, token: `t`, intents: [`GUILDS`] },
+      { type: `reconnect`, intents: [`GUILDS`] },
+      { type: `disconnect` },
+      { type: `record`, recording: false },
+      { type: `recordFilter`, types: [`MESSAGE_CREATE`] },
+      { type: `recordFilter`, types: null },
+      { type: `simulate`, event: `MESSAGE_CREATE` },
+      { type: `clear` }
+    ] as const) {
+      expect(v.safeParse(clientMessageSchema, message).success).toBe(true);
+    }
+  });
+
+  it(`rejects a known type carrying the wrong payload`, () => {
+    // The case a cast could not catch: `type` is valid, so the DO would have
+    // dispatched on it and read `intents` as an array that isn't there.
+    const result = v.safeParse(clientMessageSchema, {
+      type: `connect`,
+      token: 42,
+      intents: `GUILDS`
+    });
+    expect(result.success).toBe(false);
+    // And the issues name the offending fields, which is what makes the
+    // error message actionable rather than "Malformed message".
+    const paths = (result.issues ?? []).map((i) =>
+      i.path?.map((p) => String(p.key)).join(`.`)
+    );
+    expect(paths).toContain(`token`);
+  });
+
+  it(`rejects an unknown message type`, () => {
+    expect(
+      v.safeParse(clientMessageSchema, { type: `drop-tables` }).success
+    ).toBe(false);
   });
 });
 

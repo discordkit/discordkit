@@ -1,3 +1,4 @@
+import * as v from "valibot";
 import type { GatewayIntentName } from "@discordkit/gateway";
 
 /**
@@ -111,28 +112,48 @@ export type ServerMessage =
   | { type: `backlog`; events: readonly InspectedEvent[] }
   | { type: `error`; message: string };
 
-/** Messages browsers send to the Durable Object. */
-export type ClientMessage =
-  | { type: `connect`; token: string; intents: readonly GatewayIntentName[] }
+/**
+ * Messages browsers send to the Durable Object.
+ *
+ * Defined as a valibot schema and the type derived from it, so the two cannot
+ * drift. The DO parses every inbound frame against this: it is a public
+ * WebSocket endpoint, and `JSON.parse` alone would let a malformed payload
+ * through to be read as a `ClientMessage` it isn't.
+ */
+const intentList = v.pipe(
+  v.array(v.string() as v.GenericSchema<GatewayIntentName>),
+  v.readonly()
+);
+
+export const clientMessageSchema = v.variant(`type`, [
+  v.object({
+    type: v.literal(`connect`),
+    token: v.string(),
+    intents: intentList
+  }),
   /**
    * Re-IDENTIFY with a new intent set. Distinct from `connect` because it
    * tears down a live session — Discord only accepts intents in IDENTIFY, so
-   * this necessarily costs one of the 1000 daily session starts. The UI makes
-   * it an explicit action for that reason.
+   * this necessarily costs one of the 1000 daily session starts.
    */
-  | { type: `reconnect`; intents: readonly GatewayIntentName[] }
-  | { type: `disconnect` }
+  v.object({
+    type: v.literal(`reconnect`),
+    intents: intentList
+  }),
+  v.object({ type: v.literal(`disconnect`) }),
   /** Start/stop capturing. Does not touch the Gateway connection. */
-  | { type: `record`; recording: boolean }
+  v.object({ type: v.literal(`record`), recording: v.boolean() }),
   /** Set the recorded-type allowlist; `null` records everything. */
-  | { type: `recordFilter`; types: readonly string[] | null }
+  v.object({
+    type: v.literal(`recordFilter`),
+    types: v.nullable(v.pipe(v.array(v.string()), v.readonly()))
+  }),
   /**
-   * Inject a synthetic event, for exercising the UI without a live Gateway.
-   *
-   * Kept in the protocol rather than hidden behind an RPC because the browser
-   * drives it: filling the timeline with dense, multi-type traffic is how the
-   * lanes, brush, and zoom get tested at all, and a real session is too sparse
-   * and too slow to serve as a fixture.
+   * Inject a synthetic event, for exercising the UI without a live Gateway:
+   * a real session is too sparse to fill the timeline while developing it.
    */
-  | { type: `simulate`; event: string }
-  | { type: `clear` };
+  v.object({ type: v.literal(`simulate`), event: v.string() }),
+  v.object({ type: v.literal(`clear`) })
+]);
+
+export type ClientMessage = v.InferOutput<typeof clientMessageSchema>;
