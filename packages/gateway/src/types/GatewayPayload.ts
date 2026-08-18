@@ -7,8 +7,13 @@ import { GatewayOpcode } from "./GatewayOpcode.js";
 const _gatewayPayloadSchema = v.object({
   /** {@link GatewayOpcode | Opcode} for the payload */
   op: v.enum_(GatewayOpcode),
-  /** Event data */
-  d: v.unknown(),
+  /**
+   * Event data.
+   *
+   * Optional, per the docs' `?mixed`: lifecycle frames such as `RECONNECT`
+   * carry no `d` at all, so requiring it would reject them.
+   */
+  d: v.optional(v.unknown()),
   /** Sequence number of event used for {@link resume | resuming} sessions and heartbeating. Present only on {@link GatewayOpcode.DISPATCH | Dispatch} payloads. */
   s: v.nullish(v.number()),
   /** The event name for this payload. Present only on {@link GatewayOpcode.DISPATCH | Dispatch} payloads. */

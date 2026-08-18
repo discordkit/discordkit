@@ -1,3 +1,7 @@
+// oxlint-disable promise/prefer-await-to-callbacks -- `onError` is a
+// subscription, not a promise: it may fire zero or many times over a
+// connection's life, which `await` cannot express. Subscribing is the only way
+// to observe the error these tests assert on.
 import { describe, it, expect, afterEach, vi } from "vite-plus/test";
 import { ws } from "msw";
 import { setupServer } from "msw/node";
@@ -100,7 +104,6 @@ describe(`unsupported frame encodings`, () => {
     // A silently ignored frame is the worst outcome here: the bot connects,
     // receives nothing, and reports no error. Compression and ETF both arrive
     // as binary, so this is the tripwire for "the encoding assumption broke".
-    const errors: string[] = [];
     server = setupServer(
       gateway.addEventListener(`connection`, ({ client }) => {
         client.send(hello());
@@ -109,24 +112,49 @@ describe(`unsupported frame encodings`, () => {
     );
     server.listen({ onUnhandledRequest: `error` });
 
-    const onError = (event: { message?: string; reason?: unknown }): void => {
-      errors.push(String(event.message ?? event.reason));
-    };
-    process.on(`uncaughtException`, onError);
-    process.on(`unhandledRejection`, onError);
+    const errors: Error[] = [];
+    const connection = new GatewayConnection({
+      token: `t`,
+      intents: [`GUILDS`]
+    });
+    opened.push(connection);
+    connection.onError((error) => errors.push(error));
+    connection.connect();
+
+    await vi.waitFor(() => {
+      expect(errors).toHaveLength(1);
+    });
+    expect(errors[0]?.message).toMatch(/binary Gateway frame/);
+  });
+
+  it(`stops instead of reconnecting into the same failure`, async () => {
+    // Every later frame would be undecodable too, so retrying just spends the
+    // 1000/day session-start budget to fail identically.
+    let connects = 0;
+    server = setupServer(
+      gateway.addEventListener(`connection`, ({ client }) => {
+        connects += 1;
+        client.send(hello());
+        client.send(new TextEncoder().encode(`compressed-ish`));
+      })
+    );
+    server.listen({ onUnhandledRequest: `error` });
 
     const connection = new GatewayConnection({
       token: `t`,
       intents: [`GUILDS`]
     });
     opened.push(connection);
+    const seen: Error[] = [];
+    connection.onError((error) => seen.push(error));
     connection.connect();
 
     await vi.waitFor(() => {
-      expect(errors.some((e) => e.includes(`binary Gateway frame`))).toBe(true);
+      expect(seen).toHaveLength(1);
     });
-
-    process.off(`uncaughtException`, onError);
-    process.off(`unhandledRejection`, onError);
+    await vi.waitFor(() => {
+      expect(connection.state).toBe(`closed`);
+    });
+    expect(connects).toBe(1);
   });
 });

@@ -35,6 +35,7 @@ const fakeConnection = (): ConnectionLike & {
       for (const intent of intents) registered.add(intent);
     },
     onStateChange: (): Subscription => toSubscription(() => {}),
+    onError: (): Subscription => toSubscription(() => {}),
     onDispatch: (handler): Subscription => {
       handlers.add(handler);
       return toSubscription(() => {

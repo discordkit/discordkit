@@ -45,8 +45,8 @@ The same bot, bundled with rolldown for Node and minified:
 
 |                     |       discordkit | discord.js 14.27 |
 | ------------------- | ---------------: | ---------------: |
-| Bundle              |     **30.5 KiB** |       1264.4 KiB |
-| Gzipped             |     **10.4 KiB** |        334.6 KiB |
+| Bundle              |     **32.4 KiB** |       1264.4 KiB |
+| Gzipped             |     **11.1 KiB** |        334.6 KiB |
 | `node_modules`      | 1.8 MB (valibot) |            24 MB |
 | Direct dependencies |                1 |               15 |
 

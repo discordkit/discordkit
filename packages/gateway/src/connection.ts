@@ -1,6 +1,10 @@
+import * as v from "valibot";
 import { GatewayCloseCode, isReconnectable } from "./types/GatewayCloseCode.js";
 import { GatewayOpcode } from "./types/GatewayOpcode.js";
-import type { GatewayPayload } from "./types/GatewayPayload.js";
+import {
+  gatewayPayloadSchema,
+  type GatewayPayload
+} from "./types/GatewayPayload.js";
 import type { GatewayIntentName } from "./types/GatewayIntents.js";
 import { intents as toIntentMask } from "./types/GatewayIntents.js";
 import { globalScheduler, type Scheduler } from "./scheduler.js";
@@ -245,6 +249,8 @@ export interface ConnectionLike {
   onDispatch: (handler: (event: DispatchEvent) => void) => Subscription;
   /** Subscribe to lifecycle state changes. */
   onStateChange: (handler: (state: ConnectionState) => void) => Subscription;
+  /** Subscribe to fatal protocol errors the client cannot recover from. */
+  onError: (handler: (error: Error) => void) => Subscription;
 }
 
 /**
@@ -280,6 +286,7 @@ export class GatewayConnection implements ConnectionLike, Disposable {
   readonly #scheduler: Scheduler;
   readonly #dispatchHandlers = new Set<(event: DispatchEvent) => void>();
   readonly #stateHandlers = new Set<(state: ConnectionState) => void>();
+  readonly #errorHandlers = new Set<(error: Error) => void>();
 
   #socket: WebSocket | null = null;
   #state: ConnectionState = `idle`;
@@ -456,6 +463,41 @@ export class GatewayConnection implements ConnectionLike, Disposable {
     });
   };
 
+  /**
+   * Subscribe to fatal protocol errors: conditions the client cannot recover
+   * from, where reconnecting would fail the same way.
+   *
+   * Separate from {@link onStateChange} because `closed` alone cannot say
+   * *why*, and a bot that stops for an unsupported encoding should be able to
+   * report that rather than look idle.
+   */
+  onError = (handler: (error: Error) => void): Subscription => {
+    this.#errorHandlers.add(handler);
+    return toSubscription(() => {
+      this.#errorHandlers.delete(handler);
+    });
+  };
+
+  /**
+   * Give up on the connection, telling subscribers why.
+   *
+   * Stops before closing so the close handler takes the no-reconnect path: a
+   * retry would hit the identical condition, and the reconnect loop would
+   * spend the daily session-start budget achieving nothing.
+   */
+  #reportFatal = (message: string): void => {
+    this.#stopped = true;
+    const error = new Error(message);
+    // Unobserved fatals must not vanish. Without a subscriber this is exactly
+    // the silent failure the package exists to surface, so fall back to the
+    // console rather than swallowing it.
+    if (this.#errorHandlers.size === 0) {
+      console.error(error.message);
+    }
+    for (const handler of this.#errorHandlers) handler(error);
+    this.#socket?.close(CLOSE_DONE, `Unsupported frame encoding`);
+  };
+
   #setState = (next: ConnectionState): void => {
     if (this.#state === next) return;
     this.#state = next;
@@ -588,15 +630,24 @@ export class GatewayConnection implements ConnectionLike, Disposable {
   };
 
   #handleMessage = (raw: string): void => {
-    let payload: GatewayPayload;
+    let json: unknown;
     try {
-      payload = JSON.parse(raw) as GatewayPayload;
+      json = JSON.parse(raw);
     } catch {
       // A frame we can't parse isn't actionable — Discord only sends JSON on a
       // `encoding=json` connection, so this means corruption, not a protocol
       // variant we should handle.
       return;
     }
+
+    // Parse the envelope rather than asserting it. `op` drives every branch
+    // below, so an unexpected one would fall through the switch and be lost
+    // silently; a payload whose `s` is not a number would corrupt the sequence
+    // used to RESUME. `d` stays `unknown` here, so this validates the wrapper
+    // without paying to validate every event's body.
+    const result = v.safeParse(gatewayPayloadSchema, json);
+    if (!result.success) return;
+    const payload = result.output;
 
     switch (payload.op) {
       case GatewayOpcode.DISPATCH:
@@ -706,10 +757,10 @@ export class GatewayConnection implements ConnectionLike, Disposable {
       // The connection asks for `encoding=json` with no compression, so every
       // frame should be text. A binary one means that assumption no longer
       // holds — transport compression or ETF, neither of which this client
-      // decodes yet. Dropping it silently would look like a bot that connects
-      // and then receives nothing, which is the failure this package exists to
-      // make visible, so say so instead.
-      throw new Error(
+      // decodes yet. Every later frame would be undecodable too, so this is
+      // fatal rather than a frame to skip: close with a code that will not
+      // reconnect, instead of leaving a bot that receives nothing.
+      this.#reportFatal(
         `Received a binary Gateway frame, but this client only decodes JSON text. That means the connection negotiated transport compression or ETF encoding, which @discordkit/gateway does not support yet. Remove any "compress" or "encoding" override from the Gateway URL.`
       );
     });
