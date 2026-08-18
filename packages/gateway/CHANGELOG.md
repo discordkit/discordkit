@@ -1,0 +1,137 @@
+# Changelog
+
+## 1.0.0
+<sub>2026-08-18</sub>
+
+- [#79](https://github.com/discordkit/discordkit/pull/79)  *(major)* Thanks [@Saeris](https://github.com/Saeris)!
+  `createConnection()` is now `new GatewayConnection()`, and a connection is disposable.
+
+  ```diff
+  -const connection = createConnection({ token, intents: [`GUILDS`] });
+  +const connection = new GatewayConnection({ token, intents: [`GUILDS`] });
+  ```
+
+  Scoping a connection to a block now cleans it up automatically, even if the block throws — the socket closes, timers clear, and no reconnect is scheduled:
+
+  ```ts
+  using connection = new GatewayConnection({ token, intents: [`GUILDS`] });
+  connection.connect();
+  ```
+
+  `[Symbol.dispose]()` is an alias for `close()` rather than a second teardown path: leaving a scope means you are done with the connection, which is exactly what `close()` already meant.
+
+  The connection's session state (session id, sequence number, heartbeat-ack status, reconnect attempts) is now genuinely private in `#` fields. It was previously closure state reachable through the returned object's getters.
+
+  Two decisions the connection makes are now pure functions, exported and independently testable rather than reachable only by driving a live socket through each case:
+
+  - `backoffDelay(attempts)` — the exponential reconnect curve and its cap.
+  - `closeAction(code)` — whether a close code means resume, reconnect fresh, or stop. This is the highest-consequence branch in the client: getting it wrong either burns the 1000/day session-start limit in a reconnect loop, or silently stops a bot forever.
+
+  A new `ConnectionLike` interface describes the connection surface structurally, for code that accepts a connection without owning one — the event fan-out takes it, and tests substitute fakes. It deliberately does not extend `Disposable`, so a stub needs no no-op `[Symbol.dispose]`.
+- [#79](https://github.com/discordkit/discordkit/pull/79)  *(major)* Thanks [@Saeris](https://github.com/Saeris)!
+  Subscribing now registers the intents that event needs, so most bots never name one.
+
+  ```diff
+   onMessageCreate(handler);
+  -gateway.setIntents(onMessageCreate).connect();
+  +gateway.connect();
+  ```
+
+  Every subscriber already carries its own intents, and every subscription already names its connection, so the connection can derive the exact mask from the handlers a bot actually uses. A hand-written list was the one part that could drift: under-request and the events never arrive, silently.
+
+  `setIntents()` is now **additive** rather than replacing. It is for intents no handler implies — above all `MESSAGE_CONTENT`, which gates message _fields_ rather than an event:
+
+  ```ts
+  onMessageCreate(handler);
+  gateway.setIntents(`MESSAGE_CONTENT`).connect();
+  ```
+
+  Both `setIntents()` and subscribing **throw once connected**. Discord reads intents only in IDENTIFY, so a handler added to a live connection would never receive its event — the failure this package exists to prevent. Close and connect again to apply a new set.
+
+  `connect()` throws when nothing has contributed an intent. `ConnectionLike` gains `registerIntents`, which any custom implementation or test stub must provide, and `GatewayConnection` gains an `intents` getter returning the resolved list.
+- [#79](https://github.com/discordkit/discordkit/pull/79)  *(major)* Thanks [@Saeris](https://github.com/Saeris)!
+  The ambient connection is now a singleton instance, and configuration fails fast.
+
+  `configure()`, `connect()`, and `disconnect()` are removed. The package exports a `gateway` connection instead, mirroring `@discordkit/core`'s `discord` session:
+
+  ```diff
+  -configure({ token, intents: [`GUILDS`] });
+  -connect();
+  +gateway.setIntents(`GUILDS`).connect();
+  ```
+
+  Free functions hid where configuration went and offered nothing to inspect. An instance is discoverable, carries its own state, and reads the same as the REST client. Subscriptions still default to it, so the common case needs no wiring:
+
+  ```ts
+  onMessageCreate((message) => console.log(message.content));
+  gateway.setIntents(onMessageCreate).connect();
+  ```
+
+  Durable Objects must keep passing an explicit `{ connection }`, because module globals are per-isolate.
+
+  `token` and `intents` are now optional in `ConnectionConfig`, so a connection can be built empty and configured by `setToken()` / `setIntents()`. Both are validated in `connect()` rather than the constructor:
+
+  - No token, and no `DISCORD_BOT_TOKEN` in the environment, throws. The lookup is guarded, so it does nothing on runtimes without `process` — Cloudflare Workers reach the token through a binding and must pass it explicitly.
+  - No intents throws. An intentless IDENTIFY is legal but delivers almost nothing, which reads as a dead bot rather than a configuration mistake.
+
+  Both errors arrive before a socket opens, naming the fix, instead of surfacing later as an opaque `4004` close or as silence. `resolveToken()` and `TOKEN_ENV_VAR` are exported.
+- [#79](https://github.com/discordkit/discordkit/pull/79)  *(minor)* Thanks [@Saeris](https://github.com/Saeris)!
+  Add `@discordkit/gateway`, a tree-shakeable Discord Gateway (WebSocket) client targeting the Cloudflare Workers / Durable Object runtime contract.
+
+  v0 covers the connection lifecycle — identify, heartbeat with jitter, resume, and reconnect backoff — plus dispatch subscription and the codegen'd opcode, close-code, and intent types. Typed per-event modules land next.
+- [#79](https://github.com/discordkit/discordkit/pull/79)  *(minor)* Thanks [@Saeris](https://github.com/Saeris)!
+  Add typed dispatch events with per-event intent metadata: `onReady`, `onResumed`, `onGuildCreate`, `onMessageCreate`, and `onInteractionCreate`, each its own module and export so importing one never pulls in another.
+
+  Each subscriber carries the intents Discord requires for that event, and `intentsFor(...)` unions them, so a bot can request exactly what its handlers need — under-requesting fails silently, and over-requesting a privileged intent is a fatal 4014.
+
+  Dispatch payloads are now camelized at the transport boundary (as the REST layer already does), which is what lets the event schemas compose `@discordkit/client`'s rather than redefine them.
+- [#79](https://github.com/discordkit/discordkit/pull/79)  *(minor)* Thanks [@Saeris](https://github.com/Saeris)!
+  Add a `Scheduler` seam so hosts with durable scheduling can drive the connection's lifecycle timers. Defaults to the platform's global timers, so nothing changes for existing consumers.
+
+  The heartbeat is now a self-rescheduling one-shot timeout rather than `setInterval`, which avoids overlapping runs and is the only shape a Durable Object alarm can express. The README documents which scheduling concerns belong in-process and which belong on cron or a durable-execution platform.
+- [#79](https://github.com/discordkit/discordkit/pull/79)  *(minor)* Thanks [@Saeris](https://github.com/Saeris)!
+  Add 27 typed dispatch events — every event Discord documents as a direct alias over a REST resource, bringing typed coverage to 32 of 84 receive events.
+
+  Each reuses the corresponding `@discordkit/client` schema rather than redefining it, and carries the intents that gate it. The remaining ~52 events have bespoke payloads that each need a hand-written schema.
+- [#79](https://github.com/discordkit/discordkit/pull/79)  *(minor)* Thanks [@Saeris](https://github.com/Saeris)!
+  Add the message, reaction, and poll dispatch events — `MESSAGE_DELETE`, `MESSAGE_DELETE_BULK`, the four `MESSAGE_REACTION_*` events, and both `MESSAGE_POLL_VOTE_*` events — bringing typed coverage to 40 of 84.
+
+  Unlike the alias events these have bespoke payloads, so each schema is hand-written from the docs' field tables and covered by specs that parse real payload shapes.
+- [#79](https://github.com/discordkit/discordkit/pull/79)  *(minor)* Thanks [@Saeris](https://github.com/Saeris)!
+  Add the guild and presence dispatch events — member add/remove/update, members chunk, bans, roles, emojis, stickers, integrations update, scheduled event users, soundboard, plus `PRESENCE_UPDATE` and `TYPING_START` — bringing typed coverage to 58 of 84.
+- [#79](https://github.com/discordkit/discordkit/pull/79)  *(minor)* Thanks [@Saeris](https://github.com/Saeris)!
+  Complete the dispatch event surface: all 79 dispatchable events are now typed and tested, with a coverage guard that fails the build if a docs refresh adds one nobody wired up.
+
+  The final batch adds channels and threads (pins, list sync, members update, channel info, voice channel status/start time), invites, voice effects and server updates, stage instances, entitlements, subscriptions, webhooks, auto-moderation execution, integration delete, and the gateway rate-limit event.
+- [#79](https://github.com/discordkit/discordkit/pull/79)  *(minor)* Thanks [@Saeris](https://github.com/Saeris)!
+  Three improvements from an audit of the completed event surface:
+
+  - Dispatch payloads are camelized lazily, only for events that have a subscriber — measured ~79% cheaper at a realistic subscribe ratio. `connection.onDispatch` now delivers raw wire-shaped payloads.
+  - Each event module carries its own intents rather than looking them up, so importing one handler no longer drags in the 107-entry `EVENT_INTENTS` map: ~11 KB down to ~4 KB.
+  - `intents` accepts handlers as well as names, so `createConnection({ token, intents: [onMessageCreate] })` derives the mask from what the bot consumes.
+- [#79](https://github.com/discordkit/discordkit/pull/79)  *(minor)* Thanks [@Saeris](https://github.com/Saeris)!
+  Inbound frames are now parsed against `gatewayPayloadSchema` instead of asserted, and fatal protocol errors are observable.
+
+  `#handleMessage` cast `JSON.parse` straight to `GatewayPayload`. Nothing checked it, so an unexpected `op` fell through the switch unnoticed and a non-numeric `s` would have corrupted the sequence number used to RESUME. `d` stays `unknown`, so this validates the envelope without paying to validate every event's body.
+
+  Doing so surfaced a bug in the schema itself: `d` was required, but Discord documents it as `?mixed` and sends `RECONNECT` with no `d` at all. Parsing would have rejected Discord's own request to reconnect. `d` is now optional and covered by tests.
+
+  New `onError` subscription for fatal protocol errors:
+
+  ```ts
+  gateway.onError((error) => {
+    console.error(error.message);
+  });
+  ```
+
+  A binary frame now reports through it and closes without reconnecting, rather than throwing from inside the socket's message listener where no consumer could catch it. Retrying would meet the identical condition and spend the daily session-start budget to fail the same way. With no subscriber the error still reaches the console, since an unobserved fatal is the silent failure this package exists to surface.
+
+  `ConnectionLike` gains `onError`, which custom implementations and test stubs must provide.
+- [#79](https://github.com/discordkit/discordkit/pull/79)  *(patch)* Thanks [@Saeris](https://github.com/Saeris)!
+  Group the dispatch events by resource (`events/messages/`, `events/guild/`, `events/channel/`, …), mirroring how `@discordkit/client` organizes its endpoints. Every event keeps its existing export from the package root; the change also gives each event an importable subpath.
+- [#79](https://github.com/discordkit/discordkit/pull/79)  *(patch)* Thanks [@Saeris](https://github.com/Saeris)!
+  A binary Gateway frame now raises an error instead of being dropped.
+
+  The connection asks for `encoding=json` with no compression, so every frame should be text. Anything binary means that assumption no longer holds — transport compression or ETF encoding, neither of which this client decodes. The message listener previously ignored those frames, so a bot would connect, receive nothing, and report no error: exactly the silent failure this package exists to make visible.
+
+  The error names both causes and the fix, rather than leaving a dead connection to diagnose.
