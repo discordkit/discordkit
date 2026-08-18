@@ -21,14 +21,19 @@ import type { Ready } from "../lifecycle/types/Ready.js";
 const fakeConnection = (): ConnectionLike & {
   emit: (event: DispatchEvent) => void;
   dispatchSubscriptions: () => number;
+  registered: () => string[];
 } => {
   const handlers = new Set<(event: DispatchEvent) => void>();
+  const registered = new Set<string>();
   return {
-    state: `ready`,
+    state: `idle`,
     sessionId: `s`,
     connect: () => {},
     close: () => {},
     send: () => {},
+    registerIntents: ({ intents }) => {
+      for (const intent of intents) registered.add(intent);
+    },
     onStateChange: (): Subscription => toSubscription(() => {}),
     onDispatch: (handler): Subscription => {
       handlers.add(handler);
@@ -39,7 +44,8 @@ const fakeConnection = (): ConnectionLike & {
     emit: (event) => {
       for (const handler of handlers) handler(event);
     },
-    dispatchSubscriptions: () => handlers.size
+    dispatchSubscriptions: () => handlers.size,
+    registered: () => [...registered]
   };
 };
 
@@ -316,5 +322,37 @@ describe(`messageCreateSchema`, () => {
     };
     const result = v.safeParse(messageCreateSchema, wire);
     expect(result.success).toBe(false);
+  });
+});
+
+describe(`automatic intent registration`, () => {
+  it(`registers an event's intents when you subscribe`, () => {
+    // The whole point: the mask comes from the handlers a bot actually uses,
+    // so it cannot drift as handlers are added or removed.
+    const connection = fakeConnection();
+    onMessageCreate(() => {}, { connection });
+
+    expect(connection.registered()).toEqual(
+      expect.arrayContaining([`GUILD_MESSAGES`, `DIRECT_MESSAGES`])
+    );
+  });
+
+  it(`unions the intents of every subscribed event`, () => {
+    const connection = fakeConnection();
+    onMessageCreate(() => {}, { connection });
+    onGuildCreate(() => {}, { connection });
+
+    expect(connection.registered()).toEqual(
+      expect.arrayContaining([`GUILD_MESSAGES`, `DIRECT_MESSAGES`, `GUILDS`])
+    );
+  });
+
+  it(`registers nothing for an event Discord always delivers`, () => {
+    // READY is not gated by any intent, so it must not contribute one — an
+    // empty registration would otherwise look like a configured connection.
+    const connection = fakeConnection();
+    onReady(() => {}, { connection });
+
+    expect(connection.registered()).toEqual([]);
   });
 });

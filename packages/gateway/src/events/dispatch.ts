@@ -1,6 +1,6 @@
 import { isObject } from "@discordkit/core/utils/isObject";
 import { toCamelKeys } from "@discordkit/core/utils/toCamelKeys";
-import { useConnection } from "../ambient.js";
+import { gateway } from "../connection.js";
 import type { ConnectionLike, DispatchEvent } from "../connection.js";
 import { toSubscription, type Subscription } from "../subscription.js";
 // Both type-only, deliberately. `IntentsFor` needs the SHAPE of EVENT_INTENTS,
@@ -14,8 +14,10 @@ import type {
 /** Options every event subscription accepts. */
 export interface EventOptions {
   /**
-   * Target a specific connection instead of the ambient singleton. Durable
-   * Objects should always pass this — module globals are per-isolate.
+   * The connection to subscribe on. Defaults to the {@link gateway} singleton.
+   *
+   * Durable Objects must pass this — module globals are per-isolate, so each
+   * instance owns its own socket.
    */
   connection?: ConnectionLike;
 }
@@ -78,8 +80,11 @@ const registryFor = (connection: ConnectionLike): Registry => {
  * mask it needs from the handlers it actually registers:
  *
  * ```ts
- * connect({ token, intents: onMessageCreate.intents });
+ * new GatewayConnection({ intents: [onMessageCreate] });
  * ```
+ *
+ * Calling one returns an unsubscribe function. Ignore it unless you need to
+ * stop listening before the connection closes.
  */
 export interface EventSubscriber<T, E extends string> {
   (handler: (data: T) => void, options?: EventOptions): Subscription;
@@ -118,9 +123,12 @@ export const dispatchEvent = <T, E extends string>(
 ): EventSubscriber<T, E> => {
   const subscribe = (
     handler: (data: T) => void,
-    options: EventOptions = {}
+    { connection = gateway }: EventOptions = {}
   ): Subscription => {
-    const connection = options.connection ?? useConnection();
+    // Before anything else: this is what lets `connect()` build the intent mask
+    // from the handlers actually subscribed, and it throws if the connection is
+    // already live, since Discord would never deliver the new event.
+    connection.registerIntents({ intents });
     const { byEvent } = registryFor(connection);
 
     let subscribers = byEvent.get(event);
@@ -152,7 +160,7 @@ export const dispatchEvent = <T, E extends string>(
  *
  * @example
  * ```ts
- * connect({
+ * new GatewayConnection({
  *   token,
  *   intents: intentsFor(onMessageCreate, onGuildCreate)
  * });

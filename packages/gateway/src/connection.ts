@@ -12,6 +12,32 @@ export const GATEWAY_VERSION = 10;
 /** Default Gateway URL, used when none is supplied via {@link ConnectionConfig.url}. */
 export const DEFAULT_GATEWAY_URL = `wss://gateway.discord.gg/`;
 
+/** Environment variable read when no token is passed explicitly. */
+export const TOKEN_ENV_VAR = `DISCORD_BOT_TOKEN`;
+
+/**
+ * The token to identify with: the explicit one, else `DISCORD_BOT_TOKEN` from
+ * the environment.
+ *
+ * `process` is absent on bare Workers (it needs `nodejs_compat`), so this is
+ * guarded rather than read directly — an unguarded `process.env` would throw a
+ * `ReferenceError` there and break merely constructing a connection.
+ *
+ * @throws when neither source provides one, naming both ways to supply it.
+ */
+export const resolveToken = (token?: string): string => {
+  const resolved =
+    token ??
+    (typeof process === `undefined` ? undefined : process.env[TOKEN_ENV_VAR]);
+
+  if (resolved === undefined || resolved === ``) {
+    throw new Error(
+      `No Discord bot token was provided, so the Gateway cannot identify. Pass one as new GatewayConnection({ token }), or set ${TOKEN_ENV_VAR} in the environment. On Cloudflare Workers, read it from your binding and pass it explicitly — process.env needs the nodejs_compat flag.`
+    );
+  }
+  return resolved;
+};
+
 /** Read a string field off an unknown payload, or `null` if absent. */
 const readString = (source: unknown, key: string): string | null => {
   if (typeof source !== `object` || source === null) return null;
@@ -119,8 +145,13 @@ export const resolveIntents = (
 export interface ConnectionConfig {
   /**
    * Bot token, **without** the `Bot ` prefix — it's added when identifying.
+   *
+   * Optional: when omitted, {@link resolveToken} falls back to
+   * `process.env.DISCORD_BOT_TOKEN`. That fallback is a convenience for
+   * runtimes that expose `process`; Workers reach the token through a binding
+   * instead, so pass it explicitly there.
    */
-  token: string;
+  token?: string;
   /**
    * Intents to request, combined into the bitfield sent with `IDENTIFY`.
    *
@@ -132,7 +163,7 @@ export interface ConnectionConfig {
    * new GatewayConnection({ token, intents: [onMessageCreate, onGuildCreate] });
    * ```
    */
-  intents: ReadonlyArray<GatewayIntentName | IntentSource>;
+  intents?: ReadonlyArray<GatewayIntentName | IntentSource>;
   /**
    * Gateway URL. Defaults to {@link DEFAULT_GATEWAY_URL}; pass the `url` from
    * `getGatewayBot()` if you want Discord's per-app recommendation (and its
@@ -205,6 +236,11 @@ export interface ConnectionLike {
   close: () => void;
   /** Send a payload. Throws if the socket isn't open. */
   send: (payload: Pick<GatewayPayload, `op` | `d`>) => void;
+  /**
+   * Register the intents an event needs. Called by each subscription so
+   * `connect()` can derive the mask from the handlers a bot actually uses.
+   */
+  registerIntents: (source: IntentSource) => void;
   /** Subscribe to every dispatch event. Used by the per-event fan-out. */
   onDispatch: (handler: (event: DispatchEvent) => void) => Subscription;
   /** Subscribe to lifecycle state changes. */
@@ -238,7 +274,9 @@ export interface ConnectionLike {
  * survives destructuring (`const { connect } = connection`).
  */
 export class GatewayConnection implements ConnectionLike, Disposable {
-  readonly #config: ConnectionConfig;
+  #config: ConnectionConfig;
+  /** Intents contributed by subscriptions, via {@link registerIntents}. */
+  #registered: ReadonlySet<GatewayIntentName> = new Set();
   readonly #scheduler: Scheduler;
   readonly #dispatchHandlers = new Set<(event: DispatchEvent) => void>();
   readonly #stateHandlers = new Set<(state: ConnectionState) => void>();
@@ -261,10 +299,79 @@ export class GatewayConnection implements ConnectionLike, Disposable {
   /** Set by `close()` so an intentional shutdown doesn't reconnect. */
   #stopped = false;
 
-  constructor(config: ConnectionConfig) {
+  constructor(config: ConnectionConfig = {}) {
     this.#config = config;
     this.#scheduler = config.scheduler ?? globalScheduler;
   }
+
+  /**
+   * Set the bot token. Overrides {@link TOKEN_ENV_VAR}.
+   *
+   * Takes the token **without** a `Bot ` prefix, unlike the REST session: the
+   * Gateway's IDENTIFY carries a bare token and adds the prefix itself.
+   */
+  setToken = (token: string): this => {
+    if (token.length === 0) {
+      throw new Error(
+        `Must provide a non-empty string to set the Gateway bot token.`
+      );
+    }
+    this.#config = { ...this.#config, token };
+    return this;
+  };
+
+  /**
+   * Add intents to identify with. Additive: each call adds to the set.
+   *
+   * Subscribing already registers an event's own intents, so this is for the
+   * ones no handler implies — `MESSAGE_CONTENT` above all, which gates message
+   * _fields_ rather than an event.
+   *
+   * @throws once connected. Discord reads intents only in IDENTIFY, so a later
+   *   change would silently not apply.
+   */
+  setIntents = (
+    ...intents: ReadonlyArray<GatewayIntentName | IntentSource>
+  ): this => {
+    this.#assertConfigurable(`intents`);
+    this.#config = {
+      ...this.#config,
+      intents: [...(this.#config.intents ?? []), ...intents]
+    };
+    return this;
+  };
+
+  /**
+   * Register the intents an event needs, called by each subscription.
+   *
+   * This is what lets `connect()` derive the mask from the handlers a bot
+   * actually subscribes to, instead of a hand-written list that drifts.
+   *
+   * @throws once connected, for the same reason as {@link setIntents}: the
+   *   events would never arrive, and silence is this library's worst failure.
+   */
+  registerIntents = (source: IntentSource): void => {
+    if (source.intents.length === 0) return;
+    this.#assertConfigurable(`a subscription`);
+    this.#registered = new Set([...this.#registered, ...source.intents]);
+  };
+
+  /** All intents to identify with: registered by subscriptions, plus explicit. */
+  get intents(): GatewayIntentName[] {
+    return [
+      ...new Set([
+        ...this.#registered,
+        ...resolveIntents(this.#config.intents ?? [])
+      ])
+    ];
+  }
+
+  #assertConfigurable = (what: string): void => {
+    if (this.#state === `idle` || this.#state === `closed`) return;
+    throw new Error(
+      `Cannot add ${what} after connecting, because Discord only reads intents when the connection identifies. Register everything before connect(), or close() and connect() again to apply a new set.`
+    );
+  };
 
   /** Current lifecycle state. */
   get state(): ConnectionState {
@@ -276,9 +383,24 @@ export class GatewayConnection implements ConnectionLike, Disposable {
     return this.#sessionId;
   }
 
-  /** Open the socket. Idempotent — a second call while live is a no-op. */
+  /**
+   * Open the socket. Idempotent — a second call while live is a no-op.
+   *
+   * Validates configuration here rather than in the constructor, so a
+   * connection can be built empty and configured before opening.
+   *
+   * @throws when no token is available, or when nothing has contributed an
+   *   intent. An intentless IDENTIFY is accepted by Discord but delivers almost
+   *   nothing, which reads as a dead bot rather than a configuration mistake.
+   */
   connect = (): void => {
     if (this.#socket !== null) return;
+    resolveToken(this.#config.token);
+    if (this.intents.length === 0) {
+      throw new Error(
+        `No intents were set, so Discord would deliver almost no events. Subscribing registers an event's intents automatically, so subscribe before calling connect(), or add them with setIntents(...).`
+      );
+    }
     this.#stopped = false;
     this.#open();
   };
@@ -391,11 +513,13 @@ export class GatewayConnection implements ConnectionLike, Disposable {
 
   #identify = (): void => {
     this.#setState(`identifying`);
+    // Re-resolve rather than trusting the field: both are validated in
+    // `connect()`, and resolving again keeps this honest if that ever changes.
     this.send({
       op: GatewayOpcode.IDENTIFY,
       d: {
-        token: this.#config.token,
-        intents: toIntentMask(...resolveIntents(this.#config.intents)),
+        token: resolveToken(this.#config.token),
+        intents: toIntentMask(...this.intents),
         properties: {
           os: this.#config.properties?.os ?? `linux`,
           browser: this.#config.properties?.browser ?? `discordkit`,
@@ -411,7 +535,7 @@ export class GatewayConnection implements ConnectionLike, Disposable {
     this.send({
       op: GatewayOpcode.RESUME,
       d: {
-        token: this.#config.token,
+        token: resolveToken(this.#config.token),
         session_id: this.#sessionId,
         seq: this.#sequence
       }
@@ -575,7 +699,19 @@ export class GatewayConnection implements ConnectionLike, Disposable {
     this.#socket = ws;
 
     ws.addEventListener(`message`, (event: MessageEvent) => {
-      if (typeof event.data === `string`) this.#handleMessage(event.data);
+      if (typeof event.data === `string`) {
+        this.#handleMessage(event.data);
+        return;
+      }
+      // The connection asks for `encoding=json` with no compression, so every
+      // frame should be text. A binary one means that assumption no longer
+      // holds — transport compression or ETF, neither of which this client
+      // decodes yet. Dropping it silently would look like a bot that connects
+      // and then receives nothing, which is the failure this package exists to
+      // make visible, so say so instead.
+      throw new Error(
+        `Received a binary Gateway frame, but this client only decodes JSON text. That means the connection negotiated transport compression or ETF encoding, which @discordkit/gateway does not support yet. Remove any "compress" or "encoding" override from the Gateway URL.`
+      );
     });
     ws.addEventListener(`close`, (event: CloseEvent) => {
       this.#handleClose(event.code);
@@ -585,3 +721,20 @@ export class GatewayConnection implements ConnectionLike, Disposable {
     // schedule two reconnects for a single failure.
   };
 }
+
+/**
+ * The default connection, mirroring `@discordkit/core`'s `discord` session.
+ *
+ * Constructing it opens nothing: a connection is inert until `connect()`, so
+ * this is safe at module scope. Configure it, then open it:
+ *
+ * ```ts
+ * gateway.setIntents(onMessageCreate).connect();
+ * ```
+ *
+ * Every subscription falls back to this connection, so the common case — one
+ * bot, one socket — needs no wiring. Pass `{ connection }` to target another
+ * instance, which a Durable Object must do because module globals are
+ * per-isolate.
+ */
+export const gateway = new GatewayConnection();

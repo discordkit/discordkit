@@ -1,9 +1,16 @@
 import { describe, it, expect, afterEach, vi } from "vite-plus/test";
 import { ws } from "msw";
 import { setupServer } from "msw/node";
-import { GatewayConnection, backoffDelay, closeAction } from "../connection.js";
+import {
+  GatewayConnection,
+  backoffDelay,
+  closeAction,
+  resolveToken,
+  TOKEN_ENV_VAR
+} from "../connection.js";
 import { GatewayCloseCode } from "../types/GatewayCloseCode.js";
 import { GatewayOpcode } from "../types/GatewayOpcode.js";
+import { onMessageCreate } from "../events/messages/onMessageCreate.js";
 
 /**
  * Protocol tests against a synthetic Gateway.
@@ -181,6 +188,75 @@ describe(`gateway connection`, () => {
     // GUILDS (1<<0) | GUILD_MESSAGES (1<<9) = 1 | 512 = 513. A wrong bitfield
     // means silently receiving no events, so pin the exact value.
     expect(data.intents).toBe(513);
+  });
+
+  it(`identifies with the intents its subscriptions registered`, async () => {
+    // End-to-end proof of automatic registration: nothing names an intent, yet
+    // the correct mask reaches the wire. GUILD_MESSAGES (1<<9) |
+    // DIRECT_MESSAGES (1<<12) = 512 | 4096 = 4608.
+    harness = withGateway((ctx) => {
+      ctx.client.send(hello());
+    });
+
+    connection = new GatewayConnection({ token: `test-token` });
+    const off = onMessageCreate(() => {}, { connection });
+    connection.connect();
+
+    const capture = await harness.connected();
+    const identify = await capture.waitFor(GatewayOpcode.IDENTIFY);
+    expect((identify.d as { intents: number }).intents).toBe(4608);
+    off();
+  });
+
+  it(`adds setIntents on top of what subscriptions registered`, async () => {
+    // MESSAGE_CONTENT gates message FIELDS rather than an event, so no handler
+    // implies it. If setIntents replaced instead of added, asking for it would
+    // silently drop the handler's own intents.
+    harness = withGateway((ctx) => {
+      ctx.client.send(hello());
+    });
+
+    connection = new GatewayConnection({ token: `test-token` });
+    const off = onMessageCreate(() => {}, { connection });
+    // Two separate calls: the second must not discard the first, which is what
+    // "additive" has to mean for `setIntents` to compose with itself.
+    connection.setIntents(`MESSAGE_CONTENT`);
+    connection.setIntents(`GUILD_MEMBERS`);
+    connection.connect();
+
+    const capture = await harness.connected();
+    const identify = await capture.waitFor(GatewayOpcode.IDENTIFY);
+    // 4608 | MESSAGE_CONTENT (1<<15 = 32768) | GUILD_MEMBERS (1<<1 = 2) = 37378
+    expect((identify.d as { intents: number }).intents).toBe(37378);
+    off();
+  });
+
+  it(`refuses a subscription once connected`, async () => {
+    // Discord reads intents only in IDENTIFY, so a handler added later would
+    // never receive its event. Throwing beats delivering silence.
+    harness = withGateway((ctx) => {
+      ctx.client.send(hello());
+      afterFrame(ctx.capture, GatewayOpcode.IDENTIFY, () => {
+        ctx.client.send(ready(`session-late`));
+      });
+    });
+
+    connection = new GatewayConnection({
+      token: `test-token`,
+      intents: [`GUILDS`]
+    });
+    connection.connect();
+    await harness.connected();
+    await vi.waitFor(() => {
+      expect(connection?.state).toBe(`ready`);
+    });
+
+    expect(() =>
+      onMessageCreate(() => {}, { connection: connection! })
+    ).toThrow(/after connecting/);
+    expect(() => connection?.setIntents(`GUILD_MEMBERS`)).toThrow(
+      /after connecting/
+    );
   });
 
   it(`reaches ready and records the session id from READY`, async () => {
@@ -506,5 +582,210 @@ describe(`closeAction`, () => {
         discardSession: true
       });
     }
+  });
+});
+
+describe(`resolveToken`, () => {
+  // stubEnv restores on unstubAllEnvs, so a real DISCORD_BOT_TOKEN in the
+  // developer's shell can't leak in and make these pass for the wrong reason.
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it(`prefers an explicit token over the environment`, () => {
+    // Precedence matters for multi-bot processes: a second connection built
+    // with its own token must not silently identify as the ambient one.
+    vi.stubEnv(TOKEN_ENV_VAR, `from-env`);
+    expect(resolveToken(`explicit`)).toBe(`explicit`);
+  });
+
+  it(`falls back to the environment when none is passed`, () => {
+    vi.stubEnv(TOKEN_ENV_VAR, `from-env`);
+    expect(resolveToken()).toBe(`from-env`);
+  });
+
+  it(`rejects an empty environment value rather than identifying with it`, () => {
+    // An unset variable reads as `""` in many shells and CI configs. Passing
+    // that through would spend a session start to earn an opaque 4004.
+    vi.stubEnv(TOKEN_ENV_VAR, ``);
+    expect(() => resolveToken()).toThrow(/No Discord bot token/);
+  });
+
+  it(`names both ways to supply a token when it finds none`, () => {
+    // The message is the entire recovery path for this failure, so assert the
+    // actionable parts rather than just that it threw.
+    vi.stubEnv(TOKEN_ENV_VAR, undefined);
+    expect(() => resolveToken()).toThrow(/GatewayConnection\({ token }\)/);
+    expect(() => resolveToken()).toThrow(new RegExp(TOKEN_ENV_VAR));
+  });
+
+  it(`fails on connect(), not mid-handshake`, () => {
+    // Validation happens at connect() rather than construction so a connection
+    // can be built empty and configured by setters. It must still fail before
+    // a socket opens, so the error names the mistake instead of arriving later
+    // as an opaque 4004 close.
+    vi.stubEnv(TOKEN_ENV_VAR, undefined);
+    const connection = new GatewayConnection({ intents: [`GUILDS`] });
+    expect(() => {
+      connection.connect();
+    }).toThrow(/No Discord bot token/);
+    expect(connection.state).toBe(`idle`);
+  });
+
+  it(`refuses to connect with no intents`, () => {
+    // An intentless IDENTIFY is legal but delivers almost nothing, which reads
+    // as a dead bot rather than a misconfiguration — this library's worst
+    // failure mode is silence.
+    vi.stubEnv(TOKEN_ENV_VAR, `from-env`);
+    const connection = new GatewayConnection();
+    expect(() => {
+      connection.connect();
+    }).toThrow(/No intents were set/);
+  });
+
+  it(`accepts configuration through chainable setters`, () => {
+    // Mirrors core's `discord.setToken(...)`: an instance you configure, not a
+    // module-level function that hides where the config went.
+    vi.stubEnv(TOKEN_ENV_VAR, undefined);
+    const connection = new GatewayConnection();
+    expect(connection.setToken(`t`).setIntents(`GUILDS`)).toBe(connection);
+    expect(() => {
+      connection.connect();
+    }).not.toThrow();
+    connection.close();
+  });
+});
+
+describe(`server-initiated opcodes`, () => {
+  let harness: Harness | null = null;
+  let connection: GatewayConnection | null = null;
+
+  afterEach(() => {
+    connection?.close();
+    connection = null;
+    harness?.server.close();
+    harness = null;
+    vi.useRealTimers();
+  });
+
+  /** Bring a connection to `ready`, then hand back its capture. */
+  const connected = async (
+    onReadyFrame?: (ctx: { client: { send: (data: string) => void } }) => void
+  ): Promise<Capture> => {
+    harness = withGateway((ctx) => {
+      ctx.client.send(hello());
+      afterFrame(ctx.capture, GatewayOpcode.IDENTIFY, () => {
+        ctx.client.send(ready());
+        onReadyFrame?.(ctx);
+      });
+    });
+    connection = new GatewayConnection({
+      token: `test-token`,
+      intents: [`GUILDS`]
+    });
+    connection.connect();
+    const capture = await harness.connected();
+    await vi.waitFor(() => {
+      expect(connection?.state).toBe(`ready`);
+    });
+    return capture;
+  };
+
+  it(`heartbeats immediately when Discord asks`, async () => {
+    // Opcode 1 is Discord saying "prove you're alive, now". Waiting for the
+    // next scheduled beat instead risks being dropped as a zombie.
+    const capture = await connected((ctx) => {
+      ctx.client.send(JSON.stringify({ op: GatewayOpcode.HEARTBEAT, d: null }));
+    });
+
+    const beat = await capture.waitFor(GatewayOpcode.HEARTBEAT);
+    // The last sequence seen, so Discord knows which events we have.
+    expect(beat.d).toBe(1);
+  });
+
+  it(`reconnects and resumes when Discord sends RECONNECT`, async () => {
+    // Opcode 7 means "close and come back", used during Discord's deploys.
+    // The session must survive, so the client sends RESUME rather than
+    // IDENTIFY — an IDENTIFY here would spend one of the 1000 daily starts.
+    let connections = 0;
+    let resumed = false;
+    harness = withGateway((ctx) => {
+      connections += 1;
+      ctx.client.send(hello());
+      if (connections === 1) {
+        afterFrame(ctx.capture, GatewayOpcode.IDENTIFY, () => {
+          ctx.client.send(ready());
+          ctx.client.send(JSON.stringify({ op: GatewayOpcode.RECONNECT }));
+        });
+      } else {
+        afterFrame(ctx.capture, GatewayOpcode.RESUME, () => {
+          resumed = true;
+        });
+      }
+    });
+    connection = new GatewayConnection({
+      token: `test-token`,
+      intents: [`GUILDS`]
+    });
+    connection.connect();
+    await harness.connected();
+
+    await vi.waitFor(
+      () => {
+        expect(connections).toBeGreaterThan(1);
+        expect(resumed).toBe(true);
+      },
+      { timeout: 5000 }
+    );
+  });
+
+  it(`keeps the session when INVALID_SESSION says it is resumable`, async () => {
+    // `d: true` means the session survives, so the id must be kept for RESUME.
+    // Discarding it would spend a session start for nothing.
+    await connected((ctx) => {
+      ctx.client.send(
+        JSON.stringify({ op: GatewayOpcode.INVALID_SESSION, d: true })
+      );
+    });
+
+    await vi.waitFor(() => {
+      expect(connection?.sessionId).toBe(`session-abc`);
+    });
+  });
+
+  it(`discards the session when INVALID_SESSION says it is not`, async () => {
+    // `d: false` means resuming would fail, so the next connection must
+    // IDENTIFY fresh. Trying to RESUME on a dead session loops.
+    await connected((ctx) => {
+      ctx.client.send(
+        JSON.stringify({ op: GatewayOpcode.INVALID_SESSION, d: false })
+      );
+    });
+
+    await vi.waitFor(() => {
+      expect(connection?.sessionId).toBeNull();
+    });
+  });
+
+  it(`ignores a send-only opcode without breaking the connection`, async () => {
+    // Discord never sends these. Receiving one signals a protocol change, but
+    // it must not throw and kill a working session.
+    await connected((ctx) => {
+      ctx.client.send(
+        JSON.stringify({ op: GatewayOpcode.REQUEST_GUILD_MEMBERS, d: {} })
+      );
+    });
+
+    expect(connection?.state).toBe(`ready`);
+  });
+
+  it(`ignores a malformed frame`, async () => {
+    // A non-JSON frame must not take the connection down; the socket is still
+    // healthy and the next frame may be fine.
+    await connected((ctx) => {
+      ctx.client.send(`{not json`);
+    });
+
+    expect(connection?.state).toBe(`ready`);
   });
 });
