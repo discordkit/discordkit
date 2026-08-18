@@ -16,7 +16,7 @@ import type { Ready } from "./types/Ready.js";
  *
  * @example
  * ```ts
- * using sub = onReady(({ user, guilds }) => {
+ * onReady(({ user, guilds }) => {
  *   console.log(`Logged in as ${user.username}, ${guilds.length} guilds`);
  * });
  * ```

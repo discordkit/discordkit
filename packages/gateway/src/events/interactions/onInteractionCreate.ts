@@ -16,7 +16,7 @@ import { dispatchEvent } from "../dispatch.js";
  *
  * @example
  * ```ts
- * using sub = onInteractionCreate(async (interaction) => {
+ * onInteractionCreate(async (interaction) => {
  *   if (interaction.type !== InteractionType.APPLICATION_COMMAND) return;
  *   await createInteractionResponse({ ... });
  * });

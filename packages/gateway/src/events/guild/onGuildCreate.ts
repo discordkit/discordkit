@@ -15,7 +15,7 @@ import { dispatchEvent } from "../dispatch.js";
  *
  * @example
  * ```ts
- * using sub = onGuildCreate((guild) => {
+ * onGuildCreate((guild) => {
  *   console.log(`${guild.name} is available`);
  * });
  * ```

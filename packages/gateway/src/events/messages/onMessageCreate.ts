@@ -19,7 +19,7 @@ import type { MessageCreate } from "./types/MessageCreate.js";
  *
  * @example
  * ```ts
- * using sub = onMessageCreate((message) => {
+ * onMessageCreate((message) => {
  *   if (message.author.bot) return;
  *   console.log(message.content);
  * });

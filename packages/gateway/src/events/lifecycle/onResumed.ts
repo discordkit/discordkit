@@ -11,7 +11,7 @@ import { dispatchEvent } from "../dispatch.js";
  *
  * @example
  * ```ts
- * using sub = onResumed(() => {
+ * onResumed(() => {
  *   console.log(`Caught up after reconnecting`);
  * });
  * ```
