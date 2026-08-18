@@ -962,7 +962,7 @@ function phrasingToMarkdown(node: PhrasingContent): string {
     default: {
       const maybeChildren = (node as { children?: PhrasingContent[] }).children;
       if (maybeChildren) return maybeChildren.map(phrasingToMarkdown).join(``);
-      return mdToString(node as unknown);
+      return mdToString(node);
     }
   }
 }
@@ -1103,7 +1103,7 @@ function phrasingForJsDoc(node: PhrasingContent): string {
   if (node.type === `break`) return `\n`;
   const maybeChildren = (node as { children?: PhrasingContent[] }).children;
   if (maybeChildren) return maybeChildren.map(phrasingForJsDoc).join(``);
-  return mdToString(node as unknown);
+  return mdToString(node);
 }
 
 function normalizePath(rawPath: string): string {

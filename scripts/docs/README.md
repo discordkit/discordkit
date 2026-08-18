@@ -54,6 +54,15 @@ understand.
                                        {@link Name | display})            │
                                                                           │
    scaffold.ts (for brand-new endpoints) ◄──────────────────────────────┘
+
+        .discord-docs/**/*.md
+                │
+                │  parse-gateway.ts   (Gateway protocol constructs —
+                ▼                      a separate reader, see § 3.13)
+        GatewayDoc = { opcodes, closeCodes, intents, events }
+                │
+                ▼
+        packages/gateway/src/
 ```
 
 The two halves of the pipeline are mostly independent:
@@ -392,6 +401,50 @@ to see "SKU".
 heading carries any 2+-uppercase run (`SKU`, `MFA`, `URL`). If so,
 the docs casing wins. Otherwise the identifier-derived display
 applies.
+
+### 3.13 Gateway protocol constructs — a separate reader
+
+`parse.ts` is **endpoint-and-object shaped**: `<Route>` components and
+`| Field | Type | Description |` Structure tables. That model covers the
+REST surface completely, and it extracts the Gateway's two REST endpoints
+(`GET /gateway`, `GET /gateway/bot`) and the Session Start Limit object
+cleanly. Three Gateway constructs do not fit it:
+
+1. **Opcodes** carry a `Client Action` column (Send / Receive /
+   Send-Receive). `tableAsEnum` collapses every table to
+   `(value, name, description)` and drops it — yet direction is what
+   separates an opcode we send from one we dispatch on.
+2. **Close event codes** are `| Code | Description | Explanation | Reconnect |`
+   — there is **no `Name` column**. The column heuristics slide by one, so
+   the numeric code lands in `name` and the prose in `value`. The
+   `Reconnect` boolean is dropped too, and that is precisely the
+   resumability predicate the connection layer needs: reconnecting after
+   `4004`/`4013`/`4014` is a broken-loop bug.
+3. **The intent → event map** is a fenced **code block**, not a table
+   (`GUILDS (1 << 0)` + indented `- EVENT_NAME`, privileged-gated events
+   marked with a trailing `*`). Table-oriented parsing correctly skips it.
+
+Running the generic parser over `events/gateway-events.md` also collapses
+~84 discrete events into 15 "objects" named after their category headings
+(`Messages`, `Guilds`), because it has no notion that a `####` under
+`## Receive Events` is an event.
+
+**Decision**: add `parse-gateway.ts` as a **separate reader** rather than
+widening `parse.ts`'s shapes, which every REST folder depends on. It reads
+the Gateway tables directly and exposes `parseGateway()` plus the four
+per-construct parsers. `parse.ts` remains the authority for everything it
+already handles — including the two Gateway REST endpoints, which stay in
+`packages/client`.
+
+Run `vp run docs:gateway` for a human-readable summary (or `--json`).
+Sanity numbers as of the Aug 2026 cache: **13 opcodes, 14 close codes,
+21 intents, 91 events (7 send / 84 receive)**. A zero or a wild swing in
+any of those means the docs restructured — check before trusting codegen.
+
+> **Gotcha:** Mintlify fences carry an info string with attributes
+> (` ```json theme={"system"} `). A ` ```[a-z]* ` pattern stops at the
+> language tag and captures the attributes as the block's first content
+> line — which silently yielded **0 intents**. Match ` ```[^\n]*\n `.
 
 ---
 

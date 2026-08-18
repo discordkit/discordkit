@@ -1,0 +1,32 @@
+{
+  "name": "with-cloudflare",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@discordkit/client": "workspace:^",
+    "@discordkit/core": "workspace:^",
+    "@discordkit/gateway": "workspace:^",
+    "@xstate/react": "catalog:",
+    "lucide-react": "catalog:",
+    "react": "catalog:",
+    "react-aria-components": "catalog:",
+    "react-dom": "catalog:",
+    "xstate": "catalog:"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "1.51.3",
+    "@cloudflare/vitest-pool-workers": "0.21.1",
+    "@cloudflare/workers-types": "5.20260811.1",
+    "@tailwindcss/vite": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "tailwindcss": "catalog:",
+    "tailwindcss-react-aria-components": "^2.1.1",
+    "typescript": "catalog:",
+    "varlock": "catalog:",
+    "vite-plus": "catalog:",
+    "wrangler": "4.121.0"
+  }
+}

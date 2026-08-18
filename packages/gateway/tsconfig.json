@@ -1,0 +1,13 @@
+{
+  // Editor-only: oxlint's language server lints the open file in isolation and
+  // discovers the nearest tsconfig from that file's directory. Without one in
+  // this package it builds a program that misses the root config's
+  // `lib: ["ESNext", "DOM"]`, so `Disposable` and `Symbol.dispose` (from
+  // `esnext.disposable`) don't resolve — reporting a spurious
+  // `no-redundant-type-constituents` on every `X & Disposable` intersection.
+  //
+  // `vp lint` and `vp check` are unaffected either way: they read the root
+  // config, where those libs are already in scope.
+  "extends": "../../tsconfig.json",
+  "include": ["./src/**/*.ts"]
+}

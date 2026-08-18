@@ -1,0 +1,57 @@
+{
+  "name": "@discordkit/gateway",
+  "description": "A tree-shakeable Discord Gateway (WebSocket) client for Workers, Durable Objects, and Node",
+  "version": "0.1.0",
+  "license": "MIT",
+  "author": "Drake Costa <drake@saeris.gg> (https://saeris.gg)",
+  "keywords": [
+    "discord",
+    "gateway",
+    "websocket",
+    "bot",
+    "events",
+    "cloudflare",
+    "durable-objects"
+  ],
+  "homepage": "https://github.com/discordkit/discordkit#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/discordkit/discordkit.git",
+    "directory": "packages/gateway"
+  },
+  "bugs": {
+    "url": "https://github.com/discordkit/discordkit/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "@discordkit/source": "./src/index.ts",
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    },
+    "./*": {
+      "@discordkit/source": "./src/*.ts",
+      "types": "./dist/*.d.mts",
+      "import": "./dist/*.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist/**/*"
+  ],
+  "sideEffects": false,
+  "dependencies": {
+    "@discordkit/client": "workspace:^",
+    "@discordkit/core": "workspace:^"
+  },
+  "devDependencies": {
+    "msw": "catalog:"
+  },
+  "peerDependencies": {
+    "valibot": ">= 1.4.0"
+  }
+}

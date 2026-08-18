@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+/* Registers React Aria's data-attribute variants (selected:, pressed:,
+   hover:, focus-within:, …) so they compile. Without this plugin those
+   variants silently no-op under Tailwind v4 — no error, just missing styles. */
+@plugin "tailwindcss-react-aria-components";
+
+/* The inspector is a dev tool that sits next to a terminal, so it commits to a
+   dark palette rather than following the OS. */
+:root {
+  color-scheme: dark;
+}
+
+/* ---------------------------------------------------------------------------
+   Palette, in oklch, tuned against APCA rather than WCAG 2 ratios.
+
+   APCA is polarity-aware, and that matters here: on a very dark ground, mid
+   greys read far dimmer than their WCAG ratio suggests. WCAG 2 passes the old
+   `slate-500` on `slate-950` at ~4.6:1, while APCA scores it Lc 24.7 — below
+   any text threshold. Measured Lc for each token is noted inline (see
+   APCA-W3 0.1.9; thresholds: Lc 90 preferred body, 75 body, 60 large/bold,
+   45 headings, below that non-text only).
+
+   oklch because its L axis is perceptually uniform, so "one step lighter"
+   means the same thing at every hue — picking a ramp that clears a contrast
+   threshold is arithmetic rather than trial and error.
+   ------------------------------------------------------------------------- */
+@theme {
+  /* Surfaces */
+  --color-ink-bg: oklch(0.18 0.02 265); /* app background */
+  --color-ink-panel: oklch(0.23 0.02 265); /* raised panel */
+  --color-ink-track: oklch(0.16 0.02 265); /* timeline track well */
+  --color-ink-line: oklch(0.32 0.02 265); /* borders, gridlines */
+  --color-ink-line-strong: oklch(0.42 0.02 265); /* emphasised borders */
+
+  /* Text. Anything below `muted` is non-text only — the old palette used
+     L≈0.55-0.65 greys for timestamps and help text, which measured Lc 12-25
+     and were the "difficult to read" parts. */
+  --color-ink-text: oklch(0.94 0.01 265); /* Lc ~90  primary */
+  --color-ink-body: oklch(0.9 0.015 265); /* Lc ~83  body */
+  --color-ink-muted: oklch(0.85 0.02 265); /* Lc ~73  secondary, >=12px */
+  --color-ink-faint: oklch(0.73 0.02 265); /* Lc ~50  icons / disabled only */
+
+  /* Accents, at the lightness needed to clear body-text contrast. They read
+     pastel against this ground, which is what accessible dark UI looks like. */
+  --color-accent: oklch(0.85 0.11 275); /* Lc ~70 */
+  --color-accent-dim: oklch(0.62 0.14 275); /* fills, not text */
+  --color-warn: oklch(0.85 0.11 75); /* Lc ~72 */
+  --color-warn-dim: oklch(0.62 0.14 75);
+  --color-danger: oklch(0.85 0.11 15); /* Lc ~68 */
+  --color-danger-dim: oklch(0.6 0.17 15);
+  --color-ok: oklch(0.85 0.11 155); /* Lc ~75 */
+
+  /* Type scale. 12px is the floor: below it, APCA's thresholds rise steeply
+     and the text stops being readable at any contrast we can reach on this
+     background. The old UI used 9-11px in a dozen places. */
+  --text-2xs: 0.75rem; /* 12px — smallest permitted */
+  --text-xs: 0.8125rem; /* 13px */
+  --text-sm: 0.875rem; /* 14px */
+}
+
+/* Give the app shell a real height to fill.
+   Sizing it with a viewport unit on a nested div (`h-dvh`) left a gap below the
+   UI whenever the resolved unit disagreed with the actual viewport — and a hard
+   `h-dvh` also caps the shell, so overflowing content clips instead of
+   scrolling. Anchoring to html/body means the shell inherits the true layout
+   height and `h-full` just works. */
+html,
+body,
+#root {
+  height: 100%;
+}
+
+/* The shell manages its own internal scrolling regions, so the page itself
+   should never scroll horizontally — that only ever happens when something has
+   escaped its container, and a scrollbar hides the bug rather than fixing it. */
+body {
+  overflow-x: hidden;
+}

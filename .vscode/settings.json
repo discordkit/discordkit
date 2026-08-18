@@ -1,0 +1,14 @@
+{
+  // Use the workspace TypeScript (pinned to ^6.0.3) rather than the version
+  // bundled with the editor. Without this, VS Code typechecks with a different
+  // compiler than `vp check` does, and the two disagree — most visibly on the
+  // Cloudflare example, where the editor reports "Cannot find package
+  // 'cloudflare:workers'" for a project that compiles cleanly.
+  //
+  // `cloudflare:workers` and `cloudflare:test` are virtual modules: TypeScript
+  // skips resolving them ("looks like an absolute URI") and relies entirely on
+  // the ambient `declare module` blocks in @cloudflare/workers-types and
+  // @cloudflare/vitest-pool-workers/types, which that example's tsconfig loads.
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true
+}
