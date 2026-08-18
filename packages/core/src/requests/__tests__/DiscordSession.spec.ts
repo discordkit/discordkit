@@ -4,25 +4,37 @@ import {
   expect,
   beforeAll,
   afterEach,
-  afterAll
+  afterAll,
+  vi
 } from "vite-plus/test";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
-import { DiscordSession } from "../DiscordSession.js";
+import {
+  DiscordSession,
+  TOKEN_ENV_VAR,
+  tokenFromEnv
+} from "../DiscordSession.js";
 import { sleep } from "../../utils/sleep.js";
 
 const server = setupServer();
 
 describe(`discordSession`, () => {
   beforeAll(() => server.listen({ onUnhandledRequest: `error` }));
-  afterEach(() => server.resetHandlers());
+  afterEach(() => {
+    server.resetHandlers();
+    vi.unstubAllEnvs();
+  });
   afterAll(() => server.close());
 
   it(`supports setting the auth token`, () => {
+    // Pin the environment: the session falls back to DISCORD_BOT_TOKEN, so a
+    // real token in the developer's shell would otherwise make `ready` true
+    // and this test pass for the wrong reason.
+    vi.stubEnv(TOKEN_ENV_VAR, undefined);
     const instance = new DiscordSession();
 
     expect(instance.ready).toBe(false);
-    expect(() => instance.getSession()).toThrow(`Auth Token must be set`);
+    expect(() => instance.getSession()).toThrow(`No Discord token is set`);
 
     instance.setToken(`Bot <bot-token>`);
     expect(instance.ready).toBe(true);
@@ -56,6 +68,51 @@ describe(`discordSession`, () => {
 
     expect(presetClient.ready).toBe(true);
     expect(presetClient.getSession()).toBe(`Bearer <client-token>`);
+  });
+
+  describe(`environment token fallback`, () => {
+    it(`authorizes from DISCORD_BOT_TOKEN when no token is set`, () => {
+      // A bot needs no setup beyond .env, matching @discordkit/gateway, which
+      // reads the same variable. Both clients take the same secret.
+      vi.stubEnv(TOKEN_ENV_VAR, `env-token`);
+      const instance = new DiscordSession();
+
+      expect(instance.ready).toBe(true);
+      expect(instance.getSession()).toBe(`Bot env-token`);
+    });
+
+    it(`adds the Bot prefix the environment value omits`, () => {
+      // .env holds the raw secret Discord issues; the Authorization header
+      // needs a scheme. Storing the prefix in .env would be a second format to
+      // get wrong.
+      vi.stubEnv(TOKEN_ENV_VAR, `raw`);
+      expect(tokenFromEnv()).toBe(`Bot raw`);
+    });
+
+    it(`prefers an explicitly set token over the environment`, () => {
+      // A process may act as more than one identity, so an explicit call must
+      // never be silently overridden by ambient configuration.
+      vi.stubEnv(TOKEN_ENV_VAR, `env-token`);
+      const instance = new DiscordSession();
+      instance.setToken(`Bot explicit`);
+
+      expect(instance.getSession()).toBe(`Bot explicit`);
+    });
+
+    it(`ignores an empty environment value`, () => {
+      // An unset variable reads as "" in many shells and CI configs. Treating
+      // that as a token would send `Bot ` and earn an opaque 401.
+      vi.stubEnv(TOKEN_ENV_VAR, ``);
+      expect(tokenFromEnv()).toBeNull();
+      expect(new DiscordSession().ready).toBe(false);
+    });
+
+    it(`reports auth as available so requests are not rejected early`, () => {
+      // request.ts gates on `hasAuth`, not `ready`. If the fallback missed that
+      // getter, every request would throw before the header was ever built.
+      vi.stubEnv(TOKEN_ENV_VAR, `env-token`);
+      expect(new DiscordSession().hasAuth).toBe(true);
+    });
   });
 
   describe(`rate limiting`, () => {

@@ -3,6 +3,24 @@ import type { RequestOptions } from "./request.js";
 
 export const endpoint = `https://discord.com/api/v10/`;
 
+/** Environment variable read when no token has been set explicitly. */
+export const TOKEN_ENV_VAR = `DISCORD_BOT_TOKEN`;
+
+/**
+ * The bot token from the environment, already prefixed for the `Authorization`
+ * header, or `null` when unavailable.
+ *
+ * Only bot tokens come from the environment: a bearer token belongs to one
+ * user and arrives per-request, so `.env` holds the raw secret Discord issued
+ * and each client formats it. `process` is absent on some runtimes (bare
+ * Cloudflare Workers), so the lookup is guarded rather than read directly.
+ */
+export const tokenFromEnv = (): `Bot ${string}` | null => {
+  if (typeof process === `undefined`) return null;
+  const token = process.env[TOKEN_ENV_VAR];
+  return token === undefined || token === `` ? null : `Bot ${token}`;
+};
+
 interface QueuedRequest {
   resource: URL;
   method: string;
@@ -81,7 +99,7 @@ export class DiscordSession {
   #invalidRequestWindow = 10 * 60 * 1000; // 10 minutes in ms
 
   get ready(): boolean {
-    return Boolean(this.#authToken);
+    return Boolean(this.#authToken ?? tokenFromEnv());
   }
 
   constructor(authToken?: `${`Bot` | `Bearer`} ${string}` | null) {
@@ -174,14 +192,23 @@ export class DiscordSession {
    * decide if it must fail early for lack of auth.
    */
   get hasAuth(): boolean {
-    return this.#activeToken !== null || this.#authToken !== null;
+    return (
+      this.#activeToken !== null ||
+      this.#authToken !== null ||
+      tokenFromEnv() !== null
+    );
   }
 
   getSession = (): string => {
-    const token = this.#authToken;
+    // Falls back to the environment so a bot needs no setup beyond `.env`,
+    // matching @discordkit/gateway. An explicit token always wins, since a
+    // process may act as several identities.
+    const token = this.#authToken ?? tokenFromEnv();
 
     if (!token) {
-      throw new Error(`Auth Token must be set before requests can be made.`);
+      throw new Error(
+        `No Discord token is set, so the request cannot be authorized. Call discord.setToken("Bot <token>"), or set ${TOKEN_ENV_VAR} in the environment.`
+      );
     }
 
     return token;

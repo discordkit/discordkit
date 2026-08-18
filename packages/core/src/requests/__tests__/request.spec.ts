@@ -4,11 +4,12 @@ import {
   expect,
   beforeAll,
   afterEach,
-  afterAll
+  afterAll,
+  vi
 } from "vite-plus/test";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
-import { discord } from "../DiscordSession.js";
+import { discord, TOKEN_ENV_VAR } from "../DiscordSession.js";
 import { request } from "../request.js";
 
 const server = setupServer();
@@ -82,10 +83,15 @@ describe(`request`, () => {
     });
 
     it(`throws when an auth'd request is made without a session`, async () => {
+      // Pin the environment too: the session now falls back to
+      // DISCORD_BOT_TOKEN, so a token in the developer's shell would authorize
+      // this request and the test would never see the error it asserts.
+      vi.stubEnv(TOKEN_ENV_VAR, undefined);
       discord.clearSession();
       await expect(
         request(new URL(`https://discord.com/api/v10/users/@me`), `GET`)
-      ).rejects.toThrow(/Auth Token must be set/);
+      ).rejects.toThrow(/No Discord token is set/);
+      vi.unstubAllEnvs();
     });
 
     it(`forwards the reason as an URL-encoded X-Audit-Log-Reason header`, async () => {
