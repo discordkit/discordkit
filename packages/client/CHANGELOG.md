@@ -4,6 +4,21 @@
 
 
 
+
+## 4.3.1
+<sub>2026-08-19</sub>
+
+- [#80](https://github.com/discordkit/discordkit/pull/80)  *(patch)* Thanks [@Saeris](https://github.com/Saeris)!
+  Every package now publishes to [JSR](https://jsr.io/@discordkit) alongside npm.
+
+  Installation from npm is unchanged, and this version ships the same code as the one before it — the bump exists so each package has a version to publish to JSR for the first time.
+
+  ```sh
+  deno add jsr:@discordkit/client
+  ```
+
+  JSR publishes from source rather than from `dist/`, so the packages carry an explicit export map generated from the same subpaths npm resolves through its `"./*"` wildcard.
+
 ## 4.3.0
 <sub>2026-08-18</sub>
 
