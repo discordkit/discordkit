@@ -40,6 +40,9 @@ jobs:
   abi:
     name: Real-SDK ABI smoke
     runs-on: ubuntu-latest
+    # The smoke itself runs in about a second; anything approaching this is a
+    # stuck dependency install, and failing fast beats burning the 6-hour default.
+    timeout-minutes: 10
     # Skip on fork PRs — they have no SOCIAL_SDK_TOKEN, so the checkout below
     # would fail. Same-repo pushes/PRs and workflow_dispatch run normally.
     if: >-
@@ -64,8 +67,26 @@ jobs:
       # bare runner doesn't have — koffi.load() fails without it. Install the
       # runtime libs the .so NEEDs so it can load (we only load + resolve symbols,
       # we don't drive audio).
+      #
+      # `apt-get update` reaches azure.archive.ubuntu.com, which is a long-running
+      # source of flakiness on hosted runners (actions/runner-images#7048). It has
+      # taken 16s, 85s, and 257s on consecutive runs here, and once hung past the
+      # hour while the smoke itself takes one second. So: bound each attempt,
+      # retry, and let a failed *update* fall through — the package index shipped
+      # in the image is usually new enough to install from, and the install step
+      # below is the one that actually has to succeed.
       - name: Install SDK runtime deps (Linux)
-        run: sudo apt-get update && sudo apt-get install -y libpulse0
+        timeout-minutes: 5
+        run: |
+          for attempt in 1 2 3; do
+            echo "apt-get update (attempt $attempt)"
+            if sudo timeout 60 apt-get update -o Acquire::Retries=2; then
+              break
+            fi
+            echo "update failed or timed out; retrying"
+            sleep 5
+          done
+          sudo apt-get install -y --no-install-recommends libpulse0
 
       # No build needed — the smoke runs against TS source via Vitest (like the
       # unit suite); it loads the real SDK shared library at runtime through koffi
