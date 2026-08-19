@@ -9,6 +9,13 @@ import {
 export type RequestBody = object | null | undefined;
 
 /**
+ * The HTTP methods Discord's REST API uses, and the only ones the typed helpers
+ * in `methods.ts` emit. A subset of the full HTTP method list: there is no
+ * endpoint this client calls with `HEAD`, `OPTIONS`, or `TRACE`.
+ */
+export type RequestMethod = `GET` | `POST` | `PUT` | `PATCH` | `DELETE`;
+
+/**
  * Per-call request options forwarded by the typed method helpers
  * (`get`/`post`/`put`/`patch`/`remove`) into the request layer.
  *
@@ -33,7 +40,7 @@ export interface RequestOptions {
 
 export const request = async <T>(
   resource: URL,
-  method = `GET`,
+  method: RequestMethod = `GET`,
   body?: RequestBody,
   options?: RequestOptions
 ): Promise<T> => {

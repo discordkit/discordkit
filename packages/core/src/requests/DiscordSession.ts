@@ -1,10 +1,10 @@
 import { sleep } from "../utils/sleep.js";
-import type { RequestOptions } from "./request.js";
+import type { RequestMethod, RequestOptions } from "./request.js";
 
-export const endpoint = `https://discord.com/api/v10/`;
+export const endpoint = "https://discord.com/api/v10/" as const;
 
 /** Environment variable read when no token has been set explicitly. */
-export const TOKEN_ENV_VAR = `DISCORD_BOT_TOKEN`;
+export const TOKEN_ENV_VAR = "DISCORD_BOT_TOKEN" as const;
 
 /**
  * The bot token from the environment, already prefixed for the `Authorization`
@@ -23,7 +23,7 @@ export const tokenFromEnv = (): `Bot ${string}` | null => {
 
 interface QueuedRequest {
   resource: URL;
-  method: string;
+  method: RequestMethod;
   body?: string | FormData | null;
   options?: RequestOptions;
   /**
@@ -219,7 +219,7 @@ export class DiscordSession {
    */
   queueRequest = async (
     resource: URL,
-    method: string,
+    method: RequestMethod,
     body?: string | FormData | null,
     options?: RequestOptions
   ): Promise<Response> => {
@@ -478,4 +478,4 @@ export class DiscordSession {
   getQueueSize = (): number => this.#requestQueue.length;
 }
 
-export const discord = new DiscordSession();
+export const discord: DiscordSession = new DiscordSession();

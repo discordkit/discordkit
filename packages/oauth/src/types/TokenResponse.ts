@@ -10,7 +10,7 @@ import type { OAuth2Scope } from "./OAuth2Scope.js";
  * from it (Valimock). The camelCased {@link TokenResponse} is the public form
  * the flow utilities normalize to.
  */
-const _rawTokenResponseSchema = v.object({
+const _rawTokenResponseSchema: v.GenericSchema<RawTokenResponse> = v.object({
   access_token: v.string(),
   token_type: v.literal(`Bearer`),
   expires_in: v.number(),
@@ -28,15 +28,28 @@ const _rawTokenResponseSchema = v.object({
  * should prefer {@link TokenResponse}, the camelCased form the flow utilities
  * resolve to.
  *
+ * Written out rather than inferred from the schema above. JSR requires every
+ * exported symbol to carry an explicit type, and annotating the schema with an
+ * interface inferred *from that schema* is circular (`TS2310`). The two must
+ * now be kept in step by hand: add a field here whenever you add one there.
+ *
  * @internal
  */
-export interface RawTokenResponse extends v.InferOutput<
-  typeof _rawTokenResponseSchema
-> {}
+export interface RawTokenResponse {
+  access_token: string;
+  token_type: `Bearer`;
+  expires_in: number;
+  refresh_token?: string;
+  scope: string;
+  /**
+   * Present only on the webhook flow (`scope=webhook.incoming`). Left as
+   * `unknown` here — the webhook object is owned by `@discordkit/client`.
+   */
+  webhook?: unknown;
+}
 
-export const rawTokenResponseSchema = schema<RawTokenResponse>(
-  _rawTokenResponseSchema
-);
+export const rawTokenResponseSchema: v.GenericSchema<RawTokenResponse> =
+  schema<RawTokenResponse>(_rawTokenResponseSchema);
 
 /**
  * A successful token exchange / refresh result, normalized to `camelCase` to

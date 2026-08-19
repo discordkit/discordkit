@@ -7,12 +7,14 @@ import { extractDataURIMetadata } from "./datauri.js";
  *
  * @__NO_SIDE_EFFECTS__
  */
-export const hasMimeType = (
+export const hasMimeType = <
+  TMessage extends string = `Received badly formatted Data URI`
+>(
   /** an array of MIME types to validate against */
   requirement: Array<`${string}/${string}`>,
   /** an optional error message on failed validation */
-  message = `Received badly formatted Data URI` as const
-): CheckAction<string, typeof message> =>
+  message: TMessage = `Received badly formatted Data URI` as TMessage
+): CheckAction<string, TMessage> =>
   check((input: string) => {
     const { mimeType } = extractDataURIMetadata(input);
     if (typeof mimeType === `undefined`) {
