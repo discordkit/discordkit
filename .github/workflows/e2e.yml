@@ -59,26 +59,15 @@ jobs:
       # the 2-core runner and intermittently trips `fork()` (see ci.yml).
       - run: vp run --concurrency-limit 1 -r build
 
-      # Cache the Playwright browser binaries, keyed on the resolved Playwright
-      # version (from the lockfile). On a cache miss we install browsers + OS
-      # deps; on a hit we still need the OS deps (not cached).
-      - name: Resolve Playwright version
-        id: pw
-        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
-
-      - uses: actions/cache@v4
-        id: pw-cache
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ steps.pw.outputs.version }}
-
-      - name: Install Playwright browsers (+ OS deps)
-        if: steps.pw-cache.outputs.cache-hit != 'true'
-        run: npx playwright install --with-deps chromium
-
-      - name: Install Playwright OS deps (cached browsers)
-        if: steps.pw-cache.outputs.cache-hit == 'true'
-        run: npx playwright install-deps chromium
+      # No browser install step: each example's playwright config sets
+      # `channel: "chrome"` under CI, so the tests drive the Google Chrome the
+      # runner image already ships (see the Ubuntu image manifest).
+      #
+      # This replaced a cache + `playwright install-deps` pair. The deps step
+      # shells out to apt-get, and a transient Ubuntu mirror outage left it
+      # retrying `azure.archive.ubuntu.com` until the job hit its 20-minute
+      # timeout — four runs died that way before the tests ever started, while
+      # identical runs passed in ~2.5 minutes when the mirror answered.
 
       # Run every example's e2e task (root aggregator). Each playwright config
       # boots its own dev server with DISCORD_E2E_MOCK=1 (MSW intercepts
