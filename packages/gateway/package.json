@@ -1,7 +1,7 @@
 {
   "name": "@discordkit/gateway",
   "description": "A tree-shakeable Discord Gateway (WebSocket) client for Workers, Durable Objects, and Node",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "license": "MIT",
   "author": "Drake Costa <drake@saeris.gg> (https://saeris.gg)",
   "keywords": [
