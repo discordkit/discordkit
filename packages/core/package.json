@@ -42,6 +42,7 @@
   },
   "devDependencies": {
     "@discordkit/test-utils": "workspace:^",
+    "@trpc/server": "catalog:",
     "valibot": "catalog:"
   },
   "bumpy": {
