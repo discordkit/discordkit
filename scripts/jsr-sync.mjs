@@ -100,6 +100,69 @@ const jsr = JSON.parse(readFileSync(`jsr.json`, `utf8`));
  * this every spec file and vite.config.ts lands in the package — noise for
  * consumers and extra surface for JSR's type checker.
  */
+/**
+ * Which runtimes each package supports, surfaced on its JSR page.
+ *
+ * Declared per package rather than blanket-set: `native` loads a shared library
+ * through Node's FFI and reads `node:fs`/`node:os`, so it cannot run anywhere
+ * else, while the REST and Gateway packages deliberately keep Node builtins off
+ * the hot path and run on Workers unchanged.
+ */
+const RUNTIME_COMPAT = {
+  "@discordkit/core": {
+    node: true,
+    deno: true,
+    bun: true,
+    workerd: true,
+    browser: true
+  },
+  "@discordkit/client": {
+    node: true,
+    deno: true,
+    bun: true,
+    workerd: true,
+    browser: true
+  },
+  "@discordkit/gateway": {
+    node: true,
+    deno: true,
+    bun: true,
+    workerd: true,
+    browser: true
+  },
+  "@discordkit/oauth": {
+    node: true,
+    deno: true,
+    bun: true,
+    workerd: true,
+    browser: true
+  },
+  // Node-only: FFI into the Social SDK shared library.
+  "@discordkit/native": {
+    node: true,
+    deno: false,
+    bun: false,
+    workerd: false,
+    browser: false
+  },
+  // Main process is Node; the renderer half is a browser context.
+  "@discordkit/electron": {
+    node: true,
+    deno: false,
+    bun: false,
+    workerd: false,
+    browser: true
+  },
+  // Sidecar is Node; the webview half is a browser context.
+  "@discordkit/tauri": {
+    node: true,
+    deno: false,
+    bun: false,
+    workerd: false,
+    browser: true
+  }
+};
+
 const EXCLUDE = [
   `**/__tests__`,
   `**/__mocks__`,
@@ -115,7 +178,10 @@ const next = {
   name: pkg.name,
   version: pkg.version,
   exports: buildExports(pkg),
-  publish: { ...jsr.publish, exclude: EXCLUDE }
+  publish: { ...jsr.publish, exclude: EXCLUDE },
+  ...(RUNTIME_COMPAT[pkg.name]
+    ? { runtimeCompat: RUNTIME_COMPAT[pkg.name] }
+    : {})
 };
 
 if (JSON.stringify(next) !== JSON.stringify(jsr)) {

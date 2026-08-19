@@ -1,6 +1,6 @@
 {
   "name": "@discordkit/gateway",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "exports": {
     ".": "./src/index.ts",
     "./connection": "./src/connection.ts",
@@ -152,5 +152,12 @@
       "vite.config.ts",
       "tsconfig.json"
     ]
+  },
+  "runtimeCompat": {
+    "node": true,
+    "deno": true,
+    "bun": true,
+    "workerd": true,
+    "browser": true
   }
 }

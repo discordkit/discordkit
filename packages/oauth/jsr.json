@@ -1,6 +1,6 @@
 {
   "name": "@discordkit/oauth",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "exports": {
     ".": "./src/index.ts",
     "./astro": "./src/astro.ts",
@@ -23,5 +23,12 @@
       "vite.config.ts",
       "tsconfig.json"
     ]
+  },
+  "runtimeCompat": {
+    "node": true,
+    "deno": true,
+    "bun": true,
+    "workerd": true,
+    "browser": true
   }
 }

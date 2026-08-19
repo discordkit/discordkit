@@ -1,6 +1,6 @@
 {
   "name": "@discordkit/tauri",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "exports": {
     ".": "./src/index.ts",
     "./channels/core": "./src/channels/core.ts",
@@ -52,5 +52,12 @@
       "vite.config.ts",
       "tsconfig.json"
     ]
+  },
+  "runtimeCompat": {
+    "node": true,
+    "deno": false,
+    "bun": false,
+    "workerd": false,
+    "browser": true
   }
 }

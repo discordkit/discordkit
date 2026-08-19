@@ -1,10 +1,21 @@
-# @discordkit/gateway
+<div align="center">
 
-A tree-shakeable Discord **Gateway** (WebSocket) client for Cloudflare Workers, Durable Objects, and Node.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-dark.svg">
+  <img alt="Discordkit" src="https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-light.svg">
+</picture>
 
-The Gateway delivers real-time events: messages, interactions, and guild updates. HTTP Interactions can deliver command and component callbacks. Only a Gateway connection can see ordinary channel messages, which is what "watch the channel and react" bots need.
+[![npm version][npm_badge]][npm]
+[![jsr version][jsr_badge]][jsr]
+[![CI status][ci_badge]][ci]
 
-## Installation
+A tree-shakeable Discord [Gateway][gateway_docs] (WebSocket) client for Cloudflare Workers, Durable Objects, and Node.
+
+</div>
+
+---
+
+## 📦 Installation
 
 ```sh
 yarn add @discordkit/gateway valibot
@@ -12,7 +23,7 @@ yarn add @discordkit/gateway valibot
 
 `valibot` is a peer dependency, shared with the rest of discordkit.
 
-## Quickstart
+## 🔧 Quickstart
 
 Here is a minimal example gateway application: reply to `!ping` with `Pong!`.
 
@@ -64,7 +75,7 @@ Discord's docs list 84 items under _Receive Events_. Five of them are not dispat
 
 The runtime target is the **Workers/Durable Object contract**: the Web-standard global `WebSocket`, with no Node-only dependency on the hot path. The same code runs unchanged on Node 22+, which provides that global.
 
-## Usage
+## 🔧 Usage
 
 ### The connection
 
@@ -251,6 +262,16 @@ closeAction(4014); // { reconnect: false, discardSession: true  } — give up
 - [`@discordkit/core`](../core) — the shared request/validation layer.
 - [`@discordkit/native`](../native) — the Discord Social SDK for desktop apps.
 
-## License
+## 🥂 License
 
 MIT
+[npm_badge]: https://img.shields.io/npm/v/@discordkit/gateway.svg?style=flat
+[npm]: https://www.npmjs.com/package/@discordkit/gateway
+[jsr_badge]: https://jsr.io/badges/@discordkit/gateway
+[jsr]: https://jsr.io/@discordkit/gateway
+[ci_badge]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml/badge.svg
+[ci]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml
+[license]: https://github.com/discordkit/discordkit/blob/main/LICENSE.md
+[personal-website]: https://saeris.gg
+[gateway_docs]: https://discord.com/developers/docs/events/gateway
+[discord_api]: https://discord.com/developers/docs

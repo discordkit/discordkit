@@ -1,6 +1,6 @@
 {
   "name": "@discordkit/native",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "exports": {
     ".": "./src/index.ts",
     "./auth": "./src/auth/index.ts",
@@ -85,5 +85,12 @@
       "vite.config.ts",
       "tsconfig.json"
     ]
+  },
+  "runtimeCompat": {
+    "node": true,
+    "deno": false,
+    "bun": false,
+    "workerd": false,
+    "browser": false
   }
 }

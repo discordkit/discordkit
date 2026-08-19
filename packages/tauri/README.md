@@ -1,14 +1,19 @@
-# @discordkit/tauri
+<div align="center">
 
-Run the [Discord Social SDK][social-sdk] (via [`@discordkit/native`][native]) in a **Node sidecar** and reach it from a **Tauri webview** over a typed, bidirectional [kkrpc][kkrpc] bridge.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-dark.svg">
+  <img alt="Discordkit" src="https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-light.svg">
+</picture>
 
-> [!WARNING]
->
-> 🚧 Pre-1.0 and under active development. The API may change between minor versions. 🚧
+[![npm version][npm_badge]][npm]
+[![jsr version][jsr_badge]][jsr]
+[![CI status][ci_badge]][ci]
 
-The SDK's FFI is a Node-runtime binding, so it can't live in Tauri's Rust core — it runs in a **sidecar** process that Tauri's [shell plugin][shell] spawns. This package is the glue: a sidecar **host** that runs the SDK and speaks kkrpc over stdio, and a webview **client** that drives it as a typed object. The bridge is **composed per-domain** (mirroring `@discordkit/native`'s subpaths), so an app bundles only the native code for the features it actually wires — importing presence never pulls in voice.
+Tauri adapter for [`@discordkit/native`][native]: run the Social SDK in a Node sidecar, reach it from the webview.
 
-There is **no Rust crate to install**: kkrpc rides the standard `tauri-plugin-shell`. You add one plugin line and merge a permissions snippet — see [Getting started](#-getting-started).
+</div>
+
+---
 
 ## 📦 Installation
 
@@ -197,7 +202,7 @@ await friends.reload();
 
 Per Discord's SDK guidance, action APIs (send a message, send/accept an invite, friend requests, …) must only be called **in response to an explicit user action** — never automatically.
 
-## 🪪 License
+## 🥂 License
 
 MIT © [Drake Costa](https://saeris.gg)
 
@@ -208,3 +213,12 @@ MIT © [Drake Costa](https://saeris.gg)
 [shell]: https://v2.tauri.app/plugin/shell/
 [signals]: https://github.com/tc39/proposal-signals
 [keyring]: https://github.com/HuakunShen/tauri-plugin-keyring
+[npm_badge]: https://img.shields.io/npm/v/@discordkit/tauri.svg?style=flat
+[npm]: https://www.npmjs.com/package/@discordkit/tauri
+[jsr_badge]: https://jsr.io/badges/@discordkit/tauri
+[jsr]: https://jsr.io/@discordkit/tauri
+[ci_badge]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml/badge.svg
+[ci]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml
+[license]: https://github.com/discordkit/discordkit/blob/main/LICENSE.md
+[personal-website]: https://saeris.gg
+[social_sdk]: https://discord.com/developers/docs/discord-social-sdk/overview

@@ -30,7 +30,7 @@ yarn add -D @discordkit/core valibot
 - **Validation primitives** — schema typing helpers (`schema<T>`, `partialSchema`, `pickFields`, `omitFields`, `requiredFields`, `variantSchema`), `boundedString`, `boundedInteger`, `snowflake`, `timestamp`, `datauri`, `fileUpload`, etc. Build your own schemas without re-deriving them.
 - **`@__NO_SIDE_EFFECTS__` annotations and `sideEffects: false`** — every export is tree-shake-friendly. Consumer bundles only pay for what they actually import.
 
-## Usage
+## 🔧 Usage
 
 See the [`@discordkit/client` README][client] for the full usage walkthrough — every example there relies on `@discordkit/core` for the actual composition.
 
