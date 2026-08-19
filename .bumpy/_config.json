@@ -1,7 +1,13 @@
 {
   "$schema": "../node_modules/@varlock/bumpy/config-schema.json",
   "baseBranch": "main",
-  "changelog": ["github", { "repo": "discordkit/discordkit" }],
+  "changelog": [
+    "github",
+    {
+      "repo": "discordkit/discordkit"
+    }
+  ],
+  "allowCustomCommands": true,
   "linked": [["@discordkit/client", "@discordkit/core"]],
   "ignore": [
     "webhook-action",

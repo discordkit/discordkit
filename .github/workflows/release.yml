@@ -125,4 +125,4 @@ jobs:
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK_ID }}
           token: ${{ secrets.DISCORD_WEBHOOK_TOKEN }}
-          content: "${GITHUB_REPOSITORY} was successfully published to npm!"
+          content: "${GITHUB_REPOSITORY} was successfully published to npm and JSR!"

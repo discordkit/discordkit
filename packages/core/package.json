@@ -42,5 +42,12 @@
   },
   "devDependencies": {
     "@discordkit/test-utils": "workspace:^"
+  },
+  "bumpy": {
+    "publishCommand": [
+      "node ../../scripts/npm-publish.mjs",
+      "node ../../scripts/jsr-sync.mjs",
+      "node ../../scripts/jsr-publish.mjs"
+    ]
   }
 }
