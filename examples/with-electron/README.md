@@ -21,7 +21,7 @@ The renderer is a **live editor** modelled on Discord's Developer Portal Rich Pr
 
 The SDK is native (Koffi FFI) and must run in a Node context, so it lives in the main process. The sandboxed renderer never touches FFI — it talks to `window.discord`, exposed by a preload bundle.
 
-## 🧠 Architecture
+## 🏗️ Architecture
 
 ```mermaid
 flowchart LR
@@ -46,6 +46,15 @@ flowchart LR
 - **`electron/main.mjs`** — ESM main; creates the window and calls `registerDiscord(ipcMain, …)`. Readiness is awaited inside an async IIFE (`await app.whenReady()` — never at module top level) so Playwright's `_electron.launch` doesn't deadlock.
 - **`electron/preload.ts`** — calls `exposeDiscord(contextBridge, ipcRenderer)`. The renderer is **sandboxed** (secure default), so this is **bundled** into a self-contained `preload.bundle.cjs` via the `preload` pack task (sandboxed preloads can't import from `node_modules`). `electron` stays external.
 - **`src/`** — the renderer (React + React Aria + React Hook Form + Valibot + Tailwind v4); imports `@discordkit/electron/renderer` for `window.discord` typings. `useDiscordStatus` (useSyncExternalStore over the IPC status stream) and `useDiscordPresence` (debounced push) wrap the bridge.
+
+## 🔑 Environment variables
+
+Copy `.env.schema` to `.env` and fill these in. `.env` is gitignored; `.env.schema` is committed and declares the shape, which Varlock validates at build and start.
+
+| Variable                 | Required | Where to get it                                                                                                                                         |
+| ------------------------ | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `DISCORD_APPLICATION_ID` | yes      | [Developer Portal][portal] → your app → **General Information**. Public; the SDK identifies your app by it.                                             |
+| `DISCORD_SDK_PATH`       | no       | Where you unpacked the [Social SDK][social-sdk-dl]. It cannot be redistributed, so download it yourself. Unset means conventional locations are probed. |
 
 ## 📦 Prerequisites
 
@@ -88,7 +97,7 @@ Edit any field and the presence updates live (no login — see the note below). 
 
 > **You won't see your own buttons.** Discord only shows Rich Presence buttons to _other_ users viewing your profile — never on your own. To verify buttons work, have a friend (or a second account) look at your profile. (Everything else — details, state, images, timestamps, party — shows on your own profile.)
 
-## Smoke test (local, maintainer-driven)
+## 🧪 Smoke test (local, maintainer-driven)
 
 A Playwright `_electron.launch` smoke verifies the renderer wires up to the SDK over IPC. It needs the real SDK, so it's **local-only** (skips without the env):
 
@@ -104,3 +113,5 @@ DISCORD_APPLICATION_ID=… DISCORD_SDK_PATH=… vp run smoke
 [ci]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml
 [license]: https://github.com/discordkit/discordkit/blob/main/LICENSE.md
 [personal-website]: https://saeris.gg
+[portal]: https://discord.com/developers/applications
+[social-sdk-dl]: https://discord.com/developers/docs/discord-social-sdk/getting-started

@@ -5,9 +5,7 @@
   <img alt="Discordkit" src="https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-light.svg">
 </picture>
 
-[![npm version][npm_badge]][npm]
-[![jsr version][jsr_badge]][jsr]
-[![CI status][ci_badge]][ci]
+[![npm version][npm_badge]][npm] [![jsr version][jsr_badge]][jsr] [![CI status][ci_badge]][ci]
 
 A functional TypeScript bridge to the Discord [Social SDK][social-sdk] for desktop and headless Node.
 

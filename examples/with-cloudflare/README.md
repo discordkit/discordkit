@@ -34,7 +34,7 @@ The Gateway's most common failure is silent. Without the privileged `MESSAGE_CON
 - **Guild filter.** Built from the `GUILD_CREATE` events already in the buffer, so a bot in many guilds narrows to the one you are testing.
 - **Lifecycle separators.** `connected`, `disconnected`, and `connection lost` rules in the event list, so a gap in the stream reads as a reconnect instead of silence.
 
-## 🧠 Architecture
+## 🏗️ Architecture
 
 ```mermaid
 flowchart LR
@@ -63,6 +63,15 @@ connection.connect();
 ```
 
 A normal bot does the opposite: subscribe with `onMessageCreate` and let the connection derive its own intents.
+
+## 🔑 Environment variables
+
+Copy `.env.schema` to `.env` and fill these in. `.env` is gitignored; `.env.schema` is committed and declares the shape, which Varlock validates at build and start.
+
+| Variable            | Required | Where to get it                                                                                                      |
+| ------------------- | -------- | -------------------------------------------------------------------------------------------------------------------- |
+| `DISCORD_BOT_TOKEN` | no       | [Developer Portal][portal] → your app → **Bot → Reset Token**. Optional: the inspector also takes a token in the UI. |
+| `GATEWAY_URL`       | no       | Only for pointing the inspector at a mock gateway. Leave unset to reach Discord.                                     |
 
 ## 🔧 Running it
 
@@ -103,7 +112,7 @@ DISCORD_BOT_TOKEN=your-token-here
 >
 > Most guides also show the older `defineWorkersConfig` and `poolOptions.workers` shape. That shape fails here with `Missing "./config" specifier`, because the pool is now a `cloudflareTest()` plugin.
 
-## Related
+## 🔗 Related
 
 - [`@discordkit/gateway`](../../packages/gateway) — the Gateway client
 - [`@discordkit/client`](../../packages/client) — the REST API, including `getGatewayBot`
@@ -117,3 +126,4 @@ DISCORD_BOT_TOKEN=your-token-here
 [ci]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml
 [license]: https://github.com/discordkit/discordkit/blob/main/LICENSE.md
 [personal-website]: https://saeris.gg
+[portal]: https://discord.com/developers/applications

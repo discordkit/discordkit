@@ -98,7 +98,7 @@ vp dev
 
 The native Social SDK packages are unit-tested against a mock FFI backend, so `vp test` needs no SDK binary. A separate CI job loads the real SDK to verify the ABI. That job needs the non-redistributable binary, so it is maintainer-only and never gates contributions.
 
-## Contributing
+## 🤝 Contributing
 
 1. Branch off `main` and make your change.
 2. Run `vp check --fix` and `vp test` until green.

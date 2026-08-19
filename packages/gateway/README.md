@@ -5,9 +5,7 @@
   <img alt="Discordkit" src="https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-light.svg">
 </picture>
 
-[![npm version][npm_badge]][npm]
-[![jsr version][jsr_badge]][jsr]
-[![CI status][ci_badge]][ci]
+[![npm version][npm_badge]][npm] [![jsr version][jsr_badge]][jsr] [![CI status][ci_badge]][ci]
 
 A tree-shakeable Discord [Gateway][gateway_docs] (WebSocket) client for Cloudflare Workers, Durable Objects, and Node.
 
@@ -256,7 +254,7 @@ closeAction(4014); // { reconnect: false, discardSession: true  } — give up
 
 `closeAction` carries the highest consequence in the client. One wrong direction reconnect-loops through the 1000/day session-start budget. The other stops a bot with no error.
 
-## Related packages
+## 🔗 Related packages
 
 - [`@discordkit/client`](../client) — the REST API, including `getGateway` and `getGatewayBot` for the WSS URL, recommended shard count, and session start limits.
 - [`@discordkit/core`](../core) — the shared request/validation layer.

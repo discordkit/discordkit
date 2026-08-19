@@ -5,9 +5,7 @@
   <img alt="Discordkit" src="https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-light.svg">
 </picture>
 
-[![npm version][npm_badge]][npm]
-[![jsr version][jsr_badge]][jsr]
-[![CI status][ci_badge]][ci]
+[![npm version][npm_badge]][npm] [![jsr version][jsr_badge]][jsr] [![CI status][ci_badge]][ci]
 
 Electron adapter for [`@discordkit/native`][native]: run the Social SDK in the main process, reach it from the renderer.
 
@@ -23,7 +21,7 @@ npm install @discordkit/electron
 
 `electron` is a peer dependency. You also supply the Discord Social SDK shared library yourself (it can't be redistributed) — see [`@discordkit/native`][native] for how `init` resolves it.
 
-## 🧠 The three contexts
+## 🏗️ The three contexts
 
 An Electron app has three JS contexts; this package has a subpath for each, plus a per-domain module under each:
 

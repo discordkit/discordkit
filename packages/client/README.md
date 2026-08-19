@@ -5,9 +5,7 @@
   <img alt="Discordkit" src="https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-light.svg">
 </picture>
 
-[![npm version][npm_badge]][npm]
-[![jsr version][jsr_badge]][jsr]
-[![CI status][ci_badge]][ci]
+[![npm version][npm_badge]][npm] [![jsr version][jsr_badge]][jsr] [![CI status][ci_badge]][ci]
 
 A fully-typed Fetcher and [`valibot`][valibot] schema for every endpoint in Discord's [REST API][discord_api].
 
@@ -129,7 +127,7 @@ Endpoint documentation taken from Discord's [Official API docs][discord_api].
 
 ## 🥂 License
 
-[MIT][license] © [Drake Costa][personal-website].
+[MIT][license] © [Drake Costa][personal-website]
 
 [npm_badge]: https://img.shields.io/npm/v/@discordkit/client.svg?style=flat
 [npm]: https://www.npmjs.com/package/@discordkit/client

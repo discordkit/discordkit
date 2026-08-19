@@ -5,9 +5,7 @@
   <img alt="Discordkit" src="https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-light.svg">
 </picture>
 
-[![npm version][npm_badge]][npm]
-[![jsr version][jsr_badge]][jsr]
-[![CI status][ci_badge]][ci]
+[![npm version][npm_badge]][npm] [![jsr version][jsr_badge]][jsr] [![CI status][ci_badge]][ci]
 
 Tauri adapter for [`@discordkit/native`][native]: run the Social SDK in a Node sidecar, reach it from the webview.
 
@@ -23,7 +21,7 @@ npm install @discordkit/tauri @tauri-apps/api @tauri-apps/plugin-shell
 
 `@tauri-apps/api` and `@tauri-apps/plugin-shell` are peer dependencies. You also supply the Discord Social SDK shared library yourself (it can't be redistributed) — see [`@discordkit/native`][native] for how the sidecar resolves it.
 
-## 🧠 The two contexts
+## 🏗️ The two contexts
 
 A Tauri app splits into the Rust-spawned **sidecar** (where the SDK runs) and the **webview** (your UI). This package has a subpath for each, plus a per-domain module under each:
 
