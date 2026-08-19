@@ -10,16 +10,40 @@
  *
  * JSR publishes from source via jsr.json, so there is no dist build here.
  *
- * `--allow-slow-types` is required: these packages infer their public types
- * from valibot schemas, which JSR cannot resolve to explicit signatures.
  * `--allow-dirty` is required because the release job edits package.json and
  * jsr.json in place before publishing.
+ *
+ * `--allow-slow-types` is passed only where it is still needed. JSR wants every
+ * exported symbol explicitly annotated, which a valibot schema cannot be
+ * without hand-writing the type it already infers — and annotating a schema
+ * with its own inferred interface is circular (`TS2310`). Packages whose public
+ * surface is mostly schemas keep the flag and forfeit those points; the rest
+ * publish without it. See denoland/deno#23126.
+ *
+ * One gotcha if you are clearing these elsewhere: JSR's "simple inference"
+ * accepts a plain string literal but NOT a template string, so a `const` in
+ * this repo's usual backticks reads as a slow type even though the same value
+ * in double quotes does not. A handful of constants are written with plain
+ * quotes for that reason, each marked with a comment.
  */
 import { execSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 
 const { name, version } = JSON.parse(readFileSync(`package.json`, `utf8`));
 const [, scope, pkg] = /^@([^/]+)\/(.+)$/.exec(name) ?? [];
+
+/**
+ * Packages whose public API is dominated by valibot schemas, where explicit
+ * annotations would mean maintaining every field twice with nothing keeping
+ * the two in sync.
+ */
+const SLOW_TYPES = new Set([
+  `@discordkit/client`,
+  `@discordkit/gateway`,
+  `@discordkit/native`,
+  `@discordkit/electron`,
+  `@discordkit/tauri`
+]);
 
 if (!scope || !pkg) {
   throw new Error(
@@ -40,7 +64,8 @@ try {
 if (onRegistry) {
   console.log(`  ${name}@${version} already on JSR — skipping`);
 } else {
-  execSync(`npx jsr publish --allow-dirty --allow-slow-types`, {
+  const slowTypes = SLOW_TYPES.has(name) ? ` --allow-slow-types` : ``;
+  execSync(`npx jsr publish --allow-dirty${slowTypes}`, {
     stdio: `inherit`
   });
 }

@@ -1,6 +1,6 @@
 {
   "name": "@discordkit/client",
-  "version": "4.3.0",
+  "version": "4.3.2",
   "exports": {
     ".": "./src/index.ts",
     "./application/bulkOverwriteGlobalApplicationCommands": "./src/application/bulkOverwriteGlobalApplicationCommands.ts",
@@ -606,5 +606,12 @@
       "vite.config.ts",
       "tsconfig.json"
     ]
+  },
+  "runtimeCompat": {
+    "node": true,
+    "deno": true,
+    "bun": true,
+    "workerd": true,
+    "browser": true
   }
 }

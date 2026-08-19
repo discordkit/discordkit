@@ -1,6 +1,6 @@
 {
   "name": "@discordkit/electron",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "exports": {
     ".": "./src/index.ts",
     "./channels/core": "./src/channels/core.ts",
@@ -50,5 +50,12 @@
       "vite.config.ts",
       "tsconfig.json"
     ]
+  },
+  "runtimeCompat": {
+    "node": true,
+    "deno": false,
+    "bun": false,
+    "workerd": false,
+    "browser": true
   }
 }

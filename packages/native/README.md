@@ -1,12 +1,17 @@
-# @discordkit/native
+<div align="center">
 
-Functional TypeScript bridge to the [Discord Social SDK][social-sdk] for native desktop runtimes — Electron, Tauri, and headless Node.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-dark.svg">
+  <img alt="Discordkit" src="https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-light.svg">
+</picture>
 
-> [!WARNING]
->
-> 🚧 Pre-1.0 and under active development. The API may change between minor versions. 🚧
+[![npm version][npm_badge]][npm] [![jsr version][jsr_badge]][jsr] [![CI status][ci_badge]][ci]
 
-It wraps the SDK's flat C ABI (`cdiscord.h`) over a [Koffi][koffi] FFI backend behind a seam that a future `node:ffi` implementation can slot into. The public surface is **free functions + a couple of live handle wrappers**, organized into tree-shakeable subpaths so importing one feature never pulls in another.
+A functional TypeScript bridge to the Discord [Social SDK][social-sdk] for desktop and headless Node.
+
+</div>
+
+---
 
 ## 📦 Installation
 
@@ -129,9 +134,17 @@ using sub = onMessageCreated((messageId) => {
 
 Per Discord's SDK guidance, the action APIs (send a message, send/accept an invite, friend requests, …) must only be called **in response to an explicit user action** — never automatically.
 
-## 🪪 License
+## 🥂 License
 
-MIT © [Drake Costa](https://saeris.gg)
+[MIT][license] © [Drake Costa][personal-website]
 
 [social-sdk]: https://discord.com/developers/docs/discord-social-sdk/overview
 [koffi]: https://koffi.dev
+[npm_badge]: https://img.shields.io/npm/v/@discordkit/native.svg?style=flat
+[npm]: https://www.npmjs.com/package/@discordkit/native
+[jsr_badge]: https://img.shields.io/jsr/v/@discordkit/native
+[jsr]: https://jsr.io/@discordkit/native
+[ci_badge]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml/badge.svg
+[ci]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml
+[license]: https://github.com/discordkit/discordkit/blob/main/LICENSE.md
+[personal-website]: https://saeris.gg

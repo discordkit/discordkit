@@ -1,14 +1,17 @@
-# @discordkit/tauri
+<div align="center">
 
-Run the [Discord Social SDK][social-sdk] (via [`@discordkit/native`][native]) in a **Node sidecar** and reach it from a **Tauri webview** over a typed, bidirectional [kkrpc][kkrpc] bridge.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-dark.svg">
+  <img alt="Discordkit" src="https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-light.svg">
+</picture>
 
-> [!WARNING]
->
-> 🚧 Pre-1.0 and under active development. The API may change between minor versions. 🚧
+[![npm version][npm_badge]][npm] [![jsr version][jsr_badge]][jsr] [![CI status][ci_badge]][ci]
 
-The SDK's FFI is a Node-runtime binding, so it can't live in Tauri's Rust core — it runs in a **sidecar** process that Tauri's [shell plugin][shell] spawns. This package is the glue: a sidecar **host** that runs the SDK and speaks kkrpc over stdio, and a webview **client** that drives it as a typed object. The bridge is **composed per-domain** (mirroring `@discordkit/native`'s subpaths), so an app bundles only the native code for the features it actually wires — importing presence never pulls in voice.
+Tauri adapter for [`@discordkit/native`][native]: run the Social SDK in a Node sidecar, reach it from the webview.
 
-There is **no Rust crate to install**: kkrpc rides the standard `tauri-plugin-shell`. You add one plugin line and merge a permissions snippet — see [Getting started](#-getting-started).
+</div>
+
+---
 
 ## 📦 Installation
 
@@ -18,7 +21,7 @@ npm install @discordkit/tauri @tauri-apps/api @tauri-apps/plugin-shell
 
 `@tauri-apps/api` and `@tauri-apps/plugin-shell` are peer dependencies. You also supply the Discord Social SDK shared library yourself (it can't be redistributed) — see [`@discordkit/native`][native] for how the sidecar resolves it.
 
-## 🧠 The two contexts
+## 🏗️ The two contexts
 
 A Tauri app splits into the Rust-spawned **sidecar** (where the SDK runs) and the **webview** (your UI). This package has a subpath for each, plus a per-domain module under each:
 
@@ -127,7 +130,7 @@ const discord = await createClient([usersSlice], {
 
 The sidecar can't touch the OS vault directly, so `tauriKeyringStore`'s reads/writes relay through the webview's `keyringRelay`. Setup adds the `tauri-plugin-keyring` crate to `src-tauri`, the `tauri-plugin-keyring-api` peer dep, and the `keyring:allow-*-password` capabilities. (Don't want a vault? Use native's addon-free `fileStore` — no extra setup.)
 
-## 🪞 What crosses the bridge (snapshots + id-keyed RPC)
+## 🌉 What crosses the bridge (snapshots + id-keyed RPC)
 
 `@discordkit/native` returns **live** `Lobby` / `Call` objects (native handles + methods) — those can't cross the process boundary. Over the bridge the webview instead gets serializable **snapshots** (`LobbySnapshot`, `CallSnapshot`) from reads, and drives those entities with **id-keyed RPC** — identical to the [`@discordkit/electron`][electron] model.
 
@@ -197,9 +200,9 @@ await friends.reload();
 
 Per Discord's SDK guidance, action APIs (send a message, send/accept an invite, friend requests, …) must only be called **in response to an explicit user action** — never automatically.
 
-## 🪪 License
+## 🥂 License
 
-MIT © [Drake Costa](https://saeris.gg)
+[MIT][license] © [Drake Costa][personal-website]
 
 [social-sdk]: https://discord.com/developers/docs/discord-social-sdk/overview
 [native]: https://www.npmjs.com/package/@discordkit/native
@@ -208,3 +211,11 @@ MIT © [Drake Costa](https://saeris.gg)
 [shell]: https://v2.tauri.app/plugin/shell/
 [signals]: https://github.com/tc39/proposal-signals
 [keyring]: https://github.com/HuakunShen/tauri-plugin-keyring
+[npm_badge]: https://img.shields.io/npm/v/@discordkit/tauri.svg?style=flat
+[npm]: https://www.npmjs.com/package/@discordkit/tauri
+[jsr_badge]: https://img.shields.io/jsr/v/@discordkit/tauri
+[jsr]: https://jsr.io/@discordkit/tauri
+[ci_badge]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml/badge.svg
+[ci]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml
+[license]: https://github.com/discordkit/discordkit/blob/main/LICENSE.md
+[personal-website]: https://saeris.gg

@@ -161,7 +161,7 @@ export const toMultipartBody = (
  * body so it doesn't leak into JSON serialization or the TypeScript
  * output type.
  */
-export const MULTIPART_MARKER = Symbol.for(`@discordkit/core/multipart`);
+export const MULTIPART_MARKER = Symbol.for("@discordkit/core/multipart");
 
 /**
  * Returns true if `body` should be serialized as `multipart/form-data`.

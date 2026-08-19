@@ -84,9 +84,6 @@ audit/
 **/dist/
 coverage/
 
-# Copied from root README at publish time via packages/client's
-# `prepack` script. Not maintained in-tree.
-packages/client/README.md
 **/public/workbox-*.js*
 **/public/sw.js*
 **/public/worker-*.js*

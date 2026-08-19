@@ -1,4 +1,17 @@
-# discordkit × Electron — Rich Presence Visualizer
+<div align="center">
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-dark.svg">
+  <img alt="Discordkit" src="https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-light.svg">
+</picture>
+
+[![CI status][ci_badge]][ci]
+
+**Rich Presence Visualizer** — a live presence editor built on the Social SDK, in Electron.
+
+</div>
+
+---
 
 An Electron app showing Discord **Rich Presence** via [`@discordkit/native`](../../packages/native) (the Social SDK bridge) running in the Electron **main process**, driven from the renderer over the typed IPC bridge in [`@discordkit/electron`](../../packages/electron).
 
@@ -8,7 +21,7 @@ The renderer is a **live editor** modelled on Discord's Developer Portal Rich Pr
 
 The SDK is native (Koffi FFI) and must run in a Node context, so it lives in the main process. The sandboxed renderer never touches FFI — it talks to `window.discord`, exposed by a preload bundle.
 
-## Architecture
+## 🏗️ Architecture
 
 ```mermaid
 flowchart LR
@@ -34,14 +47,23 @@ flowchart LR
 - **`electron/preload.ts`** — calls `exposeDiscord(contextBridge, ipcRenderer)`. The renderer is **sandboxed** (secure default), so this is **bundled** into a self-contained `preload.bundle.cjs` via the `preload` pack task (sandboxed preloads can't import from `node_modules`). `electron` stays external.
 - **`src/`** — the renderer (React + React Aria + React Hook Form + Valibot + Tailwind v4); imports `@discordkit/electron/renderer` for `window.discord` typings. `useDiscordStatus` (useSyncExternalStore over the IPC status stream) and `useDiscordPresence` (debounced push) wrap the bridge.
 
-## Prerequisites
+## 🔑 Environment variables
+
+Copy `.env.schema` to `.env` and fill these in. `.env` is gitignored; `.env.schema` is committed and declares the shape, which Varlock validates at build and start.
+
+| Variable                 | Required | Where to get it                                                                                                                                         |
+| ------------------------ | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `DISCORD_APPLICATION_ID` | yes      | [Developer Portal][portal] → your app → **General Information**. Public; the SDK identifies your app by it.                                             |
+| `DISCORD_SDK_PATH`       | no       | Where you unpacked the [Social SDK][social-sdk-dl]. It cannot be redistributed, so download it yourself. Unset means conventional locations are probed. |
+
+## 📦 Prerequisites
 
 1. A Discord application with the **Social SDK enabled** (Developer Portal).
 2. The **Social SDK download** for your platform — it can't be redistributed, so download it yourself. `.env` points `DISCORD_SDK_PATH` at the repo's `vendor/discord-social-sdk/<version>` by default (relative to this example).
 3. The Discord **desktop client** running (presence goes over RPC to it).
 4. Copy `.env.schema` → `.env` and set `DISCORD_APPLICATION_ID` (and `DISCORD_SDK_PATH` if your SDK lives elsewhere — a relative path is resolved against this example's root, so it's portable).
 
-## Run
+## 🔧 Run
 
 First build the workspace packages (once, from the repo root):
 
@@ -75,10 +97,21 @@ Edit any field and the presence updates live (no login — see the note below). 
 
 > **You won't see your own buttons.** Discord only shows Rich Presence buttons to _other_ users viewing your profile — never on your own. To verify buttons work, have a friend (or a second account) look at your profile. (Everything else — details, state, images, timestamps, party — shows on your own profile.)
 
-## Smoke test (local, maintainer-driven)
+## 🧪 Smoke test (local, maintainer-driven)
 
 A Playwright `_electron.launch` smoke verifies the renderer wires up to the SDK over IPC. It needs the real SDK, so it's **local-only** (skips without the env):
 
 ```sh
 DISCORD_APPLICATION_ID=… DISCORD_SDK_PATH=… vp run smoke
 ```
+
+## 🥂 License
+
+[MIT][license] © [Drake Costa][personal-website]
+
+[ci_badge]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml/badge.svg
+[ci]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml
+[license]: https://github.com/discordkit/discordkit/blob/main/LICENSE.md
+[personal-website]: https://saeris.gg
+[portal]: https://discord.com/developers/applications
+[social-sdk-dl]: https://discord.com/developers/docs/discord-social-sdk/getting-started

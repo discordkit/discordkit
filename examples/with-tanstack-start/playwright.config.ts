@@ -18,7 +18,19 @@ export default defineConfig({
     baseURL,
     trace: `on-first-retry`
   },
-  projects: [{ name: `chromium`, use: { ...devices[`Desktop Chrome`] } }],
+  // On CI, drive the Chrome that GitHub's runner image already ships rather
+  // than a Playwright-managed download. That removes the browser install and,
+  // more importantly, the `playwright install-deps` apt-get step: a transient
+  // Ubuntu mirror outage there hung the job until the 20-minute timeout.
+  projects: [
+    {
+      name: `chromium`,
+      use: {
+        ...devices[`Desktop Chrome`],
+        ...(process.env.CI ? { channel: `chrome` as const } : {})
+      }
+    }
+  ],
   webServer: {
     command: `vp dev --port ${PORT}`,
     url: baseURL,

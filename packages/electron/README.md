@@ -1,12 +1,17 @@
-# @discordkit/electron
+<div align="center">
 
-Run the [Discord Social SDK][social-sdk] (via [`@discordkit/native`][native]) in Electron's **main process** and reach it from the **renderer** over a typed, sandboxed IPC bridge.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-dark.svg">
+  <img alt="Discordkit" src="https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-light.svg">
+</picture>
 
-> [!WARNING]
->
-> 🚧 Pre-1.0 and under active development. The API may change between minor versions. 🚧
+[![npm version][npm_badge]][npm] [![jsr version][jsr_badge]][jsr] [![CI status][ci_badge]][ci]
 
-The SDK is a native library — it can only live in the main process. This package is the glue: it wires the SDK to IPC in the main process and exposes a typed `window.discord` in the renderer, so your UI drives Discord without ever touching FFI. The bridge is **composed per-domain** (mirroring `@discordkit/native`'s subpaths), so an app bundles only the native code for the features it actually wires — importing presence never pulls in voice.
+Electron adapter for [`@discordkit/native`][native]: run the Social SDK in the main process, reach it from the renderer.
+
+</div>
+
+---
 
 ## 📦 Installation
 
@@ -16,7 +21,7 @@ npm install @discordkit/electron
 
 `electron` is a peer dependency. You also supply the Discord Social SDK shared library yourself (it can't be redistributed) — see [`@discordkit/native`][native] for how `init` resolves it.
 
-## 🧠 The three contexts
+## 🏗️ The three contexts
 
 An Electron app has three JS contexts; this package has a subpath for each, plus a per-domain module under each:
 
@@ -91,7 +96,7 @@ using lobby = await window.discord.lobbies.createOrJoin(secret); // a snapshot
 
 > Exposed everything? Use `FullBridge` from `@discordkit/electron/renderer` instead of composing the pieces.
 
-## 🪞 What crosses IPC (snapshots + id-keyed RPC)
+## 🌉 What crosses IPC (snapshots + id-keyed RPC)
 
 `@discordkit/native` returns **live** `Lobby` / `Call` objects (native handles + methods) — those can't cross the process boundary. Over IPC the renderer instead gets serializable **snapshots** (`LobbySnapshot`, `CallSnapshot`) from reads, and drives those entities with **id-keyed RPC**:
 
@@ -167,10 +172,18 @@ await friends.reload();
 
 Per Discord's SDK guidance, action APIs (send a message, send/accept an invite, friend requests, …) must only be called **in response to an explicit user action** — never automatically.
 
-## 🪪 License
+## 🥂 License
 
-MIT © [Drake Costa](https://saeris.gg)
+[MIT][license] © [Drake Costa][personal-website]
 
 [social-sdk]: https://discord.com/developers/docs/discord-social-sdk/overview
 [native]: https://www.npmjs.com/package/@discordkit/native
 [signals]: https://github.com/tc39/proposal-signals
+[npm_badge]: https://img.shields.io/npm/v/@discordkit/electron.svg?style=flat
+[npm]: https://www.npmjs.com/package/@discordkit/electron
+[jsr_badge]: https://img.shields.io/jsr/v/@discordkit/electron
+[jsr]: https://jsr.io/@discordkit/electron
+[ci_badge]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml/badge.svg
+[ci]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml
+[license]: https://github.com/discordkit/discordkit/blob/main/LICENSE.md
+[personal-website]: https://saeris.gg
