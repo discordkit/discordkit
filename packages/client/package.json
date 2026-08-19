@@ -53,7 +53,8 @@
     "@discordkit/core": "workspace:^"
   },
   "devDependencies": {
-    "@discordkit/test-utils": "workspace:^"
+    "@discordkit/test-utils": "workspace:^",
+    "valibot": "catalog:"
   },
   "peerDependencies": {
     "valibot": ">= 1.4.0"

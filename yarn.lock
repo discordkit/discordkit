@@ -627,6 +627,7 @@ __metadata:
   dependencies:
     "@discordkit/core": "workspace:^"
     "@discordkit/test-utils": "workspace:^"
+    valibot: "catalog:"
   peerDependencies:
     valibot: ">= 1.4.0"
   languageName: unknown
@@ -637,6 +638,7 @@ __metadata:
   resolution: "@discordkit/core@workspace:packages/core"
   dependencies:
     "@discordkit/test-utils": "workspace:^"
+    valibot: "catalog:"
   peerDependencies:
     valibot: ">= 1.4.0"
   languageName: unknown
@@ -674,6 +676,7 @@ __metadata:
     "@discordkit/client": "workspace:^"
     "@discordkit/core": "workspace:^"
     msw: "catalog:"
+    valibot: "catalog:"
   peerDependencies:
     valibot: ">= 1.4.0"
   languageName: unknown
@@ -696,6 +699,7 @@ __metadata:
   dependencies:
     "@discordkit/core": "workspace:^"
     "@discordkit/test-utils": "workspace:^"
+    valibot: "catalog:"
   peerDependencies:
     valibot: ">= 1.4.0"
   languageName: unknown

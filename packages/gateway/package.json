@@ -49,7 +49,8 @@
     "@discordkit/core": "workspace:^"
   },
   "devDependencies": {
-    "msw": "catalog:"
+    "msw": "catalog:",
+    "valibot": "catalog:"
   },
   "peerDependencies": {
     "valibot": ">= 1.4.0"
