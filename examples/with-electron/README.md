@@ -1,4 +1,17 @@
-# discordkit × Electron — Rich Presence Visualizer
+<div align="center">
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-dark.svg">
+  <img alt="Discordkit" src="https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-light.svg">
+</picture>
+
+[![CI status][ci_badge]][ci]
+
+**Rich Presence Visualizer** — a live presence editor built on the Social SDK, in Electron.
+
+</div>
+
+---
 
 An Electron app showing Discord **Rich Presence** via [`@discordkit/native`](../../packages/native) (the Social SDK bridge) running in the Electron **main process**, driven from the renderer over the typed IPC bridge in [`@discordkit/electron`](../../packages/electron).
 
@@ -8,7 +21,7 @@ The renderer is a **live editor** modelled on Discord's Developer Portal Rich Pr
 
 The SDK is native (Koffi FFI) and must run in a Node context, so it lives in the main process. The sandboxed renderer never touches FFI — it talks to `window.discord`, exposed by a preload bundle.
 
-## Architecture
+## 🧠 Architecture
 
 ```mermaid
 flowchart LR
@@ -34,14 +47,14 @@ flowchart LR
 - **`electron/preload.ts`** — calls `exposeDiscord(contextBridge, ipcRenderer)`. The renderer is **sandboxed** (secure default), so this is **bundled** into a self-contained `preload.bundle.cjs` via the `preload` pack task (sandboxed preloads can't import from `node_modules`). `electron` stays external.
 - **`src/`** — the renderer (React + React Aria + React Hook Form + Valibot + Tailwind v4); imports `@discordkit/electron/renderer` for `window.discord` typings. `useDiscordStatus` (useSyncExternalStore over the IPC status stream) and `useDiscordPresence` (debounced push) wrap the bridge.
 
-## Prerequisites
+## 📦 Prerequisites
 
 1. A Discord application with the **Social SDK enabled** (Developer Portal).
 2. The **Social SDK download** for your platform — it can't be redistributed, so download it yourself. `.env` points `DISCORD_SDK_PATH` at the repo's `vendor/discord-social-sdk/<version>` by default (relative to this example).
 3. The Discord **desktop client** running (presence goes over RPC to it).
 4. Copy `.env.schema` → `.env` and set `DISCORD_APPLICATION_ID` (and `DISCORD_SDK_PATH` if your SDK lives elsewhere — a relative path is resolved against this example's root, so it's portable).
 
-## Run
+## 🔧 Run
 
 First build the workspace packages (once, from the repo root):
 
@@ -82,3 +95,12 @@ A Playwright `_electron.launch` smoke verifies the renderer wires up to the SDK 
 ```sh
 DISCORD_APPLICATION_ID=… DISCORD_SDK_PATH=… vp run smoke
 ```
+
+## 🥂 License
+
+[MIT][license] © [Drake Costa][personal-website]
+
+[ci_badge]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml/badge.svg
+[ci]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml
+[license]: https://github.com/discordkit/discordkit/blob/main/LICENSE.md
+[personal-website]: https://saeris.gg

@@ -98,7 +98,7 @@ using lobby = await window.discord.lobbies.createOrJoin(secret); // a snapshot
 
 > Exposed everything? Use `FullBridge` from `@discordkit/electron/renderer` instead of composing the pieces.
 
-## 🪞 What crosses IPC (snapshots + id-keyed RPC)
+## 🌉 What crosses IPC (snapshots + id-keyed RPC)
 
 `@discordkit/native` returns **live** `Lobby` / `Call` objects (native handles + methods) — those can't cross the process boundary. Over IPC the renderer instead gets serializable **snapshots** (`LobbySnapshot`, `CallSnapshot`) from reads, and drives those entities with **id-keyed RPC**:
 
@@ -176,17 +176,16 @@ Per Discord's SDK guidance, action APIs (send a message, send/accept an invite, 
 
 ## 🥂 License
 
-MIT © [Drake Costa](https://saeris.gg)
+[MIT][license] © [Drake Costa][personal-website]
 
 [social-sdk]: https://discord.com/developers/docs/discord-social-sdk/overview
 [native]: https://www.npmjs.com/package/@discordkit/native
 [signals]: https://github.com/tc39/proposal-signals
 [npm_badge]: https://img.shields.io/npm/v/@discordkit/electron.svg?style=flat
 [npm]: https://www.npmjs.com/package/@discordkit/electron
-[jsr_badge]: https://jsr.io/badges/@discordkit/electron
+[jsr_badge]: https://img.shields.io/jsr/v/@discordkit/electron
 [jsr]: https://jsr.io/@discordkit/electron
 [ci_badge]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml/badge.svg
 [ci]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml
 [license]: https://github.com/discordkit/discordkit/blob/main/LICENSE.md
 [personal-website]: https://saeris.gg
-[social_sdk]: https://discord.com/developers/docs/discord-social-sdk/overview

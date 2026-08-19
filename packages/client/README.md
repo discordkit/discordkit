@@ -113,7 +113,7 @@ export const router = t.router({
 
 Capability-free endpoints only: those requiring `{ anonymous: true }` or accepting `{ reason }` have no natural channel in tRPC.
 
-## 🧩 Tree shaking
+## 🚚 Tree shaking
 
 Each endpoint is its own module, and the package is marked `sideEffects: false` with `@__NO_SIDE_EFFECTS__` annotations throughout. Importing `getGuild` never pulls in the other several hundred endpoints, so a bundle only pays for what it calls.
 
@@ -129,11 +129,11 @@ Endpoint documentation taken from Discord's [Official API docs][discord_api].
 
 ## 🥂 License
 
-Released under the [MIT license][license] © [Drake Costa][personal-website].
+[MIT][license] © [Drake Costa][personal-website].
 
 [npm_badge]: https://img.shields.io/npm/v/@discordkit/client.svg?style=flat
 [npm]: https://www.npmjs.com/package/@discordkit/client
-[jsr_badge]: https://jsr.io/badges/@discordkit/client
+[jsr_badge]: https://img.shields.io/jsr/v/@discordkit/client
 [jsr]: https://jsr.io/@discordkit/client
 [ci_badge]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml/badge.svg
 [ci]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml

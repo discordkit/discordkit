@@ -1,4 +1,17 @@
-# discordkit — Next.js + Better Auth example
+<div align="center">
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-dark.svg">
+  <img alt="Discordkit" src="https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-light.svg">
+</picture>
+
+[![CI status][ci_badge]][ci]
+
+Discord OAuth2 in **Next.js**, with [Better Auth][better_auth] owning the flow.
+
+</div>
+
+---
 
 A Next.js (App Router) app that uses **[Better Auth](https://better-auth.com)**
 — a full third-party auth framework — to own the Discord OAuth2 login, then uses
@@ -22,7 +35,7 @@ identical; only the auth internals differ.
 4. **Refresh / Logout** — Better Auth refreshes the token transparently; logout
    is `authClient.signOut`.
 
-## How it's wired
+## 🧠 How it's wired
 
 - **`src/lib/auth.ts`** — the Better Auth server instance: the Discord social
   provider (with the `identify`, `email`, `guilds` scopes) and a `node:sqlite`
@@ -44,7 +57,7 @@ The shared MSW handlers in [`@discordkit/e2e`](../../packages/e2e) intercept the
 Discord calls — including Better Auth's own token exchange — so the E2E runs with
 no real Discord account.
 
-## Setup
+## 📦 Setup
 
 1. Create a Discord application at the
    [developer dashboard](https://discord.com/developers/applications).
@@ -69,3 +82,13 @@ Better Auth handles session security, token storage, and refresh for you — the
 tradeoff vs. the lightweight `@discordkit/oauth` approach is that it needs a
 database. Swap the `node:sqlite` dev database in `lib/auth.ts` for a managed
 connection (Postgres, Turso, …) when deploying.
+
+## 🥂 License
+
+[MIT][license] © [Drake Costa][personal-website]
+
+[ci_badge]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml/badge.svg
+[ci]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml
+[license]: https://github.com/discordkit/discordkit/blob/main/LICENSE.md
+[personal-website]: https://saeris.gg
+[better_auth]: https://better-auth.com

@@ -9,7 +9,7 @@
 [![jsr version][jsr_badge]][jsr]
 [![CI status][ci_badge]][ci]
 
-A functional TypeScript bridge to the Discord [Social SDK][social_sdk] for desktop and headless Node.
+A functional TypeScript bridge to the Discord [Social SDK][social-sdk] for desktop and headless Node.
 
 </div>
 
@@ -138,16 +138,15 @@ Per Discord's SDK guidance, the action APIs (send a message, send/accept an invi
 
 ## 🥂 License
 
-MIT © [Drake Costa](https://saeris.gg)
+[MIT][license] © [Drake Costa][personal-website]
 
 [social-sdk]: https://discord.com/developers/docs/discord-social-sdk/overview
 [koffi]: https://koffi.dev
 [npm_badge]: https://img.shields.io/npm/v/@discordkit/native.svg?style=flat
 [npm]: https://www.npmjs.com/package/@discordkit/native
-[jsr_badge]: https://jsr.io/badges/@discordkit/native
+[jsr_badge]: https://img.shields.io/jsr/v/@discordkit/native
 [jsr]: https://jsr.io/@discordkit/native
 [ci_badge]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml/badge.svg
 [ci]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml
 [license]: https://github.com/discordkit/discordkit/blob/main/LICENSE.md
 [personal-website]: https://saeris.gg
-[social_sdk]: https://discord.com/developers/docs/discord-social-sdk/overview

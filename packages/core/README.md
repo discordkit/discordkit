@@ -1,9 +1,12 @@
 <div align="center">
 
-![Discordkit](https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-light.svg#gh-light-mode-only)
-![Discordkit](https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-dark.svg#gh-dark-mode-only)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-dark.svg">
+  <img alt="Discordkit" src="https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-light.svg">
+</picture>
 
 [![npm version][npm_badge]][npm]
+[![jsr version][jsr_badge]][jsr]
 [![CI status][ci_badge]][ci]
 
 Runtime helpers and shared validation primitives that power [`@discordkit/client`][client].
@@ -40,10 +43,12 @@ Endpoint documentation taken from Discord's [Official API docs][discord_api].
 
 ## 🥂 License
 
-Released under the [MIT license][license] © [Drake Costa][personal-website].
+[MIT][license] © [Drake Costa][personal-website]
 
 [npm_badge]: https://img.shields.io/npm/v/@discordkit/core.svg?style=flat
 [npm]: https://www.npmjs.com/package/@discordkit/core
+[jsr_badge]: https://img.shields.io/jsr/v/@discordkit/core
+[jsr]: https://jsr.io/@discordkit/core
 [ci_badge]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml/badge.svg
 [ci]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml
 [client]: https://www.npmjs.com/package/@discordkit/client

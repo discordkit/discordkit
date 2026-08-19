@@ -1,4 +1,17 @@
-# discordkit × Tauri — Friends List Studio
+<div align="center">
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-dark.svg">
+  <img alt="Discordkit" src="https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-light.svg">
+</picture>
+
+[![CI status][ci_badge]][ci]
+
+**Friends List Studio** — a live, tunable unified friends list built on the Social SDK, in Tauri.
+
+</div>
+
+---
 
 A live, tunable **unified friends list** built on your real Discord relationships,
 rendered against [Discord's design guidelines][guidelines]. The social-graph
@@ -12,7 +25,7 @@ It's also the example for [`@discordkit/tauri`][tauri]: the Discord Social SDK r
 in a Node **sidecar** (Tauri's Rust core can't load the FFI), bridged to the webview
 over a typed kkrpc connection.
 
-## Architecture
+## 🧠 Architecture
 
 ```mermaid
 flowchart LR
@@ -31,7 +44,7 @@ flowchart LR
   sidecar shell permissions (`capabilities/default.json`), and wires the sidecar
   binary (`externalBin`) + koffi addon (`resources`).
 
-## Prerequisites
+## 📦 Prerequisites
 
 Tier 1 (the default) needs **no backend and no client secret** — Discord auth is
 OAuth2 **PKCE** (a public client), so the whole flow runs locally in the sidecar.
@@ -51,7 +64,7 @@ OAuth2 **PKCE** (a public client), so the whole flow runs locally in the sidecar
    If the SDK can't be found, the app shows a clear "Couldn't start the Discord
    SDK" panel (with the exact paths it checked) and a Retry — not a silent hang.
 
-## Run
+## 🔧 Run
 
 ```bash
 # from the repo root
@@ -80,6 +93,8 @@ crate to `src-tauri`, the `tauri-plugin-keyring-api` npm bindings, and the
 `keyring:allow-*-password` capabilities. (Don't want the vault? Swap in native's
 addon-free `fileStore` — encrypted-file persistence with no extra setup.) The
 **Log out** button clears the stored session.
+
+[MIT][license] © [Drake Costa][personal-website]
 
 [keyring]: https://github.com/HuakunShen/tauri-plugin-keyring
 
@@ -113,6 +128,14 @@ builds.
 
 A later PR will add an optional Steam panel that reconciles your Discord and Steam friend graphs — demonstrating the cross-platform unified list — behind a `STEAM_BACKEND_URL` flag (hidden by default). Steam needs a small companion backend (its Web API key is a secret and Steam blocks CORS), so it's deliberately out of scope here to keep the now-stable libraries shippable; the design is captured in `docs/with-tauri-example-spec.md`.
 
+## 🥂 License
+
+[MIT][license] © [Drake Costa][personal-website]
+
 [guidelines]: https://docs.discord.com/developers/discord-social-sdk/design-guidelines
 [electron]: ../with-electron
 [tauri]: ../../packages/tauri
+[ci_badge]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml/badge.svg
+[ci]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml
+[license]: https://github.com/discordkit/discordkit/blob/main/LICENSE.md
+[personal-website]: https://saeris.gg

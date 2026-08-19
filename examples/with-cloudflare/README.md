@@ -1,4 +1,17 @@
-# discordkit × Cloudflare — Gateway Event Inspector
+<div align="center">
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-dark.svg">
+  <img alt="Discordkit" src="https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-light.svg">
+</picture>
+
+[![CI status][ci_badge]][ci]
+
+**Gateway Event Inspector** — DevTools for the Discord Gateway, on a Worker + Durable Object.
+
+</div>
+
+---
 
 **DevTools for the Discord Gateway.** Connect with a bot token and watch every event Discord sends. The inspector shows the dispatches and the connection lifecycle that other libraries hide.
 
@@ -21,7 +34,7 @@ The Gateway's most common failure is silent. Without the privileged `MESSAGE_CON
 - **Guild filter.** Built from the `GUILD_CREATE` events already in the buffer, so a bot in many guilds narrows to the one you are testing.
 - **Lifecycle separators.** `connected`, `disconnected`, and `connection lost` rules in the event list, so a gap in the stream reads as a reconnect instead of silence.
 
-## Architecture
+## 🧠 Architecture
 
 ```mermaid
 flowchart LR
@@ -51,7 +64,7 @@ connection.connect();
 
 A normal bot does the opposite: subscribe with `onMessageCreate` and let the connection derive its own intents.
 
-## Running it
+## 🔧 Running it
 
 | What         | Command               | Needs               |
 | ------------ | --------------------- | ------------------- |
@@ -96,6 +109,11 @@ DISCORD_BOT_TOKEN=your-token-here
 - [`@discordkit/client`](../../packages/client) — the REST API, including `getGatewayBot`
 - [Example spec](../../docs/gateway-example-spec.md) · [Package spec](../../docs/gateway-package-spec.md)
 
-## License
+## 🥂 License
 
-MIT
+[MIT][license] © [Drake Costa][personal-website]
+
+[ci_badge]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml/badge.svg
+[ci]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml
+[license]: https://github.com/discordkit/discordkit/blob/main/LICENSE.md
+[personal-website]: https://saeris.gg

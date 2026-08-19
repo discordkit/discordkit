@@ -264,10 +264,11 @@ closeAction(4014); // { reconnect: false, discardSession: true  } — give up
 
 ## 🥂 License
 
-MIT
+[MIT][license] © [Drake Costa][personal-website]
+
 [npm_badge]: https://img.shields.io/npm/v/@discordkit/gateway.svg?style=flat
 [npm]: https://www.npmjs.com/package/@discordkit/gateway
-[jsr_badge]: https://jsr.io/badges/@discordkit/gateway
+[jsr_badge]: https://img.shields.io/jsr/v/@discordkit/gateway
 [jsr]: https://jsr.io/@discordkit/gateway
 [ci_badge]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml/badge.svg
 [ci]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml

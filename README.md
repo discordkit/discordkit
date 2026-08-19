@@ -1,9 +1,10 @@
 <div align="center">
 
-![Discordkit][logo-light]
-![Discordkit][logo-dark]
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-dark.svg">
+  <img alt="Discordkit" src="https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-light.svg">
+</picture>
 
-[![npm version][npm_badge]][npm]
 [![CI status][ci_badge]][ci]
 
 A TypeScript SDK for Discord, with support for the [REST API][discord_api] and the native [Social SDK][social-sdk].
@@ -110,12 +111,8 @@ Endpoint documentation taken from Discord's [Official API docs][discord_api].
 
 ## 🥂 License
 
-Released under the [MIT license][license] © [Drake Costa][personal-website].
+[MIT][license] © [Drake Costa][personal-website]
 
-[logo-light]: https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-light.svg#gh-light-mode-only
-[logo-dark]: https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-dark.svg#gh-dark-mode-only
-[npm_badge]: https://img.shields.io/npm/v/@discordkit/client.svg?style=flat
-[npm]: https://www.npmjs.com/package/@discordkit/client
 [ci_badge]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml/badge.svg
 [ci]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml
 [discord_api]: https://discord.com/developers/docs

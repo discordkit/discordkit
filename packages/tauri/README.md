@@ -132,7 +132,7 @@ const discord = await createClient([usersSlice], {
 
 The sidecar can't touch the OS vault directly, so `tauriKeyringStore`'s reads/writes relay through the webview's `keyringRelay`. Setup adds the `tauri-plugin-keyring` crate to `src-tauri`, the `tauri-plugin-keyring-api` peer dep, and the `keyring:allow-*-password` capabilities. (Don't want a vault? Use native's addon-free `fileStore` — no extra setup.)
 
-## 🪞 What crosses the bridge (snapshots + id-keyed RPC)
+## 🌉 What crosses the bridge (snapshots + id-keyed RPC)
 
 `@discordkit/native` returns **live** `Lobby` / `Call` objects (native handles + methods) — those can't cross the process boundary. Over the bridge the webview instead gets serializable **snapshots** (`LobbySnapshot`, `CallSnapshot`) from reads, and drives those entities with **id-keyed RPC** — identical to the [`@discordkit/electron`][electron] model.
 
@@ -204,7 +204,7 @@ Per Discord's SDK guidance, action APIs (send a message, send/accept an invite, 
 
 ## 🥂 License
 
-MIT © [Drake Costa](https://saeris.gg)
+[MIT][license] © [Drake Costa][personal-website]
 
 [social-sdk]: https://discord.com/developers/docs/discord-social-sdk/overview
 [native]: https://www.npmjs.com/package/@discordkit/native
@@ -215,10 +215,9 @@ MIT © [Drake Costa](https://saeris.gg)
 [keyring]: https://github.com/HuakunShen/tauri-plugin-keyring
 [npm_badge]: https://img.shields.io/npm/v/@discordkit/tauri.svg?style=flat
 [npm]: https://www.npmjs.com/package/@discordkit/tauri
-[jsr_badge]: https://jsr.io/badges/@discordkit/tauri
+[jsr_badge]: https://img.shields.io/jsr/v/@discordkit/tauri
 [jsr]: https://jsr.io/@discordkit/tauri
 [ci_badge]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml/badge.svg
 [ci]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml
 [license]: https://github.com/discordkit/discordkit/blob/main/LICENSE.md
 [personal-website]: https://saeris.gg
-[social_sdk]: https://discord.com/developers/docs/discord-social-sdk/overview

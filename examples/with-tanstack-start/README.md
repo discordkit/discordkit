@@ -1,4 +1,17 @@
-# discordkit — TanStack Start OAuth2 example
+<div align="center">
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-dark.svg">
+  <img alt="Discordkit" src="https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-light.svg">
+</picture>
+
+[![CI status][ci_badge]][ci]
+
+Discord OAuth2 login and authenticated API calls in **TanStack Start**.
+
+</div>
+
+---
 
 A minimal TanStack Start app demonstrating Discord OAuth2 login with
 [`@discordkit/oauth`](../../packages/oauth) and authenticated API calls with
@@ -12,7 +25,7 @@ idiomatic TanStack Start shape.
    (`/oauth2/@me` and `getCurrentUserGuilds`), rendered directly.
 4. **Refresh / Logout** — server routes hit from the dashboard's buttons.
 
-## How it's wired
+## 🧠 How it's wired
 
 - **`src/lib/discord.ts`** — the OAuth2 client + login/callback handler
   (`@discordkit/oauth`). The `@sensitive` client secret never reaches the client.
@@ -31,7 +44,7 @@ Runs under Vite+ (`vp dev`/`vp build`) with the `nitro/vite` plugin providing
 the server runtime. The shared E2E flow lives in
 [`@discordkit/e2e`](../../packages/e2e) and is reused verbatim across examples.
 
-## Setup
+## 📦 Setup
 
 1. Create a Discord application at the
    [developer dashboard](https://discord.com/developers/applications).
@@ -53,3 +66,12 @@ the server runtime. The shared E2E flow lives in
 This keeps session handling intentionally small to focus on the OAuth2 flow. For
 a production app, consider a dedicated auth library — `@discordkit/oauth` provides
 the framework-agnostic primitives such libraries build on.
+
+## 🥂 License
+
+[MIT][license] © [Drake Costa][personal-website]
+
+[ci_badge]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml/badge.svg
+[ci]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml
+[license]: https://github.com/discordkit/discordkit/blob/main/LICENSE.md
+[personal-website]: https://saeris.gg

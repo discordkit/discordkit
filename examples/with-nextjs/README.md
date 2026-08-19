@@ -1,4 +1,17 @@
-# discordkit — Next.js OAuth2 example
+<div align="center">
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-dark.svg">
+  <img alt="Discordkit" src="https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-light.svg">
+</picture>
+
+[![CI status][ci_badge]][ci]
+
+Discord OAuth2 login and authenticated API calls in **Next.js** (App Router).
+
+</div>
+
+---
 
 A minimal Next.js (App Router) app demonstrating Discord OAuth2 login with
 [`@discordkit/oauth`](../../packages/oauth) and authenticated API calls with
@@ -12,7 +25,7 @@ It walks the full loop:
 4. **Guilds** — list the user's guilds (`getCurrentUserGuilds` from `@discordkit/client`).
 5. **Refresh / Logout** — refresh the access token, or revoke it and clear the session.
 
-## How it's wired
+## 🧠 How it's wired
 
 - **`src/lib/discord.ts`** — the OAuth2 client + the shared login/callback handler
   (`createAuthHandler`). `server-only`, so the client secret never reaches the browser.
@@ -35,7 +48,7 @@ the client secret and session key live only in `server-only` modules and route h
 and [Varlock](https://varlock.dev) marks them `@sensitive` so importing them into a client
 component is a build-time error. The browser only sees `/api/me` and `/api/guilds` results.
 
-## Setup
+## 📦 Setup
 
 1. Create a Discord application at the
    [developer dashboard](https://discord.com/developers/applications).
@@ -75,3 +88,12 @@ session rotation, CSRF, and many edge cases for you. The Next.js docs list good 
 (Better Auth, Auth.js, Clerk, WorkOS, and others):
 <https://nextjs.org/docs/app/guides/authentication#auth-libraries>. `@discordkit/oauth`
 provides the framework-agnostic primitives such libraries can build on.
+
+## 🥂 License
+
+[MIT][license] © [Drake Costa][personal-website]
+
+[ci_badge]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml/badge.svg
+[ci]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml
+[license]: https://github.com/discordkit/discordkit/blob/main/LICENSE.md
+[personal-website]: https://saeris.gg

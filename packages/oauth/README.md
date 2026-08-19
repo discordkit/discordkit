@@ -123,11 +123,11 @@ OAuth2 documentation taken from Discord's [Official API docs][discord_api].
 
 ## 🥂 License
 
-Released under the [MIT license][license] © [Drake Costa][personal-website].
+[MIT][license] © [Drake Costa][personal-website]
 
 [npm_badge]: https://img.shields.io/npm/v/@discordkit/oauth.svg?style=flat
 [npm]: https://www.npmjs.com/package/@discordkit/oauth
-[jsr_badge]: https://jsr.io/badges/@discordkit/oauth
+[jsr_badge]: https://img.shields.io/jsr/v/@discordkit/oauth
 [jsr]: https://jsr.io/@discordkit/oauth
 [ci_badge]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml/badge.svg
 [ci]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml

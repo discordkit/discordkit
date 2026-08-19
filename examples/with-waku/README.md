@@ -1,4 +1,17 @@
-# discordkit — Waku OAuth2 example
+<div align="center">
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-dark.svg">
+  <img alt="Discordkit" src="https://raw.githubusercontent.com/discordkit/discordkit/main/static/logo-light.svg">
+</picture>
+
+[![CI status][ci_badge]][ci]
+
+Discord OAuth2 login and authenticated API calls in [Waku][waku].
+
+</div>
+
+---
 
 A minimal [Waku](https://waku.gg) app demonstrating Discord OAuth2 login with
 [`@discordkit/oauth`](../../packages/oauth) and authenticated API calls with
@@ -13,7 +26,7 @@ A minimal [Waku](https://waku.gg) app demonstrating Discord OAuth2 login with
    (`/oauth2/@me` and `getCurrentUserGuilds`), rendered directly.
 4. **Refresh / Logout** — API routes hit from the dashboard's `<form>` buttons.
 
-## How it's wired
+## 🧠 How it's wired
 
 - **`src/lib/discord.ts`** — the OAuth2 client + login/callback handler
   (`@discordkit/oauth`). The `@sensitive` client secret never reaches the client.
@@ -42,7 +55,7 @@ Varlock env plugin and the `@discordkit/source` resolve condition. The shared
 E2E flow lives in [`@discordkit/e2e`](../../packages/e2e) and is reused verbatim
 across examples.
 
-## Setup
+## 📦 Setup
 
 1. Create a Discord application at the
    [developer dashboard](https://discord.com/developers/applications).
@@ -66,3 +79,13 @@ a production app, consider a dedicated auth library — `@discordkit/oauth` prov
 the framework-agnostic primitives such libraries build on. Note also that Waku's
 server-side cookie/context APIs (`unstable_getRequest`, `unstable_redirect`) are
 marked `unstable_` and may change before Waku's 1.0 stable release.
+
+## 🥂 License
+
+[MIT][license] © [Drake Costa][personal-website]
+
+[ci_badge]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml/badge.svg
+[ci]: https://github.com/discordkit/discordkit/actions/workflows/ci.yml
+[license]: https://github.com/discordkit/discordkit/blob/main/LICENSE.md
+[personal-website]: https://saeris.gg
+[waku]: https://waku.gg
