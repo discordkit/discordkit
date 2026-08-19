@@ -1,0 +1,27 @@
+{
+  "name": "@discordkit/oauth",
+  "version": "0.1.0",
+  "exports": {
+    ".": "./src/index.ts",
+    "./astro": "./src/astro.ts",
+    "./cookies": "./src/cookies.ts",
+    "./createOAuth2": "./src/createOAuth2.ts",
+    "./crypto": "./src/crypto.ts",
+    "./handler": "./src/handler.ts",
+    "./next": "./src/next.ts",
+    "./types/OAuth2Scope": "./src/types/OAuth2Scope.ts",
+    "./types/TokenResponse": "./src/types/TokenResponse.ts",
+    "./web": "./src/web.ts"
+  },
+  "publish": {
+    "exclude": [
+      "**/__tests__",
+      "**/__mocks__",
+      "**/__smoke__",
+      "**/*.spec.ts",
+      "**/*.test-d.ts",
+      "vite.config.ts",
+      "tsconfig.json"
+    ]
+  }
+}

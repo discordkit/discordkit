@@ -62,5 +62,12 @@
     "@tauri-apps/api": "catalog:",
     "@tauri-apps/plugin-shell": "catalog:",
     "tauri-plugin-keyring-api": "catalog:"
+  },
+  "bumpy": {
+    "publishCommand": [
+      "node ../../scripts/npm-publish.mjs",
+      "node ../../scripts/jsr-sync.mjs",
+      "node ../../scripts/jsr-publish.mjs"
+    ]
   }
 }

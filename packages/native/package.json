@@ -89,5 +89,12 @@
     "disposablestack": "catalog:",
     "koffi": "catalog:",
     "signal-polyfill": "catalog:"
+  },
+  "bumpy": {
+    "publishCommand": [
+      "node ../../scripts/npm-publish.mjs",
+      "node ../../scripts/jsr-sync.mjs",
+      "node ../../scripts/jsr-publish.mjs"
+    ]
   }
 }
