@@ -19,5 +19,5 @@ export const boundedInteger = (
           )
         : v.pipe(v.number(), v.integer(), v.minValue(req.min ?? 0)),
     (issue) =>
-      `Expected an integer with a value ${typeof req === `number` ? `of ${req}` : `>= ${req.min ?? 0}${req.max ? `&& <= ${req.max}` : ``}`}, received has value: ${issue.received.length}`
+      `Expected an integer with a value ${typeof req === `number` ? `of ${req}` : `>= ${req.min ?? 0}${typeof req.max === `number` ? ` && <= ${req.max}` : ``}`}, received: ${issue.received}`
   );
