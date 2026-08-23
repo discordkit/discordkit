@@ -6,7 +6,6 @@ import { CORE_CHANNELS, type CoreBridge } from "./channels/core.js";
 import {
   bridgeIo,
   eventRouter,
-  EVENT_SINK,
   type BridgeIo,
   type RemoteApi
 } from "./internal.js";
