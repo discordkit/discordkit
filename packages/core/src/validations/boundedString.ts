@@ -15,5 +15,5 @@ export const boundedString = (
         ? v.pipe(v.string(), v.minLength(req.min ?? 1), v.maxLength(req.max))
         : v.pipe(v.string(), v.minLength(req.min ?? 1)),
     (issue) =>
-      `Expected a string with a legnth ${typeof req === `number` ? req : `>= ${req.min ?? 0}${req.max ? `&& <= ${req.max}` : ``}`}, received has length: ${issue.received.length}`
+      `Expected a string with a length ${typeof req === `number` ? req : `>= ${req.min ?? 1}${typeof req.max === `number` ? ` && <= ${req.max}` : ``}`}, received: ${issue.received}`
   );
