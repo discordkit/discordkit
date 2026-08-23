@@ -1,11 +1,12 @@
 import * as v from "valibot";
 import { remove, type Fetcher } from "@discordkit/core/requests/methods";
 import { snowflake } from "@discordkit/core/validations/snowflake";
+import { reactionEmoji } from "@discordkit/core/validations/reactionEmoji";
 
 export const deleteOwnReactionSchema = v.object({
   channel: snowflake,
   message: snowflake,
-  emoji: snowflake
+  emoji: reactionEmoji
 });
 
 /**

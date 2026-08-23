@@ -7,6 +7,7 @@ export * from "./boundedString.js";
 export * from "./datauri.js";
 export * from "./fileUpload.js";
 export * from "./hasMimeType.js";
+export * from "./reactionEmoji.js";
 export * from "./schema.js";
 export * from "./toBlob.js";
 export * from "./snowflake.js";

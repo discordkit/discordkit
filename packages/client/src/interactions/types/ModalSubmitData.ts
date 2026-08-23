@@ -6,7 +6,7 @@ export const modalSubmitData = v.object({
   /** custom_id of the modal */
   customId: boundedString({ max: 100 }),
   /** Values submitted by the user */
-  components: v.array(messageComponentSchema)
+  components: messageComponentSchema
 });
 
 export interface ModalSubmitData extends v.InferOutput<

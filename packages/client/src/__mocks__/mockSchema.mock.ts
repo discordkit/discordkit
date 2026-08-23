@@ -7,6 +7,7 @@ import {
   type FileUpload
 } from "@discordkit/core/validations/fileUpload";
 import { snowflake } from "@discordkit/core/validations/snowflake";
+import { reactionEmoji } from "@discordkit/core/validations/reactionEmoji";
 import { faker } from "@faker-js/faker";
 import {
   applicationFlag,
@@ -39,6 +40,9 @@ import {
 export const mockUtils = new MockUtils(discord, {
   customMocks: [
     [snowflake, (): string => MockUtils.uid.getUniqueID().toString()],
+    // A Unicode emoji, the form these endpoints are most often called with
+    // and one the schema previously rejected outright.
+    [reactionEmoji, (): string => faker.internet.emoji()],
     [datauri, (): string => faker.image.dataUri()],
     [
       fileUpload,
