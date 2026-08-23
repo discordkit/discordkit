@@ -2,12 +2,13 @@ import * as v from "valibot";
 import { get, type Fetcher } from "@discordkit/core/requests/methods";
 import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
 import { snowflake } from "@discordkit/core/validations/snowflake";
+import { reactionEmoji } from "@discordkit/core/validations/reactionEmoji";
 import type { User } from "../user/types/User.js";
 
 export const getReactionsSchema = v.object({
   channel: snowflake,
   message: snowflake,
-  emoji: snowflake,
+  emoji: reactionEmoji,
   params: v.exactOptional(
     v.partial(
       v.object({
