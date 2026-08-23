@@ -19,5 +19,5 @@ export const boundedArray = <TItem>(
           )
         : v.pipe(v.array(items), v.minLength(req.min ?? 1)),
     (issue) =>
-      `Expected an array with a legnth ${typeof req === `number` ? req : `>= ${req.min ?? 0}${req.max ? `&& <= ${req.max}` : ``}`}, received has length: ${issue.received.length}`
+      `Expected an array with a length ${typeof req === `number` ? req : `>= ${req.min ?? 1}${typeof req.max === `number` ? ` && <= ${req.max}` : ``}`}, received: ${issue.received}`
   );
