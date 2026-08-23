@@ -31,7 +31,7 @@ export const editFollowupMessageSchema = v.object({
       /** allowed mentions for the message */
       allowedMentions: allowedMentionSchema,
       /** the components to include with the message */
-      components: v.array(messageComponentSchema),
+      components: messageComponentSchema,
       /** the contents of the file being sent */
       files: v.array(fileUpload),
       /** attachment objects with filename and description */

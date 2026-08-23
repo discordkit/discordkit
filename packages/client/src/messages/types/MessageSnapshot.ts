@@ -38,7 +38,7 @@ export const messageSnapshotSchema = v.object({
     /** sent if the message contains stickers */
     stickerItems: v.exactOptional(v.array(stickerSchema)),
     /** sent if the message contains components like buttons, action rows, or other interactive components */
-    components: v.exactOptional(v.array(messageComponentSchema))
+    components: v.exactOptional(messageComponentSchema)
   })
 });
 
