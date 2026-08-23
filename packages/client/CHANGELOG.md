@@ -7,6 +7,45 @@
 
 
 
+
+## 4.4.0
+<sub>2026-08-23</sub>
+
+- [#90](https://github.com/discordkit/discordkit/pull/90)  *(minor)* Thanks [@Saeris](https://github.com/Saeris)!
+  Reaction endpoints now accept the emoji forms Discord actually takes. `createReaction`, `deleteOwnReaction`, `deleteUserReaction`, `deleteAllReactionsForEmoji` and `getReactions` typed `emoji` as `snowflake`, which is a runtime validator, not just a type. It rejected both a Unicode emoji (`"❌"`) and the `name:id` custom form that these endpoints' own documentation describes, leaving a custom emoji's bare id as the only value that parsed. A cast could satisfy the compiler but not the validator.
+
+  Adds `reactionEmoji` to `@discordkit/core/validations`, accepting all three documented forms:
+
+  - a Unicode emoji, as the character itself (`"❌"`)
+  - a custom emoji, as `name:id` (`"catgirl:1234567890123456789"`)
+  - a custom emoji's bare id
+
+  A value containing `/` is rejected, since it would split into a second path segment and address a different endpoint.
+
+  Callers do not need to percent-encode the value. `URL` encodes non-ASCII path segments on its own and leaves an existing `%` untouched, so encoded and unencoded input produce identical requests.
+
+  This widens what the five endpoints accept and rejects nothing that previously parsed.
+
+  Reported by the team building [inbou](https://github.com/discordkit/inbou).
+- [#91](https://github.com/discordkit/discordkit/pull/91)  *(minor)* Thanks [@Saeris](https://github.com/Saeris)!
+  Components V2 messages can now be sent. Fixes [#88](https://github.com/discordkit/discordkit/issues/88).
+
+  **`components` accepts the V2 layout components.** The top-level `components` field was typed as `boundedArray(actionRowSchema, { max: 5 })`, so it admitted only `ActionRow`. `Container`, `TextDisplay`, `MediaGallery`, `Section`, `Separator` and `File` were all fully modelled and exported but had no path to the API — passing one was a type error, and casting past it failed validation. The field is now a union of the V1 shape (up to 5 action rows) and the V2 shape (up to 40 components, admitting the layout components), so `createMessage`, `editMessage`, the interaction responses and the webhook endpoints all take V2 messages. Anything that validated before still validates.
+
+  **`UnfurledMediaItem.attachmentId` is now optional.** It is response-only and present only when the media was uploaded as an attachment, as its own doc comment says, but the schema required it — which made every externally-hosted image unrepresentable. The other response-only fields on that object were already optional.
+
+  **`Section.accessroy` is now `Section.accessory`.** Discord names the field `accessory`, so the misspelling serialised to a field Discord ignores and a `Section` could never render its accessory. This renames a property on an exported interface, but no working code can depend on the old name: the misspelled field was dropped by Discord, so any Section relying on it was already broken. Rename the property at any construction site.
+
+  `MessageComponent` is now a type alias rather than an interface, because a union cannot be extended by one. It is still exported under the same name and infers from the same schema.
+
+  Reported against `@discordkit/client@4.3.3` while building [tome](https://github.com/crimson-witnesses/tome).
+- [#92](https://github.com/discordkit/discordkit/pull/92)  *(patch)* Thanks [@Saeris](https://github.com/Saeris)!
+  `components` is a flat array everywhere. `messageComponentSchema` is itself an array (`boundedArray(actionRowSchema, …)`), but eight places wrapped it in `v.array()` again, producing `ActionRow[][]` — a shape Discord neither sends nor accepts. Those schemas rejected the real flat payload and admitted only a doubly nested one.
+
+  Affected: `Message`, `MessageSnapshot`, `ModalSubmitData`, `createFollowupMessage`, `editFollowupMessage`, `editOriginalInteractionResponse`, `executeWebhook` and `editWebhookMessage`. `createMessage`, `editMessage`, `startThreadInForumOrMediaChannel` and `InteractionCallbackData` already used it correctly and are unchanged.
+
+  In practice this means parsing a message that has components, and sending components through the interaction-followup and webhook endpoints, now work against Discord's actual wire format.
+
 ## 4.3.3
 <sub>2026-08-19</sub>
 
