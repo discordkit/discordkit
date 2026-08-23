@@ -21,7 +21,7 @@ export const unfurledMediaItemSchema = v.object({
   /** The [media type](https://en.wikipedia.org/wiki/Media_type) of the content. This field is ignored and provided by the API as part of the response */
   contentType: v.exactOptional(boundedString()),
   /** The id of the uploaded attachment. This field is ignored and provided by the API as part of the response (Only present if the media item was uploaded as an attachment.) */
-  attachmentId: snowflake
+  attachmentId: v.exactOptional(snowflake)
 });
 
 export interface UnfurledMediaItem extends v.InferOutput<
