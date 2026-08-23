@@ -15,7 +15,7 @@ const _sectionSchema = v.object({
   /** One to three child components representing the content of the section that is contextually associated to the accessory */
   components: boundedArray(textDisplaySchema, { max: 3 }),
   /** A thumbnail or a button component, with a future possibility of adding more compatible components */
-  accessroy: v.union([thumbnailSchema, buttonSchema])
+  accessory: v.union([thumbnailSchema, buttonSchema])
 });
 
 export interface Section extends v.InferOutput<typeof _sectionSchema> {}
