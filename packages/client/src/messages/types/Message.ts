@@ -97,7 +97,7 @@ const _messageSchema = v.object({
   /** the thread that was started from this message, includes {@link ThreadMember | thread member object} */
   thread: v.exactOptional<v.GenericSchema<Channel>>(channelSchema),
   /** sent if the message contains components like buttons, action rows, or other interactive components */
-  components: v.exactOptional(v.array(messageComponentSchema)),
+  components: v.exactOptional(messageComponentSchema),
   /** sent if the message contains stickers */
   stickerItems: v.exactOptional(v.array(stickerSchema)),
   /** @deprecated Use `stickerItems` instead. The stickers sent with the message. */
