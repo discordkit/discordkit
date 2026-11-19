@@ -14,7 +14,7 @@ export const modifyLobbySchema = v.object({
       metadata: v.nullish(
         v.pipe(v.record(v.string(), v.string()), v.maxEntries(1000))
       ),
-      /** optional array of up to 25 users to replace the lobby members with. If provided, lobby members not in this list will be removed from the lobby. */
+      /** optional array of up to 25 users to replace the lobby members with. If provided, lobby members not in this list will be removed from the lobby. Requests with more than 25 members are rejected. */
       members: v.pipe(
         v.array(
           v.object({

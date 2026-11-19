@@ -89,7 +89,7 @@ const threadOptions = v.partial(
     rateLimitPerUser: v.nullable(
       v.pipe(v.number(), v.minValue(0), v.maxValue(21600))
     ),
-    /** channel flags combined as a bitfield; PINNED can only be set for threads in forum channels */
+    /** {@link ChannelFlags | channel flags} combined as a bitfield */
     flags: v.exactOptional(asInteger(channelFlag) as v.GenericSchema<number>),
     /** the IDs of the set of tags that have been applied to a thread in a `GUILD_FORUM` or a `GUILD_MEDIA` channel; limited to 5 */
     appliedTags: v.exactOptional(v.pipe(v.array(snowflake), v.maxLength(5)))

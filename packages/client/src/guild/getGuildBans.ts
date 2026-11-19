@@ -24,7 +24,7 @@ export const getGuildBansSchema = v.object({
  *
  * **GET** `/guilds/:guild/bans`
  *
- * Returns a list of {@link Ban | ban objects} for the users banned from this guild. Requires the `BAN_MEMBERS` permission.
+ * Returns a list of {@link Ban | ban objects} for the users banned from this guild. Requires the `BAN_MEMBERS` or `VIEW_AUDIT_LOG` permission.
  */
 export const getGuildBans: Fetcher<typeof getGuildBansSchema, Ban[]> = async ({
   guild,

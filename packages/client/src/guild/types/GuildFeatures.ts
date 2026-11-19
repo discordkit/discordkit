@@ -39,6 +39,8 @@ export enum GuildFeatures {
   PARTNERED = `PARTNERED`,
   /** guild can be previewed before joining via Membership Screening or the directory */
   PREVIEW_ENABLED = `PREVIEW_ENABLED`,
+  /** guild requires the `ADMINISTRATOR` permission to prune members, in place of `MANAGE_GUILD` and `KICK_MEMBERS`. Can be enabled by the server owner */
+  PRUNE_REQUIRES_ADMIN = `PRUNE_REQUIRES_ADMIN`,
   /** guild has disabled alerts for join raids in the configured safety alerts channel */
   RAID_ALERTS_DISABLED = `RAID_ALERTS_DISABLED`,
   /** guild is able to set role icons */

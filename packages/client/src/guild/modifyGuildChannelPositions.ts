@@ -30,7 +30,25 @@ export const modifyGuildChannelPositionsSchema = v.object({
  * > [!NOTE]
  * >
  * > Only channels to be modified are required.
+ *
+ * > [!NOTE]
+ * >
+ * > This endpoint supports the `X-Audit-Log-Reason` header.
+ *
+ * > [!NOTE]
+ * >
+ * > At most one entry per request may change `parentId`. A request that changes `parentId` for more than one channel fails with a `400` response and error code `40009` (`Only one channel can have a parent_id modified at a time`).
+ *
+ * > [!NOTE]
+ * >
+ * > Permissions are checked per entry, based on what the entry changes:
+ * >
+ * > - An entry that only changes `position` requires the `MANAGE_CHANNELS` permission at the guild level (or on the channel's current parent category). It does **not** require access to the individual channel, so a full reordering may include channels the current user cannot view.
+ * > - An entry that changes `parentId` requires the `MANAGE_CHANNELS` permission on that channel and on the destination (the new parent category, or the guild when moving the channel out of a category).
  */
 export const modifyGuildChannelPositions: Fetcher<
-  typeof modifyGuildChannelPositionsSchema
-> = async ({ guild, body }) => patch(`/guilds/${guild}/channels`, body);
+  typeof modifyGuildChannelPositionsSchema,
+  void,
+  { auditLogReason: true }
+> = async ({ guild, body }, options) =>
+  patch(`/guilds/${guild}/channels`, body, options);
