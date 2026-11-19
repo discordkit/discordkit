@@ -174,6 +174,36 @@ const ADMONITION_NAMES = new Set<AdmonitionBlock[`kind`]>([
   `Danger`
 ]);
 
+// ─── render normalization ──────────────────────────────────────────────────
+
+/**
+ * Fold Mintlify's current `.md` render back into the shape the rest of this
+ * file reads. See README § 3.14.
+ *
+ * Since late 2026 the render no longer emits `<Route>`: an endpoint is a bare
+ * paragraph of the method, a newline, then the path. Doc links also became
+ * absolute `https://docs.discord.com/….md#anchor` URLs. Rewriting both here,
+ * at the single entry point, keeps every downstream assumption true — Route
+ * detection, and the `/developers/…` link handling in the JSDoc renderers.
+ *
+ * A cache fetched before the change passes through untouched.
+ */
+export function normalizeRender(markdown: string): string {
+  return markdown
+    .replace(
+      /^(GET|POST|PUT|PATCH|DELETE)\r?\n(\/\S.*)$/gm,
+      // remark-mdx reads a bare `{channel.id}` as a JS expression, not text,
+      // so the path params must be escaped the way the old render had them.
+      (_match, method: string, path: string) =>
+        `<Route method="${method}">${path.replace(/(?<!\\)\{/g, `\\{`)}</Route>`
+    )
+    .replace(
+      /\]\(https:\/\/docs\.discord\.com(\/developers\/[^)#\s]*?)\.md(#[^)\s]*)?\)/g,
+      (_match, page: string, hash: string | undefined) =>
+        `](${page}${hash ?? ``})`
+    );
+}
+
 // ─── public entry point ────────────────────────────────────────────────────
 
 export function parseResource(markdown: string): DocResource {
@@ -181,7 +211,7 @@ export function parseResource(markdown: string): DocResource {
     .use(remarkParse)
     .use(remarkGfm)
     .use(remarkMdx)
-    .parse(markdown);
+    .parse(normalizeRender(markdown));
 
   // Title and resource description.
   const { title, description, bodyStart } = extractHeader(tree.children);

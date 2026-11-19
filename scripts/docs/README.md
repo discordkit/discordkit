@@ -446,6 +446,24 @@ any of those means the docs restructured — check before trusting codegen.
 > language tag and captures the attributes as the block's first content
 > line — which silently yielded **0 intents**. Match ` ```[^\n]*\n `.
 
+### 3.14 The late-2026 render change — normalize, don't re-teach
+
+Between the Aug 2026 and Nov 2026 refreshes, Mintlify changed how it renders a docs page to `.md`:
+
+| Construct | Aug 2026 render                                   | Nov 2026 render                                                   |
+| --------- | ------------------------------------------------- | ----------------------------------------------------------------- |
+| Endpoint  | `<Route method="GET">/channels/[\{…}](…)</Route>` | a bare paragraph: `GET`, a newline, then `/channels/[{…}](…)`     |
+| Doc links | `/developers/resources/channel#anchor`            | `https://docs.discord.com/developers/resources/channel.md#anchor` |
+| Anchors   | `<ManualAnchor id="…" />`                         | removed                                                           |
+
+Nothing failed. `parseResource` returned **zero endpoints** for every page, so `audit.ts` would have reported every endpoint in the codebase as "missing from docs" and `diff-jsdoc.ts` would have matched nothing.
+
+**Decision**: `normalizeRender()` in `parse.ts` rewrites the new render back into the old one before parsing, rather than adding a second Route shape. `parse.ts` consults Routes in four places and three downstream tools assume site-relative `/developers/…` links, so one rewrite at the single entry point keeps all of them true. A cache fetched before the change passes through untouched. `__tests__/parse.spec.ts` pins both renders.
+
+**Sanity number**: the Nov 2026 cache yields **245 endpoints** across the REST pages. A zero, or every folder's audit reporting its endpoints as missing, means the render changed again — check here before trusting any report.
+
+> **Gotcha:** the parser runs `remark-mdx`, where a bare `{channel.id}` is a JavaScript expression node, not text. The old render shipped path params pre-escaped as `\{`; the new one does not. `normalizeRender()` restores the escape, or the params silently drop out of the route.
+
 ---
 
 ## 4. Per-folder fudges (FOLDER_PREFIX / FOLDER_INFIX / FOLDER_STRIP_IDENT)
