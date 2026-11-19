@@ -41,7 +41,12 @@ jobs:
       # examples' Varlock `env.d.ts`, which is gitignored like `next-env.d.ts`).
       - run: vp run --concurrency-limit 1 -r typegen
       - run: vp check
-      - run: vp test
+      # The Node project is what the version matrix is for. The browser project
+      # does not depend on the Node version, so it runs once, on the LTS leg,
+      # against the Chrome the runner image ships (see the root vite.config.ts).
+      - run: vp test --project node
+      - run: vp test --project browser
+        if: ${{ matrix.node-version == 'lts' }}
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5

@@ -4600,6 +4600,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@vitest/browser-playwright@npm:5.1.0":
+  version: 5.1.0
+  resolution: "@vitest/browser-playwright@npm:5.1.0"
+  dependencies:
+    "@vitest/browser": "npm:5.1.0"
+    "@vitest/mocker": "npm:5.1.0"
+    tinyrainbow: "npm:^3.2.0"
+  peerDependencies:
+    playwright: "*"
+    vitest: 5.1.0
+  peerDependenciesMeta:
+    playwright:
+      optional: false
+  checksum: 10/617bcc7dd81b526fd909bc7264c2b4ca1b49e13da8dbd97ed1a6cca7594f258acd7c4e24debfe31b0af496d742e0b8f8307062a5eb423806b688aad1791417c3
+  languageName: node
+  linkType: hard
+
 "@vitest/browser-preview@npm:5.1.0":
   version: 5.1.0
   resolution: "@vitest/browser-preview@npm:5.1.0"
@@ -5962,11 +5979,13 @@ __metadata:
     "@types/node": "catalog:"
     "@types/react": "catalog:"
     "@types/react-dom": "catalog:"
+    "@vitest/browser-playwright": "catalog:"
     "@vitest/coverage-v8": "catalog:"
     happy-dom: "npm:^21.0.4"
     mdast-util-to-string: "npm:^4.0.0"
     msw: "catalog:"
     nodejs-snowflake: "npm:^2.0.1"
+    playwright: "catalog:"
     react: "catalog:"
     react-dom: "catalog:"
     remark-gfm: "npm:^4.0.1"
