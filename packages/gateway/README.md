@@ -249,6 +249,7 @@ backoffDelay(9); // 30000 — capped
 
 closeAction(4000); // { reconnect: true,  discardSession: false } — resume
 closeAction(1000); // { reconnect: true,  discardSession: true  } — fresh identify
+closeAction(4007); // { reconnect: true,  discardSession: true  } — fresh identify
 closeAction(4014); // { reconnect: false, discardSession: true  } — give up
 ```
 

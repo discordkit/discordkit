@@ -435,6 +435,38 @@ describe(`gateway connection`, () => {
     expect(data.seq).toBe(1);
   });
 
+  it(`identifies fresh after Discord rejects the resume sequence`, async () => {
+    let first = true;
+    harness = withGateway((ctx) => {
+      ctx.client.send(hello());
+      if (first) {
+        first = false;
+        afterFrame(ctx.capture, GatewayOpcode.IDENTIFY, () => {
+          ctx.client.send(ready(`session-rejected`));
+          setTimeout(() => {
+            ctx.client.close(4007, `Invalid seq`);
+          }, 10);
+        });
+      }
+    });
+
+    connection = new GatewayConnection({ token: `t`, intents: [`GUILDS`] });
+    connection.connect();
+
+    // The second connection is the reconnect. Race the two possible openers so
+    // a regression reports the wrong opcode instead of timing out.
+    const capture = await harness.connected(2);
+    const opener = await Promise.race([
+      capture.waitFor(GatewayOpcode.IDENTIFY),
+      capture.waitFor(GatewayOpcode.RESUME)
+    ]);
+    // 4007 means Discord refused this session's sequence number. Resuming
+    // re-sends the same refused pair, so the client would earn another 4007 on
+    // every backoff tick and never come back online.
+    expect(opener.op).toBe(GatewayOpcode.IDENTIFY);
+    expect(connection.sessionId).toBeNull();
+  });
+
   it(`stops reconnecting after a fatal close code`, async () => {
     harness = withGateway((ctx) => {
       // 4014 = disallowed intent. Retrying is an infinite loop that will fail
@@ -562,6 +594,15 @@ describe(`closeAction`, () => {
 
   it(`discards the session when it timed out`, () => {
     expect(closeAction(GatewayCloseCode.SESSION_TIMED_OUT)).toEqual({
+      reconnect: true,
+      discardSession: true
+    });
+  });
+
+  it(`discards the session when its resume sequence was rejected`, () => {
+    // Discord closes with 4007 instead of sending INVALID_SESSION, so nothing
+    // else clears the session. Keeping it replays the rejected RESUME forever.
+    expect(closeAction(GatewayCloseCode.INVALID_SEQ)).toEqual({
       reconnect: true,
       discardSession: true
     });
