@@ -46,3 +46,24 @@ export interface Attachment extends v.InferOutput<typeof _attachmentSchema> {}
  * ### [Attachment](https://discord.com/developers/docs/resources/message#attachment-object)
  */
 export const attachmentSchema = schema<Attachment>(_attachmentSchema);
+
+const _attachmentRequestSchema = v.object({
+  ...v.partial(_attachmentSchema).entries,
+  /** whether the attachment should be marked as a spoiler and blurred until clicked, this sets the `IS_SPOILER` attachment flag */
+  isSpoiler: v.exactOptional(v.boolean())
+});
+
+export interface AttachmentRequest extends Partial<Attachment> {
+  isSpoiler?: boolean;
+}
+
+/**
+ * ### [Attachment Request](https://discord.com/developers/docs/resources/message#attachment-object-attachment-request-structure)
+ *
+ * This structure is used in Message Create and Edit requests to set which attachments are in the message and provide their metadata.
+ *
+ * When editing, you must provide the `id` of each file to keep, and you can optionally update the `description` and `isSpoiler` fields of existing attachments.
+ */
+export const attachmentRequestSchema = schema<AttachmentRequest>(
+  _attachmentRequestSchema
+);

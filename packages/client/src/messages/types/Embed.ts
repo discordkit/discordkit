@@ -1,10 +1,13 @@
 import * as v from "valibot";
+import { asInteger } from "@discordkit/core/validations/asInteger";
 import { boundedArray } from "@discordkit/core/validations/boundedArray";
 import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
 import { boundedString } from "@discordkit/core/validations/boundedString";
 import { schema } from "@discordkit/core/validations/schema";
 import { timestamp } from "@discordkit/core/validations/timestamp";
 import { url } from "@discordkit/core/validations/url";
+import { componentSchema } from "../../components/types/Component.js";
+import { embedFlag } from "./EmbedFlags.js";
 import { embedTypeSchema } from "./EmbedType.js";
 
 const _embedFooterSchema = v.object({
@@ -157,7 +160,11 @@ export const embedEntries = {
   /** author information */
   author: embedAuthorSchema,
   /** fields information, max of 25 */
-  fields: boundedArray(embedFieldSchema, { max: 25 })
+  fields: boundedArray(embedFieldSchema, { max: 25 }),
+  /** components that make up the embed, only present on `components` type embeds. See [Component Embeds](https://discord.com/developers/docs/link-previews/component-embeds) */
+  components: v.array(componentSchema),
+  /** {@link EmbedFlags | embed flags} combined as a bitfield */
+  flags: asInteger(embedFlag) as v.GenericSchema<number>
 } as const;
 
 const _embedSchema = v.partial(v.object(embedEntries));

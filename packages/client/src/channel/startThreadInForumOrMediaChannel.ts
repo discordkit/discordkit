@@ -2,13 +2,12 @@
 import { post, type Fetcher } from "@discordkit/core/requests/methods";
 import { asInteger } from "@discordkit/core/validations/asInteger";
 import { multipart, fileUpload } from "@discordkit/core/validations/fileUpload";
-import { partialSchema } from "@discordkit/core/validations/schema";
 import { snowflake } from "@discordkit/core/validations/snowflake";
 import { threadChannelEntries } from "./types/Channel.js";
 import { autoArchiveDurationSchema } from "./types/AutoArchiveDuration.js";
 import { embedSchema } from "../messages/types/Embed.js";
 import { allowedMentionSchema } from "../messages/types/AllowedMention.js";
-import { attachmentSchema } from "../messages/types/Attachment.js";
+import { attachmentRequestSchema } from "../messages/types/Attachment.js";
 import { messageComponentSchema } from "../messages/types/MessageComponent.js";
 import { messageSchema } from "../messages/types/Message.js";
 import { messageFlag } from "../messages/types/MessageFlag.js";
@@ -38,7 +37,7 @@ export const startThreadInForumOrMediaChannelSchema = v.object({
         /** IDs of up to 3 stickers in the server to send in the message */
         stickerIds: v.pipe(v.array(v.string()), v.maxLength(3)),
         /** Attachment objects with filename and description. See Uploading Files */
-        attachments: v.array(partialSchema(attachmentSchema)),
+        attachments: v.array(attachmentRequestSchema),
         /** Message flags combined as a bitfield (only `SUPPRESS_EMBEDS` and `SUPPRESS_NOTIFICATIONS` can be set) */
         flags: asInteger(messageFlag) as v.GenericSchema<number>
       })

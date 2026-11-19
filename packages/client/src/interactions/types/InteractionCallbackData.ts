@@ -2,11 +2,11 @@ import * as v from "valibot";
 import { boundedArray } from "@discordkit/core/validations/boundedArray";
 import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
 import { boundedString } from "@discordkit/core/validations/boundedString";
-import { partialSchema, schema } from "@discordkit/core/validations/schema";
+import { schema } from "@discordkit/core/validations/schema";
 import { allowedMentionSchema } from "../../messages/types/AllowedMention.js";
 import { embedSchema } from "../../messages/types/Embed.js";
 import { messageComponentSchema } from "../../messages/types/MessageComponent.js";
-import { attachmentSchema } from "../../messages/types/Attachment.js";
+import { attachmentRequestSchema } from "../../messages/types/Attachment.js";
 import { pollCreateRequestSchema } from "../../poll/types/PollCreateRequest.js";
 import { applicationCommandOptionChoiceSchema } from "../../application-commands/types/ApplicationCommandOptionChoice.js";
 import { componentSchema } from "../../components/types/Component.js";
@@ -25,7 +25,7 @@ const _messagesCallbackDataSchema = v.object({
   /** message components */
   components: v.exactOptional(messageComponentSchema),
   /** attachment objects with filename and description */
-  attachments: v.exactOptional(v.array(partialSchema(attachmentSchema))),
+  attachments: v.exactOptional(v.array(attachmentRequestSchema)),
   /** Details about the poll */
   poll: v.exactOptional(pollCreateRequestSchema)
 });

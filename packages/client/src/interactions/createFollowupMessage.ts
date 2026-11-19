@@ -4,11 +4,10 @@ import { asInteger } from "@discordkit/core/validations/asInteger";
 import { boundedArray } from "@discordkit/core/validations/boundedArray";
 import { boundedString } from "@discordkit/core/validations/boundedString";
 import { multipart, fileUpload } from "@discordkit/core/validations/fileUpload";
-import { partialSchema } from "@discordkit/core/validations/schema";
 import { snowflake } from "@discordkit/core/validations/snowflake";
 import { embedEntries } from "../messages/types/Embed.js";
 import { allowedMentionSchema } from "../messages/types/AllowedMention.js";
-import { attachmentSchema } from "../messages/types/Attachment.js";
+import { attachmentRequestSchema } from "../messages/types/Attachment.js";
 import { EmbedType } from "../messages/types/EmbedType.js";
 import { messageComponentSchema } from "../messages/types/MessageComponent.js";
 import { messageFlag } from "../messages/types/MessageFlag.js";
@@ -37,7 +36,7 @@ export const createFollowupMessageSchema = v.object({
       /** the contents of the file being sent */
       files: v.array(fileUpload),
       /** attachment objects with filename and description */
-      attachments: v.array(partialSchema(attachmentSchema)),
+      attachments: v.array(attachmentRequestSchema),
       /** message flags combined as a bitfield */
       flags: asInteger(messageFlag),
       /** name of thread to create (requires the webhook channel to be a forum channel) */

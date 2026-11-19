@@ -4,6 +4,7 @@ export * from "./Attachment.js";
 export * from "./AttachmentFlags.js";
 export * from "./ChannelMention.js";
 export * from "./Embed.js";
+export * from "./EmbedFlags.js";
 export * from "./EmbedType.js";
 export * from "./Message.js";
 export * from "./MessageActivity.js";

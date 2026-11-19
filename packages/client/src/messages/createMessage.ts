@@ -4,14 +4,13 @@ import { asInteger } from "@discordkit/core/validations/asInteger";
 import { boundedArray } from "@discordkit/core/validations/boundedArray";
 import { boundedString } from "@discordkit/core/validations/boundedString";
 import { multipart, fileUpload } from "@discordkit/core/validations/fileUpload";
-import { partialSchema } from "@discordkit/core/validations/schema";
 import { snowflake } from "@discordkit/core/validations/snowflake";
 import type { Message } from "./types/Message.js";
 import { embedSchema } from "./types/Embed.js";
 import { allowedMentionSchema } from "./types/AllowedMention.js";
 import { messageReferenceSchema } from "./types/MessageReference.js";
 import { messageComponentSchema } from "./types/MessageComponent.js";
-import { attachmentSchema } from "./types/Attachment.js";
+import { attachmentRequestSchema } from "./types/Attachment.js";
 import { messageFlag } from "./types/MessageFlag.js";
 
 export const createMessageSchema = v.object({
@@ -35,7 +34,7 @@ export const createMessageSchema = v.object({
       /** Contents of the file being sent. See Uploading Files */
       files: v.array(fileUpload),
       /** Attachment objects with filename and description. See Uploading Files */
-      attachments: v.array(partialSchema(attachmentSchema)),
+      attachments: v.array(attachmentRequestSchema),
       /** Message flags combined as a bitfield (only SUPPRESS_EMBEDS can be set) */
       flags: asInteger(messageFlag)
     },

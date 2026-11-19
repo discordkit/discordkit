@@ -27,7 +27,12 @@ import {
   attachmentFlag,
   AttachmentFlags
 } from "../messages/types/AttachmentFlags.js";
+import { embedFlag, EmbedFlags } from "../messages/types/EmbedFlags.js";
 import { messageFlag, MessageFlag } from "../messages/types/MessageFlag.js";
+import {
+  contentScanMetadataFlag,
+  ContentScanMetadataFlags
+} from "../components/types/ContentScanMetadataFlags.js";
 import { permissionFlag, Permissions } from "../permissions/Permissions.js";
 import { roleFlag, RoleFlags } from "../permissions/RoleFlags.js";
 import { userFlag, UserFlags } from "../user/types/UserFlags.js";
@@ -62,7 +67,9 @@ export const mockUtils = new MockUtils(discord, {
     [roleFlag, MockUtils.flagMatcher(RoleFlags)],
     [userFlag, MockUtils.flagMatcher(UserFlags)],
     [skuFlag, MockUtils.flagMatcher(SKUFlags)],
-    [lobbyMemberFlag, MockUtils.flagMatcher(LobbyMemberFlags)]
+    [lobbyMemberFlag, MockUtils.flagMatcher(LobbyMemberFlags)],
+    [embedFlag, MockUtils.flagMatcher(EmbedFlags)],
+    [contentScanMetadataFlag, MockUtils.flagMatcher(ContentScanMetadataFlags)]
   ]
 });
 

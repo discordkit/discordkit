@@ -3,6 +3,7 @@ import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
 import { boundedString } from "@discordkit/core/validations/boundedString";
 import { snowflake } from "@discordkit/core/validations/snowflake";
 import { url } from "@discordkit/core/validations/url";
+import { contentScanMetadataSchema } from "./ContentScanMetadata.js";
 
 /**
  * ### [Unfurled Media Item](https://discord.com/developers/docs/components/reference#unfurled-media-item)
@@ -21,7 +22,9 @@ export const unfurledMediaItemSchema = v.object({
   /** The [media type](https://en.wikipedia.org/wiki/Media_type) of the content. This field is ignored and provided by the API as part of the response */
   contentType: v.exactOptional(boundedString()),
   /** The id of the uploaded attachment. This field is ignored and provided by the API as part of the response (Only present if the media item was uploaded as an attachment.) */
-  attachmentId: v.exactOptional(snowflake)
+  attachmentId: v.exactOptional(snowflake),
+  /** Results of Discord's content scanning, if the media item has been scanned. This field is ignored and provided by the API as part of the response */
+  contentScanMetadata: v.exactOptional(contentScanMetadataSchema)
 });
 
 export interface UnfurledMediaItem extends v.InferOutput<
