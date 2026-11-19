@@ -128,6 +128,31 @@ describe(`domain slices`, () => {
     off();
     expect(devices).toHaveBeenCalledWith(payload);
   });
+
+  it(`voice settings resolve from the main process and stream their updates`, async () => {
+    const { ipc, io } = setup();
+    const { voice } = voiceSlice(io);
+    const settings = {
+      selfMute: true,
+      inputMode: `pushToTalk`,
+      pttKey: `SHIFT + F`
+    };
+    ipc.ipcMain.handle(VOICE_CHANNELS.getVoiceSettings, () => settings);
+
+    // Why: these settings live in the user's Discord client, which only the main
+    // process can reach. A renderer showing a mute indicator needs both halves:
+    // the current value on mount, then every change, each as the same snapshot.
+    await expect(voice.getVoiceSettings()).resolves.toEqual(settings);
+
+    const updates = vi.fn<(payload: unknown) => void>();
+    const off = voice.onVoiceSettingsUpdated(updates);
+    ipc.emit(VOICE_CHANNELS.voiceSettingsUpdated, {
+      ...settings,
+      selfMute: false
+    });
+    off();
+    expect(updates).toHaveBeenCalledWith({ ...settings, selfMute: false });
+  });
 });
 
 describe(`composition`, () => {

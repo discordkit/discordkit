@@ -47,8 +47,12 @@ const login = async (page: Page, context: BrowserContext): Promise<void> => {
   const location = response.headers()[`location`];
   const state = new URL(location).searchParams.get(`state`) ?? ``;
 
-  // Stand in for Discord's post-consent redirect back to the app.
-  await page.goto(`/api/auth/callback?code=e2e-test-code&state=${state}`);
+  // Stand in for Discord's post-consent redirect back to the app. Discord adds
+  // `iss` to every authorization response (RFC 9207) and the handler rejects a
+  // callback without it, so the stand-in has to send it too.
+  await page.goto(
+    `/api/auth/callback?code=e2e-test-code&state=${state}&iss=${encodeURIComponent(`https://discord.com`)}`
+  );
 };
 
 /**

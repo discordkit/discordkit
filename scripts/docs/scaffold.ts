@@ -42,6 +42,7 @@ const FOLDER_MAP: Record<string, string[]> = {
     `interactions/application-commands.md`
   ],
   "application-commands": [`interactions/application-commands.md`],
+  "application-identity-profile": [`resources/application-identity-profile.md`],
   "application-role-connection": [
     `resources/application-role-connection-metadata.md`
   ],
@@ -72,6 +73,7 @@ const FOLDER_MAP: Record<string, string[]> = {
 const FOLDER_DOC_BASE: Record<string, string> = {
   application: `resources/application`,
   "application-commands": `interactions/application-commands`,
+  "application-identity-profile": `resources/application-identity-profile`,
   "application-role-connection": `resources/application-role-connection-metadata`,
   "audit-log": `resources/audit-log`,
   "auto-moderation": `resources/auto-moderation`,

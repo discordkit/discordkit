@@ -13,7 +13,7 @@ export const getGuildBanSchema = v.object({
  *
  * **GET** `/guilds/:guild/bans/:user`
  *
- * Returns a {@link Ban | ban object} for the given user or a 404 not found if the ban cannot be found. Requires the `BAN_MEMBERS` permission.
+ * Returns a {@link Ban | ban object} for the given user or a 404 not found if the ban cannot be found. Requires the `BAN_MEMBERS` or `VIEW_AUDIT_LOG` permission.
  */
 export const getGuildBan: Fetcher<typeof getGuildBanSchema, Ban> = async ({
   guild,

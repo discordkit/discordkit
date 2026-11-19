@@ -1,6 +1,7 @@
 import * as v from "valibot";
 import { post, type Fetcher } from "@discordkit/core/requests/methods";
 import { asInteger } from "@discordkit/core/validations/asInteger";
+import { boundedString } from "@discordkit/core/validations/boundedString";
 import { snowflake } from "@discordkit/core/validations/snowflake";
 import type { Lobby } from "./types/Lobby.js";
 import { lobbyMemberFlag } from "./types/LobbyMemberFlags.js";
@@ -12,7 +13,7 @@ export const createLobbySchema = v.object({
       metadata: v.nullish(
         v.pipe(v.record(v.string(), v.string()), v.maxEntries(1000))
       ),
-      /** optional array of up to 25 users to be added to the lobby */
+      /** optional array of up to 25 users to be added to the lobby. Requests with more than 25 members are rejected. */
       members: v.pipe(
         v.array(
           v.object({
@@ -25,7 +26,9 @@ export const createLobbySchema = v.object({
             /** {@link LobbyMember | lobby member} flags combined as a bitfield */
             flags: v.exactOptional(
               asInteger(lobbyMemberFlag) as v.GenericSchema<number>
-            )
+            ),
+            /** an additional display name for the member, such as an in-game character name. 1-80 characters. When updating an existing member, omit the field to preserve their current value, or send `null` to clear it. */
+            additionalName: v.nullish(boundedString({ min: 1, max: 80 }))
           })
         ),
         v.maxLength(25)
@@ -49,6 +52,12 @@ export const createLobbySchema = v.object({
  * Creates a new lobby, adding any of the specified members to it, if provided.
  *
  * Returns a lobby object.
+ *
+ * **Member Limits**
+ *
+ * Up to 25 members can be included in a single request. The array is not truncated. A request with more than 25 members fails with a `400` response and error code `50035` (`Invalid Form Body`), with a `BASE_TYPE_MAX_LENGTH` error on `members` in the `errors` object.
+ *
+ * A lobby can still hold up to 1,000 members. Add more with {@link addMemberToLobby | Add a Member to a Lobby}, or in batches of up to 25 with {@link bulkUpdateLobbyMembers | Bulk Update Lobby Members}.
  *
  * > [!NOTE]
  * >

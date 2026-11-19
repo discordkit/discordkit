@@ -14,7 +14,9 @@ export const getCurrentUserGuildsSchema = v.object({
         /** max number of guilds to return (1-200) */
         limit: v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(200)),
         /** include approximate member and presence counts in response */
-        withCounts: v.boolean()
+        withCounts: v.boolean(),
+        /** only return guilds in this shard (`0` to `max_concurrency - 1`). Required for apps using [large bot sharding](https://discord.com/developers/docs/events/gateway#sharding-for-large-bots), where `max_concurrency` comes from the session start limit object. Note that this value is different from the shard id used when connecting to the Gateway */
+        shard: v.pipe(v.number(), v.integer(), v.minValue(0))
       })
     )
   )
@@ -30,6 +32,12 @@ export const getCurrentUserGuildsSchema = v.object({
  * > [!NOTE]
  * >
  * > This endpoint returns 200 guilds by default, which is the maximum number of guilds a non-bot user can join. Therefore, pagination is **not needed** for integrations that need to get a list of the users' guilds.
+ *
+ * > [!NOTE]
+ * >
+ * > Apps using [large bot sharding](https://discord.com/developers/docs/events/gateway#sharding-for-large-bots) must provide the `shard` param. Valid values are `0` through `max_concurrency - 1`, where `max_concurrency` comes from the session start limit object on Get Gateway Bot. Iterate over every shard to retrieve the full guild list. Apps that are not using large bot sharding are unaffected.
+ * >
+ * > Note that this value is different from the shard id used when connecting to the Gateway.
  *
  * **Example Partial Guild**
  *

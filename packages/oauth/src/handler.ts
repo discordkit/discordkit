@@ -45,6 +45,13 @@ export const appendCookie = (
   headers.append(`Set-Cookie`, serializeCookie(descriptor));
 };
 
+/**
+ * The issuer Discord names itself as in the `iss` parameter of every authorization response, following [RFC 9207](https://www.rfc-editor.org/info/rfc9207). It is the `issuer` in Discord's [authorization server metadata](https://discord.com/.well-known/oauth-authorization-server).
+ *
+ * {@link createAuthHandler} checks it for you. If you handle the callback yourself with {@link createOAuth2}, compare the `iss` query parameter to this before exchanging the code.
+ */
+export const DISCORD_ISSUER = `https://discord.com`;
+
 /** Build a descriptor that clears a cookie (empty value, immediate expiry). */
 const clearCookie = (descriptor: CookieDescriptor): CookieDescriptor => ({
   ...descriptor,
@@ -93,7 +100,7 @@ export interface AuthHandlerConfig extends OAuth2Config {
 export interface AuthHandler {
   /** Start the flow: sets state/PKCE cookies and 302s to Discord's consent page. */
   login: (request: Request) => Promise<Response>;
-  /** Finish the flow: verifies state, exchanges the code, clears cookies. */
+  /** Finish the flow: verifies state and issuer, exchanges the code, clears cookies. */
   callback: (request: Request) => Promise<Response>;
 }
 
@@ -186,6 +193,18 @@ export const createAuthHandler = (config: AuthHandlerConfig): AuthHandler => {
       ) {
         return new Response(
           `The OAuth2 state value didn't match, so this callback was rejected to protect you from a cross-site request forgery (CSRF) attack. This can also happen if the login cookie expired before you finished. To fix: start the flow again from the login route.`,
+          { status: 400 }
+        );
+      }
+
+      // Issuer check (RFC 9207): Discord stamps every authorization response
+      // with `iss`. A response that lacks it, or names someone else, was not
+      // issued by Discord, so its code must never reach the token endpoint. A
+      // missing `iss` is rejected too: an attacker's server would just leave it
+      // out, so accepting that would make the check worthless.
+      if (requestUrl.searchParams.get(`iss`) !== DISCORD_ISSUER) {
+        return new Response(
+          `This callback was rejected because it did not identify Discord as the authorization server: its \`iss\` parameter was missing or was not ${DISCORD_ISSUER}, which Discord sends on every authorization response. That is what an authorization server mix-up attack looks like, where a response from another provider is passed off as Discord's. To fix: start the flow again from the login route. If you are testing against a stand-in for Discord, have it add iss=${DISCORD_ISSUER} to its redirect.`,
           { status: 400 }
         );
       }

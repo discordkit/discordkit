@@ -1,4 +1,5 @@
 import { defineConfig } from "vite-plus";
+import { configDefaults } from "vite-plus/test/config";
 import { buildTarget } from "../../scripts/buildTarget.js";
 
 export default defineConfig({
@@ -9,7 +10,9 @@ export default defineConfig({
     }
   },
   test: {
-    globals: true
+    globals: true,
+    // `*.browser.spec.ts` files run in the root config's `browser` project. Vitest reads this file, not the root one, when it is started from inside the package, so keep them out of the Node run here too.
+    exclude: [...configDefaults.exclude, `**/*.browser.spec.ts`]
   },
   pack: {
     // Build target derived from the root package.json `engines.node` — a
@@ -28,6 +31,12 @@ export default defineConfig({
     // inlines transitive type definitions (e.g. @trpc/server's deep
     // type imports) into `dist/node_modules/...`, which both bloats
     // the package and pulls third-party types under our publish surface.
-    deps: { skipNodeModulesBundle: true }
+    deps: {
+      // tsdown <0.23 compatibility: resolve external dependency subpaths.
+      // Remove to preserve subpath imports as written (the new default).
+      // https://tsdown.dev/options/dependencies#deps-resolvedepsubpath
+      resolveDepSubpath: true,
+      neverBundle: true
+    }
   }
 });

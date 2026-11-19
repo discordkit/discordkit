@@ -89,10 +89,9 @@ describe(`fileUpload`, () => {
       // And the file part itself is appended as files[0].
       const filesEntry = form.get(`files[0]`);
       expect(filesEntry).toBeInstanceOf(Blob);
-      // In spec-compliant FormData the entry would be a File with `name === "a.png"`;
-      // happy-dom serializes it as a plain Blob, so we just confirm the part exists
-      // and has content. The filename is preserved via the multipart boundary header
-      // when the FormData is sent through fetch.
+      // This only confirms the part exists and has content. The filename and
+      // content type Discord reads are asserted on the serialized body in
+      // fileUpload.browser.spec.ts.
       expect((filesEntry as Blob).size).toBeGreaterThan(0);
     });
 

@@ -23,7 +23,9 @@ You must also supply the Discord Social SDK shared library yourself — it can't
 
 ### Supported SDK versions
 
-There's no npm-style version constraint we can enforce on a library you bring yourself, so instead: this release is **verified against Discord Social SDK `1.9.17379`**, and is compatible with any `1.9.x` build. Discord ships `1.9.x` as ABI-stable, drop-in binary updates (same C ABI, same archive layout), so newer patch builds work without a package upgrade — grab the latest `1.9.x` from the Developer Portal to pick up SDK bug fixes. A new SDK **minor** (e.g. `1.10`) may add or change API surface; those are validated and pinned here per release.
+There's no npm-style version constraint we can enforce on a library you bring yourself, so instead: this release is **verified against Discord Social SDK `1.11.24259`** and **needs `1.10.19337` or newer**. Discord ships patch builds of a minor as ABI-stable, drop-in binary updates (same C ABI, same archive layout), so a newer `1.11.x` works without a package upgrade — grab the latest from the Developer Portal to pick up SDK bug fixes. A new SDK **minor** may add or change API surface; those are validated and pinned here per release.
+
+The floor comes from the newest symbols this package binds: reading the Discord client's voice settings (`getVoiceSettings`, `onVoiceSettingsUpdated`) arrived in `1.10.19337`. On an older build those two operations fail with a missing-symbol error, and so does the voice domain of the Electron and Tauri bridges, which subscribe to settings updates as soon as they are registered.
 
 ## 🔧 Quick start
 
@@ -66,7 +68,7 @@ Each feature is its own subpath (`@discordkit/native/<name>`) — the tree-shaki
 | `/activity-invites` | Send/accept activity invites + join requests; subscribe to incoming invites. `acceptActivityInvite` resolves with the join secret.                                                                                                                                                                        |
 | `/lobbies`          | `createOrJoinLobby` → a live **`Lobby`** (members, metadata, channel linking, per-lobby events); client-wide lobby events; guild/channel discovery.                                                                                                                                                       |
 | `/messaging`        | Send/edit/delete messages (user + lobby), read messages + history, DM summaries, message events.                                                                                                                                                                                                          |
-| `/voice`            | `startCall` → a live **`Call`** (mute/deaf/volume, audio mode, VAD, per-call events); client-wide audio (devices, volume, mute/deaf-all).                                                                                                                                                                 |
+| `/voice`            | `startCall` → a live **`Call`** (mute/deaf/volume, audio mode, VAD, per-call events); client-wide audio (devices, volume, mute/deaf-all); the Discord desktop client's own voice settings, read-only (`getVoiceSettings`, `onVoiceSettingsUpdated`).                                                      |
 
 ### Snapshots vs. live wrappers
 

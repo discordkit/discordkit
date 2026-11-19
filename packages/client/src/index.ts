@@ -2,6 +2,7 @@ export { discord } from "@discordkit/core";
 
 export * from "./application/index.js";
 export * from "./application-commands/index.js";
+export * from "./application-identity-profile/index.js";
 export * from "./application-role-connection/index.js";
 export * from "./audit-log/index.js";
 export * from "./auto-moderation/index.js";

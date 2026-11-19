@@ -17,7 +17,9 @@ export enum EmbedType {
   /** link embed */
   LINK = `link`,
   /** poll result embed */
-  POLL_RESULT = `poll_result`
+  POLL_RESULT = `poll_result`,
+  /** link preview built from Discord components, see [Component Embeds](https://discord.com/developers/docs/link-previews/component-embeds) */
+  COMPONENTS = `components`
 }
 
 export const embedTypeSchema = v.enum_(EmbedType);

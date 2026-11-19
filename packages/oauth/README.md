@@ -47,7 +47,8 @@ const url = discord.createAuthorizationURL({
   codeChallenge
 });
 
-// 2. Exchange the code Discord sends back.
+// 2. Discord redirects back with `code`, `state` and `iss`. Check that `state`
+//    is the one you sent and that `iss` is DISCORD_ISSUER, then exchange the code.
 const tokens = await discord.validateAuthorizationCode(code, { codeVerifier });
 
 // 3. Later, once the access token expires. `refreshToken` is optional because
@@ -71,6 +72,8 @@ const profile = await user.request(() => getCurrentUser());
 ### The full flow, as two route handlers
 
 Most apps need the same two endpoints: one that redirects to Discord, one that receives the callback. `createAuthHandler` builds both, and owns the PKCE verifier and state cookies so you do not have to.
+
+The callback rejects any response that does not carry `iss=https://discord.com`, which Discord adds to every authorization response ([RFC 9207][rfc9207]). That stops a response from another OAuth2 provider being passed off as Discord's. If you test against a stand-in for Discord, it has to send `iss` as well.
 
 ```ts
 import { createAuthHandler } from "@discordkit/oauth";
@@ -132,6 +135,7 @@ OAuth2 documentation taken from Discord's [Official API docs][discord_api].
 [client]: https://www.npmjs.com/package/@discordkit/client
 [discord_api]: https://discord.com/developers/docs
 [oauth_docs]: https://discord.com/developers/docs/topics/oauth2
+[rfc9207]: https://www.rfc-editor.org/info/rfc9207
 [scopes]: https://discord.com/developers/docs/topics/oauth2#shared-resources-oauth2-scopes
 [license]: https://github.com/discordkit/discordkit/blob/main/LICENSE.md
 [personal-website]: https://saeris.gg

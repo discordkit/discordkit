@@ -8,6 +8,8 @@ export * from "./CheckboxGroupOption.js";
 export * from "./Component.js";
 export * from "./ComponentType.js";
 export * from "./Container.js";
+export * from "./ContentScanMetadata.js";
+export * from "./ContentScanMetadataFlags.js";
 export * from "./File.js";
 export * from "./FileUpload.js";
 export * from "./Label.js";

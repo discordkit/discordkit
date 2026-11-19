@@ -9,7 +9,7 @@ import type { Message } from "./types/Message.js";
 import { embedSchema } from "./types/Embed.js";
 import { allowedMentionSchema } from "./types/AllowedMention.js";
 import { messageComponentSchema } from "./types/MessageComponent.js";
-import { attachmentSchema } from "./types/Attachment.js";
+import { attachmentRequestSchema } from "./types/Attachment.js";
 import { messageFlag } from "./types/MessageFlag.js";
 
 export const editMessageSchema = v.object({
@@ -30,7 +30,7 @@ export const editMessageSchema = v.object({
       /** Contents of the file being sent/edited. See Uploading Files */
       files: v.array(fileUpload),
       /** Attached files to keep and possible descriptions for new files. See Uploading Files */
-      attachments: v.array(attachmentSchema)
+      attachments: v.array(attachmentRequestSchema)
     },
     { partial: true }
   )

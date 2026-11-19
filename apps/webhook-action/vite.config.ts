@@ -9,7 +9,13 @@ export default defineConfig({
   pack: {
     entry: `src/index.ts`,
     format: `esm`,
-    deps: { alwaysBundle: [`@discordkit/client`] },
+    deps: {
+      // tsdown <0.23 compatibility: resolve external dependency subpaths.
+      // Remove to preserve subpath imports as written (the new default).
+      // https://tsdown.dev/options/dependencies#deps-resolvedepsubpath
+      resolveDepSubpath: true,
+      alwaysBundle: [`@discordkit/client`]
+    },
     minify: true,
     treeshake: true
   }

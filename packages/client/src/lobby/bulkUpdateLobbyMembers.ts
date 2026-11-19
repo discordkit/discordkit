@@ -2,6 +2,7 @@ import * as v from "valibot";
 import { post, type Fetcher } from "@discordkit/core/requests/methods";
 import { asInteger } from "@discordkit/core/validations/asInteger";
 import { boundedArray } from "@discordkit/core/validations/boundedArray";
+import { boundedString } from "@discordkit/core/validations/boundedString";
 import { snowflake } from "@discordkit/core/validations/snowflake";
 import type { LobbyMember } from "./types/LobbyMember.js";
 import { lobbyMemberFlag } from "./types/LobbyMemberFlags.js";
@@ -24,6 +25,10 @@ export const bulkUpdateLobbyMembersSchema = v.object({
       /** {@link LobbyMember | lobby member} flags combined as a bitfield */
       flags: v.exactOptional(
         asInteger(lobbyMemberFlag) as v.GenericSchema<number>
+      ),
+      /** an additional display name for the member, such as an in-game character name. 1-80 characters. Omit the field to preserve the member's current value, or send `null` to clear it. */
+      additionalName: v.exactOptional(
+        v.nullable(boundedString({ min: 1, max: 80 }))
       ),
       /** if `true`, the user is removed from the lobby instead of upserted */
       removeMember: v.exactOptional(v.boolean())

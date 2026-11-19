@@ -16,7 +16,7 @@ export const setVoiceChannelStatusSchema = v.object({
  *
  * **PUT** `/channels/:channel/voice-status`
  *
- * Set a voice channel's status. Requires the `SET_VOICE_CHANNEL_STATUS` permission, and additionally the `MANAGE_CHANNELS` permission if the current user is not connected to the voice channel. Fires a Voice Channel Status Update Gateway event.
+ * Set a voice channel's status. Requires the `SET_VOICE_CHANNEL_STATUS` permission, and additionally the `MANAGE_CHANNELS` permission if the current user is not connected to the voice channel. Users who are connected to the voice channel do not need the `CONNECT` permission (see [Implicit Permissions](https://discord.com/developers/docs/topics/permissions#implicit-permissions)). Fires a Voice Channel Status Update Gateway event.
  *
  * > [!NOTE]
  * >

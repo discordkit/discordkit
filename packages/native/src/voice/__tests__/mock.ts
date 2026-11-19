@@ -25,6 +25,20 @@ export interface ScriptedVoiceState {
   selfDeaf: boolean;
 }
 
+export interface ScriptedVoiceSettings {
+  selfMute: boolean;
+  selfDeaf: boolean;
+  /** The ABI's numeric `Discord_VoiceInputModeType`. */
+  inputMode: number;
+  pttKey: string;
+  inputVolume: number;
+  outputVolume: number;
+  automaticGainControl: boolean;
+  echoCancellation: boolean;
+  noiseSuppression: boolean;
+  noiseCancellation: boolean;
+}
+
 export interface ScriptedCall {
   channelId: bigint;
   guildId: bigint;
@@ -56,6 +70,8 @@ interface VoiceDomainState {
   actions: string[];
   callEvents: Partial<Record<string, unknown>>;
   deviceChange?: unknown;
+  voiceSettings?: ScriptedVoiceSettings;
+  voiceSettingsUpdated?: unknown;
   invoke?: (handle: unknown, ...args: unknown[]) => void;
 }
 
@@ -157,6 +173,42 @@ export const fireDeviceChange = (
   );
 };
 
+/** Make fully-populated scripted voice settings, overridable per field. */
+export const makeVoiceSettings = (
+  overrides: Partial<ScriptedVoiceSettings> = {}
+): ScriptedVoiceSettings => ({
+  selfMute: false,
+  selfDeaf: false,
+  inputMode: 0, // voice activity
+  pttKey: ``,
+  inputVolume: 100,
+  outputVolume: 100,
+  automaticGainControl: true,
+  echoCancellation: true,
+  noiseSuppression: true,
+  noiseCancellation: false,
+  ...overrides
+});
+
+/** Set the settings `getVoiceSettings` resolves with. */
+export const scriptVoiceSettings = (
+  state: MockState,
+  settings: ScriptedVoiceSettings
+): void => {
+  stateOf(state).voiceSettings = settings;
+};
+
+/** Deliver a voice-settings-updated event. */
+export const fireVoiceSettingsUpdated = (
+  state: MockState,
+  settings: ScriptedVoiceSettings
+): void => {
+  const s = stateOf(state);
+  s.invoke?.(s.voiceSettingsUpdated, { __settings: settings });
+};
+
+const settingsOf = (handle: unknown): ScriptedVoiceSettings | undefined =>
+  (handle as { __settings?: ScriptedVoiceSettings }).__settings;
 const callOf = (handle: unknown): ScriptedCall | undefined =>
   (handle as { __call?: ScriptedCall }).__call;
 const deviceOf = (handle: unknown): ScriptedDevice | undefined =>
@@ -263,6 +315,41 @@ registerMockHandlers({
     s.invoke = ctx.invokeCallback;
     return undefined;
   },
+  // --- Discord client voice settings ---
+  Discord_Client_GetVoiceSettings: (ctx) => {
+    ctx.fireResultCallback({
+      __settings: stateOf(ctx.state).voiceSettings ?? makeVoiceSettings()
+    });
+    return undefined;
+  },
+  Discord_Client_SetVoiceSettingsUpdatedCallback: (ctx) => {
+    const s = stateOf(ctx.state);
+    s.voiceSettingsUpdated = ctx.args[1];
+    s.invoke = ctx.invokeCallback;
+    return undefined;
+  },
+  Discord_VoiceSettings_SelfMute: (ctx) =>
+    Boolean(settingsOf(ctx.args[0])?.selfMute),
+  Discord_VoiceSettings_SelfDeaf: (ctx) =>
+    Boolean(settingsOf(ctx.args[0])?.selfDeaf),
+  Discord_VoiceSettings_InputMode: (ctx) =>
+    settingsOf(ctx.args[0])?.inputMode ?? 0,
+  Discord_VoiceSettings_PttKey: (ctx) => {
+    ctx.writeString(ctx.args[1], settingsOf(ctx.args[0])?.pttKey ?? ``);
+    return undefined;
+  },
+  Discord_VoiceSettings_InputVolume: (ctx) =>
+    settingsOf(ctx.args[0])?.inputVolume ?? 0,
+  Discord_VoiceSettings_OutputVolume: (ctx) =>
+    settingsOf(ctx.args[0])?.outputVolume ?? 0,
+  Discord_VoiceSettings_AutomaticGainControl: (ctx) =>
+    Boolean(settingsOf(ctx.args[0])?.automaticGainControl),
+  Discord_VoiceSettings_EchoCancellation: (ctx) =>
+    Boolean(settingsOf(ctx.args[0])?.echoCancellation),
+  Discord_VoiceSettings_NoiseSuppression: (ctx) =>
+    Boolean(settingsOf(ctx.args[0])?.noiseSuppression),
+  Discord_VoiceSettings_NoiseCancellation: (ctx) =>
+    Boolean(settingsOf(ctx.args[0])?.noiseCancellation),
   // --- Call getters ---
   Discord_Call_GetChannelId: (ctx) => callOf(ctx.args[0])?.channelId ?? 0n,
   Discord_Call_GetGuildId: (ctx) => callOf(ctx.args[0])?.guildId ?? 0n,

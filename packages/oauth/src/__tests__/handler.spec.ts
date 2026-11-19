@@ -8,7 +8,12 @@ import {
 } from "vite-plus/test";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
-import { createAuthHandler, parseCookies, appendCookie } from "../handler.js";
+import {
+  createAuthHandler,
+  parseCookies,
+  appendCookie,
+  DISCORD_ISSUER
+} from "../handler.js";
 import { createStateCookie } from "../cookies.js";
 
 const server = setupServer();
@@ -50,7 +55,7 @@ describe(`appendCookie`, () => {
 });
 
 describe(`createAuthHandler.login`, () => {
-  beforeAll(() => server.listen({ onUnhandledRequest: `error` }));
+  beforeAll(() => server.listen({ onUnhandledFrame: `error` }));
   afterEach(() => server.resetHandlers());
   afterAll(() => server.close());
 
@@ -90,7 +95,7 @@ describe(`createAuthHandler.login`, () => {
 });
 
 describe(`createAuthHandler.callback`, () => {
-  beforeAll(() => server.listen({ onUnhandledRequest: `error` }));
+  beforeAll(() => server.listen({ onUnhandledFrame: `error` }));
   afterEach(() => server.resetHandlers());
   afterAll(() => server.close());
 
@@ -98,15 +103,19 @@ describe(`createAuthHandler.callback`, () => {
   const callbackRequest = ({
     code,
     state,
-    cookieState
+    cookieState,
+    iss = DISCORD_ISSUER
   }: {
     code?: string;
     state?: string;
     cookieState?: string;
+    /** Defaults to Discord's issuer, as on a real redirect. Pass `null` to omit it. */
+    iss?: string | null;
   }): Request => {
     const url = new URL(`https://app.example.com/api/auth/callback`);
     if (code !== undefined) url.searchParams.set(`code`, code);
     if (state !== undefined) url.searchParams.set(`state`, state);
+    if (iss !== null) url.searchParams.set(`iss`, iss);
     return new Request(url, {
       headers:
         cookieState === undefined
@@ -134,6 +143,34 @@ describe(`createAuthHandler.callback`, () => {
     await expect(res.text()).resolves.toContain(`cross-site request forgery`);
     expect(tokenCalled).toBe(false);
   });
+
+  it.each([
+    [`names a different authorization server`, `https://evil.example`],
+    [`omits the issuer`, null]
+  ])(
+    `rejects a callback that %s, without calling the token endpoint`,
+    async (_case, iss) => {
+      // WHY: this is the defence against authorization server mix-up (RFC
+      // 9207). State alone cannot catch it, because the state here is valid:
+      // the flow really did start at our login route, and another provider's
+      // response is being passed off as Discord's. The missing-issuer case has
+      // to fail as well, since a hostile server would simply leave `iss` out.
+      let tokenCalled = false;
+      server.use(
+        http.post(TOKEN_URL, () => {
+          tokenCalled = true;
+          return HttpResponse.json({});
+        })
+      );
+      const handler = createAuthHandler({ ...config, usePKCE: false });
+      const res = await handler.callback(
+        callbackRequest({ code: `c`, state: `s`, cookieState: `s`, iss })
+      );
+      expect(res.status).toBe(400);
+      await expect(res.text()).resolves.toContain(`mix-up`);
+      expect(tokenCalled).toBe(false);
+    }
+  );
 
   it(`surfaces a user-denied authorization error`, async () => {
     const handler = createAuthHandler(config);

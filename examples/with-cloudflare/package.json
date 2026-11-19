@@ -15,18 +15,19 @@
     "xstate": "catalog:"
   },
   "devDependencies": {
-    "@cloudflare/vite-plugin": "1.51.3",
-    "@cloudflare/vitest-pool-workers": "0.21.1",
-    "@cloudflare/workers-types": "5.20260811.1",
+    "@cloudflare/vite-plugin": "1.69.1",
+    "@cloudflare/vitest-plugin": "1.8.2",
+    "@cloudflare/workers-types": "5.20261116.1",
     "@tailwindcss/vite": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "tailwindcss": "catalog:",
-    "tailwindcss-react-aria-components": "^2.1.1",
+    "tailwindcss-react-aria-components": "^2.2.0",
     "typescript": "catalog:",
     "varlock": "catalog:",
     "vite-plus": "catalog:",
-    "wrangler": "4.121.0"
+    "vitest": "catalog:",
+    "wrangler": "4.162.0"
   }
 }

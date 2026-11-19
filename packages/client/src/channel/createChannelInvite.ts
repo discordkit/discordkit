@@ -1,5 +1,6 @@
 import * as v from "valibot";
 import { post, type Fetcher } from "@discordkit/core/requests/methods";
+import { boundedArray } from "@discordkit/core/validations/boundedArray";
 import { snowflake } from "@discordkit/core/validations/snowflake";
 import type { Invite } from "../invite/types/Invite.js";
 import { inviteTargetSchema } from "../invite/types/InviteTarget.js";
@@ -32,7 +33,11 @@ export const createChannelInviteSchema = v.object({
         /** the id of the user whose stream to display for this invite, required if target_type is 1, the user must be streaming in the channel	 */
         targetUserId: snowflake,
         /** the id of the embedded application to open for this invite, required if target_type is 2, the application must have the EMBEDDED flag	 */
-        targetApplicationId: snowflake
+        targetApplicationId: snowflake,
+        /** an array of IDs of all users able to see and accept this invite. Max of 1000 IDs */
+        targetUserIds: boundedArray(snowflake, { max: 1000 }),
+        /** the role ID(s) for {@link Role | roles} in the guild given to the users that accept this invite. Requires the `MANAGE_ROLES` permission and cannot assign roles with higher permissions than the sender */
+        roleIds: v.array(snowflake)
       })
     )
   )

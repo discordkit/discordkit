@@ -103,7 +103,7 @@ const withGateway = (
   });
 
   const server = setupServer(handler);
-  server.listen({ onUnhandledRequest: `error` });
+  server.listen({ onUnhandledFrame: `error` });
 
   return {
     server,

@@ -15,7 +15,7 @@ import { request } from "../request.js";
 const server = setupServer();
 
 describe(`request`, () => {
-  beforeAll(() => server.listen({ onUnhandledRequest: `error` }));
+  beforeAll(() => server.listen({ onUnhandledFrame: `error` }));
   afterEach(() => server.resetHandlers());
   afterAll(() => server.close());
 

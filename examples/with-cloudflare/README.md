@@ -103,7 +103,7 @@ DISCORD_BOT_TOKEN=your-token-here
 
 `nodejs_compat` is **off** on purpose. `@discordkit/gateway` claims to run on the bare Workers runtime: Web-standard `WebSocket`, with no Node builtins on the hot path. Two checks enforce that claim.
 
-- **`vp test`** proves the code _runs_. It drives a real Durable Object inside workerd through `@cloudflare/vitest-pool-workers`.
+- **`vp test`** proves the code _runs_. It drives a real Durable Object inside workerd through `@cloudflare/vitest-plugin`.
 - **`vp run check:bundle`** proves it _deploys_. A `wrangler deploy --dry-run` fails when the bundle pulls in a Node builtin.
 
 **The test suite alone is not enough.** The Vitest pool runs inside workerd, but its module resolution is permissive because Vitest itself needs Node interop. `node:fs` and `node:net` resolve there. To confirm this, `import { Buffer } from "node:buffer"` was added to the gateway's `connection.ts`: the suite stayed green while the bundle check failed. Run both.

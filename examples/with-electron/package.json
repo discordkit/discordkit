@@ -7,12 +7,12 @@
   "dependencies": {
     "@discordkit/electron": "workspace:^",
     "@discordkit/native": "workspace:^",
-    "@hookform/resolvers": "^5.4.0",
+    "@hookform/resolvers": "^5.9.2",
     "lucide-react": "catalog:",
     "react": "catalog:",
     "react-aria-components": "catalog:",
     "react-dom": "catalog:",
-    "react-hook-form": "^7.78.0",
+    "react-hook-form": "^7.92.0",
     "valibot": "catalog:"
   },
   "devDependencies": {
@@ -22,10 +22,10 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",
-    "electron": "^42.4.0",
-    "playwright": "^1.62.1",
+    "electron": "^42.11.18",
+    "playwright": "^1.65.1",
     "tailwindcss": "catalog:",
-    "tailwindcss-react-aria-components": "^2.1.1",
+    "tailwindcss-react-aria-components": "^2.2.0",
     "typescript": "catalog:",
     "varlock": "catalog:",
     "vite-plus": "catalog:"

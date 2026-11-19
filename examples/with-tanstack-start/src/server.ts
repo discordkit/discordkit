@@ -16,7 +16,7 @@ const startMockServer = async (): Promise<void> => {
     mswStarted = true;
     const { setupServer } = await import(`msw/node`);
     const { handlers } = await import(`@discordkit/e2e/oauth-handlers`);
-    setupServer(...handlers).listen({ onUnhandledRequest: `bypass` });
+    setupServer(...handlers).listen({ onUnhandledFrame: `bypass` });
   }
 };
 

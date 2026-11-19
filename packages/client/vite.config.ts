@@ -37,6 +37,12 @@ export default defineConfig({
     // publish surface. Workspace packages like `@discordkit/core` are
     // resolved to symlinks under node_modules so the same rule keeps
     // them as imports.
-    deps: { skipNodeModulesBundle: true }
+    deps: {
+      // tsdown <0.23 compatibility: resolve external dependency subpaths.
+      // Remove to preserve subpath imports as written (the new default).
+      // https://tsdown.dev/options/dependencies#deps-resolvedepsubpath
+      resolveDepSubpath: true,
+      neverBundle: true
+    }
   }
 });

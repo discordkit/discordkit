@@ -12,6 +12,10 @@
  * mute/deaf-all, audio device enumeration + selection
  * ({@link getInputDevices}, {@link setInputDevice}, …), and the device-change
  * event ({@link onDeviceChange}).
+ *
+ * The Discord desktop client's own voice settings are readable too
+ * ({@link getVoiceSettings}, {@link onVoiceSettingsUpdated}); those belong to the
+ * Discord client, not to this SDK's calls.
  */
 export {
   startCall,
@@ -38,6 +42,11 @@ export {
 export type { VoiceOptions } from "./calls.js";
 export { Call } from "./call.js";
 export {
+  getVoiceSettings,
+  onVoiceSettingsUpdated,
+  readVoiceSettings
+} from "./voiceSettings.js";
+export {
   readVoiceState,
   readAudioDevice,
   readVADThreshold
@@ -50,5 +59,7 @@ export type {
   CallStatus,
   CallError,
   AudioMode,
-  CallSnapshot
+  CallSnapshot,
+  VoiceInputMode,
+  VoiceSettings
 } from "./types.js";

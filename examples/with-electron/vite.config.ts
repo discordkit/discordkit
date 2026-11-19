@@ -17,7 +17,14 @@ export default defineConfig({
     clean: false,
     dts: false,
     // Inline our app deps (so the sandbox has no node_modules imports), but keep `electron` EXTERNAL — it's provided by the Electron runtime, not npm. Bundling the `electron` npm package would inline its binary-locator shim (require child_process/fs) instead of the real runtime module, leaving contextBridge undefined.
-    deps: { alwaysBundle: [/.*/], neverBundle: [`electron`] },
+    deps: {
+      // tsdown <0.23 compatibility: resolve external dependency subpaths.
+      // Remove to preserve subpath imports as written (the new default).
+      // https://tsdown.dev/options/dependencies#deps-resolvedepsubpath
+      resolveDepSubpath: true,
+      alwaysBundle: [/.*/],
+      neverBundle: [`electron`]
+    },
     // Emit `preload.bundle.cjs`, not `preload.cjs`, so it never clobbers source.
     outExtensions: () => ({ js: `.bundle.cjs` })
   },

@@ -1,4 +1,5 @@
 import { defineConfig } from "vite-plus";
+import { playwright } from "vite-plus/test/browser-playwright";
 import { lint, fmt, mergeLint } from "@saeris/configs";
 
 export default defineConfig({
@@ -89,16 +90,35 @@ export default defineConfig({
     conditions: [`@discordkit/source`]
   },
   test: {
-    name: `discordkit`,
     globals: true,
     watch: false,
-    // Node is ~2x faster than happy-dom for this suite (13s vs 26s wall-clock).
-    // No test in this codebase touches DOM APIs that Node 18+ doesn't already
-    // provide globally (Response, URL, Blob, File, FormData, crypto.subtle).
-    // verifyKey.ts feature-detects `typeof window` so it works in both
-    // environments. If a future test needs a real DOM, opt in per-file with:
-    //   // @vitest-environment happy-dom
-    environment: `node`,
+    // Two projects, selected by filename. Everything is a Node test unless it is named `*.browser.spec.ts(x)`, which runs in a real browser instead. There is no simulated DOM (happy-dom, jsdom) in between: a test either needs no DOM, or it needs the real one. Run one side with `vp test --project node` or `vp test --project browser`.
+    //
+    // Inline projects inherit everything else in this block, and Vitest concatenates arrays, so the shared `exclude` list below applies to both.
+    projects: [
+      {
+        test: {
+          name: `node`,
+          environment: `node`,
+          exclude: [`**/*.browser.spec.{ts,tsx}`]
+        }
+      },
+      {
+        test: {
+          name: `browser`,
+          include: [`**/*.browser.spec.{ts,tsx}`],
+          browser: {
+            enabled: true,
+            headless: true,
+            // CI drives the Google Chrome the runner image already ships, the same way the Playwright E2E configs do, so no browser download step is needed there. Locally it uses Playwright's own Chromium (`vp exec playwright install chromium`).
+            provider: playwright({
+              launchOptions: process.env.CI ? { channel: `chrome` } : {}
+            }),
+            instances: [{ browser: `chromium` }]
+          }
+        }
+      }
+    ],
     coverage: {
       provider: `v8`
     },
@@ -118,7 +138,7 @@ export default defineConfig({
       // test discovery.
       `**/e2e/**`,
       // The Cloudflare example's specs run inside workerd via
-      // @cloudflare/vitest-pool-workers, which the root runner doesn't load.
+      // @cloudflare/vitest-plugin, which the root runner doesn't load.
       // They import the virtual `cloudflare:test` module, so collecting them
       // here fails at import. Run them with `vp test` in that package.
       `**/examples/with-cloudflare/**`

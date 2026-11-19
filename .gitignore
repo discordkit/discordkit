@@ -123,3 +123,4 @@ examples/with-cloudflare/dist/
 # secrets the same way `.env` does — it must never be committed.
 examples/with-cloudflare/.env
 examples/with-cloudflare/.dev.vars
+.vitest/

@@ -12,7 +12,11 @@ export enum ChannelFlags {
    */
   REQUIRE_TAG = 1 << 4,
   /** when set hides the embedded media download options. Available only for media channels */
-  HIDE_MEDIA_DOWNLOAD_OPTIONS = 1 << 15
+  HIDE_MEDIA_DOWNLOAD_OPTIONS = 1 << 15,
+  /** this channel's metadata has been obfuscated because the current user cannot view it. Only ever set on channels received over the Gateway; the HTTP API never sets this flag. */
+  CHANNEL_OBFUSCATED = 1 << 17,
+  /** this channel is a Spoiler Channel i.e. users must opt in to view its contents. Can be set on all textual guild channels and voice channels (not `GUILD_STAGE`). Can only be set if channel's `nsfw` is false */
+  IS_SPOILER_CHANNEL = 1 << 21
 }
 
 export const channelFlagsSchema = v.enum_(ChannelFlags);

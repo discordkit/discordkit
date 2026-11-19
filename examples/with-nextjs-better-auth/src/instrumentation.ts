@@ -20,6 +20,6 @@ export const register = async (): Promise<void> => {
 
   if (process.env.DISCORD_E2E_MOCK === `1`) {
     const { server } = await import(`./__mocks__/node`);
-    server.listen({ onUnhandledRequest: `bypass` });
+    server.listen({ onUnhandledFrame: `bypass` });
   }
 };
