@@ -18,14 +18,31 @@
  * (`./lobbies` -> `src/lobby/`), and a tree walk alone would silently omit them.
  * The wildcard is then expanded to cover everything else.
  *
- * Runs in a package directory.
+ * Runs in a package directory, and syncs EVERY package in the workspace, not
+ * only that one. When deno publishes a package it rewrites each cross-package
+ * import (`@discordkit/core/validations/snowflake`) into a `jsr:` specifier,
+ * and it takes both the version range and the list of valid subpaths from the
+ * SIBLING's jsr.json on disk. A sibling that is not part of the current release
+ * never runs this script itself, so its committed jsr.json would be whatever it
+ * was the last time someone committed one. An export missing from that stale
+ * file is rewritten to a relative path that does not exist, and JSR rejects the
+ * whole package with "failed to build module graph: Module not found". An
+ * export that is present is pinned to the stale version, which nothing reports.
+ * This was invisible for as long as `client` and `core` always released
+ * together; the first `client`-only release (4.5.0) hit it.
  *
  * Note when running `bumpy publish --dry-run` locally: bumpy resolves
  * `workspace:`/`catalog:` specifiers in package.json in place before invoking
  * these commands, and does so even in dry-run mode. CI runs on a throwaway
  * checkout, but locally you will want to `git checkout packages/` afterwards.
  */
-import { readFileSync, writeFileSync, readdirSync, statSync } from "node:fs";
+import {
+  existsSync,
+  readFileSync,
+  writeFileSync,
+  readdirSync,
+  statSync
+} from "node:fs";
 import { join, relative, sep } from "node:path";
 
 /** Files that support the build or the tests and are never imported by name. */
@@ -51,12 +68,12 @@ const sourceOf = (value) =>
   typeof value === `string` ? value : (value?.[`@discordkit/source`] ?? null);
 
 /**
- * Build the explicit export map JSR requires.
+ * Build the explicit export map JSR requires, for the package in `dir`.
  *
  * Starts from package.json's own entries so hand-written aliases survive, then
  * expands `"./*"` across the source tree the way Node would resolve it.
  */
-const buildExports = (pkg) => {
+const buildExports = (dir, pkg) => {
   const declared = Object.entries(pkg.exports ?? {});
 
   // Hand-written entries first: some subpaths are aliases whose name differs
@@ -70,11 +87,12 @@ const buildExports = (pkg) => {
 
   if (!declared.some(([key]) => key === `./*`)) return exports;
 
-  const modules = walk(`src`)
+  const src = join(dir, `src`);
+  const modules = walk(src)
     .filter(isPublishable)
     .map((file) => ({
-      specifier: posix(relative(`src`, file)).replace(/\.ts$/, ``),
-      target: `./${posix(file)}`
+      specifier: posix(relative(src, file)).replace(/\.ts$/, ``),
+      target: `./${posix(relative(dir, file))}`
     }))
     .filter(({ specifier }) => specifier !== `index`);
 
@@ -90,16 +108,6 @@ const buildExports = (pkg) => {
   return exports;
 };
 
-const pkg = JSON.parse(readFileSync(`package.json`, `utf8`));
-const jsr = JSON.parse(readFileSync(`jsr.json`, `utf8`));
-
-/**
- * Keep tests and build config out of the published tarball.
- *
- * npm ships only `dist/` via `files`, but JSR publishes from source, so without
- * this every spec file and vite.config.ts lands in the package — noise for
- * consumers and extra surface for JSR's type checker.
- */
 /**
  * Which runtimes each package supports, surfaced on its JSR page.
  *
@@ -163,6 +171,13 @@ const RUNTIME_COMPAT = {
   }
 };
 
+/**
+ * Keep tests and build config out of the published tarball.
+ *
+ * npm ships only `dist/` via `files`, but JSR publishes from source, so without
+ * this every spec file and vite.config.ts lands in the package — noise for
+ * consumers and extra surface for JSR's type checker.
+ */
 const EXCLUDE = [
   `**/__tests__`,
   `**/__mocks__`,
@@ -173,20 +188,37 @@ const EXCLUDE = [
   `tsconfig.json`
 ];
 
-const next = {
-  ...jsr,
-  name: pkg.name,
-  version: pkg.version,
-  exports: buildExports(pkg),
-  publish: { ...jsr.publish, exclude: EXCLUDE },
-  ...(RUNTIME_COMPAT[pkg.name]
-    ? { runtimeCompat: RUNTIME_COMPAT[pkg.name] }
-    : {})
+/** Sync the jsr.json of the package in `dir` to its package.json. */
+const sync = (dir) => {
+  const pkg = JSON.parse(readFileSync(join(dir, `package.json`), `utf8`));
+  const jsr = JSON.parse(readFileSync(join(dir, `jsr.json`), `utf8`));
+
+  const next = {
+    ...jsr,
+    name: pkg.name,
+    version: pkg.version,
+    exports: buildExports(dir, pkg),
+    publish: { ...jsr.publish, exclude: EXCLUDE },
+    ...(RUNTIME_COMPAT[pkg.name]
+      ? { runtimeCompat: RUNTIME_COMPAT[pkg.name] }
+      : {})
+  };
+
+  if (JSON.stringify(next) !== JSON.stringify(jsr)) {
+    writeFileSync(join(dir, `jsr.json`), `${JSON.stringify(next, null, 2)}\n`);
+    console.log(
+      `  synced jsr.json to ${pkg.name}@${pkg.version} (${Object.keys(next.exports).length} exports)`
+    );
+  }
 };
 
-if (JSON.stringify(next) !== JSON.stringify(jsr)) {
-  writeFileSync(`jsr.json`, `${JSON.stringify(next, null, 2)}\n`);
-  console.log(
-    `  synced jsr.json to ${pkg.name}@${pkg.version} (${Object.keys(next.exports).length} exports)`
-  );
-}
+// Every package that publishes to JSR, this one included. See the header for
+// why the siblings cannot be left as they are on disk.
+const workspace = `..`;
+readdirSync(workspace)
+  .map((entry) => join(workspace, entry))
+  .filter(
+    (dir) =>
+      existsSync(join(dir, `jsr.json`)) && existsSync(join(dir, `package.json`))
+  )
+  .forEach(sync);

@@ -45,12 +45,15 @@ export const appendCookie = (
   headers.append(`Set-Cookie`, serializeCookie(descriptor));
 };
 
+// Plain quotes, not this repo's usual backticks: JSR infers the type of a
+// string literal but not of a template string, and reads a template string
+// as a slow type, which fails the publish for this package.
 /**
  * The issuer Discord names itself as in the `iss` parameter of every authorization response, following [RFC 9207](https://www.rfc-editor.org/info/rfc9207). It is the `issuer` in Discord's [authorization server metadata](https://discord.com/.well-known/oauth-authorization-server).
  *
  * {@link createAuthHandler} checks it for you. If you handle the callback yourself with {@link createOAuth2}, compare the `iss` query parameter to this before exchanging the code.
  */
-export const DISCORD_ISSUER = `https://discord.com`;
+export const DISCORD_ISSUER = "https://discord.com" as const;
 
 /** Build a descriptor that clears a cookie (empty value, immediate expiry). */
 const clearCookie = (descriptor: CookieDescriptor): CookieDescriptor => ({
