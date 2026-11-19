@@ -1,3 +1,4 @@
+export * from "./ComputedPermissions.js";
 export * from "./Permissions.js";
 export * from "./Role.js";
 export * from "./RoleColors.js";
