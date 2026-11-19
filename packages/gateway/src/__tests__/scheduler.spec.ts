@@ -87,7 +87,7 @@ describe(`gateway connection with a custom scheduler`, () => {
         client.send(hello());
       })
     );
-    server.listen({ onUnhandledRequest: `error` });
+    server.listen({ onUnhandledFrame: `error` });
 
     const connection = new GatewayConnection({
       token: `t`,
@@ -114,7 +114,7 @@ describe(`gateway connection with a custom scheduler`, () => {
         client.send(hello());
       })
     );
-    server.listen({ onUnhandledRequest: `error` });
+    server.listen({ onUnhandledFrame: `error` });
 
     const connection = new GatewayConnection({
       token: `t`,
@@ -145,7 +145,7 @@ describe(`gateway connection with a custom scheduler`, () => {
         client.send(hello());
       })
     );
-    server.listen({ onUnhandledRequest: `error` });
+    server.listen({ onUnhandledFrame: `error` });
 
     const connection = new GatewayConnection({
       token: `t`,
@@ -202,7 +202,7 @@ describe(`zombie connection detection`, () => {
         client.send(hello());
       })
     );
-    server.listen({ onUnhandledRequest: `error` });
+    server.listen({ onUnhandledFrame: `error` });
 
     const connection = new GatewayConnection({
       token: `t`,
@@ -253,7 +253,7 @@ describe(`zombie connection detection`, () => {
         client.send(hello());
       })
     );
-    server.listen({ onUnhandledRequest: `error` });
+    server.listen({ onUnhandledFrame: `error` });
 
     const states: string[] = [];
     const connection = new GatewayConnection({

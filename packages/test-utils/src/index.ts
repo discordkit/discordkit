@@ -212,7 +212,7 @@ export class MockUtils {
     if (options?.debug) {
       this.#enableDebugging();
     }
-    this.#msw.listen({ onUnhandledRequest: `error` });
+    this.#msw.listen({ onUnhandledFrame: `error` });
   }
 
   #enableDebugging = (): void => {
@@ -321,7 +321,7 @@ export class MockUtils {
   reset = (): void => {
     this.#msw.resetHandlers();
     this.#msw.close();
-    this.#msw.listen({ onUnhandledRequest: `error` });
+    this.#msw.listen({ onUnhandledFrame: `error` });
   };
 
   request = {

@@ -13,6 +13,6 @@ export const register = async (): Promise<void> => {
     process.env.NEXT_RUNTIME === `nodejs`
   ) {
     const { server } = await import(`./__mocks__/node`);
-    server.listen({ onUnhandledRequest: `bypass` });
+    server.listen({ onUnhandledFrame: `bypass` });
   }
 };

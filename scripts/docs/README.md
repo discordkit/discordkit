@@ -535,9 +535,9 @@ Choices we made that future maintainers may want to reconsider:
 
 - **No `@example` tags**: we use markdown sub-headings + fenced code
   blocks (`**Example Response**\n\`\`\`json …`) instead of `@example`.
-Pass 2c removed a stray `@example`to enforce this. The reason:
-TSDoc and the IDE hover-preview both render markdown
-sub-sections, while`@example` rendering varies between IDEs.
+  Pass 2c removed a stray `@example`to enforce this. The reason:
+  TSDoc and the IDE hover-preview both render markdown
+  sub-sections, while`@example` rendering varies between IDEs.
 
 ---
 

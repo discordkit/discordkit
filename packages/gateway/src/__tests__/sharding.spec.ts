@@ -56,7 +56,7 @@ describe(`multiple connections`, () => {
         client.send(hello());
       })
     );
-    server.listen({ onUnhandledRequest: `error` });
+    server.listen({ onUnhandledFrame: `error` });
 
     const total = 2;
     for (let id = 0; id < total; id++) {
@@ -110,7 +110,7 @@ describe(`unsupported frame encodings`, () => {
         client.send(new TextEncoder().encode(`compressed-ish`));
       })
     );
-    server.listen({ onUnhandledRequest: `error` });
+    server.listen({ onUnhandledFrame: `error` });
 
     const errors: Error[] = [];
     const connection = new GatewayConnection({
@@ -138,7 +138,7 @@ describe(`unsupported frame encodings`, () => {
         client.send(new TextEncoder().encode(`compressed-ish`));
       })
     );
-    server.listen({ onUnhandledRequest: `error` });
+    server.listen({ onUnhandledFrame: `error` });
 
     const connection = new GatewayConnection({
       token: `t`,

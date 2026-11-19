@@ -17,6 +17,11 @@ export default defineConfig({
     }
   },
   test: {
+    // Vitest v4 compatibility: keep separate Vite servers for inline projects.
+    // Remove when plugins and config hooks can run once for shared projects.
+    // https://viteplus.dev/guide/vitest-v5#remove-unneeded-compatibility-settings
+    // https://vitest.dev/guide/migration/#inline-projects-share-the-vite-server-by-default
+    sharedViteServer: false,
     globals: true,
     // Two Vitest projects: the mock-backend `unit` suite (the fork-safe default)
     // and the `real-sdk` ABI smoke (opt-in via `vp run smoke` / `--project`).
@@ -47,6 +52,12 @@ export default defineConfig({
     ],
     unbundle: true,
     dts: true,
-    deps: { skipNodeModulesBundle: true }
+    deps: {
+      // tsdown <0.23 compatibility: resolve external dependency subpaths.
+      // Remove to preserve subpath imports as written (the new default).
+      // https://tsdown.dev/options/dependencies#deps-resolvedepsubpath
+      resolveDepSubpath: true,
+      neverBundle: true
+    }
   }
 });

@@ -10,7 +10,7 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@faker-js/faker": "^10.4.0",
+    "@faker-js/faker": "^10.6.0",
     "msw": "catalog:",
     "nodejs-snowflake": "^2.0.1",
     "valibot": "catalog:",

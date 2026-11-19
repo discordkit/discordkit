@@ -1,6 +1,6 @@
 import { env } from "cloudflare:workers";
 import { runInDurableObject } from "cloudflare:test";
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi } from "vite-plus/test";
 import { alarmScheduler } from "../worker/alarmScheduler.js";
 import type { GatewayInspector } from "../worker/inspector.js";
 

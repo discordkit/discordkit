@@ -212,7 +212,7 @@ runtime-agnostic and tree-shakeable:
     (`0.2.2`, Apache-2.0), driven internally from the SDK's `OnStatusChanged`. So
     `status.get()` is always-current (`Disconnected|…|Ready`; a late reader still gets the
     value — the `useState` property), and ecosystem consumers can build `Signal.Computed(() =>
-status.get() === "Ready")` directly off it. We **wrap the spec's `Signal.subtle.Watcher`
+    status.get() === "Ready")` directly off it. We **wrap the spec's `Signal.subtle.Watcher`
     once** to also expose an ergonomic `status.subscribe(cb)` (the proposal omits a
     `.subscribe`); apps get the simple path, power users get the raw `Signal.State`.
     No proxy-setters — those suit deep object stores (Valtio/Jotai), not scalar signals; the

@@ -50,7 +50,7 @@ describe(`appendCookie`, () => {
 });
 
 describe(`createAuthHandler.login`, () => {
-  beforeAll(() => server.listen({ onUnhandledRequest: `error` }));
+  beforeAll(() => server.listen({ onUnhandledFrame: `error` }));
   afterEach(() => server.resetHandlers());
   afterAll(() => server.close());
 
@@ -90,7 +90,7 @@ describe(`createAuthHandler.login`, () => {
 });
 
 describe(`createAuthHandler.callback`, () => {
-  beforeAll(() => server.listen({ onUnhandledRequest: `error` }));
+  beforeAll(() => server.listen({ onUnhandledFrame: `error` }));
   afterEach(() => server.resetHandlers());
   afterAll(() => server.close());
 

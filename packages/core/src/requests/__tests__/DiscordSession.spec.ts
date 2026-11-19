@@ -19,7 +19,7 @@ import { sleep } from "../../utils/sleep.js";
 const server = setupServer();
 
 describe(`discordSession`, () => {
-  beforeAll(() => server.listen({ onUnhandledRequest: `error` }));
+  beforeAll(() => server.listen({ onUnhandledFrame: `error` }));
   afterEach(() => {
     server.resetHandlers();
     vi.unstubAllEnvs();

@@ -24,9 +24,6 @@
     // type packages loaded. The root config's `types: ["node"]` doesn't
     // include them, and this Worker must NOT see Node's globals anyway: the
     // whole point is that it runs on the bare Workers runtime.
-    "types": [
-      "@cloudflare/workers-types",
-      "@cloudflare/vitest-pool-workers/types"
-    ]
+    "types": ["@cloudflare/workers-types", "@cloudflare/vitest-plugin/types"]
   }
 }

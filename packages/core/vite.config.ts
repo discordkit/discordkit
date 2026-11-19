@@ -28,6 +28,12 @@ export default defineConfig({
     // inlines transitive type definitions (e.g. @trpc/server's deep
     // type imports) into `dist/node_modules/...`, which both bloats
     // the package and pulls third-party types under our publish surface.
-    deps: { skipNodeModulesBundle: true }
+    deps: {
+      // tsdown <0.23 compatibility: resolve external dependency subpaths.
+      // Remove to preserve subpath imports as written (the new default).
+      // https://tsdown.dev/options/dependencies#deps-resolvedepsubpath
+      resolveDepSubpath: true,
+      neverBundle: true
+    }
   }
 });

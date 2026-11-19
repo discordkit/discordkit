@@ -35,7 +35,13 @@ export default defineConfig({
     // it EXTERNAL — koffi loads it at runtime via a path search (createRequire +
     // import.meta.dirname), and `scripts/build-sidecar.mjs` drops the real
     // prebuilt koffi.node into that search layout next to the binary.
-    deps: { alwaysBundle: [/.*/] },
+    deps: {
+      // tsdown <0.23 compatibility: resolve external dependency subpaths.
+      // Remove to preserve subpath imports as written (the new default).
+      // https://tsdown.dev/options/dependencies#deps-resolvedepsubpath
+      resolveDepSubpath: true,
+      alwaysBundle: [/.*/]
+    },
     external: [/\.node$/],
     exe: {
       fileName: `discord-sidecar`,
