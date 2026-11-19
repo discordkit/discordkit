@@ -111,10 +111,14 @@ export const closeAction = (code: number): CloseAction => {
   // A session survives only an unclean drop. 1000/1001 are the WHATWG "clean
   // close" codes — plain numbers, not GatewayCloseCode members.
   const cleanClose = code === 1000 || code === 1001;
+  // Discord closes with 4007 rather than sending INVALID_SESSION, so nothing
+  // else clears the session. Keeping it replays the rejected RESUME forever.
+  const invalidSeq: number = GatewayCloseCode.INVALID_SEQ;
   const sessionTimedOut: number = GatewayCloseCode.SESSION_TIMED_OUT;
   return {
     reconnect: true,
-    discardSession: cleanClose || code === sessionTimedOut
+    discardSession:
+      cleanClose || code === invalidSeq || code === sessionTimedOut
   };
 };
 
