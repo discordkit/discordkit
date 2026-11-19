@@ -1,5 +1,6 @@
 import * as v from "valibot";
 import { asInteger } from "@discordkit/core/validations/asInteger";
+import { boundedString } from "@discordkit/core/validations/boundedString";
 import { schema } from "@discordkit/core/validations/schema";
 import { snowflake } from "@discordkit/core/validations/snowflake";
 import { lobbyMemberFlag } from "./LobbyMemberFlags.js";
@@ -12,7 +13,9 @@ const _lobbyMemberSchema = v.object({
     v.pipe(v.record(v.string(), v.string()), v.maxEntries(1000))
   ),
   /** lobby member flags combined as a bitfield */
-  flags: v.exactOptional(asInteger(lobbyMemberFlag) as v.GenericSchema<number>)
+  flags: v.exactOptional(asInteger(lobbyMemberFlag) as v.GenericSchema<number>),
+  /** an additional 1-80 character display name for the member, such as an in-game character name. Can only be set through the HTTP API, not from a Social SDK client. */
+  additionalName: v.exactOptional(boundedString({ min: 1, max: 80 }))
 });
 
 export interface LobbyMember extends v.InferOutput<typeof _lobbyMemberSchema> {}

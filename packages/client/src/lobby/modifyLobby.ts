@@ -1,6 +1,7 @@
 import * as v from "valibot";
 import { patch, type Fetcher } from "@discordkit/core/requests/methods";
 import { asInteger } from "@discordkit/core/validations/asInteger";
+import { boundedString } from "@discordkit/core/validations/boundedString";
 import { snowflake } from "@discordkit/core/validations/snowflake";
 import type { Lobby } from "./types/Lobby.js";
 import { lobbyMemberFlag } from "./types/LobbyMemberFlags.js";
@@ -26,7 +27,9 @@ export const modifyLobbySchema = v.object({
             /** {@link LobbyMember | lobby member} flags combined as a bitfield */
             flags: v.exactOptional(
               asInteger(lobbyMemberFlag) as v.GenericSchema<number>
-            )
+            ),
+            /** an additional display name for the member, such as an in-game character name. 1-80 characters. When updating an existing member, omit the field to preserve their current value, or send `null` to clear it. */
+            additionalName: v.nullish(boundedString({ min: 1, max: 80 }))
           })
         ),
         v.maxLength(25)
