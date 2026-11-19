@@ -36,6 +36,7 @@ const FOLDER_MAP: Record<string, string[]> = {
     `resources/application.md`,
     `interactions/application-commands.md`
   ],
+  "application-identity-profile": [`resources/application-identity-profile.md`],
   "application-role-connection": [
     `resources/application-role-connection-metadata.md`
   ],

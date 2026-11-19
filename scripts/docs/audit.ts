@@ -61,6 +61,7 @@ const FOLDER_MAP: Record<string, string[]> = {
   ],
   // application-commands/ is a types-only folder; its endpoint files live in
   // application/. Handled via SPECIAL_FOLDERS below.
+  "application-identity-profile": [`resources/application-identity-profile.md`],
   "application-role-connection": [
     `resources/application-role-connection-metadata.md`
   ],
