@@ -63,6 +63,41 @@ export const AUDIO_MODE_CODE: Record<AudioMode, number> = {
   pushToTalk: 2
 };
 
+/** When the Discord desktop client transmits microphone audio, the public form of `Discord_VoiceInputModeType`. */
+export type VoiceInputMode = `voiceActivity` | `pushToTalk`;
+
+/** Maps the ABI's numeric `Discord_VoiceInputModeType` to the public string form. */
+export const VOICE_INPUT_MODE_BY_CODE: Record<number, VoiceInputMode> = {
+  0: `voiceActivity`,
+  1: `pushToTalk`
+};
+
+/**
+ * A read-only snapshot of the user's voice settings in the connected Discord desktop client. These belong to the Discord client, not to any individual call.
+ */
+export interface VoiceSettings {
+  /** Whether the user has muted their own microphone in Discord. */
+  selfMute: boolean;
+  /** Whether the user has deafened themselves in Discord. */
+  selfDeaf: boolean;
+  /** When the client transmits microphone audio: on voice activity, or while the push-to-talk shortcut is held. */
+  inputMode: VoiceInputMode;
+  /** Display string for the push-to-talk key, such as `"SHIFT + F"`. Empty when nothing is bound. */
+  pttKey: string;
+  /** Microphone volume, ranging from 0 to 100. */
+  inputVolume: number;
+  /** Speaker volume, ranging from 0 to 200. */
+  outputVolume: number;
+  /** Whether automatic gain control is on. */
+  automaticGainControl: boolean;
+  /** Whether echo cancellation is on. */
+  echoCancellation: boolean;
+  /** Whether noise suppression is on. */
+  noiseSuppression: boolean;
+  /** Whether noise cancellation is on. */
+  noiseCancellation: boolean;
+}
+
 /** A snapshot of one call participant's self-mute/deaf state. */
 export interface VoiceState {
   /** Whether the user has muted their own microphone. */

@@ -19,6 +19,8 @@ import {
   setInputDevice,
   setOutputDevice,
   onDeviceChange,
+  getVoiceSettings,
+  onVoiceSettingsUpdated,
   type AudioMode,
   type Call,
   type CallSnapshot
@@ -143,5 +145,12 @@ export const registerVoice = ({
 
   track(
     onDeviceChange((devices) => broadcast(VOICE_CHANNELS.deviceChange, devices))
+  );
+
+  handle(VOICE_CHANNELS.getVoiceSettings, async () => getVoiceSettings());
+  track(
+    onVoiceSettingsUpdated((settings) =>
+      broadcast(VOICE_CHANNELS.voiceSettingsUpdated, settings)
+    )
   );
 };

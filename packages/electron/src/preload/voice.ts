@@ -56,7 +56,10 @@ export const voiceSlice = (io: BridgeIo): { voice: VoiceBridge } => {
       io.call(VOICE_CHANNELS.setInputDevice, deviceId),
     setOutputDevice: async (deviceId) =>
       io.call(VOICE_CHANNELS.setOutputDevice, deviceId),
-    onDeviceChange: (handler) => io.on(VOICE_CHANNELS.deviceChange, handler)
+    onDeviceChange: (handler) => io.on(VOICE_CHANNELS.deviceChange, handler),
+    getVoiceSettings: async () => io.call(VOICE_CHANNELS.getVoiceSettings),
+    onVoiceSettingsUpdated: (handler) =>
+      io.on(VOICE_CHANNELS.voiceSettingsUpdated, handler)
   };
   return { voice };
 };

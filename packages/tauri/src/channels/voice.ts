@@ -3,7 +3,8 @@ import type { UserId, ChannelId } from "@discordkit/native";
 import type {
   AudioDevice,
   AudioMode,
-  CallSnapshot
+  CallSnapshot,
+  VoiceSettings
 } from "@discordkit/native/voice";
 import type { Unsubscribe } from "../internal.js";
 
@@ -36,7 +37,9 @@ export const VOICE_CHANNELS = {
   getCurrentOutputDevice: `discordkit:voice:getCurrentOutputDevice`,
   setInputDevice: `discordkit:voice:setInputDevice`,
   setOutputDevice: `discordkit:voice:setOutputDevice`,
-  deviceChange: `discordkit:voice:deviceChange`
+  deviceChange: `discordkit:voice:deviceChange`,
+  getVoiceSettings: `discordkit:voice:getVoiceSettings`,
+  voiceSettingsUpdated: `discordkit:voice:voiceSettingsUpdated`
 } as const;
 
 /** The `voice` namespace on the webview bridge (calls + client-wide audio). */
@@ -86,5 +89,10 @@ export interface VoiceBridge {
   setOutputDevice: (deviceId: string) => Promise<void>;
   onDeviceChange: (
     handler: (devices: { input: AudioDevice[]; output: AudioDevice[] }) => void
+  ) => Unsubscribe;
+  // the Discord desktop client's own voice settings (read-only)
+  getVoiceSettings: () => Promise<VoiceSettings>;
+  onVoiceSettingsUpdated: (
+    handler: (settings: VoiceSettings) => void
   ) => Unsubscribe;
 }

@@ -4,6 +4,8 @@ import { getCurrentUser } from "../users/users.js";
 import { getRelationships } from "../relationships/relationships.js";
 import { getLobbyIds } from "../lobby/lobbies.js";
 import { resolveLibraryPath } from "../resolveLibrary.js";
+import { ResultError } from "../ffi/bindings.js";
+import { getVoiceSettings } from "../voice/voiceSettings.js";
 
 /**
  * Real-SDK ABI smoke — loads the GENUINE Discord Social SDK binary (not the mock backend the unit suite uses) and verifies it loads, every `Discord_*` symbol our bindings declare resolves, and a representative op per domain can be CALLED without crashing at the FFI boundary.
@@ -53,5 +55,14 @@ describe.skipIf(!hasBinary)(`real Social SDK (genuine binary)`, () => {
     expect(getCurrentUser()).toBeUndefined(); // no current user before auth
     expect(getRelationships()).toEqual([]); // empty cache
     expect(getLobbyIds()).toEqual([]); // not in any lobby
+  });
+
+  it(`resolves the Discord client voice settings symbols (SDK 1.10.19337+)`, async () => {
+    // These are the newest symbols the package binds, so this is the check that fails first if the SDK under test predates them. With no Discord client the op cannot succeed; what matters is HOW it fails: a `ResultError` (the SDK answered, or nothing did in time) means every symbol in the set resolved, where a missing symbol would throw a koffi error instead.
+    const outcome = await getVoiceSettings({ timeoutMs: 1_000 }).catch(
+      (error: unknown) => error
+    );
+
+    expect(outcome).toBeInstanceOf(ResultError);
   });
 });
