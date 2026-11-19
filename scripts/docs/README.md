@@ -450,13 +450,16 @@ any of those means the docs restructured — check before trusting codegen.
 
 Between the Aug 2026 and Nov 2026 refreshes, Mintlify changed how it renders a docs page to `.md`:
 
-| Construct | Aug 2026 render                                   | Nov 2026 render                                                   |
-| --------- | ------------------------------------------------- | ----------------------------------------------------------------- |
-| Endpoint  | `<Route method="GET">/channels/[\{…}](…)</Route>` | a bare paragraph: `GET`, a newline, then `/channels/[{…}](…)`     |
-| Doc links | `/developers/resources/channel#anchor`            | `https://docs.discord.com/developers/resources/channel.md#anchor` |
-| Anchors   | `<ManualAnchor id="…" />`                         | removed                                                           |
+| Construct | Aug 2026 render                                               | Nov 2026 render                                                                |
+| --------- | ------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Endpoint  | `<Route method="GET">/channels/[\{…}](…)</Route>`             | a bare paragraph: `GET`, a newline, then `/channels/[{…}](…)`                  |
+| Doc links | `/developers/resources/channel#anchor`                        | `https://docs.discord.com/developers/resources/channel.md#anchor`              |
+| Anchors   | `<ManualAnchor id="…" />`                                     | removed                                                                        |
+| Notes     | `<Info>`, `<Note>`, `<Warning>`, `<Danger>`, `<Tip>` elements | GFM alert blockquotes: `> [!NOTE]`, `> [!WARNING]`, `> [!CAUTION]`, `> [!TIP]` |
 
 Nothing failed. `parseResource` returned **zero endpoints** for every page, so `audit.ts` would have reported every endpoint in the codebase as "missing from docs" and `diff-jsdoc.ts` would have matched nothing.
+
+A minority of doc links also omit the `.md` extension; both forms are rewritten. Notes were a second, quieter failure: read as plain blockquotes they detach from their endpoint and render as `[!NOTE]text` glued together, which showed up as 20 guild files "changing" in a `diff-jsdoc.ts` dry run that had no real edits.
 
 **Decision**: `normalizeRender()` in `parse.ts` rewrites the new render back into the old one before parsing, rather than adding a second Route shape. `parse.ts` consults Routes in four places and three downstream tools assume site-relative `/developers/…` links, so one rewrite at the single entry point keeps all of them true. A cache fetched before the change passes through untouched. `__tests__/parse.spec.ts` pins both renders.
 

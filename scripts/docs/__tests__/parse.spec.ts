@@ -17,6 +17,10 @@ const LEGACY_RENDER = `
 <Route method="GET">/channels/[\\{channel.id}](/developers/resources/channel#channel-object)/invites</Route>
 
 Returns a list of [invite](/developers/resources/invite#invite-object) objects for the channel.
+
+<Info>
+  This endpoint supports the \`X-Audit-Log-Reason\` header.
+</Info>
 `;
 
 const CURRENT_RENDER = `
@@ -28,6 +32,10 @@ GET
 /channels/[{channel.id}](https://docs.discord.com/developers/resources/channel.md#channel-object)/invites
 
 Returns a list of [invite](https://docs.discord.com/developers/resources/invite.md#invite-object) objects for the channel.
+
+> [!NOTE]
+>
+> This endpoint supports the \`X-Audit-Log-Reason\` header.
 
 ## Create Channel Invite
 
@@ -70,6 +78,20 @@ describe(`parseResource`, () => {
     const [invites] = parseResource(CURRENT_RENDER).endpoints;
 
     expect(invites?.description).toMatch(/^Returns a list of/);
+  });
+
+  it(`keeps a note that is now a GFM alert blockquote`, () => {
+    // Notes carry things a caller must know, like audit-log support or a
+    // permission caveat. Read as an ordinary blockquote, the alert marker ends
+    // up glued to the text and the note is no longer attached to the endpoint.
+    const [invites] = parseResource(CURRENT_RENDER).endpoints;
+
+    expect(invites?.notes).toEqual([
+      {
+        kind: `Info`,
+        content: `This endpoint supports the \`X-Audit-Log-Reason\` header.`
+      }
+    ]);
   });
 
   it(`resolves an absolute docs link to the same type reference`, () => {

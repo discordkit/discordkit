@@ -177,14 +177,29 @@ const ADMONITION_NAMES = new Set<AdmonitionBlock[`kind`]>([
 // ─── render normalization ──────────────────────────────────────────────────
 
 /**
+ * GFM alert → the Mintlify element the old render used for it. The old render
+ * had two elements for some alerts (`<Info>`/`<Note>`, `<Warning>`/`<Danger>`);
+ * the JSDoc renderer folds each pair into one alert anyway, so which of a pair
+ * is picked here does not change any output.
+ */
+const ALERT_ELEMENTS = {
+  NOTE: `Info`,
+  WARNING: `Warning`,
+  CAUTION: `Danger`,
+  TIP: `Tip`
+} as const;
+
+/**
  * Fold Mintlify's current `.md` render back into the shape the rest of this
  * file reads. See README § 3.14.
  *
  * Since late 2026 the render no longer emits `<Route>`: an endpoint is a bare
  * paragraph of the method, a newline, then the path. Doc links also became
- * absolute `https://docs.discord.com/….md#anchor` URLs. Rewriting both here,
- * at the single entry point, keeps every downstream assumption true — Route
- * detection, and the `/developers/…` link handling in the JSDoc renderers.
+ * absolute `https://docs.discord.com/….md#anchor` URLs, and admonitions became
+ * GFM alert blockquotes (`> [!NOTE]`) instead of `<Info>`-style elements.
+ * Rewriting all three here, at the single entry point, keeps every downstream
+ * assumption true — Route detection, admonition capture, and the
+ * `/developers/…` link handling in the JSDoc renderers.
  *
  * A cache fetched before the change passes through untouched.
  */
@@ -198,9 +213,22 @@ export function normalizeRender(markdown: string): string {
         `<Route method="${method}">${path.replace(/(?<!\\)\{/g, `\\{`)}</Route>`
     )
     .replace(
-      /\]\(https:\/\/docs\.discord\.com(\/developers\/[^)#\s]*?)\.md(#[^)\s]*)?\)/g,
+      // `.md` is optional: a minority of links in the render omit it.
+      /\]\(https:\/\/docs\.discord\.com(\/developers\/[^)#\s]*?)(?:\.md)?(#[^)\s]*)?\)/g,
       (_match, page: string, hash: string | undefined) =>
         `](${page}${hash ?? ``})`
+    )
+    .replace(
+      /^> \[!(NOTE|WARNING|CAUTION|TIP)\]\r?\n((?:>.*(?:\r?\n|$))*)/gm,
+      (_match, alert: keyof typeof ALERT_ELEMENTS, quoted: string) => {
+        const element = ALERT_ELEMENTS[alert];
+        const body = quoted
+          .split(/\r?\n/)
+          .map((line) => line.replace(/^> ?/, ``))
+          .join(`\n`)
+          .trim();
+        return `<${element}>\n${body}\n</${element}>\n`;
+      }
     );
 }
 
