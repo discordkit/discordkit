@@ -1,4 +1,5 @@
 import { discord } from "./DiscordSession.js";
+import { DiscordAPIError } from "./DiscordAPIError.js";
 import { toCamelKeys } from "../utils/toCamelKeys.js";
 import { toSnakeKeys } from "../utils/toSnakeKeys.js";
 import {
@@ -78,9 +79,10 @@ export const request = async <T>(
   );
 
   if (!res.ok) {
-    throw new Error(
-      `Request to resource '${resource.toString()}' failed:\n\n${res.statusText}`
-    );
+    // Not every error body is Discord's JSON (a Cloudflare page, an empty
+    // body). A parse failure must not replace the error that says what failed.
+    const body: unknown = await res.json().catch(() => undefined);
+    throw new DiscordAPIError(resource, res, body);
   }
 
   // Return `void` on `204 No Content` responses

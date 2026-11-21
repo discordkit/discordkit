@@ -1,4 +1,4 @@
-export { discord } from "@discordkit/core";
+export { discord, DiscordAPIError } from "@discordkit/core";
 
 export * from "./application/index.js";
 export * from "./application-commands/index.js";

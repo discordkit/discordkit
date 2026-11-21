@@ -188,7 +188,9 @@ describe(`discordSession`, () => {
       // Should take at least 2 seconds due to rate limit
       expect(elapsed).toBeGreaterThanOrEqual(1900);
       expect(requestCount).toBeGreaterThanOrEqual(7);
-    });
+      // About 4s: the session waits out the reset the 5th response announces,
+      // then this handler still answers the 6th request with a 429.
+    }, 10000);
 
     it(`handles global rate limits`, async () => {
       const guildId = `123456789`;
@@ -564,6 +566,352 @@ describe(`discordSession`, () => {
 
       expect(session.getQueueSize()).toBe(0);
       expect(session.ready).toBe(false);
+    });
+  });
+
+  // Discord limits each route separately, and within a route it counts each
+  // channel, guild and webhook separately. Interaction endpoints sit outside
+  // the global limit. https://discord.com/developers/docs/topics/rate-limits
+  describe(`rate limit buckets`, () => {
+    const api = (path: string): URL =>
+      new URL(`https://discord.com/api/v10${path}`);
+
+    const rateLimited = (retryAfter: number, scope: `user` | `global`) =>
+      HttpResponse.json(
+        {
+          message: `You are being rate limited.`,
+          retry_after: retryAfter,
+          global: scope === `global`
+        },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": String(retryAfter),
+            "X-RateLimit-Scope": scope,
+            ...(scope === `global` ? { "X-RateLimit-Global": `true` } : {})
+          }
+        }
+      );
+
+    /** A promise the test resolves by hand, to mark or hold a moment. */
+    const signal = (): { promise: Promise<void>; resolve: () => void } => {
+      let settle: () => void = () => {};
+      const promise = new Promise<void>((resolve) => {
+        settle = resolve;
+      });
+      return { promise, resolve: settle };
+    };
+
+    it(`answers an interaction while another route waits out a 429`, async () => {
+      // WHY: Discord voids an interaction that is not answered within 3
+      // seconds, and the user sees "This interaction failed". A 429 on some
+      // other route must not hold the reply back for its Retry-After.
+      const limited = signal();
+      server.use(
+        http.post(
+          `https://discord.com/api/v10/channels/1/messages`,
+          () => {
+            limited.resolve();
+            return rateLimited(1, `user`);
+          },
+          { once: true }
+        ),
+        http.post(`https://discord.com/api/v10/channels/1/messages`, () =>
+          HttpResponse.json({ id: `1` })
+        ),
+        http.post(
+          `https://discord.com/api/v10/interactions/:id/:token/callback`,
+          () => new HttpResponse(null, { status: 204 })
+        )
+      );
+      const session = new DiscordSession(`Bot test-token`);
+
+      let messageSettled = false;
+      const message = (async () => {
+        await session.queueRequest(api(`/channels/1/messages`), `POST`, `{}`);
+        messageSettled = true;
+      })();
+      await limited.promise;
+
+      const reply = await session.queueRequest(
+        api(`/interactions/2/interaction-token/callback`),
+        `POST`,
+        `{}`,
+        { anonymous: true }
+      );
+
+      expect(reply.status).toBe(204);
+      expect(messageSettled).toBe(false);
+      await message;
+    }, 10000);
+
+    it(`does not hold one channel's requests behind another channel's 429`, async () => {
+      // WHY: `channel_id` is a major parameter, so Discord counts each
+      // channel on its own. A busy channel must not slow a quiet one.
+      const limited = signal();
+      server.use(
+        http.post(
+          `https://discord.com/api/v10/channels/1/messages`,
+          () => {
+            limited.resolve();
+            return rateLimited(1, `user`);
+          },
+          { once: true }
+        ),
+        http.post(`https://discord.com/api/v10/channels/:id/messages`, () =>
+          HttpResponse.json({ id: `1` })
+        )
+      );
+      const session = new DiscordSession(`Bot test-token`);
+
+      let busySettled = false;
+      const busy = (async () => {
+        await session.queueRequest(api(`/channels/1/messages`), `POST`, `{}`);
+        busySettled = true;
+      })();
+      await limited.promise;
+
+      const quiet = await session.queueRequest(
+        api(`/channels/2/messages`),
+        `POST`,
+        `{}`
+      );
+
+      expect(quiet.status).toBe(200);
+      expect(busySettled).toBe(false);
+      await busy;
+    }, 10000);
+
+    it(`sends requests on one route one at a time, in the order they were made`, async () => {
+      // WHY: two messages sent to one channel must post in the order the bot
+      // sent them, and Discord's per-route count is only known once the
+      // previous response arrives.
+      const arrived: string[] = [];
+      const firstHeld = signal();
+      server.use(
+        http.post(
+          `https://discord.com/api/v10/channels/1/messages`,
+          async ({ request }) => {
+            const { content } = (await request.json()) as { content: string };
+            arrived.push(content);
+            if (content === `first`) await firstHeld.promise;
+            return HttpResponse.json({ id: content });
+          }
+        )
+      );
+      const session = new DiscordSession(`Bot test-token`);
+
+      const sends = [`first`, `second`, `third`].map(async (content) =>
+        session.queueRequest(
+          api(`/channels/1/messages`),
+          `POST`,
+          JSON.stringify({ content })
+        )
+      );
+      await sleep(50);
+
+      expect(arrived).toEqual([`first`]);
+      firstHeld.resolve();
+      await Promise.all(sends);
+      expect(arrived).toEqual([`first`, `second`, `third`]);
+    });
+
+    it(`holds every route during a global 429, except interaction replies`, async () => {
+      // WHY: a global 429 means the bot as a whole is over its limit, and
+      // every further request would earn another 429, each one counting
+      // toward Cloudflare's ban. Interaction endpoints are outside the global
+      // limit, so replies must still go out inside their 3 seconds.
+      const limited = signal();
+      let otherHits = 0;
+      server.use(
+        http.get(
+          `https://discord.com/api/v10/users/@me`,
+          () => {
+            limited.resolve();
+            return rateLimited(1, `global`);
+          },
+          { once: true }
+        ),
+        http.get(`https://discord.com/api/v10/users/@me`, () =>
+          HttpResponse.json({ id: `1` })
+        ),
+        http.get(`https://discord.com/api/v10/channels/1`, () => {
+          otherHits++;
+          return HttpResponse.json({ id: `1` });
+        }),
+        http.post(
+          `https://discord.com/api/v10/interactions/:id/:token/callback`,
+          () => new HttpResponse(null, { status: 204 })
+        )
+      );
+      const session = new DiscordSession(`Bot test-token`);
+
+      const me = session.queueRequest(api(`/users/@me`), `GET`);
+      await limited.promise;
+      // Let the session read the 429 before the next requests are queued.
+      await sleep(50);
+
+      const started = Date.now();
+      const other = session.queueRequest(api(`/channels/1`), `GET`);
+      const reply = await session.queueRequest(
+        api(`/interactions/2/interaction-token/callback`),
+        `POST`,
+        `{}`,
+        { anonymous: true }
+      );
+
+      expect(reply.status).toBe(204);
+      expect(Date.now() - started).toBeLessThan(500);
+      expect(otherHits).toBe(0);
+      await Promise.all([me, other]);
+      expect(otherHits).toBe(1);
+    }, 10000);
+
+    it(`keeps to 50 requests a second when they are spread over many routes`, async () => {
+      // WHY: the global limit counts every request the bot makes, whatever
+      // the route. Queues that run side by side must share one count, or a
+      // burst across many channels goes straight past it.
+      server.use(
+        http.get(`https://discord.com/api/v10/channels/:id`, () =>
+          HttpResponse.json({ id: `1` })
+        )
+      );
+      const session = new DiscordSession(`Bot test-token`);
+      const started = Date.now();
+
+      await Promise.all(
+        Array.from({ length: 60 }, async (_, i) =>
+          session.queueRequest(api(`/channels/${i}`), `GET`)
+        )
+      );
+
+      expect(Date.now() - started).toBeGreaterThanOrEqual(900);
+    });
+
+    it(`does not hold interaction replies when 50 other requests filled the last second`, async () => {
+      // WHY: a class pressing buttons at once is a burst of interactions on
+      // top of the bot's other traffic. Replies are outside the global limit,
+      // so a full one-second window must not delay them past 3 seconds.
+      server.use(
+        http.get(`https://discord.com/api/v10/channels/:id`, () =>
+          HttpResponse.json({ id: `1` })
+        ),
+        http.post(
+          `https://discord.com/api/v10/interactions/:id/:token/callback`,
+          () => new HttpResponse(null, { status: 204 })
+        )
+      );
+      const session = new DiscordSession(`Bot test-token`);
+      await Promise.all(
+        Array.from({ length: 50 }, async (_, i) =>
+          session.queueRequest(api(`/channels/${i}`), `GET`)
+        )
+      );
+
+      const started = Date.now();
+      const waiting = session.queueRequest(api(`/channels/50`), `GET`);
+      const reply = await session.queueRequest(
+        api(`/interactions/2/interaction-token/callback`),
+        `POST`,
+        `{}`,
+        { anonymous: true }
+      );
+
+      expect(reply.status).toBe(204);
+      expect(Date.now() - started).toBeLessThan(500);
+      await waiting;
+    });
+
+    describe(`known limits`, () => {
+      const bucketHeaders = (bucket: string, remaining: number) => ({
+        "X-RateLimit-Bucket": bucket,
+        "X-RateLimit-Limit": `1`,
+        "X-RateLimit-Remaining": String(remaining),
+        "X-RateLimit-Reset": String(Date.now() / 1000 + 0.5),
+        "X-RateLimit-Reset-After": `0.5`
+      });
+
+      it(`waits for an empty bucket to reset rather than send into a 429`, async () => {
+        // WHY: every 429 counts toward Discord's limit of 10,000 invalid
+        // requests in 10 minutes, after which Cloudflare bans the bot's IP.
+        // When a response says the bucket is empty, the next request on that
+        // route must wait for the reset instead of spending one.
+        let resetAt = 0;
+        let rejected = 0;
+        server.use(
+          http.get(`https://discord.com/api/v10/channels/1/messages`, () => {
+            if (Date.now() < resetAt) {
+              rejected++;
+              return rateLimited(0.5, `user`);
+            }
+            resetAt = Date.now() + 500;
+            return HttpResponse.json([], { headers: bucketHeaders(`abc`, 0) });
+          })
+        );
+        const session = new DiscordSession(`Bot test-token`);
+
+        await Promise.all([
+          session.queueRequest(api(`/channels/1/messages`), `GET`),
+          session.queueRequest(api(`/channels/1/messages`), `GET`)
+        ]);
+
+        expect(rejected).toBe(0);
+      });
+
+      it(`waits on a bucket another route emptied, when Discord says they share it`, async () => {
+        // WHY: Discord limits some sets of routes together, and says so by
+        // sending the same X-RateLimit-Bucket hash for each. A limit kept per
+        // route would miss that and send into a 429.
+        let resetAt = 0;
+        let rejected = 0;
+        const shared = ({ request }: { request: Request }) => {
+          if (Date.now() < resetAt) {
+            rejected++;
+            return rateLimited(0.5, `user`);
+          }
+          // Only the messages route empties the shared bucket.
+          const empty = new URL(request.url).pathname.endsWith(`/messages`);
+          if (empty) resetAt = Date.now() + 500;
+          return HttpResponse.json([], {
+            headers: bucketHeaders(`shared`, empty ? 0 : 1)
+          });
+        };
+        server.use(
+          http.get(`https://discord.com/api/v10/channels/1/messages`, shared),
+          http.get(`https://discord.com/api/v10/channels/1/pins`, shared)
+        );
+        const session = new DiscordSession(`Bot test-token`);
+
+        // The session learns that both routes report the same bucket
+        await session.queueRequest(api(`/channels/1/pins`), `GET`);
+        await session.queueRequest(api(`/channels/1/messages`), `GET`);
+        await session.queueRequest(api(`/channels/1/pins`), `GET`);
+
+        expect(rejected).toBe(0);
+      });
+
+      it(`does not hold one channel because the same bucket is empty in another`, async () => {
+        // WHY: the bucket hash is the same for every channel, but Discord
+        // counts each channel on its own. Waiting on another channel's count
+        // would slow the bot for no reason.
+        server.use(
+          http.get(`https://discord.com/api/v10/channels/:id/messages`, () =>
+            HttpResponse.json([], {
+              headers: {
+                ...bucketHeaders(`abc`, 0),
+                "X-RateLimit-Reset-After": `1`
+              }
+            })
+          )
+        );
+        const session = new DiscordSession(`Bot test-token`);
+        await session.queueRequest(api(`/channels/1/messages`), `GET`);
+
+        const started = Date.now();
+        await session.queueRequest(api(`/channels/2/messages`), `GET`);
+
+        expect(Date.now() - started).toBeLessThan(500);
+      });
     });
   });
 
