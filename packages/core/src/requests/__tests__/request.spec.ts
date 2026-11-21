@@ -10,6 +10,7 @@ import {
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { discord, TOKEN_ENV_VAR } from "../DiscordSession.js";
+import { DiscordAPIError } from "../DiscordAPIError.js";
 import { request } from "../request.js";
 
 const server = setupServer();
@@ -225,6 +226,107 @@ describe(`request`, () => {
       expect(authHeaders).toEqual([`Bearer solo-user-token`]);
       // No session token remained active after the scoped request.
       expect(discord.hasAuth).toBe(false);
+    });
+  });
+
+  describe(`failed requests`, () => {
+    it(`report Discord's status, error code and message`, async () => {
+      // WHY: what a caller should do depends on why Discord said no. 50013
+      // means the bot lacks a permission; 10062 means the interaction expired.
+      // The status text alone cannot tell those apart, and it is empty over
+      // HTTP/2.
+      server.use(
+        http.post(`https://discord.com/api/v10/channels/123/messages`, () =>
+          HttpResponse.json(
+            { code: 50013, message: `Missing Permissions` },
+            { status: 403 }
+          )
+        )
+      );
+      discord.clearSession();
+      discord.setToken(`Bot test-token`);
+
+      const error: unknown = await request(
+        new URL(`https://discord.com/api/v10/channels/123/messages`),
+        `POST`,
+        { content: `hello` }
+      ).catch((caught: unknown) => caught);
+
+      // Existing `catch (error)` blocks that check for an Error still match.
+      expect(error).toBeInstanceOf(Error);
+      expect(error).toBeInstanceOf(DiscordAPIError);
+      expect(error).toMatchObject({
+        status: 403,
+        code: 50013,
+        discordMessage: `Missing Permissions`
+      });
+      const { message } = error as Error;
+      expect(message).toContain(`403`);
+      expect(message).toContain(`Missing Permissions (code 50013)`);
+    });
+
+    it.each([
+      [
+        `/interactions/1/secret-token/callback`,
+        `/interactions/1/<token>/callback`
+      ],
+      [
+        `/webhooks/1/secret-token/messages/@original`,
+        `/webhooks/1/<token>/messages/@original`
+      ]
+    ])(`keep the token out of %s`, async (path, redacted) => {
+      // WHY: these routes carry a token in the path, and anyone holding it can
+      // post as the bot for 15 minutes. Errors end up in logs.
+      server.use(
+        http.all(`https://discord.com/api/v10/*`, () =>
+          HttpResponse.json(
+            { code: 10062, message: `Unknown interaction` },
+            { status: 404 }
+          )
+        )
+      );
+      discord.clearSession();
+
+      const error: unknown = await request(
+        new URL(`https://discord.com/api/v10${path}`),
+        `POST`,
+        { type: 1 },
+        { anonymous: true }
+      ).catch((caught: unknown) => caught);
+
+      expect(error).toBeInstanceOf(DiscordAPIError);
+      const { message, stack } = error as Error;
+      expect(message).toContain(redacted);
+      expect(`${stack}${JSON.stringify(error)}`).not.toContain(`secret-token`);
+    });
+
+    it(`still report the status when the body is not Discord's JSON`, async () => {
+      // WHY: Cloudflare and proxies answer some failures with an HTML page.
+      // Failing to parse that page must not replace the error that says what
+      // went wrong with a JSON syntax error.
+      server.use(
+        http.get(`https://discord.com/api/v10/users/@me`, () =>
+          HttpResponse.text(`<html>Bad Gateway</html>`, {
+            status: 502,
+            statusText: `Bad Gateway`
+          })
+        )
+      );
+      discord.clearSession();
+      discord.setToken(`Bot test-token`);
+
+      const error: unknown = await request(
+        new URL(`https://discord.com/api/v10/users/@me`),
+        `GET`
+      ).catch((caught: unknown) => caught);
+
+      expect(error).toBeInstanceOf(DiscordAPIError);
+      expect(error).toMatchObject({
+        status: 502,
+        code: undefined,
+        discordMessage: undefined
+      });
+      expect((error as Error).message).toContain(`502 Bad Gateway`);
     });
   });
 });

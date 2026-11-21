@@ -1,4 +1,5 @@
 import { sleep } from "../utils/sleep.js";
+import { redactToken } from "./DiscordAPIError.js";
 import type { RequestMethod, RequestOptions } from "./request.js";
 
 export const endpoint = "https://discord.com/api/v10/" as const;
@@ -21,9 +22,62 @@ export const tokenFromEnv = (): `Bot ${string}` | null => {
   return token === undefined || token === `` ? null : `Bot ${token}`;
 };
 
+/**
+ * Where a request falls in Discord's rate limits.
+ * https://discord.com/developers/docs/topics/rate-limits
+ */
+interface Route {
+  /**
+   * The method and path, with ids, tokens and reaction emoji replaced by
+   * placeholders: `GET /channels/:id/messages`. Discord gives every request on
+   * one route the same `X-RateLimit-Bucket` hash.
+   */
+  key: string;
+  /**
+   * The top-level resource Discord counts on its own: the channel, guild, or
+   * webhook (with its token) in the path. For an interaction callback it is the
+   * interaction, so that no callback waits for another. Empty when there is none.
+   */
+  major: string;
+  /**
+   * `false` for interaction endpoints, which Discord does not count against
+   * the global rate limit.
+   */
+  global: boolean;
+}
+
+const toRoute = (method: RequestMethod, resource: URL): Route => {
+  const segments = resource.pathname
+    .replace(/^\/api(?:\/v\d+)?/, ``)
+    .split(`/`);
+  const [, top = ``, id = ``, token = ``] = segments;
+  // `/webhooks/{id}` alone is a bot-authorized route with no token.
+  const hasToken =
+    (top === `webhooks` || top === `interactions`) && segments.length > 3;
+  if (hasToken) segments[3] = `:token`;
+
+  const path = segments
+    .join(`/`)
+    // Every reaction route on a message shares one limit, whatever the emoji.
+    // Without this, each emoji would get its own queue and they would race.
+    // Taken from discord.js, which groups them the same way.
+    .replace(/\/reactions\/.*/, `/reactions/:reaction`)
+    .replace(/\/\d+(?=\/|$)/g, `/:id`);
+
+  let major = ``;
+  if (top === `channels` || top === `guilds` || top === `interactions`) {
+    major = id;
+  } else if (top === `webhooks`) {
+    major = hasToken ? `${id}/${token}` : id;
+  }
+
+  return { key: `${method} ${path}`, major, global: top !== `interactions` };
+};
+
 interface QueuedRequest {
   resource: URL;
   method: RequestMethod;
+  route: Route;
   body?: string | FormData | null;
   options?: RequestOptions;
   /**
@@ -37,13 +91,6 @@ interface QueuedRequest {
   resolve: (value: Response) => void;
   reject: (error: Error) => void;
   retryCount?: number; // Optional retry tracking
-}
-
-interface RateLimitBucket {
-  limit: number;
-  remaining: number;
-  reset: number; // Epoch timestamp in seconds
-  resetAfter: number; // Seconds until reset
 }
 
 interface InvalidRequestTracker {
@@ -79,10 +126,19 @@ export class DiscordSession {
   #activeToken: `${`Bot` | `Bearer`} ${string}` | null = null;
 
   // Rate limit tracking
-  #buckets = new Map<string, RateLimitBucket>();
-  #globalReset: number = 0; // Epoch timestamp when global limit resets
-  #requestQueue: QueuedRequest[] = [];
-  #processingQueue = false;
+  /** Route key → the bucket hash Discord last reported for that route. */
+  #bucketHashes = new Map<string, string>();
+  /**
+   * `${bucket hash}:${major}` → epoch ms when that bucket resets. Holds only
+   * buckets with no requests left.
+   */
+  #exhaustedBuckets = new Map<string, number>();
+  #globalReset: number = 0; // Epoch ms when a global 429 cooldown ends
+  /**
+   * One queue per route and major parameter, keyed `${route.key} ${major}`.
+   * A queue is in the map only while its processor runs.
+   */
+  #queues = new Map<string, QueuedRequest[]>();
 
   // Global rate limit: 50 requests per second
   #globalLimit = 50;
@@ -129,9 +185,13 @@ export class DiscordSession {
   clearSession = (): this => {
     this.#authToken = null;
     this.#activeToken = null;
-    this.#buckets.clear();
+    this.#bucketHashes.clear();
+    this.#exhaustedBuckets.clear();
     this.#globalReset = 0;
-    this.#requestQueue = [];
+    // Empty each queue as well as the map: a running processor holds its own
+    // reference to its queue, and would otherwise keep sending.
+    for (const queue of this.#queues.values()) queue.length = 0;
+    this.#queues.clear();
     this.#globalRequestTimestamps = [];
     this.#invalidRequests = {
       count: 0,
@@ -224,9 +284,11 @@ export class DiscordSession {
     options?: RequestOptions
   ): Promise<Response> => {
     return new Promise((resolve, reject) => {
-      this.#requestQueue.push({
+      const route = toRoute(method, resource);
+      const request: QueuedRequest = {
         resource,
         method,
+        route,
         body,
         options,
         // Snapshot the active token NOW, at enqueue time. Reading it here
@@ -236,58 +298,41 @@ export class DiscordSession {
         ...(this.#activeToken === null ? {} : { token: this.#activeToken }),
         resolve,
         reject
-      });
+      };
 
-      // Start processing if not already running
-      void this.#processQueue(); // This will return early if already processing
+      const key = `${route.key} ${route.major}`;
+      const queue = this.#queues.get(key);
+      if (queue) {
+        // Its processor is running and will reach this request in turn.
+        queue.push(request);
+        return;
+      }
+      const fresh = [request];
+      this.#queues.set(key, fresh);
+      void this.#processQueue(key, fresh);
     });
   };
 
   /**
-   * Process the request queue with rate limiting
+   * Send one queue's requests in order, one at a time. Queues for other
+   * buckets run alongside it, so a slow or rate-limited bucket holds up only
+   * its own requests.
    */
-  #processQueue = async (): Promise<void> => {
-    if (this.#processingQueue) return;
-    this.#processingQueue = true;
-
-    while (this.#requestQueue.length > 0) {
-      const now = Date.now();
-
-      // Check if we're temporarily banned (invalid request limit)
-      if (this.#isTemporarilyBanned()) {
-        const waitTime =
-          this.#invalidRequestWindow -
-          (now - this.#invalidRequests.windowStart);
-        console.warn(
-          `Temporarily banned from Discord API. Waiting ${Math.ceil(waitTime / 1000)}s`
-        );
-        await sleep(waitTime);
-        this.#resetInvalidRequestCounter();
-      }
-
-      // Check global rate limit (50 req/s)
-      await this.#enforceGlobalRateLimit();
-
-      // Check if we're under a global rate limit cooldown
-      if (this.#globalReset > now / 1000) {
-        const waitTime = (this.#globalReset - now / 1000) * 1000;
-        await sleep(waitTime);
-        continue;
-      }
-
-      const request = this.#requestQueue[0];
+  #processQueue = async (
+    key: string,
+    queue: QueuedRequest[]
+  ): Promise<void> => {
+    while (queue.length > 0) {
+      const request = queue[0];
       if (typeof request === `undefined`) break;
-      const bucket = this.#buckets.get(`${request.method}:${request.resource}`);
 
-      if (bucket?.remaining === 0) {
-        const resetTime = bucket.reset * 1000; // Convert to ms
-        if (resetTime > now) {
-          await sleep(resetTime - now);
-        }
-      }
+      // The request stays in the queue, and counts in getQueueSize(), until it
+      // may be sent.
+      await this.#awaitTurn(request.route);
+      // clearSession() emptied the queue while this request waited.
+      if (queue[0] !== request) continue;
 
-      // Execute the request
-      this.#requestQueue.shift();
+      queue.shift();
       try {
         const response = await this.#executeRequest(request);
         request.resolve(response);
@@ -298,12 +343,63 @@ export class DiscordSession {
       }
     }
 
-    this.#processingQueue = false;
+    // After clearSession(), a new queue may already hold this key.
+    if (this.#queues.get(key) === queue) this.#queues.delete(key);
+  };
 
-    // Check if any requests were added while we were processing the last one
-    if (this.#requestQueue.length > 0) {
-      void this.#processQueue(); // Restart the processor
+  /**
+   * Wait until a request on `route` may be sent, then claim its place in the
+   * global one-second window.
+   */
+  #awaitTurn = async (route: Route): Promise<void> => {
+    // Check if we're temporarily banned (invalid request limit)
+    if (this.#isTemporarilyBanned()) {
+      const waitTime =
+        this.#invalidRequestWindow -
+        (Date.now() - this.#invalidRequests.windowStart);
+      console.warn(
+        `Temporarily banned from Discord API. Waiting ${Math.ceil(waitTime / 1000)}s`
+      );
+      await sleep(waitTime);
+      this.#resetInvalidRequestCounter();
     }
+
+    for (
+      let wait = this.#delayFor(route);
+      wait > 0;
+      wait = this.#delayFor(route)
+    ) {
+      await sleep(wait);
+    }
+
+    // Claimed in the same tick as the last check, with no await between, so
+    // queues running side by side cannot all take the same free slot.
+    if (route.global) this.#globalRequestTimestamps.push(Date.now());
+  };
+
+  /**
+   * Milliseconds until a request on `route` may be sent: the latest of its
+   * bucket's reset and, unless the route is exempt, the global limits.
+   */
+  #delayFor = (route: Route): number => {
+    const now = Date.now();
+    const hash = this.#bucketHashes.get(route.key);
+    const bucketReset =
+      hash === undefined
+        ? 0
+        : (this.#exhaustedBuckets.get(`${hash}:${route.major}`) ?? 0);
+    if (!route.global) return bucketReset - now;
+
+    // Global rate limit: 50 requests in any one second
+    this.#globalRequestTimestamps = this.#globalRequestTimestamps.filter(
+      (timestamp) => now - timestamp < this.#globalWindow
+    );
+    const windowReset =
+      this.#globalRequestTimestamps.length >= this.#globalLimit
+        ? this.#globalRequestTimestamps[0] + this.#globalWindow
+        : 0;
+
+    return Math.max(bucketReset, windowReset, this.#globalReset) - now;
   };
 
   /**
@@ -313,11 +409,6 @@ export class DiscordSession {
     request: QueuedRequest,
     retryCount = 0
   ): Promise<Response> => {
-    const now = Date.now();
-
-    // Track this request for global rate limiting
-    this.#globalRequestTimestamps.push(now);
-
     const headers: HeadersInit = {};
 
     // Anonymous endpoints (webhook/interaction tokens in the URL) must NOT
@@ -351,28 +442,31 @@ export class DiscordSession {
     });
 
     // Update rate limit tracking from headers
-    this.#updateRateLimits(response);
+    this.#updateRateLimits(request.route, response);
 
     // Handle 429 Too Many Requests
     if (response.status === 429) {
       if (retryCount >= this.maxRetries) {
         console.error(
-          `Max retries (${this.maxRetries}) exceeded for ${request.resource}`
+          `Max retries (${this.maxRetries}) exceeded for ${redactToken(request.resource)}`
         );
         return response; // Return the 429 response instead of retrying forever
       }
 
-      const retryAfter = response.headers.get(`Retry-After`) ?? `1`;
+      const retryAfter = parseFloat(response.headers.get(`Retry-After`) ?? `1`);
       const isGlobal = response.headers.get(`X-RateLimit-Global`) === `true`;
       const scope = response.headers.get(`X-RateLimit-Scope`);
 
       if (isGlobal || scope === `global`) {
         console.warn(`Hit global rate limit`);
-        this.#globalReset = now / 1000 + parseFloat(retryAfter);
+        // Every other queue checks this before it sends. Interaction routes
+        // do not, since Discord does not count them against the global limit.
+        this.#globalReset = Date.now() + retryAfter * 1000;
       }
 
-      // Wait before retrying
-      await sleep(parseFloat(retryAfter) * 1000);
+      // Wait before retrying. This holds up only this request's queue.
+      await sleep(retryAfter * 1000);
+      await this.#awaitTurn(request.route);
 
       // Retry with incremented counter
       return this.#executeRequest(request, retryCount + 1);
@@ -391,43 +485,32 @@ export class DiscordSession {
   };
 
   /**
-   * Update rate limit buckets from response headers
+   * Update rate limit buckets from response headers.
+   *
+   * Discord names a bucket by its hash, which every route limited together
+   * shares, but counts it per major parameter: one channel running out does
+   * not hold up another. So the route maps to a hash, and the count is kept
+   * under the hash and the major parameter together.
    */
-  #updateRateLimits = (response: Response): void => {
+  #updateRateLimits = (route: Route, response: Response): void => {
     const bucket = response.headers.get(`X-RateLimit-Bucket`);
-    const limit = response.headers.get(`X-RateLimit-Limit`);
     const remaining = response.headers.get(`X-RateLimit-Remaining`);
-    const reset = response.headers.get(`X-RateLimit-Reset`);
     const resetAfter = response.headers.get(`X-RateLimit-Reset-After`);
+    if (!bucket) return;
 
-    if (bucket && limit && remaining && reset && resetAfter) {
-      this.#buckets.set(bucket, {
-        limit: parseInt(limit, 10),
-        remaining: parseInt(remaining, 10),
-        reset: parseFloat(reset),
-        resetAfter: parseFloat(resetAfter)
-      });
-    }
-  };
+    this.#bucketHashes.set(route.key, bucket);
+    if (!remaining || !resetAfter) return;
 
-  /**
-   * Enforce global rate limit of 50 requests per second
-   */
-  #enforceGlobalRateLimit = async (): Promise<void> => {
-    const now = Date.now();
-
-    // Remove timestamps older than 1 second
-    this.#globalRequestTimestamps = this.#globalRequestTimestamps.filter(
-      (timestamp) => now - timestamp < this.#globalWindow
-    );
-
-    // If we're at the limit, wait
-    if (this.#globalRequestTimestamps.length >= this.#globalLimit) {
-      const oldestTimestamp = this.#globalRequestTimestamps[0];
-      const waitTime = this.#globalWindow - (now - oldestTimestamp);
-      if (waitTime > 0) {
-        await sleep(waitTime);
-      }
+    const key = `${bucket}:${route.major}`;
+    if (parseInt(remaining, 10) === 0) {
+      // Reset-After rather than Reset, so that a local clock that disagrees
+      // with Discord's does not change how long we wait.
+      this.#exhaustedBuckets.set(
+        key,
+        Date.now() + parseFloat(resetAfter) * 1000
+      );
+    } else {
+      this.#exhaustedBuckets.delete(key);
     }
   };
 
@@ -473,9 +556,14 @@ export class DiscordSession {
   };
 
   /**
-   * Get current queue size (useful for monitoring)
+   * Get current queue size: requests not yet sent, across every bucket
+   * (useful for monitoring)
    */
-  getQueueSize = (): number => this.#requestQueue.length;
+  getQueueSize = (): number => {
+    let size = 0;
+    for (const queue of this.#queues.values()) size += queue.length;
+    return size;
+  };
 }
 
 export const discord: DiscordSession = new DiscordSession();

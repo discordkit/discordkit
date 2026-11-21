@@ -1,4 +1,5 @@
 export { endpoint, discord } from "./DiscordSession.js";
+export { DiscordAPIError } from "./DiscordAPIError.js";
 export * from "./buildURL.js";
 export * from "./getAsset.js";
 export * from "./methods.js";
