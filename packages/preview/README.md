@@ -35,6 +35,7 @@ discordkit-preview render  [input...]   Draw each input to a PNG (or HTML with -
 discordkit-preview lint    [input...]   Check each input against Discord's schemas and limits
 discordkit-preview codegen [input]      Print TypeScript source for an input
 discordkit-preview diff    <a> <b>      Compare two PNGs and write a diff image
+discordkit-preview studio  [file]       Open an editor on a scene file, with a live preview
 ```
 
 An input is a JSON file holding any of: a whole scene (see [The scene](#-the-scene)), a message body as you would send it, an array of components, or one component. Keys can be Discord's `snake_case`, discordkit's `camelCase`, or a mix. With no input file, or `-`, a command reads standard input. `discordkit-preview <command> --help` lists every option.
@@ -210,6 +211,38 @@ The images are compared pixel by pixel, aligned at their top-left corners, after
 `--tolerance <0-255>` is how far apart two pixels' colour channels may be and still match. It defaults to `0`, because this package draws the same input to the same bytes, so any difference between two of its renders is a real change. Raise it (8 is a reasonable start) when one image comes from another tool that may round colours differently.
 
 Any PNG works, not only this package's renders: a screenshot of the Discord client taken by another tool is read the same way. The reader handles every PNG colour type and bit depth, palettes, transparency and interlacing, with Node's own zlib and no browser. It compares the stored colour values and ignores embedded colour profiles.
+
+### `studio`
+
+```bash
+discordkit-preview studio question.json
+```
+
+```
+Studio is editing /path/to/question.json
+  http://127.0.0.1:5480/3f9a…e1/
+
+  Edits in the browser are written to the file, and changes to the file appear in the browser.
+  The address carries a secret for this run. Anyone with it can change the file, so do not share it.
+  Press Ctrl+C to stop.
+```
+
+Studio is an editor for one file that you and a coding agent can work in at the same time. It shows the message drawn by the same components `render` uses, `lint`'s findings and counts, the TypeScript `codegen` prints, and the file's JSON in an editable pane. The agent edits the file and runs `render` as usual; you keep Studio open on the same file, see each change within a second, and make your own, which the agent then sees in the file.
+
+- **Preview settings.** Discord theme, chat-column width (with Desktop 600 and Phone 390 presets), locale, time zone, the scene's clock, revealing spoilers, and which String Select is drawn open. In a scene file they are scene fields, so they are saved to it; a file holding only a message payload or components has no place for them, so they stay in Studio and the toolbar says so.
+- **Editing the JSON.** The preview and findings follow as you type. The text is written to the file once it parses, in exactly the form you typed. While it does not parse, nothing is written, the preview keeps the last version that did, and the pane says what is wrong and on which line and column.
+- **Saving keeps the file's shape.** A settings change Studio writes itself goes back in the file's own shape and key style: a snake_case component array stays a snake_case component array, keys keep their spelling, and the indentation and line endings are kept.
+- **When the file and you disagree.** A change to the file from elsewhere replaces the pane's text when nothing in it is unsaved. When you have unsaved text (half-typed JSON, say), Studio keeps it, stops saving, shows the file's new version in the preview, and asks: _Discard mine, load the file_, or _Overwrite the file with mine_. A write is always based on the version it was edited from, and the server refuses it if the file has changed since, so an agent's change is never overwritten by a tab that had not seen it.
+
+It listens on 127.0.0.1 only, at an address with a secret that changes every run; requests without the secret, or with another site's `Host` or `Origin`, are refused. It reads and writes only the file it was given (it will not create one), and serves images the scene lists in `context.attachments`, read-only.
+
+| Option                 | Does                                                                                                                                       |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `--port <n>`           | Port to listen on. Default: 5480 if free, otherwise any free port. A fixed default keeps the page's origin, and so a stored draft, stable. |
+| `--open` / `--no-open` | Open the address in your browser, or not. Default: open when run in a terminal; not when the output is piped or `--json` is given.         |
+| `--json`               | Print `{ "url", "port", "file", "opened" }` on standard output once ready.                                                                 |
+
+It runs until you stop it with Ctrl+C, then exits with status 0; it exits with 2 if it cannot start. With no file, Studio keeps a draft in the browser's storage, with import and export; the built app in `dist/studio` works the same way when served from anywhere else.
 
 ## 🧩 The Node API
 

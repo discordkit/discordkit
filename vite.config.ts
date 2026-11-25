@@ -104,6 +104,10 @@ export default defineConfig({
         }
       },
       {
+        // Studio's specs pull these in. Found mid-run on a cold cache, Vite re-optimises them and the page ends up with two copies of React ("Cannot read properties of null (reading 'useRef')"); listing them up front avoids it.
+        optimizeDeps: {
+          include: [`react-hook-form`, `react-aria-components`]
+        },
         test: {
           name: `browser`,
           include: [`**/*.browser.spec.{ts,tsx}`],
@@ -227,6 +231,16 @@ export default defineConfig({
         plugins: react.plugins,
         env: react.env,
         rules: react.overrides?.[0]?.rules
+      },
+      {
+        // Studio (packages/preview/src/studio) is an app bundled into the package, not library surface. Its react-aria controls take handlers and option lists inline, as react-aria's own examples do, and memoising each one to satisfy these rules would add noise without a measurable gain in an editor that re-renders on keystrokes anyway. The library's components keep the rules.
+        files: [`packages/preview/src/studio/**/*.{ts,tsx}`],
+        plugins: react.plugins,
+        rules: {
+          "react-perf/jsx-no-new-function-as-prop": `off`,
+          "react-perf/jsx-no-new-array-as-prop": `off`,
+          "react-perf/jsx-no-new-object-as-prop": `off`
+        }
       },
       {
         // `throw redirect(...)` is TanStack Router's documented control-flow API

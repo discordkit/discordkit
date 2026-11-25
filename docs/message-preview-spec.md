@@ -107,7 +107,7 @@ flowchart LR
   CLI[discordkit-preview CLI] --> A
   CLI --> L
   CLI --> C
-  ST[apps/studio editor] --> R
+  ST[Studio editor] --> R
   ST --> L
   ST --> C
 ```
@@ -328,7 +328,7 @@ The CLI wraps the same API. Arguments are parsed with `node:util`'s `parseArgs`;
 | `discordkit-preview lint <scene.json>`    | Reports schema errors and lint findings. Non-zero exit on errors.                                                         |
 | `discordkit-preview codegen <scene.json>` | Prints TypeScript source for the payload.                                                                                 |
 | `discordkit-preview diff <a.png> <b.png>` | Reports whether two renders differ and writes a diff image.                                                               |
-| `discordkit-preview studio [scene.json]`  | Later slice: serves the editor against a scene file on disk.                                                              |
+| `discordkit-preview studio [scene.json]`  | Serves the editor against a scene file on disk (§12, §12a).                                                               |
 
 Every command takes `--json` and then prints one machine-readable object: output paths, image dimensions, and findings with a path into the payload. Error messages follow the repo's standard: what happened, why, and the concrete next step.
 
@@ -415,39 +415,88 @@ Found later, while building intake against these schemas, and not yet fixed:
 - The interaction-callback body puts no maximum on `content` and accepts any integer for `flags`.
 - The message-body type the interaction callbacks use lacks `stickerIds` and `messageReference`.
 
-## 12. The editor (`apps/studio`)
+## 12. The editor (Studio)
 
-Designed in detail once the renderer has been dogfooded. The outline:
+The interactive editor, in the spirit of message.style, built on the renderer, intake, lint and codegen that already exist. Its distinguishing property is that a person and an agent can work on the same message at the same time.
 
-- A private Vite app built with `vp`, on React 19, react-aria-components, react-hook-form with the valibot resolver, and CSS Modules.
-- Modelled on the with-electron Rich Presence Visualizer, the repo's existing form + live preview + "Show Code" example.
-- Borrowed from message.style: a per-node editor card that subscribes only to its own node, and validation errors routed to the field that caused them. Not borrowed: its separate editor model, its lenient import schema, and its renderer.
-- **The document is a scene file on disk.** `discordkit-preview studio scene.json` serves the editor and watches the file, so a person editing in the browser and an agent editing the file are working on the same message. This is what "driveable by agents" means for the editor.
+### Decisions
+
+- **Studio lives inside `packages/preview`, not in `apps/`.** An earlier draft of this spec put it in a private `apps/studio`. But `discordkit-preview studio` has to work from an installed package in Inbou or Tome, which means the built app must ship in the package the CLI is in. So Studio is a second build output of the same package: a static site in `dist/studio`, served by the CLI. Its form libraries are bundled into that static build and are dev dependencies; they are not runtime dependencies of the library subpaths.
+- **The document is a scene file on disk.** `discordkit-preview studio scene.json` serves the editor against that file. Edits in the browser are written to the file; changes to the file from outside (an agent editing it, a bot's spec regenerating it) appear in the browser. There is no separate project format, database or account.
+- **The form state is the scene.** Field paths in the form are paths into the scene, which are the paths lint findings already carry. A finding lands on its field with no mapping table. message.style keeps a separate normalised editor model and a converter that returns an id-to-path map; this design needs neither.
+- **Validation is `lint`.** The form's resolver calls the package's own `lint` and turns findings into field errors. The editor cannot disagree with the CLI about what is wrong with a message.
+- **The preview is `<Scene>`.** The same component the Node renderer screenshots, so what the editor shows is what `render` writes, given the same fonts.
+- **Stack, as the owner specified:** React 19, react-aria-components for every control, react-hook-form for form state, CSS Modules for styling. The with-electron Rich Presence Visualizer is the in-repo precedent for a form with a live preview and a "Show Code" tab.
+
+### The file bridge
+
+`discordkit-preview studio [scene.json]` starts a small HTTP server on the loopback interface and prints its address.
+
+- It serves the static app, the scene file's content, a write endpoint, and a stream of change events from watching the file.
+- **It binds to loopback only and requires a per-run secret**, carried in the printed address. A page on another site can make a browser send requests to `localhost`; without the secret such a page could overwrite the scene file. The server also rejects requests whose `Host` or `Origin` is not its own.
+- **It reads and writes exactly one file**, the one named on the command line. Attachments the scene references are served read-only from paths the scene itself lists.
+- **Writes carry the version they were based on.** If the file changed on disk in the meantime, the write is refused and the browser takes the newer content, keeping the person's last edit in the undo history. An agent's write to the file is never silently lost to a stale browser tab.
+- The file keeps the key style and shape it had: a snake_case component array stays a snake_case component array when Studio saves it, unless the person asks to convert it.
+- Without a file argument, and when the static build is opened from anywhere else, Studio works on a draft kept in the browser's storage and can import and export files by hand.
+
+### What a person can do
+
+- **Edit the component tree**: add, remove, duplicate and reorder components, with each parent offering only the children Discord allows there, and a form for every field of every component the renderer supports, plus content and embeds for classic messages.
+- **See what is wrong while typing**: a finding under the field it belongs to, a marker on any collapsed ancestor, and a summary with the counts ("13 of 40 components").
+- **See the result**: the live preview with controls for theme, width (desktop and phone presets), locale, clock, spoiler reveal and which select is open.
+- **Describe the surroundings**: the author, the users, roles, channels and emoji that mentions resolve to, and attachments.
+- **Edit several messages** in one scene, for sequences such as an open card and its closed state.
+- **Take the result away**: generated TypeScript, the JSON in either key style, and a PNG rendered by the same Node renderer the CLI uses (available when Studio is served by the CLI).
+- **Undo and redo**, across both their own edits and changes that arrived from the file.
+
+Not in the first version: sending to Discord, saved-message storage, templates, drag and drop across parents, a markdown toolbar, and modals.
+
+### Slices
+
+| #   | Slice                               | Done when                                                                                                                                                                                                                                                                                               |
+| --- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 8a  | Shell, file bridge and live preview | `discordkit-preview studio scene.json` opens an app showing the live preview, the findings and counts, the generated code, and the JSON in an editable text pane. Editing the file outside updates the browser within a second; editing the JSON in the browser writes the file. Preview controls work. |
+| 8b  | Structured editing                  | The component tree and a form per component, embed and message field, with findings on their fields. A person can build Inbou's question card from an empty scene without touching JSON.                                                                                                                |
+| 8c  | Surroundings and finish             | Context and attachment editors, several messages, undo and redo, PNG export through the bridge, keyboard and screen-reader passes.                                                                                                                                                                      |
+
+### 12a. As built (slice 8a)
+
+What 8b and 8c build on, observed rather than planned:
+
+- **Two build outputs.** The package's `build` task is `vp pack && vp build --config vite.studio.config.ts`. `vp pack` builds the library as before, with `src/studio/**` left out of its entry; the second step bundles the app from `src/studio` (React, react-aria-components, react-hook-form, valibot, the client schemas, the preview itself and Noto Sans) into `dist/studio`. The pack step empties `dist/`, so the order matters; on a cache hit Vite Task restores `dist/studio`. The site is about 666 kB of JavaScript (206 kB gzipped), 53 kB of CSS and 0.95 MB of Noto Sans subsets (1.4 MB in all on disk), loaded per Unicode range. react-aria-components and react-hook-form are dev dependencies, so the library subpaths gain no runtime dependency, and `./scene`, `./lint`, `./codegen` and `./markdown` still import from plain Node.
+- **The bridge is `src/bridge/`** (Node only, packed with the CLI): `server.ts`, `watch.ts`, and `protocol.ts`, which the app shares. Routes live under `/<secret>/`: the app's files, `api/file` (`GET` a snapshot, `PUT` `{ text, baseVersion }`), `api/events` (server-sent events, one snapshot per change, starting with the current one) and `api/attachments/<name>`. A version is the SHA-256 of the file's bytes. A `PUT` whose base is stale gets `409` with the file as it is now; text that is not JSON gets `400`; a body that is not `application/json` gets `415`. Reads and writes take turns, so no write lands between another write's version check and its write. Writes are in place, not by rename, and keep a byte-order mark the file had. The page the bridge serves carries a `<meta name="discordkit-preview-bridge">`; without it the app keeps a draft in `localStorage`.
+- **Watching on Windows.** The directory is watched, not the file, so editors that save by rename keep being followed; events are debounced (60 ms) and compared by content hash, so a save that raises several events, or rewrites the same bytes, is announced once; reads retry through `EBUSY`, `EPERM` and a momentary `ENOENT`; and the file's size and modification time are polled every 750 ms in case an event is missed. The end-to-end spec holds a change on disk to reaching the browser's preview in under a second, on Windows.
+- **State.** The JSON pane and the file are a pure reducer (`studio/document/documentState.ts`); text is held with line feeds and written back with the file's own line endings. The form (`react-hook-form`, values typed as `Scene`) holds the normalised camelCase scene that `readScene` makes of the text, and is reset from each text that parses. Its resolver is `lint`: a finding becomes a field error at its scene path; a finding on an object or array goes under that path's `root` key, and one about the whole input under `root.lint`. The error's `type` is the worst severity there and `types` holds every finding there by code. 8b registers fields at those paths and reads `getFieldState(path).error`.
+- **Saving through the file's shape** (`studio/document/fileShape.ts`). The pane's own text is written exactly as typed. A change Studio makes itself (in this slice, only a preview setting in a scene file) is written by unwrapping the scene back to what the file holds (message, components or one component), giving each key the spelling it already had in the file and new keys the file's majority style, and keeping its indentation. 8b's field edits should save the same way. A side effect: such a save reformats the whole file as `JSON.stringify` indents it, so a hand-formatted file's compact arrays expand.
+- **Preview settings are scene fields.** Theme, width, locale, time zone, clock, spoiler reveal and the open select are set on the form. In a scene file they are written to it. A bare payload has no place for them, so they are kept in Studio across changes to the file and never written, and the toolbar says so. Studio draws one select open at a time.
+- **Conflicts.** A change from disk replaces the pane's text when nothing in it is unsaved. When something is (text that does not parse, or a write refused as stale), the pane keeps the person's text, saving stops, the preview, findings and code show the file, and the pane offers "Discard mine, load the file" or "Overwrite the file with mine" (only once the text parses). The echo of Studio's own write is recognised by its text and is not a conflict. This is 8a's stand-in for the undo history §12 describes; 8c can replace the banner's "discard" with an undo entry.
+- **Isolation.** The preview sits in a box with `all: initial`, so none of Studio's inherited text styles reach it, and it sets the brand font to the bundled Noto Sans, as the Node renderer does without gg sans. Studio's tokens are all `--st-*` on `:root`, and its stylesheet has no universal selectors.
+- **Not done in 8a:** the structured editor, undo and redo, PNG export, line numbers in the JSON pane, a dev server for working on Studio itself (`vp dev --config vite.studio.config.ts` runs it in draft mode only), and a way to convert a bare payload to a scene from the toolbar.
 
 ## 13. Slices
 
 Each slice is implemented by a sub-agent from a written brief and reviewed against its criteria before the next starts.
 
-| #   | Slice                                                                             | Done when                                                                                                                                                                                                                |
-| --- | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 0   | Client schema fixes (§11). **Implemented**, PR #106.                              | Each defect has a spec that fails before the fix; `vp check` and `vp test` pass; bump file added.                                                                                                                        |
-| 1   | Package skeleton and pipeline proof. **Implemented.**                             | A container with one text display builds with `vp pack`, renders to a PNG from Node, and passes a computed-style spec in the browser project. The CSS Modules output shape and the JSR question are answered in writing. |
-| 2   | Markdown parser. **Implemented.**                                                 | Every quirk in §6 is a passing test; rule sets per context are data.                                                                                                                                                     |
-| 3a  | Text rendering, scene context, message chrome, asset loader. **Implemented.**     | Markdown, mentions, timestamps and emoji render to Discord's styles against a fixed clock; a render reaches nothing on the network.                                                                                      |
-| 3b  | Separator, media gallery, action row and buttons, legacy embeds. **Implemented.** | Inbou's and Tome's real cards render completely, in all four themes, each component with computed-style specs.                                                                                                           |
-| 4a  | Scene intake, lint, codegen. **Implemented.**                                     | An agent can hand over snake_case JSON and get back a normalised scene, findings with counts, and TypeScript that compiles and round-trips.                                                                              |
-| 4b  | CLI, gg sans and CJK font options, HTML output, image diff. **Implemented.**      | An agent can render, lint, generate code and compare two renders with one command each, and read every result as JSON.                                                                                                   |
-| 5   | Dogfood                                                                           | Inbou and Tome render their real cards through the tool from their own specs; Tome's `sample:post` is no longer needed for layout review.                                                                                |
-| C   | Calibration (parallel, needs the owner)                                           | Reference files exist for the fixture set from the live client; every deviation found is fixed or recorded.                                                                                                              |
-| 6   | Remaining message components. **Implemented.**                                    | Section, thumbnail, file, all five selects.                                                                                                                                                                              |
-| 7   | Modals                                                                            | Label, text input, file upload, radio and checkbox groups.                                                                                                                                                               |
-| 8   | Editor                                                                            | §12, specified separately first.                                                                                                                                                                                         |
+| #        | Slice                                                                             | Done when                                                                                                                                                                                                                |
+| -------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 0        | Client schema fixes (§11). **Implemented**, PR #106.                              | Each defect has a spec that fails before the fix; `vp check` and `vp test` pass; bump file added.                                                                                                                        |
+| 1        | Package skeleton and pipeline proof. **Implemented.**                             | A container with one text display builds with `vp pack`, renders to a PNG from Node, and passes a computed-style spec in the browser project. The CSS Modules output shape and the JSR question are answered in writing. |
+| 2        | Markdown parser. **Implemented.**                                                 | Every quirk in §6 is a passing test; rule sets per context are data.                                                                                                                                                     |
+| 3a       | Text rendering, scene context, message chrome, asset loader. **Implemented.**     | Markdown, mentions, timestamps and emoji render to Discord's styles against a fixed clock; a render reaches nothing on the network.                                                                                      |
+| 3b       | Separator, media gallery, action row and buttons, legacy embeds. **Implemented.** | Inbou's and Tome's real cards render completely, in all four themes, each component with computed-style specs.                                                                                                           |
+| 4a       | Scene intake, lint, codegen. **Implemented.**                                     | An agent can hand over snake_case JSON and get back a normalised scene, findings with counts, and TypeScript that compiles and round-trips.                                                                              |
+| 4b       | CLI, gg sans and CJK font options, HTML output, image diff. **Implemented.**      | An agent can render, lint, generate code and compare two renders with one command each, and read every result as JSON.                                                                                                   |
+| 5        | Dogfood                                                                           | Inbou and Tome render their real cards through the tool from their own specs; Tome's `sample:post` is no longer needed for layout review.                                                                                |
+| C        | Calibration (parallel, needs the owner)                                           | Reference files exist for the fixture set from the live client; every deviation found is fixed or recorded.                                                                                                              |
+| 6        | Remaining message components. **Implemented.**                                    | Section, thumbnail, file, all five selects.                                                                                                                                                                              |
+| 7        | Modals                                                                            | Label, text input, file upload, radio and checkbox groups.                                                                                                                                                               |
+| 8a to 8c | Studio, the editor                                                                | See the slice table in §12.                                                                                                                                                                                              |
 
 ## 14. Repo conventions this package must follow
 
 - `exports` with the private `@discordkit/source` condition, `sideEffects` limited to the stylesheet, `.js` import specifiers, and the shared `vp pack` config plus the stylesheet hook described in §4a.
 - DOM tests run in the `browser` Vitest project as `*.browser.spec.tsx`. No happy-dom or jsdom.
-- A bump file per pull request once the package is public. Until then it is `private` and on the bumpy `ignore` list; `apps/studio` joins that list permanently.
+- A bump file per pull request once the package is public. Until then it is `private` and on the bumpy `ignore` list.
 - **npm only, not JSR** (§4a). This is the one package in the repo with that exception, so `scripts/jsr-sync.mjs` and `scripts/jsr-publish.mjs` must skip it when it is made public.
 - The first npm publish of a new package is manual.
 

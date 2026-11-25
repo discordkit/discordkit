@@ -2,6 +2,7 @@ import { runCodegen } from "./codegen.js";
 import { runDiff } from "./diff.js";
 import { runLint } from "./lint.js";
 import { runRender } from "./render.js";
+import { runStudio } from "./studio.js";
 import {
   CliError,
   exitCodes,
@@ -20,8 +21,10 @@ Commands:
   lint [input...]     Check each input against Discord's schemas and limits.
   codegen [input]     Print TypeScript source for an input.
   diff <a> <b>        Compare two PNGs and write a diff image.
+  studio [scene.json] Open an editor on a scene file, with a live preview, that
+                      you and an agent can work in at the same time.
 
-Every command reads standard input when given no input file, and takes --json to print exactly one JSON document on standard output. Diagnostics go to standard error. Run \`${program} <command> --help\` for a command's options.
+Every command but studio reads standard input when given no input file, and every command takes --json to print exactly one JSON document on standard output. Diagnostics go to standard error. Run \`${program} <command> --help\` for a command's options.
 
 Exit status:
   0  It ran, and found nothing wrong (for diff: the images match).
@@ -36,7 +39,8 @@ const commands: Record<string, (args: readonly string[]) => Promise<number>> = {
   render: runRender,
   lint: runLint,
   codegen: runCodegen,
-  diff: runDiff
+  diff: runDiff,
+  studio: runStudio
 };
 
 /** Whether `parseArgs` threw for the arguments themselves: an unknown option, a missing value. Node marks these with a code. */
@@ -64,7 +68,7 @@ export const main = async (argv: readonly string[]): Promise<number> => {
     const command = Object.hasOwn(commands, name) ? commands[name] : undefined;
     if (command === undefined) {
       throw new CliError(
-        `${program} has no command called \`${name}\`. Its commands are render, lint, codegen and diff. Run \`${program} --help\` for what each does.`
+        `${program} has no command called \`${name}\`. Its commands are render, lint, codegen, diff and studio. Run \`${program} --help\` for what each does.`
       );
     }
     try {

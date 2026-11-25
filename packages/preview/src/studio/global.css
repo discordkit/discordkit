@@ -1,0 +1,105 @@
+/*
+ * Studio's own appearance: a developer tool beside an editor, so calm, dense and neutral, in light and dark following the system setting. It is deliberately not Discord's: only the preview pane looks like Discord.
+ *
+ * Every token is prefixed `--st-` so none can collide with the preview's own tokens (`--space-8`, `--background-surface-high`), which the preview sets on its own root. Contrast of each text colour against the surfaces it sits on is at least 4.5:1 in both appearances (checked when this file was written; the pairs are noted where they are closest).
+ */
+
+:root {
+  color-scheme: light dark;
+
+  --st-font-ui:
+    system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    sans-serif;
+  --st-font-code:
+    ui-monospace, "Cascadia Mono", "SF Mono", Menlo, Consolas,
+    "Liberation Mono", monospace;
+  --st-text-xs: 11px;
+  --st-text-sm: 12px;
+  --st-text-md: 13px;
+  --st-text-lg: 15px;
+  --st-space-1: 2px;
+  --st-space-2: 4px;
+  --st-space-3: 6px;
+  --st-space-4: 8px;
+  --st-space-5: 12px;
+  --st-space-6: 16px;
+  --st-space-7: 24px;
+  --st-radius-sm: 4px;
+  --st-radius-md: 6px;
+  --st-control-height: 28px;
+  --st-focus-width: 2px;
+
+  /* Light. Closest pair: --st-text-muted on --st-canvas, 5.6:1. */
+  --st-canvas: #f4f5f7;
+  --st-surface: #ffffff;
+  --st-surface-raised: #ffffff;
+  --st-surface-sunken: #eceef1;
+  --st-surface-hover: #e6e9ed;
+  --st-surface-selected: #dde3ec;
+  --st-border: #d5d9df;
+  --st-border-strong: #b4bac3;
+  /* The edge of a control a person types into or presses: at least 3:1 against the surfaces it sits on (3.3:1 on --st-surface-sunken), as a control's boundary must be. Panel dividers stay lighter, since they are not controls. */
+  --st-control-border: #7c8490;
+  --st-text: #1a1d21;
+  --st-text-muted: #545b66;
+  --st-accent: #1f5fbf;
+  --st-accent-text: #ffffff;
+  --st-accent-soft: #e3ecfa;
+  --st-focus: #1f5fbf;
+  --st-ok: #17703a;
+  --st-ok-soft: #e2f3e8;
+  --st-warn: #8a5a00;
+  --st-warn-soft: #fbf0d9;
+  --st-error: #b42318;
+  --st-error-soft: #fbe6e4;
+  --st-shadow: 0 1px 2px rgb(16 24 40 / 0.06), 0 4px 12px rgb(16 24 40 / 0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Dark. Closest pair: --st-text-muted on --st-surface-selected, 5.1:1. */
+    --st-canvas: #121417;
+    --st-surface: #181b1f;
+    --st-surface-raised: #1f2328;
+    --st-surface-sunken: #0e1013;
+    --st-surface-hover: #252a30;
+    --st-surface-selected: #2b323b;
+    --st-border: #2c3137;
+    --st-border-strong: #424951;
+    --st-control-border: #6b737e;
+    --st-text: #e4e7eb;
+    --st-text-muted: #a2a9b3;
+    --st-accent: #7fa8f0;
+    --st-accent-text: #0d1117;
+    --st-accent-soft: #1d2a3d;
+    --st-focus: #8fb4f5;
+    --st-ok: #6fcf8f;
+    --st-ok-soft: #15281c;
+    --st-warn: #e6b450;
+    --st-warn-soft: #2d2412;
+    --st-error: #f2837a;
+    --st-error-soft: #33191a;
+    --st-shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 4px 12px rgb(0 0 0 / 0.35);
+  }
+}
+
+/* No universal rules (`* { box-sizing }` and the like): they would reach into the preview, which must be drawn exactly as the Node renderer draws it. Studio's components set what they need on their own classes. */
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  background: var(--st-canvas);
+  color: var(--st-text);
+  font-family: var(--st-font-ui);
+  font-size: var(--st-text-md);
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100%;
+}

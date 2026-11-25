@@ -61,7 +61,8 @@ const dataKeyedContext = new Set([
   `skus`
 ]);
 
-const isDataKeyed = (path: readonly PathSegment[]): boolean =>
+/** Whether the object at this path in a scene is keyed by data (ids, file names) rather than field names. Studio reads it too, to put keys back in a file's own spelling without touching these. */
+export const isDataKeyed = (path: readonly PathSegment[]): boolean =>
   path.length === 2 &&
   path[0] === `context` &&
   typeof path[1] === `string` &&
