@@ -867,12 +867,14 @@ __metadata:
   resolution: "@discordkit/preview@workspace:packages/preview"
   dependencies:
     "@discordkit/client": "workspace:^"
+    "@discordkit/core": "workspace:^"
     "@fontsource-variable/noto-sans": "npm:5.3.0"
     "@types/react": "catalog:"
     "@types/react-dom": "catalog:"
     playwright: "catalog:"
     react: "catalog:"
     react-dom: "catalog:"
+    typescript: "catalog:"
     valibot: "catalog:"
   peerDependencies:
     playwright: ">= 1.50.0"

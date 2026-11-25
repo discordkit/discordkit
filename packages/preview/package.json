@@ -39,6 +39,21 @@
       "types": "./dist/markdown/index.d.mts",
       "import": "./dist/markdown/index.mjs"
     },
+    "./scene": {
+      "@discordkit/source": "./src/scene/index.ts",
+      "types": "./dist/scene/index.d.mts",
+      "import": "./dist/scene/index.mjs"
+    },
+    "./lint": {
+      "@discordkit/source": "./src/lint/index.ts",
+      "types": "./dist/lint/index.d.mts",
+      "import": "./dist/lint/index.mjs"
+    },
+    "./codegen": {
+      "@discordkit/source": "./src/codegen/index.ts",
+      "types": "./dist/codegen/index.d.mts",
+      "import": "./dist/codegen/index.mjs"
+    },
     "./package.json": "./package.json"
   },
   "files": [
@@ -50,6 +65,7 @@
   ],
   "dependencies": {
     "@discordkit/client": "workspace:^",
+    "@discordkit/core": "workspace:^",
     "@fontsource-variable/noto-sans": "5.3.0"
   },
   "devDependencies": {
@@ -58,6 +74,7 @@
     "playwright": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
+    "typescript": "catalog:",
     "valibot": "catalog:"
   },
   "peerDependencies": {
