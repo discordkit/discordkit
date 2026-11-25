@@ -1,9 +1,9 @@
 import type { ReactElement } from "react";
-import { ComponentType } from "@discordkit/client/components/types/ComponentType";
+import { isComponentsV2 } from "../components.js";
 import { resolveAuthor } from "../format/resolve.js";
 import { formatMessageTime } from "../format/timestamp.js";
 import { parseMarkdown } from "../markdown/parse.js";
-import type { MessagePayload, SceneMessage } from "../scene.js";
+import type { SceneMessage } from "../scene.js";
 import { AppTag } from "./AppTag.js";
 import { ClassicComponents } from "./ClassicComponents.js";
 import { DefaultAvatar } from "./DefaultAvatar.js";
@@ -25,15 +25,8 @@ export interface MessageProps {
   index: number;
 }
 
-/** `IS_COMPONENTS_V2`, the message flag that switches a message to Components V2. */
-const componentsV2Flag = 1 << 15;
-
-/** Whether Discord draws the payload as Components V2: the flag is set, or it holds a component only V2 allows, which is anything but an action row. */
-export const isComponentsV2 = (payload: MessagePayload): boolean =>
-  ((payload.flags ?? 0) & componentsV2Flag) !== 0 ||
-  (payload.components ?? []).some(
-    (component) => component.type !== ComponentType.ActionRow
-  );
+// Shared with lint, which has to decide the same thing without React.
+export { isComponentsV2 };
 
 /** The line under an ephemeral reply. */
 const EphemeralNotice = (): ReactElement => (

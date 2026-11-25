@@ -1,0 +1,43 @@
+{
+  "flags": 32768,
+  "components": [
+    {
+      "type": 17,
+      "accent_color": 3099502,
+      "components": [
+        {
+          "type": 10,
+          "content": "**もんだい4** · 18 / 24 · ends <t:1795604745:R> · 3 answered"
+        },
+        {
+          "type": 10,
+          "content": "-# ＿＿の ぶんと だいたい おなじ いみの ぶんが あります。1・2・3・4から いちばん いい ものを ひとつ えらんで ください。"
+        },
+        {
+          "type": 10,
+          "content": "## __兄は 先生です。__\n-# 兄 あに · 先生 せんせい"
+        },
+        { "type": 14, "divider": true, "spacing": 1 },
+        {
+          "type": 10,
+          "content": "### 1　兄は がっこうで おしえて います。\n### 2　兄は びょういんで はたらいて います。\n### 3　兄は がっこうで べんきょうして います。\n### 4　兄は みせで やさいを うって います。\n-# 兄 あに"
+        },
+        {
+          "type": 1,
+          "components": [
+            { "type": 2, "style": 2, "label": "1", "custom_id": "vote:1" },
+            { "type": 2, "style": 2, "label": "2", "custom_id": "vote:2" },
+            { "type": 2, "style": 2, "label": "3", "custom_id": "vote:3" },
+            { "type": 2, "style": 2, "label": "4", "custom_id": "vote:4" }
+          ]
+        }
+      ]
+    },
+    {
+      "type": 1,
+      "components": [
+        { "type": 2, "style": 4, "label": "End test", "custom_id": "exam:end" }
+      ]
+    }
+  ]
+}
