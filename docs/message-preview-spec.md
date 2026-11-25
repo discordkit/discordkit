@@ -54,12 +54,12 @@ Each finding says how it was established. "Read" means the source was read direc
 
 Made by the owner on 2026-11-24:
 
-| Decision | Choice |
-| --- | --- |
-| Styling | CSS Modules for both the renderer and the editor. This is a new convention in this repo, whose examples use Tailwind v4. |
-| Font | Noto Sans by default, with a bring-your-own path for gg sans. |
+| Decision     | Choice                                                                                                                                                                                                                                   |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Styling      | CSS Modules for both the renderer and the editor. This is a new convention in this repo, whose examples use Tailwind v4.                                                                                                                 |
+| Font         | Noto Sans by default, with a bring-your-own path for gg sans.                                                                                                                                                                            |
 | Ground truth | A computed-style capture from the live web client plus desktop and phone screenshots, once per fixture set. Preferred route to explore: the owner logs in to Discord in a headed Playwright browser and the agent reads styles directly. |
-| Build order | Renderer and CLI first, on Inbou's and Tome's component subset; then wider coverage; then the editor. |
+| Build order  | Renderer and CLI first, on Inbou's and Tome's component subset; then wider coverage; then the editor.                                                                                                                                    |
 
 Made in this spec, open to challenge:
 
@@ -114,14 +114,14 @@ flowchart LR
 
 Proposed subpaths, each independently importable:
 
-| Subpath | Contents | Runtime |
-| --- | --- | --- |
-| `@discordkit/preview/scene` | Scene types, normalisation, snake_case intake | Any |
-| `@discordkit/preview/markdown` | Parser, AST types, per-context rule sets | Any |
-| `@discordkit/preview/lint` | Findings for limits and rules the schemas do not enforce | Any |
-| `@discordkit/preview/codegen` | Payload to TypeScript source | Any |
-| `@discordkit/preview/react` | `<Scene>`, `<Message>` and per-component React components, plus the stylesheet | Browser, SSR |
-| `@discordkit/preview/node` | `renderScene()` to PNG or HTML | Node, needs `playwright` |
+| Subpath                        | Contents                                                                       | Runtime                  |
+| ------------------------------ | ------------------------------------------------------------------------------ | ------------------------ |
+| `@discordkit/preview/scene`    | Scene types, normalisation, snake_case intake                                  | Any                      |
+| `@discordkit/preview/markdown` | Parser, AST types, per-context rule sets                                       | Any                      |
+| `@discordkit/preview/lint`     | Findings for limits and rules the schemas do not enforce                       | Any                      |
+| `@discordkit/preview/codegen`  | Payload to TypeScript source                                                   | Any                      |
+| `@discordkit/preview/react`    | `<Scene>`, `<Message>` and per-component React components, plus the stylesheet | Browser, SSR             |
+| `@discordkit/preview/node`     | `renderScene()` to PNG or HTML                                                 | Node, needs `playwright` |
 
 `playwright` is an optional peer dependency, needed only by `/node` and the CLI.
 
@@ -189,10 +189,10 @@ A parser from Discord-flavoured markdown to a typed AST, with no React dependenc
 
 Rule sets differ by context and are data, not branches:
 
-| Context | Rule set |
-| --- | --- |
-| Message content, text display, embed description | Full |
-| Embed field value | Full, minus headings |
+| Context                                                | Rule set                                                                                  |
+| ------------------------------------------------------ | ----------------------------------------------------------------------------------------- |
+| Message content, text display, embed description       | Full                                                                                      |
+| Embed field value                                      | Full, minus headings                                                                      |
 | Embed title, embed field name, embed author and footer | Reduced: inline styles, inline code, links, spoilers, timestamps, channel mentions, emoji |
 
 That table comes from Discohook's rule map (reported) and is verified against the live client in calibration before it is treated as fact.
@@ -235,18 +235,18 @@ A script fetches the public stylesheets into a gitignored cache, the same arrang
 
 Values already extracted from build 679963 (reported), to seed slice 1:
 
-| Component | Rule |
-| --- | --- |
-| Container | Surface-high background, 1px subtle border, 8px radius, 16px padding, 8px gap between children; accent is a 4px bar drawn as a pseudo-element on the leading edge |
-| Top level (V2) | 8px row gap, max width `min(600px, 100%)` |
+| Component           | Rule                                                                                                                                                                                                                         |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Container           | Surface-high background, 1px subtle border, 8px radius, 16px padding, 8px gap between children; accent is a 4px bar drawn as a pseudo-element on the leading edge                                                            |
+| Top level (V2)      | 8px row gap, max width `min(600px, 100%)`                                                                                                                                                                                    |
 | Text in a container | 0.875rem, line height `1.375rem × 0.875`; subtext 0.75rem; a heading with nothing before it has no top margin, and one with no element after it has no bottom margin (so a heading followed only by plain text loses it too) |
-| Separator | 1px line; large spacing adds 8px above and below |
-| Section | 12px between text and accessory, 4px between text rows; a button accessory is capped at half the width less 12px |
-| Thumbnail | 85px square, 8px radius, cover fit |
-| Media gallery | 4px grid gap, 2px item radius, 8px outer radius, max height 350px, max width 600px |
-| Button | 32px tall, 60px minimum width, 3px by 11px padding, 18px line height |
-| Action row | Wrapping row, 8px gap |
-| Embed | Surface-high background, 1px border, 4px leading colour bar, 4px radius; padding 2px top, 16px right, 16px bottom, 12px left; 8px field gap |
+| Separator           | 1px line; large spacing adds 8px above and below                                                                                                                                                                             |
+| Section             | 12px between text and accessory, 4px between text rows; a button accessory is capped at half the width less 12px                                                                                                             |
+| Thumbnail           | 85px square, 8px radius, cover fit                                                                                                                                                                                           |
+| Media gallery       | 4px grid gap, 2px item radius, 8px outer radius, max height 350px, max width 600px                                                                                                                                           |
+| Button              | 32px tall, 60px minimum width, 3px by 11px padding, 18px line height                                                                                                                                                         |
+| Action row          | Wrapping row, 8px gap                                                                                                                                                                                                        |
+| Embed               | Surface-high background, 1px border, 4px leading colour bar, 4px radius; padding 2px top, 16px right, 16px bottom, 12px left; 8px field gap                                                                                  |
 
 ### Test layers
 
@@ -294,13 +294,13 @@ Called from a spec, this needs no module-resolution workaround: the test runner 
 
 The CLI wraps the same API. Arguments are parsed with `node:util`'s `parseArgs`; no argument-parsing dependency is added.
 
-| Command | Does |
-| --- | --- |
-| `discordkit-preview render <scene.json>` | Writes a PNG (or HTML with `--html`). Reads stdin when no file is given. Options for theme, width, scale and output path. |
-| `discordkit-preview lint <scene.json>` | Reports schema errors and lint findings. Non-zero exit on errors. |
-| `discordkit-preview codegen <scene.json>` | Prints TypeScript source for the payload. |
-| `discordkit-preview diff <a.png> <b.png>` | Reports whether two renders differ and writes a diff image. |
-| `discordkit-preview studio [scene.json]` | Later slice: serves the editor against a scene file on disk. |
+| Command                                   | Does                                                                                                                      |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `discordkit-preview render <scene.json>`  | Writes a PNG (or HTML with `--html`). Reads stdin when no file is given. Options for theme, width, scale and output path. |
+| `discordkit-preview lint <scene.json>`    | Reports schema errors and lint findings. Non-zero exit on errors.                                                         |
+| `discordkit-preview codegen <scene.json>` | Prints TypeScript source for the payload.                                                                                 |
+| `discordkit-preview diff <a.png> <b.png>` | Reports whether two renders differ and writes a diff image.                                                               |
+| `discordkit-preview studio [scene.json]`  | Later slice: serves the editor against a scene file on disk.                                                              |
 
 Every command takes `--json` and then prints one machine-readable object: output paths, image dimensions, and findings with a path into the payload. Error messages follow the repo's standard: what happened, why, and the concrete next step.
 
@@ -331,7 +331,9 @@ export const components: MessageComponent = [
   {
     type: ComponentType.Container,
     accentColor: 0x5865f2,
-    components: [{ type: ComponentType.TextDisplay, content: `## Which hero is this?` }]
+    components: [
+      { type: ComponentType.TextDisplay, content: `## Which hero is this?` }
+    ]
   }
 ];
 ```
@@ -362,19 +364,19 @@ Designed in detail once the renderer has been dogfooded. The outline:
 
 Each slice is implemented by a sub-agent from a written brief and reviewed against its criteria before the next starts.
 
-| # | Slice | Done when |
-| --- | --- | --- |
-| 0 | Client schema fixes (§11). **Implemented**, PR #106. | Each defect has a spec that fails before the fix; `vp check` and `vp test` pass; bump file added. |
-| 1 | Package skeleton and pipeline proof. **Implemented.** | A container with one text display builds with `vp pack`, renders to a PNG from Node, and passes a computed-style spec in the browser project. The CSS Modules output shape and the JSR question are answered in writing. |
-| 2 | Markdown parser. **Implemented.** | Every quirk in §6 is a passing test; rule sets per context are data. |
-| 3a | Text rendering, scene context, message chrome, asset loader. **Implemented.** | Markdown, mentions, timestamps and emoji render to Discord's styles against a fixed clock; a render reaches nothing on the network. |
-| 3b | Separator, media gallery, action row and buttons, legacy embeds. In progress. | Inbou's and Tome's real cards render completely, in all four themes, each component with computed-style specs. |
-| 4 | Node API, CLI, lint, codegen | An agent can render, lint and generate code for a fixture with one command each and read the result as JSON. |
-| 5 | Dogfood | Inbou and Tome render their real cards through the tool from their own specs; Tome's `sample:post` is no longer needed for layout review. |
-| C | Calibration (parallel, needs the owner) | Reference files exist for the fixture set from the live client; every deviation found is fixed or recorded. |
-| 6 | Remaining message components | Section, thumbnail, file, all five selects. |
-| 7 | Modals | Label, text input, file upload, radio and checkbox groups. |
-| 8 | Editor | §12, specified separately first. |
+| #   | Slice                                                                         | Done when                                                                                                                                                                                                                |
+| --- | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 0   | Client schema fixes (§11). **Implemented**, PR #106.                          | Each defect has a spec that fails before the fix; `vp check` and `vp test` pass; bump file added.                                                                                                                        |
+| 1   | Package skeleton and pipeline proof. **Implemented.**                         | A container with one text display builds with `vp pack`, renders to a PNG from Node, and passes a computed-style spec in the browser project. The CSS Modules output shape and the JSR question are answered in writing. |
+| 2   | Markdown parser. **Implemented.**                                             | Every quirk in §6 is a passing test; rule sets per context are data.                                                                                                                                                     |
+| 3a  | Text rendering, scene context, message chrome, asset loader. **Implemented.** | Markdown, mentions, timestamps and emoji render to Discord's styles against a fixed clock; a render reaches nothing on the network.                                                                                      |
+| 3b  | Separator, media gallery, action row and buttons, legacy embeds. In progress. | Inbou's and Tome's real cards render completely, in all four themes, each component with computed-style specs.                                                                                                           |
+| 4   | Node API, CLI, lint, codegen                                                  | An agent can render, lint and generate code for a fixture with one command each and read the result as JSON.                                                                                                             |
+| 5   | Dogfood                                                                       | Inbou and Tome render their real cards through the tool from their own specs; Tome's `sample:post` is no longer needed for layout review.                                                                                |
+| C   | Calibration (parallel, needs the owner)                                       | Reference files exist for the fixture set from the live client; every deviation found is fixed or recorded.                                                                                                              |
+| 6   | Remaining message components                                                  | Section, thumbnail, file, all five selects.                                                                                                                                                                              |
+| 7   | Modals                                                                        | Label, text input, file upload, radio and checkbox groups.                                                                                                                                                               |
+| 8   | Editor                                                                        | §12, specified separately first.                                                                                                                                                                                         |
 
 ## 14. Repo conventions this package must follow
 
