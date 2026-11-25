@@ -322,6 +322,17 @@ Every command takes `--json` and then prints one machine-readable object: output
 
 Renders are deterministic: fixed clock and zone from the scene, animations off, images awaited, and a visible placeholder for an image that fails to load.
 
+### 8a. As built (slice 4b)
+
+- **The binary is a small hand-written script, `bin/discordkit-preview.mjs`, that imports the compiled `dist/cli.mjs`.** It exists so that running the command before the package is built says to build it, instead of Node failing to find a module. Yarn links it as `node_modules/.bin/discordkit-preview` with a `.cmd` shim on Windows; it runs the same through the shim and directly with `node`.
+- **Exit status: 0 ran and found nothing wrong (for `diff`, the images match); 1 ran and an input has errors or could not be drawn (for `diff`, they differ); 2 could not run.** With `--json`, a failure to run is still one JSON document, `{ "error": { "message" } }`.
+- **`render(input, options)` in `./node` is what the `render` command runs per input**: intake, lint and the renderer in one findings list. Lint's `component-unsupported` becomes an error there and no image is drawn; any other scene the components refuse becomes a `scene-undrawable` finding. Neither throws. A machine problem (no browser, package not built, unreadable gg sans) still throws.
+- **One `Finding` type.** The renderer's asset findings now have a severity (`warning`), a path into the input where the image is named (empty for an emoji, which is named by text), and `asset`. Lint's `attachment-missing` carries `asset` too, and `render` keeps only lint's copy.
+- **Fonts.** `ggSans` takes a file or a directory; each file's weight and style are read from its `OS/2` and `fvar` tables (TrueType, OpenType, WOFF, WOFF2), since Discord's copies have hashed names. `cjk: "noto-sans-jp"` puts Noto Sans JP (`@fontsource-variable/noto-sans-jp`, a regular dependency, 5.8 MB unpacked) right after the Latin fonts. Every render reports which fonts drew the text, read from Chromium's `CSS.getPlatformFontsForNode` per text node, with `machineDependent` and a `note` when CJK text was left to the machine or any text used an installed font. That report is beside the findings, not one of them: it describes the image, not the message.
+- **Observed on the owner's Windows machine, en-US, unpinned:** Inbou's question card drew kana with an installed Noto Sans JP and kanji with Microsoft YaHei, as this section predicted. Pinned, the kanji change shape and the kana barely move.
+- **HTML** is the page after the browser has finished with it (placeholders, gallery shapes), with only the font files the page requested and the images inlined. The Inbou card is about 280 KB pinned.
+- **`diff`** decodes PNG with Node's zlib (every colour type, bit depth, palette, `tRNS` and Adam7; checked against Chromium's decoder), compares premultiplied RGBA with a per-channel tolerance that defaults to 0, and draws a faded grey copy of the first image with differences in red.
+
 ## 9. Lint
 
 The client schemas answer "is this a valid request body". Lint answers the questions that are still open after that, and reports counts so an agent can see headroom ("32 of 40 components"):
@@ -369,8 +380,8 @@ Three subpaths with no React, DOM or Node built-ins, each returning plain data a
 Open after this slice:
 
 - **Character counting.** Lint counts Unicode code points; the client schemas count UTF-16 units. Which Discord uses, and whether it trims first, is unverified.
-- **`valid` can be true for a scene the renderer will refuse**, because an undrawable component is a warning. The CLI decides whether `render` stops first.
-- **Two `Finding` types exist**: the Node renderer's for assets and this one. The CLI slice merges them.
+- **`valid` can be true for a scene the renderer will refuse**, because an undrawable component is a warning. Settled in 4b: `render` raises it to an error and draws nothing (§8a).
+- **Two `Finding` types existed**: the Node renderer's for assets and this one. Merged in 4b (§8a).
 - **Misspelled keys pass silently**, since the schemas drop unknown keys. A candidate rule.
 
 ## 11. Prerequisite fixes in `@discordkit/client`
@@ -413,7 +424,7 @@ Each slice is implemented by a sub-agent from a written brief and reviewed again
 | 3a  | Text rendering, scene context, message chrome, asset loader. **Implemented.**     | Markdown, mentions, timestamps and emoji render to Discord's styles against a fixed clock; a render reaches nothing on the network.                                                                                      |
 | 3b  | Separator, media gallery, action row and buttons, legacy embeds. **Implemented.** | Inbou's and Tome's real cards render completely, in all four themes, each component with computed-style specs.                                                                                                           |
 | 4a  | Scene intake, lint, codegen. **Implemented.**                                     | An agent can hand over snake_case JSON and get back a normalised scene, findings with counts, and TypeScript that compiles and round-trips.                                                                              |
-| 4b  | CLI, font options (bring-your-own gg sans, CJK pinning), HTML output, image diff  | An agent can render, lint, generate code and compare two renders with one command each, and read every result as JSON.                                                                                                   |
+| 4b  | CLI, gg sans and CJK font options, HTML output, image diff. **Implemented.**      | An agent can render, lint, generate code and compare two renders with one command each, and read every result as JSON.                                                                                                   |
 | 5   | Dogfood                                                                           | Inbou and Tome render their real cards through the tool from their own specs; Tome's `sample:post` is no longer needed for layout review.                                                                                |
 | C   | Calibration (parallel, needs the owner)                                           | Reference files exist for the fixture set from the live client; every deviation found is fixed or recorded.                                                                                                              |
 | 6   | Remaining message components                                                      | Section, thumbnail, file, all five selects.                                                                                                                                                                              |
