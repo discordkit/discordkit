@@ -11,6 +11,7 @@ import { resolveClock } from "../format/timestamp.js";
 import { placeholderClass, transparentPixel } from "../react/Image.js";
 import { measureAttribute } from "../react/MediaGallery.js";
 import { Scene as SceneView, sceneSelector } from "../react/Scene.js";
+import { overlayAttribute } from "../react/SelectPopout.js";
 import type { AssetUrl } from "../react/SceneContext.js";
 import {
   defaultCacheDir,
@@ -387,6 +388,27 @@ export const renderScene = async (
           placeholder: placeholderClass,
           measure: measureAttribute
         }
+      );
+      // An open select's list hangs over what is below it, as the client's does, and can reach past the last message. The screenshot is of the scene's box, so grow the box's bottom padding until the list fits inside it with the usual space below.
+      await page.evaluate(
+        ({ scene, overlay }) => {
+          const root = document.querySelector<HTMLElement>(scene);
+          if (!root) return;
+          const box = root.getBoundingClientRect();
+          const padding = Number.parseFloat(
+            getComputedStyle(root).paddingBottom
+          );
+          const reach = Math.max(
+            box.bottom - padding,
+            ...[...root.querySelectorAll(`[${overlay}]`)].map(
+              (element) => element.getBoundingClientRect().bottom
+            )
+          );
+          const over = reach - (box.bottom - padding);
+          if (over > 0)
+            root.style.paddingBottom = `${String(padding + over)}px`;
+        },
+        { scene: sceneSelector, overlay: overlayAttribute }
       );
       const findings = [
         ...loaded.findings,

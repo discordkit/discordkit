@@ -5,13 +5,54 @@ import { MessageFlag } from "@discordkit/client/messages/types/MessageFlag";
 import {
   buttonSheet,
   embedSheet,
+  fileSheet,
   fixtures,
-  gallerySheet
+  gallerySheet,
+  inbouLevelPicker,
+  inbouSettings,
+  inbouStudyPack,
+  openMultiSelectSheet,
+  openSelectSheet,
+  sectionSheet,
+  selectSheet,
+  spoilerSheet,
+  thumbnailSheet,
+  tomeHeroCard,
+  tomeSpoilerAnswer
 } from "../../__tests__/fixtures.js";
 import inbouQuestionWire from "../../__tests__/wire/inbou-question.json" with { type: "json" };
+import type { Finding } from "../../findings.js";
 import { readScene } from "../intake.js";
 
-const scenes = { ...fixtures, buttonSheet, embedSheet, gallerySheet };
+const scenes = {
+  ...fixtures,
+  buttonSheet,
+  embedSheet,
+  gallerySheet,
+  tomeHeroCard,
+  tomeSpoilerAnswer,
+  sectionSheet,
+  thumbnailSheet
+};
+
+/** Scenes with select rows or File components, which @discordkit/client's schema rejects until #106. */
+const awaitingClientFix = {
+  inbouStudyPack,
+  inbouSettings,
+  inbouLevelPicker,
+  fileSheet,
+  selectSheet,
+  openSelectSheet,
+  openMultiSelectSheet,
+  spoilerSheet
+};
+
+/** One of the two schema defects #106 fixes: a select in an action row's array, or a File without the `name` and `size` only Discord's responses carry. */
+const isClientDefect = ({ code, path, message }: Finding): boolean =>
+  (code === `schema-position` &&
+    path.at(-1) === `components` &&
+    message.includes(" Select)")) ||
+  (code === `schema` && [`name`, `size`].includes(String(path.at(-1))));
 
 describe(`readScene: what the input is`, () => {
   it(`reads Inbou's question card as the snake_case JSON a logged request shows, and gives back the same payload Inbou builds in camelCase`, () => {
@@ -31,6 +72,20 @@ describe(`readScene: what the input is`, () => {
       expect(result.kind).toBe(`scene`);
       expect(result.findings).toStrictEqual([]);
       expect(result.scene).toStrictEqual(scene);
+    }
+  );
+
+  // Until #106 lands, the client's schema rejects these scenes' selects and files; every other finding would be a real problem. Once it lands, fold them into the test above.
+  it.each(Object.entries(awaitingClientFix))(
+    `reads the %s fixture from snake_case JSON back into the scene it came from, with no findings but the client's select and File defects (#106)`,
+    (_, scene) => {
+      const result = readScene(JSON.stringify(toSnakeKeys(scene)));
+      expect(result.kind).toBe(`scene`);
+      expect(result.scene).toStrictEqual(scene);
+      expect(result.findings.length).toBeGreaterThan(0);
+      expect(
+        result.findings.filter((finding) => !isClientDefect(finding))
+      ).toStrictEqual([]);
     }
   );
 

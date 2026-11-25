@@ -23,6 +23,8 @@
   /* `:root` radius scale. */
   --radius-xs: 4px;
   --radius-sm: 8px;
+  /* `:root`: the height of a medium form control, which a select menu is at least. */
+  --control-input-height-md: 40px;
   /* `:root` font weights. */
   --font-weight-normal: 400;
   --font-weight-medium: 500;
@@ -85,6 +87,9 @@
   /* The "Spoiler" pill over a hidden attachment: `--__spoiler-warning-background-color` is opacity-black-60, and `--__spoiler-warning-text-color` is primary-200, which `.visual-refresh` maps to neutral-8 (#e4e4e6). */
   --opacity-black-60: hsl(0 0% 0% / 0.6);
   --primary-200: hsl(240 3.846% 89.804%);
+  /* `:root`: how far a spoilered container is blurred (the embed spoiler's radius, which `.container_*.isHidden_*` reads), and the shadow a hidden spoiler casts (`.spoilerContainer_*.hidden_*`: opacity-black-8). */
+  --custom-embed-spoiler-blur-radius: 44px;
+  --opacity-black-8: hsl(0 0% 0% / 0.0784313725490196);
 
   font-family: var(--font-primary);
 }
@@ -162,6 +167,22 @@
   --border-muted: hsl(240 4% 60.784% / 0.2);
   /* neutral-76, #28282d */
   --control-secondary-text-default: hsl(240 5.882% 16.667%);
+  /* opacity-black-1: #000000 at 2% */
+  --input-background-default: hsl(0 0% 0% / 0.0196078431372549);
+  /* opacity-40: #97979f at 40% */
+  --input-border-default: hsl(240 4% 60.784% / 0.4);
+  /* neutral-76, #28282d */
+  --interactive-text-active: hsl(240 5.882% 16.667%);
+  /* neutral-47, #595a63 */
+  --interactive-text-default: hsl(234 5.319% 36.863%);
+  /* opacity-24: #97979f at 23.9% */
+  --interactive-background-selected: hsl(240 4% 60.784% / 0.23921568627450981);
+  /* neutral-1, #ffffff */
+  --background-surface-higher: hsl(0 0% 100%);
+  /* opacity-52: #97979f at 52.2% */
+  --border-strong: hsl(240 4% 60.784% / 0.5215686274509804);
+  /* 0 1px 4px black at 8% */
+  --shadow-low: 0 1px 4px 0 hsl(0 0% 0% / 0.08);
 }
 
 /* `@media (-webkit-max-device-pixel-ratio: 1) { .theme-light … }`: on a 1x screen, Discord sets light-theme text one step heavier, message markup and the ephemeral notice at medium and user names at semibold. These are ours, not Discord tokens: they carry that rule to the components. */
@@ -218,6 +239,22 @@
   --border-muted: hsl(240 4% 60.784% / 0.0392156862745098);
   /* neutral-1, #ffffff */
   --control-secondary-text-default: hsl(0 0% 100%);
+  /* opacity-black-8: #000000 at 7.8% */
+  --input-background-default: hsl(0 0% 0% / 0.0784313725490196);
+  /* opacity-20: #97979f at 20% */
+  --input-border-default: hsl(240 4% 60.784% / 0.2);
+  /* neutral-1, #ffffff */
+  --interactive-text-active: hsl(0 0% 100%);
+  /* neutral-16, #c5c6ca */
+  --interactive-text-default: hsl(228 4.505% 78.235%);
+  /* opacity-20: #97979f at 20% */
+  --interactive-background-selected: hsl(240 4% 60.784% / 0.2);
+  /* neutral-62, #3c3d45 */
+  --background-surface-higher: hsl(233.333 6.977% 25.294%);
+  /* opacity-44: #97979f at 43.9% */
+  --border-strong: hsl(240 4% 60.784% / 0.4392156862745098);
+  /* 0 1px 4px black at 14% */
+  --shadow-low: 0 1px 4px 0 hsl(0 0% 0% / 0.14);
 }
 
 /* Discord's "Dark" setting: `.theme-darker`. */
@@ -264,6 +301,22 @@
   --border-muted: hsl(240 4% 60.784% / 0.0392156862745098);
   /* neutral-2, #fbfbfb */
   --control-secondary-text-default: hsl(0 0% 98.431%);
+  /* opacity-black-12: #000000 at 12.2% */
+  --input-background-default: hsl(0 0% 0% / 0.12156862745098039);
+  /* opacity-20: #97979f at 20% */
+  --input-border-default: hsl(240 4% 60.784% / 0.2);
+  /* neutral-2, #fbfbfb */
+  --interactive-text-active: hsl(0 0% 98.431%);
+  /* neutral-23, #abacb2 */
+  --interactive-text-default: hsl(231.429 4.348% 68.431%);
+  /* opacity-20: #97979f at 20% */
+  --interactive-background-selected: hsl(240 4% 60.784% / 0.2);
+  /* neutral-76, #28282d */
+  --background-surface-higher: hsl(240 5.882% 16.667%);
+  /* opacity-44: #97979f at 43.9% */
+  --border-strong: hsl(240 4% 60.784% / 0.4392156862745098);
+  /* 0 1px 4px black at 14% */
+  --shadow-low: 0 1px 4px 0 hsl(0 0% 0% / 0.14);
 }
 
 /* Discord's "Onyx" setting: `.theme-midnight`. */
@@ -310,4 +363,20 @@
   --border-muted: hsl(240 4% 60.784% / 0.1607843137254902);
   /* neutral-10, #dcdcdf */
   --control-secondary-text-default: hsl(240 4.478% 86.863%);
+  /* opacity-black-12: #000000 at 12.2% */
+  --input-background-default: hsl(0 0% 0% / 0.12156862745098039);
+  /* opacity-24: #97979f at 23.9% */
+  --input-border-default: hsl(240 4% 60.784% / 0.23921568627450981);
+  /* neutral-10, #dcdcdf */
+  --interactive-text-active: hsl(240 4.478% 86.863%);
+  /* neutral-29, #96979e */
+  --interactive-text-default: hsl(232.5 3.96% 60.392%);
+  /* opacity-24: #97979f at 23.9% */
+  --interactive-background-selected: hsl(240 4% 60.784% / 0.23921568627450981);
+  /* neutral-92, #121214 */
+  --background-surface-higher: hsl(240 5.263% 7.451%);
+  /* opacity-44: #97979f at 43.9% */
+  --border-strong: hsl(240 4% 60.784% / 0.4392156862745098);
+  /* 0 1px 4px black at 14% */
+  --shadow-low: 0 1px 4px 0 hsl(0 0% 0% / 0.14);
 }

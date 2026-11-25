@@ -286,6 +286,8 @@ A bare payload is enough to draw one message from an app called "App". A scene a
 }
 ```
 
+To see a String Select's options, give its message `"openSelect"` with the select's `custom_id`: the select is drawn open, with every option's emoji, label and description listed under it and the ones marked `default` selected, hanging over whatever is below as the client's list does, and the image grows to fit it. Only a string select can be drawn open, since the other selects list members, roles or channels the client fetches; lint reports an `openSelect` that names anything else. A File component's size comes from its `size` (Discord's responses carry one) or from its file's entry in `context.attachments`, as `"size": <bytes>`; with neither, only the name is drawn.
+
 Messages stack top to bottom as they would in a channel, so a card before and after an edit can be shown in one image. Every field but `messages` is optional, and the clock defaults to a fixed instant, so a scene renders the same on any day. Images named by URL (avatars, custom emoji, Unicode emoji as Twemoji) are fetched once and kept in a disk cache, and the browser itself never touches the network, so the same scene gives byte-identical PNG and HTML. An image that cannot be had is drawn as a placeholder and reported as a finding.
 
 ## 🔤 Fonts
@@ -306,11 +308,13 @@ Every render reports which fonts drew the text (`fonts.used`: the family name in
 
 ## 🚧 Not supported yet
 
-- **Components**: Section, Thumbnail, File and the select menus are not drawn yet; a message holding one gets a `component-unsupported` finding and no image. Modals, polls, reactions, replies, threads and forwarded messages are not drawn.
-- **Calibration**: values come from Discord's stylesheet. Layout Discord decides in JavaScript (media gallery layouts for five or more items, embed text sizes, relative-timestamp wording) is inferred and has not been checked against the live client.
+- **Components**: every component a message can hold is drawn. The components only a modal holds (Label, Text Input, File Upload, and radio and checkbox groups) are not; a message holding one gets a `component-unsupported` finding and no image. Modals, polls, reactions, replies, threads and forwarded messages are not drawn.
+- **Selects**: only a String Select can be drawn open. The closed control's fill and border, and the text sizes in it and in the open list, are inferred, and the open list shows every option where the client's scrolls.
+- **Calibration**: values come from Discord's stylesheet. Layout Discord decides in JavaScript (media gallery layouts for five or more items, embed text sizes, relative-timestamp wording, file sizes' wording) is inferred and has not been checked against the live client.
 - **Mobile**: previews match the web client at the width you give, not the native mobile apps.
 - **Markdown**: no syntax highlighting in code blocks.
 - **Lint**: misspelled keys pass silently, because the client schemas drop unknown keys; character counts use Unicode code points, and whether Discord counts UTF-16 units instead is unverified.
+- **Validation of selects and files**: until a fix to `@discordkit/client` lands, its schemas reject a select menu in an action row's array (the shape Discord expects) and a File component without `name` and `size` (which only Discord's responses carry), so a correct payload holding either gets `schema` errors. They are still drawn.
 
 ## 🥂 License
 

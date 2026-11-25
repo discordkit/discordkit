@@ -1,0 +1,72 @@
+/*
+ * Discord build 679963: a spoilered attachment or container. The cover is `.spoilerContainer_*` while hidden: the hidden spoiler colour behind its content, clipped, with a faint shadow (`.hidden_*:not(:focus)`: 0.5px 0.5px 1px 1px opacity-black-8), and `.attachmentContainer_*`'s 8px radius. The content is blurred by 44px and ignores the pointer: `.container_*.isHidden_*` for a container (the embed spoiler radius), `.hiddenSpoiler_*` for a thumbnail and `.spoilerAttachment_*.isHidden_*` for a file (the attachment spoiler radius). The pill is `.obscureWarning_*` with `.spoilerWarning_*`, as on a gallery item.
+ *
+ * Whether a container takes the attachment's 8px corners or the embed's 4px ones is not in the stylesheet; 8px matches the container's own radius. Unverified.
+ *
+ * Revealed, the content is drawn as it is, over `--background-mod-subtle` (`--__spoiler-background-color--revealed`), which only shows where the content is transparent.
+ */
+.spoiler {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background-color: var(--spoiler-hidden-background);
+  box-shadow: 0.5px 0.5px 1px 1px var(--opacity-black-8);
+  cursor: pointer;
+}
+
+.content {
+  filter: blur(var(--custom-embed-spoiler-blur-radius));
+  pointer-events: none;
+}
+
+/* Hidden from sight but not from the keyboard or screen readers, so Space still reveals it. */
+.toggle {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+.warning {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  inset-inline-start: 50%;
+  padding: 8px 12px;
+  border-radius: 20px;
+  background-color: var(--opacity-black-60);
+  color: var(--primary-200);
+  font-size: 15px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  transform: translate(-50%, -50%);
+  user-select: none;
+  white-space: nowrap;
+}
+
+.toggle:checked ~ .content {
+  filter: none;
+  pointer-events: auto;
+}
+
+.toggle:checked ~ .warning {
+  display: none;
+}
+
+.spoiler:has(.toggle:checked) {
+  background-color: var(--background-mod-subtle);
+  box-shadow: none;
+  cursor: auto;
+}
+
+.toggle:focus-visible ~ .warning {
+  outline: 2px solid Highlight;
+  outline-offset: 2px;
+}

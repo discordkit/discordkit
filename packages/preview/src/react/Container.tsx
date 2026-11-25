@@ -3,8 +3,11 @@ import type { Container as ContainerComponent } from "@discordkit/client/compone
 import { ComponentType } from "@discordkit/client/components/types/ComponentType";
 import { colorToHex } from "../format/color.js";
 import { ActionRow } from "./ActionRow.js";
+import { FileAttachment } from "./FileAttachment.js";
 import { MediaGallery } from "./MediaGallery.js";
+import { Section } from "./Section.js";
 import { Separator } from "./Separator.js";
+import { SpoilerCover } from "./SpoilerCover.js";
 import { TextDisplay } from "./TextDisplay.js";
 import { unsupportedComponent } from "./unsupportedComponent.js";
 import styles from "./Container.module.css";
@@ -27,8 +30,9 @@ const renderChild = (child: Child, key: number): ReactElement => {
     case ComponentType.ActionRow:
       return <ActionRow key={key} component={child} />;
     case ComponentType.Section:
+      return <Section key={key} component={child} />;
     case ComponentType.File:
-      throw unsupportedComponent(child.type, `a Container`);
+      return <FileAttachment key={key} component={child} />;
     default:
       throw unsupportedComponent(
         (child satisfies never as { type: number }).type,
@@ -37,7 +41,7 @@ const renderChild = (child: Child, key: number): ReactElement => {
   }
 };
 
-/** A Container: a bordered card whose children stack with an 8px gap, with an optional accent bar on its leading edge. */
+/** A Container: a bordered card whose children stack with an 8px gap, with an optional accent bar on its leading edge. A container marked `spoiler` is blurred under a "Spoiler" pill until clicked, or drawn revealed when the scene reveals spoilers. */
 export const Container = ({ component }: ContainerProps): ReactElement => {
   // `0x000000` is a valid accent, so test for absence rather than truthiness.
   const accent = component.accentColor ?? undefined;
@@ -46,7 +50,7 @@ export const Container = ({ component }: ContainerProps): ReactElement => {
     accent === undefined
       ? undefined
       : { "--__accent-color": colorToHex(accent) };
-  return (
+  const card = (
     <div
       className={
         accent === undefined
@@ -57,5 +61,10 @@ export const Container = ({ component }: ContainerProps): ReactElement => {
     >
       {component.components.map((child, index) => renderChild(child, index))}
     </div>
+  );
+  return component.spoiler === true ? (
+    <SpoilerCover>{card}</SpoilerCover>
+  ) : (
+    card
   );
 };

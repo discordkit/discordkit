@@ -144,7 +144,14 @@ export const dark = {
   successButton: [0, 133, 69],
   dangerButton: [210, 45, 57],
   spoilerWarning: [0, 0, 0, 0.6],
-  spoilerWarningText: [228, 228, 230]
+  spoilerWarningText: [228, 228, 230],
+  inputBackground: [0, 0, 0, 0.122],
+  inputBorder: [151, 151, 159, 0.2],
+  interactiveTextActive: [251, 251, 251],
+  interactiveTextDefault: [171, 172, 178],
+  interactiveBackgroundSelected: [151, 151, 159, 0.2],
+  backgroundSurfaceHigher: [40, 40, 45],
+  borderStrong: [151, 151, 159, 0.439]
 } as const;
 
 /** One message whose payload is `payload`, in an otherwise default scene. */

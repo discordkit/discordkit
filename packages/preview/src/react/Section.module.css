@@ -1,0 +1,33 @@
+/*
+ * Discord build 679963: the Components V2 section rules (`.section_*`, `.children_*`, `.textChildren_*`, `.accessory_*` and `.restrictWidth_*`, beside the container rule). The text takes the space the accessory leaves, 12px from it, its text displays 4px apart; the accessory sits at the top, and a button accessory is never wider than half the section less that gap.
+ *
+ * Not drawn: `.verticallyCenterAlign_*`, which centres the text against a taller accessory. The client decides when to add it in JavaScript, and when it does is unverified; without it the text starts at the top.
+ */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.children {
+  display: flex;
+  gap: var(--space-12);
+  justify-content: space-between;
+}
+
+.textChildren {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  row-gap: var(--space-4);
+}
+
+.accessory {
+  display: flex;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.restrictWidth {
+  max-width: calc(50% - var(--space-12));
+}

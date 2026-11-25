@@ -1,0 +1,26 @@
+/* Ours: the icon before a chosen member, role or channel in a select. The client draws these in JavaScript (an avatar, a role's colour, a channel's type), so their sizes are unverified; each fills the 16px slot the select gives an emoji. */
+.avatar {
+  box-sizing: border-box;
+  width: 16px;
+  height: 16px;
+  overflow: hidden;
+  border-radius: 50%;
+  font-size: 9px;
+  object-fit: cover;
+}
+
+.roleDot {
+  display: block;
+  width: 12px;
+  height: 12px;
+  margin: 2px;
+  border-radius: 50%;
+  background-color: var(--text-muted);
+}
+
+.channel {
+  display: block;
+  width: 16px;
+  height: 16px;
+  color: var(--interactive-text-default);
+}

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
-import { fixtures } from "../../__tests__/fixtures.js";
+import { componentFixtures, fixtures } from "../../__tests__/fixtures.js";
 import type { LintCode } from "../../findings.js";
 import { lint } from "../index.js";
 
@@ -279,12 +279,19 @@ describe(`components`, () => {
   });
 
   it(`reports a component the renderer cannot draw yet before a render throws, and only the outermost one`, () => {
-    const section = { type: 9, components: [text(`a`)], accessory: button() };
-    const result = lint(card(section));
+    // An action row inside an action row: the inner row cannot be drawn, and its button is not reported again.
+    const nested = {
+      type: 1,
+      components: [{ type: 1, components: [button()] }]
+    };
+    const result = lint(card(nested));
     expect(
       result.findings.filter(({ code }) => code === `component-unsupported`)
     ).toMatchObject([
-      { severity: `warning`, path: [`components`, 0, `components`, 0] }
+      {
+        severity: `warning`,
+        path: [`components`, 0, `components`, 0, `components`, 0]
+      }
     ]);
   });
 
@@ -325,6 +332,219 @@ describe(`components`, () => {
         ]
       }
     ]);
+  });
+});
+
+/**
+ * Selects in rows here are written as Discord expects, in an array, which @discordkit/client's schema still rejects (#106), and File components leave out `name` and `size`, which it still requires (#106). So these tests look for the lint finding they are about rather than asserting the whole list of findings; once #106 lands, each could assert that its finding is the only one.
+ */
+describe(`sections, files and select menus`, () => {
+  const select = (
+    fields: Record<string, unknown> = {}
+  ): Record<string, unknown> => ({
+    type: 3,
+    custom_id: `level`,
+    options: [{ label: `N5`, value: `n5` }],
+    ...fields
+  });
+  const thumbnail = { type: 11, media: { url: `https://example.com/a.png` } };
+
+  it.each(Object.entries(componentFixtures))(
+    `finds no lint problem in the %s card, whose only findings are the client's schema defects (#106)`,
+    (_, scene) => {
+      const result = lint(scene);
+      expect(
+        result.findings.filter(
+          ({ code }) => code !== `schema` && code !== `schema-position`
+        )
+      ).toStrictEqual([]);
+    }
+  );
+
+  it.each([0, 4])(
+    `catches a section with %i text displays, where Discord takes one to three`,
+    (count) => {
+      const section = {
+        type: 9,
+        components: Array.from({ length: count }, (_, index) =>
+          text(String(index))
+        ),
+        accessory: thumbnail
+      };
+      expect(
+        findingFor(card(section), `section-component-count`)
+      ).toMatchObject({
+        severity: `error`,
+        path: [`components`, 0, `components`, 0, `components`]
+      });
+    }
+  );
+
+  it(`leaves a section of three text displays alone`, () => {
+    const section = {
+      type: 9,
+      components: [text(`a`), text(`b`), text(`c`)],
+      accessory: thumbnail
+    };
+    expect(codes(card(section))).toStrictEqual([]);
+  });
+
+  it(`catches a File that points at a web address, since a File shows only a file uploaded with the message`, () => {
+    const file = { type: 13, file: { url: `https://example.com/notes.txt` } };
+    expect(findingFor(card(file), `file-not-attachment`)).toMatchObject({
+      severity: `error`,
+      path: [`components`, 0, `components`, 0, `file`, `url`]
+    });
+    expect(
+      findingFor(
+        card({ type: 13, file: { url: `attachment://notes.txt` } }),
+        `file-not-attachment`
+      )
+    ).toBeUndefined();
+  });
+
+  it(`catches a string select with more than 25 options`, () => {
+    const options = Array.from({ length: 26 }, (_, index) => ({
+      label: `Option ${String(index)}`,
+      value: String(index)
+    }));
+    expect(
+      findingFor(card(row(select({ options }))), `select-option-count`)?.path
+    ).toStrictEqual([
+      `components`,
+      0,
+      `components`,
+      0,
+      `components`,
+      0,
+      `options`
+    ]);
+    expect(
+      findingFor(
+        card(row(select({ options: options.slice(0, 25) }))),
+        `select-option-count`
+      )
+    ).toBeUndefined();
+  });
+
+  it.each([
+    [`label`, `select-option-label-length`],
+    [`value`, `select-option-value-length`],
+    [`description`, `select-option-description-length`]
+  ] as const)(`catches an option %s over 100 characters`, (field, code) => {
+    const long = select({
+      options: [{ label: `N5`, value: `n5`, [field]: `x`.repeat(101) }]
+    });
+    const ok = select({
+      options: [{ label: `N5`, value: `n5`, [field]: `x`.repeat(100) }]
+    });
+    expect(findingFor(card(row(long)), code)?.path).toStrictEqual([
+      `components`,
+      0,
+      `components`,
+      0,
+      `components`,
+      0,
+      `options`,
+      0,
+      field
+    ]);
+    expect(findingFor(card(row(ok)), code)).toBeUndefined();
+  });
+
+  it(`catches a placeholder over 150 characters on any select`, () => {
+    for (const type of [3, 5, 6, 7, 8]) {
+      const menu = { ...select({ type }), placeholder: `x`.repeat(151) };
+      expect(
+        findingFor(card(row(menu)), `select-placeholder-length`)
+      ).toMatchObject({
+        severity: `error`
+      });
+    }
+    expect(
+      findingFor(
+        card(row(select({ placeholder: `x`.repeat(150) }))),
+        `select-placeholder-length`
+      )
+    ).toBeUndefined();
+  });
+
+  it(`catches min_values or max_values above 25`, () => {
+    expect(
+      findingFor(
+        card(row(select({ max_values: 26 }))),
+        `select-values-range`
+      )?.path.at(-1)
+    ).toBe(`max_values`);
+    expect(
+      findingFor(
+        card(row(select({ min_values: 26 }))),
+        `select-values-range`
+      )?.path.at(-1)
+    ).toBe(`min_values`);
+    expect(
+      findingFor(
+        card(row(select({ min_values: 0, max_values: 25 }))),
+        `select-values-range`
+      )
+    ).toBeUndefined();
+  });
+
+  it(`catches more default values than max_values allows, counting Discord's default of 1 when it is unset`, () => {
+    const users = {
+      type: 5,
+      custom_id: `buddy`,
+      default_values: [
+        { id: `1311000000000000101`, type: `user` },
+        { id: `1311000000000000102`, type: `user` }
+      ]
+    };
+    expect(findingFor(card(row(users)), `select-default-count`)).toMatchObject({
+      severity: `error`,
+      path: [
+        `components`,
+        0,
+        `components`,
+        0,
+        `components`,
+        0,
+        `default_values`
+      ]
+    });
+    expect(
+      findingFor(card(row({ ...users, max_values: 2 })), `select-default-count`)
+    ).toBeUndefined();
+  });
+
+  it(`catches fewer default values than min_values asks for`, () => {
+    const roles = {
+      type: 6,
+      custom_id: `roles`,
+      min_values: 2,
+      max_values: 3,
+      default_values: [{ id: `1311000000000000201`, type: `role` }]
+    };
+    expect(findingFor(card(row(roles)), `select-default-count`)).toBeDefined();
+  });
+
+  it(`catches a scene's openSelect that names no component, or a select that is not a string select`, () => {
+    const scene = (openSelect: string): unknown => ({
+      messages: [
+        {
+          open_select: openSelect,
+          payload: card(row(select()), row({ type: 5, custom_id: `buddy` }))
+        }
+      ]
+    });
+    expect(findingFor(scene(`nothing`), `open-select-missing`)).toMatchObject({
+      severity: `error`,
+      path: [`messages`, 0, `open_select`],
+      message: expect.stringMatching(/no component in this message/)
+    });
+    expect(findingFor(scene(`buddy`), `open-select-missing`)?.message).toMatch(
+      /not a String Select/
+    );
+    expect(findingFor(scene(`level`), `open-select-missing`)).toBeUndefined();
   });
 });
 
