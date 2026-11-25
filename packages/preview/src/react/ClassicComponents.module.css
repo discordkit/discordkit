@@ -1,0 +1,7 @@
+/* Discord build 679963: a message's component list without the `isComponentsV2` modifier. Its rows of buttons span the message's width, 6px apart. */
+.components {
+  display: flex;
+  flex-direction: column;
+  row-gap: 6px;
+  width: 100%;
+}

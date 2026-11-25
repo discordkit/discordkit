@@ -3,6 +3,7 @@ import { flushSync } from "react-dom";
 import { createRoot } from "react-dom/client";
 import { ComponentType } from "@discordkit/client/components/types/ComponentType";
 import type { MessageComponent } from "@discordkit/client/messages/types/MessageComponent";
+import type { MessagePayload } from "../../scene.js";
 import { Scene, type SceneProps } from "../Scene.js";
 import textDisplayStyles from "../TextDisplay.module.css";
 
@@ -131,5 +132,23 @@ export const dark = {
   spoilerHidden: [102, 103, 112],
   brand: [88, 101, 242],
   brand05a: [88, 101, 242, 0.05],
-  white: [255, 255, 255]
+  white: [255, 255, 255],
+  backgroundModStrong: [151, 151, 159, 0.2],
+  backgroundBaseLow: [32, 32, 36],
+  backgroundSurfaceHigh: [36, 36, 41],
+  borderSubtle: [151, 151, 159, 0.122],
+  borderMuted: [151, 151, 159, 0.039],
+  buttonBorder: [255, 255, 255, 0.078],
+  secondaryButton: [151, 151, 159, 0.122],
+  secondaryButtonText: [251, 251, 251],
+  successButton: [0, 133, 69],
+  dangerButton: [210, 45, 57],
+  spoilerWarning: [0, 0, 0, 0.6],
+  spoilerWarningText: [228, 228, 230]
 } as const;
+
+/** One message whose payload is `payload`, in an otherwise default scene. */
+export const mountPayload = (
+  payload: MessagePayload,
+  scene: Omit<SceneProps, `messages`> = {}
+): HTMLElement => mountScene({ ...scene, messages: [{ payload }] });

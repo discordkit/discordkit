@@ -1,4 +1,4 @@
-import type { ReactElement } from "react";
+import type { ReactElement, ReactEventHandler } from "react";
 import { useSceneSettings } from "./SceneContext.js";
 import styles from "./Image.module.css";
 
@@ -13,6 +13,8 @@ export interface ImageProps {
   reference: string;
   alt: string;
   className: string;
+  /** Called in a browser once the picture (or the placeholder drawn for it) has loaded. Server rendering drops it. */
+  onLoad?: ReactEventHandler<HTMLImageElement>;
 }
 
 /**
@@ -21,7 +23,8 @@ export interface ImageProps {
 export const Image = ({
   reference,
   alt,
-  className
+  className,
+  onLoad
 }: ImageProps): ReactElement => {
   const src = useSceneSettings().assetUrl(reference);
   return src === null ? (
@@ -30,8 +33,15 @@ export const Image = ({
       src={transparentPixel}
       alt={alt}
       data-discordkit-preview-missing={reference}
+      onLoad={onLoad}
     />
   ) : (
-    <img className={className} src={src} alt={alt} draggable={false} />
+    <img
+      className={className}
+      src={src}
+      alt={alt}
+      draggable={false}
+      onLoad={onLoad}
+    />
   );
 };

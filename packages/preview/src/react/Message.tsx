@@ -1,10 +1,16 @@
 import type { ReactElement } from "react";
+import { ComponentType } from "@discordkit/client/components/types/ComponentType";
 import { resolveAuthor } from "../format/resolve.js";
 import { formatMessageTime } from "../format/timestamp.js";
-import type { SceneMessage } from "../scene.js";
+import { parseMarkdown } from "../markdown/parse.js";
+import type { MessagePayload, SceneMessage } from "../scene.js";
 import { AppTag } from "./AppTag.js";
+import { ClassicComponents } from "./ClassicComponents.js";
+import { DefaultAvatar } from "./DefaultAvatar.js";
+import { Embed } from "./Embed.js";
 import { EyeIcon } from "./icons.js";
 import { Image } from "./Image.js";
+import { Markup } from "./Markup.js";
 import { MessageComponents } from "./MessageComponents.js";
 import { useSceneSettings } from "./SceneContext.js";
 import styles from "./Message.module.css";
@@ -15,7 +21,19 @@ export interface MessageProps {
   sentAt: number;
   /** The first message of a group: drawn with the avatar and the header. A message that continues the group above it is drawn as its body alone. */
   groupStart: boolean;
+  /** Its place in the scene, for error messages. */
+  index: number;
 }
+
+/** `IS_COMPONENTS_V2`, the message flag that switches a message to Components V2. */
+const componentsV2Flag = 1 << 15;
+
+/** Whether Discord draws the payload as Components V2: the flag is set, or it holds a component only V2 allows, which is anything but an action row. */
+export const isComponentsV2 = (payload: MessagePayload): boolean =>
+  ((payload.flags ?? 0) & componentsV2Flag) !== 0 ||
+  (payload.components ?? []).some(
+    (component) => component.type !== ComponentType.ActionRow
+  );
 
 /** The line under an ephemeral reply. */
 const EphemeralNotice = (): ReactElement => (
@@ -28,13 +46,76 @@ const EphemeralNotice = (): ReactElement => (
   </div>
 );
 
+const EditedMark = (): ReactElement => (
+  <span className={`${styles.timestamp} ${styles.timestampInline}`}>
+    <span className={styles.edited}>(edited)</span>
+  </span>
+);
+
+/** A Components V2 message's body. It has no content line, so the edited mark gets one of its own. */
+const ComponentsBody = ({
+  message,
+  index
+}: {
+  message: SceneMessage;
+  index: number;
+}): ReactElement => {
+  const { content, embeds = [], components = [] } = message.payload;
+  if ((content ?? ``) !== `` || embeds.length > 0) {
+    throw new Error(
+      `@discordkit/preview cannot draw message ${String(index + 1)}: it is a Components V2 message (it has the IS_COMPONENTS_V2 flag or a layout component) but also has ${(content ?? ``) === `` ? `embeds` : `content`}. Discord refuses to send a V2 message with \`content\` or \`embeds\`, so no real message looks like this. Move the text into a Text Display, or drop the flag and the layout components to send a classic message.`
+    );
+  }
+  return (
+    <>
+      {message.edited ? (
+        // Where Discord places the edited mark on a Components V2 message is unverified.
+        <div className={styles.content}>
+          <EditedMark />
+        </div>
+      ) : null}
+      <div className={styles.accessories}>
+        <MessageComponents components={components} />
+      </div>
+    </>
+  );
+};
+
+/** A classic message's body: its content with the edited mark at the end of it, then its embeds and its rows of buttons. */
+const ClassicBody = ({ message }: { message: SceneMessage }): ReactElement => {
+  const { content = ``, embeds = [], components = [] } = message.payload;
+  const hasContent = content !== `` || message.edited === true;
+  return (
+    <>
+      {hasContent ? (
+        <div className={styles.content}>
+          <Markup nodes={parseMarkdown(content, `message`)} />
+          {message.edited ? <EditedMark /> : null}
+        </div>
+      ) : null}
+      {embeds.length > 0 || components.length > 0 ? (
+        <div className={styles.accessories}>
+          {embeds.map((embed, position) => (
+            // oxlint-disable-next-line react/no-array-index-key -- payload order is the identity; embeds have no key of their own.
+            <Embed key={position} embed={embed} index={position} />
+          ))}
+          {components.length > 0 ? (
+            <ClassicComponents components={components} />
+          ) : null}
+        </div>
+      ) : null}
+    </>
+  );
+};
+
 /**
- * One message as a channel shows it at Discord's default ("cozy") density: the author's avatar in the gutter, a header with their name, the app tag and the time, then the message's components.
+ * One message as a channel shows it at Discord's default ("cozy") density: the author's avatar in the gutter, a header with their name, the app tag and the time, then the message's body, which is either its Components V2 components or its classic content, embeds and buttons.
  */
 export const Message = ({
   message,
   sentAt,
-  groupStart
+  groupStart,
+  index
 }: MessageProps): ReactElement => {
   const { context, clock } = useSceneSettings();
   const author = resolveAuthor(message.author, context);
@@ -49,7 +130,11 @@ export const Message = ({
     <div className={className}>
       {groupStart ? (
         <>
-          <Image reference={author.avatar} alt="" className={styles.avatar} />
+          {author.avatar === undefined ? (
+            <DefaultAvatar avatar={author.fallback} className={styles.avatar} />
+          ) : (
+            <Image reference={author.avatar} alt="" className={styles.avatar} />
+          )}
           <h3 className={styles.header}>
             <span className={styles.headerText}>
               <span className={styles.username}>{author.name}</span>
@@ -65,17 +150,11 @@ export const Message = ({
           </h3>
         </>
       ) : null}
-      {message.edited ? (
-        // A Components V2 message has no content, so the edited mark is the content line's only text. Where Discord places it for such a message is unverified.
-        <div className={styles.content}>
-          <span className={`${styles.timestamp} ${styles.timestampInline}`}>
-            <span className={styles.edited}>(edited)</span>
-          </span>
-        </div>
-      ) : null}
-      <div className={styles.accessories}>
-        <MessageComponents payload={message.payload} />
-      </div>
+      {isComponentsV2(message.payload) ? (
+        <ComponentsBody message={message} index={index} />
+      ) : (
+        <ClassicBody message={message} />
+      )}
       {message.ephemeral ? <EphemeralNotice /> : null}
     </div>
   );

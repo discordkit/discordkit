@@ -1,0 +1,6 @@
+/* Discord build 679963: `.lookFilled_*.colorPrimary_*`, a translucent grey fill over whatever is behind it, with a border and text colour that change by theme. */
+.secondary {
+  border-color: var(--border-muted);
+  background-color: var(--control-secondary-background-default);
+  color: var(--control-secondary-text-default);
+}

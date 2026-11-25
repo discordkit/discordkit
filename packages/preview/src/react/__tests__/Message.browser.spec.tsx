@@ -45,13 +45,35 @@ const mountMessages = (...messages: SceneMessage[]): HTMLElement[] =>
 describe(`a message's header`, () => {
   it(`draws the author's avatar as a 40px circle in the gutter, 16px from the edge and 4px from the top`, () => {
     const [first] = mountMessages(message());
-    const avatar = find(first, `img`);
+    const avatar = find(first, byClass(messageStyles.avatar));
     const box = first.getBoundingClientRect();
     const image = avatar.getBoundingClientRect();
     expect([image.width, image.height]).toStrictEqual([40, 40]);
     expect(style(avatar).borderTopLeftRadius).toBe(`50%`);
     expect(image.left - box.left).toBe(16);
     expect(image.top - box.top).toBe(4);
+  });
+
+  it(`draws an author with no picture as their initial on a coloured circle, with no image to fetch`, () => {
+    const [first] = mountMessages(message());
+    const avatar = find(first, byClass(messageStyles.avatar));
+    expect(avatar.tagName).toBe(`DIV`);
+    expect(avatar.textContent).toBe(`T`);
+    expect(first.querySelector(`img`)).toBeNull();
+    expectColor(style(avatar).color, dark.white);
+    expect(style(avatar).backgroundColor).not.toBe(`rgba(0, 0, 0, 0)`);
+  });
+
+  it(`draws an author's picture when the scene gives one`, () => {
+    const root = mountScene({
+      ...base,
+      context: {
+        users: { [bot]: { name: `Tome`, avatar: `https://cdn.example/a.png` } }
+      },
+      messages: [message()]
+    });
+    const avatar = find(root, byClass(messageStyles.avatar));
+    expect(avatar.tagName).toBe(`IMG`);
   });
 
   it(`starts the message's content 72px in: the avatar and a 16px gutter either side of it`, () => {

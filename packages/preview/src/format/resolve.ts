@@ -1,5 +1,6 @@
 import type { GuildNavigationTarget } from "../markdown/ast.js";
 import type { SceneContext, SceneUser } from "../scene.js";
+import { colorToHex } from "./color.js";
 
 /**
  * What ids in a message resolve to, looked up in the scene's context. An id the context does not list resolves to what the Discord client shows for an id it cannot find. Those fallback words are decided in the client's JavaScript, so they are unverified until calibration.
@@ -17,9 +18,6 @@ export interface RoleMention {
   color?: string;
 }
 
-const toHex = (color: number): string =>
-  `#${color.toString(16).padStart(6, `0`)}`;
-
 export const roleMention = (
   id: string,
   context: SceneContext | undefined
@@ -28,7 +26,7 @@ export const roleMention = (
   if (!role) return { label: `@deleted-role` };
   // Discord stores "no colour" as 0, so black cannot be a role colour and 0 is an absence here.
   return role.color
-    ? { label: `@${role.name}`, color: toHex(role.color) }
+    ? { label: `@${role.name}`, color: colorToHex(role.color) }
     : { label: `@${role.name}` };
 };
 
@@ -50,19 +48,53 @@ export const guildNavigationLabels = {
 export const defaultAuthor: SceneUser = { name: `App`, bot: true };
 
 /**
- * Discord's default avatar for a user with none: one of six images, chosen from the id (`(id >> 22) % 6`, the rule for accounts on the current username system). An id that is not a snowflake gets the first.
+ * The background colours a drawn default avatar picks from. Ours, not Discord's: muted enough to sit in any of the four themes, and dark enough for a white initial to read on each.
  */
-export const defaultAvatarUrl = (id: string | undefined): string => {
-  let index = 0n;
-  if (id !== undefined && /^\d+$/.test(id)) index = (BigInt(id) >> 22n) % 6n;
-  return `https://cdn.discordapp.com/embed/avatars/${String(index)}.png`;
+export const defaultAvatarColors = [
+  `#4f6d7a`,
+  `#7a5c4f`,
+  `#5c7a4f`,
+  `#6b4f7a`,
+  `#7a4f5c`,
+  `#4f5c7a`
+] as const;
+
+/** A small, stable string hash (32-bit FNV-1a), so the same key always picks the same colour on every machine. */
+const hash = (text: string): number => {
+  let value = 0x81_1c_9d_c5;
+  for (let index = 0; index < text.length; index++) {
+    value ^= text.charCodeAt(index);
+    value = Math.imul(value, 0x01_00_01_93) >>> 0;
+  }
+  return value;
+};
+
+export interface DefaultAvatar {
+  /** The first character of the name as a reader sees it (one grapheme), upper-cased. */
+  initial: string;
+  color: (typeof defaultAvatarColors)[number];
+}
+
+/**
+ * What a user with no picture is drawn with: a coloured circle with their name's initial. Discord would show one of its own default avatars, fetched from its CDN; this is drawn locally instead, so a scene that sets no avatars renders with no network at all and the image carries no Discord logo. The colour is chosen from `key` (the user's id when there is one), so a user keeps their colour from scene to scene.
+ */
+export const defaultAvatar = (key: string, name: string): DefaultAvatar => {
+  const first = new Intl.Segmenter(`en`, { granularity: `grapheme` })
+    .segment(name.trim())
+    [Symbol.iterator]()
+    .next();
+  return {
+    initial: first.done ? `?` : first.value.segment.toLocaleUpperCase(`en`),
+    color: defaultAvatarColors[hash(key) % defaultAvatarColors.length]
+  };
 };
 
 export interface ResolvedAuthor extends SceneUser {
-  avatar: string;
+  /** Drawn when the user has no `avatar`. */
+  fallback: DefaultAvatar;
 }
 
-/** The user a message is drawn as: the entry `author` names, the default app when it names none, and the default avatar when the user has no picture. */
+/** The user a message is drawn as: the entry `author` names, or the default app when it names none, with the drawn avatar to use if the user has no picture. */
 export const resolveAuthor = (
   author: string | undefined,
   context: SceneContext | undefined
@@ -70,5 +102,5 @@ export const resolveAuthor = (
   const user =
     (author === undefined ? undefined : context?.users?.[author]) ??
     (author === undefined ? defaultAuthor : { name: `unknown-user` });
-  return { ...user, avatar: user.avatar ?? defaultAvatarUrl(author) };
+  return { ...user, fallback: defaultAvatar(author ?? user.name, user.name) };
 };

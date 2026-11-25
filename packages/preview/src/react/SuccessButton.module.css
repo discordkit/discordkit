@@ -1,0 +1,6 @@
+/* Discord build 679963: `.lookFilled_*.colorGreen_*`, green with white text. */
+.success {
+  border-color: var(--control-connected-border-default);
+  background-color: var(--control-connected-background-default);
+  color: var(--white);
+}

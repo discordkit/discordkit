@@ -1,0 +1,65 @@
+/*
+ * Discord build 679963: a message component button. Its box is the shared button at its small size, growing to fit its label (`.button_*`, `.lookFilled_*`, `.sizeSmall_*`, `.grow_*`), and its inside is the message button's own content rule (`.content_*`, `.textEmoji_*`, `.label_*`, in the stylesheet with `.launchIcon_*` and `.shopIcon_*`). Each style's colours are in its own component's stylesheet.
+ *
+ * Discord ships a second, newer button (`.button_*` with `.sm_*` and `.hasText_*`) whose box and colours come out the same for a labelled button. Which one message buttons use is not visible in the stylesheet; the two differ only for a button with no label, which the older one draws 60px wide and the newer one 32px. This follows the older one, whose small size is the 32px by 60px the spec's values table lists. To confirm in calibration.
+ */
+.button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: auto;
+  height: 32px;
+  min-width: 60px;
+  min-height: 32px;
+  margin: 0;
+  padding: calc(var(--space-4) - 1px) calc(var(--space-12) - 1px);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: none;
+  font-family: var(--font-primary);
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  line-height: 18px;
+  user-select: none;
+  cursor: pointer;
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* `.lookFilled_* .contents_*`: one line, cut with an ellipsis when the row is too narrow for it. */
+.contents {
+  margin: 0 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  margin: auto;
+}
+
+/* An emoji before a label. An emoji on its own has no margin. The emoji's size is the inline emoji size, 1.375em of the button's 14px; Discord sets it in JavaScript, so it is unverified. */
+.emoji {
+  display: flex;
+  flex-shrink: 0;
+}
+
+.textEmoji {
+  margin-inline-end: 4px;
+}
+
+.label {
+  flex-shrink: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

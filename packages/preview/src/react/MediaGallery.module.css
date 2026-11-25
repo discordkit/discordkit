@@ -1,0 +1,164 @@
+/*
+ * Discord build 679963: the attachment mosaic a Media Gallery is drawn with. Which arrangement a count gets is in format/galleryLayout.ts; this file is each arrangement's sizing.
+ *
+ * From the stylesheet: items 4px apart, each rounded by 2px (`.mosaicItemMediaMosaic_*`), the whole gallery clipped to an 8px radius at up to 600px wide in a Components V2 message (`.visualMediaItemContainer_*.isInAppComponentsV2_*`), a lone item rounded by 8px and up to 350px tall (`.oneByOneGrid_*`, `.oneByOneGridSingle_*`), a pair or a lone item over a grid up to 280px tall (`.oneByTwoGrid_*`, `.oneByOneGridMosaic_*`), three items and the 2×2 grid up to 350px (`.oneByTwoLayoutThreeGrid_*`, `.twoByTwoGrid_*`), the three-item split 2:1 (`.oneByTwoSoloItem_*`, `.oneByTwoDuoItem_*`, `.twoByOneGrid_*`), squares in the 3-column grid, and 4px between a lone item or a pair and a grid below it.
+ *
+ * Ours, because Discord sizes items in JavaScript: an item takes its picture's aspect ratio (`--dkp-ratio`, from the payload's `width` and `height`, or measured once the picture loads) and is scaled up or down to fill its slot, never drawn at the file's own size (Tome observed this); a lone item is as wide as fits at that ratio up to 350px tall; a band of items is as tall as its tallest item would be at the band's width, up to the band's limit, and every item in it fills that height, cropped rather than letterboxed (Tome: Discord "never letterboxes"). The gallery asks for the full 600px, so a container holding one is as wide as the column allows.
+ */
+.gallery {
+  /* A picture that has not arrived is Discord's loading box, `.imagePlaceholder_*`. */
+  --dkp-placeholder-background: var(--background-base-low);
+  width: 600px;
+  max-width: 100%;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.oneByOne {
+  display: block;
+}
+
+.mosaic {
+  display: flex;
+  width: 100%;
+  max-height: 280px;
+}
+
+.oneByTwo {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  max-height: 280px;
+}
+
+.layoutThree {
+  max-height: 350px;
+}
+
+.twoByTwo {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: 4px;
+  max-height: 350px;
+}
+
+.threeByThree {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.oneByOne + .threeByThree,
+.oneByTwo + .threeByThree {
+  margin-top: 4px;
+}
+
+.item {
+  position: relative;
+  display: block;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 2px;
+}
+
+.mosaic > .item,
+.oneByTwo > .item {
+  flex: 1;
+}
+
+/* A lone item: as wide as its ratio allows at 350px tall, narrower if the gallery is. */
+.single {
+  width: calc(350px * var(--dkp-ratio, 1));
+  max-width: 100%;
+  border-radius: 8px;
+}
+
+.oneByTwo > .solo {
+  flex: 2;
+}
+
+.duo {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.duo > .item {
+  flex: 1;
+}
+
+.media {
+  display: block;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: var(--dkp-ratio, 1);
+  object-fit: cover;
+}
+
+.threeByThree .media {
+  aspect-ratio: 1 / 1;
+}
+
+/* The two stacked items take whatever height the large one gives the band, and none of their own. */
+.duo .media {
+  height: 0;
+  min-height: 100%;
+}
+
+/*
+ * A spoilered item: blurred by Discord's 44px (`.hiddenMosaicItem_*.hiddenSpoiler_*`) over the hidden spoiler colour, with a "Spoiler" pill in its middle (`.obscureWarning_*`, `.spoilerWarning_*`). Clicking reveals it with no script, as a text spoiler does: the item is a label around a visually hidden checkbox.
+ */
+.spoiler {
+  background-color: var(--spoiler-hidden-background);
+  cursor: pointer;
+}
+
+.spoiler .media {
+  filter: blur(var(--custom-message-attachment-spoiler-blur-radius));
+}
+
+.toggle {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+.warning {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  inset-inline-start: 50%;
+  padding: 8px 12px;
+  border-radius: 20px;
+  background-color: var(--opacity-black-60);
+  color: var(--primary-200);
+  font-size: 15px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  transform: translate(-50%, -50%);
+  user-select: none;
+}
+
+.toggle:checked ~ .media {
+  filter: none;
+}
+
+.toggle:checked ~ .warning {
+  display: none;
+}
+
+.toggle:focus-visible ~ .warning {
+  outline: 2px solid Highlight;
+  outline-offset: 2px;
+}

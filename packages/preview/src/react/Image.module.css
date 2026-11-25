@@ -1,4 +1,7 @@
-/* Ours, after Discord build 679963's `.avatar_*::before`, which fills an image's box with `--background-mod-subtle` until the picture arrives. The same fill stands in for any image that is missing. */
+/* Ours, after Discord build 679963's `.avatar_*::before`, which fills an image's box with `--background-mod-subtle` until the picture arrives. The same fill stands in for any image that is missing. A component whose loading box Discord fills differently sets `--dkp-placeholder-background` around it (a Media Gallery uses the image loader's `--background-base-low`). */
 .placeholder {
-  background-color: var(--background-mod-subtle);
+  background-color: var(
+    --dkp-placeholder-background,
+    var(--background-mod-subtle)
+  );
 }

@@ -1,0 +1,6 @@
+/* Discord build 679963: `.lookFilled_*.colorBrand_*`, blurple with white text. Disabled keeps the same fill under the button's 50% opacity. */
+.primary {
+  border-color: var(--control-primary-border-default);
+  background-color: var(--control-primary-background-default);
+  color: var(--control-primary-text-default);
+}
