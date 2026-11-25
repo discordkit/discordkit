@@ -29,10 +29,12 @@ export const editOriginalInteractionResponseSchema = v.object({
       content: boundedString({ max: 2000 }),
       /** embedded `rich` content */
       embeds: boundedArray(
-        v.object({
-          ...embedEntries,
-          type: v.literal(EmbedType.RICH)
-        }),
+        v.partial(
+          v.object({
+            ...embedEntries,
+            type: v.literal(EmbedType.RICH)
+          })
+        ),
         { max: 10 }
       ),
       /** allowed mentions for the message */

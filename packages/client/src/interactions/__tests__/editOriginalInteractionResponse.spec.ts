@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vite-plus/test";
+import * as v from "valibot";
 import { toValidated } from "@discordkit/core/requests/toValidated";
 
 import { mockUtils } from "#mocks";
@@ -23,5 +24,18 @@ describe(`editOriginalInteractionResponse`, { repeats: 5 }, () => {
         interactionCallbackResponseSchema
       )(config, { anonymous: true })
     ).resolves.toStrictEqual(expected);
+  });
+});
+
+describe(`editOriginalInteractionResponseSchema embeds`, () => {
+  it(`accepts an embed that sets only the fields it uses`, () => {
+    // Every embed field is optional on Discord's side. The embed here was rebuilt without `partial`, so editing a response could only send an embed that set every field.
+    expect(
+      v.safeParse(editOriginalInteractionResponseSchema, {
+        application: `1234567890123456789`,
+        token: `token`,
+        body: { embeds: [{ title: `Patch notes` }] }
+      }).success
+    ).toBe(true);
   });
 });

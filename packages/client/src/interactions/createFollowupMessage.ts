@@ -23,10 +23,12 @@ export const createFollowupMessageSchema = v.object({
       tts: v.boolean(),
       /** embedded rich content */
       embeds: boundedArray(
-        v.object({
-          ...embedEntries,
-          type: v.literal(EmbedType.RICH)
-        }),
+        v.partial(
+          v.object({
+            ...embedEntries,
+            type: v.literal(EmbedType.RICH)
+          })
+        ),
         { max: 10 }
       ),
       /** allowed mentions for the message */
