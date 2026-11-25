@@ -1,6 +1,6 @@
 import { defineConfig } from "vite-plus";
 import { playwright } from "vite-plus/test/browser-playwright";
-import { lint, fmt, mergeLint } from "@saeris/configs";
+import { lint, fmt, mergeLint, react } from "@saeris/configs";
 
 export default defineConfig({
   run: {
@@ -220,6 +220,13 @@ export default defineConfig({
           // `H` appears once by design — that's the ergonomic, not a smell.
           "typescript/no-unnecessary-type-parameters": `off`
         }
+      },
+      {
+        // The React preset, for the one published React package. `vp check` reads only this root `lint` block, so a `lint: mergeLint(lint, react)` in the package's own config would apply to `vp lint` run inside the package and never to `vp check`. The preset keeps its rules in a single override scoped to every JS/TS file; this re-scopes them to the package.
+        files: [`packages/preview/**/*.{ts,tsx}`],
+        plugins: react.plugins,
+        env: react.env,
+        rules: react.overrides?.[0]?.rules
       },
       {
         // `throw redirect(...)` is TanStack Router's documented control-flow API

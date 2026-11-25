@@ -10,6 +10,7 @@
   "allowCustomCommands": true,
   "linked": [["@discordkit/client", "@discordkit/core"]],
   "ignore": [
+    "@discordkit/preview",
     "webhook-action",
     "with-nextjs-better-auth",
     "with-nextjs",

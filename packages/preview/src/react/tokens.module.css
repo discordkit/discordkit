@@ -1,0 +1,76 @@
+/*
+ * Design tokens, under the names Discord's own stylesheets give them, so a value's origin is a one-line lookup and a re-extraction after a Discord redesign is a diff of this file.
+ *
+ * Provenance: every value below was read from the production stylesheet of the Discord web client, stable build 679963, fetched 2026-11-24. Theme values come from the rule named in each block; shared values come from that stylesheet's `:root` rule. Colours are written in the same HSL form Discord uses (with its `--saturation-factor` at 1), so they are exact rather than rounded to hex; the hex in each comment is for reading only. None of this is copied CSS: it is a table of measurements, written as our own rules.
+ *
+ * Only the tokens a component in this package uses are defined. Add a token when a component needs it, with its source.
+ *
+ * Tokens live on the scene root, not on `:root`, so rendering a preview never restyles the page that hosts it.
+ *
+ * Theme classes are named after Discord's settings UI. Which of Discord's theme classes each one maps to (`ash` to `.theme-dark`, `dark` to `.theme-darker`, `onyx` to `.theme-midnight`) is inferred from the token values and still has to be confirmed against the live client.
+ *
+ * `--background-base-lowest` is the chat column's background (`.chat_*` paints `var(--background-gradient-chat, var(--background-base-lowest))`). Which surface sits directly behind a message is also unconfirmed until calibration.
+ */
+
+.root {
+  /* `:root` spacing scale. */
+  --space-8: 8px;
+  --space-16: 16px;
+  /* `:root` radius scale. */
+  --radius-sm: 8px;
+  /* `:root`: the line height of message markup. */
+  --chat-markup-line-height: 1.375rem;
+  /* `:root`, Latin locales. gg sans is not shipped (Discord does not license it for redistribution); Noto Sans is Discord's own first fallback, and the Node renderer loads a bundled copy of it so output does not depend on installed fonts. */
+  --font-primary:
+    "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  font-family: var(--font-primary);
+}
+
+/* Discord's "Light" setting: `.theme-light`. */
+.light {
+  /* neutral-4, #f3f3f4 */
+  --background-base-lowest: hsl(240 4.348% 95.49%);
+  /* neutral-1, #ffffff */
+  --background-surface-high: hsl(0 0% 100%);
+  /* opacity-28: #97979f at 27.8% */
+  --border-subtle: hsl(240 4% 60.784% / 0.2784313725490196);
+  /* neutral-72, #2e2e34 */
+  --text-default: hsl(240 6.122% 19.216%);
+}
+
+/* Discord's "Ash" setting: `.theme-dark`. */
+.ash {
+  /* neutral-73, #2c2d32 */
+  --background-base-lowest: hsl(230 6.383% 18.431%);
+  /* neutral-64, #393a41 */
+  --background-surface-high: hsl(232.5 6.557% 23.922%);
+  /* opacity-12: #97979f at 12.2% */
+  --border-subtle: hsl(240 4% 60.784% / 0.12156862745098039);
+  /* neutral-4, #f3f3f4 */
+  --text-default: hsl(240 4.348% 95.49%);
+}
+
+/* Discord's "Dark" setting: `.theme-darker`. */
+.dark {
+  /* neutral-92, #121214 */
+  --background-base-lowest: hsl(240 5.263% 7.451%);
+  /* neutral-79, #242429 */
+  --background-surface-high: hsl(240 6.494% 15.098%);
+  /* opacity-12: #97979f at 12.2% */
+  --border-subtle: hsl(240 4% 60.784% / 0.12156862745098039);
+  /* neutral-5, #efeff1 */
+  --text-default: hsl(240 6.667% 94.118%);
+}
+
+/* Discord's "Onyx" setting: `.theme-midnight`. */
+.onyx {
+  /* neutral-100, #000000 */
+  --background-base-lowest: hsl(0 0% 0%);
+  /* neutral-96, #0a0a0c */
+  --background-surface-high: hsl(240 9.091% 4.314%);
+  /* opacity-20: #97979f at 20% */
+  --border-subtle: hsl(240 4% 60.784% / 0.2);
+  /* neutral-12, #d4d5d8 */
+  --text-default: hsl(225 4.878% 83.922%);
+}
