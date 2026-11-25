@@ -99,12 +99,12 @@ describe(`discordkit-preview`, () => {
     it(`lists every command and what each exit status means`, async () => {
       const result = await run([`--help`]);
       expect(result.code).toBe(0);
-      for (const command of [`render`, `lint`, `codegen`, `diff`])
+      for (const command of [`render`, `lint`, `codegen`, `diff`, `studio`])
         expect(result.stdout).toContain(command);
       expect(result.stdout).toMatch(/Exit status:\s+0[\s\S]+1[\s\S]+2/);
     });
 
-    it.each([`render`, `lint`, `codegen`, `diff`])(
+    it.each([`render`, `lint`, `codegen`, `diff`, `studio`])(
       `explains %s's options`,
       async (command) => {
         const result = await run([command, `--help`]);
@@ -399,6 +399,29 @@ describe(`discordkit-preview`, () => {
           )
         }
       });
+    });
+  });
+
+  describe(`studio`, () => {
+    it(`refuses a file that does not exist rather than creating one, and says what to do`, async () => {
+      const result = await run([
+        `studio`,
+        join(out, `missing.json`),
+        `--json`,
+        `--no-open`,
+        `--port`,
+        `0`
+      ]);
+      expect(result.code).toBe(2);
+      const { error } = json(result) as { error: { message: string } };
+      expect(error.message).toMatch(/no file there/);
+      expect(error.message).toMatch(/create the file first/);
+    });
+
+    it(`cannot edit standard input, since it writes back to the file it reads`, async () => {
+      const result = await run([`studio`, `-`, `--no-open`]);
+      expect(result.code).toBe(2);
+      expect(result.stderr).toMatch(/cannot edit standard input/);
     });
   });
 

@@ -78,7 +78,9 @@
     "@types/react-dom": "catalog:",
     "playwright": "catalog:",
     "react": "catalog:",
+    "react-aria-components": "catalog:",
     "react-dom": "catalog:",
+    "react-hook-form": "^7.92.0",
     "typescript": "catalog:",
     "valibot": "catalog:"
   },

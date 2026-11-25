@@ -64,7 +64,8 @@ export const defaultCacheDir = (): string =>
 
 const fetchTimeout = 15_000;
 
-const imageTypes: Partial<Record<string, string>> = {
+/** The image types an attachment can be, by file extension. Studio's file bridge serves attachments by the same list. */
+export const imageTypes: Partial<Record<string, string>> = {
   ".avif": `image/avif`,
   ".gif": `image/gif`,
   ".jpeg": `image/jpeg`,
