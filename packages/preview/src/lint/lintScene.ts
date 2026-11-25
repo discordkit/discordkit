@@ -209,12 +209,14 @@ export const lintScene = (scene: Scene): LintSceneResult => {
   const checkAttachments = (value: unknown, path: Path): void => {
     for (const reference of attachmentReferences(value, path)) {
       if (Object.hasOwn(attachments, reference.name)) continue;
-      add(
-        `attachment-missing`,
-        `warning`,
-        reference.path,
-        `\`attachment://${reference.name}\` names a file the scene does not have: \`context.attachments\` has no entry called ${JSON.stringify(reference.name)}. The preview draws a placeholder in its place, and Discord shows the picture only if a file of exactly that name is uploaded with the message. Add \`${JSON.stringify(reference.name)}: { "path": "<file on disk>" }\` to the scene's \`context.attachments\`, or correct the name to match a file that is there.`
-      );
+      // `asset` lets the Node renderer recognise its own report of the same missing file and keep only this one.
+      findings.push({
+        code: `attachment-missing`,
+        severity: `warning`,
+        path: reference.path,
+        message: `\`attachment://${reference.name}\` names a file the scene does not have: \`context.attachments\` has no entry called ${JSON.stringify(reference.name)}. The preview draws a placeholder in its place, and Discord shows the picture only if a file of exactly that name is uploaded with the message. Add \`${JSON.stringify(reference.name)}: { "path": "<file on disk>" }\` to the scene's \`context.attachments\`, or correct the name to match a file that is there.`,
+        asset: `attachment://${reference.name}`
+      });
     }
   };
 

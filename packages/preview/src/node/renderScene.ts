@@ -3,7 +3,8 @@ import { fileURLToPath } from "node:url";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import type * as Playwright from "playwright";
-import type { Browser } from "playwright";
+import type { Browser, Page } from "playwright";
+import type { Finding } from "../findings.js";
 import type { Scene } from "../scene.js";
 import { defaultWidth } from "../scene.js";
 import { resolveClock } from "../format/timestamp.js";
@@ -14,20 +15,29 @@ import type { AssetUrl } from "../react/SceneContext.js";
 import {
   defaultCacheDir,
   loadAssets,
-  type Finding,
+  locate,
+  placeholderFinding,
+  type AssetFinding,
   type LoadedAsset
 } from "./assets.js";
-import { fontFaces, fontOrigin, fontStackOverride, readFont } from "./fonts.js";
+import { describeFonts, hasCjk, type FontReport } from "./fontReport.js";
+import { loadFonts, type CjkFont, type DeclaredFace } from "./fonts.js";
 
 export interface RenderOptions {
   /** Device pixels per CSS pixel. Defaults to 1. */
   scale?: number;
-  /** A browser to render in. Passing one skips the launch, which is most of a single render's cost; the caller closes it. Without one, a headless Chromium is launched for this render and closed after. */
+  /** A Chromium browser to render in. Passing one skips the launch, which is most of a single render's cost; the caller closes it. Without one, a headless Chromium is launched for this render and closed after. */
   browser?: Browser;
   /** Where fetched images (avatars, emoji) are cached between renders. Defaults to `node_modules/.cache/@discordkit/preview/assets` under the working directory. Delete it to fetch everything afresh. */
   cacheDir?: string;
   /** Draw only images that are already cached: a cache miss becomes a placeholder and a finding instead of a fetch. Defaults to false. */
   offline?: boolean;
+  /** Your own copy of gg sans, Discord's font, which cannot be bundled: a font file (`.ttf`, `.otf`, `.woff` or `.woff2`) or a directory of them. Each file's weight and style are read from the file. Without it, text starts at the bundled Noto Sans, so line breaks can differ from the real client. */
+  ggSans?: string;
+  /** How Chinese, Japanese and Korean text is drawn: `system` (the default) leaves it to this machine's fonts, as the real client does; `noto-sans-jp` pins it to the bundled Noto Sans JP, so the image is the same on every machine. */
+  cjk?: CjkFont;
+  /** Also return the page as one self-contained HTML document, with its stylesheet, fonts and images inlined. Defaults to false. */
+  html?: boolean;
 }
 
 export interface RenderResult {
@@ -36,11 +46,18 @@ export interface RenderResult {
   width: number;
   /** Height of the image in device pixels. */
   height: number;
-  /** What the caller should know about the render, such as an image drawn as a placeholder. Empty when everything was drawn as asked. */
-  findings: Finding[];
+  /** Images drawn as placeholders, and why, each with the path where the scene names it and the image in `asset`. Empty when everything was drawn as asked. */
+  findings: Array<Finding & { asset: string }>;
+  /** Which fonts drew the text, and whether the image depends on the fonts installed on this machine. */
+  fonts: FontReport;
+  /** The page as one file that opens anywhere with no scripts and no network: present when `html` was asked for. Spoilers reveal on click. Only the font files the text uses are inlined; with `cjk: "system"`, CJK text uses the viewer's own fonts. */
+  html?: string;
 }
 
-export type { Finding, FindingCode } from "./assets.js";
+/** Thrown by {@link renderScene} when the scene itself cannot be drawn, such as a component the renderer does not support yet, as opposed to a browser or file that failed. Its message says what to change in the scene. */
+export class UndrawableSceneError extends Error {
+  override name = `UndrawableSceneError`;
+}
 
 /** The compiled stylesheet `vp pack` writes beside this module's directory: `dist/styles.css`. */
 const stylesheetUrl = new URL(`../styles.css`, import.meta.url);
@@ -90,16 +107,23 @@ const pngSize = (png: Buffer): { width: number; height: number } => ({
   height: png.readUInt32BE(20)
 });
 
-/** Every image reference the scene draws, found by rendering it once with a resolver that only records what it is asked for. The components decide which images they need, so this cannot drift from what they draw. */
+/** Every image reference the scene draws, found by rendering it once with a resolver that only records what it is asked for. The components decide which images they need, so this cannot drift from what they draw. This is also the first time the scene is drawn, so a scene the components refuse fails here, before anything is fetched or launched. */
 const collectReferences = (scene: Scene): string[] => {
   const references: string[] = [];
   const record: AssetUrl = (reference) => {
     references.push(reference);
     return reference;
   };
-  renderToStaticMarkup(
-    createElement(SceneView, { ...scene, assetUrl: record })
-  );
+  try {
+    renderToStaticMarkup(
+      createElement(SceneView, { ...scene, assetUrl: record })
+    );
+  } catch (error) {
+    throw new UndrawableSceneError(
+      error instanceof Error ? error.message : String(error),
+      { cause: error }
+    );
+  }
   return references;
 };
 
@@ -128,16 +152,98 @@ const serveAssets = (
   };
 };
 
-const undecodable = (reference: string): Finding => ({
-  code: `asset-undecodable`,
-  asset: reference,
-  message: `@discordkit/preview drew a placeholder for ${reference}, because Chromium could not decode the image it loaded. The file is probably not the image format its type says, or is damaged. Check the file (or, for a URL, the cached copy, by deleting the asset cache and rendering again).`
-});
+const undecodable = (reference: string): AssetFinding =>
+  placeholderFinding(
+    `asset-undecodable`,
+    reference,
+    `@discordkit/preview drew a placeholder for ${reference}, because Chromium could not decode the image it loaded. The file is probably not the image format its type says, or is damaged. Check the file (or, for a URL, the cached copy, by deleting the asset cache and rendering again).`
+  );
+
+const dataUri = (contentType: string, body: Buffer): string =>
+  `data:${contentType};base64,${body.toString(`base64`)}`;
+
+/** Every font that drew the scene's text, as Chromium reports it: by the family name inside the font file, and whether it was one the page declared or one installed on this machine. */
+const fontsUsed = async (
+  page: Page
+): Promise<Array<{ family: string; system: boolean; glyphs: number }>> => {
+  const cdp = await page.context().newCDPSession(page);
+  try {
+    await cdp.send(`DOM.enable`);
+    await cdp.send(`CSS.enable`);
+    const { root } = await cdp.send(`DOM.getDocument`, { depth: -1 });
+    // Asked of an element, Chromium reports only part of what is under it, so ask of each text node: those answers do not overlap.
+    const textNodes: number[] = [];
+    const collect = (node: typeof root, inScene: boolean): void => {
+      const scene =
+        inScene ||
+        (node.attributes ?? []).includes(`data-discordkit-preview-scene`);
+      if (scene && node.nodeType === 3 && node.nodeValue.trim() !== ``) {
+        textNodes.push(node.nodeId);
+      }
+      for (const child of node.children ?? []) collect(child, scene);
+    };
+    collect(root, false);
+    const reports = await Promise.all(
+      textNodes.map(async (nodeId) =>
+        cdp.send(`CSS.getPlatformFontsForNode`, { nodeId })
+      )
+    );
+    return reports.flatMap(({ fonts }) =>
+      fonts.map((font) => ({
+        family: font.familyName,
+        system: !font.isCustomFont,
+        glyphs: font.glyphCount
+      }))
+    );
+  } finally {
+    await cdp.detach();
+  }
+};
+
+/** The page as one file: the faces the text used and the images it shows inlined as `data:` URLs, after every change the renderer made to it in the browser (placeholders, gallery shapes). */
+const selfContained = async ({
+  page,
+  locale,
+  faces,
+  requested,
+  served,
+  stylesheet,
+  stack
+}: {
+  page: Page;
+  locale: string;
+  faces: readonly DeclaredFace[];
+  requested: ReadonlySet<string>;
+  served: ReadonlyMap<string, LoadedAsset>;
+  stylesheet: string;
+  stack: string;
+}): Promise<string> => {
+  const inlined = await Promise.all(
+    faces
+      .filter((declared) => requested.has(declared.url))
+      .map(async (declared) =>
+        declared.rule.replace(
+          declared.url,
+          dataUri(declared.contentType, await readFile(declared.file))
+        )
+      )
+  );
+  const body = (await page.evaluate(() => document.body.innerHTML)).replaceAll(
+    new RegExp(`${assetOrigin.replaceAll(`.`, `\\.`)}/\\d+`, `g`),
+    (url) => {
+      const asset = served.get(url);
+      return asset ? dataUri(asset.contentType, asset.body) : transparentPixel;
+    }
+  );
+  return `<!doctype html><html lang="${locale}"><head><meta charset="utf-8"><title>Discord message preview</title><style>${inlined.join(`\n`)}</style><style>${stylesheet}</style><style>${stack}${determinism}</style></head><body>${body}</body></html>`;
+};
 
 /**
- * Draws a scene the way the Discord web client would and returns a PNG of the chat column holding its messages, with findings about anything that could not be drawn as asked.
+ * Draws a scene the way the Discord web client would and returns a PNG of the chat column holding its messages, with findings about anything that could not be drawn as asked and a report of the fonts that drew the text.
  *
- * The scene is server-rendered with React, loaded with the package's stylesheet, the bundled Noto Sans and the images it needs into headless Chromium, and screenshotted once its fonts and images have loaded, with animations off. The images are fetched (or read from the asset cache) before the browser starts, and the browser is refused every request the renderer does not answer itself.
+ * The scene is server-rendered with React, loaded with the package's stylesheet, the bundled fonts and the images it needs into headless Chromium, and screenshotted once its fonts and images have loaded, with animations off. The images are fetched (or read from the asset cache) before the browser starts, and the browser is refused every request the renderer does not answer itself.
+ *
+ * Throws {@link UndrawableSceneError} for a scene the renderer cannot draw, and a plain error when the browser, the stylesheet or a supplied font cannot be had.
  */
 export const renderScene = async (
   scene: Scene,
@@ -145,15 +251,18 @@ export const renderScene = async (
     scale = 1,
     browser: givenBrowser,
     cacheDir = defaultCacheDir(),
-    offline = false
+    offline = false,
+    ggSans,
+    cjk = `system`,
+    html: wantHtml = false
   }: RenderOptions = {}
 ): Promise<RenderResult> => {
   // Checked first, so a bad clock, zone or locale fails before anything is fetched. The canonical locale is also safe to write into the page.
   const { locale } = resolveClock(scene);
   const references = collectReferences(scene);
-  const [stylesheet, faces, loaded] = await Promise.all([
+  const [stylesheet, fonts, loaded] = await Promise.all([
     loadStylesheet(),
-    fontFaces(),
+    loadFonts({ ggSans, cjk }),
     loadAssets(references, {
       cacheDir,
       offline,
@@ -165,7 +274,13 @@ export const renderScene = async (
   const markup = renderToStaticMarkup(
     createElement(SceneView, { ...scene, assetUrl })
   );
-  const html = `<!doctype html><html lang="${locale}"><head><meta charset="utf-8"><style>${faces}</style><style>${stylesheet}</style><style>${fontStackOverride}${determinism}</style></head><body>${markup}</body></html>`;
+  const faceCss = fonts.faces.map((declared) => declared.rule).join(`\n`);
+  const html = `<!doctype html><html lang="${locale}"><head><meta charset="utf-8"><style>${faceCss}</style><style>${stylesheet}</style><style>${fonts.stack}${determinism}</style></head><body>${markup}</body></html>`;
+  const faceByUrl = new Map(
+    fonts.faces.map((declared) => [declared.url, declared])
+  );
+  /** The fonts the page asked for, which are the ones its text uses. */
+  const requested = new Set<string>();
 
   const browser = givenBrowser ?? (await launchChromium());
   try {
@@ -193,31 +308,46 @@ export const renderScene = async (
           });
           return;
         }
-        const font = url.startsWith(`${fontOrigin}/`)
-          ? await readFont(url)
-          : undefined;
-        await (font
-          ? route.fulfill({ contentType: `font/woff2`, body: font })
-          : route.abort());
+        const declared = faceByUrl.get(url);
+        if (declared) {
+          requested.add(url);
+          await route.fulfill({
+            contentType: declared.contentType,
+            body: await readFile(declared.file)
+          });
+          return;
+        }
+        await route.abort();
       });
       await page.goto(`${pageOrigin}/`);
-      const fontsLoaded = await page.evaluate(async () => {
-        // Load the Latin face even if the scene has no text, so the check below has something to confirm.
-        await document.fonts.load(`16px "Noto Sans"`);
+      const fontsLoaded = await page.evaluate(async (brand) => {
+        // Load the first family in the stack even if the scene has no text, so the check below has something to confirm.
+        await document.fonts.load(`16px "${brand}"`);
         // Reading a layout property forces layout, which is what requests the faces the scene's text needs; only then does `ready` wait for them.
         void document.body.offsetHeight;
         await document.fonts.ready;
-        const faces = [...document.fonts].filter(
-          (face) => face.family.replaceAll(`"`, ``) === `Noto Sans`
+        const faces = [...document.fonts];
+        const brandFaces = faces.filter(
+          (face) => face.family.replaceAll(`"`, ``) === brand
         );
-        return (
-          faces.some((face) => face.status === `loaded`) &&
-          !faces.some((face) => face.status === `error`)
-        );
-      });
-      if (!fontsLoaded) {
+        return {
+          brand: brandFaces.some((face) => face.status === `loaded`),
+          failed: faces
+            .filter((face) => face.status === `error`)
+            .map((face) => face.family.replaceAll(`"`, ``))
+        };
+      }, fonts.brand);
+      if (
+        fonts.brand === `gg sans` &&
+        (!fontsLoaded.brand || fontsLoaded.failed.includes(`gg sans`))
+      ) {
         throw new Error(
-          `@discordkit/preview/node rendered the scene, but Chromium did not load the bundled Noto Sans, so the image would use whatever fallback font the machine has. Check that \`@fontsource-variable/noto-sans\` is installed beside @discordkit/preview and that its \`files/\` directory is intact, then render again.`
+          `@discordkit/preview/node rendered the scene, but Chromium could not load the gg sans files supplied from ${ggSans ?? ``}, so the image would not show gg sans. The files are probably damaged or not fonts Chromium accepts. Check them (each should open in a font viewer), or leave the gg sans option out to draw with the bundled Noto Sans.`
+        );
+      }
+      if (!fontsLoaded.brand || fontsLoaded.failed.length > 0) {
+        throw new Error(
+          `@discordkit/preview/node rendered the scene, but Chromium did not load the bundled fonts (${[...new Set(fontsLoaded.failed)].join(`, `) || fonts.brand}), so the image would use whatever fallback font the machine has. Check that \`@fontsource-variable/noto-sans\` and \`@fontsource-variable/noto-sans-jp\` are installed beside @discordkit/preview and that their \`files/\` directories are intact, then render again.`
         );
       }
       // Wait for every image, then swap any that would not decode for the placeholder, so the image never shows the browser's broken-image icon. Then give each gallery item whose shape the payload did not state its picture's aspect ratio, which is what a browser's `onLoad` does and server rendering cannot.
@@ -263,11 +393,37 @@ export const renderScene = async (
         ...[...new Set(broken)].map((url) =>
           undecodable(served.get(url)?.reference ?? url)
         )
-      ];
+      ].map((finding) => ({ ...finding, path: locate(scene, finding.asset) }));
+      const text = await page.evaluate(
+        (selector) => document.querySelector(selector)?.textContent ?? ``,
+        sceneSelector
+      );
+      const report = describeFonts(await fontsUsed(page), {
+        cjkText: hasCjk(text),
+        cjk
+      });
       const png = await page
         .locator(sceneSelector)
         .screenshot({ animations: `disabled`, caret: `hide`, scale: `device` });
-      return { png, ...pngSize(png), findings };
+      return {
+        png,
+        ...pngSize(png),
+        findings,
+        fonts: report,
+        ...(wantHtml
+          ? {
+              html: await selfContained({
+                page,
+                locale,
+                faces: fonts.faces,
+                requested,
+                served,
+                stylesheet,
+                stack: fonts.stack
+              })
+            }
+          : {})
+      };
     } finally {
       await context.close();
     }

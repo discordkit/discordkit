@@ -1,6 +1,7 @@
 import { createHash, randomUUID } from "node:crypto";
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import { extname, join, resolve } from "node:path";
+import type { Finding, FindingCode, Path } from "../findings.js";
 import type { SceneContext } from "../scene.js";
 
 /**
@@ -9,21 +10,32 @@ import type { SceneContext } from "../scene.js";
  * `attachment://name` is read from the file the scene's `context.attachments` names. Anything else is fetched by URL through a disk cache keyed by the URL: once an image is cached, it is never fetched again, so the same scene renders the same pixels for as long as the cache lives. An image that cannot be had becomes a finding, and the page draws a placeholder in its place.
  */
 
-export type FindingCode =
-  | `asset-offline`
-  | `asset-fetch-failed`
-  | `asset-unsupported`
-  | `asset-undecodable`
-  | `attachment-missing`
-  | `attachment-unreadable`;
+/** A finding about one image, which always says which. */
+export type AssetFinding = Finding & { asset: string };
 
-/** Something about a render the caller should know: here, an image that was drawn as a placeholder, and why. */
-export interface Finding {
-  code: FindingCode;
-  /** The image as the scene names it: a URL or `attachment://name`. */
-  asset: string;
-  message: string;
-}
+/** An image drawn as a placeholder: a warning, since the message itself may be fine. The path is filled in by the renderer, which knows the scene. */
+export const placeholderFinding = (
+  code: FindingCode,
+  asset: string,
+  message: string
+): AssetFinding => ({ code, severity: `warning`, path: [], message, asset });
+
+/** The path of the first place `root` holds the string `value`, searching depth first in key order, or the empty path when it holds none (an emoji's image is named by text, not written in the scene). */
+export const locate = (root: unknown, value: string): Path => {
+  const search = (node: unknown, path: Path): Path | undefined => {
+    if (node === value) return path;
+    if (typeof node !== `object` || node === null) return undefined;
+    for (const [key, child] of Object.entries(node)) {
+      const found = search(child, [
+        ...path,
+        Array.isArray(node) ? Number(key) : key
+      ]);
+      if (found) return found;
+    }
+    return undefined;
+  };
+  return search(root, []) ?? [];
+};
 
 export interface LoadedAsset {
   body: Buffer;
@@ -43,7 +55,7 @@ export interface LoadedAssets {
   /** Every image that loaded, by its reference. `data:` references are left out: the page uses them as written. */
   assets: Map<string, LoadedAsset>;
   /** One per image that did not load, in the order the references were given. */
-  findings: Finding[];
+  findings: AssetFinding[];
 }
 
 /** Where the cache lives unless a render names another: beside the project's other tool caches. */
@@ -70,33 +82,33 @@ const reasonOf = (error: unknown): string =>
 const loadAttachment = async (
   reference: string,
   attachments: SceneContext[`attachments`]
-): Promise<LoadedAsset | Finding> => {
+): Promise<LoadedAsset | AssetFinding> => {
   const name = reference.slice(attachmentPrefix.length);
   const entry = attachments?.[name];
   if (!entry) {
-    return {
-      code: `attachment-missing`,
-      asset: reference,
-      message: `@discordkit/preview drew a placeholder for ${reference}, because the scene's \`context.attachments\` has no entry named ${JSON.stringify(name)}. An attachment reference is drawn from the file that entry points to. Add \`${JSON.stringify(name)}: { path: "<file on disk>" }\` to \`context.attachments\`.`
-    };
+    return placeholderFinding(
+      `attachment-missing`,
+      reference,
+      `@discordkit/preview drew a placeholder for ${reference}, because the scene's \`context.attachments\` has no entry named ${JSON.stringify(name)}. An attachment reference is drawn from the file that entry points to. Add \`${JSON.stringify(name)}: { path: "<file on disk>" }\` to \`context.attachments\`.`
+    );
   }
   const path = resolve(entry.path);
   const contentType = imageTypes[extname(path).toLowerCase()];
   if (contentType === undefined) {
-    return {
-      code: `attachment-unreadable`,
-      asset: reference,
-      message: `@discordkit/preview drew a placeholder for ${reference}, because its file ${path} does not have an image extension the renderer knows (${Object.keys(imageTypes).join(`, `)}). The extension sets the type the browser decodes it as. Point the attachment at an image file with one of those extensions.`
-    };
+    return placeholderFinding(
+      `attachment-unreadable`,
+      reference,
+      `@discordkit/preview drew a placeholder for ${reference}, because its file ${path} does not have an image extension the renderer knows (${Object.keys(imageTypes).join(`, `)}). The extension sets the type the browser decodes it as. Point the attachment at an image file with one of those extensions.`
+    );
   }
   try {
     return { body: await readFile(path), contentType };
   } catch (error) {
-    return {
-      code: `attachment-unreadable`,
-      asset: reference,
-      message: `@discordkit/preview drew a placeholder for ${reference}, because it could not read the file ${path}: ${reasonOf(error)}. Attachment paths are resolved against the working directory (${process.cwd()}). Check that the file exists there, or give an absolute path.`
-    };
+    return placeholderFinding(
+      `attachment-unreadable`,
+      reference,
+      `@discordkit/preview drew a placeholder for ${reference}, because it could not read the file ${path}: ${reasonOf(error)}. Attachment paths are resolved against the working directory (${process.cwd()}). Check that the file exists there, or give an absolute path.`
+    );
   }
 };
 
@@ -154,24 +166,25 @@ const writeCache = async (
   await write(`${key}.json`, JSON.stringify(entry));
 };
 
-const fetchFailed = (url: string, reason: string): Finding => ({
-  code: `asset-fetch-failed`,
-  asset: url,
-  message: `@discordkit/preview drew a placeholder for ${url}, because fetching it failed: ${reason}. An image is drawn only once it has been fetched or is in the asset cache. Check that the URL is right and reachable from this machine; once one render fetches it, later renders use the cached copy.`
-});
+const fetchFailed = (url: string, reason: string): AssetFinding =>
+  placeholderFinding(
+    `asset-fetch-failed`,
+    url,
+    `@discordkit/preview drew a placeholder for ${url}, because fetching it failed: ${reason}. An image is drawn only once it has been fetched or is in the asset cache. Check that the URL is right and reachable from this machine; once one render fetches it, later renders use the cached copy.`
+  );
 
 const loadUrl = async (
   url: string,
   { cacheDir, offline, fetch }: LoadAssetsOptions
-): Promise<LoadedAsset | Finding> => {
+): Promise<LoadedAsset | AssetFinding> => {
   const cached = await readCache(cacheDir, url);
   if (cached) return cached;
   if (offline) {
-    return {
-      code: `asset-offline`,
-      asset: url,
-      message: `@discordkit/preview drew a placeholder for ${url}, because the render is offline and that image is not in the asset cache at ${cacheDir}. Offline renders draw only what an earlier render cached. Render once with network access (without \`offline\`) to cache it, or point \`cacheDir\` at a cache that has it.`
-    };
+    return placeholderFinding(
+      `asset-offline`,
+      url,
+      `@discordkit/preview drew a placeholder for ${url}, because the render is offline and that image is not in the asset cache at ${cacheDir}. Offline renders draw only what an earlier render cached. Render once with network access (without \`offline\`) to cache it, or point \`cacheDir\` at a cache that has it.`
+    );
   }
   let response: Response;
   try {
@@ -215,20 +228,21 @@ const loadUrl = async (
 const load = async (
   reference: string,
   options: LoadAssetsOptions
-): Promise<LoadedAsset | Finding> => {
+): Promise<LoadedAsset | AssetFinding> => {
   if (reference.startsWith(attachmentPrefix)) {
     return loadAttachment(reference, options.attachments);
   }
   if (/^https?:\/\//i.test(reference)) return loadUrl(reference, options);
-  return {
-    code: `asset-unsupported`,
-    asset: reference,
-    message: `@discordkit/preview drew a placeholder for ${JSON.stringify(reference)}, because it is neither an http(s) URL, a data: URL nor an attachment:// reference, and those are the only images a render can load. Give the image as one of those.`
-  };
+  return placeholderFinding(
+    `asset-unsupported`,
+    reference,
+    `@discordkit/preview drew a placeholder for ${JSON.stringify(reference)}, because it is neither an http(s) URL, a data: URL nor an attachment:// reference, and those are the only images a render can load. Give the image as one of those.`
+  );
 };
 
-const isFinding = (result: LoadedAsset | Finding): result is Finding =>
-  `code` in result;
+const isFinding = (
+  result: LoadedAsset | AssetFinding
+): result is AssetFinding => `code` in result;
 
 /** Loads each distinct reference once, all at the same time. */
 export const loadAssets = async (
@@ -242,7 +256,7 @@ export const loadAssets = async (
     distinct.map(async (reference) => load(reference, options))
   );
   const assets = new Map<string, LoadedAsset>();
-  const findings: Finding[] = [];
+  const findings: AssetFinding[] = [];
   results.forEach((result, index) => {
     if (isFinding(result)) findings.push(result);
     else assets.set(distinct[index], result);
