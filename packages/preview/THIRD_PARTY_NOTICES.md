@@ -2,6 +2,22 @@
 
 `@discordkit/preview` includes material adapted from the following projects.
 
+## Twemoji 17.0.3 (graphics)
+
+- Project: https://github.com/jdecked/twemoji, the maintained continuation of Twitter's Twemoji
+- Graphics licence: Creative Commons Attribution 4.0 International (CC-BY 4.0), https://creativecommons.org/licenses/by/4.0/
+- Used in: `src/format/emoji.ts`, which names the image for each Unicode emoji
+
+Copyright 2014–2021 Twitter, Inc. and other contributors; copyright 2022–present Jason Sofonia and Justine De Caires. The emoji graphics are licensed under CC-BY 4.0. No graphics are included in this package: when a scene contains a Unicode emoji, the Node renderer downloads that emoji's SVG from the jsDelivr CDN at the pinned release, keeps it in a local cache, and draws it in the rendered image. Images rendered by this package that show emoji therefore include Twemoji graphics, which you may share under the terms of CC-BY 4.0 with this attribution. The file-naming rule (code points in hex, joined by `-`, with U+FE0F dropped outside zero-width-joiner sequences) is Twemoji's, reimplemented here.
+
+## Mirrordown spoiler plugin
+
+- Project: https://github.com/saeris/markdown (`@mirrordown/mdit-spoiler`), by the same author as this package
+- Licence: MIT
+- Used in: `src/react/Spoiler.tsx` and `src/react/Spoiler.module.css`
+
+What was adapted: the script-free click-to-reveal structure, a label wrapping a visually hidden checkbox and the spoiler's content, revealed by a sibling selector when the box is checked, with the bar redrawn on every wrapped line. The colours and radius are Discord's, not Mirrordown's.
+
 ## simple-markdown 0.7.3
 
 - Project: https://github.com/Khan/simple-markdown (published on npm as `simple-markdown`)

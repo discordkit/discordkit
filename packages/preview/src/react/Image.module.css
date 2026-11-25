@@ -1,0 +1,4 @@
+/* Ours, after Discord build 679963's `.avatar_*::before`, which fills an image's box with `--background-mod-subtle` until the picture arrives. The same fill stands in for any image that is missing. */
+.placeholder {
+  background-color: var(--background-mod-subtle);
+}

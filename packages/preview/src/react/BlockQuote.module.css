@@ -1,0 +1,22 @@
+/* Discord build 679963: `.blockquoteContainer_*`, its `.blockquoteDivider_*`, and the markup stylesheet's `blockquote` rules. */
+.blockQuote {
+  display: flex;
+  margin-block: var(--space-4);
+}
+
+.divider {
+  width: 4px;
+  min-width: 4px;
+  border-radius: 4px;
+  background-color: var(--spine-default);
+}
+
+.quote {
+  box-sizing: border-box;
+  max-width: 90%;
+  margin: 0;
+  padding-block: 0;
+  padding-inline: 12px 8px;
+  color: var(--text-subtle);
+  text-indent: 0;
+}

@@ -1,0 +1,37 @@
+/*
+ * Discord build 679963: the bot tag (`.botTag_*` with its `rem` size and `botTagRegular` colours, `.botText_*`, `.botTagVerified_*`), plus the message header's own `.botTag_*` and `.botTagCozy_*` offsets. Which of the tag's two sizes (`rem` or `px`) a message header uses is decided in the client's JavaScript; `rem` is assumed.
+ */
+.tag {
+  position: relative;
+  top: 0.1rem;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  height: 0.9375rem;
+  margin-top: 0.2em;
+  margin-inline-start: 0.25rem;
+  padding: 0 0.275rem;
+  border-radius: 4px;
+  background: var(--background-brand);
+  color: var(--white);
+  font-size: 0.625rem;
+  text-indent: 0;
+  text-transform: uppercase;
+  vertical-align: top;
+}
+
+.text {
+  position: relative;
+  font-size: 0.8rem;
+  font-weight: var(--font-weight-semibold);
+  line-height: 0.9375rem;
+  vertical-align: top;
+}
+
+.verified {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  margin-top: -0.02rem;
+  margin-inline-start: -0.2rem;
+}

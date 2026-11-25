@@ -5,6 +5,9 @@ import { ComponentType } from "@discordkit/client/components/types/ComponentType
 import type { Container as ContainerComponent } from "@discordkit/client/components/types/Container";
 import { Scene } from "../Scene.js";
 
+/** Draws the message's avatar as a placeholder, so the spec loads nothing from the network. */
+const offline = (): null => null;
+
 /**
  * The renderer's whole value is looking like Discord, so these specs pin the container and its text to the values measured from Discord's own stylesheet (web client build 679963). Each one reads the computed style in a real browser, so it fails if the stylesheet drifts from those measurements, whatever the cause: a token renamed, a rule lost in the build, a cascade that stopped applying.
  */
@@ -29,6 +32,7 @@ describe(`a container in a message`, () => {
     flushSync(() => {
       root?.render(
         <Scene
+          assetUrl={offline}
           messages={[
             {
               payload: {
