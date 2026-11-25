@@ -15,9 +15,9 @@ const _fileSchema = v.object({
   /** Whether the media should be a spoiler (or blurred out). Defaults to `false` */
   spoiler: v.exactOptional(v.boolean()),
   /** The name of the file. This field is ignored and provided by the API as part of the response */
-  name: boundedString(),
+  name: v.exactOptional(boundedString()),
   /** The size of the file in bytes. This field is ignored and provided by the API as part of the response */
-  size: boundedInteger()
+  size: v.exactOptional(boundedInteger())
 });
 
 export interface File extends v.InferOutput<typeof _fileSchema> {}

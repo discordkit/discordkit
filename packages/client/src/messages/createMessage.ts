@@ -18,7 +18,7 @@ export const createMessageSchema = v.object({
   body: multipart(
     {
       /** Message contents (up to 2000 characters) */
-      content: boundedString({ max: 20000 }),
+      content: boundedString({ max: 2000 }),
       /** true if this is a TTS message */
       tts: v.boolean(),
       /** Embedded rich content (up to 6000 characters) */
