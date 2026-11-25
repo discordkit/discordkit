@@ -36,6 +36,9 @@ const pngSignature = Buffer.from([
   0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a
 ]);
 
+// Launching a browser is the slow part of this spec, and on a cold two-core CI runner it has taken longer than Vitest's default 10 second hook limit. The hooks that launch one get this much instead.
+const launchTimeout = 60_000;
+
 describe(`renderScene`, () => {
   let renderScene: typeof NodeApi.renderScene;
   let browser: Browser;
@@ -51,7 +54,7 @@ describe(`renderScene`, () => {
     browser = await chromium.launch(
       process.env.CI ? { channel: `chrome` } : {}
     );
-  });
+  }, launchTimeout);
 
   afterAll(async () => {
     await browser.close();
