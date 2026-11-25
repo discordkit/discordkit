@@ -1,7 +1,6 @@
-import { useMemo, type ReactElement, type ReactNode } from "react";
+import type { ReactElement, ReactNode } from "react";
 import type { Button } from "@discordkit/client/components/types/Button";
-import type { CustomEmojiNode } from "../markdown/ast.js";
-import { CustomEmoji, UnicodeEmoji } from "./Emoji.js";
+import { PartialEmoji } from "./PartialEmoji.js";
 import styles from "./ButtonBase.module.css";
 
 export interface ButtonBaseProps {
@@ -15,29 +14,6 @@ export interface ButtonBaseProps {
   /** Drawn after the label, such as a Link button's external-link mark. */
   trailing?: ReactNode;
 }
-
-/** The emoji on a button: a server emoji by its id, or a Unicode emoji by its character. */
-const ButtonEmoji = ({
-  emoji
-}: {
-  emoji: NonNullable<Button[`emoji`]>;
-}): ReactElement | null => {
-  const { id, name, animated } = emoji;
-  const node = useMemo(
-    (): CustomEmojiNode | undefined =>
-      id
-        ? {
-            type: `customEmoji`,
-            id,
-            name: name ?? `_`,
-            animated: animated ?? false
-          }
-        : undefined,
-    [id, name, animated]
-  );
-  if (node) return <CustomEmoji node={node} jumbo={false} />;
-  return emoji.name ? <UnicodeEmoji value={emoji.name} jumbo={false} /> : null;
-};
 
 /**
  * What every message button shares: Discord's 32px box, an optional emoji, a label cut to one line, and the disabled state. Each button style is its own component around this, so the style's colours live with it.
@@ -67,7 +43,7 @@ export const ButtonBase = ({
                 hasLabel ? `${styles.emoji} ${styles.textEmoji}` : styles.emoji
               }
             >
-              <ButtonEmoji emoji={button.emoji} />
+              <PartialEmoji emoji={button.emoji} />
             </span>
           ) : null}
           {hasLabel ? <span className={styles.label}>{label}</span> : null}

@@ -24,6 +24,30 @@ const v2WithContent: SceneMessage[] = [
   }
 ];
 
+/** A select in its action row, in the array Discord expects. The client's `ActionRow` type has a select as a bare object (#106), so the row is cast. */
+const selectRow = (select: Record<string, unknown>): never =>
+  ({ type: ComponentType.ActionRow, components: [select] }) as never;
+
+/** A message holding a user select and a string select, with `openSelect` naming the given `customId`. */
+const withOpenSelect = (openSelect: string): SceneMessage[] => [
+  {
+    openSelect,
+    payload: {
+      components: [
+        selectRow({ type: ComponentType.UserSelect, customId: `buddy` }),
+        selectRow({
+          type: ComponentType.StringSelect,
+          customId: `level`,
+          options: [{ label: `N5`, value: `n5` }]
+        })
+      ]
+    }
+  }
+];
+const openMissing = withOpenSelect(`missing`);
+const openUserSelect = withOpenSelect(`buddy`);
+const openStringSelect = withOpenSelect(`level`);
+
 /** Server-rendering checks that need no browser: what a scene refuses, and how images load by default. */
 describe(`scene`, () => {
   it(`refuses a message timestamp it cannot read, naming the message, instead of drawing a header with "Invalid Date"`, () => {
@@ -41,6 +65,33 @@ describe(`scene`, () => {
   it(`draws a message as Components V2 when it holds a layout component, even without the flag, since only V2 allows one`, () => {
     expect(isComponentsV2({ components: text.payload.components })).toBe(true);
     expect(isComponentsV2({ content: `hi`, components: [] })).toBe(false);
+  });
+
+  it.each([
+    [
+      `no component has its customId`,
+      openMissing,
+      /no component in the message has that `customId`/
+    ],
+    [
+      `it names a user select, whose options the client fetches`,
+      openUserSelect,
+      /not a String Select/
+    ]
+  ])(
+    `refuses to draw a select open when %s, instead of drawing every select closed and hiding the mistake`,
+    (_, messages, message) => {
+      expect(() => renderToStaticMarkup(<Scene messages={messages} />)).toThrow(
+        message
+      );
+    }
+  );
+
+  it(`marks the open select's list as an overlay, so the Node renderer can make room for it`, () => {
+    const markup = renderToStaticMarkup(<Scene messages={openStringSelect} />);
+    expect(markup).toMatch(/data-discordkit-preview-overlay=""[^>]*>.*N5/);
+    expect(markup).toContain(`anchor-name:--dkp-open-select-0`);
+    expect(markup).toContain(`position-anchor:--dkp-open-select-0`);
   });
 
   it(`writes the scene's locale as the page language, which is what switches Discord's font stack`, () => {

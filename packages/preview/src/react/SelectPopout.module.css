@@ -1,0 +1,122 @@
+/*
+ * Discord build 679963: an open select's list. The panel is Discord's general select popout (`.popout_*`, with the later rule that gives every popout the same look): the higher surface colour, a 1px subtle border, 8px corners, 8px below the control. Each option is `.option_*` with the message select's `.selectOption_*` padding of 8px: a grid of the content and the selected mark, 16px text on a 20px line in the subtle colour. A chosen option (`[aria-selected=true]`) is in the default colour at medium weight; in a single-choice list it also takes the selected background and the active text colour, and is marked by `.selectedIcon_*` in blurple. In a list that takes several choices, each option has `.multiSelectCheckbox_*` instead: a 20px box with 6px corners, outlined in the strong border colour, or filled blurple with a white check once chosen.
+ *
+ * An option's own content is the message select's (`.option_*`, `.emoji_*`, `.labelContainer_*`, `.label_*`, `.description_*` and `.offset_*`): an emoji 8px before the label; with a description, both at 14px on an 18px line, the label in the strong colour 4px above the description in the default interactive colour, and the description indented 27px past an emoji, which is the emoji's 1.375em at 14px plus its margin.
+ *
+ * Ours: the panel lists every option, where the client's scrolls after a height its JavaScript sets; the selected mark's 20px size; and the placement, by CSS anchor positioning, which stands in for the client's popout layer. Unverified.
+ */
+.popout {
+  position: absolute;
+  z-index: 1;
+  top: anchor(bottom);
+  left: anchor(left);
+  box-sizing: border-box;
+  width: anchor-size(width);
+  margin: 8px 0 0;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  background-color: var(--background-surface-higher);
+}
+
+.option {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 8px;
+  color: var(--text-subtle);
+  font-size: 16px;
+  font-weight: var(--font-weight-normal);
+  line-height: 20px;
+  cursor: pointer;
+}
+
+.selected {
+  color: var(--text-default);
+  font-weight: var(--font-weight-medium);
+}
+
+.selectedSingle {
+  background-color: var(--interactive-background-selected);
+  color: var(--interactive-text-active);
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 16px;
+}
+
+.emoji {
+  display: inline-flex;
+  flex-shrink: 0;
+  margin-inline-end: 8px;
+  vertical-align: bottom;
+}
+
+.plainLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.labelContainer {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 14px;
+  line-height: 18px;
+}
+
+.label {
+  display: block;
+  margin-bottom: 4px;
+  overflow: hidden;
+  color: var(--text-strong);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.description {
+  color: var(--interactive-text-default);
+}
+
+.offset {
+  margin-inline-start: 27px;
+}
+
+.selectedIcon {
+  display: block;
+  width: 20px;
+  height: 20px;
+  color: var(--brand-500);
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+}
+
+.unchecked {
+  border: 1px solid var(--border-strong);
+}
+
+.checked {
+  border: 1px solid var(--brand-500);
+  background: var(--brand-500);
+}
+
+.check {
+  display: block;
+  width: 16px;
+  height: 16px;
+  color: var(--white);
+}

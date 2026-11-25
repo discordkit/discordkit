@@ -3,7 +3,9 @@ import { ButtonStyle } from "@discordkit/client/components/types/ButtonStyle";
 import { ComponentType } from "@discordkit/client/components/types/ComponentType";
 import {
   componentName,
+  findOpenSelect,
   isComponentsV2,
+  selectTypes,
   supportedComponents,
   type ComponentParent
 } from "../components.js";
@@ -12,6 +14,7 @@ import type { MarkdownContext } from "../markdown/parse.js";
 import type { Scene } from "../scene.js";
 import {
   characters,
+  defaultSelectValues,
   maxActionRowButtons,
   maxAltText,
   maxButtonLabel,
@@ -22,7 +25,15 @@ import {
   maxCustomId,
   maxEmbedCharacters,
   maxEmbeds,
-  maxTextDisplayCharacters
+  maxSectionComponents,
+  maxSelectOptionDescription,
+  maxSelectOptionLabel,
+  maxSelectOptions,
+  maxSelectOptionValue,
+  maxSelectPlaceholder,
+  maxSelectValues,
+  maxTextDisplayCharacters,
+  minSectionComponents
 } from "./limits.js";
 import { markdownFindings } from "./markdown.js";
 
@@ -53,13 +64,7 @@ export interface LintSceneResult {
 
 type Node = Record<string, unknown>;
 
-const selectTypes = new Set<unknown>([
-  ComponentType.StringSelect,
-  ComponentType.UserSelect,
-  ComponentType.RoleSelect,
-  ComponentType.MentionableSelect,
-  ComponentType.ChannelSelect
-]);
+const selects = new Set<unknown>(selectTypes);
 
 const countWords: Record<CountMetric, string> = {
   components: `components`,
@@ -75,8 +80,11 @@ const text = (value: unknown): string | undefined =>
 
 const list = (value: unknown): unknown[] => (Array.isArray(value) ? value : []);
 
-/** Where a component sits: the positions the renderer knows, or a section's parts, which it does not draw yet. */
-type Position = ComponentParent | `section` | `accessory`;
+/** Where a component sits. */
+type Position = ComponentParent;
+
+const isSupported = (position: Position, type: unknown): boolean =>
+  (supportedComponents[position] as readonly unknown[]).includes(type);
 
 interface Visit {
   node: Node;
@@ -107,13 +115,7 @@ const visitComponents = (components: unknown, base: Path): Visit[] => {
     for (const [item, at] of entries) {
       if (!isObject(item)) continue;
       visits.push({ node: item, path: at, position, insideUnsupported });
-      const supported =
-        position !== `section` &&
-        position !== `accessory` &&
-        (supportedComponents[position] as readonly unknown[]).includes(
-          item.type
-        );
-      const inside = insideUnsupported || !supported;
+      const inside = insideUnsupported || !isSupported(position, item.type);
       switch (item.type) {
         case ComponentType.Container:
           walk(item.components, [...at, `components`], `container`, inside);
@@ -336,11 +338,7 @@ export const lintScene = (scene: Scene): LintSceneResult => {
     for (const { node, path, position, insideUnsupported } of visits) {
       const type = node.type;
       if (!insideUnsupported) {
-        const supported =
-          position !== `section` &&
-          position !== `accessory` &&
-          (supportedComponents[position] as readonly unknown[]).includes(type);
-        if (!supported) {
+        if (!isSupported(position, type)) {
           add(
             `component-unsupported`,
             `warning`,
@@ -379,7 +377,7 @@ export const lintScene = (scene: Scene): LintSceneResult => {
         const buttons = children.filter(
           (child) => child.type === ComponentType.Button
         );
-        const selects = children.filter((child) => selectTypes.has(child.type));
+        const rowSelects = children.filter((child) => selects.has(child.type));
         if (buttons.length > maxActionRowButtons) {
           add(
             `action-row-size`,
@@ -388,12 +386,15 @@ export const lintScene = (scene: Scene): LintSceneResult => {
             `This action row holds ${String(buttons.length)} buttons, over Discord's limit of ${String(maxActionRowButtons)} per row, so Discord would refuse the message. Move the extra buttons into another action row.`
           );
         }
-        if (selects.length > 0 && (buttons.length > 0 || selects.length > 1)) {
+        if (
+          rowSelects.length > 0 &&
+          (buttons.length > 0 || rowSelects.length > 1)
+        ) {
           add(
             `action-row-mixed`,
             `error`,
             [...path, `components`],
-            `This action row holds ${buttons.length > 0 ? `buttons and a select menu` : `${String(selects.length)} select menus`}, but Discord allows a row to hold either up to ${String(maxActionRowButtons)} buttons or exactly one select menu, so it would refuse the message. Put the select menu in an action row of its own.`
+            `This action row holds ${buttons.length > 0 ? `buttons and a select menu` : `${String(rowSelects.length)} select menus`}, but Discord allows a row to hold either up to ${String(maxActionRowButtons)} buttons or exactly one select menu, so it would refuse the message. Put the select menu in an action row of its own.`
           );
         }
       }
@@ -471,6 +472,129 @@ export const lintScene = (scene: Scene): LintSceneResult => {
 
       if (type === ComponentType.TextDisplay) {
         markdown(node.content, `textDisplay`, [...path, `content`]);
+      }
+
+      if (type === ComponentType.Section) {
+        const used = list(node.components).length;
+        if (used < minSectionComponents || used > maxSectionComponents) {
+          add(
+            `section-component-count`,
+            `error`,
+            [...path, `components`],
+            `This section holds ${String(used)} text displays, but Discord requires ${String(minSectionComponents)} to ${String(maxSectionComponents)} beside its accessory, so it would refuse the message. ${used === 0 ? `Add a Text Display for the accessory to sit beside, or use the accessory on its own (a button in an Action Row, a picture in a Media Gallery).` : `Merge the text into ${String(maxSectionComponents)} Text Displays or fewer (one can hold several lines), or move the rest out of the section.`}`
+          );
+        }
+      }
+
+      if (type === ComponentType.File) {
+        const url = isObject(node.file) ? text(node.file.url) : undefined;
+        if (url !== undefined && !url.startsWith(`attachment://`)) {
+          add(
+            `file-not-attachment`,
+            `error`,
+            [...path, `file`, `url`],
+            `This File component points at ${JSON.stringify(url)}, but a File can only show a file uploaded with the message, named as \`attachment://<filename>\`, so Discord would refuse it. Upload the file with the message and set \`url\` to \`attachment://\` and its file name, or show a picture from the web in a Media Gallery or a link in a Text Display instead.`
+          );
+        }
+      }
+
+      if (selects.has(type)) {
+        const placeholder = text(node.placeholder);
+        if (
+          placeholder !== undefined &&
+          characters(placeholder) > maxSelectPlaceholder
+        ) {
+          add(
+            `select-placeholder-length`,
+            `error`,
+            [...path, `placeholder`],
+            `This select menu's placeholder is ${String(characters(placeholder))} characters, over Discord's limit of ${String(maxSelectPlaceholder)}, so Discord would refuse the message. The box shows one line of it anyway; shorten it to a prompt and put any explanation in a Text Display above the menu.`
+          );
+        }
+        for (const field of [`minValues`, `maxValues`] as const) {
+          const value = node[field];
+          if (
+            typeof value === `number` &&
+            (value < 0 || value > maxSelectValues)
+          ) {
+            add(
+              `select-values-range`,
+              `error`,
+              [...path, field],
+              `\`${field}\` is ${String(value)}, outside the 0 to ${String(maxSelectValues)} Discord allows for how many values a select menu takes, so Discord would refuse the message. Set it between 0 and ${String(maxSelectValues)}, or leave it out for Discord's default of ${String(defaultSelectValues)}.`
+            );
+          }
+        }
+        const defaults = list(node.defaultValues);
+        const min =
+          typeof node.minValues === `number`
+            ? node.minValues
+            : defaultSelectValues;
+        const max =
+          typeof node.maxValues === `number`
+            ? node.maxValues
+            : defaultSelectValues;
+        if (
+          type !== ComponentType.StringSelect &&
+          defaults.length > 0 &&
+          (defaults.length < min || defaults.length > max)
+        ) {
+          add(
+            `select-default-count`,
+            `error`,
+            [...path, `defaultValues`],
+            `This select menu has ${String(defaults.length)} default values, but Discord requires the number of defaults to be within its \`minValues\` and \`maxValues\` (${min === max ? `exactly ${String(min)}` : `${String(min)} to ${String(max)}`}${node.minValues === undefined && node.maxValues === undefined ? `, Discord's default when neither is set` : ``}), so it would refuse the message. ${defaults.length > max ? `Raise \`maxValues\` to at least ${String(defaults.length)} to let people keep them all, or remove defaults.` : `Lower \`minValues\`, or add defaults.`}`
+          );
+        }
+      }
+
+      if (type === ComponentType.StringSelect) {
+        const options = list(node.options);
+        if (options.length > maxSelectOptions) {
+          add(
+            `select-option-count`,
+            `error`,
+            [...path, `options`],
+            `This string select has ${String(options.length)} options, over Discord's limit of ${String(maxSelectOptions)}, so Discord would refuse the message. Split the choices across two selects, or, for a list of members, roles or channels, use the select for that kind, which the client fills for you.`
+          );
+        }
+        const optionLimits = [
+          [`label`, maxSelectOptionLabel, `select-option-label-length`],
+          [`value`, maxSelectOptionValue, `select-option-value-length`],
+          [
+            `description`,
+            maxSelectOptionDescription,
+            `select-option-description-length`
+          ]
+        ] as const;
+        options.forEach((option: unknown, optionIndex) => {
+          if (!isObject(option)) return;
+          for (const [field, limit, code] of optionLimits) {
+            const value = text(option[field]);
+            if (value === undefined || characters(value) <= limit) continue;
+            add(
+              code,
+              `error`,
+              [...path, `options`, optionIndex, field],
+              `This option's \`${field}\` is ${String(characters(value))} characters, over Discord's limit of ${String(limit)} for an option's ${field}, so Discord would refuse the message. ${field === `value` ? `The value only identifies the choice to your app; use a short key and look the rest up when the interaction arrives.` : `The open list cuts long text short anyway; shorten it, and put anything longer in a Text Display beside the menu.`}`
+            );
+          }
+        });
+      }
+    }
+
+    const openSelect = isObject(message) ? text(message.openSelect) : undefined;
+    if (openSelect !== undefined) {
+      const found = findOpenSelect(payload.components, openSelect);
+      if (!(`select` in found)) {
+        add(
+          `open-select-missing`,
+          `error`,
+          [`messages`, index, `openSelect`],
+          found.problem === `missing`
+            ? `\`openSelect\` is ${JSON.stringify(openSelect)}, but no component in this message has that \`customId\`, so the preview cannot draw a select open. \`openSelect\` names the String Select to draw with its options listed; it is scene data, not part of the payload. Set it to the \`customId\` of a String Select in this message, or remove it.`
+            : `\`openSelect\` names ${JSON.stringify(openSelect)}, which is not a String Select, so the preview cannot draw it open: only a String Select's options are in the payload, while the other selects list members, roles or channels the client fetches. Point \`openSelect\` at a String Select, or remove it.`
+        );
       }
     }
 

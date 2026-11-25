@@ -38,6 +38,16 @@ export type LintCode =
   | `button-label-length`
   | `button-url-length`
   | `alt-text-length`
+  | `section-component-count`
+  | `select-option-count`
+  | `select-option-label-length`
+  | `select-option-value-length`
+  | `select-option-description-length`
+  | `select-placeholder-length`
+  | `select-values-range`
+  | `select-default-count`
+  | `file-not-attachment`
+  | `open-select-missing`
   | `attachment-missing`
   | `component-unsupported`
   | `subtext-missing-space`

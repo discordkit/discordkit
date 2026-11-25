@@ -103,7 +103,8 @@ const sceneSchema = v.object({
               `It is when the message was sent, which the header shows. Write it as an ISO 8601 date-time like "2026-11-25T16:05:00Z", or leave it out to use the scene's \`now\`.`
             )
           )
-        )
+        ),
+        openSelect: optionalString
       })
     ),
     v.minLength(1, `A scene needs at least one message to draw. Add one.`)

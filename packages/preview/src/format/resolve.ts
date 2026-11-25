@@ -6,11 +6,17 @@ import { colorToHex } from "./color.js";
  * What ids in a message resolve to, looked up in the scene's context. An id the context does not list resolves to what the Discord client shows for an id it cannot find. Those fallback words are decided in the client's JavaScript, so they are unverified until calibration.
  */
 
+/** A user's display name, or `unknown-user` for an id the scene does not list. */
+export const userName = (
+  id: string,
+  context: SceneContext | undefined
+): string => context?.users?.[id]?.name ?? `unknown-user`;
+
 /** A user mention's text. */
 export const userMentionLabel = (
   id: string,
   context: SceneContext | undefined
-): string => `@${context?.users?.[id]?.name ?? `unknown-user`}`;
+): string => `@${userName(id, context)}`;
 
 export interface RoleMention {
   label: string;
@@ -18,16 +24,25 @@ export interface RoleMention {
   color?: string;
 }
 
-export const roleMention = (
+/** A role's name and colour, without the `@` a mention adds: `deleted-role` for an id the scene does not list. */
+export const resolveRole = (
   id: string,
   context: SceneContext | undefined
 ): RoleMention => {
   const role = context?.roles?.[id];
-  if (!role) return { label: `@deleted-role` };
+  if (!role) return { label: `deleted-role` };
   // Discord stores "no colour" as 0, so black cannot be a role colour and 0 is an absence here.
   return role.color
-    ? { label: `@${role.name}`, color: colorToHex(role.color) }
-    : { label: `@${role.name}` };
+    ? { label: role.name, color: colorToHex(role.color) }
+    : { label: role.name };
+};
+
+export const roleMention = (
+  id: string,
+  context: SceneContext | undefined
+): RoleMention => {
+  const role = resolveRole(id, context);
+  return { ...role, label: `@${role.label}` };
 };
 
 /** A channel mention's name, without the `#`, which is drawn as an icon. */

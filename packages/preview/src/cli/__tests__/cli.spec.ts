@@ -71,13 +71,13 @@ const pngSignature = Buffer.from([
   0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a
 ]);
 
+/** A text input, which only a modal holds and the renderer does not draw yet. */
 const unsupported = JSON.stringify({
   flags: 32768,
   components: [
     {
-      type: 9,
-      components: [{ type: 10, content: `x` }],
-      accessory: { type: 11, media: { url: `attachment://a.png` } }
+      type: 1,
+      components: [{ type: 4, custom_id: `name`, style: 1, label: `Name` }]
     }
   ]
 });

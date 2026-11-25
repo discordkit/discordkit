@@ -34,6 +34,25 @@ export const maxCustomId = 100;
 /** Characters in a media gallery item's or a thumbnail's alt text. Component reference, Media Gallery Item and Thumbnail: "Alt text for the media, max 1024 characters". */
 export const maxAltText = 1024;
 
+/** Text displays in a section. Component reference, Section: "One to three child components representing the content of the section". */
+export const minSectionComponents = 1;
+export const maxSectionComponents = 3;
+
+/** Options in a string select. Component reference, String Select: "Specified choices in a select menu; max 25". */
+export const maxSelectOptions = 25;
+
+/** Characters in a select option's label, value and description. Component reference, Select Option Structure: "User-facing name of the option; max 100 characters", "Dev-defined value of the option; max 100 characters", "Additional description of the option; max 100 characters". */
+export const maxSelectOptionLabel = 100;
+export const maxSelectOptionValue = 100;
+export const maxSelectOptionDescription = 100;
+
+/** Characters in a select menu's placeholder. Component reference, each select: "Placeholder text if nothing is selected ...; max 150 characters". */
+export const maxSelectPlaceholder = 150;
+
+/** The range of a select's `min_values` and `max_values`. Component reference, each select: `min_values` "min 0 ..., max 25", `max_values` "max 25"; both default to 1. */
+export const maxSelectValues = 25;
+export const defaultSelectValues = 1;
+
 /** Embeds on one message. Message resource, Create Message: "Up to 10 `rich` embeds". */
 export const maxEmbeds = 10;
 

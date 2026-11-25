@@ -69,6 +69,75 @@ export const ShopIcon = ({ className }: IconProps): ReactElement => (
   </svg>
 );
 
+/** A downward chevron, at the end of a closed select menu. */
+export const ChevronDownIcon = ({ className }: IconProps): ReactElement => (
+  <svg className={className} viewBox="0 0 24 24" aria-hidden="true">
+    <path
+      d="m6 9.5 6 6 6-6"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+/** A filled circle holding a check mark, beside the chosen option of an open select menu. */
+export const SelectedIcon = ({ className }: IconProps): ReactElement => (
+  <svg className={className} viewBox="0 0 24 24" aria-hidden="true">
+    <circle cx="12" cy="12" r="10" fill="currentColor" />
+    <path
+      d="m7.5 12.25 3 3 6-6.5"
+      fill="none"
+      stroke="var(--white)"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+/** A cross, on a chosen value's pill in a member, role or channel select. */
+export const CloseIcon = ({ className }: IconProps): ReactElement => (
+  <svg className={className} viewBox="0 0 24 24" aria-hidden="true">
+    <path
+      d="m7 7 10 10M17 7 7 17"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+
+/** A page with its corner folded down, for a file attachment. Drawn in the 30 by 40 box Discord gives its file icon. */
+export const FileIcon = ({ className }: IconProps): ReactElement => (
+  <svg className={className} viewBox="0 0 30 40" aria-hidden="true">
+    <path
+      d="M3 1h16l10 10v26a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2Z"
+      fill="var(--background-mod-normal)"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M19 1v8a2 2 0 0 0 2 2h8"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M7 20h16M7 25h16M7 30h10"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+
 /** An open eye, for the "Only you can see this" line under an ephemeral message. */
 export const EyeIcon = ({ className }: IconProps): ReactElement => (
   <svg className={className} viewBox="0 0 24 24" aria-hidden="true">

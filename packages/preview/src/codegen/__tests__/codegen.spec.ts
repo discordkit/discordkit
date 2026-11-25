@@ -11,13 +11,46 @@ import { toSnakeKeys } from "@discordkit/core/utils/toSnakeKeys";
 import {
   buttonSheet,
   embedSheet,
+  fileSheet,
   fixtures,
-  gallerySheet
+  gallerySheet,
+  inbouLevelPicker,
+  inbouSettings,
+  inbouStudyPack,
+  openMultiSelectSheet,
+  openSelectSheet,
+  sectionSheet,
+  selectSheet,
+  spoilerSheet,
+  thumbnailSheet,
+  tomeHeroCard,
+  tomeSpoilerAnswer
 } from "../../__tests__/fixtures.js";
 import inbouQuestionWire from "../../__tests__/wire/inbou-question.json" with { type: "json" };
 import { codegen, templateLiteral } from "../index.js";
 
-const scenes = { ...fixtures, buttonSheet, embedSheet, gallerySheet };
+const scenes = {
+  ...fixtures,
+  buttonSheet,
+  embedSheet,
+  gallerySheet,
+  tomeHeroCard,
+  tomeSpoilerAnswer,
+  sectionSheet,
+  thumbnailSheet
+};
+
+/** Scenes with select rows or File components, which @discordkit/client's schema and types reject until #106. */
+const awaitingClientFix = {
+  inbouStudyPack,
+  inbouSettings,
+  inbouLevelPicker,
+  fileSheet,
+  selectSheet,
+  openSelectSheet,
+  openMultiSelectSheet,
+  spoilerSheet
+};
 
 /**
  * What generated code reads from `@discordkit/client` at run time: only the enums it names, since its types are erased. Importing them one by one keeps the client's whole source out of the test run, which otherwise slows every other spec running beside this one.
@@ -152,6 +185,20 @@ describe(`codegen output compiles and round-trips`, () => {
         expect(components[`components${suffix}`]).toStrictEqual(
           message.payload.components ?? []
         );
+      });
+    }
+  );
+
+  /** These hold select rows and File components written the way Discord expects, which @discordkit/client's schema and types still reject (#106): intake reports `schema` findings for them and their source would not type-check yet. Until #106 lands they are only round-tripped; then they belong in `scenes` above. */
+  it.each(Object.entries(awaitingClientFix))(
+    `evaluates %s back to the payloads it was generated from, though the client's types reject its selects and files until #106`,
+    (_, scene) => {
+      const { source } = codegen(scene);
+      if (source === undefined) throw new Error(`No source generated`);
+      const messages = evaluate(source);
+      scene.messages.forEach((message, index) => {
+        const suffix = scene.messages.length === 1 ? `` : String(index + 1);
+        expect(messages[`message${suffix}`]).toStrictEqual(message.payload);
       });
     }
   );
