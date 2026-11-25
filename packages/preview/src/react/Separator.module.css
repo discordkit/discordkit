@@ -1,0 +1,18 @@
+/*
+ * Discord build 679963: the Components V2 separator, `.divider_*` and `.spacingLarge_*` (in the same stylesheet as the container's reduced text size and the thumbnail). The separator adds no space of its own at small spacing: it is one more child of the column it sits in, so it gets that column's 8px gap above and below. Large spacing adds 8px more on each side. The line is a 1px bottom border; without the divider there is nothing to draw, and the element is empty.
+ */
+/* Drawn as an `<hr>`, so the browser's own rule (an inset border and half an em above and below) is cleared first. */
+.separator {
+  flex-shrink: 0;
+  height: 0;
+  margin: 0;
+  border: 0;
+}
+
+.divider {
+  border-bottom: 1px solid var(--background-mod-strong);
+}
+
+.spacingLarge {
+  margin: var(--space-8) 0;
+}

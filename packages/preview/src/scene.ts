@@ -1,11 +1,20 @@
+import type { Embed } from "@discordkit/client/messages/types/Embed";
 import type { MessageComponent } from "@discordkit/client/messages/types/MessageComponent";
 
 /** Discord's four appearance settings, by the names its settings UI uses. */
 export type Theme = `light` | `ash` | `dark` | `onyx`;
 
-/** The part of a message body the renderer draws: the body you would pass to `createMessage`. */
+/**
+ * The part of a message body the renderer draws: the body you would pass to `createMessage`.
+ *
+ * A message is drawn as Components V2 when `flags` has `IS_COMPONENTS_V2` (`1 << 15`) or when `components` holds anything but action rows, which only V2 allows. Otherwise it is a classic message: `content`, then `embeds`, then rows of buttons.
+ */
 export interface MessagePayload {
-  components: MessageComponent;
+  /** A classic message's text. */
+  content?: string;
+  /** A classic message's embeds, drawn under its content. */
+  embeds?: Embed[];
+  components?: MessageComponent;
   flags?: number;
 }
 
@@ -24,7 +33,7 @@ export interface SceneMessage {
 export interface SceneUser {
   /** The name shown in the message header and in mentions: the member's display name. */
   name: string;
-  /** Avatar image URL, or `attachment://name` for a file listed in `context.attachments`. Without one, Discord's default avatar for the id is used. */
+  /** Avatar image URL, or `attachment://name` for a file listed in `context.attachments`. Without one, a coloured circle with the name's initial is drawn, with no network. */
   avatar?: string;
   /** An app or bot account: its messages carry the "APP" tag. */
   bot?: boolean;
@@ -56,13 +65,21 @@ export interface SceneAttachment {
   size?: number;
 }
 
-/** What mentions, custom emoji and attachments resolve to, keyed by id (attachments by file name). An id with no entry renders the way Discord shows an unknown one. */
+/** A product an app sells, as a Premium button shows it. A payload names only the SKU's id; the client looks up the rest. */
+export interface SceneSku {
+  name: string;
+  /** The price as the viewer would see it, already formatted, such as `$4.99`. */
+  price?: string;
+}
+
+/** What mentions, custom emoji, attachments and SKUs resolve to, keyed by id (attachments by file name). An id with no entry renders the way Discord shows an unknown one. */
 export interface SceneContext {
   users?: Record<string, SceneUser>;
   roles?: Record<string, SceneRole>;
   channels?: Record<string, SceneChannel>;
   emoji?: Record<string, SceneEmoji>;
   attachments?: Record<string, SceneAttachment>;
+  skus?: Record<string, SceneSku>;
 }
 
 /** One or more messages, drawn top to bottom as they would stack in a channel. */

@@ -153,15 +153,48 @@ describe(`renderScene`, () => {
       offline: true
     });
     expect(png.subarray(0, 8)).toEqual(pngSignature);
-    // The default avatar and the ✅ emoji.
-    expect(findings.map(({ code }) => code)).toStrictEqual([
-      `asset-offline`,
-      `asset-offline`
-    ]);
+    // Only the ✅ emoji: the author has no avatar, and the one drawn for them is local, so a bare payload needs nothing else.
+    expect(findings.map(({ code }) => code)).toStrictEqual([`asset-offline`]);
     expect(findings.map(({ asset }) => asset)).toStrictEqual([
-      `https://cdn.discordapp.com/embed/avatars/0.png`,
       `https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/2705.svg`
     ]);
+  });
+
+  it(`sizes a lone gallery picture from its own shape when the payload does not give one, so a tall picture draws taller than a wide one`, async () => {
+    const galleryOf = (file: string): NodeApi.Scene => ({
+      context: {
+        attachments: {
+          [file]: {
+            path: fileURLToPath(
+              new URL(`../../__tests__/assets/${file}`, import.meta.url)
+            )
+          }
+        }
+      },
+      messages: [
+        {
+          payload: {
+            components: [
+              {
+                type: ComponentType.MediaGallery,
+                items: [{ media: { url: `attachment://${file}` } }]
+              }
+            ]
+          }
+        }
+      ]
+    });
+    const wide = await renderScene(galleryOf(`panorama-21x9.png`), {
+      browser,
+      cacheDir
+    });
+    const tall = await renderScene(galleryOf(`portrait-3x4.png`), {
+      browser,
+      cacheDir
+    });
+    expect(wide.findings).toStrictEqual([]);
+    // A 3:4 picture reaches the 350px cap; a 21:9 one is as wide as the 504px column allows, 216px tall.
+    expect(tall.height - wide.height).toBe(350 - 216);
   });
 
   it(`draws a placeholder where an image was missing, so the miss is visible in the image itself`, async () => {
@@ -177,14 +210,27 @@ describe(`renderScene`, () => {
   });
 
   it(`refuses a component it cannot draw yet, instead of leaving it out and returning an image unlike the real message`, async () => {
-    const withSeparator: NodeApi.Scene = {
+    const withSection: NodeApi.Scene = {
       messages: [
-        { payload: { components: [{ type: ComponentType.Separator }] } }
+        {
+          payload: {
+            components: [
+              {
+                type: ComponentType.Section,
+                components: [{ type: ComponentType.TextDisplay, content: `x` }],
+                accessory: {
+                  type: ComponentType.Thumbnail,
+                  media: { url: `https://cdn.example/a.png` }
+                }
+              }
+            ]
+          }
+        }
       ]
     };
     await expect(
-      renderScene(withSeparator, { browser, cacheDir })
-    ).rejects.toThrow(/cannot draw a Separator component inside a message/);
+      renderScene(withSection, { browser, cacheDir })
+    ).rejects.toThrow(/cannot draw a Section component inside a message/);
   });
 
   it(`draws each theme differently, so the theme actually reaches the stylesheet`, async () => {

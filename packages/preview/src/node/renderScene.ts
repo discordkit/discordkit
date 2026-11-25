@@ -8,6 +8,7 @@ import type { Scene } from "../scene.js";
 import { defaultWidth } from "../scene.js";
 import { resolveClock } from "../format/timestamp.js";
 import { placeholderClass, transparentPixel } from "../react/Image.js";
+import { measureAttribute } from "../react/MediaGallery.js";
 import { Scene as SceneView, sceneSelector } from "../react/Scene.js";
 import type { AssetUrl } from "../react/SceneContext.js";
 import {
@@ -219,9 +220,9 @@ export const renderScene = async (
           `@discordkit/preview/node rendered the scene, but Chromium did not load the bundled Noto Sans, so the image would use whatever fallback font the machine has. Check that \`@fontsource-variable/noto-sans\` is installed beside @discordkit/preview and that its \`files/\` directory is intact, then render again.`
         );
       }
-      // Wait for every image, then swap any that would not decode for the placeholder, so the image never shows the browser's broken-image icon.
+      // Wait for every image, then swap any that would not decode for the placeholder, so the image never shows the browser's broken-image icon. Then give each gallery item whose shape the payload did not state its picture's aspect ratio, which is what a browser's `onLoad` does and server rendering cannot.
       const broken = await page.evaluate(
-        async ({ pixel, placeholder }) => {
+        async ({ pixel, placeholder, measure }) => {
           const images = [...document.images];
           await Promise.all(
             images.map(async (image) => image.decode().catch(() => undefined))
@@ -233,13 +234,29 @@ export const renderScene = async (
           for (const image of failed) {
             image.src = pixel;
             image.classList.add(placeholder);
+            image.setAttribute(`data-discordkit-preview-missing`, image.alt);
           }
           await Promise.all(
             failed.map(async (image) => image.decode().catch(() => undefined))
           );
+          for (const item of document.querySelectorAll<HTMLElement>(
+            `[${measure}]`
+          )) {
+            const image = item.querySelector(`img`);
+            if (image && image.naturalWidth > 0 && image.naturalHeight > 0) {
+              item.style.setProperty(
+                `--dkp-ratio`,
+                String(image.naturalWidth / image.naturalHeight)
+              );
+            }
+          }
           return urls;
         },
-        { pixel: transparentPixel, placeholder: placeholderClass }
+        {
+          pixel: transparentPixel,
+          placeholder: placeholderClass,
+          measure: measureAttribute
+        }
       );
       const findings = [
         ...loaded.findings,

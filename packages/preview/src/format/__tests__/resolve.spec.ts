@@ -2,7 +2,8 @@ import { describe, expect, it } from "vite-plus/test";
 import type { SceneContext } from "../../scene.js";
 import {
   channelMentionLabel,
-  defaultAvatarUrl,
+  defaultAvatar,
+  defaultAvatarColors,
   resolveAuthor,
   roleMention,
   userMentionLabel
@@ -58,10 +59,9 @@ describe(`mentions`, () => {
 
 describe(`message authors`, () => {
   it(`draws the scene's user, keeping their avatar`, () => {
-    expect(resolveAuthor(`80351110224678912`, context)).toStrictEqual({
-      name: `Nelly`,
-      avatar: `https://cdn.example/nelly.png`
-    });
+    const author = resolveAuthor(`80351110224678912`, context);
+    expect(author.name).toBe(`Nelly`);
+    expect(author.avatar).toBe(`https://cdn.example/nelly.png`);
   });
 
   it(`draws a message with no author as an app called "App", with the APP tag`, () => {
@@ -69,23 +69,37 @@ describe(`message authors`, () => {
     expect(author.name).toBe(`App`);
     expect(author.bot).toBe(true);
   });
+});
 
-  it(`gives a user without a picture Discord's default avatar for their id: (id >> 22) % 6`, () => {
-    // Ids built from the part the rule reads (the bits above the low 22), with noise in the low bits it must ignore.
-    expect(defaultAvatarUrl(String((7n << 22n) + 12_345n))).toBe(
-      `https://cdn.discordapp.com/embed/avatars/1.png`
-    );
-    expect(defaultAvatarUrl(String((11n << 22n) + 4_194_303n))).toBe(
-      `https://cdn.discordapp.com/embed/avatars/5.png`
-    );
-    expect(resolveAuthor(`1`, { users: { "1": { name: `A` } } }).avatar).toBe(
-      `https://cdn.discordapp.com/embed/avatars/0.png`
-    );
+/** A bare payload must render with no network, and generated images must not carry Discord's logo, so a user without a picture gets an avatar drawn locally instead of one of Discord's CDN images. */
+describe(`the default avatar`, () => {
+  it(`names no image at all for a user without a picture, so nothing is fetched for it`, () => {
+    const author = resolveAuthor(`1`, { users: { "1": { name: `quill` } } });
+    expect(author.avatar).toBeUndefined();
+    expect(author.fallback.initial).toBe(`Q`);
   });
 
-  it(`gives an id that is not a snowflake the first default avatar instead of failing`, () => {
-    expect(defaultAvatarUrl(`inbou`)).toBe(
-      `https://cdn.discordapp.com/embed/avatars/0.png`
+  it(`takes the first character a reader sees, so a name starting with an emoji or a combining mark is not split`, () => {
+    expect(defaultAvatar(`a`, `👩‍🚀 Ada`).initial).toBe(`👩‍🚀`);
+    expect(defaultAvatar(`b`, `  émile`).initial).toBe(`É`);
+    expect(defaultAvatar(`c`, ``).initial).toBe(`?`);
+  });
+
+  it(`keeps a user's colour from scene to scene, chosen from their id rather than their place in the scene`, () => {
+    const first = defaultAvatar(`1311000000000000101`, `Emberwing`);
+    expect(defaultAvatar(`1311000000000000101`, `Emberwing`)).toStrictEqual(
+      first
     );
+    expect(defaultAvatarColors).toContain(first.color);
+  });
+
+  it(`spreads different users across the palette rather than giving everyone one colour`, () => {
+    const colors = new Set(
+      Array.from(
+        { length: 24 },
+        (_, index) => defaultAvatar(`13110000000000${String(index)}`, `x`).color
+      )
+    );
+    expect(colors.size).toBeGreaterThan(3);
   });
 });

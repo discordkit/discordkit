@@ -1,0 +1,10 @@
+/* Ours: a user with no picture is drawn as their initial on a coloured circle, in the box the avatar image would have taken. The size and position come from the class the message passes in. */
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+  font-size: 18px;
+  font-weight: var(--font-weight-semibold);
+  line-height: 1;
+}
