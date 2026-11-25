@@ -1,0 +1,94 @@
+JLPT N5 kanji, with one reading each
+
+一 いち one
+二 に two
+三 さん three
+四 よん four
+五 ご five
+六 ろく six
+七 なな seven
+八 はち eight
+九 きゅう nine
+十 じゅう ten
+百 ひゃく hundred
+千 せん thousand
+万 まん ten thousand
+円 えん yen
+日 にち day, sun
+月 げつ month, moon
+火 か fire
+水 すい water
+木 もく tree
+金 きん gold, money
+土 ど earth
+年 ねん year
+時 じ time, hour
+分 ふん minute
+半 はん half
+今 いま now
+何 なに what
+人 ひと person
+男 おとこ man
+女 おんな woman
+子 こ child
+父 ちち father
+母 はは mother
+友 とも friend
+先 さき ahead
+生 せい life
+学 がく study
+校 こう school
+名 な name
+本 ほん book, origin
+山 やま mountain
+川 かわ river
+田 た rice field
+天 てん heaven
+気 き spirit
+雨 あめ rain
+花 はな flower
+空 そら sky
+上 うえ above
+下 した below
+中 なか inside
+外 そと outside
+右 みぎ right
+左 ひだり left
+前 まえ before
+後 うしろ behind
+東 ひがし east
+西 にし west
+南 みなみ south
+北 きた north
+大 おお big
+小 ちい small
+長 なが long
+高 たか tall, expensive
+安 やす cheap
+新 あたら new
+古 ふる old
+白 しろ white
+食 た eat
+飲 の drink
+見 み see
+聞 き hear
+読 よ read
+書 か write
+話 はな speak
+言 い say
+行 い go
+来 く come
+出 で exit
+入 はい enter
+休 やす rest
+会 あ meet
+買 か buy
+立 た stand
+道 みち road
+駅 えき station
+電 でん electricity
+車 くるま car
+国 くに country
+語 ご language
+社 しゃ company
+店 みせ shop

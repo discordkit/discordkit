@@ -3,7 +3,9 @@ import { ComponentType } from "@discordkit/client/components/types/ComponentType
 import type { MessageComponent } from "@discordkit/client/messages/types/MessageComponent";
 import { ActionRow } from "./ActionRow.js";
 import { Container } from "./Container.js";
+import { FileAttachment } from "./FileAttachment.js";
 import { MediaGallery } from "./MediaGallery.js";
+import { Section } from "./Section.js";
 import { Separator } from "./Separator.js";
 import { TextDisplay } from "./TextDisplay.js";
 import { unsupportedComponent } from "./unsupportedComponent.js";
@@ -31,10 +33,11 @@ export const MessageComponents = ({
           return <MediaGallery key={index} component={component} />;
         case ComponentType.ActionRow:
           return <ActionRow key={index} component={component} />;
-        // oxlint-enable react/no-array-index-key
         case ComponentType.Section:
+          return <Section key={index} component={component} />;
         case ComponentType.File:
-          throw unsupportedComponent(component.type, `a message`);
+          return <FileAttachment key={index} component={component} />;
+        // oxlint-enable react/no-array-index-key
         default:
           throw unsupportedComponent(
             (component satisfies never as { type: number }).type,

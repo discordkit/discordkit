@@ -150,12 +150,16 @@ describe(`render`, () => {
         flags: 32768,
         components: [
           {
-            type: ComponentType.Section,
-            components: [{ type: ComponentType.TextDisplay, content: `x` }],
-            accessory: {
-              type: ComponentType.Thumbnail,
-              media: { url: `attachment://a.png` }
-            }
+            // A text input belongs in a modal, and the modal components are not drawn yet.
+            type: ComponentType.ActionRow,
+            components: [
+              {
+                type: ComponentType.TextInput,
+                customId: `name`,
+                style: 1,
+                label: `Name`
+              }
+            ]
           }
         ]
       });
@@ -165,7 +169,7 @@ describe(`render`, () => {
         expect.objectContaining({
           code: `component-unsupported`,
           severity: `error`,
-          path: [`components`, 0]
+          path: [`components`, 0, `components`, 0]
         })
       );
     });
