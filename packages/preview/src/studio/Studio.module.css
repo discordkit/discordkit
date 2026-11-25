@@ -1,0 +1,147 @@
+/* Wide and medium windows: the app fills the window and each column scrolls on its own, so the preview never scrolls away from the JSON beside it. */
+.app {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  /* Without this, the long file path in the top bar would widen the one column past the window. */
+  grid-template-columns: minmax(0, 1fr);
+  height: 100dvh;
+  overflow: hidden;
+}
+
+/* Narrow windows: one column, preview first, and the page scrolls. */
+.appStacked {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+.workspace,
+.workspaceWide {
+  display: grid;
+  min-height: 0;
+}
+
+.workspace {
+  grid-template-columns: minmax(320px, 38%) minmax(0, 1fr);
+}
+
+.workspaceWide {
+  grid-template-columns: minmax(340px, 30%) minmax(0, 1fr) minmax(300px, 24%);
+}
+
+.workspaceStacked {
+  display: flex;
+  flex-direction: column;
+}
+
+.workspaceStacked > :first-child {
+  min-height: 60dvh;
+}
+
+.side {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  border-right: 1px solid var(--st-border);
+  background: var(--st-canvas);
+}
+
+.workspaceStacked .side {
+  border-top: 1px solid var(--st-border);
+  border-right: 0;
+}
+
+.tabs {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.tabList {
+  display: flex;
+  gap: var(--st-space-1);
+  padding: var(--st-space-3) var(--st-space-5) 0;
+  border-bottom: 1px solid var(--st-border);
+  background: var(--st-surface);
+}
+
+.tab {
+  position: relative;
+  padding: var(--st-space-3) var(--st-space-4) var(--st-space-4);
+  color: var(--st-text-muted);
+  font-size: var(--st-text-sm);
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: default;
+  outline: none;
+}
+
+.tab[data-hovered] {
+  color: var(--st-text);
+}
+
+.tab[data-selected] {
+  color: var(--st-text);
+}
+
+.tab[data-selected]::after {
+  content: "";
+  position: absolute;
+  right: var(--st-space-3);
+  bottom: -1px;
+  left: var(--st-space-3);
+  height: 2px;
+  border-radius: 1px;
+  background: var(--st-accent);
+}
+
+.tab[data-focus-visible] {
+  outline: var(--st-focus-width) solid var(--st-focus);
+  outline-offset: -3px;
+  border-radius: var(--st-radius-sm);
+}
+
+.tabPanel {
+  box-sizing: border-box;
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: var(--st-space-5);
+  outline: none;
+}
+
+.tabPanel[data-focus-visible] {
+  outline: var(--st-focus-width) solid var(--st-focus);
+  outline-offset: -2px;
+}
+
+/* In one column the page scrolls, so the panel needs a height of its own for the JSON to fill. */
+.workspaceStacked .tabPanel {
+  flex: none;
+  height: 75dvh;
+}
+
+.findingsColumn {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--st-space-4);
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  padding: var(--st-space-5);
+  border-left: 1px solid var(--st-border);
+  background: var(--st-canvas);
+}
+
+.columnHeading {
+  margin: 0;
+  color: var(--st-text-muted);
+  font-size: var(--st-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}

@@ -10,7 +10,11 @@ const stylesheet = `styles.css`;
 export default defineConfig({
   run: {
     tasks: {
-      build: { command: `vp pack`, cache: true },
+      // The library first, because `vp pack` empties dist/; then Studio's static site into dist/studio (see vite.studio.config.ts).
+      build: {
+        command: `vp pack && vp build --config vite.studio.config.ts`,
+        cache: true
+      },
       dev: { command: `vp pack --watch`, cache: false }
     }
   },
@@ -23,9 +27,10 @@ export default defineConfig({
     // Build target derived from the root package.json `engines.node` — a
     // single source of truth for the whole workspace.
     target: buildTarget,
-    // Same 1:1 src-to-dist mirror as the other packages, widened to `.tsx` for the React components.
+    // Same 1:1 src-to-dist mirror as the other packages, widened to `.tsx` for the React components. Studio's web app is not part of the library: `vite.studio.config.ts` bundles it into dist/studio, and its server side lives in src/bridge, which is.
     entry: [
       `src/**/*.{ts,tsx}`,
+      `!src/studio/**`,
       `!src/**/__tests__/**`,
       `!src/**/*.spec.{ts,tsx}`
     ],
