@@ -1,0 +1,29 @@
+/* Discord build 679963: the mention pill, `.wrapper_*` together with the global `.mention` (both 3px radius, 0 2px padding). */
+.mention {
+  padding: 0 2px;
+  border-radius: 3px;
+  background: var(--mention-background);
+  color: var(--mention-foreground);
+  font-weight: var(--font-weight-medium);
+  unicode-bidi: plaintext;
+  cursor: pointer;
+}
+
+/* `.roleMention_*`. Its colours, when the role has one, are set inline. */
+.roleMention {
+  font-weight: var(--font-weight-medium);
+}
+
+/* `.nowrap_*`, from the same stylesheet as the channel icon below, keeps the icon on the line with the name. That it applies to the whole mention is unverified. */
+.channelMention {
+  white-space: nowrap;
+}
+
+/* `.icon_*` in the channel-mention stylesheet: a 1em icon before the name. Which element of the mention carries this rule is unverified. */
+.channelIcon {
+  width: 1em;
+  height: 1em;
+  margin-bottom: 0.2rem;
+  margin-inline-end: var(--space-4);
+  vertical-align: middle;
+}

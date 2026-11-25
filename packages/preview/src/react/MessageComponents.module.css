@@ -1,0 +1,9 @@
+/* Discord build 679963: a message's component list with the `isComponentsV2` modifier. It shrinks to its widest child, up to 600px or the column, whichever is narrower. */
+.components {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  row-gap: var(--space-8);
+  width: fit-content;
+  max-width: min(600px, 100%);
+}

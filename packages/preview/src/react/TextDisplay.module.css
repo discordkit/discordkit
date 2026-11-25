@@ -3,7 +3,21 @@
   margin: 0;
   color: var(--text-default);
   font-size: var(--dkp-markup-font-size, 1rem);
+  font-weight: var(--dkp-light-text-weight, var(--font-weight-normal));
   line-height: var(--dkp-markup-line-height, var(--chat-markup-line-height));
   white-space: break-spaces;
   overflow-wrap: break-word;
+}
+
+/* `.markdownContainer_*`, the markup inside a Components V2 text display: a heading that starts the text has no top margin, a heading with nothing after it has no bottom margin, and quotes and code blocks may use the full width. A heading followed only by text has nothing after it in this sense, since text is not an element, so it loses its bottom margin too. */
+.textDisplay :is(h1, h2, h3):first-child {
+  margin-top: 0;
+}
+
+.textDisplay :is(h1, h2, h3):not(:has(+ *)) {
+  margin-bottom: 0;
+}
+
+.textDisplay :is(blockquote, pre) {
+  max-width: unset;
 }

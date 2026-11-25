@@ -1,9 +1,133 @@
-/* Discord build 679963: a message's component list with the `isComponentsV2` modifier. It shrinks to its widest child, up to 600px or the column, whichever is narrower. */
-.components {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  row-gap: var(--space-8);
-  width: fit-content;
-  max-width: min(600px, 100%);
+/*
+ * Discord build 679963: a chat message at the default cozy density. The rules are the message wrapper (`.wrapper_*` with `.cozy_*`, and `.message_*`, whose `padding-inline-end` is `!important`), the group start (`.cozyMessage_*.groupStart_*`), the avatar, header, user name, timestamp and edited mark, the accessories grid the components sit in (`.container_*` with `grid-row-gap: .25rem`), and the ephemeral treatment (`.ephemeral_*` and `.ephemeralMessage_*`).
+ */
+.message {
+  position: relative;
+  min-height: 1.375rem;
+  padding-block: var(--custom-message-spacing-vertical-container-cozy);
+  padding-inline: var(--custom-message-margin-left-content-cozy) var(--space-xl);
+  border-start-end-radius: var(--radius-xs);
+  border-end-end-radius: var(--radius-xs);
+  overflow-wrap: break-word;
+}
+
+.groupStart {
+  min-height: 2.75rem;
+  margin-top: var(--custom-group-spacing-start);
+}
+
+/* An ephemeral reply is tinted blurple, with a 2px bar on its leading edge. */
+.ephemeral {
+  background: var(--brand-05a);
+}
+
+.ephemeral::before {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 2px;
+  background: var(--brand-500);
+  content: "";
+  pointer-events: none;
+}
+
+/* In the gutter, 4px below the top of the message. */
+.avatar {
+  position: absolute;
+  inset-inline-start: var(--custom-message-margin-horizontal);
+  width: var(--chat-avatar-size);
+  height: var(--chat-avatar-size);
+  margin-top: calc(4px - var(--custom-message-spacing-vertical-container-cozy));
+  overflow: hidden;
+  border-radius: 50%;
+  user-select: none;
+}
+
+.header {
+  position: relative;
+  display: block;
+  min-height: 1.375rem;
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 1rem;
+  font-weight: inherit;
+  line-height: 1.375rem;
+  white-space: break-spaces;
+}
+
+.headerText {
+  margin-inline-end: 0.25rem;
+}
+
+.username {
+  position: relative;
+  display: inline;
+  color: var(--text-strong);
+  font-size: 1rem;
+  font-weight: var(--dkp-light-username-weight, var(--font-weight-medium));
+  line-height: 1.375rem;
+  vertical-align: baseline;
+}
+
+.timestamp {
+  display: inline-block;
+  height: 1.25rem;
+  color: var(--chat-text-muted);
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-medium);
+  line-height: 1.375rem;
+  vertical-align: baseline;
+  cursor: default;
+}
+
+.timestampInline {
+  margin-inline-start: 0.25rem;
+}
+
+/* The content line, which for a Components V2 message holds only the edited mark. It is message markup, so it takes the markup size and line height. */
+.content {
+  color: var(--text-default);
+  font-size: 1rem;
+  line-height: var(--chat-markup-line-height);
+}
+
+.edited {
+  font-size: 0.625rem;
+  font-weight: var(--font-weight-normal);
+  line-height: 1;
+  user-select: none;
+}
+
+.accessories {
+  position: relative;
+  display: grid;
+  grid-auto-flow: row;
+  grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+  row-gap: 0.25rem;
+  height: fit-content;
+  min-width: 0;
+  min-height: 0;
+  padding-block: 0.125rem;
+  text-indent: 0;
+}
+
+.ephemeralNotice {
+  margin-top: 4px;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: var(--dkp-light-text-weight, var(--font-weight-normal));
+}
+
+/* `.icon_*` beside the notice: 4px before the text, sitting on the text's bottom. Its 16px size is assumed. */
+.ephemeralIcon {
+  width: 16px;
+  height: 16px;
+  margin-inline-end: 4px;
+  vertical-align: text-bottom;
+}
+
+.dismiss {
+  color: var(--text-link);
+  text-decoration: none;
+  cursor: pointer;
 }

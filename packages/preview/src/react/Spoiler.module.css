@@ -1,0 +1,50 @@
+/*
+ * Discord build 679963: `.spoilerMarkdownContent_*`, whose background is `--spoiler-hidden-background` while hidden and `--background-mod-subtle` once revealed, with `--radius-xs` corners redrawn on every wrapped line. While hidden, the text is transparent and its inline pieces are at zero opacity, so pills, emoji and code vanish along with the letters.
+ *
+ * The label-and-checkbox structure is ours, after Mirrordown's spoiler plugin.
+ */
+.spoiler {
+  cursor: pointer;
+}
+
+/* Hidden from sight but not from the keyboard or screen readers, so Space still reveals it. */
+.toggle {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+.content {
+  border-radius: var(--radius-xs);
+  background-color: var(--spoiler-hidden-background);
+  color: transparent;
+  user-select: none;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.content * {
+  opacity: 0;
+}
+
+.toggle:checked ~ .content {
+  background-color: var(--background-mod-subtle);
+  color: inherit;
+  cursor: auto;
+  user-select: text;
+}
+
+.toggle:checked ~ .content * {
+  opacity: 1;
+}
+
+.toggle:focus-visible ~ .content {
+  outline: 2px solid Highlight;
+  outline-offset: 2px;
+}

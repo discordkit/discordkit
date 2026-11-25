@@ -1,0 +1,13 @@
+/* Discord build 679963: `.emoji`, an emoji image sized to the text around it, and `.emoji.jumboable`, the size it takes when a text is only emoji. */
+.emoji {
+  width: var(--custom-emoji-size-emoji);
+  height: var(--custom-emoji-size-emoji);
+  object-fit: contain;
+  vertical-align: bottom;
+}
+
+.jumbo {
+  width: var(--custom-emoji-size-jumbo-emoji);
+  height: var(--custom-emoji-size-jumbo-emoji);
+  min-height: var(--custom-emoji-size-jumbo-emoji);
+}
