@@ -329,7 +329,9 @@ Messages stack top to bottom as they would in a channel, so a card before and af
 
 ## 🔤 Fonts
 
-Discord's own font, gg sans, cannot be redistributed, so text is drawn with the bundled Noto Sans, which is Discord's own first fallback. Line breaks can then fall differently from the real client.
+Discord's own font, gg sans, cannot be redistributed, so text is drawn with the bundled Noto Sans, which is Discord's own first fallback. Line breaks can then fall differently from the real client. Its vertical metrics are set to gg sans's, measured from the client, so lines and the boxes behind timestamps and mentions are as tall as the client draws them.
+
+Code is drawn with Source Code Pro where it is installed and with the machine's own monospace font otherwise (gg mono cannot be redistributed either), so inline code's box is not the client's size. It does not change the height of the line it is on.
 
 **Bring your own gg sans.** If you have gg sans, point `--gg-sans` (Node: `ggSans`) at a font file or a directory of them (`.ttf`, `.otf`, `.woff` or `.woff2`). Each file's weight and style are read from the file itself, so hashed file names are fine. The renderer then declares gg sans from those files and draws with it; without the option it never uses a gg sans installed on the machine, so an image does not depend on whether one is. Nothing about gg sans is shipped or downloaded.
 
@@ -347,7 +349,7 @@ Every render reports which fonts drew the text (`fonts.used`: the family name in
 
 - **Components**: every component a message can hold is drawn. The components only a modal holds (Label, Text Input, File Upload, and radio and checkbox groups) are not; a message holding one gets a `component-unsupported` finding and no image. Modals, polls, reactions, replies, threads and forwarded messages are not drawn.
 - **Selects**: only a String Select can be drawn open. The closed control's fill and border, and the text sizes in it and in the open list, are inferred, and the open list shows every option where the client's scrolls.
-- **Calibration**: values come from Discord's stylesheet. Layout Discord decides in JavaScript (media gallery layouts for five or more items, embed text sizes, relative-timestamp wording, file sizes' wording) is inferred and has not been checked against the live client.
+- **Calibration**: values come from Discord's stylesheet, checked against screenshots of the real desktop client in the dark theme. Layout Discord decides in JavaScript is calibrated where a screenshot showed it (galleries of one, two and four pictures, the header's time for a message sent today, where "(edited)" sits on a Components V2 message) and inferred elsewhere: galleries of three and of five or more on desktop, a pair of large or differently shaped pictures, the header's time for an older message, embed text sizes, relative-timestamp wording, file sizes' wording. The light, ash and onyx themes have not been checked against the client.
 - **Mobile**: previews match the web client at the width you give, not the native mobile apps.
 - **Markdown**: no syntax highlighting in code blocks.
 - **Lint**: misspelled keys pass silently, because the client schemas drop unknown keys; character counts use Unicode code points, and whether Discord counts UTF-16 units instead is unverified.

@@ -7,9 +7,9 @@
  *
  * Tokens live on the scene root, not on `:root`, so rendering a preview never restyles the page that hosts it.
  *
- * Theme classes are named after Discord's settings UI. Which of Discord's theme classes each one maps to (`ash` to `.theme-dark`, `dark` to `.theme-darker`, `onyx` to `.theme-midnight`) is inferred from the token values and still has to be confirmed against the live client.
+ * Theme classes are named after Discord's settings UI. `dark` is `.theme-darker`: the owner's desktop captures in the theme they call Dark show the chat at #1a1a1e, which is `--background-base-lower` in `.theme-darker` and in no other theme (spec §7b). That `ash` is `.theme-dark` and `onyx` is `.theme-midnight` is still inferred from the token values; no capture shows either, or the light theme.
  *
- * `--background-base-lowest` is the chat column's background (`.chat_*` paints `var(--background-gradient-chat, var(--background-base-lowest))`). Which surface sits directly behind a message is also unconfirmed until calibration.
+ * `--background-base-lower` is the chat's background: `.chatContent_*`, the column the messages sit in, paints `var(--background-gradient-chat, var(--background-base-lower))`. The `.chat_*` around it paints `--background-base-lowest` (#121214 in `.theme-darker`), which shows only outside the message column. Confirmed in the dark theme by the captures; the other three themes use the same token without a capture to check it against.
  */
 
 .root {
@@ -125,8 +125,8 @@
 
 /* Discord's "Light" setting: `.theme-light`. */
 .light {
-  /* neutral-4, #f3f3f4 */
-  --background-base-lowest: hsl(240 4.348% 95.49%);
+  /* neutral-2, #fbfbfb */
+  --background-base-lower: hsl(0 0% 98.431%);
   /* neutral-1, #ffffff */
   --background-surface-high: hsl(0 0% 100%);
   /* opacity-28: #97979f at 27.8% */
@@ -197,8 +197,8 @@
 
 /* Discord's "Ash" setting: `.theme-dark`. */
 .ash {
-  /* neutral-73, #2c2d32 */
-  --background-base-lowest: hsl(230 6.383% 18.431%);
+  /* neutral-69, #323339 */
+  --background-base-lower: hsl(231.429 6.542% 20.98%);
   /* neutral-64, #393a41 */
   --background-surface-high: hsl(232.5 6.557% 23.922%);
   /* opacity-12: #97979f at 12.2% */
@@ -259,8 +259,8 @@
 
 /* Discord's "Dark" setting: `.theme-darker`. */
 .dark {
-  /* neutral-92, #121214 */
-  --background-base-lowest: hsl(240 5.263% 7.451%);
+  /* neutral-86, #1a1a1e */
+  --background-base-lower: hsl(240 7.143% 10.98%);
   /* neutral-79, #242429 */
   --background-surface-high: hsl(240 6.494% 15.098%);
   /* opacity-12: #97979f at 12.2% */
@@ -322,7 +322,7 @@
 /* Discord's "Onyx" setting: `.theme-midnight`. */
 .onyx {
   /* neutral-100, #000000 */
-  --background-base-lowest: hsl(0 0% 0%);
+  --background-base-lower: hsl(0 0% 0%);
   /* neutral-96, #0a0a0c */
   --background-surface-high: hsl(240 9.091% 4.314%);
   /* opacity-20: #97979f at 20% */

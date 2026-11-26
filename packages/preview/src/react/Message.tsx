@@ -1,7 +1,7 @@
 import { useMemo, type ReactElement } from "react";
 import { isComponentsV2 } from "../components.js";
 import { resolveAuthor } from "../format/resolve.js";
-import { formatMessageTime } from "../format/timestamp.js";
+import { formatHeaderTime } from "../format/timestamp.js";
 import { parseMarkdown } from "../markdown/parse.js";
 import type { SceneMessage } from "../scene.js";
 import { AppTag } from "./AppTag.js";
@@ -52,7 +52,7 @@ const EditedMark = (): ReactElement => (
   </span>
 );
 
-/** A Components V2 message's body. It has no content line, so the edited mark gets one of its own. */
+/** A Components V2 message's body. It has no content line, so the edited mark gets one of its own, under the components and at their leading edge, where the desktop client draws it (spec §7b). */
 const ComponentsBody = ({
   message,
   index
@@ -68,15 +68,14 @@ const ComponentsBody = ({
   }
   return (
     <>
-      {message.edited ? (
-        // Where Discord places the edited mark on a Components V2 message is unverified.
-        <div className={styles.content}>
-          <EditedMark />
-        </div>
-      ) : null}
       <div className={styles.accessories}>
         <MessageComponents components={components} />
       </div>
+      {message.edited ? (
+        <div className={`${styles.content} ${styles.editedLine}`}>
+          <EditedMark />
+        </div>
+      ) : null}
     </>
   );
 };
@@ -161,7 +160,7 @@ export const Message = ({
             </span>
             <span className={`${styles.timestamp} ${styles.timestampInline}`}>
               <time dateTime={new Date(sentAt).toISOString()}>
-                {formatMessageTime(sentAt, clock)}
+                {formatHeaderTime(sentAt, clock)}
               </time>
             </span>
           </h3>

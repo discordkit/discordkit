@@ -2,6 +2,7 @@ import { describe, expect, it } from "vite-plus/test";
 import { ComponentType } from "@discordkit/client/components/types/ComponentType";
 import type { SceneMessage } from "../../scene.js";
 import type { SceneProps } from "../Scene.js";
+import containerStyles from "../Container.module.css";
 import messageStyles from "../Message.module.css";
 import textDisplayStyles from "../TextDisplay.module.css";
 import { byClass, dark, expectColor, find, mountScene } from "./mount.js";
@@ -126,12 +127,12 @@ describe(`a message's header`, () => {
     expect(find(first, `h3 span`).textContent).toBe(`Emberwing`);
   });
 
-  it(`shows when the message was sent at 12px in the muted chat colour, against the scene's clock`, () => {
+  it(`shows when the message was sent at 12px in the muted chat colour, against the scene's clock, as the time alone for a message sent today, as every desktop capture shows`, () => {
     const [first] = mountMessages(
       message({ timestamp: `2026-11-25T15:58:00Z` })
     );
     const time = find(first, `time`);
-    expect(time.textContent).toBe(`Today at 3:58 PM`);
+    expect(time.textContent).toBe(`3:58 PM`);
     expect(time.getAttribute(`datetime`)).toBe(`2026-11-25T15:58:00.000Z`);
     const stamp = time.parentElement;
     if (!stamp) throw new Error(`The time has no wrapper.`);
@@ -206,6 +207,44 @@ describe(`an edited message`, () => {
     const mark = find(first, byClass(messageStyles.edited));
     expect(mark.textContent).toBe(`(edited)`);
     expect(style(mark).fontSize).toBe(`10px`);
+  });
+
+  it(`marks a Components V2 message under its components, at their leading edge, and moves the next message in the group 32px below the container, where the desktop client draws it`, () => {
+    const payload = {
+      components: [
+        {
+          type: ComponentType.Container,
+          components: [{ type: ComponentType.TextDisplay, content: `closed` }]
+        }
+      ]
+    } satisfies SceneMessage[`payload`];
+    const [first, second] = mountMessages(
+      message({ edited: true, payload }),
+      message({ payload })
+    );
+    const container = find(
+      first,
+      byClass(containerStyles.container)
+    ).getBoundingClientRect();
+    const mark = find(
+      first,
+      byClass(messageStyles.edited)
+    ).getBoundingClientRect();
+    const next = find(
+      second,
+      byClass(containerStyles.container)
+    ).getBoundingClientRect();
+    expect(mark.top).toBeGreaterThan(container.bottom);
+    expect(mark.left).toBe(container.left);
+    // Grouped messages are 8px apart; the client's edited line adds 24px.
+    expect(next.top - container.bottom).toBe(32);
+  });
+});
+
+describe(`the chat column`, () => {
+  it(`is painted #1a1a1e in the dark theme, the colour the desktop captures show behind messages (Discord's --background-base-lower)`, () => {
+    const root = mountScene({ ...base, messages: [message()] });
+    expectColor(style(root).backgroundColor, dark.backgroundBaseLower);
   });
 });
 

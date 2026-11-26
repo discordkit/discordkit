@@ -1,12 +1,13 @@
 import { describe, expect, it } from "vite-plus/test";
 import { ComponentType } from "@discordkit/client/components/types/ComponentType";
 import type { MediaGalleryItem } from "@discordkit/client/components/types/MediaGalleryItem";
-import { dark, expectColor, mountComponents } from "./mount.js";
+import containerStyles from "../Container.module.css";
+import { byClass, dark, expectColor, find, mountComponents } from "./mount.js";
 
 /**
- * Gallery size and crop by item count were what Tome's author iterated on most, and what they established in the client is the strongest evidence here: three items make one large panel beside two stacked, four make an even 2×2 whose square pictures come out as wide tiles, two keep their shape, and pictures are scaled to fill their slot rather than drawn at their file's size. The rest is Discord build 679963's stylesheet: a 4px gap, 2px item corners, an 8px outer radius, 350px and 280px caps, a 44px spoiler blur.
+ * Gallery size and crop by item count were what Tome's author iterated on most, and they decide whether a card fits. The sizes here are the ones measured in screenshots of the real desktop client (spec §7b): a lone picture at its file's own size, never scaled up, and scaled down to the width and to 350px tall; a pair of small pictures at their own size 4px apart; four as an even 2×2 filling the width, which turns square pictures into wide tiles. A container holding one or two pictures shrinks to them. Three items making one large panel beside two stacked was seen only on iOS. The rest is Discord build 679963's stylesheet: a 4px gap, 2px item corners, an 8px outer radius, 350px and 280px caps, a 44px spoiler blur.
  *
- * Every picture here gives its size in the payload, as Discord's API returns it, so the layout does not depend on a picture loading. The column is 600px wide, leaving a 470px gallery inside a container (504px less 16px padding and a 1px border each side).
+ * Every picture here gives its size in the payload, as Discord's API returns it, so the layout does not depend on a picture loading. The column is 600px wide, leaving at most 470px for a gallery inside a container (504px less 16px padding and a 1px border each side).
  */
 
 const item = (
@@ -22,39 +23,89 @@ const item = (
   ...extra
 });
 
-/** Mounts a gallery of `items` in a container and returns its pictures' boxes. */
+/** Mounts a gallery of `items` in a container and returns its pictures' boxes and the container's. */
 const mountGallery = (
-  items: MediaGalleryItem[]
-): { root: HTMLElement; boxes: DOMRect[]; images: HTMLImageElement[] } => {
-  const root = mountComponents([
-    {
-      type: ComponentType.Container,
-      components: [{ type: ComponentType.MediaGallery, items }]
-    }
-  ]);
+  items: MediaGalleryItem[],
+  width?: number
+): {
+  root: HTMLElement;
+  boxes: DOMRect[];
+  images: HTMLImageElement[];
+  card: DOMRect;
+} => {
+  const root = mountComponents(
+    [
+      {
+        type: ComponentType.Container,
+        components: [{ type: ComponentType.MediaGallery, items }]
+      }
+    ],
+    { width }
+  );
   // The author has no picture, so their avatar is drawn without an image, and every image is a gallery picture.
   const images = [...root.querySelectorAll(`img`)];
+  const card = find(root, byClass(containerStyles.container));
   return {
     root,
     images,
-    boxes: images.map((image) => image.getBoundingClientRect())
+    boxes: images.map((image) => image.getBoundingClientRect()),
+    card: card.getBoundingClientRect()
   };
 };
+
+/** A container's padding and border on both sides: what it adds to the width of what it holds. */
+const cardInsets = 2 * (16 + 1);
 
 const square = (): MediaGalleryItem => item(128, 128);
 const wide = (): MediaGalleryItem => item(256, 144);
 
 describe(`a media gallery`, () => {
-  it(`scales a lone picture up to fill its slot, keeping its shape, as Tome saw a 32px icon drawn large`, () => {
-    const { boxes } = mountGallery([item(32, 32)]);
-    expect(boxes[0].width).toBe(350);
-    expect(boxes[0].height).toBe(350);
+  it.each([
+    [88, 64],
+    [128, 128],
+    [256, 144],
+    [32, 32]
+  ])(
+    `draws a lone %ix%i picture at its file's own size, never scaled up, as the desktop client draws one`,
+    (width, height) => {
+      const { boxes } = mountGallery([item(width, height)]);
+      expect(boxes[0].width).toBe(width);
+      expect(boxes[0].height).toBe(height);
+    }
+  );
+
+  it(`shrinks the container to a lone picture, so a card with a small picture is only as wide as it needs to be`, () => {
+    const { card } = mountGallery([item(88, 64)]);
+    expect(card.width).toBe(88 + cardInsets);
   });
 
-  it(`draws a lone wide picture as wide as the gallery, at its own ratio`, () => {
-    const { boxes } = mountGallery([wide()]);
+  it(`scales a picture wider than the container down to the container's width, keeping its shape`, () => {
+    const { boxes } = mountGallery([item(1200, 675)]);
     expect(boxes[0].width).toBe(470);
-    expect(boxes[0].height).toBeCloseTo(470 / (256 / 144), 0);
+    expect(boxes[0].height).toBeCloseTo(470 / (1200 / 675), 0);
+  });
+
+  it(`scales a tall picture down to 350px tall, keeping its shape, as the client draws a tall page 350px tall`, () => {
+    const { boxes } = mountGallery([item(600, 940)]);
+    expect(boxes[0].height).toBeCloseTo(350, 1);
+    expect(boxes[0].width).toBeCloseTo(350 * (600 / 940), 0);
+  });
+
+  it(`draws a lone picture whose size is unknown and that has not arrived as a 350px square box, and does not take the placeholder's one-pixel image for its size`, async () => {
+    const root = mountComponents([
+      {
+        type: ComponentType.MediaGallery,
+        items: [{ media: { url: `https://cdn.example/unknown.png` } }]
+      }
+    ]);
+    const image = root.querySelector(`img`);
+    if (!image) throw new Error(`No picture was drawn.`);
+    await image.decode();
+    // Let the load event reach React's handler before measuring.
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    const box = image.getBoundingClientRect();
+    expect(box.width).toBe(350);
+    expect(box.height).toBe(350);
   });
 
   it(`rounds a lone picture's corners by 8px`, () => {
@@ -64,12 +115,34 @@ describe(`a media gallery`, () => {
     expect(getComputedStyle(holder).borderTopLeftRadius).toBe(`8px`);
   });
 
-  it(`puts two pictures side by side, 4px apart, and keeps square pictures square`, () => {
-    const { boxes } = mountGallery([square(), square()]);
+  it(`draws a pair of small pictures at their own size, 4px apart, and shrinks the container to them, as the client draws two 256×144 pictures in a 550px card`, () => {
+    // An 800px column, so the container could be its full 600px, as in the capture.
+    const { boxes, card } = mountGallery([wide(), wide()], 800);
     expect(boxes[1].left - boxes[0].right).toBe(4);
     expect(boxes[0].top).toBe(boxes[1].top);
-    expect(boxes[0].width).toBe(233);
-    expect(boxes[0].height).toBe(233);
+    for (const box of boxes) {
+      expect(box.width).toBe(256);
+      expect(box.height).toBe(144);
+    }
+    expect(card.width).toBe(550);
+  });
+
+  it(`splits the width evenly between a pair of large pictures of one size (a choice: no large pair has been captured)`, () => {
+    const { boxes } = mountGallery([item(1200, 675), item(1200, 675)]);
+    expect(boxes[1].left - boxes[0].right).toBe(4);
+    for (const box of boxes) {
+      expect(box.width).toBe((470 - 4) / 2);
+      expect(box.height).toBeCloseTo((470 - 4) / 2 / (1200 / 675), 0);
+    }
+  });
+
+  it(`keeps each of a pair of different shapes at its own shape, top-aligned, rather than cropping one to the other (a choice: no mixed pair has been captured)`, () => {
+    const { boxes } = mountGallery([square(), wide()]);
+    expect(boxes[0].width).toBe(128);
+    expect(boxes[0].height).toBe(128);
+    expect(boxes[1].width).toBe(256);
+    expect(boxes[1].height).toBe(144);
+    expect(boxes[1].top).toBe(boxes[0].top);
   });
 
   it(`draws three as one large picture beside two stacked, the large one taking two thirds`, () => {
@@ -82,14 +155,25 @@ describe(`a media gallery`, () => {
     expect(lower.bottom).toBe(solo.bottom);
   });
 
-  it(`draws four as an even 2×2 within 350px, which turns square pictures into wide tiles`, () => {
-    const { boxes } = mountGallery([square(), square(), square(), square()]);
+  it(`draws four as an even 2×2 filling the width within 350px, which turns square pictures into wide tiles, as the client draws four 32px icons`, () => {
+    const { boxes, card } = mountGallery([
+      item(32, 32),
+      item(32, 32),
+      item(32, 32),
+      item(32, 32)
+    ]);
     const [first, second, third] = boxes;
     expect(second.top).toBe(first.top);
     expect(third.left).toBe(first.left);
     expect(third.top - first.bottom).toBe(4);
     expect(third.bottom - first.top).toBe(350);
-    expect(first.width).toBeGreaterThan(first.height);
+    expect(first.width).toBe((470 - 4) / 2);
+    expect(card.width).toBe(470 + cardInsets);
+  });
+
+  it(`fills a 600px container with four, as the desktop client does in a wide window`, () => {
+    const { card } = mountGallery(Array.from({ length: 4 }, wide), 800);
+    expect(card.width).toBe(600);
   });
 
   it(`draws six and nine as square tiles, three to a row`, () => {

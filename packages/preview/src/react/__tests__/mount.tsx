@@ -135,6 +135,7 @@ export const dark = {
   white: [255, 255, 255],
   backgroundModStrong: [151, 151, 159, 0.2],
   backgroundBaseLow: [32, 32, 36],
+  backgroundBaseLower: [26, 26, 30],
   backgroundSurfaceHigh: [36, 36, 41],
   borderSubtle: [151, 151, 159, 0.122],
   borderMuted: [151, 151, 159, 0.039],

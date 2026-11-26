@@ -154,7 +154,7 @@ interface Scene {
     emoji?: Record<string, { name: string; url: string; animated?: boolean }>;
     attachments?: Record<string, { path: string; size?: number }>;
   };
-  /** Fixed clock, zone and locale, so `<t:…:R>` and "Today at 4:05 PM" are the same on every machine. */
+  /** Fixed clock, zone and locale, so `<t:…:R>` and the header's "4:05 PM" are the same on every machine. */
   now?: string;
   timeZone?: string;
   locale?: string;
@@ -252,15 +252,15 @@ Values already extracted from build 679963 (reported), to seed slice 1:
 
 ### Media gallery layouts, as built (slice 3b)
 
-Which layout Discord uses for N items is decided in its JavaScript. The mapping is one data table in `format/galleryLayout.ts`, each entry carrying its evidence, so calibration corrects it by editing the table.
+Which layout Discord uses for N items is decided in its JavaScript. The mapping is one data table in `format/galleryLayout.ts`, each entry carrying its evidence, so calibration corrects it by editing the table. Corrected after the first calibration (§7b); the table below is the corrected one.
 
-| Items   | Layout drawn                                                                                                          | Evidence                                                                                |
-| ------- | --------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| 1       | The picture at its own aspect ratio, scaled up or down to the largest size that fits the gallery width and 350px tall | Upscaling observed by Tome; the 350px cap from the stylesheet; the sizing rule inferred |
-| 2       | Side by side, equal widths, at most 280px tall; the shorter picture is cropped to the taller one's height             | Observed by Tome for like shapes; the mixed-shape crop inferred                         |
-| 3       | One picture taking two thirds of the width beside two stacked                                                         | Observed by Tome                                                                        |
-| 4       | A 2 by 2 grid of equal rows, so square pictures become wide tiles                                                     | Observed by Tome                                                                        |
-| 5 to 10 | Rows of three squares, with the remainder (one or two pictures) in a band on top                                      | Inferred from the stylesheet's grid classes; no observation                             |
+| Items   | Layout drawn                                                                                                                                                                                                                | Evidence                                                                                                                                                             |
+| ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1       | The picture at its file's own size, never scaled up, scaled down (keeping its shape) to the column's width and 350px tall. The gallery, and so a container holding it, is only as wide as the picture                       | Desktop captures: 88×64, 128×128 and 256×144 files at their own size, a wide picture at the container's width, a tall one 350px tall                                 |
+| 2       | Each picture at its own size, 4px apart, at most 280px tall; a pair wider than the column shrinks in proportion to the pictures' widths; different shapes keep their shapes, top-aligned. The container shrinks to the pair | Desktop captures of two 256×144 files only. Large and mixed pairs are unobserved: the 280px cap is the stylesheet's, and the shrinking and top alignment are choices |
+| 3       | One picture taking two thirds of the width beside two stacked, filling the width                                                                                                                                            | iOS captures only (one 181pt square beside two 88pt squares in a fixed box); the desktop drawing is unobserved                                                       |
+| 4       | A 2 by 2 grid of equal rows filling the width, at most 350px tall, so square pictures become wide tiles                                                                                                                     | Desktop captures: 16:9 pictures as 281.6×158.4px tiles in a 600px container; 32px icons scaled up to rows 172.8px tall                                               |
+| 5 to 10 | Rows of three squares, with the remainder (one or two pictures) in a band on top, filling the width                                                                                                                         | Inferred from the stylesheet's grid classes; no capture on either client                                                                                             |
 
 A picture's aspect ratio comes from the payload's `media.width` and `media.height` when given, as Discord's API returns them, and otherwise from the image once it loads.
 
@@ -275,6 +275,68 @@ Every component a message can hold is now drawn; only the modal components refus
 - **Spoilers.** A spoilered container, thumbnail or file shares one cover (`SpoilerCover`): the content blurred by 44px over `--spoiler-hidden-background`, an 8px-radius clip, and the gallery's "Spoiler" pill, revealed by the scene's `revealSpoilers` or a click. On an 85px thumbnail the pill fills the width and is clipped at its ends with Noto Sans, as Discord's own `overflow: hidden` would clip it.
 - **New lint rules**, each checked against the live component reference on 2026-11-25: `section-component-count`, `file-not-attachment`, `select-option-count`, `select-option-label-length`, `select-option-value-length`, `select-option-description-length`, `select-placeholder-length`, `select-values-range`, `select-default-count` and `open-select-missing`.
 - **Waiting on #106.** The client's schemas reject a select in an action row's array and a File without `name` and `size`. Fixtures are written the way Discord expects, so intake reports `schema` errors for them; the specs that read them assert everything else and say so.
+
+### 7b. First calibration against real captures (2026-11-25)
+
+The first check of the renderer against the real client, using 91 screenshots the owner took while developing Tome and Inbou: 50 of real desktop messages, 14 of the real iOS app, and the rest reference art. They are private and are kept out of the repository, in a locally ignored `.discord-reference/captures/` with a catalogue. What follows are measurements, which are facts about Discord and contain nothing private.
+
+How they were read. Every client capture is the dark theme. Desktop captures are crops at 1.0 or 1.25 image pixels per CSS pixel, with each one's scale derived from a button's 32px height or an avatar's 40px. The phone is an iPhone 14 Pro (393 by 852 points); its captures were downscaled when attached, so each set's scale was derived from its width. Greys in the desktop captures read true, but saturated colours are shifted, so reds, greens and blurple must not be calibrated from them.
+
+#### Desktop: confirmed as drawn
+
+Container (16px padding, 8px radius, 8px gap, a 4px accent bar inside the padding, shrinking to its content); separator; buttons (32px tall, 60px minimum width, 8px gap, 8px radius, 1px border, disabled colours); text in a container (h2 at 20px, body at 14px); classic embeds line by line (4px bar, 12px inset, every text line within 1px, content-sized inline field columns); the mention pill's colours and padding (its height was 1px too tall, as item 7 explains); `@unknown-user` for an uncached user; the app tag and the 40px avatar; the four-item gallery; 8px between grouped messages; and a mention in an embed title staying literal.
+
+#### Desktop: wrong, most consequential first (fixed in slice 9a)
+
+1. **A single gallery picture is drawn at the file's own size, not scaled up.** An 88 by 64 file is 88 by 64px; large pictures do scale down, to the container's content width (566px in a 600px container) and to 350px tall (a tall page was 223 by 350px), left-aligned. The renderer scaled small pictures up; it now draws the file at its own size and scales down under both caps. A picture whose size is neither in the payload nor loaded is drawn as a 350px square, as before (unobserved).
+2. **A container holding a one- or two-item gallery shrinks to it.** The renderer forced the container to the full width; a one- or two-item gallery is now only as wide as its pictures, so the container shrinks to it unless something else in it is wider. A four-item gallery does fill 600px, and still does. Galleries of three and of five to ten still fill the width, which no desktop capture shows.
+3. **A pair of small pictures is drawn at their own size, 4px apart** (two 256 by 144 files in a 550px container). The renderer shared the full width between them; it now draws each at its own size. A pair of large or mixed pictures has not been captured, so what the renderer does with one is a choice, marked as such in `format/galleryLayout.ts`: each picture at most 280px tall (the stylesheet's cap for a pair), a pair wider than the column shrinking in proportion to the pictures' widths, and pictures of different shapes keeping their shapes, top-aligned, rather than one being cropped to the other's height. The two bands of two in galleries of five and eight still fill the width.
+4. **The message header shows only the time for a message sent today** ("2:57 PM"), in every capture across four months. The renderer said "Today at …"; it now writes the time alone. For an older message it writes a short date and the time ("4/20/21, 4:20 PM"), as the iOS app does, since no desktop capture shows one; for the day before it still says "Yesterday at …", which no capture shows. An embed footer's time is unchanged ("Today at …"), and also uncaptured.
+5. **The chat background in the dark theme is `#1a1a1e`.** The renderer used `#121214`, which in the real client appears only outside the chat column. The error carried into everything blended over it, such as the ephemeral row and a secondary button drawn on the chat. The stylesheet explains it: `.chatContent_*`, the message column, paints `--background-base-lower`, and only `.chat_*` around it paints `--background-base-lowest`. `--background-base-lower` is `#1a1a1e` in `.theme-darker` and in no other theme, which also confirms that the theme the owner calls Dark is `.theme-darker`. The renderer now paints the chat with `--background-base-lower` in every theme: `#fbfbfb` in light, `#323339` in ash, `#000000` in onyx. Those three are unverified, as is the ash and onyx mapping.
+6. **"(edited)" on a Components V2 message sits below the components**, at their leading edge with no space before it, its ink 12 to 13px under the container; its baseline is 19px under the container's bottom edge, and a following message in the same group starts 32px under that edge (8px without the mark). The renderer drew it between the header and the first container; it now draws it under the components, matching all three measurements at 1×. The rule Discord draws it with was not found, so the line's 1px of padding above and below is ours, fitted to the captures.
+7. **The inline timestamp chip is 18px tall, not 19, and so is the mention pill.** Rows of fallback-font characters (the bar-chart blocks) are 19.25px apart in the client and were 20 in the renderer at 1×, which changes a card's height. Two causes, both fixed:
+   - The chip and pill are inline boxes whose height is the font's ascent plus descent. Noto Sans's (1.069em and 0.293em) gave 19px at 14px; the captures put the baseline 14px below the chip's top and 4px above its bottom at 1×, and 18 and 6 device pixels at 1.25×, which Chromium gets by rounding each separately. The bundled Noto Sans is now declared with gg sans's metrics as measured (`ascent-override: 101.8%`, `descent-override: 31.8%`, the middle of the range all three captures allow), in the Node renderer and in Studio. Every chip, pill and hidden spoiler is now 18px at 14px. Glyph shapes and widths still differ.
+   - The rows did not grow because of the block characters, which come from a fallback font but cannot change a line whose height is fixed. They grew because each row holds inline code. Discord gives inline code an 18px line height, which fits inside the line with gg mono; the code font that stands in for it is whatever the machine has (Consolas here), whose metrics sit that 18px box lower, so it reached below the line and pushed every row to 20px. Inline code now has a line height of 0, which paints the same and never changes a line's height, so rows holding code are 19.25px apart on any machine. The code box itself is still the stand-in font's size: 14px tall here at 14px text, where gg mono's is 18.
+
+The renders before and after each fix, against the capture that shows it, are described in the slice 9a report; none of them is committed.
+
+#### What Tome's notes got right and wrong
+
+The gallery table in §7 rested on these notes. Checked against the same images:
+
+- "Discord upscales a gallery item to fill a fixed slot" holds only for four items on desktop, and for two, three and four on iOS. It is wrong for a single item on both clients and for a pair on desktop.
+- The three-item mosaic was captured on iOS only, never on desktop.
+- "A pair of square icons renders as proper squares" has no capture behind it; the only square pair captured, on iOS, is cropped at the sides.
+- Four items are forced wide, and the thumbnail slot is square: both hold. No desktop thumbnail was ever captured, so its 85px size is still unverified.
+
+So in the gallery table, the entry for one item was wrong, the entry for two was unsupported, three is observed on iOS only, four holds, and five to ten have no observation. Both tables (§7 and `format/galleryLayout.ts`) now say so, entry by entry.
+
+#### iOS: the layout, in points
+
+The iOS app is not the desktop layout at a narrow width.
+
+| Thing                         | Value                                                                                                                                                                                   | Confidence                    |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
+| Content column                | Starts at 68, ends 16 from the right edge; 309 wide on a 393-point screen                                                                                                               | High                          |
+| Avatar                        | 40 square, 16 from the left, 12 before the content                                                                                                                                      | High                          |
+| Header name and time          | About 17, and about 12 to 13; the time alone for a message sent today, a short date and time for an older one                                                                           | Medium                        |
+| App tag                       | 38 by 16                                                                                                                                                                                | High                          |
+| Container                     | Fill `#242429` with a hairline `#323237` border; radius about 8; 16 padding on every side; 8 between children; accent bar about 4 on the left edge                                      | High, radius medium           |
+| Body text                     | About 15, on a 20 line height                                                                                                                                                           | Size medium, line height high |
+| Second-level heading          | About 22                                                                                                                                                                                | Medium                        |
+| Button                        | 32 tall, about 12 padding each side, **no minimum width** (a one-letter button is 33 to 35 wide), radius about 8, 8 between buttons and between rows                                    | High                          |
+| Gallery of two, three or four | **Always one box, 273 by 181**, with 4 gaps, cover-cropped. Two: 135 by 181 each. Three: a 181 square beside two 88 squares. Four: 135 by 88 each. Outer radius about 12, inner about 2 | High                          |
+| Single picture                | The file's own size when it fits; a large one fills the content width                                                                                                                   | High                          |
+| ALT badge                     | Drawn bottom-left on a picture that has a description. Desktop draws none                                                                                                               | Medium                        |
+| Separator                     | About a 1-point line with 8 above and below                                                                                                                                             | Medium-high                   |
+| Inline timestamp              | A chip the full height of the line, which wraps mid-phrase with each fragment filled                                                                                                    | High                          |
+| Section with a thumbnail      | 60 square, radius about 8, right- and top-aligned                                                                                                                                       | High                          |
+
+Not captured on iOS at all, and so still unknown: any classic embed; subtext, quotes, lists, code, mentions, emoji in text, and first- and third-level headings; coloured, disabled, link or emoji buttons and long labels; selects, files and spoilers; galleries of five to ten; anything outside a container; "(edited)", an ephemeral reply, a grouped follow-up; and the light theme.
+
+#### Still needed
+
+For desktop: galleries of three and of five to ten, and pairs of large and mixed pictures; a narrow window, which no capture shows; thumbnails and sections; an embed with every part, including a footer with a timestamp; the header of a message from yesterday and of an older one; the light, ash and onyx themes; and one whole-window capture. For iOS: the list above. The fixtures for each already exist as scenes; they need posting to a channel and capturing as PNG files at native size.
 
 ### Test layers
 
