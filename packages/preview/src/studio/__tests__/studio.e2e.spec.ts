@@ -369,13 +369,15 @@ describe(`discordkit-preview studio, editing with the tree and the forms`, () =>
     const out = join(dir, `out`);
     const fixtureCopy = join(dir, `fixture.json`);
     await writeFile(fixtureCopy, await readFile(fixture, `utf8`));
+    // CI drives the Chrome its runner image ships, as the other specs do; without this the command exits 2 there, having no Playwright Chromium to launch.
     const render = await runCommand([
       `render`,
       fixtureCopy,
       file,
       `--out-dir`,
       out,
-      `--json`
+      `--json`,
+      ...(process.env.CI ? [`--channel`, `chrome`] : [])
     ]);
     expect(render).toMatchObject({ code: 0 });
     const diff = await runCommand([
