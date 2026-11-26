@@ -5,6 +5,7 @@ import { embedFieldColumns } from "../format/embedFields.js";
 import { formatMessageTime } from "../format/timestamp.js";
 import { parseMarkdown, type MarkdownContext } from "../markdown/parse.js";
 import { Image } from "./Image.js";
+import { useInspect } from "./Inspect.js";
 import { Markup } from "./Markup.js";
 import { useSceneSettings } from "./SceneContext.js";
 import styles from "./Embed.module.css";
@@ -46,6 +47,7 @@ const refuseUndrawn = (embed: EmbedData, index: number): void => {
  */
 export const Embed = ({ embed, index }: EmbedProps): ReactElement => {
   const { clock } = useSceneSettings();
+  const inspect = useInspect(embed);
   refuseUndrawn(embed, index);
   const hasThumbnail = embed.thumbnail !== undefined;
   const fields = useMemo(() => embed.fields ?? [], [embed.fields]);
@@ -76,7 +78,7 @@ export const Embed = ({ embed, index }: EmbedProps): ReactElement => {
   }
   const { author, footer } = embed;
   return (
-    <article className={styles.embed} style={barStyle}>
+    <article className={styles.embed} style={barStyle} {...inspect}>
       <div className={styles.gridContainer}>
         <div className={cx(styles.grid, hasThumbnail && styles.hasThumbnail)}>
           {author ? (

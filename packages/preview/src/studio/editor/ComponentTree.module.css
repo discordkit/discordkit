@@ -1,0 +1,128 @@
+.frame {
+  min-width: 0;
+}
+
+.tree {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  outline: none;
+  font-size: var(--st-text-sm);
+}
+
+.tree[data-focus-visible] {
+  outline: var(--st-focus-width) solid var(--st-focus);
+  outline-offset: -2px;
+}
+
+.row {
+  --indent: 14px;
+  position: relative;
+  min-width: 0;
+  border-radius: var(--st-radius-sm);
+  color: var(--st-text);
+  outline: none;
+  cursor: default;
+}
+
+.row[data-hovered] {
+  background: var(--st-surface-hover);
+}
+
+.row[data-selected] {
+  background: var(--st-accent-soft);
+  box-shadow: inset 3px 0 0 var(--st-accent);
+}
+
+.row[data-focus-visible] {
+  outline: var(--st-focus-width) solid var(--st-focus);
+  outline-offset: -2px;
+}
+
+.rowInner {
+  display: flex;
+  align-items: center;
+  gap: var(--st-space-2);
+  min-width: 0;
+  height: 26px;
+  padding-right: var(--st-space-3);
+  padding-left: calc((var(--tree-item-level, 1) - 1) * var(--indent));
+}
+
+.chevron {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  color: var(--st-text-muted);
+  font: inherit;
+  outline: none;
+}
+
+.chevron[data-focus-visible] {
+  outline: var(--st-focus-width) solid var(--st-focus);
+}
+
+.chevronSpacer {
+  flex: none;
+  width: 16px;
+}
+
+.chevronIcon {
+  width: 12px;
+  height: 12px;
+  transition: rotate 120ms;
+}
+
+.row[data-expanded] .chevronIcon {
+  rotate: 90deg;
+}
+
+.name {
+  flex: none;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.summary {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--st-text-muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.markerError,
+.markerWarning {
+  display: inline-flex;
+  flex: none;
+}
+
+.markerError {
+  color: var(--st-error);
+}
+
+.markerWarning {
+  color: var(--st-warn);
+}
+
+.markerIcon {
+  width: 14px;
+  height: 14px;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

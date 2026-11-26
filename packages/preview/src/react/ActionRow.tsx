@@ -4,6 +4,7 @@ import type { Button } from "@discordkit/client/components/types/Button";
 import { ComponentType } from "@discordkit/client/components/types/ComponentType";
 import type { Select } from "@discordkit/client/components/types/Select";
 import type { TextInput } from "@discordkit/client/components/types/TextInput";
+import { useInspect } from "./Inspect.js";
 import { MessageButton } from "./MessageButton.js";
 import { MessageSelect } from "./MessageSelect.js";
 import { unsupportedComponent } from "./unsupportedComponent.js";
@@ -15,6 +16,7 @@ export interface ActionRowProps {
 
 /** An Action Row: up to five buttons, or one select menu. */
 export const ActionRow = ({ component }: ActionRowProps): ReactElement => {
+  const inspect = useInspect(component);
   // Discord sends and expects an array. The client's schema has a select as a bare object (fixed in #106), so a payload typed against it may hold one; draw it the same.
   const children: ReadonlyArray<Button | Select | TextInput> = Array.isArray(
     component.components
@@ -22,7 +24,7 @@ export const ActionRow = ({ component }: ActionRowProps): ReactElement => {
     ? component.components
     : [component.components];
   return (
-    <div className={styles.actionRow}>
+    <div className={styles.actionRow} {...inspect}>
       <div className={styles.children}>
         {children.map((child, index) => {
           // Payload order is the identity of each child; none has a stable key of its own.

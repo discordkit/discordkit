@@ -4,17 +4,48 @@ import { PrimaryButton, QuietButton } from "../controls/Buttons.js";
 import type { JsonError } from "../document/jsonError.js";
 import styles from "./JsonPane.module.css";
 
+/**
+ * What Studio shows when the file changed on disk while the person had unsaved edits, from the JSON pane or the forms: their text is kept, the file's version is shown, and they choose. It sits above every tab, so it is seen wherever the person was editing.
+ */
+export const ConflictBanner = ({
+  fileName,
+  onLoadFile,
+  onKeepMine,
+  canKeepMine
+}: {
+  /** The file's name, for the banner. */
+  fileName: string;
+  onLoadFile: () => void;
+  onKeepMine: () => void;
+  /** False while the person's text does not parse, which cannot be written. */
+  canKeepMine: boolean;
+}): ReactElement => (
+  <div role="alert" className={styles.conflict}>
+    <p className={styles.conflictText}>
+      <strong>
+        {fileName} changed on disk while you had unsaved edits here.
+      </strong>
+      {` `}
+      The preview, findings, code and forms now show the file. Your version is
+      still in the JSON pane and has not been saved; saving is paused until you
+      choose.
+    </p>
+    <div className={styles.conflictActions}>
+      <QuietButton onPress={onLoadFile}>
+        Discard mine, load the file
+      </QuietButton>
+      <PrimaryButton onPress={onKeepMine} isDisabled={!canKeepMine}>
+        Overwrite the file with mine
+      </PrimaryButton>
+    </div>
+  </div>
+);
+
 export interface JsonPaneProps {
   text: string;
   onChange: (text: string) => void;
   /** Where the text stops being JSON, if it does. */
   error: JsonError | undefined;
-  /** The file changed on disk while this text was unsaved. */
-  conflict: boolean;
-  /** The file's name, for the banner. */
-  fileName: string;
-  onLoadFile: () => void;
-  onKeepMine: () => void;
   /** Whether the text is written somewhere: false while nothing has loaded. */
   isDisabled: boolean;
 }
@@ -26,10 +57,6 @@ export const JsonPane = ({
   text,
   onChange,
   error,
-  conflict,
-  fileName,
-  onLoadFile,
-  onKeepMine,
   isDisabled
 }: JsonPaneProps): ReactElement => {
   const area = useRef<HTMLTextAreaElement>(null);
@@ -61,29 +88,6 @@ export const JsonPane = ({
 
   return (
     <div className={styles.pane}>
-      {conflict ? (
-        <div role="alert" className={styles.conflict}>
-          <p className={styles.conflictText}>
-            <strong>
-              {fileName} changed on disk while you had unsaved edits here.
-            </strong>
-            {` `}
-            The preview, findings and code now show the file. Your text is still
-            below and has not been saved; saving is paused until you choose.
-          </p>
-          <div className={styles.conflictActions}>
-            <QuietButton onPress={onLoadFile}>
-              Discard mine, load the file
-            </QuietButton>
-            <PrimaryButton
-              onPress={onKeepMine}
-              isDisabled={error !== undefined}
-            >
-              Overwrite the file with mine
-            </PrimaryButton>
-          </div>
-        </div>
-      ) : null}
       <TextField
         className={styles.field}
         value={text}

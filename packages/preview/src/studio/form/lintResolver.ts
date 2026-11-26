@@ -3,6 +3,7 @@ import { set, type FieldErrors, type Resolver } from "react-hook-form";
 import type { Finding, PathSegment } from "../../findings.js";
 import { lint, type LintResult } from "../../lint/index.js";
 import type { Scene } from "../../scene.js";
+import { prune } from "../editor/prune.js";
 
 let last: { key: string; result: LintResult } | undefined;
 
@@ -81,8 +82,10 @@ export const findingsToErrors = (
  * The form's resolver: the package's own `lint`, so Studio can never disagree with the command line about what is wrong with a message. With no findings the values pass through unchanged, since the form holds the scene itself.
  */
 export const lintResolver: Resolver<Scene> = (values) => {
-  const { findings } = lintScene(values);
+  // Lint sees what is written: the form's cleared fields are absent, not `undefined`.
+  const scene = prune(values);
+  const { findings } = lintScene(scene);
   return findings.length === 0
     ? { values, errors: {} }
-    : { values: {}, errors: findingsToErrors(findings, values) };
+    : { values: {}, errors: findingsToErrors(findings, scene) };
 };

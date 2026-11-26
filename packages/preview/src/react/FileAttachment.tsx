@@ -2,6 +2,7 @@ import type { ReactElement } from "react";
 import type { File as FileComponent } from "@discordkit/client/components/types/File";
 import { formatFileSize } from "../format/fileSize.js";
 import { FileIcon } from "./icons.js";
+import { useInspect } from "./Inspect.js";
 import { useSceneSettings } from "./SceneContext.js";
 import { SpoilerCover } from "./SpoilerCover.js";
 import styles from "./FileAttachment.module.css";
@@ -31,6 +32,7 @@ export const FileAttachment = ({
   component
 }: FileAttachmentProps): ReactElement => {
   const { context } = useSceneSettings();
+  const inspect = useInspect(component);
   const referenced = nameFromReference(component.file.url);
   const name = component.name ?? referenced;
   const size = component.size ?? context?.attachments?.[referenced]?.size;
@@ -50,7 +52,7 @@ export const FileAttachment = ({
     </div>
   );
   return (
-    <div className={styles.fileWrapper}>
+    <div className={styles.fileWrapper} {...inspect}>
       {component.spoiler === true ? <SpoilerCover>{row}</SpoilerCover> : row}
     </div>
   );

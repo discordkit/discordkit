@@ -10,6 +10,7 @@ import { DefaultAvatar } from "./DefaultAvatar.js";
 import { Embed } from "./Embed.js";
 import { EyeIcon } from "./icons.js";
 import { Image } from "./Image.js";
+import { useInspect } from "./Inspect.js";
 import { Markup } from "./Markup.js";
 import { MessageComponents } from "./MessageComponents.js";
 import {
@@ -118,6 +119,7 @@ export const Message = ({
 }: MessageProps): ReactElement => {
   const { context, clock } = useSceneSettings();
   const author = resolveAuthor(message.author, context);
+  const inspect = useInspect(message);
   const openSelect = useMemo(() => {
     if (message.openSelect === undefined) return null;
     const select = openStringSelect(
@@ -142,7 +144,7 @@ export const Message = ({
     .filter(Boolean)
     .join(` `);
   return (
-    <div className={className}>
+    <div className={className} {...inspect}>
       {groupStart ? (
         <>
           {author.avatar === undefined ? (

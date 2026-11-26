@@ -63,6 +63,29 @@
   gap: var(--st-space-2) var(--st-space-4);
 }
 
+.findingButton {
+  composes: findingHead;
+  box-sizing: border-box;
+  width: 100%;
+  padding: var(--st-space-1) 0;
+  border: 0;
+  border-radius: var(--st-radius-sm);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  outline: none;
+  cursor: pointer;
+}
+
+.findingButton[data-hovered] {
+  background: var(--st-surface-hover);
+}
+
+.findingButton[data-focus-visible] {
+  outline: var(--st-focus-width) solid var(--st-focus);
+}
+
 .icon {
   flex: none;
   width: 14px;

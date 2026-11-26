@@ -4,6 +4,7 @@ import { ComponentType } from "@discordkit/client/components/types/ComponentType
 import { colorToHex } from "../format/color.js";
 import { ActionRow } from "./ActionRow.js";
 import { FileAttachment } from "./FileAttachment.js";
+import { useInspect } from "./Inspect.js";
 import { MediaGallery } from "./MediaGallery.js";
 import { Section } from "./Section.js";
 import { Separator } from "./Separator.js";
@@ -43,6 +44,7 @@ const renderChild = (child: Child, key: number): ReactElement => {
 
 /** A Container: a bordered card whose children stack with an 8px gap, with an optional accent bar on its leading edge. A container marked `spoiler` is blurred under a "Spoiler" pill until clicked, or drawn revealed when the scene reveals spoilers. */
 export const Container = ({ component }: ContainerProps): ReactElement => {
+  const inspect = useInspect(component);
   // `0x000000` is a valid accent, so test for absence rather than truthiness.
   const accent = component.accentColor ?? undefined;
   // React's style type has no entries for custom properties; this is the one the accent rule reads.
@@ -58,12 +60,13 @@ export const Container = ({ component }: ContainerProps): ReactElement => {
           : `${styles.container} ${styles.withAccentColor}`
       }
       style={style}
+      {...(component.spoiler === true ? undefined : inspect)}
     >
       {component.components.map((child, index) => renderChild(child, index))}
     </div>
   );
   return component.spoiler === true ? (
-    <SpoilerCover>{card}</SpoilerCover>
+    <SpoilerCover inspect={inspect}>{card}</SpoilerCover>
   ) : (
     card
   );

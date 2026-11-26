@@ -53,6 +53,12 @@
   border-right: 0;
 }
 
+/* The conflict banner sits above the tabs, so it is in view whichever one the person was editing in. */
+.banner {
+  padding: var(--st-space-4) var(--st-space-5) 0;
+  background: var(--st-surface);
+}
+
 .tabs {
   display: flex;
   flex: 1;

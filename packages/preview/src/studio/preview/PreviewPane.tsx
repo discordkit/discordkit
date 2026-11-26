@@ -1,5 +1,16 @@
-import type { ReactElement } from "react";
+import {
+  memo,
+  useCallback,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  type ReactElement,
+  type RefObject
+} from "react";
+import { InspectContext, type Inspect } from "../../react/Inspect.js";
 import type { InputKind } from "../../scene/intake.js";
+import { valueAt } from "../editor/paths.js";
+import { buildTree, flatten } from "../editor/tree.js";
 import {
   defaultLocale,
   defaultNow,
@@ -65,9 +76,73 @@ export interface PreviewPaneProps {
   onProblem: (message: string | undefined) => void;
   /** Shown over the stage when the scene on screen is not the pane's text: it does not parse, or a conflict is showing the file's. */
   staleNote: string | undefined;
+  /** The tree's selected node, outlined in the preview. */
+  selected: string | undefined;
+  /** Called with a node's id when the person clicks what it draws. */
+  onSelect: (id: string) => void;
 }
 
-export const PreviewPane = ({
+const nodeAttribute = `data-dkp-node`;
+
+/**
+ * Which object in the scene each drawn element came from, for selecting by clicking: every message, embed and component, by the tree's id for it. The preview's components ask for it through `InspectContext` and mark their outermost element; nothing is marked for anyone else (see `react/Inspect.ts`).
+ */
+const useInspect = (scene: SceneData | undefined): Inspect => {
+  const ids = useMemo(() => {
+    const map = new WeakMap<object, string>();
+    if (scene === undefined) return map;
+    for (const node of flatten(buildTree(scene))) {
+      const value = valueAt(scene, node.path);
+      if (typeof value === `object` && value !== null) map.set(value, node.id);
+    }
+    return map;
+  }, [scene]);
+  return useCallback(
+    (node: object) => {
+      const id = ids.get(node);
+      return id === undefined ? undefined : { [nodeAttribute]: id };
+    },
+    [ids]
+  );
+};
+
+/**
+ * Places the outline around the selected node in this preview: measured from the element the preview marked for it, relative to this preview's own frame, and measured again whenever the drawing changes size. It is Studio's element laid over the preview, not a style inside it, so the preview stays exactly what `render` draws. The measurement is written straight to the outline's style, since it is layout, not state anything else renders from.
+ */
+const useSelectionBox = (
+  frame: RefObject<HTMLDivElement | null>,
+  drawing: RefObject<HTMLDivElement | null>,
+  outline: RefObject<HTMLDivElement | null>,
+  selected: string | undefined,
+  scene: SceneData | undefined
+): void => {
+  useLayoutEffect(() => {
+    const root = drawing.current;
+    const outer = frame.current;
+    const box = outline.current;
+    if (root === null || outer === null || box === null) return;
+    const measure = (): void => {
+      const element =
+        selected === undefined
+          ? null
+          : root.querySelector(`[${nodeAttribute}="${CSS.escape(selected)}"]`);
+      box.toggleAttribute(`hidden`, element === null);
+      if (element === null) return;
+      const at = element.getBoundingClientRect();
+      const origin = outer.getBoundingClientRect();
+      box.style.setProperty(`top`, `${String(at.top - origin.top)}px`);
+      box.style.setProperty(`left`, `${String(at.left - origin.left)}px`);
+      box.style.setProperty(`width`, `${String(at.width)}px`);
+      box.style.setProperty(`height`, `${String(at.height)}px`);
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(root);
+    return (): void => observer.disconnect();
+  }, [frame, drawing, outline, selected, scene]);
+};
+
+export const PreviewPane = memo(function PreviewPane({
   scene,
   kind,
   assetUrl,
@@ -75,8 +150,15 @@ export const PreviewPane = ({
   disabledReason,
   fieldError,
   onProblem,
-  staleNote
-}: PreviewPaneProps): ReactElement => {
+  staleNote,
+  selected,
+  onSelect
+}: PreviewPaneProps): ReactElement {
+  const inspect = useInspect(scene);
+  const frameRef = useRef<HTMLDivElement>(null);
+  const drawingRef = useRef<HTMLDivElement>(null);
+  const outlineRef = useRef<HTMLDivElement>(null);
+  useSelectionBox(frameRef, drawingRef, outlineRef, selected, scene);
   const disabled = disabledReason !== undefined || scene === undefined;
   const width = scene?.width ?? defaultWidth;
   const theme = scene?.theme ?? defaultTheme;
@@ -185,7 +267,7 @@ export const PreviewPane = ({
         )}
       </div>
       <div className={styles.stage}>
-        <div className={styles.frame}>
+        <div ref={frameRef} className={styles.frame}>
           <p className={styles.caption}>
             <span>{String(width)} px</span>
             <span>
@@ -196,19 +278,40 @@ export const PreviewPane = ({
             )}
           </p>
           {/* `all: initial` stops Studio's inherited text styles reaching the preview, so it is drawn as the Node renderer draws it. */}
-          <div className={styles.isolate} data-testid="preview">
+          {/* A click selects what was clicked, in the tree and the form. The tree is the keyboard's way to the same thing, so this is a pointer convenience and needs no role of its own. */}
+          {/* oxlint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- the tree is the keyboard route to the same selection. */}
+          <div
+            ref={drawingRef}
+            className={styles.isolate}
+            data-testid="preview"
+            onClick={(event) => {
+              const target =
+                event.target instanceof Element ? event.target : null;
+              const marked = target?.closest<HTMLElement>(`[${nodeAttribute}]`);
+              const id = marked?.getAttribute(nodeAttribute);
+              if (id !== null && id !== undefined) onSelect(id);
+            }}
+          >
             {scene === undefined ? (
               <p className={styles.empty}>Nothing to draw yet.</p>
             ) : (
-              <DrawBoundary
-                scene={scene}
-                assetUrl={assetUrl}
-                onProblem={onProblem}
-              />
+              <InspectContext value={inspect}>
+                <DrawBoundary
+                  scene={scene}
+                  assetUrl={assetUrl}
+                  onProblem={onProblem}
+                />
+              </InspectContext>
             )}
           </div>
+          <div
+            ref={outlineRef}
+            className={styles.selection}
+            aria-hidden="true"
+            hidden
+          />
         </div>
       </div>
     </section>
   );
-};
+});
