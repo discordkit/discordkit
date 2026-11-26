@@ -13,6 +13,9 @@ import { decodePng, encodePng, type Bitmap } from "../png.js";
 // Launching a browser is the slow part of this spec, and on a cold two-core CI runner it has taken longer than Vitest's default 10 second hook limit.
 const launchTimeout = 60_000;
 
+// Each test below opens a page per image to ask Chromium for its own decode. One of them does that for every test picture, and on a slow CI runner it has run past Vitest's default 5 second test limit.
+const decodeTimeout = 60_000;
+
 const crcTable = Array.from({ length: 256 }, (_, index) => {
   let value = index;
   for (let bit = 0; bit < 8; bit++) {
@@ -322,38 +325,49 @@ describe(`decodePng`, () => {
         height: spec.height
       });
       expect(pixels(ours)).toStrictEqual(pixels(theirs));
-    }
+    },
+    decodeTimeout
   );
 
-  it(`reads the test pictures, which were written by another tool, the way Chromium does`, async () => {
-    const directory = new URL(`../../__tests__/assets/`, import.meta.url);
-    const files = (await readdir(directory)).filter((file) =>
-      file.endsWith(`.png`)
-    );
-    expect(files.length).toBeGreaterThan(0);
-    for (const file of files) {
-      const png = await readFile(new URL(file, directory));
-      const same = pixels(decodePng(png)).equals(
-        pixels(await chromiumDecode(png))
+  it(
+    `reads the test pictures, which were written by another tool, the way Chromium does`,
+    async () => {
+      const directory = new URL(`../../__tests__/assets/`, import.meta.url);
+      const files = (await readdir(directory)).filter((file) =>
+        file.endsWith(`.png`)
       );
-      expect({ file, same }).toStrictEqual({ file, same: true });
-    }
-  });
+      expect(files.length).toBeGreaterThan(0);
+      for (const file of files) {
+        const png = await readFile(new URL(file, directory));
+        const same = pixels(decodePng(png)).equals(
+          pixels(await chromiumDecode(png))
+        );
+        expect({ file, same }).toStrictEqual({ file, same: true });
+      }
+    },
+    decodeTimeout
+  );
 
-  it(`reads a screenshot Chromium itself wrote`, async () => {
-    const page = await browser.newPage({ viewport: { width: 40, height: 30 } });
-    try {
-      await page.setContent(
-        `<body style="margin:0;background:linear-gradient(90deg,#5865f2,#d22d39)">Aa</body>`
-      );
-      const png = await page.screenshot();
-      expect(
-        pixels(decodePng(png)).equals(pixels(await chromiumDecode(png)))
-      ).toBe(true);
-    } finally {
-      await page.close();
-    }
-  });
+  it(
+    `reads a screenshot Chromium itself wrote`,
+    async () => {
+      const page = await browser.newPage({
+        viewport: { width: 40, height: 30 }
+      });
+      try {
+        await page.setContent(
+          `<body style="margin:0;background:linear-gradient(90deg,#5865f2,#d22d39)">Aa</body>`
+        );
+        const png = await page.screenshot();
+        expect(
+          pixels(decodePng(png)).equals(pixels(await chromiumDecode(png)))
+        ).toBe(true);
+      } finally {
+        await page.close();
+      }
+    },
+    decodeTimeout
+  );
 
   it(`explains why a file is not a PNG it can read, so the caller knows which file to fix`, () => {
     expect(() => decodePng(Buffer.from(`GIF89a`))).toThrow(
