@@ -8,7 +8,11 @@ import type { Finding } from "../findings.js";
 import type { Scene } from "../scene.js";
 import { defaultWidth } from "../scene.js";
 import { resolveClock } from "../format/timestamp.js";
-import { placeholderClass, transparentPixel } from "../react/Image.js";
+import {
+  missingAttribute,
+  placeholderClass,
+  transparentPixel
+} from "../react/Image.js";
 import { measureAttribute } from "../react/MediaGallery.js";
 import { Scene as SceneView, sceneSelector } from "../react/Scene.js";
 import { overlayAttribute } from "../react/SelectPopout.js";
@@ -351,9 +355,9 @@ export const renderScene = async (
           `@discordkit/preview/node rendered the scene, but Chromium did not load the bundled fonts (${[...new Set(fontsLoaded.failed)].join(`, `) || fonts.brand}), so the image would use whatever fallback font the machine has. Check that \`@fontsource-variable/noto-sans\` and \`@fontsource-variable/noto-sans-jp\` are installed beside @discordkit/preview and that their \`files/\` directories are intact, then render again.`
         );
       }
-      // Wait for every image, then swap any that would not decode for the placeholder, so the image never shows the browser's broken-image icon. Then give each gallery item whose shape the payload did not state its picture's aspect ratio, which is what a browser's `onLoad` does and server rendering cannot.
+      // Wait for every image, then swap any that would not decode for the placeholder, so the image never shows the browser's broken-image icon. Then give each gallery item whose size the payload did not state its picture's width and aspect ratio, which is what a browser's `onLoad` does and server rendering cannot. A placeholder keeps the gallery's default size.
       const broken = await page.evaluate(
-        async ({ pixel, placeholder, measure }) => {
+        async ({ pixel, placeholder, measure, missing }) => {
           const images = [...document.images];
           await Promise.all(
             images.map(async (image) => image.decode().catch(() => undefined))
@@ -365,7 +369,7 @@ export const renderScene = async (
           for (const image of failed) {
             image.src = pixel;
             image.classList.add(placeholder);
-            image.setAttribute(`data-discordkit-preview-missing`, image.alt);
+            image.setAttribute(missing, image.alt);
           }
           await Promise.all(
             failed.map(async (image) => image.decode().catch(() => undefined))
@@ -374,7 +378,13 @@ export const renderScene = async (
             `[${measure}]`
           )) {
             const image = item.querySelector(`img`);
-            if (image && image.naturalWidth > 0 && image.naturalHeight > 0) {
+            if (
+              image &&
+              !image.hasAttribute(missing) &&
+              image.naturalWidth > 0 &&
+              image.naturalHeight > 0
+            ) {
+              item.style.setProperty(`--dkp-width`, String(image.naturalWidth));
               item.style.setProperty(
                 `--dkp-ratio`,
                 String(image.naturalWidth / image.naturalHeight)
@@ -386,7 +396,8 @@ export const renderScene = async (
         {
           pixel: transparentPixel,
           placeholder: placeholderClass,
-          measure: measureAttribute
+          measure: measureAttribute,
+          missing: missingAttribute
         }
       );
       // An open select's list hangs over what is below it, as the client's does, and can reach past the last message. The screenshot is of the scene's box, so grow the box's bottom padding until the list fits inside it with the usual space below.

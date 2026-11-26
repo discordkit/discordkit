@@ -1,6 +1,7 @@
 import { readdir, readFile, stat } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { basename, dirname, extname, join, resolve } from "node:path";
+import { ggSansStandInDescriptors } from "../fontMetrics.js";
 import { readFontDescriptors } from "./fontFile.js";
 
 const require = createRequire(import.meta.url);
@@ -57,7 +58,9 @@ const fontsource = async (
   name: string,
   family: string,
   slug: string,
-  styles: ReadonlyArray<`normal` | `italic`>
+  styles: ReadonlyArray<`normal` | `italic`>,
+  /** More descriptors for every face, such as metric overrides. */
+  descriptors = ``
 ): Promise<DeclaredFace[]> => {
   const directory = packageDir(name);
   // The package's map of subset name to `unicode-range`, e.g. `"latin": "U+0000-00FF,…"`, or `"[12]": "…"` for a numbered CJK slice.
@@ -72,7 +75,7 @@ const fontsource = async (
         url,
         rule: face(
           family,
-          `font-style:${style};font-weight:100 900;unicode-range:${range};`,
+          `font-style:${style};font-weight:100 900;unicode-range:${range};${descriptors}`,
           url,
           `woff2`
         ),
@@ -186,7 +189,7 @@ export const fontStack = ({ ggSans, cjk = `system` }: FontOptions): string => {
 export const fontStackOverride = fontStack({});
 
 /**
- * Every face the page may need: the bundled Noto Sans (upright and italic, since gg sans has a true italic), supplied gg sans when given, and Noto Sans JP when CJK is pinned. The browser fetches only the faces whose Unicode range the scene's text uses.
+ * Every face the page may need: the bundled Noto Sans (upright and italic, since gg sans has a true italic, and with gg sans's vertical metrics, so lines and inline boxes take the room they do in the client), supplied gg sans when given, and Noto Sans JP when CJK is pinned. The browser fetches only the faces whose Unicode range the scene's text uses.
  */
 export const loadFonts = async ({
   ggSans,
@@ -198,7 +201,8 @@ export const loadFonts = async ({
       `@fontsource-variable/noto-sans`,
       `Noto Sans`,
       `noto-sans`,
-      [`normal`, `italic`]
+      [`normal`, `italic`],
+      ggSansStandInDescriptors
     )),
     ...(cjk === `noto-sans-jp`
       ? await fontsource(

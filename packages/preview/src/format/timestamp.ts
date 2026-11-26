@@ -29,7 +29,7 @@ export const resolveClock = ({
   const ms = Date.parse(now);
   if (Number.isNaN(ms)) {
     throw new Error(
-      `@discordkit/preview could not read the scene's \`now\` (${JSON.stringify(now)}) as a date. It is the clock that relative timestamps and "Today at" are measured from, so it has to be an ISO 8601 date-time. Write it like "2026-11-25T16:05:00Z".`
+      `@discordkit/preview could not read the scene's \`now\` (${JSON.stringify(now)}) as a date. It is the clock that relative timestamps and the day in each message header are measured from, so it has to be an ISO 8601 date-time. Write it like "2026-11-25T16:05:00Z".`
     );
   }
   try {
@@ -140,7 +140,27 @@ const dayNumber = (ms: number, timeZone: string): number => {
 };
 
 /**
- * The time in a message header: "Today at 4:05 PM", "Yesterday at 4:05 PM", or the date and time for anything older or newer. The words are English whatever the locale, which is only right for English locales; the time and date follow the locale.
+ * The time in a message header, as the desktop client writes it.
+ *
+ * - Sent on the viewer's current day: the time alone, "4:05 PM". Seen in every desktop capture of a header (spec §7b).
+ * - The day before: "Yesterday at 4:05 PM". Not seen in any capture; kept from what an embed's footer says.
+ * - Anything older or newer: a short date and the time, "4/20/21, 4:05 PM". Seen only in the iOS app; the desktop header for an older message has not been captured.
+ *
+ * The word "Yesterday" is English whatever the locale; the time and date follow the locale.
+ */
+export const formatHeaderTime = (ms: number, clock: Clock): string => {
+  const days =
+    dayNumber(clock.now, clock.timeZone) - dayNumber(ms, clock.timeZone);
+  if (days === 1) return formatMessageTime(ms, clock);
+  return new Intl.DateTimeFormat(clock.locale, {
+    ...(days === 0 ? {} : { dateStyle: `short` }),
+    timeStyle: `short`,
+    timeZone: clock.timeZone
+  }).format(ms);
+};
+
+/**
+ * The time in an embed's footer: "Today at 4:05 PM", "Yesterday at 4:05 PM", or the date and time for anything older or newer. None of these has been seen in a capture. The words are English whatever the locale, which is only right for English locales; the time and date follow the locale.
  */
 export const formatMessageTime = (ms: number, clock: Clock): string => {
   const time = new Intl.DateTimeFormat(clock.locale, {

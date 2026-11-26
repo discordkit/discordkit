@@ -3,7 +3,12 @@
  *
  * From the stylesheet: items 4px apart, each rounded by 2px (`.mosaicItemMediaMosaic_*`), the whole gallery clipped to an 8px radius at up to 600px wide in a Components V2 message (`.visualMediaItemContainer_*.isInAppComponentsV2_*`), a lone item rounded by 8px and up to 350px tall (`.oneByOneGrid_*`, `.oneByOneGridSingle_*`), a pair or a lone item over a grid up to 280px tall (`.oneByTwoGrid_*`, `.oneByOneGridMosaic_*`), three items and the 2×2 grid up to 350px (`.oneByTwoLayoutThreeGrid_*`, `.twoByTwoGrid_*`), the three-item split 2:1 (`.oneByTwoSoloItem_*`, `.oneByTwoDuoItem_*`, `.twoByOneGrid_*`), squares in the 3-column grid, and 4px between a lone item or a pair and a grid below it.
  *
- * Ours, because Discord sizes items in JavaScript: an item takes its picture's aspect ratio (`--dkp-ratio`, from the payload's `width` and `height`, or measured once the picture loads) and is scaled up or down to fill its slot, never drawn at the file's own size (Tome observed this); a lone item is as wide as fits at that ratio up to 350px tall; a band of items is as tall as its tallest item would be at the band's width, up to the band's limit, and every item in it fills that height, cropped rather than letterboxed (Tome: Discord "never letterboxes"). The gallery asks for the full 600px, so a container holding one is as wide as the column allows.
+ * Ours, because Discord sizes items in JavaScript. An item knows its picture's width and aspect ratio (`--dkp-width` and `--dkp-ratio`, from the payload's `width` and `height`, or measured once the picture loads). How it uses them depends on the count, as format/galleryLayout.ts says:
+ *
+ * - One or two items (`.ownSize`): each picture at its file's own size, never scaled up, scaled down to fit: one to the column's width and 350px tall, each of two to 280px tall and, when the pair is wider than the column, in proportion to their widths. The gallery is only as wide as its pictures, so a container holding it shrinks to it. Seen in the desktop client for one picture of every size and for a pair of small ones (spec §7b); a pair of large or mixed pictures has not been seen.
+ * - Three or more: the gallery asks for the full 600px, and a band of items is as tall as its tallest item would be at the band's width, up to the band's limit, every item filling that height, cropped rather than letterboxed. Seen in the desktop client for four (which scales 32px icons up into wide tiles); three and five to ten have not been seen on desktop.
+ *
+ * A picture whose size is not known (no size in the payload, and nothing loaded) is drawn as a square at its slot's height cap.
  */
 .gallery {
   /* A picture that has not arrived is Discord's loading box, `.imagePlaceholder_*`. */
@@ -12,6 +17,10 @@
   max-width: 100%;
   overflow: hidden;
   border-radius: 8px;
+}
+
+.ownSize {
+  width: fit-content;
 }
 
 .oneByOne {
@@ -68,11 +77,27 @@
   flex: 1;
 }
 
-/* A lone item: as wide as its ratio allows at 350px tall, narrower if the gallery is. */
+/* A lone item: its picture's own width, or narrower if that would make it taller than 350px or wider than the column. */
 .single {
-  width: calc(350px * var(--dkp-ratio, 1));
+  width: min(
+    calc(var(--dkp-width, 350) * 1px),
+    calc(350px * var(--dkp-ratio, 1))
+  );
   max-width: 100%;
   border-radius: 8px;
+}
+
+/* Each of a pair: its picture's own width, or narrower if that would make it taller than 280px. A pair too wide for the column shrinks in proportion to the pictures' widths, so two of one size split the width evenly. Pictures of different shapes keep their shapes, top-aligned. Only a pair of small pictures of one shape has been seen. */
+.ownSize .oneByTwo {
+  align-items: flex-start;
+}
+
+.ownSize .oneByTwo > .item {
+  flex: 0 1 auto;
+  width: min(
+    calc(var(--dkp-width, 280) * 1px),
+    calc(280px * var(--dkp-ratio, 1))
+  );
 }
 
 .oneByTwo > .solo {

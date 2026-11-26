@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vite-plus/test";
 import { colorToHex } from "../color.js";
 import { embedFieldColumns } from "../embedFields.js";
-import { arrangeGallery, galleryArrangements } from "../galleryLayout.js";
+import {
+  arrangeGallery,
+  galleryArrangements,
+  gallerySizing
+} from "../galleryLayout.js";
 
 /** The decisions Discord makes in JavaScript rather than CSS, kept as data so calibration can correct them in one place. These pin what the data says, so a change to it is deliberate. */
 
@@ -35,15 +39,44 @@ describe(`the media gallery arrangement`, () => {
     }
   );
 
-  it(`draws three as one large item beside two stacked, and four as an even 2×2, as Tome saw in the client`, () => {
+  it(`draws three as one large item beside two stacked, and four as an even 2×2, as the captures show (three on iOS only)`, () => {
     expect(arrangeGallery(items(3)).map((band) => band.layout)).toStrictEqual([
       `oneByTwoLayoutThree`
     ]);
     expect(arrangeGallery(items(4)).map((band) => band.layout)).toStrictEqual([
       `twoByTwo`
     ]);
-    expect(galleryArrangements[3].evidence).toBe(`observed`);
-    expect(galleryArrangements[4].evidence).toBe(`observed`);
+    expect(galleryArrangements[3].evidence).toBe(`ios`);
+    expect(galleryArrangements[4].evidence).toBe(`desktop`);
+  });
+
+  it(`draws one or two pictures at their own size and three or more filling the width, as the desktop captures show for one, two and four`, () => {
+    expect(
+      Object.keys(galleryArrangements).map((count) =>
+        gallerySizing(Number(count))
+      )
+    ).toStrictEqual([
+      `own`,
+      `own`,
+      `fill`,
+      `fill`,
+      `fill`,
+      `fill`,
+      `fill`,
+      `fill`,
+      `fill`,
+      `fill`
+    ]);
+    expect(galleryArrangements[1].evidence).toBe(`desktop`);
+    expect(galleryArrangements[2].evidence).toBe(`desktop`);
+  });
+
+  it(`says what part of an entry no capture has shown, so a reader does not take a choice for an observation`, () => {
+    expect(galleryArrangements[2].unobserved).toMatch(/large/);
+    expect(galleryArrangements[3].unobserved).toMatch(/desktop/);
+    for (const count of [5, 6, 7, 8, 9, 10] as const) {
+      expect(galleryArrangements[count].evidence).toBe(`stylesheet`);
+    }
   });
 
   it(`puts what is left over from rows of three in a band on top, with the rest in the 3-column grid`, () => {
@@ -61,6 +94,9 @@ describe(`the media gallery arrangement`, () => {
     `refuses a gallery of %i items, which Discord will not send, instead of inventing an arrangement`,
     (count) => {
       expect(() => arrangeGallery(items(count))).toThrow(
+        /cannot draw a Media Gallery of \d+ items/
+      );
+      expect(() => gallerySizing(count)).toThrow(
         /cannot draw a Media Gallery of \d+ items/
       );
     }

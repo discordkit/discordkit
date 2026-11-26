@@ -5,6 +5,9 @@ import styles from "./Image.module.css";
 /** A one-pixel transparent GIF. A placeholder is an image of nothing over the placeholder colour, so it keeps the size and box of the image it stands in for. */
 export const transparentPixel = `data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7`;
 
+/** The attribute an image drawn as a placeholder carries, naming the reference it stands in for. The Node renderer adds it to an image that arrived but would not decode. */
+export const missingAttribute = `data-discordkit-preview-missing`;
+
 /** The class the Node renderer adds to an image that arrived but would not decode, so it draws as the same placeholder. */
 export const placeholderClass = styles.placeholder;
 

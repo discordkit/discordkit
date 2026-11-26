@@ -94,6 +94,17 @@
   overflow-wrap: break-word;
 }
 
+/*
+ * A Components V2 message's edited mark, on its own line under the components. Ours, measured, since the rule Discord draws it with is not identified: in the desktop captures (spec §7b) the mark starts at the components' leading edge, with no space before it, its baseline is 19px under the container's bottom edge, and the next message in the group starts 32px under that edge where it would otherwise start 8px under it. The content line alone gives 18px and 30px, so the line is padded by 1px above and below.
+ */
+.editedLine {
+  padding-block: 1px;
+}
+
+.editedLine .timestampInline {
+  margin-inline-start: 0;
+}
+
 .edited {
   font-size: 0.625rem;
   font-weight: var(--font-weight-normal);

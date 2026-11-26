@@ -1,9 +1,9 @@
-/* The chat column behind the messages. Its background, and `line-height: 1`, are Discord's (build 679963: the chat's `--background-base-lowest`, and the `body` rule). The space below the last message is ours: it matches the space a message group leaves above itself, so the image is evenly framed. A flex column keeps the first message's group spacing inside the column instead of letting it collapse through the top. */
+/* The chat column behind the messages. Its background, and `line-height: 1`, are Discord's (build 679963: `.chatContent_*`'s `--background-base-lower`, #1a1a1e in the dark theme as the desktop captures show, and the `body` rule). The space below the last message is ours: it matches the space a message group leaves above itself, so the image is evenly framed. A flex column keeps the first message's group spacing inside the column instead of letting it collapse through the top. */
 .scene {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   padding-bottom: var(--custom-group-spacing-start);
-  background: var(--background-base-lowest);
+  background: var(--background-base-lower);
   line-height: 1;
 }
