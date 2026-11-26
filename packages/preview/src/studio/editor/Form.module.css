@@ -1,0 +1,372 @@
+/* The structured editor's forms: one column of labelled fields, dense like the rest of Studio. Inputs, switches, segments and list boxes reuse the controls' own classes (`controls/Fields.module.css`). */
+
+.form {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--st-space-5);
+  min-width: 0;
+}
+
+.heading {
+  display: flex;
+  align-items: baseline;
+  gap: var(--st-space-3);
+  margin: 0;
+  color: var(--st-text);
+  font-size: var(--st-text-md);
+  font-weight: 600;
+  outline: none;
+}
+
+.headingDetail {
+  overflow: hidden;
+  color: var(--st-text-muted);
+  font-family: var(--st-font-code);
+  font-size: var(--st-text-xs);
+  font-weight: 400;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.heading:focus-visible {
+  outline: var(--st-focus-width) solid var(--st-focus);
+  outline-offset: 2px;
+}
+
+.field {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--st-space-2);
+  min-width: 0;
+}
+
+.label {
+  color: var(--st-text-muted);
+  font-size: var(--st-text-xs);
+  font-weight: 500;
+}
+
+.description {
+  display: flex;
+  flex-direction: column;
+  gap: var(--st-space-2);
+}
+
+.help {
+  margin: 0;
+  color: var(--st-text-muted);
+  font-size: var(--st-text-xs);
+  line-height: 1.4;
+}
+
+.textarea {
+  box-sizing: border-box;
+  width: 100%;
+  max-height: 24lh;
+  padding: var(--st-space-3) var(--st-space-4);
+  border: 1px solid var(--st-control-border);
+  border-radius: var(--st-radius-sm);
+  background: var(--st-surface);
+  color: var(--st-text);
+  /* Prose (a text display's markdown, an embed's description, a field's value) is written in the interface font, which sets Japanese and other scripts with their own spacing; the code font is kept for ids, URLs and colours. */
+  font-family: var(--st-font-ui);
+  font-size: var(--st-text-md);
+  line-height: 1.5;
+  resize: vertical;
+  outline: none;
+  field-sizing: content;
+}
+
+.textarea[data-hovered] {
+  border-color: var(--st-text-muted);
+}
+
+.textarea[data-focused] {
+  border-color: var(--st-focus);
+  box-shadow: 0 0 0 1px var(--st-focus);
+}
+
+.textarea[data-invalid] {
+  border-color: var(--st-error);
+}
+
+.textarea[data-disabled] {
+  opacity: 0.55;
+}
+
+.number {
+  max-width: 12ch;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--st-space-4) var(--st-space-5);
+  align-items: start;
+}
+
+.group {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--st-space-4);
+  min-width: 0;
+  margin: 0;
+  padding: var(--st-space-4) var(--st-space-5) var(--st-space-5);
+  border: 1px solid var(--st-border);
+  border-radius: var(--st-radius-md);
+}
+
+.legend {
+  padding: 0 var(--st-space-2);
+  color: var(--st-text-muted);
+  font-size: var(--st-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.findingsError,
+.findingsWarning {
+  display: flex;
+  flex-direction: column;
+  gap: var(--st-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--st-text-xs);
+  line-height: 1.4;
+}
+
+.findingsError {
+  color: var(--st-error);
+}
+
+.findingsWarning {
+  color: var(--st-warn);
+}
+
+.finding {
+  display: flex;
+  gap: var(--st-space-3);
+}
+
+.findingIcon {
+  flex: none;
+  width: 13px;
+  height: 13px;
+  margin-top: 1px;
+}
+
+.inlineCode {
+  font-family: var(--st-font-code);
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.colorRow {
+  display: flex;
+  align-items: center;
+  gap: var(--st-space-3);
+}
+
+.colorField {
+  width: 11ch;
+}
+
+.swatchButton {
+  box-sizing: border-box;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--st-control-height);
+  height: var(--st-control-height);
+  padding: 3px;
+  border: 1px solid var(--st-control-border);
+  border-radius: var(--st-radius-sm);
+  background: var(--st-surface);
+  outline: none;
+}
+
+.swatchButton[data-focus-visible] {
+  outline: var(--st-focus-width) solid var(--st-focus);
+  outline-offset: 1px;
+}
+
+.swatchButton[data-disabled] {
+  opacity: 0.55;
+}
+
+.swatch,
+.swatchNone {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 2px;
+}
+
+/* No colour: a struck-through empty box, as colour tools draw "none". */
+.swatchNone {
+  background: linear-gradient(
+    to top right,
+    transparent calc(50% - 1px),
+    var(--st-error) calc(50% - 1px),
+    var(--st-error) calc(50% + 1px),
+    transparent calc(50% + 1px)
+  );
+  box-shadow: inset 0 0 0 1px var(--st-border-strong);
+}
+
+.colorPopover {
+  padding: var(--st-space-5);
+  border: 1px solid var(--st-control-border);
+  border-radius: var(--st-radius-md);
+  background: var(--st-surface-raised);
+  box-shadow: var(--st-shadow);
+}
+
+.colorDialog {
+  display: flex;
+  flex-direction: column;
+  gap: var(--st-space-5);
+  outline: none;
+}
+
+.colorArea {
+  width: 192px;
+  height: 192px;
+  border-radius: var(--st-radius-sm);
+}
+
+.colorSlider {
+  width: 192px;
+}
+
+.colorTrack {
+  height: 16px;
+  border-radius: var(--st-radius-sm);
+}
+
+.colorThumb {
+  box-sizing: border-box;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 1px #000000,
+    inset 0 0 0 1px #000000;
+}
+
+.colorTrack .colorThumb {
+  top: 50%;
+}
+
+.colorThumb[data-focus-visible] {
+  width: 24px;
+  height: 24px;
+}
+
+.quietButton {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--st-space-2);
+  height: var(--st-control-height);
+  padding: 0 var(--st-space-4);
+  border: 1px solid var(--st-control-border);
+  border-radius: var(--st-radius-sm);
+  background: var(--st-surface);
+  color: var(--st-text);
+  font: inherit;
+  font-size: var(--st-text-sm);
+  white-space: nowrap;
+  outline: none;
+}
+
+.quietButton[data-hovered] {
+  background: var(--st-surface-hover);
+}
+
+.quietButton[data-focus-visible] {
+  outline: var(--st-focus-width) solid var(--st-focus);
+  outline-offset: 1px;
+}
+
+.quietButton[data-disabled] {
+  opacity: 0.5;
+}
+
+.iconButton {
+  composes: quietButton;
+  justify-content: center;
+  width: var(--st-control-height);
+  padding: 0;
+}
+
+.icon {
+  flex: none;
+  width: 14px;
+  height: 14px;
+}
+
+/* A repeated item in a list: an option, a field, a picture. */
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--st-space-4);
+  padding: var(--st-space-4) var(--st-space-5) var(--st-space-5);
+  border: 1px solid var(--st-border);
+  border-radius: var(--st-radius-md);
+  background: var(--st-surface);
+}
+
+.itemHead {
+  display: flex;
+  align-items: center;
+  gap: var(--st-space-2);
+}
+
+.itemTitle {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--st-text);
+  font-size: var(--st-text-sm);
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--st-space-4);
+}
+
+.note {
+  margin: 0;
+  padding: var(--st-space-4) var(--st-space-5);
+  border-left: 3px solid var(--st-border-strong);
+  background: var(--st-surface-sunken);
+  color: var(--st-text-muted);
+  font-size: var(--st-text-sm);
+  line-height: 1.45;
+}
+
+.noteAttention {
+  composes: note;
+  border-left-color: var(--st-warn);
+  background: var(--st-warn-soft);
+  color: var(--st-text);
+}

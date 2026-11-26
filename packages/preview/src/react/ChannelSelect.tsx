@@ -20,6 +20,7 @@ export const ChannelSelect = ({ select }: ChannelSelectProps): ReactElement => {
   }));
   return (
     <SelectControl
+      select={select}
       values={multi ? values : values.slice(0, 1)}
       valueStyle={multi ? `pills` : `single`}
       placeholder={select.placeholder}

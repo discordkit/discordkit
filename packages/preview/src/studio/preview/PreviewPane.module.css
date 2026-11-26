@@ -57,6 +57,7 @@
 }
 
 .frame {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -92,6 +93,17 @@
     var(--st-shadow);
   --dkp-font-brand: "Noto Sans Variable";
   --dkp-font-code-brand: "Source Code Pro";
+}
+
+/* The selected node's outline: Studio's own element over the preview, never a style inside it. Clicks pass through to the preview. */
+.selection {
+  position: absolute;
+  box-sizing: border-box;
+  border-radius: 3px;
+  outline: 2px solid var(--st-focus);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--st-focus) 25%, transparent);
+  pointer-events: none;
 }
 
 .empty {

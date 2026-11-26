@@ -6,6 +6,8 @@ export interface SpoilerCoverProps {
   children: ReactNode;
   /** Extra classes for the cover, so it can take the place of the box it covers (a thumbnail's fixed size, say). */
   className?: string;
+  /** What an inspecting tool asked for on the covered component's outermost element, which the cover now is (see `Inspect.ts`). */
+  inspect?: Readonly<Record<`data-${string}`, string>>;
 }
 
 /**
@@ -15,7 +17,8 @@ export interface SpoilerCoverProps {
  */
 export const SpoilerCover = ({
   children,
-  className
+  className,
+  inspect
 }: SpoilerCoverProps): ReactElement => {
   const { revealSpoilers } = useSceneSettings();
   return (
@@ -25,6 +28,7 @@ export const SpoilerCover = ({
           ? styles.spoiler
           : `${styles.spoiler} ${className}`
       }
+      {...inspect}
     >
       <input
         className={styles.toggle}
