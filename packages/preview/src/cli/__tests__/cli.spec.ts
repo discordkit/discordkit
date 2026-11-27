@@ -12,6 +12,7 @@ import {
   it,
   vi
 } from "vite-plus/test";
+import { decodePng } from "../../node/png.js";
 
 /**
  * The command line is what a coding agent calls in its loop: change a message, run one command, read JSON, look at an image. So these specs run the built `discordkit-preview` as a child process, exactly as an agent would, and hold it to what an agent relies on: exactly one JSON document on standard output with `--json`, an exit status that separates "fine", "the message has errors" and "could not run", and messages that say what to do next.
@@ -109,12 +110,19 @@ describe(`discordkit-preview`, () => {
     it(`lists every command and what each exit status means`, async () => {
       const result = await run([`--help`]);
       expect(result.code).toBe(0);
-      for (const command of [`render`, `lint`, `codegen`, `diff`, `studio`])
+      for (const command of [
+        `render`,
+        `lint`,
+        `codegen`,
+        `diff`,
+        `devices`,
+        `studio`
+      ])
         expect(result.stdout).toContain(command);
       expect(result.stdout).toMatch(/Exit status:\s+0[\s\S]+1[\s\S]+2/);
     });
 
-    it.each([`render`, `lint`, `codegen`, `diff`, `studio`])(
+    it.each([`render`, `lint`, `codegen`, `diff`, `devices`, `studio`])(
       `explains %s's options`,
       async (command) => {
         const result = await run([command, `--help`]);
@@ -344,6 +352,262 @@ describe(`discordkit-preview`, () => {
       ]);
       expect(result.code).toBe(2);
       expect(result.stderr).toMatch(/Use --out-dir <dir>/);
+    });
+  });
+
+  describe(`render for devices`, () => {
+    interface Placed {
+      key: string;
+      platform: string | null;
+      calibrated: boolean;
+      chatWidth: number;
+      note: string | null;
+      output: string;
+      box: { x: number; y: number; width: number; height: number };
+      drawing: { x: number; y: number; width: number; height: number };
+      fitsOneScreen: boolean | null;
+    }
+    interface Result {
+      output: string | null;
+      outputs: string[];
+      width: number;
+      height: number;
+      viewports: Placed[];
+      findings: unknown[];
+      counts: unknown[];
+    }
+    const results = (run: Run): Result[] =>
+      (json(run) as { results: Result[] }).results;
+
+    /** The pixels of `box` in a PNG, row by row. */
+    const crop = (
+      png: Buffer,
+      box: { x: number; y: number; width: number; height: number }
+    ): Buffer => {
+      const { width, data } = decodePng(png);
+      const rows: Buffer[] = [];
+      for (let y = box.y; y < box.y + box.height; y++) {
+        const start = (y * width + box.x) * 4;
+        rows.push(Buffer.from(data.subarray(start, start + box.width * 4)));
+      }
+      return Buffer.concat(rows);
+    };
+
+    it(
+      `draws a desktop window and the iPhone 14 Pro side by side in one image, reports where each is, and the phone's says it is not the iOS app`,
+      async () => {
+        const output = join(out, `both.png`);
+        const result = await run([
+          `render`,
+          fixture,
+          `--device`,
+          `desktop-1280x800`,
+          `--device`,
+          `iphone-14-pro`,
+          `--out`,
+          output,
+          `--json`,
+          ...offline()
+        ]);
+        expect(result.code).toBe(0);
+        const [entry] = results(result);
+        expect(entry.outputs).toStrictEqual([output]);
+        expect(entry.viewports.map((viewport) => viewport.key)).toStrictEqual([
+          `desktop-1280x800`,
+          `iphone-14-pro`
+        ]);
+        const [desktop, phone] = entry.viewports;
+        expect(desktop).toMatchObject({
+          calibrated: true,
+          chatWidth: 732,
+          note: null,
+          output
+        });
+        expect(phone).toMatchObject({
+          platform: `ios`,
+          calibrated: false,
+          chatWidth: 393,
+          output,
+          fitsOneScreen: expect.any(Boolean)
+        });
+        expect(phone.note).toMatch(/not as the iOS app draws it/);
+        // Side by side, left to right, each inside the image, with its drawing as wide as its chat column.
+        expect(phone.box.x).toBeGreaterThan(desktop.box.x + desktop.box.width);
+        for (const viewport of entry.viewports) {
+          expect(viewport.drawing.width).toBe(viewport.chatWidth);
+          expect(viewport.box.x + viewport.box.width).toBeLessThanOrEqual(
+            entry.width
+          );
+          expect(viewport.box.y + viewport.box.height).toBeLessThanOrEqual(
+            entry.height
+          );
+        }
+        const png = await readFile(output);
+        expect(png.readUInt32BE(16)).toBe(entry.width);
+
+        // Findings and counts are about the message, so they come once, not per viewport.
+        const linted = await run([`lint`, fixture, `--json`]);
+        const [lintEntry] = results(linted);
+        expect(entry.findings).toStrictEqual(lintEntry.findings);
+        expect(entry.counts).toStrictEqual(lintEntry.counts);
+      },
+      renderTimeout
+    );
+
+    it(
+      `writes one file per viewport with --separate, and a viewport cropped out of the side-by-side image is the same pixels as its own file`,
+      async () => {
+        const base = join(out, `card.png`);
+        const devices = [
+          `--device`,
+          `desktop-1280x800`,
+          `--device`,
+          `iphone-14-pro`
+        ];
+        const separate = await run([
+          `render`,
+          fixture,
+          ...devices,
+          `--separate`,
+          `--out`,
+          base,
+          `--json`,
+          ...offline()
+        ]);
+        expect(separate.code).toBe(0);
+        const [entry] = results(separate);
+        expect(entry.output).toBeNull();
+        expect(entry.outputs).toStrictEqual([
+          join(out, `card.desktop-1280x800.png`),
+          join(out, `card.iphone-14-pro.png`)
+        ]);
+        for (const file of entry.outputs) expect(existsSync(file)).toBe(true);
+
+        const together = await run([
+          `render`,
+          fixture,
+          ...devices,
+          `--out`,
+          join(out, `together.png`),
+          `--json`,
+          ...offline()
+        ]);
+        const [combined] = results(together);
+        const sheet = await readFile(join(out, `together.png`));
+        // The desktop window is drawn bare in its own file: its drawing in the sheet, at the box the JSON gives. Chromium rasterises a few edge pixels of the round avatar differently at another place on the page, so a handful may differ; a box off by even one pixel would differ almost everywhere.
+        const alone = Buffer.from(
+          decodePng(await readFile(entry.outputs[0])).data
+        );
+        const cropped = crop(sheet, combined.viewports[0].drawing);
+        expect(cropped).toHaveLength(alone.length);
+        let different = 0;
+        for (let at = 0; at < alone.length; at += 4) {
+          if (alone.readUInt32BE(at) !== cropped.readUInt32BE(at)) different++;
+        }
+        expect(different / (alone.length / 4)).toBeLessThan(0.001);
+        // The phone's file carries its caption too, so nobody takes it for the app.
+        const phone = entry.viewports[1];
+        expect(phone.box.height).toBeGreaterThan(phone.drawing.height);
+      },
+      renderTimeout * 2
+    );
+
+    it(
+      `draws one device at its own pixel density with --scale device, as wide as a screenshot from that phone`,
+      async () => {
+        const output = join(out, `phone.png`);
+        const result = await run([
+          `render`,
+          fixture,
+          `--device`,
+          `iphone-14-pro`,
+          `--scale`,
+          `device`,
+          `--out`,
+          output,
+          `--json`,
+          ...offline()
+        ]);
+        expect(result.code).toBe(0);
+        expect(results(result)[0]).toMatchObject({ width: 1179 });
+        expect((await readFile(output)).readUInt32BE(16)).toBe(1179);
+      },
+      renderTimeout
+    );
+
+    it(
+      `refuses --scale device for one image of devices with different densities, and says to use --separate`,
+      async () => {
+        const result = await run([
+          `render`,
+          fixture,
+          `--device`,
+          `desktop-1280x800`,
+          `--device`,
+          `iphone-14-pro`,
+          `--scale`,
+          `device`,
+          `--out`,
+          join(out, `x.png`),
+          `--json`,
+          ...offline()
+        ]);
+        expect(result.code).toBe(2);
+        expect(json(result)).toStrictEqual({
+          error: { message: expect.stringMatching(/--separate/) }
+        });
+      },
+      renderTimeout
+    );
+
+    it(`refuses a device it does not know before drawing anything, naming the one probably meant`, async () => {
+      const result = await run([
+        `render`,
+        fixture,
+        `--device`,
+        `iphone14pro`,
+        `--out`,
+        join(out, `x.png`),
+        `--json`
+      ]);
+      expect(result.code).toBe(2);
+      expect(json(result)).toStrictEqual({
+        error: {
+          message: expect.stringMatching(/`iphone-14-pro` \(iPhone 14 Pro\)/)
+        }
+      });
+      expect(existsSync(join(out, `x.png`))).toBe(false);
+    });
+
+    it(`lists every device, as JSON too, with the chat column each gets and whether its layout is its own`, async () => {
+      const text = await run([`devices`]);
+      expect(text.code).toBe(0);
+      expect(text.stdout).toMatch(
+        /iphone-14-pro\s+iPhone 14 Pro\s+393 × 852 @3x/
+      );
+      expect(text.stdout).toMatch(/not as the iOS and Android apps draw them/);
+      const listed = await run([`devices`, `--json`]);
+      expect(listed.code).toBe(0);
+      const { devices } = json(listed) as {
+        devices: Record<string, unknown>[];
+      };
+      expect(devices).toContainEqual(
+        expect.objectContaining({
+          id: `iphone-14-pro`,
+          layout: `desktop`,
+          requestedLayout: `ios`,
+          calibrated: false,
+          chatWidth: 393
+        })
+      );
+      expect(devices).toContainEqual(
+        expect.objectContaining({
+          id: `desktop-1280x800`,
+          chatWidth: 732,
+          chatWidthMemberListClosed: 996,
+          calibrated: true
+        })
+      );
     });
   });
 

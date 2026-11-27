@@ -1,4 +1,5 @@
 import { useMemo, type ReactElement } from "react";
+import type { LayoutId } from "../devices.js";
 import { resolveClock } from "../format/timestamp.js";
 import {
   defaultTheme,
@@ -24,6 +25,8 @@ export type Scene = SceneData;
 export interface SceneProps extends SceneData {
   /** Where each image the scene names should load from, or `null` to draw a placeholder. Defaults to loading URLs as written and drawing `attachment://` references as placeholders, which is what a browser can do. */
   assetUrl?: AssetUrl;
+  /** Which client's layout to draw. Only the desktop web layout exists yet (see `layouts` in `devices.ts`); it is marked on the scene's element as `data-discordkit-preview-layout`, for a later layout to style by. */
+  layout?: LayoutId;
 }
 
 /** Consecutive messages from the same author within this long of each other share one header. The client decides this in JavaScript; unverified. */
@@ -50,7 +53,8 @@ export const Scene = ({
   revealSpoilers = false,
   theme = defaultTheme,
   width = defaultWidth,
-  assetUrl = browserAssetUrl
+  assetUrl = browserAssetUrl,
+  layout = `desktop`
 }: SceneProps): ReactElement => {
   const clock = useMemo(
     () => resolveClock({ now, timeZone, locale }),
@@ -68,6 +72,7 @@ export const Scene = ({
       <div
         data-discordkit-preview-scene=""
         lang={clock.locale}
+        data-discordkit-preview-layout={layout}
         className={`${tokens.root} ${tokens[theme]} ${styles.scene}`}
         style={{ width }}
       >

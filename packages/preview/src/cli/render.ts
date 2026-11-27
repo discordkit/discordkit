@@ -3,12 +3,23 @@ import { basename, dirname, extname, resolve } from "node:path";
 import { parseArgs } from "node:util";
 import type * as Playwright from "playwright";
 import type { Browser } from "playwright";
+import { findDevice } from "../devices.js";
 import { hasErrors } from "../findings.js";
 import { resolveClock } from "../format/timestamp.js";
 import { lint } from "../lint/index.js";
 import { cjkFonts } from "../node/fonts.js";
-import { render, type RenderInputResult } from "../node/render.js";
+import {
+  render,
+  type RenderedImage,
+  type RenderInputResult
+} from "../node/render.js";
+import type { Box } from "../node/diff.js";
 import type { Theme } from "../scene.js";
+import {
+  unknownDeviceMessage,
+  type ResolvedViewport,
+  type SceneViewport
+} from "../viewport.js";
 import {
   choiceOption,
   CliError,
@@ -39,8 +50,30 @@ Options:
                           markup, stylesheet, and the fonts and images it uses
                           inlined, with no scripts and no network requests.
       --theme <name>      light, ash, dark or onyx. Replaces the scene's.
-      --width <px>        Width of the chat column in CSS pixels. Default 600.
-      --scale <n>         Device pixels per CSS pixel, 1 to 4. Default 1.
+      --device <id>       Draw the message as it fits this device: a phone's
+                          screen, or the chat column of a desktop window. Give
+                          it more than once to draw several side by side in one
+                          image, each captioned with its device, size and
+                          layout. \`${program} devices\` lists them. With
+                          --device or --width, the scene's own viewports are
+                          not used. Phones and tablets are drawn with
+                          Discord's desktop web layout at their width, which
+                          is not what the iOS and Android apps show, and their
+                          captions say so.
+      --member-list <state>
+                          open (default) or closed: whether a desktop window's
+                          member list takes 264 pixels from the chat.
+      --width <px>        Width of the chat column in CSS pixels, with no
+                          device. Default 600, unless the scene names its own
+                          viewports. With --device, drawn beside the devices.
+      --separate          Write one image per viewport, named
+                          <input>.<device>.png, instead of one side by side.
+      --scale <n>         Device pixels per CSS pixel, above 0 and at most 4,
+                          or \`device\` for each device's own pixel density
+                          (an iPhone 14 Pro at 3x is 1179 pixels wide, as a
+                          screenshot from one is). One side-by-side image has
+                          one scale, so \`device\` there needs devices of the
+                          same density; use --separate otherwise. Default 1.
       --now <iso>         The scene's clock, e.g. 2026-11-25T16:05:00Z.
       --time-zone <iana>  The viewer's time zone, e.g. Asia/Tokyo. Default UTC.
       --locale <tag>      The viewer's Discord language, e.g. ja. Default en-US.
@@ -152,28 +185,58 @@ const outputPaths = (
   return paths;
 };
 
+/** One viewport as `--json` reports it: the resolved viewport, the scale it was drawn at, and where it is. */
+interface ViewportEntry extends ResolvedViewport {
+  /** Device pixels per CSS pixel it was drawn at. */
+  scale: number;
+  /** The file it is in: the side-by-side image, or with --separate its own. */
+  output: string;
+  /** Where its caption and drawing sit in that file, and its drawing alone, in device pixels. */
+  box: Box;
+  drawing: Box;
+  /** For a phone or tablet: whether the drawing fits in the chat one screen shows (approximate). */
+  fitsOneScreen: boolean | null;
+}
+
 interface Entry {
   input: string;
   kind: RenderInputResult[`kind`];
   valid: boolean;
-  /** Absolute path of the file written, or null when nothing could be drawn. */
+  /** Absolute path of the file written, or null when nothing could be drawn or, with --separate, when each viewport has a file of its own (see `outputs`). */
   output: string | null;
+  /** Every file written for this input, in order. */
+  outputs: string[];
   format: `png` | `html`;
-  /** Size of the drawing in device pixels, or null when nothing was drawn. */
+  /** Size of the drawing in device pixels, or null when nothing was drawn or each viewport has its own file. */
   width: number | null;
   height: number | null;
+  /** The views drawn, in order. Findings and counts are about the message, so they are reported once for all of them. */
+  viewports: ViewportEntry[];
   findings: RenderInputResult[`findings`];
   counts: RenderInputResult[`counts`];
-  fonts: NonNullable<RenderInputResult[`image`]>[`fonts`] | null;
+  fonts: RenderedImage[`fonts`] | null;
 }
 
 const printEntry = (entry: Entry): void => {
   print(
-    entry.output === null
+    entry.outputs.length === 0
       ? `${entry.input}: not drawn (${tally(entry.findings)})`
-      : `${entry.input}: wrote ${entry.output} (${String(entry.width)}x${String(entry.height)}, ${tally(entry.findings)})`
+      : entry.output === null
+        ? `${entry.input}: wrote ${String(entry.outputs.length)} images (${tally(entry.findings)})`
+        : `${entry.input}: wrote ${entry.output} (${String(entry.width)}x${String(entry.height)}, ${tally(entry.findings)})`
   );
   printFindings(entry.findings);
+  for (const viewport of entry.viewports) {
+    print(
+      `  ${viewport.label}${entry.output === null ? `: ${viewport.output} (${String(viewport.box.width)}x${String(viewport.box.height)})` : ``}`
+    );
+    if (viewport.note !== null) print(`    note: ${viewport.note}`);
+    if (viewport.visibleChat !== null && viewport.fitsOneScreen !== null) {
+      print(
+        `    ${viewport.fitsOneScreen ? `fits on one screen` : `taller than one screen`} (about ${String(viewport.visibleChat.height)} px of chat show at once; approximate)`
+      );
+    }
+  }
   if (entry.fonts) {
     print(
       `  fonts: ${entry.fonts.used
@@ -187,6 +250,44 @@ const printEntry = (entry: Entry): void => {
   }
 };
 
+/** The devices named with --device, or a run failure listing close matches for one the registry does not have. */
+const deviceOptions = (
+  ids: readonly string[],
+  memberList: boolean | undefined
+): SceneViewport[] =>
+  ids.map((id) => {
+    if (findDevice(id) === undefined) {
+      throw new CliError(
+        `${program} cannot use \`--device ${id}\`. ${unknownDeviceMessage(id)}`
+      );
+    }
+    return memberList === undefined
+      ? { device: id }
+      : { device: id, memberList };
+  });
+
+/** Each viewport's own file beside `base`: `question.png` becomes `question.iphone-14-pro.png`. The same device twice gets a number. */
+const separatePaths = (
+  base: string,
+  viewports: readonly ResolvedViewport[]
+): string[] => {
+  const extension = extname(base);
+  const stem = base.slice(0, base.length - extension.length);
+  const used = new Set<string>();
+  return viewports.map((viewport, index) => {
+    const key = used.has(viewport.key)
+      ? `${viewport.key}-${String(index + 1)}`
+      : viewport.key;
+    used.add(key);
+    return `${stem}.${key}${extension}`;
+  });
+};
+
+const write = async (path: string, data: string | Buffer): Promise<void> => {
+  await mkdir(dirname(path), { recursive: true });
+  await writeFile(path, data);
+};
+
 export const runRender = async (args: readonly string[]): Promise<number> => {
   const { values, positionals } = parseArgs({
     args: [...args],
@@ -196,7 +297,10 @@ export const runRender = async (args: readonly string[]): Promise<number> => {
       "out-dir": { type: `string` },
       html: { type: `boolean`, default: false },
       theme: { type: `string` },
+      device: { type: `string`, multiple: true },
+      "member-list": { type: `string` },
       width: { type: `string` },
+      separate: { type: `boolean`, default: false },
       scale: { type: `string` },
       now: { type: `string` },
       "time-zone": { type: `string` },
@@ -214,15 +318,37 @@ export const runRender = async (args: readonly string[]): Promise<number> => {
     print(renderUsage);
     return exitCodes.ok;
   }
-  const scale = values.scale === undefined ? 1 : Number(values.scale);
-  if (!Number.isFinite(scale) || scale <= 0 || scale > 4) {
+  const scale =
+    values.scale === `device`
+      ? (`device` as const)
+      : values.scale === undefined
+        ? 1
+        : Number(values.scale);
+  if (
+    scale !== `device` &&
+    (!Number.isFinite(scale) || scale <= 0 || scale > 4)
+  ) {
     throw new CliError(
-      `${program} cannot use \`--scale ${values.scale ?? ``}\`: it must be a number above 0 and at most 4, such as 2 for an image twice the size in each direction. Pass a number in that range.`
+      `${program} cannot use \`--scale ${values.scale ?? ``}\`: it must be a number above 0 and at most 4, such as 2 for an image twice the size in each direction, or \`device\` for each device's own pixel density. Pass one of those.`
     );
   }
+  const memberList = choiceOption(`member-list`, values[`member-list`], [
+    `open`,
+    `closed`
+  ] as const);
+  const width = integerOption(`width`, values.width, { min: 1, max: 4096 });
+  const devices = deviceOptions(
+    values.device ?? [],
+    memberList === undefined ? undefined : memberList === `open`
+  );
+  // --device and --width replace the scene's viewports. --width alone is today's single column, which also replaces the scene's width.
+  const viewports: SceneViewport[] | undefined =
+    devices.length === 0
+      ? undefined
+      : [...devices, ...(width === undefined ? [] : [{ width }])];
   const options = {
     theme: choiceOption(`theme`, values.theme, themes),
-    width: integerOption(`width`, values.width, { min: 1, max: 4096 }),
+    ...(viewports === undefined ? { width } : { viewports }),
     now: clockOption(`now`, `now`, values.now),
     timeZone: clockOption(`time-zone`, `timeZone`, values[`time-zone`]),
     locale: clockOption(`locale`, `locale`, values.locale),
@@ -234,6 +360,7 @@ export const runRender = async (args: readonly string[]): Promise<number> => {
         ? undefined
         : resolve(values[`cache-dir`]),
     scale,
+    separate: values.separate,
     html: values.html
   };
   const inputs = await readInputs(positionals);
@@ -256,27 +383,50 @@ export const runRender = async (args: readonly string[]): Promise<number> => {
   const entries: Entry[] = [];
   try {
     for (const [index, input] of inputs.entries()) {
+      // A side-by-side image of devices with different densities cannot take `--scale device`; the renderer's error says so and what to pass instead.
       const result = await render(input.text, { ...options, browser });
-      let output: string | null = null;
-      if (result.image) {
-        output = outputs[index];
-        await mkdir(dirname(output), { recursive: true });
-        await writeFile(
-          output,
-          values.html ? (result.image.html ?? ``) : result.image.png
-        );
-      }
+      const images = result.images ?? (result.image ? [result.image] : []);
+      const files = values.separate
+        ? separatePaths(outputs[index], result.viewports)
+        : images.length === 0
+          ? []
+          : [outputs[index]];
+      await Promise.all(
+        images.map(async (image, at) =>
+          write(files[at], values.html ? (image.html ?? ``) : image.png)
+        )
+      );
+      const placed: ViewportEntry[] =
+        images.length === 0
+          ? []
+          : result.viewports.map((viewport, at) => {
+              const image = values.separate ? images[at] : images[0];
+              const placement = values.separate
+                ? image.placements[0]
+                : image.placements[at];
+              return {
+                ...viewport,
+                scale: scale === `device` ? viewport.pixelRatio : scale,
+                output: values.separate ? files[at] : files[0],
+                box: placement.box,
+                drawing: placement.drawing,
+                fitsOneScreen: placement.fitsOneScreen
+              };
+            });
+      const combined = values.separate ? undefined : images.at(0);
       const entry: Entry = {
         input: input.name,
         kind: result.kind,
         valid: result.valid,
-        output,
+        output: combined === undefined ? null : files[0],
+        outputs: files,
         format,
-        width: result.image?.width ?? null,
-        height: result.image?.height ?? null,
+        width: combined?.width ?? null,
+        height: combined?.height ?? null,
+        viewports: placed,
         findings: result.findings,
         counts: result.counts,
-        fonts: result.image?.fonts ?? null
+        fonts: images.at(0)?.fonts ?? null
       };
       entries.push(entry);
       if (!values.json) printEntry(entry);

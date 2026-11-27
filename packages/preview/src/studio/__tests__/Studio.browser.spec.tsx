@@ -79,8 +79,9 @@ const json = (value: unknown): string => `${JSON.stringify(value, null, 2)}\n`;
 const payload = (content: string): string =>
   json({ flags: 32768, components: [{ type: 10, content }] });
 
+/** The first viewport's drawing. */
 const preview = (): HTMLElement => {
-  const element = document.querySelector(`[data-testid="preview"]`);
+  const element = document.querySelector(`[data-testid="preview-viewport"]`);
   if (!(element instanceof HTMLElement)) throw new Error(`No preview.`);
   return element;
 };
@@ -196,8 +197,9 @@ describe(`the Studio editor`, () => {
     const file = fakeFile(payload(`Hi`));
     mount(file.backend);
     await drawn(`Hi`);
-    await userEvent.click(page.getByRole(`radio`, { name: /Phone/ }));
-    await vi.waitFor(() => expect(sceneRoot().style.width).toBe(`390px`));
+    await userEvent.click(page.getByText(`Member list`, { exact: true }));
+    // Closing the member list gives its 264 pixels to the chat.
+    await vi.waitFor(() => expect(sceneRoot().style.width).toBe(`996px`));
     await expect
       .element(
         page.getByText(/Not written to the file: it holds a message payload/)
@@ -259,8 +261,9 @@ describe(`the Studio editor`, () => {
     await expect
       .element(page.getByText(`Cannot be drawn`).first())
       .toBeVisible();
+    // Every viewport says so.
     await expect
-      .element(page.getByText(/This scene cannot be drawn/))
+      .element(page.getByText(/This scene cannot be drawn/).first())
       .toBeVisible();
   });
 

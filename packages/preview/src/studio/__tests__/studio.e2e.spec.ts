@@ -109,9 +109,11 @@ describe(`discordkit-preview studio`, () => {
     studio = await startStudio(file);
     page = await browser.newPage();
     await page.goto(studio.url);
+    // Every viewport draws it; the first is enough to know the file arrived.
     await page
       .getByTestId(`preview`)
       .getByText(`Written by the agent`)
+      .first()
       .waitFor({ timeout: flowTimeout });
     return async () => {
       await page.close();
@@ -398,6 +400,7 @@ describe(`discordkit-preview studio, editing with the tree and the forms`, () =>
       await page
         .getByTestId(`preview`)
         .getByText(`Written by the agent`)
+        .first()
         .waitFor({ timeout: flowTimeout });
       await pick(page, /^Text Display/);
       await page
@@ -431,4 +434,53 @@ describe(`discordkit-preview studio, editing with the tree and the forms`, () =>
     },
     flowTimeout
   );
+
+  it(`saves a device chosen for a viewport into the scene file, and render then draws the same viewports`, async () => {
+    const question = JSON.parse(await readFile(fixture, `utf8`)) as unknown;
+    await open(
+      `${JSON.stringify({ messages: [{ payload: question }] }, null, 2)}\n`
+    );
+    await page
+      .getByTestId(`preview-viewport`)
+      .nth(1)
+      .getByText(`End test`)
+      .waitFor({ timeout: flowTimeout });
+    // The phone's chooser: search, then pick from the iOS group.
+    await page
+      .getByRole(`region`, { name: `iPhone 14 Pro viewport` })
+      .getByRole(`button`, { name: /Device/ })
+      .click();
+    await page.getByRole(`searchbox`, { name: `Search devices` }).fill(`SE`);
+    await page.getByRole(`option`, { name: /iPhone SE/ }).click();
+    await expect
+      .poll(
+        async () =>
+          (JSON.parse(await readFile(file, `utf8`)) as { viewports?: unknown })
+            .viewports,
+        { timeout: 5000 }
+      )
+      .toStrictEqual([{ device: `desktop-1280x800` }, { device: `iphone-se` }]);
+    await expect(
+      page
+        .getByRole(`region`, { name: `iPhone SE (2nd and 3rd gen) viewport` })
+        .textContent()
+    ).resolves.toContain(`Web layout, not the app.`);
+
+    // The command line reads the same viewports from the file.
+    const rendered = await runCommand([
+      `render`,
+      file,
+      `--out`,
+      join(dir, `card.png`),
+      `--json`
+    ]);
+    expect(rendered.code).toBe(0);
+    const { results } = JSON.parse(rendered.stdout) as {
+      results: { viewports: { key: string; calibrated: boolean }[] }[];
+    };
+    expect(results[0].viewports).toMatchObject([
+      { key: `desktop-1280x800`, calibrated: true },
+      { key: `iphone-se`, calibrated: false }
+    ]);
+  }, 120_000);
 });
