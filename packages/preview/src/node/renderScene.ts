@@ -33,12 +33,16 @@ import {
   fitAttribute,
   foldAttribute,
   panelAttribute,
+  screenAttribute,
+  screenBands,
   Sheet,
   sheetAttribute,
   sheetCss,
   sheetGap,
-  sheetPadding
+  sheetPadding,
+  type Frame
 } from "./Sheet.js";
+import { viewportFidelity } from "../parts.js";
 
 export interface RenderOptions {
   /** Device pixels per CSS pixel. Defaults to 1. */
@@ -57,6 +61,8 @@ export interface RenderOptions {
   html?: boolean;
   /** Draw the scene once per viewport, side by side in one image, each under a caption naming its device, size and layout (see `Sheet.tsx`). Without it the scene is drawn once, bare, at its own `width`. */
   viewports?: readonly ResolvedViewport[];
+  /** What a phone's or tablet's drawing shows: `chat` (the default), the chat column alone; or `screen`, its whole screen, with plain placeholders at the measured heights of the status bar, channel header, message box and home indicator, and the messages at the bottom of the chat as at the end of a channel, so the image lines up with a screenshot from the device. A single framed viewport is drawn without a caption. Desktop windows and free widths are unaffected. */
+  frame?: Frame;
 }
 
 /** Where one viewport landed in the image, so it can be cropped out, and whether the message fits on one of its screens. */
@@ -300,7 +306,8 @@ export const renderScene = async (
     ggSans,
     cjk = `system`,
     html: wantHtml = false,
-    viewports
+    viewports,
+    frame: shows = `chat`
   }: RenderOptions = {}
 ): Promise<RenderResult> => {
   if (viewports?.length === 0) {
@@ -322,12 +329,21 @@ export const renderScene = async (
     })
   ]);
   const { assetUrl, served } = serveAssets(references, loaded.assets);
-  // One viewport drawn with its own client's layout needs no caption, so it is drawn bare, as a scene without viewports is: the image is the chat column and nothing else. Anything else is drawn on a sheet, captioned.
+  // One viewport drawn with its own client's layout, holding nothing that layout has not been checked for, needs no caption, so it is drawn bare, as a scene without viewports is: the image is the chat column and nothing else. Framed as a screen, it is the screen and nothing else. Anything else is drawn on a sheet, captioned.
   const single = viewports?.length === 1 ? viewports[0] : undefined;
+  const trusted =
+    single !== undefined &&
+    single.calibrated &&
+    viewportFidelity(scene, single).unobserved.length === 0;
+  const framed =
+    shows === `screen` &&
+    (viewports?.some((viewport) => screenBands(viewport) !== null) ?? false);
   const sheet =
-    viewports !== undefined && (single === undefined || !single.calibrated)
+    viewports !== undefined && (single === undefined || !trusted || framed)
       ? viewports
       : undefined;
+  // A single framed screen is for laying over a screenshot, so it carries no caption even when something in it is unobserved; the result's viewport reports that instead.
+  const captions = !(single !== undefined && (trusted || framed));
   const bareScene: Scene =
     single === undefined ? scene : { ...scene, width: single.chatWidth };
   const markup = renderToStaticMarkup(
@@ -339,10 +355,12 @@ export const renderScene = async (
         })
       : createElement(Sheet, {
           scene: { ...scene, assetUrl },
-          viewports: sheet
+          viewports: sheet,
+          captions,
+          frame: shows
         })
   );
-  const frame = sheet === undefined ? `` : sheetCss(sheet);
+  const frame = sheet === undefined ? `` : sheetCss(sheet, shows);
   /** What is screenshotted: the scene, or the sheet of viewports around it. */
   const target = sheet === undefined ? sceneSelector : `[${sheetAttribute}]`;
   const windowWidth =
@@ -503,7 +521,7 @@ export const renderScene = async (
         viewports === undefined
           ? []
           : await page.evaluate(
-              ({ target, panel, scene, fit, fold, scale, visible }) => {
+              ({ target, panel, scene, screen, fit, fold, scale, visible }) => {
                 const origin = document
                   .querySelector(target)
                   ?.getBoundingClientRect() ?? { left: 0, top: 0 };
@@ -519,10 +537,22 @@ export const renderScene = async (
                 const panels = [
                   ...document.querySelectorAll<HTMLElement>(panel)
                 ].map((element, index) => {
-                  const drawn = element.matches(scene)
+                  const content = element.matches(scene)
                     ? element
-                    : element.querySelector(scene);
-                  const height = drawn?.getBoundingClientRect().height ?? 0;
+                    : element.querySelector<HTMLElement>(scene);
+                  // A framed screen is the drawing; whether the message fits is still the messages' own height, without the room a short one is given to fill the chat.
+                  const drawn = element.querySelector(`[${screen}]`) ?? content;
+                  const first = content?.firstElementChild;
+                  const height =
+                    content === null
+                      ? 0
+                      : drawn !== content && first
+                        ? content.getBoundingClientRect().bottom -
+                          (first.getBoundingClientRect().top -
+                            Number.parseFloat(
+                              getComputedStyle(first).marginTop
+                            ))
+                        : content.getBoundingClientRect().height;
                   const limit = visible[index];
                   return {
                     element,
@@ -538,7 +568,7 @@ export const renderScene = async (
                   if (line !== null && limit !== null) {
                     line.textContent = fits
                       ? `Fits on one screen: about ${String(limit)} px of chat show at once, and this drawing is ${String(Math.round(height))} px tall (approximate).`
-                      : `Taller than one screen: about ${String(limit)} px of chat show at once (approximate); the dashed line is where the screen ends.`;
+                      : `Taller than one screen: about ${String(limit)} px of chat show at once (approximate); ${element.querySelector(`[${screen}]`) === null ? `the dashed line is where the screen ends` : `its top is cut off under the channel header, as the app shows the end of a channel`}.`;
                   }
                   // The line only means something when the drawing reaches it.
                   if (fits === true)
@@ -567,6 +597,7 @@ export const renderScene = async (
                 panel:
                   sheet === undefined ? sceneSelector : `[${panelAttribute}]`,
                 scene: sceneSelector,
+                screen: screenAttribute,
                 fit: fitAttribute,
                 fold: foldAttribute,
                 scale,

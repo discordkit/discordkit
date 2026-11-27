@@ -92,17 +92,57 @@ const drawn = async (count: number): Promise<void> => {
 };
 
 describe(`the preview's viewports`, () => {
-  it(`shows a scene that names none on a desktop window and the iPhone 14 Pro side by side, and says the phone is the web layout, not the app`, async () => {
+  it(`shows a scene that names none on a desktop window and the iPhone 14 Pro side by side, the phone in the iOS layout, and says every part of a card made of observed parts was measured from the app`, async () => {
     mount(fakeFile(scene()).backend);
     await drawn(2);
     // A 1280-pixel window with the member list open leaves 732 pixels for the chat; the phone's chat is its screen.
     expect(widths()).toStrictEqual([`732px`, `393px`]);
+    expect(
+      drawings().map((root) => root.dataset.discordkitPreviewLayout)
+    ).toStrictEqual([`desktop`, `ios`]);
     const text = (name: string): string =>
       page.getByRole(`region`, { name }).element().textContent;
     expect(text(`iPhone 14 Pro viewport`)).toMatch(
-      /Web layout, not the app\. Drawn with Discord's desktop web layout at 393 pixels wide, not as the iOS app draws it\./
+      /Every part of this message was drawn as measured from the iOS app\./
     );
-    expect(text(`Laptop 1280 × 800 viewport`)).not.toMatch(/not the app/);
+    expect(text(`iPhone 14 Pro viewport`)).not.toMatch(/not the app/);
+    expect(text(`Laptop 1280 × 800 viewport`)).not.toMatch(
+      /not the app|iOS app/
+    );
+  });
+
+  it(`lists, over the phone, exactly the parts of this scene nobody has seen in the iOS app, so the person knows what to check on a real phone`, async () => {
+    mount(
+      fakeFile(
+        json({
+          messages: [
+            {
+              payload: {
+                ...card,
+                components: [
+                  ...card.components,
+                  { type: 10, content: `-# small print` },
+                  {
+                    type: 1,
+                    components: [
+                      { type: 2, style: 4, label: `Quit`, custom_id: `q` }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        })
+      ).backend
+    );
+    await drawn(2);
+    const phone = page
+      .getByRole(`region`, { name: `iPhone 14 Pro viewport` })
+      .element();
+    const report = phone.querySelector(`[data-testid="viewport-fidelity"]`);
+    expect(report?.textContent).toBe(
+      `Not yet seen in the iOS app, so drawn from desktop's design at the app's sizes: component outside a container, subtext, danger button. Check these on a real phone.`
+    );
   });
 
   it(`keeps a scene's width as one free-width viewport`, async () => {

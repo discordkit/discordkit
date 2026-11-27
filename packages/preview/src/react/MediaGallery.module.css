@@ -187,3 +187,60 @@
   outline: 2px solid Highlight;
   outline-offset: 2px;
 }
+
+/*
+ * The iOS layout (spec §7b), measured from captures of the app on an iPhone 14 Pro in points, which are CSS pixels here. Which count gets which sizing is `iosGalleryArrangements` in format/galleryLayout.ts.
+ *
+ * Every gallery: outer corners of about 12 (`tome-023`, read from the corner's curve), and 3.5 more space above it than the container's 8-point gap (`tome-023`: 11.5 points from the line of text above to a lone picture).
+ */
+[data-discordkit-preview-layout="ios"] .gallery {
+  margin-top: 3.5px;
+  border-radius: 12px;
+}
+
+[data-discordkit-preview-layout="ios"] .single {
+  border-radius: 12px;
+}
+
+/*
+ * Two, three or four pictures: one box, 2 points in from the content column on every side (`tome-019`, `tome-023`: 411×272 px at 129 px, where the column starts at 126.5, and 2.3 points more below it than the gap to the separator), 273 by 181 points on the 14 Pro. Its shape is kept on wider and narrower phones, which is unobserved. Every slot is filled and the picture cropped: two are 135×181 each, three a 181-point square beside two stacked, four 135×88 each.
+ */
+[data-discordkit-preview-layout="ios"] .box {
+  width: calc(100% - 4px);
+  margin: 5.5px 2px 2px;
+  aspect-ratio: 273 / 181;
+}
+
+.box > .oneByTwo,
+.box > .twoByTwo {
+  height: 100%;
+  max-height: none;
+}
+
+.box .media {
+  aspect-ratio: auto;
+}
+
+/* Three: the large picture is as wide as the box is tall, a square; the two beside it share what is left. */
+.box .solo {
+  flex: none;
+  aspect-ratio: 1 / 1;
+}
+
+/*
+ * The "ALT" badge the app draws bottom-left on a picture that has a description; desktop draws none. Measured on `tome-020`, `tome-021` and `tome-056`: 31 to 32 points wide and 16 to 20 tall, 5 to 8 from the picture's left edge and 9 to 10 from its bottom, white capitals on a near-black fill over the picture. The size and offsets here are the middle of those readings; the fill's opacity is read from one badge over a known colour.
+ */
+.altBadge {
+  position: absolute;
+  bottom: 10px;
+  inset-inline-start: 7px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 6px;
+  background: hsl(0 0% 0% / 0.65);
+  color: var(--white);
+  font-size: 13px;
+  font-weight: var(--font-weight-normal);
+  line-height: 18px;
+  pointer-events: none;
+}

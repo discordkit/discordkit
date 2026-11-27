@@ -14,6 +14,7 @@ import {
 import { chromium, type Browser } from "playwright";
 import { ComponentType } from "@discordkit/client/components/types/ComponentType";
 import { componentFixtures, fixtures } from "../../__tests__/fixtures.js";
+import { resolveViewport } from "../../viewport.js";
 import type * as Fonts from "../fonts.js";
 import { loadAssets } from "../assets.js";
 import { decodePng } from "../png.js";
@@ -199,6 +200,146 @@ describe(`renderScene`, () => {
       }
     }
     expect(longest).toBe(18);
+  });
+
+  describe(`on an iPhone`, () => {
+    const iphone = resolveViewport({ device: `iphone-14-pro` });
+    /** A card holding only what captures of the iOS app show: text with a relative timestamp, in a container, from an app. */
+    const observed: NodeApi.Scene = {
+      now: `2026-11-25T16:05:00Z`,
+      messages: [
+        {
+          payload: {
+            components: [
+              {
+                type: ComponentType.Container,
+                components: [
+                  {
+                    type: ComponentType.TextDisplay,
+                    content: `ends <t:${String(Date.parse(`2026-11-25T16:05:45Z`) / 1000)}:R>`
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    };
+    const unobserved: NodeApi.Scene = {
+      ...observed,
+      messages: [
+        {
+          payload: {
+            components: [
+              {
+                type: ComponentType.Container,
+                components: [
+                  { type: ComponentType.TextDisplay, content: `-# small print` }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    };
+
+    it(`draws a card made only of parts seen in the iOS app bare, with no caption, since there is nothing to warn about: the image is the phone's chat column`, async () => {
+      const { width, placements } = await renderScene(observed, {
+        browser,
+        cacheDir,
+        viewports: [iphone]
+      });
+      expect(width).toBe(393);
+      expect(placements[0].drawing).toMatchObject({ x: 0, y: 0, width: 393 });
+    });
+
+    it(`captions a card holding a part nobody has seen in the app, and the caption names that part`, async () => {
+      const { width, placements } = await renderScene(unobserved, {
+        browser,
+        cacheDir,
+        viewports: [iphone],
+        html: true
+      }).then(async (result) => {
+        expect(result.html).toMatch(/Not yet seen in the iOS app[^<]*subtext/);
+        return result;
+      });
+      expect(width).toBe(393);
+      // The caption sits above the drawing.
+      expect(placements[0].drawing.y).toBeGreaterThan(0);
+    });
+
+    it(`draws the timestamp chip the full 20-point height of the line, as tome-019 shows (19.6 to 20 points), in the app's darker fill (#313137 on #242429)`, async () => {
+      const { png } = await renderScene(observed, {
+        browser,
+        cacheDir,
+        viewports: [iphone]
+      });
+      const bitmap = decodePng(png);
+      // The subtle modifier (#97979f at 12.2%) over the container's #242429.
+      const chip = [0x32, 0x32, 0x37];
+      let longest = 0;
+      // Inside the card's content (84 to 361 points), since its hairline border is the same grey.
+      for (let x = 90; x < 355; x++) {
+        let run = 0;
+        for (let y = 0; y < bitmap.height; y++) {
+          const at = (y * bitmap.width + x) * 4;
+          const same = chip.every(
+            (channel, index) => Math.abs(bitmap.data[at + index] - channel) <= 2
+          );
+          run = same ? run + 1 : 0;
+          longest = Math.max(longest, run);
+        }
+      }
+      expect(longest).toBe(20);
+    });
+
+    it(`frames the phone's whole screen with frame "screen": 393 by 852 points, with the messages ending 31 points above the message box, as at the end of a channel (tome-029)`, async () => {
+      const { width, height, placements, html } = await renderScene(observed, {
+        browser,
+        cacheDir,
+        viewports: [iphone],
+        frame: `screen`,
+        html: true
+      });
+      expect([width, height]).toStrictEqual([393, 852]);
+      expect(placements[0].drawing).toStrictEqual({
+        x: 0,
+        y: 0,
+        width: 393,
+        height: 852
+      });
+      expect(placements[0].fitsOneScreen).toBe(true);
+      // The status bar, channel header, message box and home indicator are plain labelled bands at their measured heights, which together with the chat make the screen.
+      for (const label of [`status bar`, `channel header`, `message box`]) {
+        expect(html).toContain(label);
+      }
+      const bitmap = decodePng(
+        (
+          await renderScene(observed, {
+            browser,
+            cacheDir,
+            viewports: [iphone],
+            frame: `screen`
+          })
+        ).png
+      );
+      // Scanning up the column at x = 200 from the message box (761 points down), the first pixel of the card's fill is 31 points up.
+      const card = [0x24, 0x24, 0x29];
+      let y = 760;
+      const at = (row: number): number[] => {
+        const offset = (row * bitmap.width + 200) * 4;
+        return [...bitmap.data.subarray(offset, offset + 3)];
+      };
+      while (
+        y > 0 &&
+        !card.every((channel, index) => Math.abs(at(y)[index] - channel) <= 2)
+      ) {
+        y--;
+      }
+      // The card's bottom border sits between its fill and the space below it.
+      expect(761 - (y + 1)).toBeGreaterThanOrEqual(31);
+      expect(761 - (y + 1)).toBeLessThanOrEqual(32);
+    });
   });
 
   it(`sizes a lone gallery picture from its own file when the payload does not give one, drawing it at the file's own size as the desktop client does`, async () => {

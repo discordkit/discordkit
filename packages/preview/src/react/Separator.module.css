@@ -16,3 +16,8 @@
 .spacingLarge {
   margin: var(--space-8) 0;
 }
+
+/* The iOS layout: a line about 1 point thick across the content column, 8 points from what is above and below (`tome-019`, `tome-055`), in the app's lighter grey in the Dark theme (see `--dkp-ios-separator`). Large spacing and a separator without its line have not been seen in the app, and keep desktop's rules. */
+[data-discordkit-preview-layout="ios"] .divider {
+  border-bottom-color: var(--dkp-ios-separator, var(--background-mod-strong));
+}

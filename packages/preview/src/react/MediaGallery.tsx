@@ -4,10 +4,12 @@ import type { MediaGalleryItem } from "@discordkit/client/components/types/Media
 import {
   arrangeGallery,
   gallerySizing,
-  type GalleryLayout
+  type GalleryLayout,
+  type GallerySizing
 } from "../format/galleryLayout.js";
 import { Image, missingAttribute } from "./Image.js";
 import { useInspect } from "./Inspect.js";
+import { useLayout } from "./Layout.js";
 import { useSceneSettings } from "./SceneContext.js";
 import styles from "./MediaGallery.module.css";
 
@@ -53,9 +55,20 @@ interface GalleryItemProps {
   className?: string;
 }
 
-/** One picture: its alt text from `description`, its ratio from the payload or its file, and the spoiler treatment when it is marked as one. */
+/** The iOS app's "ALT" badge, drawn bottom-left on a picture that has a description (spec §7b; desktop draws none). */
+const AltBadge = (): ReactElement => (
+  <span className={styles.altBadge} aria-hidden="true">
+    ALT
+  </span>
+);
+
+/** One picture: its alt text from `description`, its ratio from the payload or its file, and the spoiler treatment when it is marked as one. In the iOS layout, a described picture also carries the ALT badge. */
 const GalleryItem = ({ item, className }: GalleryItemProps): ReactElement => {
   const { revealSpoilers } = useSceneSettings();
+  const badge =
+    useLayout() === `ios` && (item.description ?? ``) !== `` ? (
+      <AltBadge />
+    ) : null;
   const { width, height } = item.media;
   const known =
     typeof width === `number` &&
@@ -100,6 +113,7 @@ const GalleryItem = ({ item, className }: GalleryItemProps): ReactElement => {
           defaultChecked={revealSpoilers}
         />
         {image}
+        {badge}
         <span className={styles.warning}>Spoiler</span>
       </label>
     );
@@ -107,8 +121,16 @@ const GalleryItem = ({ item, className }: GalleryItemProps): ReactElement => {
   return (
     <div className={classes} style={style} {...measured}>
       {image}
+      {badge}
     </div>
   );
+};
+
+/** The gallery's class for how its pictures are sized (see `GallerySizing`). */
+const sizingClasses: Record<GallerySizing, string> = {
+  own: `${styles.gallery} ${styles.ownSize}`,
+  fill: styles.gallery,
+  box: `${styles.gallery} ${styles.box}`
 };
 
 /**
@@ -119,11 +141,10 @@ export const MediaGallery = ({
 }: MediaGalleryProps): ReactElement => {
   // Payload order is the identity of every band and item below; none has a stable key of its own.
   const inspect = useInspect(component);
-  const bands = arrangeGallery(component.items);
+  const layout = useLayout();
+  const bands = arrangeGallery(component.items, layout);
   const className =
-    gallerySizing(component.items.length) === `own`
-      ? `${styles.gallery} ${styles.ownSize}`
-      : styles.gallery;
+    sizingClasses[gallerySizing(component.items.length, layout)];
   /* oxlint-disable react/no-array-index-key */
   return (
     <div className={className} {...inspect}>

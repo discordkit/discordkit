@@ -116,43 +116,62 @@ With `--json`, the same render prints:
 
 (That one was rendered with `--cjk noto-sans-jp --out question-pinned.png`.) `output`, `width`, `height` and `fonts` are `null` when nothing could be drawn. `width` and `height` are in device pixels, so `--scale 2` doubles them.
 
-| Option                                                | Does                                                                                                  |
-| ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `-o, --out <file>` / `--out-dir <dir>`                | Where to write. Default: beside each input file, or `preview.png` in the working directory for stdin. |
-| `--html`                                              | Write one self-contained HTML file instead of a PNG (see [HTML output](#-html-output)).               |
-| `--theme <light\|ash\|dark\|onyx>`                    | Discord's appearance setting. Replaces the scene's. Default `dark`.                                   |
-| `--device <id>`                                       | Draw for this device; give it several times for several side by side (see [Devices](#devices)).       |
-| `--member-list <open\|closed>`                        | Whether a desktop window's member list is open. Default `open`.                                       |
-| `--width <px>`                                        | Width of the chat column in CSS pixels, with no device. Default 600.                                  |
-| `--separate`                                          | Write one image per viewport instead of one side by side.                                             |
-| `--scale <n\|device>`                                 | Device pixels per CSS pixel, up to 4, or `device` for each device's own density. Default 1.           |
-| `--now <iso>`, `--time-zone <iana>`, `--locale <tag>` | The viewer's clock, zone and Discord language. Defaults: a fixed instant, `UTC`, `en-US`.             |
-| `--gg-sans <path>`, `--cjk <font>`                    | Font options (see [Fonts](#-fonts)).                                                                  |
-| `--offline`, `--cache-dir <dir>`                      | Draw only images already in the asset cache; where that cache is.                                     |
-| `--channel <name>`                                    | Drive an installed browser (`chrome`, `msedge`, …) instead of Playwright's Chromium.                  |
+| Option                                                | Does                                                                                                    |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `-o, --out <file>` / `--out-dir <dir>`                | Where to write. Default: beside each input file, or `preview.png` in the working directory for stdin.   |
+| `--html`                                              | Write one self-contained HTML file instead of a PNG (see [HTML output](#-html-output)).                 |
+| `--theme <light\|ash\|dark\|onyx>`                    | Discord's appearance setting. Replaces the scene's. Default `dark`.                                     |
+| `--device <id>`                                       | Draw for this device; give it several times for several side by side (see [Devices](#devices)).         |
+| `--member-list <open\|closed>`                        | Whether a desktop window's member list is open. Default `open`.                                         |
+| `--width <px>`                                        | Width of the chat column in CSS pixels, with no device. Default 600.                                    |
+| `--separate`                                          | Write one image per viewport instead of one side by side.                                               |
+| `--frame <chat\|screen>`                              | A phone's whole screen, to lay over a screenshot, instead of its chat column (see [Devices](#devices)). |
+| `--scale <n\|device>`                                 | Device pixels per CSS pixel, up to 4, or `device` for each device's own density. Default 1.             |
+| `--now <iso>`, `--time-zone <iana>`, `--locale <tag>` | The viewer's clock, zone and Discord language. Defaults: a fixed instant, `UTC`, `en-US`.               |
+| `--gg-sans <path>`, `--cjk <font>`                    | Font options (see [Fonts](#-fonts)).                                                                    |
+| `--offline`, `--cache-dir <dir>`                      | Draw only images already in the asset cache; where that cache is.                                       |
+| `--channel <name>`                                    | Drive an installed browser (`chrome`, `msedge`, …) instead of Playwright's Chromium.                    |
 
 ### Devices
 
 A message can be drawn for a device instead of a bare width, and for several at once, side by side, the way a browser's device toolbar shows a page. A phone's chat fills its screen. A desktop window's chat column is the window less Discord's server rail (72px), channel list (196px), member list (264px, when open) and the message list's scrollbar (16px), as Discord's stylesheet sets them, so a 1280 × 800 window leaves 732 pixels for the chat.
 
-> **A phone is drawn with the desktop web layout at the phone's width, not as the iOS or Android app draws it.** The apps have their own text sizes, button widths and gallery sizes. Drawn this way, a phone shows how a message wraps and overflows at that width, not what a phone user sees. Every image of a phone says so in its caption, and its JSON has `"calibrated": false` and a `note`.
+**An iPhone is drawn as Discord's iOS app draws it**, which is not the desktop layout at a narrow width: a 68-point content column, 15-point text on 20-point lines, cards that fill the column, buttons with no minimum width, galleries of two to four pictures in one fixed box, an "ALT" badge on described pictures, 60-point thumbnails, and timestamp chips that wrap mid-phrase. These were measured from screenshots of the app on an iPhone 14 Pro, in the dark theme (§7b of the design record). Anything the screenshots never showed (a classic embed, subtext, a coloured button, a select, the light theme, and more) is drawn from the desktop design at the app's text sizes, and **each image says which parts of its message those are**, so you know what to check on a real phone. A card made only of measured parts carries no warning.
+
+iPads ask for the same app layout and get it, since it is the same app, but nothing has been captured on an iPad, so every part of an iPad drawing is listed as unmeasured. **Android devices are drawn with the desktop web layout** at their width, not as the Android app draws it, and say so in their caption and their JSON (`"calibrated": false` and a `note`).
 
 ```bash
-discordkit-preview render question.json --device desktop-1280x800 --device iphone-14-pro
+discordkit-preview render round.json --device desktop-1280x800 --device iphone-14-pro
 ```
 
-This writes one image with both viewports side by side, each under a caption naming its device, size and layout, and on a phone a dashed line where the first screen of chat ends (about 647 points on an iPhone 14 Pro, measured from the iOS app; approximate on every phone) when the message is taller than that. `--separate` writes one image per viewport instead, named `question.desktop-1280x800.png` and `question.iphone-14-pro.png`, which is what comparing renders needs.
+This writes one image with both viewports side by side, each under a caption naming its device, size and layout. On the iPhone the caption also lists what in this message has not been seen in the app, or says that everything has, and a dashed line marks where the first screen of chat ends (about 647 points on an iPhone 14 Pro, measured from the iOS app; approximate on every phone) when the message is taller than that. `--separate` writes one image per viewport instead, named `round.desktop-1280x800.png` and `round.iphone-14-pro.png`. An iPhone drawn alone whose message holds only measured parts is drawn bare, with no caption: the image is the chat column. Drawn alone, the terminal says the same:
 
-**Scale.** One image has one scale, `--scale` (default 1), whatever its viewports. A device drawn alone can use its own pixel density with `--scale device`, so an iPhone 14 Pro render is 1179 pixels wide, as a screenshot taken on one is, and the two can be compared with `diff`:
+```
+round.json: wrote /path/to/round.png (393x560, 0 errors, 0 warnings)
+  iPhone 14 Pro · 393 × 852 · 3x
+    Not yet seen in the iOS app, so drawn from desktop's design at the app's sizes: classic embed, subtext, emoji, danger button. Check these on a real phone.
+    limit: Emoji are drawn as Twemoji, where the iOS app draws Apple's, which cannot be shipped: their shapes and colours differ, though their size and place do not.
+    fits on one screen (about 647 px of chat show at once; approximate)
+```
+
+**Scale.** One image has one scale, `--scale` (default 1), whatever its viewports. A device drawn alone can use its own pixel density with `--scale device`, so an iPhone 14 Pro render is 1179 pixels wide, as a screenshot taken on one is. `--scale device` on one image of devices with different densities is refused, with a pointer to `--separate`.
+
+**Laying a render over a screenshot.** `--frame screen` draws a phone's whole screen instead of its chat column: plain placeholder bands for the status bar, the channel header, the message box and the home indicator at the heights measured from the app, and the messages at the bottom of the chat, ending 31 points above the message box as they do at the end of a channel. With `--scale device` the image is exactly the size of a screenshot from the phone (1179 × 2556 on an iPhone 14 Pro), carries no caption, and lines up with a screenshot taken at the end of the channel, so `diff` compares the two directly:
 
 ```bash
-discordkit-preview render question.json --device iphone-14-pro --scale device --out question-phone.png
-discordkit-preview diff question-phone.png screenshot-from-the-phone.png --tolerance 8
+discordkit-preview render round.json --device iphone-14-pro --scale device --frame screen --out round-phone.png
+discordkit-preview diff round-phone.png screenshot-from-the-phone.png --tolerance 8
 ```
 
-(The render still carries its caption above the drawing, and the phone's screenshot its status bar and channel header, so expect the two to differ in height and position; the widths match.) `--scale device` on one image of devices with different densities is refused, with a pointer to `--separate`.
+Between two such renders of one card, one with a button relabelled, `diff` finds only the button:
 
-**JSON.** Each result lists its viewports, with where each one is in the image so it can be cropped out (`box` is the caption and drawing, `drawing` the drawing alone, both in image pixels), and findings and counts once, since they are about the message, not the view. From the command above, the phone's entry:
+```
+different: 6285 of 3013524 pixels (0.21%) in a 190x96 box at 686,1926
+```
+
+Against a real screenshot expect more: the placeholders are not the app's bars, text is drawn in Noto Sans rather than gg sans, and emoji as Twemoji. The diff image shows where the message itself differs; opening the two as layers in an image editor shows them overlaid.
+
+**JSON.** Each result lists its viewports, with where each one is in the image so it can be cropped out (`box` is the caption and drawing, `drawing` the drawing alone, or the whole screen with `--frame screen`, both in image pixels), and findings and counts once, since they are about the message, not the view. Each viewport also has `unobserved`, the parts of this message it draws from rules nobody has checked on its platform, and `limits`. From the first command above, drawn alone, the phone's entry:
 
 ```json
 {
@@ -163,9 +182,9 @@ discordkit-preview diff question-phone.png screenshot-from-the-phone.png --toler
   "screen": { "width": 393, "height": 852 },
   "pixelRatio": 3,
   "memberList": null,
-  "layout": "desktop",
+  "layout": "ios",
   "requestedLayout": "ios",
-  "calibrated": false,
+  "calibrated": true,
   "chatWidth": 393,
   "visibleChat": {
     "height": 647,
@@ -173,14 +192,25 @@ discordkit-preview diff question-phone.png screenshot-from-the-phone.png --toler
     "basis": "Measured from a full-screen capture of the iOS app on this phone: the chat runs from under the channel header to the top of the message box."
   },
   "label": "iPhone 14 Pro · 393 × 852 · 3x",
-  "note": "Drawn with Discord's desktop web layout at 393 pixels wide, not as the iOS app draws it. The app has its own text sizes, button widths and gallery sizes, so this shows how the message wraps and overflows at this width, not what a phone user sees.",
+  "note": null,
+  "unobserved": [
+    { "part": "embed", "name": "classic embed" },
+    { "part": "subtext", "name": "subtext" },
+    { "part": "emoji", "name": "emoji" },
+    { "part": "dangerButton", "name": "danger button" }
+  ],
+  "limits": [
+    "Emoji are drawn as Twemoji, where the iOS app draws Apple's, which cannot be shipped: their shapes and colours differ, though their size and place do not."
+  ],
   "scale": 1,
-  "output": "/path/to/question.png",
-  "box": { "x": 772, "y": 16, "width": 393, "height": 823 },
-  "drawing": { "x": 772, "y": 199, "width": 393, "height": 640 },
+  "output": "/path/to/round.png",
+  "box": { "x": 0, "y": 0, "width": 393, "height": 559 },
+  "drawing": { "x": 0, "y": 203, "width": 393, "height": 356 },
   "fitsOneScreen": true
 }
 ```
+
+A desktop window's `unobserved` is always empty, since the desktop layout is drawn from Discord's own stylesheet. Every part and the screenshots of the app that show it are listed in `parts`, exported from `@discordkit/preview/scene`, with `viewportFidelity(scene, viewport)` to compute the same report.
 
 The entry also has `outputs`, every file written. With `--separate`, `output`, `width` and `height` are null and each viewport's `output` is its own file. Without `--device`, a render draws the scene's own `viewports` (see [The scene](#-the-scene)), or one 600-pixel column when it names none, exactly as before.
 
@@ -292,7 +322,7 @@ Studio is an editor for one file that you and a coding agent can work in at the 
 - **Adding and arranging.** _Add_ offers only what Discord allows where the selected component is: inside it, or after it in its parent, with the reason when something cannot go there (a sixth button in a row, a select beside buttons). Duplicate, move up and down, and remove are beside it, and on the focused row as Ctrl+D, Alt+↑ and Alt+↓, and Delete. A duplicate keeps its `customId`, so the duplicate is reported at once on the copy's field.
 - **Findings where they belong.** A finding shows under the field it is about, a component with findings anywhere beneath it is marked in the tree, and choosing a finding in the findings list selects its component and puts the cursor in its field.
 - **Starting points.** An empty scene (`{ "messages": [] }`, or an empty file) offers an empty Components V2 message, a classic message with an embed, and Inbou's question and Tome's reveal from the package's fixtures, rather than a blank page.
-- **Viewports.** The preview shows the scene's viewports side by side: a 1280 × 800 desktop window and an iPhone 14 Pro when the scene names none, or one column of the scene's `width` when it has only that. Each viewport has its own device chooser, like the device list in a browser's device toolbar: grouped by platform, searchable by typing, with "Responsive" (a free width, with a width field) first, and for a desktop window a member-list switch. _New viewport_ adds one and the bin removes one. A phone's viewport says above its drawing that it is the web layout and not the app, and marks where its first screen of chat ends when the message reaches it. When the viewports do not fit side by side they are scaled down together, to no less than 50%, and the zoom is shown on each; past that, the ones that do not fit wrap onto the next line. _Fit_ and _100%_ switch between that and actual size. Clicking a component in any viewport selects it, and it is outlined in all of them.
+- **Viewports.** The preview shows the scene's viewports side by side: a 1280 × 800 desktop window and an iPhone 14 Pro when the scene names none, or one column of the scene's `width` when it has only that. Each viewport has its own device chooser, like the device list in a browser's device toolbar: grouped by platform, searchable by typing, with "Responsive" (a free width, with a width field) first, and for a desktop window a member-list switch. _New viewport_ adds one and the bin removes one. An iPhone's viewport is drawn with the iOS app's layout and says above its drawing which parts of this message have not been seen in the app (or, in green, that every part has), updating as you edit; an Android device's says it is the web layout and not the app. A phone's viewport marks where its first screen of chat ends when the message reaches it. When the viewports do not fit side by side they are scaled down together, to no less than 50%, and the zoom is shown on each; past that, the ones that do not fit wrap onto the next line. _Fit_ and _100%_ switch between that and actual size. Clicking a component in any viewport selects it, and it is outlined in all of them.
 - **Preview settings.** Discord theme, locale, time zone, the scene's clock, revealing spoilers, and which String Select is drawn open, shared by every viewport. In a scene file they and the viewports are scene fields, so they are saved to it (choosing viewports replaces a `width` the file had); a file holding only a message payload or components has no place for them, so they stay in Studio and the toolbar says so.
 - **Editing the JSON.** The preview and findings follow as you type. The text is written to the file once it parses, in exactly the form you typed. While it does not parse, nothing is written, the preview keeps the last version that did, and the pane says what is wrong and on which line and column.
 - **Saving keeps the file's shape and formatting.** A change made in a form goes back in the file's own shape and key style: a snake_case component array stays a snake_case component array, keys keep their spelling, and line endings are kept. Only the text of what changed is rewritten, so a hand-formatted file keeps its layout (a row of buttons kept one to a line stays that way) and a one-word edit is a one-line diff; new values are written in the style of their neighbours. A form change that leaves the content as it was writes nothing. A cleared optional field is removed from the file, never left as an empty string or `null`.
@@ -328,7 +358,7 @@ if (image) await writeFile(`preview.png`, image.png);
 | `@discordkit/preview/node`     | `render(input, options)`: what the `render` command runs per input; reads any input, lints it and draws it, with one findings list; `viewports`, `separate` and `scale: "device"` do what the command's options do. `renderScene(scene, options)`: draws an already normalised scene. `diffImages(a, b, { tolerance })`: the `diff` command. |
 | `@discordkit/preview/lint`     | `lint(input)`: findings, counts and `valid`, with no browser.                                                                                                                                                                                                                                                                                |
 | `@discordkit/preview/codegen`  | `codegen(input, { shape, name })`: TypeScript source.                                                                                                                                                                                                                                                                                        |
-| `@discordkit/preview/scene`    | `readScene(input)`: any input as a normalised camelCase scene, with intake findings. `devices`, `layouts` and `resolveViewport(viewport)`: the device registry and what a viewport draws.                                                                                                                                                    |
+| `@discordkit/preview/scene`    | `readScene(input)`: any input as a normalised camelCase scene, with intake findings. `devices`, `layouts` and `resolveViewport(viewport)`: the device registry and what a viewport draws. `parts` and `viewportFidelity(scene, viewport)`: which parts of a scene a viewport draws unobserved.                                               |
 | `@discordkit/preview/markdown` | `parseMarkdown(source, context)`: Discord-flavoured markdown to a typed AST.                                                                                                                                                                                                                                                                 |
 | `@discordkit/preview/react`    | `<Scene>` and the components it draws with, for showing a preview in your own React app (import `@discordkit/preview/react/styles.css` too).                                                                                                                                                                                                 |
 
@@ -412,7 +442,7 @@ Every render reports which fonts drew the text (`fonts.used`: the family name in
 - **Components**: every component a message can hold is drawn. The components only a modal holds (Label, Text Input, File Upload, and radio and checkbox groups) are not; a message holding one gets a `component-unsupported` finding and no image. Modals, polls, reactions, replies, threads and forwarded messages are not drawn.
 - **Selects**: only a String Select can be drawn open. The closed control's fill and border, and the text sizes in it and in the open list, are inferred, and the open list shows every option where the client's scrolls.
 - **Calibration**: values come from Discord's stylesheet, checked against screenshots of the real desktop client in the dark theme. Layout Discord decides in JavaScript is calibrated where a screenshot showed it (galleries of one, two and four pictures, the header's time for a message sent today, where "(edited)" sits on a Components V2 message) and inferred elsewhere: galleries of three and of five or more on desktop, a pair of large or differently shaped pictures, the header's time for an older message, embed text sizes, relative-timestamp wording, file sizes' wording. The light, ash and onyx themes have not been checked against the client.
-- **Mobile**: phones and tablets are drawn with the web client's layout at their width, not as the native apps draw them, and say so. Where a phone's first screen of chat ends was measured once, on an iPhone 14 Pro; for other iPhones it is worked out from their safe areas, and for Android and tablets it is an estimate. The desktop channel list is drawn at its default width; people can drag theirs wider.
+- **Mobile**: the iOS layout was measured from 14 screenshots of the app on one iPhone 14 Pro, all in the dark theme and all of one bot's Components V2 cards; each image lists what in its message those screenshots did not show. Sizes on other iPhones are the 14 Pro's applied at their width, unmeasured. iPads draw the same layout with everything marked unmeasured. Android devices are drawn with the web client's layout at their width, not as the Android app draws them, and say so. Emoji are Twemoji where the iOS app draws Apple's. With Noto Sans, wider than gg sans, a long name in an iPhone message header is cut with an ellipsis where the app would fit it. Where a phone's first screen of chat ends was measured once, on an iPhone 14 Pro; for other iPhones it is worked out from their safe areas, and for Android and tablets it is an estimate. The desktop channel list is drawn at its default width; people can drag theirs wider.
 - **Markdown**: no syntax highlighting in code blocks.
 - **Lint**: misspelled keys pass silently, because the client schemas drop unknown keys; character counts use Unicode code points, and whether Discord counts UTF-16 units instead is unverified.
 - **Validation of selects and files**: until a fix to `@discordkit/client` lands, its schemas reject a select menu in an action row's array (the shape Discord expects) and a File component without `name` and `size` (which only Discord's responses carry), so a correct payload holding either gets `schema` errors. They are still drawn, and Studio's forms write the shape Discord expects, so those two findings show in Studio too until the fix lands.
