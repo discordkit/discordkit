@@ -17,3 +17,34 @@ export {
   supportedComponents
 } from "../components.js";
 export type { ComponentParent } from "../components.js";
+export {
+  clientNames,
+  desktopChrome,
+  deviceSources,
+  devices,
+  drawnLayout,
+  findDevice,
+  isCalibrated,
+  layouts,
+  phoneChrome,
+  platformNames
+} from "../devices.js";
+export type {
+  Device,
+  FormFactor,
+  LayoutId,
+  LayoutInfo,
+  Platform,
+  RequestedLayout
+} from "../devices.js";
+export {
+  closeDevices,
+  defaultViewports,
+  desktopChatWidth,
+  isDeviceViewport,
+  resolveViewport,
+  sceneViewports,
+  UnknownDeviceError,
+  unknownDeviceMessage
+} from "../viewport.js";
+export type { ResolvedViewport } from "../viewport.js";

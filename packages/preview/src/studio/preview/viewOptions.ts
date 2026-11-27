@@ -1,6 +1,12 @@
 import { isObject } from "@discordkit/core/utils/isObject";
 import { ComponentType } from "@discordkit/client/components/types/ComponentType";
+import { devices, findDevice } from "../../devices.js";
 import type { Scene, Theme } from "../../scene.js";
+import {
+  isDeviceViewport,
+  resolveViewport,
+  type SceneViewport
+} from "../../viewport.js";
 import type { Option } from "../controls/Fields.js";
 
 export const themeOptions: ReadonlyArray<Option<Theme>> = [
@@ -10,18 +16,49 @@ export const themeOptions: ReadonlyArray<Option<Theme>> = [
   { id: `onyx`, label: `Onyx` }
 ];
 
-/**
- * Chat-column widths to jump to. Desktop is the renderer's default column. Phone is 390 pixels, the width of a common phone screen, which a phone's chat column nearly fills. Either way it is the web client's layout at that width that is drawn, not the native apps' (see the package's README); the phone width is an assumption until calibration.
- */
-export const widthPresets = [
-  { id: `desktop`, label: `Desktop`, width: 600 },
-  { id: `phone`, label: `Phone`, width: 390 }
-] as const;
+/** The device chooser's value for a free width with no device. */
+export const responsiveKey = `responsive`;
 
-export type WidthPreset = (typeof widthPresets)[number][`id`];
+/** What the device chooser shows as chosen for a viewport. */
+export const chooserKey = (viewport: SceneViewport): string =>
+  isDeviceViewport(viewport) ? viewport.device : responsiveKey;
 
-export const presetFor = (width: number): WidthPreset | undefined =>
-  widthPresets.find((preset) => preset.width === width)?.id;
+/** The viewport a choice in the device chooser makes of `current`: a device keeps a desktop window's member-list setting, and "responsive" starts at the chat column the device had, so switching to it changes nothing on screen. */
+export const chooseViewport = (
+  current: SceneViewport,
+  key: string
+): SceneViewport => {
+  if (key === responsiveKey) {
+    return isDeviceViewport(current)
+      ? { width: resolveViewport(current).chatWidth }
+      : current;
+  }
+  return isDeviceViewport(current) && current.memberList !== undefined
+    ? { device: key, memberList: current.memberList }
+    : { device: key };
+};
+
+/** The viewport to add after the last: the next device Studio does not show yet, preferring a phone after a desktop window and a desktop window after a phone, so each new one is a different view. */
+export const nextViewport = (
+  viewports: readonly SceneViewport[]
+): SceneViewport => {
+  const shown = new Set(
+    viewports.filter(isDeviceViewport).map((viewport) => viewport.device)
+  );
+  const last = viewports.at(-1);
+  const lastPlatform =
+    last !== undefined && isDeviceViewport(last)
+      ? findDevice(last.device)?.platform
+      : undefined;
+  const candidates = devices.filter((device) => !shown.has(device.id));
+  const different = candidates.find((device) =>
+    lastPlatform === `desktop`
+      ? device.platform !== `desktop` && device.form === `phone`
+      : device.platform === `desktop`
+  );
+  const pick = different ?? candidates.at(0);
+  return pick === undefined ? { width: 600 } : { device: pick.id };
+};
 
 const languageNames = ((): Intl.DisplayNames | undefined => {
   try {

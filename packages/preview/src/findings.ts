@@ -56,7 +56,9 @@ export type LintCode =
   | `heading-too-deep`
   | `markdown-unsupported-here`
   | `mention-literal`
-  | `link-scheme`;
+  | `link-scheme`
+  | `viewport-device-unknown`
+  | `viewport-width-ignored`;
 
 /** Rendering: an image the Node renderer drew as a placeholder (`attachment-missing` is lint's code, shared), or a scene it could not draw at all. */
 export type RenderCode =
@@ -95,6 +97,12 @@ export const formatPath = (path: readonly PathSegment[]): string =>
           : `[${JSON.stringify(segment)}]`
     )
     .join(``);
+
+/** Lint's codes for a scene the renderer refuses to draw: it throws for exactly these, a component outside `supportedComponents` where it sits and an `openSelect` that names no String Select, reading the same lists lint does. Studio checks for them before drawing, so it never renders a scene that would throw. */
+export const undrawableCodes: ReadonlySet<FindingCode> = new Set<FindingCode>([
+  `component-unsupported`,
+  `open-select-missing`
+]);
 
 /** Whether any finding would stop the message being sent or the scene being drawn. */
 export const hasErrors = (findings: readonly Finding[]): boolean =>

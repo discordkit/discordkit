@@ -164,7 +164,23 @@ const sceneSchema = v.object({
   locale: v.exactOptional(v.pipe(v.string(), clockCheck(`locale`))),
   revealSpoilers: optionalBoolean,
   theme: v.exactOptional(v.picklist([`light`, `ash`, `dark`, `onyx`])),
-  width: v.exactOptional(v.pipe(v.number(), v.integer(), v.minValue(1)))
+  width: v.exactOptional(v.pipe(v.number(), v.integer(), v.minValue(1))),
+  // Whether a device id exists is lint's question (`viewport-device-unknown`), which can suggest the one meant.
+  viewports: v.exactOptional(
+    v.array(
+      v.union([
+        v.object({ device: v.string(), memberList: optionalBoolean }),
+        v.object({
+          width: v.pipe(
+            v.number(),
+            v.integer(),
+            v.minValue(1),
+            v.maxValue(4096)
+          )
+        })
+      ])
+    )
+  )
 });
 
 const unrecognised = (detail: string): Finding => ({

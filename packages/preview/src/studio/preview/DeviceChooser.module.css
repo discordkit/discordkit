@@ -1,0 +1,42 @@
+.trigger {
+  min-width: 11em;
+}
+
+/* Tall enough for a platform's devices without scrolling the whole list into a sliver; the search stays above the list. */
+.popover {
+  display: flex;
+  flex-direction: column;
+  gap: var(--st-space-2);
+  width: 20em;
+  max-height: min(70dvh, 480px);
+  overflow: hidden;
+}
+
+.search {
+  flex: none;
+}
+
+.list {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.section:not(:first-child) {
+  margin-top: var(--st-space-3);
+}
+
+.header {
+  padding: var(--st-space-2) var(--st-space-4);
+  color: var(--st-text-muted);
+  font-size: var(--st-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.empty {
+  margin: 0;
+  padding: var(--st-space-4);
+  color: var(--st-text-muted);
+}
