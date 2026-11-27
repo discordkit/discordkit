@@ -485,6 +485,15 @@ export const renderScene = async (
             const over = reach - (box.bottom - padding);
             if (over > 0)
               root.style.paddingBottom = `${String(padding + over)}px`;
+            // A scene's height is rarely a whole number of pixels, since line heights are fractional, and where the fraction lands depends on the fonts a machine has. A screenshot of the scene alone takes the whole pixels that enclose it, while its place inside a sheet of viewports is measured and rounded, so the two could disagree by a row: on Linux a viewport cropped out of a sheet at its reported box was one row shorter than the same viewport drawn alone. Padding the scene to the next whole pixel makes its height the same number wherever it is drawn.
+            const height = root.getBoundingClientRect().height;
+            const short = Math.ceil(height) - height;
+            if (short > 0.001) {
+              const now = Number.parseFloat(
+                getComputedStyle(root).paddingBottom
+              );
+              root.style.paddingBottom = `${String(now + short)}px`;
+            }
           }
         },
         { scene: sceneSelector, overlay: overlayAttribute }
