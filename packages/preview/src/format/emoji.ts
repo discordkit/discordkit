@@ -9,7 +9,8 @@ import type { SceneContext } from "../scene.js";
 
 export const twemojiVersion = `17.0.3`;
 
-const twemojiBase = `https://cdn.jsdelivr.net/gh/jdecked/twemoji@${twemojiVersion}/assets/svg`;
+/** Where every Twemoji image is, at the pinned release: `<base>/<code points>.svg`. Studio's file bridge serves the same files from the renderer's asset cache. */
+export const twemojiBase = `https://cdn.jsdelivr.net/gh/jdecked/twemoji@${twemojiVersion}/assets/svg`;
 
 // As numbers, since both are invisible when written as characters.
 const zeroWidthJoiner = 0x200d;

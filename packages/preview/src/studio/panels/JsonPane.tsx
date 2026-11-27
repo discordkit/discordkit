@@ -28,12 +28,11 @@ export const ConflictBanner = ({
       {` `}
       The preview, findings, code and forms now show the file. Your version is
       still in the JSON pane and has not been saved; saving is paused until you
-      choose.
+      choose. Loading the file is a step in the history, so Undo brings your
+      version back.
     </p>
     <div className={styles.conflictActions}>
-      <QuietButton onPress={onLoadFile}>
-        Discard mine, load the file
-      </QuietButton>
+      <QuietButton onPress={onLoadFile}>Load the file</QuietButton>
       <PrimaryButton onPress={onKeepMine} isDisabled={!canKeepMine}>
         Overwrite the file with mine
       </PrimaryButton>

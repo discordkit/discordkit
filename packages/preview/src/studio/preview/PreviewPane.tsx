@@ -6,7 +6,8 @@ import {
   useMemo,
   useRef,
   useState,
-  type ReactElement
+  type ReactElement,
+  type RefObject
 } from "react";
 import type { InputKind } from "../../scene/intake.js";
 import {
@@ -36,6 +37,7 @@ import {
   TextInputField
 } from "../controls/Fields.js";
 import { PlusIcon } from "../controls/icons.js";
+import { ConvertToScene } from "../editor/ConvertToScene.js";
 import { useInspect } from "./selection.js";
 import {
   localeOptions,
@@ -91,6 +93,66 @@ const resolveShown = (viewport: SceneViewport): ResolvedViewport => {
   }
 };
 
+/**
+ * Makes the heads of the viewports in one row (their controls, caption and notes) as tall as the tallest, so the drawings beside each other start at the same height and can be compared line by line, as the command line's sheet does. A phone's head carries a report a desktop window's does not, so without this its drawing sat lower. Rows are found by where each panel starts, so a wrapped row is levelled on its own. It is layout measured on screen, so it is written to the elements' style rather than kept as state.
+ */
+const useLevelHeads = (stage: RefObject<HTMLDivElement | null>): void => {
+  useLayoutEffect(() => {
+    const root = stage.current;
+    if (root === null) return;
+    const level = (): void => {
+      const heads = [
+        ...root.querySelectorAll<HTMLElement>(`[data-viewport-head]`)
+      ];
+      const rows = new Map<number, HTMLElement[]>();
+      for (const head of heads) {
+        const top = Math.round(head.getBoundingClientRect().top);
+        rows.set(top, [...(rows.get(top) ?? []), head]);
+      }
+      for (const row of rows.values()) {
+        const tallest = Math.max(
+          ...row.map((head) =>
+            head.firstElementChild instanceof HTMLElement
+              ? head.firstElementChild.offsetHeight
+              : 0
+          )
+        );
+        for (const head of row) {
+          const height = `${String(tallest)}px`;
+          if (head.style.minHeight !== height) {
+            head.style.setProperty(`min-height`, height);
+          }
+        }
+      }
+    };
+    level();
+    // Levelled in the next frame, not inside the observer's callback: a change of size there is reported again in the same frame, which the browser calls a loop.
+    let frame = 0;
+    const observer = new ResizeObserver(() => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(level);
+    });
+    observer.observe(root);
+    const watched = new MutationObserver(() => {
+      observer.disconnect();
+      observer.observe(root);
+      for (const inner of root.querySelectorAll(`[data-viewport-head] > *`)) {
+        observer.observe(inner);
+      }
+      level();
+    });
+    for (const inner of root.querySelectorAll(`[data-viewport-head] > *`)) {
+      observer.observe(inner);
+    }
+    watched.observe(root, { childList: true });
+    return (): void => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+      watched.disconnect();
+    };
+  }, [stage]);
+};
+
 export interface PreviewPaneProps {
   /** The scene to draw, or undefined when there has never been one that reads. */
   scene: SceneData | undefined;
@@ -112,6 +174,10 @@ export interface PreviewPaneProps {
   selected: string | undefined;
   /** Called with a node's id when the person clicks what it draws, in any viewport. */
   onSelect: (id: string) => void;
+  /** The file's name, for the conversion's dialog. */
+  fileName: string;
+  /** Rewrites a bare payload as a scene, so these settings have somewhere to be saved. */
+  onConvertToScene: () => void;
 }
 
 /**
@@ -128,7 +194,9 @@ export const PreviewPane = memo(function PreviewPane({
   refusal,
   staleNote,
   selected,
-  onSelect
+  onSelect,
+  fileName,
+  onConvertToScene
 }: PreviewPaneProps): ReactElement {
   const headingId = useId();
   const inspect = useInspect(scene);
@@ -158,6 +226,7 @@ export const PreviewPane = memo(function PreviewPane({
     observer.observe(stage);
     return (): void => observer.disconnect();
   }, []);
+  useLevelHeads(stageRef);
   const [zoomMode, setZoomMode] = useState<ZoomMode>(`fit`);
   const room = stageWidth - stagePadding * 2 - rowGap * (resolved.length - 1);
   // The largest zoom, in steps of a percent, at which every panel fits in one row. A panel is never narrower than its controls, so it is not simply the room over the columns' total.
@@ -255,11 +324,19 @@ export const PreviewPane = memo(function PreviewPane({
           <p className={styles.note}>{disabledReason}</p>
         )}
         {kind === undefined || kind === `scene` || kind === `unknown` ? null : (
-          <p className={styles.note}>
-            Not written to the file: it holds {kindNames[kind]}, which has no
-            place for these settings. To keep them, make it a scene,{" "}
-            <code>{`{ "messages": [{ "payload": … }] }`}</code>.
-          </p>
+          <div className={styles.convert}>
+            <p className={styles.note}>
+              Not written to the file: it holds {kindNames[kind]}, which has no
+              place for these settings. To keep them, make it a scene,{" "}
+              <code>{`{ "messages": [{ "payload": … }] }`}</code>.
+            </p>
+            <ConvertToScene
+              fileKind={kind}
+              fileName={fileName}
+              onConvert={onConvertToScene}
+              isDisabled={disabled}
+            />
+          </div>
         )}
         {staleNote === undefined ? null : (
           <p className={styles.staleNote}>{staleNote}</p>

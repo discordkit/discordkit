@@ -1,8 +1,11 @@
-import { memo, type ReactElement } from "react";
+import { memo, useId, type ReactElement } from "react";
 import { Button, Label, Meter } from "react-aria-components";
-import { formatPath, type Finding } from "../../findings.js";
+import { formatPath, type Finding, type Path } from "../../findings.js";
 import type { Count } from "../../lint/index.js";
+import type { InputKind } from "../../scene/intake.js";
 import { ErrorIcon, WarningIcon } from "../controls/icons.js";
+import type { UnknownReference } from "../editor/contextUsage.js";
+import { UnknownNote } from "../editor/UnknownNotes.js";
 import { LintState, type OverallState } from "./LintState.js";
 import styles from "./FindingsPanel.module.css";
 
@@ -11,17 +14,53 @@ export interface ShownFinding extends Finding {
   filePath: string | undefined;
 }
 
+/** A count whose `path` is spelled as the file spells it, with the scene path it was measured at, for grouping. */
+export interface ShownCount extends Count {
+  scenePath: Path;
+}
+
 export interface FindingsPanelProps {
   overall: OverallState;
   /** The renderer's reason, when the scene cannot be drawn. */
   drawProblem: string | undefined;
   findings: readonly ShownFinding[];
-  counts: readonly Count[];
+  counts: readonly ShownCount[];
   /** Takes the person to a finding's field. Undefined for a finding with nowhere to go (about the input as a whole, or a preview setting). */
   onChoose?: (finding: ShownFinding) => void;
   /** Whether a finding has a field to go to. */
   canChoose?: (finding: ShownFinding) => boolean;
+  /** How many messages the scene has. With more than one, findings and limits are grouped by the message they are about, since each message is sent, and counted, on its own. */
+  messageCount?: number;
+  /** What the scene uses but its surroundings do not describe. Not lint's findings (Discord would send the message as it is), but what makes the preview draw "unknown-user" or a placeholder. */
+  unknown?: readonly UnknownReference[];
+  fileKind?: InputKind;
+  onDefine?: (reference: UnknownReference) => void;
+  isDefineDisabled?: boolean;
 }
+
+const noReferences: readonly UnknownReference[] = [];
+
+/** The message a scene path is in, or undefined for one about the scene as a whole (a viewport, the context). */
+const messageOf = (path: readonly unknown[]): number | undefined =>
+  path[0] === `messages` && typeof path[1] === `number` ? path[1] : undefined;
+
+/** Items grouped by message, in message order, with anything about the scene as a whole last. */
+const byMessage = <T,>(
+  items: readonly T[],
+  pathOf: (item: T) => readonly unknown[]
+): Array<{ message: number | undefined; items: T[] }> => {
+  const groups = new Map<number | undefined, T[]>();
+  for (const item of items) {
+    const message = messageOf(pathOf(item));
+    groups.set(message, [...(groups.get(message) ?? []), item]);
+  }
+  return [...groups.entries()]
+    .sort(([a], [b]) => (a ?? Infinity) - (b ?? Infinity))
+    .map(([message, grouped]) => ({ message, items: grouped }));
+};
+
+const groupName = (message: number | undefined): string =>
+  message === undefined ? `The scene` : `Message ${String(message + 1)}`;
 
 const where = (finding: ShownFinding): string =>
   finding.filePath === undefined
@@ -125,8 +164,37 @@ export const FindingsPanel = memo(function FindingsPanel({
   findings,
   counts,
   onChoose,
-  canChoose
+  canChoose,
+  messageCount = 1,
+  unknown = noReferences,
+  fileKind,
+  onDefine,
+  isDefineDisabled = false
 }: FindingsPanelProps): ReactElement {
+  const grouped = messageCount > 1;
+  const unknownId = useId();
+  const findingList = (
+    list: readonly ShownFinding[],
+    label: string
+  ): ReactElement => (
+    <ul className={styles.list} aria-label={label}>
+      {list.map((finding, index) => (
+        // oxlint-disable-next-line react/no-array-index-key -- two findings can share a code and path; their order is lint's.
+        <FindingItem
+          key={`${String(index)}:${finding.code}`}
+          finding={finding}
+          onChoose={canChoose?.(finding) === true ? onChoose : undefined}
+        />
+      ))}
+    </ul>
+  );
+  const meters = (list: readonly ShownCount[]): ReactElement[] =>
+    list.map((count) => (
+      <CountMeter
+        key={`${count.metric}:${formatPath(count.path)}`}
+        count={count}
+      />
+    ));
   return (
     <div className={styles.panel}>
       <output className={styles.summary}>
@@ -142,27 +210,50 @@ export const FindingsPanel = memo(function FindingsPanel({
           No findings: Discord would accept this as written, and nothing in it
           looks unintended.
         </p>
+      ) : grouped ? (
+        byMessage(findings, (finding) => finding.path).map((group) => (
+          <div key={group.message ?? `scene`} className={styles.group}>
+            <h3 className={styles.groupName}>{groupName(group.message)}</h3>
+            {findingList(
+              group.items,
+              `Findings in ${groupName(group.message)}`
+            )}
+          </div>
+        ))
       ) : (
-        <ul className={styles.list} aria-label="Findings">
-          {findings.map((finding, index) => (
-            // oxlint-disable-next-line react/no-array-index-key -- two findings can share a code and path; their order is lint's.
-            <FindingItem
-              key={`${String(index)}:${finding.code}`}
-              finding={finding}
-              onChoose={canChoose?.(finding) === true ? onChoose : undefined}
-            />
-          ))}
-        </ul>
+        findingList(findings, `Findings`)
+      )}
+      {unknown.length === 0 || onDefine === undefined ? null : (
+        <section className={styles.counts} aria-labelledby={unknownId}>
+          <h3 id={unknownId} className={styles.subheading}>
+            Not described in the scene
+          </h3>
+          <ul className={styles.unknownList}>
+            {unknown.map((reference) => (
+              <UnknownNote
+                key={`${reference.kind}:${reference.key}`}
+                reference={reference}
+                fileKind={fileKind}
+                onDefine={onDefine}
+                isDisabled={isDefineDisabled}
+              />
+            ))}
+          </ul>
+        </section>
       )}
       {counts.length === 0 ? null : (
         <section className={styles.counts} aria-label="Limits">
           <h3 className={styles.subheading}>Limits</h3>
-          {counts.map((count) => (
-            <CountMeter
-              key={`${count.metric}:${formatPath(count.path)}`}
-              count={count}
-            />
-          ))}
+          {grouped
+            ? byMessage(counts, (count) => count.scenePath).map((group) => (
+                <div key={group.message ?? `scene`} className={styles.group}>
+                  <h4 className={styles.groupName}>
+                    {groupName(group.message)}
+                  </h4>
+                  {meters(group.items)}
+                </div>
+              ))
+            : meters(counts)}
         </section>
       )}
     </div>

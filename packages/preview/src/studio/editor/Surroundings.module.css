@@ -1,0 +1,244 @@
+/* The Surroundings tab: a section per kind of entry, each entry a card saying where it is used. Fields, cards and buttons reuse the forms' classes (`Form.module.css`); these are what the tab adds. */
+
+.panel {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--st-space-6);
+  min-width: 0;
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--st-space-7);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--st-space-4);
+  min-width: 0;
+}
+
+.sectionHeading {
+  display: flex;
+  align-items: center;
+  gap: var(--st-space-3);
+  margin: 0;
+  color: var(--st-text);
+  font-size: var(--st-text-md);
+  font-weight: 600;
+}
+
+.count,
+.countAttention {
+  min-width: 1.6em;
+  padding: 0 var(--st-space-3);
+  border-radius: 999px;
+  background: var(--st-surface-sunken);
+  color: var(--st-text-muted);
+  font-size: var(--st-text-xs);
+  font-weight: 600;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.countAttention {
+  background: var(--st-warn-soft);
+  color: var(--st-warn);
+}
+
+.key {
+  margin-left: var(--st-space-3);
+  color: var(--st-text-muted);
+  font-family: var(--st-font-code);
+  font-size: var(--st-text-xs);
+  font-weight: 400;
+}
+
+.uses {
+  margin: 0;
+  color: var(--st-text-muted);
+  font-size: var(--st-text-xs);
+  line-height: 1.6;
+}
+
+.usesLabel {
+  color: var(--st-text);
+  font-weight: 600;
+}
+
+/* A place an entry is used, as a link to it in the editor. */
+.place {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--st-accent);
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  outline: none;
+}
+
+.place[data-hovered] {
+  text-decoration-thickness: 2px;
+}
+
+.place[data-focus-visible] {
+  outline: var(--st-focus-width) solid var(--st-focus);
+  outline-offset: 1px;
+  border-radius: 2px;
+}
+
+.how {
+  color: var(--st-text-muted);
+}
+
+/* An entry nothing uses: marked, with the way to remove it beside the mark. */
+.unused {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--st-space-3) var(--st-space-5);
+  padding: var(--st-space-3) var(--st-space-4);
+  border-left: 3px solid var(--st-warn);
+  background: var(--st-warn-soft);
+  color: var(--st-text);
+  font-size: var(--st-text-sm);
+}
+
+.switches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--st-space-4) var(--st-space-6);
+}
+
+.add {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--st-space-3) var(--st-space-4);
+}
+
+/* Lines the add button up with the field, whose label sits above it. */
+.add > :last-child {
+  margin-top: calc(var(--st-text-xs) * 1.4 + var(--st-space-2));
+}
+
+.addProblem {
+  color: var(--st-error);
+  font-size: var(--st-text-xs);
+}
+
+.unknownList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--st-space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Something the scene uses but does not describe, with the action that starts describing it. */
+.unknown {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--st-space-2) var(--st-space-3);
+  align-items: start;
+  padding: var(--st-space-3) var(--st-space-4);
+  border-left: 3px solid var(--st-accent);
+  background: var(--st-accent-soft);
+  color: var(--st-text);
+  font-size: var(--st-text-xs);
+  line-height: 1.45;
+}
+
+.unknownIcon {
+  width: 13px;
+  height: 13px;
+  margin-top: 1px;
+  color: var(--st-accent);
+}
+
+.unknownText {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.defineButton {
+  grid-column: 2;
+  justify-self: start;
+  box-sizing: border-box;
+  height: 24px;
+  padding: 0 var(--st-space-4);
+  border: 1px solid var(--st-accent);
+  border-radius: var(--st-radius-sm);
+  background: var(--st-surface);
+  color: var(--st-accent);
+  font: inherit;
+  font-size: var(--st-text-xs);
+  font-weight: 600;
+  outline: none;
+}
+
+.defineButton[data-hovered] {
+  background: var(--st-surface-hover);
+}
+
+.defineButton[data-focus-visible] {
+  outline: var(--st-focus-width) solid var(--st-focus);
+  outline-offset: 1px;
+}
+
+.defineButton[data-disabled] {
+  opacity: 0.5;
+}
+
+.checking,
+.checkProblem,
+.checkOk {
+  margin: 0;
+  padding: var(--st-space-3) var(--st-space-4);
+  font-size: var(--st-text-xs);
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.checking {
+  color: var(--st-text-muted);
+}
+
+.checkProblem {
+  border-left: 3px solid var(--st-error);
+  background: var(--st-error-soft);
+  color: var(--st-text);
+}
+
+.checkProblem code {
+  font-family: var(--st-font-code);
+}
+
+.checkOk {
+  display: flex;
+  align-items: center;
+  gap: var(--st-space-4);
+  border-left: 3px solid var(--st-ok);
+  background: var(--st-ok-soft);
+  color: var(--st-text);
+}
+
+.thumbnail {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--st-radius-sm);
+  object-fit: cover;
+  background: var(--st-surface-sunken);
+}

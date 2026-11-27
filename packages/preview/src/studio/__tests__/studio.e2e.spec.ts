@@ -1,6 +1,6 @@
 import { spawn, type ChildProcess } from "node:child_process";
 import { existsSync } from "node:fs";
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -47,7 +47,17 @@ const startStudio = async (file: string): Promise<Running> =>
   new Promise((resolve, reject) => {
     const child = spawn(
       process.execPath,
-      [bin, `studio`, file, `--json`, `--no-open`, `--port`, `0`],
+      [
+        bin,
+        `studio`,
+        file,
+        `--json`,
+        `--no-open`,
+        `--port`,
+        `0`,
+        // Studio's PNG export drives a browser too: on CI, the Chrome the runner image ships, as `render` does.
+        ...(process.env.CI ? [`--channel`, `chrome`] : [])
+      ],
       { stdio: [`ignore`, `pipe`, `pipe`] }
     );
     let stdout = ``;
@@ -485,4 +495,131 @@ describe(`discordkit-preview studio, editing with the tree and the forms`, () =>
       { key: `iphone-se`, calibrated: true }
     ]);
   }, 120_000);
+
+  it(`builds a before-and-after sequence from a starting point without the JSON pane: defines a mentioned user from the finding, duplicates the message and marks the copy edited, undoes an agent's change, and exports the PNG render draws`, async () => {
+    interface Saved {
+      messages: {
+        edited?: boolean;
+        payload: { components: { content?: string }[] };
+      }[];
+      context?: { users?: Record<string, { name: string }> };
+    }
+    const saved = async (): Promise<Saved> =>
+      JSON.parse(await readFile(file, `utf8`)) as Saved;
+    const snowflake = `1311000000000000201`;
+
+    await open(`{ "messages": [] }\n`);
+    await page
+      .getByRole(`button`, { name: /Empty Components V2 message/ })
+      .click();
+    await pick(page, /^Message/);
+    await add(page, `Text Display`, /^Inside Message/);
+    await page
+      .getByRole(`textbox`, { name: `Content` })
+      .fill(`Over to <@${snowflake}> for the answer.`);
+    await page
+      .getByTestId(`preview`)
+      .getByText(`@unknown-user`)
+      .first()
+      .waitFor({ timeout: flowTimeout });
+
+    // The findings say the mention is drawn unknown, with the action that defines the user.
+    await page
+      .getByRole(`complementary`, { name: `Findings` })
+      .getByRole(`button`, { name: `Define user ${snowflake}` })
+      .click();
+    await page.keyboard.type(`Mika`);
+    await page
+      .getByTestId(`preview`)
+      .getByText(`@Mika`)
+      .first()
+      .waitFor({ timeout: flowTimeout });
+    await expect
+      .poll(async () => (await saved()).context?.users, { timeout: 5000 })
+      .toStrictEqual({ [snowflake]: { name: `Mika` } });
+
+    // Before and after: the message copied, and the copy marked edited.
+    await page.getByRole(`tab`, { name: `Edit` }).click();
+    await pick(page, /^Message/);
+    await page.getByRole(`button`, { name: `Duplicate` }).click();
+    await page
+      .getByRole(`row`, { name: /^Message 2/ })
+      .waitFor({ timeout: flowTimeout });
+    await page.getByText(`Edited`, { exact: true }).click();
+    await expect
+      .poll(
+        async () => (await saved()).messages.map((message) => message.edited),
+        { timeout: 5000 }
+      )
+      .toStrictEqual([undefined, true]);
+
+    // Undo and redo the switch.
+    await page.getByRole(`button`, { name: `Undo Turn Edited on` }).click();
+    await expect
+      .poll(
+        async () => (await saved()).messages.map((message) => message.edited),
+        { timeout: 5000 }
+      )
+      .toStrictEqual([undefined, undefined]);
+    await page.getByRole(`button`, { name: `Redo Turn Edited on` }).click();
+    await expect
+      .poll(
+        async () => (await saved()).messages.map((message) => message.edited),
+        { timeout: 5000 }
+      )
+      .toStrictEqual([undefined, true]);
+    await page.waitForTimeout(600);
+
+    // An agent changes the file; undo takes back that change, by name, and the file is as it was before it.
+    const ours = await readFile(file, `utf8`);
+    const theirs = ours.replace(`for the answer.`, `for the agent's answer.`);
+    await writeFile(file, theirs);
+    await page
+      .getByTestId(`preview`)
+      .getByText(`for the agent's answer.`)
+      .first()
+      .waitFor({ timeout: flowTimeout });
+    await page.getByRole(`button`, { name: `Undo Change on disk` }).click();
+    await expect
+      .poll(async () => readFile(file, `utf8`), { timeout: 5000 })
+      .toBe(ours);
+
+    // The PNG, drawn by the studio command, is the one render writes for the same file and the viewports on screen.
+    await page.getByRole(`button`, { name: `Export PNG` }).click();
+    await page.getByRole(`button`, { name: /^Draw (the PNG|again)$/ }).click();
+    const link = page.getByRole(`link`, { name: `Save card.png` });
+    await link.waitFor({ timeout: 90_000 });
+    // Saved as a person saves it, through the browser's download.
+    const [download] = await Promise.all([
+      page.waitForEvent(`download`),
+      link.click()
+    ]);
+    expect(download.suggestedFilename()).toBe(`card.png`);
+    const out = join(dir, `out`);
+    await mkdir(out, { recursive: true });
+    await download.saveAs(join(out, `studio.png`));
+    const render = await runCommand([
+      `render`,
+      file,
+      `--device`,
+      `desktop-1280x800`,
+      `--device`,
+      `iphone-14-pro`,
+      `--out`,
+      join(out, `render.png`),
+      `--json`,
+      ...(process.env.CI ? [`--channel`, `chrome`] : [])
+    ]);
+    expect(render).toMatchObject({ code: 0 });
+    const diff = await runCommand([
+      `diff`,
+      join(out, `render.png`),
+      join(out, `studio.png`),
+      `--out`,
+      join(out, `diff.png`),
+      `--json`
+    ]);
+    expect(diff.stdout).toContain(`"identical": true`);
+    expect(diff).toMatchObject({ code: 0 });
+  }, 240_000);
 });

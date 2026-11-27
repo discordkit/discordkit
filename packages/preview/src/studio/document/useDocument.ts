@@ -7,7 +7,8 @@ import {
   initialDocument,
   isUnsaved,
   shownText,
-  type DocumentState
+  type DocumentState,
+  type StepInfo
 } from "./documentState.js";
 import { findJsonError, type JsonError } from "./jsonError.js";
 
@@ -32,7 +33,14 @@ export interface DocumentHandle {
   loadError: string | undefined;
   /** The file's name and path, once loaded. */
   file: { name: string; path: string } | undefined;
-  edit: (text: string) => void;
+  /** Puts new text in the pane. `step` names it in the history; edits of one field in quick succession are one step. */
+  edit: (text: string, step?: StepInfo) => void;
+  /** Records a change to settings the text does not hold (a bare payload's view settings). */
+  recordView: (
+    step: StepInfo & { view: NonNullable<StepInfo[`view`]> }
+  ) => void;
+  undo: () => void;
+  redo: () => void;
   loadFile: () => void;
   keepMine: () => void;
 }
@@ -135,7 +143,23 @@ export const useDocument = (backend: Backend): DocumentHandle => {
     connected,
     loadError,
     file,
-    edit: useCallback((text: string) => dispatch({ type: `edited`, text }), []),
+    edit: useCallback(
+      (text: string, step?: StepInfo) =>
+        dispatch({
+          type: `edited`,
+          text,
+          ...(step === undefined ? {} : { step }),
+          at: Date.now()
+        }),
+      []
+    ),
+    recordView: useCallback(
+      (step: StepInfo & { view: NonNullable<StepInfo[`view`]> }) =>
+        dispatch({ type: `viewChanged`, step, at: Date.now() }),
+      []
+    ),
+    undo: useCallback(() => dispatch({ type: `undo`, at: Date.now() }), []),
+    redo: useCallback(() => dispatch({ type: `redo`, at: Date.now() }), []),
     loadFile: useCallback(() => dispatch({ type: `loadFile` }), []),
     keepMine: useCallback(() => dispatch({ type: `keepMine` }), [])
   };

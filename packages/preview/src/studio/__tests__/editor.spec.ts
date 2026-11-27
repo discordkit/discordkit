@@ -11,6 +11,7 @@ import {
   canMove,
   duplicateAt,
   insertChild,
+  insertMessage,
   moveBy,
   newChild,
   removeAt
@@ -246,6 +247,81 @@ describe(`the tree's edits`, () => {
     );
     const again = newChild(added.scene, ComponentType.Button);
     expect(again.customId).toBe(`button-2`);
+  });
+
+  it(`adds a message after the selected one, sent by the same author, so a sequence keeps its sender`, () => {
+    const pair: Scene = {
+      messages: [
+        { author: `1`, payload: { content: `Question` } },
+        { author: `2`, payload: { content: `Answer` } }
+      ]
+    };
+    const added = insertMessage(pair, `v2`, 0);
+    expect(added.selected).toEqual([`messages`, 1]);
+    expect(added.scene.messages.map((message) => message.author)).toEqual([
+      `1`,
+      `1`,
+      `2`
+    ]);
+    // Empty but already Components V2, so the add menu offers containers at once.
+    expect(added.scene.messages[1].payload).toEqual({
+      flags: 32768,
+      components: []
+    });
+    // What was the second message is now the third, and the selection and folds follow it.
+    expect(added.remap([`messages`, 1, `payload`])).toEqual([
+      `messages`,
+      2,
+      `payload`
+    ]);
+    expect(insertMessage(pair, `classic`).scene.messages[2]).toEqual({
+      author: `2`,
+      payload: { content: `` }
+    });
+  });
+
+  it(`duplicates, moves and removes whole messages as it does components, so "before and after" is one duplicate and one change`, () => {
+    const one: Scene = {
+      messages: [
+        { payload: { content: `Open` } },
+        { payload: { content: `B` } }
+      ]
+    };
+    const copied = duplicateAt(one, [`messages`, 0]);
+    expect(copied.selected).toEqual([`messages`, 1]);
+    expect(copied.scene.messages[1]).toEqual(one.messages[0]);
+    // A copy is a copy, not the same object, so editing it leaves the original alone.
+    expect(copied.scene.messages[1]).not.toBe(one.messages[0]);
+    expect(
+      moveBy(one, [`messages`, 1], -1).scene.messages.map(
+        (message) => message.payload.content
+      )
+    ).toEqual([`B`, `Open`]);
+    const removed = removeAt(one, [`messages`, 0]);
+    expect(removed.scene.messages).toHaveLength(1);
+    expect(removed.selected).toEqual([`messages`, 0]);
+    // The last one removed leaves an empty scene, which offers the starting points.
+    expect(removeAt(removed.scene, [`messages`, 0]).scene.messages).toEqual([]);
+  });
+
+  it(`summarises each message by what tells it from the next in a sequence`, () => {
+    const [first, second] = buildTree({
+      messages: [
+        { author: `1`, payload: { content: `Open` } },
+        {
+          author: `1`,
+          edited: true,
+          ephemeral: true,
+          payload: { content: `x` }
+        }
+      ],
+      context: { users: { "1": { name: `Inbou` } } }
+    });
+    expect([first.name, first.summary]).toEqual([
+      `Message 1`,
+      `Classic · Inbou`
+    ]);
+    expect(second.summary).toBe(`Classic · Inbou · edited · ephemeral`);
   });
 
   it(`turns an action row's lone select, held as a bare object, into the array Discord expects once edited`, () => {
