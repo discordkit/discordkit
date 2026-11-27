@@ -1,8 +1,9 @@
 import { isObject } from "@discordkit/core/utils/isObject";
 import { ButtonStyle } from "@discordkit/client/components/types/ButtonStyle";
 import { ComponentType } from "@discordkit/client/components/types/ComponentType";
+import { MessageFlag } from "@discordkit/client/messages/types/MessageFlag";
 import type { Path, PathSegment } from "../../findings.js";
-import type { Scene } from "../../scene.js";
+import type { Scene, SceneMessage } from "../../scene.js";
 import { componentName } from "../../components.js";
 import { isScene, isWithin, replaceAt, valueAt } from "./paths.js";
 import type { ChildType } from "./tree.js";
@@ -247,6 +248,30 @@ export const setValueAt = (
   selected,
   remap: unchanged
 });
+
+/**
+ * A new, empty message after the one at `after` (or at the end), and selects it. It is sent by whoever sent the one before it, since a sequence (a card and its closed state, a question and its answer) is usually one sender's; the person changes that in its form.
+ */
+export const insertMessage = (
+  scene: Scene,
+  kind: `v2` | `classic`,
+  after?: number
+): EditResult => {
+  const previous = scene.messages.at(after ?? -1);
+  const message: SceneMessage = {
+    ...(previous?.author === undefined ? {} : { author: previous.author }),
+    payload:
+      kind === `v2`
+        ? { flags: MessageFlag.IS_COMPONENTS_V2, components: [] }
+        : { content: `` }
+  };
+  return insertChild(
+    scene,
+    [`messages`],
+    message,
+    after === undefined ? undefined : after + 1
+  );
+};
 
 /** Replaces a section's accessory with a new one of the other kind, a thumbnail or a button. */
 export const setAccessory = (

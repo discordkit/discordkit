@@ -24,11 +24,13 @@ import {
   canMove,
   duplicateAt,
   insertChild,
+  insertMessage,
   moveBy,
   newChild,
   removeAt,
   type EditResult
 } from "./edits.js";
+import { useEditor } from "./EditorContext.js";
 import { NodeForm } from "./forms.js";
 import { parsePathKey, pathKey } from "./paths.js";
 import { startingPoints, type StartingPoint } from "./startingPoints.js";
@@ -52,7 +54,7 @@ export interface EditPanelProps {
   collapsed: ReadonlySet<string>;
   onCollapsedChange: (collapsed: Set<string>) => void;
   /** Applies a structural edit and returns the id it selected. */
-  apply: (edit: (scene: Scene) => EditResult) => string;
+  apply: (edit: (scene: Scene) => EditResult, label: string) => string;
   /** Why nothing can be edited now, if it cannot. */
   disabledReason: string | undefined;
   /** The scene has no messages: offer the starting points instead of a tree. */
@@ -60,6 +62,8 @@ export interface EditPanelProps {
   onStart: (point: StartingPoint) => void;
   /** A field to move focus to, from a finding the person chose. */
   focusField: { path: Path; at: number } | undefined;
+  /** A node chosen somewhere the form cannot be seen from (a click in the preview): its form is scrolled into view once drawn, without moving focus. */
+  reveal: { id: string; at: number } | undefined;
 }
 
 interface FocusTarget {
@@ -71,6 +75,23 @@ interface FocusTarget {
   field?: string;
   at: number;
 }
+
+/** Whether an element is wholly in sight: inside the window and inside every box around it that scrolls. */
+const isInView = (element: HTMLElement): boolean => {
+  const box = element.getBoundingClientRect();
+  if (box.top < 0 || box.bottom > window.innerHeight) return false;
+  for (
+    let parent = element.parentElement;
+    parent !== null;
+    parent = parent.parentElement
+  ) {
+    const { overflowY } = getComputedStyle(parent);
+    if (overflowY !== `auto` && overflowY !== `scroll`) continue;
+    const frame = parent.getBoundingClientRect();
+    if (box.top < frame.top || box.bottom > frame.bottom) return false;
+  }
+  return true;
+};
 
 const focusable = `input:not([type="hidden"]):not([disabled]):not([tabindex="-1"]), textarea:not([disabled]), button:not([disabled]):not([tabindex="-1"])`;
 
@@ -87,10 +108,30 @@ export const EditPanel = ({
   disabledReason,
   empty,
   onStart,
-  focusField
+  focusField,
+  reveal
 }: EditPanelProps): ReactElement => {
   const [focus, setFocus] = useState<FocusTarget>();
   const formRef = useRef<HTMLDivElement>(null);
+  const { fileKind } = useEditor();
+
+  // A component picked in the preview is shown in the form even when the form is out of sight: below the preview in a narrow window, or scrolled away in the Edit tab.
+  const revealed = useRef<number>(undefined);
+  useEffect(() => {
+    if (
+      reveal === undefined ||
+      revealed.current === reveal.at ||
+      Date.now() - reveal.at > 2000
+    ) {
+      return;
+    }
+    const heading = formRef.current?.querySelector<HTMLElement>(
+      `[data-node-form="${CSS.escape(reveal.id)}"] h3`
+    );
+    if (heading === null || heading === undefined) return;
+    revealed.current = reveal.at;
+    if (!isInView(heading)) heading.scrollIntoView({ block: `start` });
+  }, [reveal, selected]);
 
   // A finding chosen in the findings panel: focus its field once its form is drawn.
   useEffect(() => {
@@ -150,9 +191,10 @@ export const EditPanel = ({
 
   const run = (
     edit: (current: Scene) => EditResult,
-    where: FocusTarget[`where`]
+    where: FocusTarget[`where`],
+    label: string
   ): void => {
-    const id = apply(edit);
+    const id = apply(edit, label);
     setFocus({ where, id, at: Date.now() });
   };
 
@@ -195,8 +237,27 @@ export const EditPanel = ({
   const disabled = disabledReason !== undefined;
   const inside = path === undefined ? [] : childSlots(scene, path);
   const beside = path === undefined ? [] : siblingSlots(scene, path);
-  const movable =
-    path !== undefined && typeof path.at(-1) === `number` && path.length > 2;
+  // A bare payload is one message, so only a scene file's messages can be added, copied, moved or removed.
+  const sceneFile = fileKind === `scene`;
+  const movable = path !== undefined && isMovable(path, sceneFile);
+  // The message the selection is in, after which a new message goes.
+  const messageIndex =
+    path === undefined || path[0] !== `messages` ? undefined : Number(path[1]);
+  const messageName =
+    messageIndex === undefined
+      ? undefined
+      : nodes.find((node) => node.id === pathKey([`messages`, messageIndex]))
+          ?.name;
+  const messageUnavailable = sceneFile
+    ? undefined
+    : `This file holds one message's payload, with no room for another. Make it a scene first (Convert to a scene, in the message's form).`;
+  const addMessage = (kind: `v2` | `classic`): void => {
+    run(
+      (current) => insertMessage(current, kind, messageIndex),
+      `tree`,
+      `Add a ${kind === `v2` ? `Components V2` : `classic`} message`
+    );
+  };
   const parentName = ((): string => {
     if (path === undefined) return ``;
     const list = path.slice(0, -1);
@@ -219,13 +280,27 @@ export const EditPanel = ({
           newChild(current, slot.type),
           after && path !== undefined ? Number(path.at(-1)) + 1 : undefined
         ),
-      `form`
+      `form`,
+      `Add ${childTypeName(slot.type)}`
     );
   };
+  /** An edit of the row `id`, named for the history as `verb` and the row's name: "Remove Button", "Move Message 2 up". */
   const byId = (
     id: string,
-    edit: (current: Scene, at: Path) => EditResult
-  ): void => run((current) => edit(current, parsePathKey(id)), `tree`);
+    edit: (current: Scene, at: Path) => EditResult,
+    verb: (name: string) => string
+  ): void =>
+    run(
+      (current) => edit(current, parsePathKey(id)),
+      `tree`,
+      verb(findNode(nodes, id)?.name ?? `component`)
+    );
+  const duplicateVerb = (name: string): string => `Duplicate ${name}`;
+  const removeVerb = (name: string): string => `Remove ${name}`;
+  const moveVerb =
+    (delta: -1 | 1) =>
+    (name: string): string =>
+      `Move ${name} ${delta === -1 ? `up` : `down`}`;
 
   const menuItem = (slot: ChildSlot, after: boolean): ReactElement => (
     <MenuItem
@@ -254,21 +329,19 @@ export const EditPanel = ({
         <div
           className={styles.toolbar}
           role="toolbar"
-          aria-label="Edit the selected component"
+          aria-label={`Edit ${selected?.name ?? `the selection`}`}
         >
           <MenuTrigger>
             <Button
               className={styles.addButton}
-              isDisabled={
-                disabled || (inside.length === 0 && beside.length === 0)
-              }
+              isDisabled={disabled || selected === undefined}
             >
               <PlusIcon className={styles.icon} />
               Add
               <ChevronIcon className={styles.icon} />
             </Button>
             <Popover className={styles.menuPopover} placement="bottom start">
-              <Menu className={styles.menu} aria-label="Add a component">
+              <Menu className={styles.menu} aria-label="Add">
                 {inside.length === 0 ? null : (
                   <MenuSection className={styles.menuSection}>
                     <Header className={styles.menuHeader}>
@@ -285,6 +358,26 @@ export const EditPanel = ({
                     {beside.map((slot) => menuItem(slot, true))}
                   </MenuSection>
                 )}
+                <MenuSection className={styles.menuSection}>
+                  <Header className={styles.menuHeader}>
+                    A new message, after {messageName ?? `the last`}
+                  </Header>
+                  {messageKinds.map((kind) => (
+                    <MenuItem
+                      key={kind.id}
+                      id={`message:${kind.id}`}
+                      textValue={kind.label}
+                      className={styles.menuItem}
+                      isDisabled={messageUnavailable !== undefined}
+                      onAction={() => addMessage(kind.id)}
+                    >
+                      <Text slot="label">{kind.label}</Text>
+                      <Text slot="description" className={styles.menuDetail}>
+                        {messageUnavailable ?? kind.detail}
+                      </Text>
+                    </MenuItem>
+                  ))}
+                </MenuSection>
               </Menu>
             </Popover>
           </MenuTrigger>
@@ -295,7 +388,8 @@ export const EditPanel = ({
             aria-keyshortcuts="Control+D"
             isDisabled={disabled || !movable}
             onPress={() =>
-              path !== undefined && byId(pathKey(path), duplicateAt)
+              path !== undefined &&
+              byId(pathKey(path), duplicateAt, duplicateVerb)
             }
           >
             <DuplicateIcon className={styles.icon} />
@@ -307,7 +401,11 @@ export const EditPanel = ({
             isDisabled={disabled || !movable || !canMove(scene, path, -1)}
             onPress={() =>
               path !== undefined &&
-              byId(pathKey(path), (current, at) => moveBy(current, at, -1))
+              byId(
+                pathKey(path),
+                (current, at) => moveBy(current, at, -1),
+                moveVerb(-1)
+              )
             }
           >
             <UpIcon className={styles.icon} />
@@ -319,7 +417,11 @@ export const EditPanel = ({
             isDisabled={disabled || !movable || !canMove(scene, path, 1)}
             onPress={() =>
               path !== undefined &&
-              byId(pathKey(path), (current, at) => moveBy(current, at, 1))
+              byId(
+                pathKey(path),
+                (current, at) => moveBy(current, at, 1),
+                moveVerb(1)
+              )
             }
           >
             <DownIcon className={styles.icon} />
@@ -329,7 +431,9 @@ export const EditPanel = ({
             aria-label="Remove"
             aria-keyshortcuts="Delete"
             isDisabled={disabled || !movable}
-            onPress={() => path !== undefined && byId(pathKey(path), removeAt)}
+            onPress={() =>
+              path !== undefined && byId(pathKey(path), removeAt, removeVerb)
+            }
           >
             <RemoveIcon className={styles.icon} />
           </Button>
@@ -344,13 +448,18 @@ export const EditPanel = ({
             onCollapsedChange={onCollapsedChange}
             focusRequest={focus?.where === `tree` ? focus : undefined}
             isDisabled={disabled}
+            isMovable={(at) => isMovable(at, sceneFile)}
             onMove={(id, delta) => {
               const at = parsePathKey(id);
               if (canMove(scene, at, delta))
-                byId(id, (current) => moveBy(current, at, delta));
+                byId(
+                  id,
+                  (current) => moveBy(current, at, delta),
+                  moveVerb(delta)
+                );
             }}
-            onRemove={(id) => byId(id, removeAt)}
-            onDuplicate={(id) => byId(id, duplicateAt)}
+            onRemove={(id) => byId(id, removeAt, removeVerb)}
+            onDuplicate={(id) => byId(id, duplicateAt, duplicateVerb)}
           />
         </div>
         <p className={styles.hint}>
@@ -369,6 +478,24 @@ export const EditPanel = ({
     </div>
   );
 };
+
+const messageKinds = [
+  {
+    id: `v2` as const,
+    label: `Components V2 message`,
+    detail: `Containers, text and media`
+  },
+  {
+    id: `classic` as const,
+    label: `Classic message`,
+    detail: `Text, embeds and rows of buttons`
+  }
+];
+
+/** Whether the node at `path` sits in a list it can be copied, moved and removed in: any component or embed, and a message in a scene file, whose messages are a list of their own. */
+const isMovable = (path: Path, sceneFile: boolean): boolean =>
+  typeof path.at(-1) === `number` &&
+  (path.length > 2 || (sceneFile && path.length === 2));
 
 const findNode = (
   nodes: readonly TreeNode[],

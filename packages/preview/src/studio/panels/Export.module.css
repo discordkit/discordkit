@@ -1,0 +1,121 @@
+/* The PNG export: a button in the top bar and a small dialog under it. */
+
+.trigger {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 var(--st-space-4);
+  border: 1px solid var(--st-control-border);
+  border-radius: var(--st-radius-sm);
+  background: var(--st-surface);
+  color: var(--st-text);
+  font: inherit;
+  font-size: var(--st-text-sm);
+  white-space: nowrap;
+  outline: none;
+}
+
+.trigger[data-hovered] {
+  background: var(--st-surface-hover);
+}
+
+.trigger[data-focus-visible] {
+  outline: var(--st-focus-width) solid var(--st-focus);
+  outline-offset: 1px;
+}
+
+.popover {
+  box-sizing: border-box;
+  width: min(400px, calc(100vw - 32px));
+  max-height: 80dvh;
+  overflow: auto;
+  border: 1px solid var(--st-control-border);
+  border-radius: var(--st-radius-md);
+  background: var(--st-surface-raised);
+  box-shadow: var(--st-shadow);
+  color: var(--st-text);
+  font-family: var(--st-font-ui);
+}
+
+.dialog {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--st-space-4);
+  padding: var(--st-space-5);
+  outline: none;
+}
+
+.heading {
+  margin: 0;
+  font-size: var(--st-text-md);
+  font-weight: 600;
+}
+
+.help {
+  margin: 0;
+  color: var(--st-text-muted);
+  font-size: var(--st-text-xs);
+  line-height: 1.45;
+}
+
+.help code,
+.problem code {
+  font-family: var(--st-font-code);
+}
+
+.problem {
+  margin: 0;
+  padding: var(--st-space-3) var(--st-space-4);
+  border-left: 3px solid var(--st-error);
+  background: var(--st-error-soft);
+  color: var(--st-text);
+  font-size: var(--st-text-sm);
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.waiting {
+  margin: 0;
+  color: var(--st-text-muted);
+  font-size: var(--st-text-sm);
+}
+
+.result {
+  display: block;
+  width: 100%;
+}
+
+.done {
+  display: flex;
+  flex-direction: column;
+  gap: var(--st-space-3);
+  font-size: var(--st-text-sm);
+}
+
+/* The PNG at a size that fits the dialog, on a checkerboard-free plain ground so its own edges show. */
+.image {
+  max-width: 100%;
+  max-height: 260px;
+  object-fit: contain;
+  align-self: flex-start;
+  border: 1px solid var(--st-border);
+  border-radius: var(--st-radius-sm);
+  background: var(--st-surface-sunken);
+}
+
+.save {
+  color: var(--st-accent);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+.save[data-focus-visible] {
+  outline: var(--st-focus-width) solid var(--st-focus);
+  outline-offset: 2px;
+  border-radius: 2px;
+}

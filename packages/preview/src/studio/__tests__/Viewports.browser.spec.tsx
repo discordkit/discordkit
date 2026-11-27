@@ -264,6 +264,91 @@ describe(`the preview's viewports`, () => {
     });
   });
 
+  it(`starts drawings side by side at the same height, though the phone carries a report the desktop window does not, so they can be compared line by line`, async () => {
+    mount(
+      fakeFile(
+        scene({
+          messages: [
+            {
+              payload: {
+                ...card,
+                components: [...card.components, { type: 10, content: `-# x` }]
+              }
+            }
+          ]
+        })
+      ).backend
+    );
+    // Wide enough for both side by side; in a narrower window the phone wraps to a row of its own.
+    await page.viewport(1440, 900);
+    onTestFinished(async () => page.viewport(414, 896));
+    await drawn(2);
+    await expect
+      .element(page.getByTestId(`viewport-fidelity`))
+      .toBeInTheDocument();
+    await vi.waitFor(() => {
+      const tops = [
+        ...document.querySelectorAll(`[data-testid="preview-viewport"]`)
+      ].map((element) => Math.round(element.getBoundingClientRect().top));
+      expect(tops).toHaveLength(2);
+      expect(tops[0]).toBe(tops[1]);
+    });
+  });
+
+  it(`brings the form of a component clicked in the preview into view in a narrow window, where the form sits below the preview`, async () => {
+    // The default viewport here is a phone's, so Studio is in one column: preview first, then the tree and the form.
+    expect(window.innerWidth).toBeLessThan(820);
+    mount(fakeFile(scene()).backend);
+    await drawn(2);
+    await userEvent.click(
+      page
+        .getByTestId(`preview-viewport`)
+        .first()
+        .getByRole(`button`, { name: `Answer` })
+    );
+    const label = page.getByRole(`textbox`, { name: `Label` });
+    await expect.element(label).toHaveValue(`Answer`);
+    await vi.waitFor(() => {
+      const box = label.element().getBoundingClientRect();
+      expect(box.top).toBeGreaterThanOrEqual(0);
+      expect(box.bottom).toBeLessThanOrEqual(window.innerHeight);
+    });
+  });
+
+  const emojiScene = json({
+    messages: [{ payload: { content: `Hot 🔥` } }],
+    viewports: [{ width: 400 }]
+  });
+  /** Where the preview asked for the emoji: its `src`, or, once a load that failed (nothing serves either address here) has turned it into the renderer's placeholder, the address the placeholder stands in for. */
+  const emojiSource = (): string | null | undefined => {
+    const image = document.querySelector(
+      `[data-testid="preview-viewport"] img[alt="🔥"]`
+    );
+    return (
+      image?.getAttribute(`data-discordkit-preview-missing`) ??
+      image?.getAttribute(`src`)
+    );
+  };
+
+  it(`draws Unicode emoji from the bridge's cached copy when there is a bridge, so they do not wait on a CDN at every page load`, async () => {
+    mount({
+      ...fakeFile(emojiScene).backend,
+      emojiUrl: (fileName) => `api/emoji/${fileName}`
+    });
+    await drawn(1);
+    await vi.waitFor(() => expect(emojiSource()).toBe(`api/emoji/1f525.svg`));
+  });
+
+  it(`draws Unicode emoji from the CDN as written when there is no bridge to serve them`, async () => {
+    mount(fakeFile(emojiScene).backend);
+    await drawn(1);
+    await vi.waitFor(() =>
+      expect(emojiSource()).toMatch(
+        /^https:\/\/cdn\.jsdelivr\.net\/gh\/jdecked\/twemoji@[\d.]+\/assets\/svg\/1f525\.svg$/
+      )
+    );
+  });
+
   it(`names the pane by its own heading, so two panes would not share an id`, async () => {
     mount(fakeFile(scene()).backend);
     await drawn(2);

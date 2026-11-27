@@ -11,8 +11,33 @@ export const bridgeRoutes = {
   /** `GET`: a stream of server-sent events, one {@link FileSnapshot} per change, starting with the current state. */
   events: `api/events`,
   /** `GET api/attachments/<name>`: the image the scene's `context.attachments[name].path` names, read-only. */
-  attachments: `api/attachments/`
+  attachments: `api/attachments/`,
+  /** `GET api/emoji/<code points>.svg`: a Twemoji image, from the renderer's asset cache, fetched into it once on a miss. */
+  emoji: `api/emoji/`,
+  /** `GET`: whether a PNG can be rendered here, as {@link RenderStatus}. `POST` a {@link RenderRequest}: the file drawn as `render` draws it, as `image/png`. */
+  render: `api/render`
 } as const;
+
+/** What `GET api/render` answers: whether this machine can draw a PNG, and why not when it cannot. */
+export type RenderStatus =
+  | { available: true }
+  | { available: false; reason: string };
+
+/**
+ * What the app sends to draw the file as a PNG. The bridge draws the file as it is on disk, so `baseVersion` must be the version the person is looking at: a file that has changed since is refused with `409`, rather than drawing something they have not seen.
+ *
+ * The other fields are the `render` command's options, for a file that has no place for them (a bare payload, whose preview settings live only in Studio). A scene file's own settings are drawn as they are, and these are not sent.
+ */
+export interface RenderRequest {
+  baseVersion: FileVersion;
+  viewports?: Array<
+    { device: string; memberList?: boolean } | { width: number }
+  >;
+  theme?: `light` | `ash` | `dark` | `onyx`;
+  now?: string;
+  timeZone?: string;
+  locale?: string;
+}
 
 /** The `<meta name>` the bridge adds to the page it serves, so the app knows it has a file to work on. Without it (a static copy opened from anywhere else) the app works on a draft in the browser's storage. */
 export const bridgeMetaName = `discordkit-preview-bridge`;

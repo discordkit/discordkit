@@ -152,11 +152,16 @@ describe(`the Studio editor`, () => {
       .toBeVisible();
     expect(editor().value).toBe(`{ "half typed": `);
     await drawn(`The agent's change`);
-    await userEvent.click(page.getByRole(`button`, { name: /Discard mine/ }));
+    await userEvent.click(page.getByRole(`button`, { name: `Load the file` }));
     await vi.waitFor(() =>
       expect(editor().value).toBe(payload(`The agent's change`))
     );
     expect(file.saves).toEqual([]);
+    // Loading the file did not throw the person's text away: it is the step before, and undo brings it back.
+    await userEvent.click(
+      page.getByRole(`button`, { name: `Undo Load the file over your edits` })
+    );
+    await vi.waitFor(() => expect(editor().value).toBe(`{ "half typed": `));
   });
 
   it(`lets the person overwrite the agent's change, but only when they choose to`, async () => {

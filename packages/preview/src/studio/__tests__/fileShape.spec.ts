@@ -6,6 +6,7 @@ import {
   readFileShape,
   toFilePath,
   toFileText,
+  toSceneText,
   withViewSettings,
   type FileShape
 } from "../document/fileShape.js";
@@ -216,6 +217,40 @@ describe(`keeping the person's view settings`, () => {
     };
     const next = withViewSettings(card(`renamed`), previous, `components`);
     expect(next.messages[0].openSelect).toBeUndefined();
+  });
+
+  it(`turns a bare payload into a scene that holds it, keeping its key spelling and the settings chosen in Studio, so they finally have somewhere to be saved`, () => {
+    const { scene, shape } = open(snakeComponents);
+    const kept = withViewSettings(
+      scene,
+      { ...scene, theme: `light`, viewports: [{ device: `iphone-14-pro` }] },
+      shape.kind
+    );
+    const text = toSceneText(kept, shape);
+    const converted = JSON.parse(text) as {
+      messages: [{ payload: { flags: number; components: unknown[] } }];
+      theme: string;
+      viewports: unknown[];
+    };
+    // The components are now the one message's, spelled as the agent spelled them.
+    expect(converted.messages[0].payload.components[0]).toEqual({
+      type: 17,
+      accent_color: 3099502,
+      components: [{ type: 10, content: `## Question 4` }]
+    });
+    expect(converted.messages[0].payload.components[1]).toMatchObject({
+      components: [{ custom_id: `end` }]
+    });
+    expect(converted).toMatchObject({
+      theme: `light`,
+      viewports: [{ device: `iphone-14-pro` }]
+    });
+    // It reads back as a scene that draws the same message, in the file's indentation.
+    const reread = open(text);
+    expect(reread.shape.kind).toBe(`scene`);
+    expect(reread.shape.style).toBe(`snake`);
+    expect(reread.scene.messages[0].payload).toEqual(scene.messages[0].payload);
+    expect(text).toMatch(/^\{\n {2}"messages"/);
   });
 
   it(`takes a scene file's own settings, since the file is where they live`, () => {

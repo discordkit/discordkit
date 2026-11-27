@@ -4,6 +4,7 @@ import {
   fileEvent,
   type BridgeError,
   type FileSnapshot,
+  type RenderStatus,
   type SaveResult
 } from "../../bridge/protocol.js";
 import type { Backend } from "./backend.js";
@@ -57,5 +58,44 @@ export const bridgeBackend = (): Backend => ({
     return () => source.close();
   },
   attachmentUrl: (name) =>
-    `${bridgeRoutes.attachments}${encodeURIComponent(name)}`
+    `${bridgeRoutes.attachments}${encodeURIComponent(name)}`,
+  emojiUrl: (fileName) => `${bridgeRoutes.emoji}${fileName}`,
+  renderStatus: async () => {
+    const response = await fetch(bridgeRoutes.render, { cache: `no-store` });
+    if (!response.ok) {
+      return { available: false, reason: await messageOf(response) };
+    }
+    const status: RenderStatus = await response.json();
+    return status;
+  },
+  renderPng: async (request) => {
+    const response = await fetch(bridgeRoutes.render, {
+      method: `POST`,
+      headers: { "Content-Type": `application/json` },
+      body: JSON.stringify(request)
+    });
+    if (!response.ok) throw new Error(await messageOf(response));
+    return response.blob();
+  },
+  checkAttachment: async (name) => {
+    try {
+      const response = await fetch(
+        `${bridgeRoutes.attachments}${encodeURIComponent(name)}`,
+        { cache: `no-store` }
+      );
+      if (!response.ok) {
+        return { served: false, reason: await messageOf(response) };
+      }
+      return {
+        served: true,
+        type: response.headers.get(`content-type`) ?? `unknown type`,
+        bytes: (await response.arrayBuffer()).byteLength
+      };
+    } catch (error) {
+      return {
+        served: false,
+        reason: `Studio could not ask the studio command: ${error instanceof Error ? error.message : String(error)}. It may have stopped; start it again.`
+      };
+    }
+  }
 });

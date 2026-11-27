@@ -167,6 +167,35 @@ export const toFileTextOver = (
 ): string => preserveFormat(oldText, toFileValue(scene, shape), shape.indent);
 
 /**
+ * The text of a file that holds a bare payload, components or one component, rewritten as a scene that holds it as its one message, so that what only a scene has room for (preview settings, viewports, the context mentions resolve to, more messages) can be saved in it. Only a person asking for it does this, since it changes what the file is for everything else that reads it.
+ *
+ * Keys keep the spelling they had and new keys follow the file's style, as on any save; the whole file is printed afresh at its indentation, since every line moves in by three levels anyway. The scene carries the view settings the person chose, which until now lived only in Studio.
+ */
+export const toSceneText = (scene: Scene, shape: FileShape): string => {
+  if (shape.kind === `scene`) return toFileText(scene, shape);
+  const raw = placeAt({ messages: [{}] }, prefixes[shape.kind], shape.raw);
+  return toFileText(scene, { ...shape, kind: `scene`, raw });
+};
+
+/** `value` with `replacement` at `path`, building an array for a numeric segment and an object otherwise, so the file's own spellings are found where the scene puts them. */
+const placeAt = (
+  value: unknown,
+  path: readonly PathSegment[],
+  replacement: unknown
+): unknown => {
+  if (path.length === 0) return replacement;
+  const [head, ...rest] = path;
+  if (typeof head === `number`) {
+    const list: unknown[] = Array.isArray(value) ? [...value] : [];
+    list[head] = placeAt(list[head], rest, replacement);
+    return list;
+  }
+  const record: Record<string, unknown> = isObject(value) ? { ...value } : {};
+  record[head] = placeAt(record[head], rest, replacement);
+  return record;
+};
+
+/**
  * A path into the scene as a path into the file, spelled as the file spells it, so a finding can be shown where a person or agent will find it in the file. Undefined for a path outside what the file holds (a view setting on a bare payload).
  */
 export const toFilePath = (

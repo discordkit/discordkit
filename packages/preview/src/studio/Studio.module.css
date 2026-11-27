@@ -110,6 +110,26 @@
   border-radius: var(--st-radius-sm);
 }
 
+/* How many things the scene uses but does not describe, on the Surroundings tab. */
+.tabBadge {
+  margin-left: var(--st-space-3);
+  padding: 0 var(--st-space-3);
+  border-radius: 999px;
+  background: var(--st-accent-soft);
+  color: var(--st-accent);
+  font-size: var(--st-text-xs);
+  font-weight: 600;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 .tabPanel {
   box-sizing: border-box;
   flex: 1;
