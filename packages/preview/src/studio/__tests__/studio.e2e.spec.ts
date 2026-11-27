@@ -472,7 +472,9 @@ describe(`discordkit-preview studio, editing with the tree and the forms`, () =>
       file,
       `--out`,
       join(dir, `card.png`),
-      `--json`
+      `--json`,
+      // CI has no Playwright Chromium; it drives the Chrome its runner image ships.
+      ...(process.env.CI ? [`--channel`, `chrome`] : [])
     ]);
     expect(rendered.code).toBe(0);
     const { results } = JSON.parse(rendered.stdout) as {
