@@ -77,6 +77,8 @@ storybook-static/
 .vite-hooks/
 .claude/settings.local.json
 .discord-docs/
+# Screenshots of the real Discord client and manifests of posted test messages, for calibrating @discordkit/preview (scripts/calibration). Private to whoever took them: never commit.
+.discord-reference/
 social-sdk-docs/
 # Discord Social SDK native binaries — license forbids redistribution; never commit
 vendor/
