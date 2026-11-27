@@ -123,6 +123,24 @@
     "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
+/*
+ * The iOS layout's own values that more than one component reads. Ours, not Discord tokens: the app is native and ships no stylesheet, so these are measurements of captures of the app on an iPhone 14 Pro (spec §7b), in points, which are CSS pixels here.
+ */
+.root[data-discordkit-preview-layout="ios"] {
+  /* A hairline: the app draws containers' and buttons' borders one device pixel wide (`tome-019`, `tome-056`). Half a CSS pixel is one device pixel on a 2x or 3x screen; Chromium draws it one pixel wide at 1x. */
+  --dkp-ios-hairline: 0.5px;
+  /* Text in a container: about 15 points (cap height 10.6 points on `tome-025`, against 10 pixels for desktop's 14) on lines 20 points apart (`tome-025`, `tome-055`). Subtext keeps desktop's proportion to body text, and is unobserved. */
+  --dkp-ios-text-size: 15px;
+  --dkp-ios-text-line-height: 20px;
+  --dkp-ios-subtext-size: 13px;
+  --dkp-ios-subtext-line-height: 17px;
+}
+
+/* The only theme captured in the iOS app is Dark. Its separator is lighter than desktop's (`tome-019`, `tome-056`: #4d4d52 on the container's #242429, where desktop draws #3b3b41). Other themes keep desktop's colour, which is unobserved. */
+.dark[data-discordkit-preview-layout="ios"] {
+  --dkp-ios-separator: #4d4d52;
+}
+
 /* Discord's "Light" setting: `.theme-light`. */
 .light {
   /* neutral-2, #fbfbfb */

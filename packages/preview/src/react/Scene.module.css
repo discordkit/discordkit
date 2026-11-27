@@ -7,3 +7,8 @@
   background: var(--background-base-lower);
   line-height: 1;
 }
+
+/* The iOS layout: at the end of a channel the last message ends 31 points above the message box (`tome-029`, 1.8041 px per point: the last container's bottom at 729.2 points, the box's top at 760). The space above the first message is the group spacing, which is unobserved. */
+[data-discordkit-preview-layout="ios"].scene {
+  padding-bottom: 31px;
+}

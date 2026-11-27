@@ -5,6 +5,7 @@ import {
   useRef,
   type ReactElement
 } from "react";
+import { fidelitySummary, viewportFidelity } from "../../parts.js";
 import { InspectContext, type Inspect } from "../../react/Inspect.js";
 import type { AssetUrl } from "../../react/SceneContext.js";
 import type { Scene as SceneData } from "../../scene.js";
@@ -44,7 +45,7 @@ export interface ViewportPanelProps {
 }
 
 /**
- * One viewport of the preview: its device chooser and settings, a caption saying what is drawn (and, for a phone, that it is the web layout and not the app), and the drawing, scaled by the pane's zoom, with the selection outline over it.
+ * One viewport of the preview: its device chooser and settings, a caption saying what is drawn (for a device drawn with a layout that is not its own, that it is not the app; for an iPhone, which parts of this scene have not been seen in the app, or that every part has), and the drawing, scaled by the pane's zoom, with the selection outline over it.
  */
 export const ViewportPanel = memo(function ViewportPanel({
   viewport,
@@ -74,6 +75,16 @@ export const ViewportPanel = memo(function ViewportPanel({
       scene === undefined ? undefined : { ...scene, width: resolved.chatWidth },
     [scene, resolved.chatWidth]
   );
+  // Which parts of this scene the viewport draws from rules nobody has seen on its platform. A scene that cannot be read (a timestamp that is not a date) has none to report; the drawing says why it cannot be drawn.
+  const fidelity = useMemo(() => {
+    if (scene === undefined) return null;
+    try {
+      const found = viewportFidelity(scene, resolved);
+      return { ...found, summary: fidelitySummary(found, resolved) };
+    } catch {
+      return null;
+    }
+  }, [scene, resolved]);
 
   // The drawing is scaled with a transform, which keeps its layout exactly the renderer's but does not change the room it takes, so the box around it is sized to the scaled drawing here. The fold line shows only when the drawing reaches it.
   useLayoutEffect(() => {
@@ -167,9 +178,31 @@ export const ViewportPanel = memo(function ViewportPanel({
       </p>
       {resolved.note === null ? null : (
         <p className={styles.note}>
-          <strong>Web layout, not the app.</strong> {resolved.note}
+          <strong>
+            {resolved.layout === resolved.requestedLayout
+              ? `Not measured on this device.`
+              : `Web layout, not the app.`}
+          </strong>{" "}
+          {resolved.note}
         </p>
       )}
+      {fidelity === null ||
+      fidelity.summary === null ||
+      !resolved.calibrated ? null : (
+        <p
+          className={
+            fidelity.unobserved.length === 0 ? styles.checked : styles.note
+          }
+          data-testid="viewport-fidelity"
+        >
+          {fidelity.summary}
+        </p>
+      )}
+      {fidelity?.limits.map((limit) => (
+        <p key={limit} className={styles.limit}>
+          {limit}
+        </p>
+      ))}
       <div ref={frameRef} className={styles.frame}>
         <div ref={sizerRef} className={styles.sizer}>
           <div className={styles.scaled}>

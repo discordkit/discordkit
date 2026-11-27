@@ -48,3 +48,16 @@ export {
   unknownDeviceMessage
 } from "../viewport.js";
 export type { ResolvedViewport } from "../viewport.js";
+export {
+  fidelitySummary,
+  parts,
+  sceneParts,
+  viewportFidelity
+} from "../parts.js";
+export type {
+  PartId,
+  PartInfo,
+  SceneParts,
+  UnobservedPart,
+  ViewportFidelity
+} from "../parts.js";

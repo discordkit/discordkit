@@ -1350,3 +1350,259 @@ export const componentSheets = {
   spoilerSheet,
   spoilerSheetRevealed
 } as const;
+
+/*
+ * Scenes holding the kinds of content the captures of the iOS app show (spec §7b), with our own words and our own generated pictures, so the iOS layout can be compared with the app part by part. Each says which capture it stands beside. None holds anything from the captures themselves.
+ */
+
+/** Two days before the scenes' clock, as a relative timestamp says it: "2 days ago". */
+const twoDaysAgo = Date.parse(now) / 1000 - 2 * 24 * 60 * 60;
+
+const row = (labels: readonly string[]): ActionRow => ({
+  type: ComponentType.ActionRow,
+  components: labels.map((label) => secondary(label, false))
+});
+
+const described = (name: string, description: string): MediaGalleryItem => ({
+  media: { url: `attachment://${name}` },
+  description
+});
+
+/** Beside `tome-019`: a question card with a countdown, a heading, a bold line, four described pictures, a divider and four answers that wrap onto a second row. */
+export const iosQuestionCard: Scene = {
+  now,
+  context: { users, attachments },
+  messages: [
+    {
+      author: tome,
+      payload: {
+        flags: v2,
+        components: [
+          {
+            type: ComponentType.Container,
+            components: [
+              {
+                type: ComponentType.TextDisplay,
+                content: `**Question 1 of 5** · ends <t:${String(twoDaysAgo)}:R>`
+              },
+              {
+                type: ComponentType.TextDisplay,
+                content: `## Which planet has rings?`
+              },
+              {
+                type: ComponentType.TextDisplay,
+                content: `**Hint: not Mars**`
+              },
+              {
+                type: ComponentType.MediaGallery,
+                items: [
+                  described(`landscape-16x9.png`, `Planet one`),
+                  described(`landscape-4x3.png`, `Planet two`),
+                  described(`panorama-21x9.png`, `Planet three`),
+                  described(`banner-2x1.png`, `Planet four`)
+                ]
+              },
+              { type: ComponentType.Separator, divider: true, spacing: 1 },
+              row([`A. Neptune`, `B. Mars`, `C. Venus`, `D. Saturn`])
+            ]
+          }
+        ]
+      }
+    }
+  ]
+};
+
+const galleryCards: readonly [string, readonly string[]][] = [
+  [`One wide picture (256x144)`, [`landscape-16x9.png`]],
+  [
+    `Three pictures`,
+    [`square-128.png`, `square-128-b.png`, `square-128-c.png`]
+  ],
+  [`Two wide pictures`, [`landscape-16x9.png`, `panorama-21x9.png`]],
+  [
+    `Four 4:3 pictures`,
+    [
+      `landscape-4x3.png`,
+      `landscape-4x3.png`,
+      `landscape-4x3.png`,
+      `landscape-4x3.png`
+    ]
+  ],
+  [
+    `Four squares (128x128)`,
+    [
+      `square-128.png`,
+      `square-128-b.png`,
+      `square-128-c.png`,
+      `square-128-d.png`
+    ]
+  ]
+];
+
+/** Beside `tome-020`, `tome-023`, `tome-024` and `tome-025`: one card per gallery the app was seen drawing, a lone 256×144 picture, three pictures, two wide pictures, and four pictures of 4:3 and of square files. */
+export const iosGalleries: Scene = {
+  now,
+  context: { users, attachments },
+  messages: [
+    {
+      author: tome,
+      payload: {
+        flags: v2,
+        components: galleryCards.map(([label, names]) => ({
+          type: ComponentType.Container,
+          components: [
+            { type: ComponentType.TextDisplay, content: label },
+            {
+              type: ComponentType.MediaGallery,
+              items: names.map((name) => ({
+                media: { url: `attachment://${name}` }
+              }))
+            }
+          ]
+        }))
+      }
+    }
+  ]
+};
+
+/** Beside `tome-028` and `tome-029`: a heading over four sections, each a bold label with a square thumbnail, then four one-letter buttons. */
+export const iosSections: Scene = {
+  now,
+  context: { users, attachments },
+  messages: [
+    {
+      author: tome,
+      payload: {
+        flags: v2,
+        components: [
+          {
+            type: ComponentType.Container,
+            components: [
+              {
+                type: ComponentType.TextDisplay,
+                content: `Square pictures as thumbnails`
+              },
+              ...[`A. Saturn`, `B. Jupiter`, `C. Uranus`, `D. Neptune`].map(
+                (label, index): Section => ({
+                  type: ComponentType.Section,
+                  components: [
+                    {
+                      type: ComponentType.TextDisplay,
+                      content: `**${label}**`
+                    }
+                  ],
+                  accessory: {
+                    type: ComponentType.Thumbnail,
+                    media: {
+                      url: `attachment://${assetNames[[1, 6, 7, 8][index]]}`
+                    }
+                  }
+                })
+              ),
+              row([`A`, `B`, `C`, `D`])
+            ]
+          }
+        ]
+      }
+    }
+  ]
+};
+
+/** Beside `tome-054`, `tome-055` and `tome-056`: a card with an accent, a line whose timestamp wraps mid-phrase, one picture larger than the column with a description, a divider and four one-letter buttons. */
+export const iosAnswerCard: Scene = {
+  now,
+  timeZone: `America/New_York`,
+  context: { users, attachments },
+  messages: [
+    {
+      author: tome,
+      timestamp: `2026-11-22T07:01:00Z`,
+      payload: {
+        flags: v2,
+        components: [
+          {
+            type: ComponentType.Container,
+            accentColor: indigo,
+            components: [
+              {
+                type: ComponentType.TextDisplay,
+                content: `**Answer card — four portraits** · 11 ms · ends <t:${String(twoDaysAgo)}:R>`
+              },
+              {
+                type: ComponentType.MediaGallery,
+                items: [
+                  described(
+                    `answer-card.png`,
+                    `A: first, B: second, C: third, D: fourth`
+                  )
+                ]
+              },
+              { type: ComponentType.Separator, divider: true, spacing: 1 },
+              row([`A`, `B`, `C`, `D`])
+            ]
+          }
+        ]
+      }
+    }
+  ]
+};
+
+/** A card holding parts the iOS app has been seen drawing beside parts it has not (subtext, a danger button, an emoji, a classic embed), so the per-viewport report has something to list. */
+export const iosMixed: Scene = {
+  now,
+  context: { users, attachments },
+  messages: [
+    {
+      author: tome,
+      payload: {
+        flags: v2,
+        components: [
+          {
+            type: ComponentType.Container,
+            components: [
+              { type: ComponentType.TextDisplay, content: `## Round over 🎉` },
+              {
+                type: ComponentType.TextDisplay,
+                content: `**3 of 5** answered correctly.\n-# Scores reset at midnight.`
+              },
+              { type: ComponentType.Separator, divider: true, spacing: 1 },
+              {
+                type: ComponentType.ActionRow,
+                components: [
+                  secondary(`Play again`, false),
+                  {
+                    type: ComponentType.Button,
+                    style: ButtonStyle.Danger,
+                    label: `Quit`,
+                    customId: `quit`
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      author: inbou,
+      payload: {
+        embeds: [
+          {
+            title: `Daily summary`,
+            description: `Five questions, three right.`,
+            color: indigo
+          }
+        ]
+      }
+    }
+  ]
+};
+
+/** The iOS comparison scenes, all drawn for the iPhone 14 Pro. */
+export const iosScenes = {
+  iosQuestionCard,
+  iosGalleries,
+  iosSections,
+  iosAnswerCard,
+  iosMixed
+} as const;

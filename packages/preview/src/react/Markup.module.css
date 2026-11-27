@@ -63,6 +63,24 @@
   margin-top: 4px;
 }
 
+/*
+ * The iOS layout's headings. A second-level heading is about 22 points (cap height 15.3 points on `tome-019`) on a 28-point line (its capitals start 6.3 points under the top of its line on `tome-021`, which a 28-point line gives with this font's metrics). First- and third-level headings have not been seen in the app: they keep desktop's proportions to the second level.
+ */
+[data-discordkit-preview-layout="ios"] .h1 {
+  font-size: 26px;
+  line-height: 34px;
+}
+
+[data-discordkit-preview-layout="ios"] .h2 {
+  font-size: 22px;
+  line-height: 28px;
+}
+
+[data-discordkit-preview-layout="ios"] .h3 {
+  font-size: 18px;
+  line-height: 24px;
+}
+
 /* `small:not(.inlineFormat_*)`: subtext. An enclosing Container passes its reduced size down (the `sizeReduced` rule for `small`: 0.75rem, line height scaled to match). */
 .subtext {
   display: block;

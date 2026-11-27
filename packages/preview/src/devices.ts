@@ -16,17 +16,27 @@ export interface LayoutInfo {
   name: string;
   /** The platforms whose real client this layout has been checked against. A device on any other platform drawn with it gets a note saying the drawing is not what its users see. */
   calibratedFor: readonly Platform[];
+  /** The kinds of screen it was checked on, when not every kind: the iOS layout was measured on an iPhone, so an iPad drawn with it is not calibrated. */
+  calibratedForms?: readonly FormFactor[];
 }
 
 /**
- * The layouts the renderer can draw. Only the desktop web client's exists: it is what every component draws, checked against captures of the desktop client (see §7b of the design record). Discord's iOS and Android apps are native, with their own text sizes, button widths and gallery sizing, so a phone drawn with this layout shows wrapping and overflow at the phone's width, not what a phone user sees.
+ * The layouts the renderer can draw.
  *
- * Adding a layout here (say `ios`) is all a device needs to pick it up: every iPhone already asks for `ios`, and `drawnLayout` hands it the new one, which also makes its note go away when the new layout lists `ios` in `calibratedFor`.
+ * - `desktop`: the desktop web client's, which every component draws by default, from Discord's shipped stylesheet and checked against captures of the desktop client (§7b of the design record).
+ * - `ios`: the iOS app's, which is native and has no stylesheet. It was measured from captures of the app on an iPhone 14 Pro, and draws what those captures show as they show it; everything else is the desktop design at the app's text sizes, and is reported per scene as unobserved (see `parts.ts`). The components read it from the scene element's `data-discordkit-preview-layout`, in an `ios` block in each component's stylesheet, and from `useLayout` where the markup differs.
+ *
+ * A device asking for a layout not listed here (every Android device asks for `android`) is drawn with the desktop layout, and says so.
  */
 export const layouts = {
   desktop: {
     name: `Discord's desktop web layout`,
     calibratedFor: [`desktop`]
+  },
+  ios: {
+    name: `Discord's iOS layout`,
+    calibratedFor: [`ios`],
+    calibratedForms: [`phone`]
   }
 } as const satisfies Record<string, LayoutInfo>;
 
@@ -39,9 +49,20 @@ const isLayoutId = (value: string): value is LayoutId =>
 export const drawnLayout = (requested: RequestedLayout): LayoutId =>
   isLayoutId(requested) ? requested : `desktop`;
 
-/** Whether `layout` has been checked against the real client on `platform`. */
-export const isCalibrated = (layout: LayoutId, platform: Platform): boolean =>
-  (layouts[layout].calibratedFor as readonly Platform[]).includes(platform);
+/** Whether `layout` has been checked against the real client on `platform`, and on this kind of screen when the layout says which kinds it was checked on. */
+export const isCalibrated = (
+  layout: LayoutId,
+  platform: Platform,
+  form?: FormFactor
+): boolean => {
+  const info: LayoutInfo = layouts[layout];
+  return (
+    info.calibratedFor.includes(platform) &&
+    (info.calibratedForms === undefined ||
+      form === undefined ||
+      info.calibratedForms.includes(form))
+  );
+};
 
 export interface Device {
   /** Stable, for scene files and `--device`: `iphone-14-pro`. */

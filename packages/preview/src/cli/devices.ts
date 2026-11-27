@@ -16,7 +16,7 @@ Lists the devices \`render --device\` and a scene's \`viewports\` can name, by p
 
 A phone's chat fills its screen. A desktop window's chat column is the window less Discord's server rail (72px), channel list (196px), member list (264px, when open) and the message list's scrollbar (16px), as Discord's stylesheet sets them.
 
-Only Discord's desktop web layout is drawn yet. Phones and tablets are drawn with it at their width, which shows how a message wraps and overflows there but not what the iOS and Android apps show.
+Desktop windows are drawn with Discord's desktop web layout, and iPhones and iPads with its iOS layout, measured from the app on an iPhone 14 Pro (nothing has been captured on an iPad). Android devices are drawn with the desktop web layout at their width, which shows how a message wraps and overflows there but not what the Android app shows.
 
 Options:
       --json      Print one JSON document on standard output.
@@ -79,7 +79,7 @@ const listDevices = (args: readonly string[]): number => {
   }
   print();
   print(
-    `Drawn with ${layouts.desktop.name}. Phones and tablets are drawn with it at their width, not as the iOS and Android apps draw them; each image of one says so in its caption.`
+    `Desktop windows are drawn with ${layouts.desktop.name}. iPhones are drawn with ${layouts.ios.name}, measured from the app on an iPhone 14 Pro; each image lists anything in its message not yet seen in the app. iPads are drawn with it too, but nothing has been captured on one. Android devices are drawn with ${layouts.desktop.name} at their width, not as the Android app draws them; each image of one says so in its caption.`
   );
   return exitCodes.ok;
 };

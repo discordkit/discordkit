@@ -28,6 +28,21 @@
   vertical-align: top;
 }
 
+/* The iOS layout's tag: 38 by 16 points, 5 after the name and with its top about 4 under the avatar's (`tome-023`, `tome-054`; see Message.module.css). The text's size is chosen to give that width with Noto Sans; the app's own is not measured. A verified app's check mark has not been seen in the app. */
+[data-discordkit-preview-layout="ios"] .tag {
+  top: 4px;
+  align-self: flex-start;
+  height: 16px;
+  margin-top: 0;
+  margin-inline-start: 5px;
+  padding: 0 7.5px;
+}
+
+[data-discordkit-preview-layout="ios"] .text {
+  font-size: 12px;
+  line-height: 16px;
+}
+
 .verified {
   display: inline-block;
   width: 1rem;

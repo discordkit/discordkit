@@ -107,7 +107,9 @@ const layoutNote = (
   layout: LayoutId,
   chatWidth: number
 ): string =>
-  `Drawn with ${layouts[layout].name} at ${String(chatWidth)} pixels wide, not as ${clientNames[device.platform]} draws it. The app has its own text sizes, button widths and gallery sizes, so this shows how the message wraps and overflows at this width, not what a ${device.form === `tablet` ? `tablet` : `phone`} user sees.`;
+  layout === device.layout
+    ? `Drawn with ${layouts[layout].name} at ${String(chatWidth)} pixels wide. That layout was measured on an iPhone, and nothing has been captured on a ${device.form === `tablet` ? `tablet` : device.form}, so every part of this drawing is unobserved here: the app's text sizes and button shapes are probably the same, but its chat width, gallery sizes and margins on this screen are guesses. Check it on the device.`
+    : `Drawn with ${layouts[layout].name} at ${String(chatWidth)} pixels wide, not as ${clientNames[device.platform]} draws it. The app has its own text sizes, button widths and gallery sizes, so this shows how the message wraps and overflows at this width, not what a ${device.form === `tablet` ? `tablet` : `phone`} user sees.`;
 
 /** Every device id, closest to `id` first: the few worth suggesting for a mistyped one. */
 export const closeDevices = (id: string, count = 3): Device[] => {
@@ -190,7 +192,7 @@ export const resolveViewport = (viewport: SceneViewport): ResolvedViewport => {
     ? desktopChatWidth(device.width, memberList ?? true)
     : device.width;
   const layout = drawnLayout(device.layout);
-  const calibrated = isCalibrated(layout, device.platform);
+  const calibrated = isCalibrated(layout, device.platform, device.form);
   const size = `${dimensions(device.width, device.height)} · ${String(device.pixelRatio)}x`;
   return {
     key: memberList === false ? `${device.id}-no-members` : device.id,

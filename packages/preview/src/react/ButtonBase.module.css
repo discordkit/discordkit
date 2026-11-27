@@ -63,3 +63,19 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+/*
+ * The iOS layout's button: 32 points tall with **no minimum width** (a one-letter button is 34 points wide on `tome-029` and `tome-056`, where desktop's is 60), 12 points either side of the label (34 less the letter's 9.4), a hairline border, an 8-point radius, and a 15-point semibold label (cap height 10.5 points on `tome-029`). Secondary buttons' colours match desktop's in the Dark theme (`tome-019`: fill #323237, border #36363b, label #fbfbfb). The other styles, a disabled button and an emoji in a button have not been seen in the app; they keep desktop's colours and the emoji's spacing.
+ */
+[data-discordkit-preview-layout="ios"] .button {
+  min-width: 0;
+  padding: 0 calc(var(--space-12) - var(--dkp-ios-hairline));
+  border-width: var(--dkp-ios-hairline);
+  font-size: 15px;
+  font-weight: var(--font-weight-semibold);
+  line-height: 20px;
+}
+
+[data-discordkit-preview-layout="ios"] .content {
+  min-width: 0;
+}

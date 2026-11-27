@@ -6,7 +6,11 @@
  * Which count maps to which arrangement, and whether its pictures keep their own size or are scaled to fill the gallery, is the table below. Each entry names its evidence. Calibration corrects it here and nowhere else: the renderer reads only this table.
  *
  * The evidence was checked on 2026-11-25 against screenshots of the real desktop and iOS clients (spec §7b). Earlier entries rested on notes written while building Tome, and two of those were wrong: a lone picture is not scaled up, and a pair of small pictures is not shared across the width.
+ *
+ * The iOS app arranges galleries differently, so it has a table of its own, `iosGalleryArrangements`, read when the scene is drawn with the iOS layout.
  */
+
+import type { LayoutId } from "../devices.js";
 
 /** One of the arrangements Discord's stylesheet defines, named after its class. */
 export type GalleryLayout =
@@ -34,8 +38,9 @@ export interface GalleryRow {
  *
  * - `own`: each picture at its file's own size, never scaled up, and scaled down (keeping its shape) only to fit its slot. The gallery is as wide as its pictures, so a container holding it shrinks to it.
  * - `fill`: the gallery takes the full width (600px, or the column if narrower) and its pictures are scaled up or down to fill their slots, cropped rather than letterboxed.
+ * - `box`: the iOS app's fixed box. Whatever the pictures' sizes and shapes, the gallery is one box 2pt in from the content column on each side and 273 by 181 points on an iPhone 14 Pro, and the pictures are cropped to fill its slots.
  */
-export type GallerySizing = `own` | `fill`;
+export type GallerySizing = `own` | `fill` | `box`;
 
 /** What each count's arrangement rests on, so a reader can tell observation from inference. */
 export type GalleryEvidence =
@@ -44,7 +49,9 @@ export type GalleryEvidence =
   /** Seen only in screenshots of the iOS app, which lays galleries out differently from desktop (spec §7b), so the desktop drawing is a choice. */
   | `ios`
   /** Inferred from the shape of Discord's stylesheet; no screenshot shows it. */
-  | `stylesheet`;
+  | `stylesheet`
+  /** In the iOS table: not seen in the iOS app, so the desktop arrangement is carried over. */
+  | `none`;
 
 export interface GalleryArrangement {
   rows: readonly GalleryRow[];
@@ -127,14 +134,59 @@ export const galleryArrangements = {
   }
 } as const satisfies Record<number, GalleryArrangement>;
 
+/**
+ * The arrangement for each count in the iOS app, which is not the desktop's (spec §7b). Measured from captures of the app on an iPhone 14 Pro at 1.5038 image pixels per point (`tome-019` to `tome-025`), each to about a point; the file named on each entry shows it.
+ */
+export const iosGalleryArrangements = {
+  // `tome-023`: a 256×144 file drawn at 256×144 points (386×217 px), at the content column's leading edge. `tome-054`: a picture larger than the column fills its 277 points. Never scaled up. A tall picture has not been seen; it is capped at 350 points tall as on desktop.
+  1: {
+    rows: [{ layout: `oneByOne`, items: 1 }],
+    sizing: `own`,
+    evidence: `ios`,
+    unobserved: `A tall picture: capped at 350 points tall, as on desktop.`
+  },
+  // `tome-020`, `tome-022`, `tome-025`: two pictures of any shape, 16:9 or square, each 135×181 points in the fixed box (203×272 px), cropped to fill.
+  2: {
+    rows: [{ layout: `oneByTwo`, items: 2 }],
+    sizing: `box`,
+    evidence: `ios`
+  },
+  // `tome-023`: a 181-point square beside two 88-point squares stacked, in the fixed box.
+  3: {
+    rows: [{ layout: `oneByTwoLayoutThree`, items: 3 }],
+    sizing: `box`,
+    evidence: `ios`
+  },
+  // `tome-019`, `tome-021`, `tome-024`: four tiles of 135×88 points (203×133 px) whatever the files' shapes (16:9, 88×64, 128×128), in the fixed box.
+  4: {
+    rows: [{ layout: `twoByTwo`, items: 4 }],
+    sizing: `box`,
+    evidence: `ios`
+  },
+  // Five to ten pictures have not been seen in the iOS app: the desktop arrangement is drawn, filling the content column.
+  5: { ...galleryArrangements[5], evidence: `none` },
+  6: { ...galleryArrangements[6], evidence: `none` },
+  7: { ...galleryArrangements[7], evidence: `none` },
+  8: { ...galleryArrangements[8], evidence: `none` },
+  9: { ...galleryArrangements[9], evidence: `none` },
+  10: { ...galleryArrangements[10], evidence: `none` }
+} as const satisfies Record<number, GalleryArrangement>;
+
+/** Which table a layout reads. */
+const tables: Record<LayoutId, Partial<Record<number, GalleryArrangement>>> = {
+  desktop: galleryArrangements,
+  ios: iosGalleryArrangements
+};
+
 /** The fewest and most items a Media Gallery can hold. */
 export const galleryItemLimits = { min: 1, max: 10 } as const;
 
 /** The table's entry for `count` items, or a RangeError for a count Discord refuses to send, so a preview never invents an arrangement for one. */
-const arrangementFor = (count: number): GalleryArrangement => {
-  const arrangement = (
-    galleryArrangements as Partial<Record<number, GalleryArrangement>>
-  )[count];
+export const arrangementFor = (
+  count: number,
+  layout: LayoutId = `desktop`
+): GalleryArrangement => {
+  const arrangement = tables[layout][count];
   if (!arrangement) {
     throw new RangeError(
       `@discordkit/preview cannot draw a Media Gallery of ${String(count)} items. Discord accepts ${String(galleryItemLimits.min)} to ${String(galleryItemLimits.max)} and refuses to send any other count, so there is no arrangement to show. Give the gallery between ${String(galleryItemLimits.min)} and ${String(galleryItemLimits.max)} items, or split it into several galleries.`
@@ -143,19 +195,22 @@ const arrangementFor = (count: number): GalleryArrangement => {
   return arrangement;
 };
 
-/** Whether a gallery of `count` items draws its pictures at their own size or fills the width. Throws as {@link arrangeGallery} does. */
-export const gallerySizing = (count: number): GallerySizing =>
-  arrangementFor(count).sizing;
+/** Whether a gallery of `count` items draws its pictures at their own size, fills the width, or fills a fixed box, in `layout`. Throws as {@link arrangeGallery} does. */
+export const gallerySizing = (
+  count: number,
+  layout: LayoutId = `desktop`
+): GallerySizing => arrangementFor(count, layout).sizing;
 
 /**
- * Splits a gallery's items into its bands, top to bottom, in the arrangement the table gives for their count.
+ * Splits a gallery's items into its bands, top to bottom, in the arrangement `layout`'s table gives for their count.
  *
  * Throws for an empty gallery or one of more than ten, which Discord refuses to send, so a preview never invents an arrangement for one.
  */
 export const arrangeGallery = <Item>(
-  items: readonly Item[]
+  items: readonly Item[],
+  layout: LayoutId = `desktop`
 ): Array<{ layout: GalleryLayout; items: Item[] }> => {
-  const arrangement = arrangementFor(items.length);
+  const arrangement = arrangementFor(items.length, layout);
   let start = 0;
   return arrangement.rows.map(({ layout, items: count }) => {
     const band = items.slice(start, start + count);

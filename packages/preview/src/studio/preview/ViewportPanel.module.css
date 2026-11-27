@@ -40,6 +40,25 @@
   line-height: 1.4;
 }
 
+/* An iPhone viewport whose drawing holds only parts seen in the app. */
+.checked {
+  margin: 0;
+  padding: var(--st-space-3) var(--st-space-4);
+  border-left: 3px solid var(--st-ok);
+  background: var(--st-ok-soft);
+  color: var(--st-text);
+  font-size: var(--st-text-sm);
+  line-height: 1.4;
+}
+
+/* A limit of the drawing that is not about a rule, such as emoji drawn as Twemoji. */
+.limit {
+  margin: 0;
+  color: var(--st-text-muted);
+  font-size: var(--st-text-xs);
+  line-height: 1.4;
+}
+
 .frame {
   position: relative;
 }

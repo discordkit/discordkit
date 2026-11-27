@@ -145,3 +145,77 @@
   text-decoration: none;
   cursor: pointer;
 }
+
+/*
+ * The iOS layout's message chrome, measured on `tome-019`, `tome-023` (1.5038 px per point) and `tome-054` (2.3461), all on a 393-point iPhone 14 Pro:
+ *
+ * - The content column starts 68 points from the screen's left edge and ends 16 from its right: a 40-point avatar 16 in, then 12.
+ * - The header's line is 22 points: the name's baseline is 17.2 points under the avatar's top (17.0 and 17.3), which a 22-point line gives a 17-point name with this font's metrics, and the components start 27.3 points under the avatar's top (on all three), so 5 under the header.
+ * - The name is about 17 points (cap height 11.3 to 11.9 points against desktop's 11 pixels at 16) and semibold (143.6 points wide where desktop's medium is 133 pixels at 16); the time about 13 (its digits 9.3 to 10 points tall), on the name's baseline, 5 points after the tag (4.7); the tag 38 by 16, 5 points after the name (5.3) and 3.4 to 4 under the avatar's top.
+ *
+ * The space above a message group, a message continuing a group, "(edited)", an ephemeral reply and a classic message's text have not been seen in the app: they keep desktop's rules at this column.
+ */
+[data-discordkit-preview-layout="ios"] .message {
+  min-height: 0;
+  padding-block: 0;
+  padding-inline: 68px 16px;
+}
+
+[data-discordkit-preview-layout="ios"] .groupStart {
+  min-height: 40px;
+}
+
+/* Unobserved: a message continuing a group starts 8 points under the one above, the space desktop leaves. */
+[data-discordkit-preview-layout="ios"] .message:not(.groupStart) {
+  padding-top: 8px;
+}
+
+[data-discordkit-preview-layout="ios"] .avatar {
+  margin-top: 0;
+}
+
+/* The header is one line: the name, tag and time on the name's baseline. In every capture they fit; a name too long to fit is cut with an ellipsis, which is ours (unobserved), so that Noto Sans, wider than gg sans, does not push the time onto a second line the app would not draw. */
+[data-discordkit-preview-layout="ios"] .header {
+  display: flex;
+  align-items: baseline;
+  min-height: 22px;
+  margin-bottom: 5px;
+  line-height: 22px;
+  white-space: nowrap;
+}
+
+[data-discordkit-preview-layout="ios"] .headerText {
+  display: flex;
+  align-items: baseline;
+  min-width: 0;
+  margin-inline-end: 5px;
+}
+
+[data-discordkit-preview-layout="ios"] .username {
+  display: block;
+  overflow: hidden;
+  font-size: 17px;
+  font-weight: var(--font-weight-semibold);
+  line-height: 22px;
+  text-overflow: ellipsis;
+}
+
+[data-discordkit-preview-layout="ios"] .header .timestamp {
+  flex: none;
+  height: auto;
+  font-size: 13px;
+  line-height: 16px;
+}
+
+[data-discordkit-preview-layout="ios"] .header .timestampInline {
+  margin-inline-start: 0;
+}
+
+[data-discordkit-preview-layout="ios"] .accessories {
+  padding-block: 0;
+}
+
+[data-discordkit-preview-layout="ios"] .content {
+  font-size: var(--dkp-ios-text-size);
+  line-height: var(--dkp-ios-text-line-height);
+}

@@ -7,3 +7,9 @@
   width: fit-content;
   max-width: min(600px, 100%);
 }
+
+/* The iOS layout: components fill the content column, 8 points apart (`tome-019`, `tome-023`). */
+[data-discordkit-preview-layout="ios"] .components {
+  width: auto;
+  max-width: 100%;
+}

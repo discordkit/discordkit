@@ -21,3 +21,19 @@
 .textDisplay :is(blockquote, pre) {
   max-width: unset;
 }
+
+/*
+ * The iOS layout. Outside a container the text is drawn at the container's size, which is unobserved: no capture shows top-level text.
+ *
+ * A heading that ends its text display has 4 points under it, where desktop has none: on `tome-019`, `tome-021` and `tome-026` the text after a second-level heading starts 12 points under the heading's line, against 8 between other text displays.
+ */
+[data-discordkit-preview-layout="ios"] .textDisplay {
+  font-size: var(--dkp-markup-font-size, var(--dkp-ios-text-size));
+  line-height: var(--dkp-markup-line-height, var(--dkp-ios-text-line-height));
+}
+
+[data-discordkit-preview-layout="ios"]
+  .textDisplay
+  :is(h1, h2, h3):not(:has(+ *)) {
+  margin-bottom: 4px;
+}

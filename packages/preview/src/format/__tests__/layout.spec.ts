@@ -3,8 +3,10 @@ import { colorToHex } from "../color.js";
 import { embedFieldColumns } from "../embedFields.js";
 import {
   arrangeGallery,
+  arrangementFor,
   galleryArrangements,
-  gallerySizing
+  gallerySizing,
+  iosGalleryArrangements
 } from "../galleryLayout.js";
 
 /** The decisions Discord makes in JavaScript rather than CSS, kept as data so calibration can correct them in one place. These pin what the data says, so a change to it is deliberate. */
@@ -101,6 +103,44 @@ describe(`the media gallery arrangement`, () => {
       );
     }
   );
+});
+
+describe(`the media gallery arrangement in the iOS app`, () => {
+  const items = (count: number): number[] =>
+    Array.from({ length: count }, (_, index) => index);
+
+  it(`puts two, three and four pictures in the app's one fixed box, whatever their sizes, and a lone picture at its own size, as every iOS capture shows`, () => {
+    expect(
+      [1, 2, 3, 4].map((count) => gallerySizing(count, `ios`))
+    ).toStrictEqual([`own`, `box`, `box`, `box`]);
+    for (const count of [1, 2, 3, 4] as const) {
+      expect(iosGalleryArrangements[count].evidence).toBe(`ios`);
+    }
+  });
+
+  it(`arranges the pictures in the box as the app does: two side by side, a large one beside two stacked, and a 2×2 grid`, () => {
+    const bands = (count: number): string[] =>
+      arrangeGallery(items(count), `ios`).map(
+        (band) => `${band.layout}:${String(band.items.length)}`
+      );
+    expect(bands(2)).toStrictEqual([`oneByTwo:2`]);
+    expect(bands(3)).toStrictEqual([`oneByTwoLayoutThree:3`]);
+    expect(bands(4)).toStrictEqual([`twoByTwo:4`]);
+  });
+
+  it(`draws five to ten pictures as desktop does and says that is not observed, since no capture of the app shows that many`, () => {
+    for (const count of [5, 6, 7, 8, 9, 10] as const) {
+      expect(iosGalleryArrangements[count].evidence).toBe(`none`);
+      expect(arrangeGallery(items(count), `ios`)).toStrictEqual(
+        arrangeGallery(items(count))
+      );
+    }
+  });
+
+  it(`leaves the desktop table as it was, so a desktop render does not change`, () => {
+    expect(arrangementFor(3)).toBe(galleryArrangements[3]);
+    expect(gallerySizing(2)).toBe(`own`);
+  });
 });
 
 describe(`embed field columns`, () => {
