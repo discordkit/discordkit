@@ -1,0 +1,24 @@
+/* Discord build 679963: the design-system checkbox (`.checkboxIndicator_*`): 20px square, 4px corners, a 1px `--checkbox-border-default` border over `--checkbox-background-default`; ticked (`[data-selected]`), `--checkbox-background-selected-default` with `--checkbox-border-selected-default` and the tick in `--checkbox-icon-active`. The tick's shape is ours, drawn in the 16px box the package's check mark uses. */
+.box {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--checkbox-border-default);
+  border-radius: var(--radius-xs);
+  background: var(--checkbox-background-default);
+}
+
+.ticked {
+  border-color: var(--checkbox-border-selected-default);
+  background: var(--checkbox-background-selected-default);
+  color: var(--checkbox-icon-active);
+}
+
+.tick {
+  width: 16px;
+  height: 16px;
+}

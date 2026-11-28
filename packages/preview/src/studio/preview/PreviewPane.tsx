@@ -61,6 +61,7 @@ export type ViewChange =
 
 const kindNames: Record<Exclude<InputKind, `scene` | `unknown`>, string> = {
   message: `a message payload`,
+  modal: `a modal`,
   components: `an array of components`,
   component: `one component`
 };

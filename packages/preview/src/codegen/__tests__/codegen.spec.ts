@@ -26,6 +26,15 @@ import {
   tomeHeroCard,
   tomeSpoilerAnswer
 } from "../../__tests__/fixtures.js";
+import {
+  checkboxGroupSheet,
+  checkboxSheet,
+  fileUploadSheet,
+  modalOpening,
+  modalScenes,
+  paragraphTextInputSheet,
+  radioGroupSheet
+} from "../../__tests__/modalFixtures.js";
 import inbouQuestionWire from "../../__tests__/wire/inbou-question.json" with { type: "json" };
 import { codegen, templateLiteral } from "../index.js";
 
@@ -202,6 +211,61 @@ describe(`codegen output compiles and round-trips`, () => {
       });
     }
   );
+});
+
+describe(`codegen output for modals compiles and round-trips`, () => {
+  /** Modals whose every field @discordkit/client's types describe as Discord does. */
+  const typed = {
+    radioGroupSheet,
+    checkboxGroupSheet,
+    checkboxSheet,
+    fileUploadSheet
+  };
+  /** Modals with a Text Input in a Label (the client's `TextInput` requires the deprecated `label`), a select's modal-only `required` (absent from the client's select types) or the older Action Row of a Text Input in an array (the client's `ActionRow` takes it bare). Correct for Discord, so they are round-tripped; their source does not type-check until the client's types are fixed, and then they belong in `typed`. */
+  const awaitingClientTypes = Object.fromEntries(
+    Object.entries(modalScenes).filter(([name]) => !(name in typed))
+  );
+
+  it(`type-checks every modal whose fields the client's types describe, as ModalCallbackData`, () => {
+    const sources = Object.fromEntries(
+      Object.entries(typed).map(([name, scene]) => [
+        name,
+        generate(scene.modal?.payload)
+      ])
+    );
+    expect(Object.values(sources)[0]).toContain(
+      `export const modal: ModalCallbackData = {`
+    );
+    expect(typecheck(sources)).toStrictEqual([]);
+  }, 120_000);
+
+  it.each(Object.entries(modalScenes))(
+    `evaluates %s back to the modal it was generated from`,
+    (_, scene) => {
+      const { source } = codegen(scene.modal?.payload);
+      if (source === undefined) throw new Error(`No source generated`);
+      expect(evaluate(source).modal).toStrictEqual(scene.modal?.payload);
+    }
+  );
+
+  it(`writes a scene's modal after its messages, so the message and the modal it opens come out together`, () => {
+    const { source } = codegen(modalOpening);
+    if (source === undefined) throw new Error(`No source generated`);
+    expect(source).toMatch(
+      /import \{[^}]*type MessagesCallbackData,[^}]*type ModalCallbackData[^}]*\} from "@discordkit\/client";/s
+    );
+    const exports = evaluate(source);
+    expect(exports.message).toStrictEqual(modalOpening.messages[0]?.payload);
+    expect(exports.modal).toStrictEqual(modalOpening.modal?.payload);
+    expect(Object.keys(awaitingClientTypes)).toContain(`modalOpening`);
+  });
+
+  it(`writes the components a Label wraps with enum members, as it does a message's`, () => {
+    const { source } = codegen(paragraphTextInputSheet.modal?.payload);
+    expect(source).toContain(`type: ComponentType.Label,`);
+    expect(source).toContain(`type: ComponentType.TextInput,`);
+    expect(source).toContain(`style: TextInputStyle.Paragraph,`);
+  });
 });
 
 describe(`codegen style`, () => {

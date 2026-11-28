@@ -111,6 +111,39 @@ export const CloseIcon = ({ className }: IconProps): ReactElement => (
   </svg>
 );
 
+/** A triangle holding an exclamation mark, for the warning at the top of a modal. The triangle is filled and the mark is cut out of it, so it reads at 20px in one colour. */
+export const WarningIcon = ({ className }: IconProps): ReactElement => (
+  <svg className={className} viewBox="0 0 24 24" aria-hidden="true">
+    <path
+      fill="currentColor"
+      fillRule="evenodd"
+      d="M10.27 3.5a2 2 0 0 1 3.46 0l8.66 15a2 2 0 0 1-1.73 3H3.34a2 2 0 0 1-1.73-3l8.66-15ZM11 9a1 1 0 1 1 2 0v5a1 1 0 1 1-2 0V9Zm1 7.5a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5Z"
+    />
+  </svg>
+);
+
+/** A page with an arrow rising out of it, for a modal's file upload. */
+export const UploadIcon = ({ className }: IconProps): ReactElement => (
+  <svg className={className} viewBox="0 0 24 24" aria-hidden="true">
+    <path
+      d="M13 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4M13 3l6 6M13 3v4a2 2 0 0 0 2 2h4m0 0v2"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M17 21v-7m-3 3 3-3 3 3"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
 /** A page with its corner folded down, for a file attachment. Drawn in the 30 by 40 box Discord gives its file icon. */
 export const FileIcon = ({ className }: IconProps): ReactElement => (
   <svg className={className} viewBox="0 0 30 40" aria-hidden="true">

@@ -1,10 +1,10 @@
 import { isObject } from "@discordkit/core/utils/isObject";
 import { ButtonStyle } from "@discordkit/client/components/types/ButtonStyle";
 import { ComponentType } from "@discordkit/client/components/types/ComponentType";
+import { TextInputStyle } from "@discordkit/client/components/types/TextInputStyle";
 import { MessageFlag } from "@discordkit/client/messages/types/MessageFlag";
 import type { Path, PathSegment } from "../../findings.js";
 import type { Scene, SceneMessage } from "../../scene.js";
-import { componentName } from "../../components.js";
 import { isScene, isWithin, replaceAt, valueAt } from "./paths.js";
 import type { ChildType } from "./tree.js";
 
@@ -94,6 +94,11 @@ export const uniqueCustomId = (scene: Scene, base: string): string => {
 
 const idBases: Partial<Record<ComponentType, string>> = {
   [ComponentType.Button]: `button`,
+  [ComponentType.TextInput]: `text-input`,
+  [ComponentType.FileUpload]: `file-upload`,
+  [ComponentType.RadioGroup]: `radio-group`,
+  [ComponentType.CheckboxGroup]: `checkbox-group`,
+  [ComponentType.Checkbox]: `checkbox`,
   [ComponentType.StringSelect]: `string-select`,
   [ComponentType.UserSelect]: `user-select`,
   [ComponentType.RoleSelect]: `role-select`,
@@ -153,18 +158,43 @@ export const newChild = (
     case ComponentType.MentionableSelect:
     case ComponentType.ChannelSelect:
       return { type, customId: id() };
-    // Only a modal holds these, and the add menu never offers them (see `supportedComponents`).
-    case ComponentType.TextInput:
+    // A modal's: a Label starts around a short text input, the most common field, which its form can swap for another kind.
     case ComponentType.Label:
+      return {
+        type,
+        label: `Question`,
+        component: newChild(scene, ComponentType.TextInput)
+      };
+    case ComponentType.TextInput:
+      return { type, customId: id(), style: TextInputStyle.Short };
     case ComponentType.FileUpload:
+    case ComponentType.Checkbox:
+      return { type, customId: id() };
     case ComponentType.RadioGroup:
     case ComponentType.CheckboxGroup:
-    case ComponentType.Checkbox:
-      throw new Error(
-        `Studio cannot add a ${componentName(type)} to a message: it belongs in a modal, which Studio does not edit yet. This is a bug in Studio, since the add menu offers only what a message can hold.`
-      );
+      return {
+        type,
+        customId: id(),
+        options: [
+          { label: `Option 1`, value: `option-1` },
+          { label: `Option 2`, value: `option-2` }
+        ]
+      };
   }
 };
+
+/** A new modal over the scene, with one Label around a short text input, and selects it. */
+export const insertModal = (scene: Scene): EditResult => ({
+  scene: withValue(scene, [`modal`], {
+    payload: {
+      customId: uniqueCustomId(scene, `modal`),
+      title: `New modal`,
+      components: [newChild(scene, ComponentType.Label)]
+    }
+  }),
+  selected: [`modal`],
+  remap: unchanged
+});
 
 /** Adds an item to a list at `index` (its end by default) and selects it. */
 export const insertChild = (

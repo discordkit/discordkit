@@ -12,6 +12,7 @@ import dialog from "./KindDialog.module.css";
 
 const holds: Record<Exclude<InputKind, `scene` | `unknown`>, string> = {
   message: `a message payload`,
+  modal: `a modal`,
   components: `an array of components`,
   component: `one component`
 };
@@ -40,9 +41,11 @@ export const ConvertToScene = ({
   const path =
     fileKind === `message`
       ? `messages[0].payload`
-      : fileKind === `components`
-        ? `messages[0].payload.components`
-        : `messages[0].payload.components[0]`;
+      : fileKind === `modal`
+        ? `modal.payload`
+        : fileKind === `components`
+          ? `messages[0].payload.components`
+          : `messages[0].payload.components[0]`;
   return (
     <DialogTrigger>
       <QuietButton isDisabled={isDisabled}>Convert to a scene…</QuietButton>

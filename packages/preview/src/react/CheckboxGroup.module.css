@@ -1,0 +1,37 @@
+/*
+ * Discord build 679963: a checkbox option (`.checkboxOption_*`): the box 12px before its text, both aligned to the top; the description 4px under the label (`.description_*`).
+ *
+ * From Discord's screenshot of a checkbox group in its component reference, which the stylesheet leaves to JavaScript: 16px between options (a 36px pitch for one-line options), the label at 16px medium on a 20px line in the default text colour, and the description at 14px on an 18px line in the subtle colour. The group's own padding (8px above, 4px below) is the radio group's (`.group_*`), which the screenshot agrees with.
+ */
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 8px 0 4px;
+}
+
+.option {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.text {
+  min-width: 0;
+}
+
+.label {
+  overflow-wrap: anywhere;
+  color: var(--text-default);
+  font-size: 16px;
+  font-weight: var(--font-weight-medium);
+  line-height: 20px;
+}
+
+.description {
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+  color: var(--text-subtle);
+  font-size: 14px;
+  line-height: 18px;
+}

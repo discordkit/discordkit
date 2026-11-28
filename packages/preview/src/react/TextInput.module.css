@@ -1,0 +1,76 @@
+/*
+ * Discord build 679963: a modal's Text Input. The box is the form field's input wrapper (`.wrapper_*`: `--input-background-default`, a 1px `--input-border-default` border, `--radius-sm`), recoloured by the field when it is in error (`FieldFrame.module.css`). A paragraph is the text area (`.textArea_*`: padded 12px by 10px, not resizable), with room for its counter (`.textAreaInner_*`: 36px below the text) and the counter itself (`.characterCount_*`, `.maxLength_*`: 12px in the code font, `--text-muted`, 12px from the bottom and 14px from the end; `.errorOverflow_*`: `--text-feedback-critical`). The placeholder is `--input-placeholder-text-default`.
+ *
+ * A single line is the older text input's size (`.input_*`: 44px tall, 16px text, padded 10px either side), which is also the height Discord's screenshots show for a select in a modal. Which input the client uses for a short Text Input is not visible in the stylesheet, and no screenshot shows one.
+ *
+ * Text is 16px on 20px lines, the size Discord's screenshots show for the placeholder.
+ */
+.box {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  border: 1px solid var(--input-border-default);
+  border-radius: var(--radius-sm);
+  background-color: var(--input-background-default);
+  color: var(--text-default);
+  font-size: 16px;
+  line-height: 20px;
+}
+
+.short {
+  display: flex;
+  align-items: center;
+  height: 44px;
+  padding: 0 10px;
+  overflow: hidden;
+}
+
+.line {
+  overflow: hidden;
+  white-space: pre;
+}
+
+.paragraph {
+  /* Two lines of text inside the padding. */
+  min-height: calc(2 * 20px + 2 * 12px + 2px);
+  padding: 12px 10px;
+}
+
+.counted {
+  padding-bottom: 36px;
+  min-height: calc(2 * 20px + 12px + 36px + 2px);
+}
+
+.lines {
+  display: block;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.placeholder {
+  overflow: hidden;
+  color: var(--input-placeholder-text-default);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* A text area's placeholder wraps, as a browser's does. */
+.paragraph .placeholder {
+  display: block;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.counter {
+  position: absolute;
+  bottom: 12px;
+  inset-inline-end: 14px;
+  color: var(--text-muted);
+  font-family: var(--font-code);
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.overflow {
+  color: var(--text-feedback-critical);
+}

@@ -7,8 +7,8 @@ import type { Scene } from "../../scene.js";
  * Paths into the scene, which are at once the form's field names, lint's finding paths and the tree's node ids. One value, three uses: that is what lets a finding land on its field and its tree node with no mapping table.
  */
 
-/** A message's path as a field name starts here; the editor builds every field name it uses from a message's path. */
-const messagePath = /^messages\.\d+(\.[\w$]+)*$/;
+/** A field name starts at a message's path or at the scene's modal; the editor builds every field name it uses from a tree node's path. */
+const messagePath = /^(?:messages\.\d+|modal)(\.[\w$]+)*$/;
 
 const isFieldPath = (name: string): name is FieldPath<Scene> =>
   messagePath.test(name);
@@ -18,7 +18,7 @@ const isFieldArrayPath = (name: string): name is FieldArrayPath<Scene> =>
 
 const notAPath = (name: string): Error =>
   new Error(
-    `Studio's editor was asked for the field "${name}", which is not a path into a scene's messages, so the form has no such field. This is a bug in Studio: field names are built from a tree node's path, such as "messages.0.payload.components.2.content".`
+    `Studio's editor was asked for the field "${name}", which is not a path into a scene's messages or its modal, so the form has no such field. This is a bug in Studio: field names are built from a tree node's path, such as "messages.0.payload.components.2.content".`
   );
 
 /**

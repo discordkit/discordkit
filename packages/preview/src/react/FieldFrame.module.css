@@ -1,0 +1,66 @@
+/*
+ * A modal's field around its control. Discord build 679963's form field (`.labelContainer_*`, `.required_*`, `.control_*`, `.statusMessageContainer_*`) gives the 8px from the label block to the control, the asterisk 4px after the title in `--text-feedback-critical`, and 4px from the control to a message under it.
+ *
+ * From Discord's screenshots of the dialog in its component reference, since the stylesheet leaves text sizes to JavaScript: the title at 16px semibold on a 20px line, the description at 14px on an 18px line in the default text colour, and 8px between them where the stylesheet's `gap` would give 4 (the screenshots show the larger space at both scales). The error's 12px medium text is ours, after the older form field's error text (`.errorMessage_*`, 12px at medium weight); no screenshot shows one.
+ *
+ * The control is a stacking context that a field in error recolours: `--input-border-default` and `--input-background-default` are swapped for the error colours, which every bordered control (a text input, a select, an upload) reads.
+ */
+.field {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.title {
+  margin-bottom: 8px;
+  overflow-wrap: anywhere;
+  color: var(--text-strong);
+  font-size: 16px;
+  font-weight: var(--font-weight-semibold);
+  line-height: 20px;
+}
+
+.required {
+  margin-inline-start: 4px;
+  color: var(--text-feedback-critical);
+}
+
+.description {
+  margin-bottom: 8px;
+  overflow-wrap: anywhere;
+  color: var(--text-default);
+  font-size: 14px;
+  line-height: 18px;
+}
+
+.control {
+  /* A select in a modal fills the width and is as tall as the other fields: the screenshots show it 44px tall, as the older text input is (`.input_*`: 44px). */
+  --dkp-select-width: 100%;
+  --control-input-height-md: 44px;
+
+  min-width: 0;
+}
+
+.control[data-error="true"] {
+  --input-border-default: var(--input-border-error-default);
+  --input-background-default: var(--input-background-error-default);
+}
+
+.error {
+  margin-top: 4px;
+  color: var(--text-feedback-critical);
+  font-size: 12px;
+  font-weight: var(--font-weight-medium);
+  line-height: 16px;
+}
+
+/* The iOS layout: the reference says a Label's description "may display above or below the component depending on the platform". Desktop's screenshots show it above; below is drawn for the app, which no capture shows. */
+[data-discordkit-preview-layout="ios"] .description {
+  order: 1;
+  margin-top: 8px;
+  margin-bottom: 0;
+}
+
+[data-discordkit-preview-layout="ios"] .error {
+  order: 2;
+}

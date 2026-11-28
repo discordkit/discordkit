@@ -16,20 +16,26 @@ import {
 
 export const codegenUsage = `Usage: ${program} codegen [input] [options]
 
-Prints TypeScript source for one input: a constant typed with @discordkit/client, using ComponentType, ButtonStyle and MessageFlag members, hex colours and backtick strings. Components become a MessageComponent; a message payload or a scene becomes one MessagesCallbackData per message. The input is a JSON file in snake_case or camelCase; with none, or \`-\`, it reads standard input.
+Prints TypeScript source for one input: a constant typed with @discordkit/client, using ComponentType, ButtonStyle and MessageFlag members, hex colours and backtick strings. Components become a MessageComponent; a message payload or a scene becomes one MessagesCallbackData per message; a modal, or a scene's modal, becomes a ModalCallbackData. The input is a JSON file in snake_case or camelCase; with none, or \`-\`, it reads standard input.
 
 The source goes to standard output and any findings to standard error. Source is still printed when the input has errors, but may not compile then.
 
 Options:
-      --shape <shape>   components, embeds or message. Default: components
-                        for components, message for a payload or a scene.
+      --shape <shape>   components, embeds, message or modal. Default:
+                        components for components, modal for a modal,
+                        message for a payload or a scene (with its modal).
       --name <name>     The constant's name. Default: the shape's name.
       --json            Print one JSON document on standard output.
   -h, --help            Show this help.
 
 Exit status: 0 no errors, 1 the input has errors, 2 could not run.`;
 
-const shapes: readonly CodegenShape[] = [`components`, `embeds`, `message`];
+const shapes: readonly CodegenShape[] = [
+  `components`,
+  `embeds`,
+  `message`,
+  `modal`
+];
 
 export const runCodegen = async (args: readonly string[]): Promise<number> => {
   const { values, positionals } = parseArgs({

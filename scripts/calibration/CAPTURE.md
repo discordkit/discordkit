@@ -95,11 +95,11 @@ Once the screenshots are in, including the next days' headers, run `vp run calib
 
 Only if the essential part is done and you have another sitting in you. Each is posted on its own and ticked off the same way, with the same settings and the same way of getting the files in.
 
-### Extended: 70 screenshots on your computer, 69 on your phone
+### Extended: 72 screenshots on your computer, 71 on your phone
 
 Everything else a message can hold: galleries of every count from one to ten in two picture sizes, every button style, long labels, an embed with every part, the rest of the text formatting, sections and thumbnails, selects, files, spoilers, components outside a container, separators, and the ash and onyx themes and a narrow window. Post it with `vp run calibration:post --send --tier extended` (F06 to F54, about 2 minutes).
 
-#### On your computer: 70 screenshots
+#### On your computer: 72 screenshots
 
 - [ ] **F06** 1 large square (1024 × 1024).
 - [ ] **F07** 2 large squares (1024 × 1024).
@@ -156,8 +156,9 @@ Then the things only you can do:
 - [ ] **Other themes.** Switch Discord to each of its other themes (Light, Ash, Onyx; on iPhone, each the app offers) and take one screenshot of each of F34, F37, F41, F46 in each theme. Switch back to Dark when done.
 - [ ] **A narrow window.** Drag the Discord window as narrow as it goes and take one screenshot each of F34, F43, F06. Then widen it again.
 - [ ] **An ephemeral reply.** Posting cannot make one: it is a reply to an interaction. If a bot of yours answers a command with a message only you can see, run it in the test channel and screenshot the reply. Otherwise skip this.
+- [ ] **A modal.** Posting cannot open one: a modal is a bot's answer to a button or a command. If a bot of yours opens a modal with a text input, a select or a checkbox in it, open it in the test channel and screenshot it as it opens; then type in one field, leave a required one empty, press Submit and screenshot it again. Otherwise skip this.
 
-#### On your iPhone: 69 screenshots
+#### On your iPhone: 71 screenshots
 
 - [ ] **F06** 1 large square (1024 × 1024).
 - [ ] **F07** 2 large squares (1024 × 1024).
@@ -213,6 +214,7 @@ Then the things only you can do:
 
 - [ ] **Other themes.** Switch Discord to each of its other themes (Light, Ash, Onyx; on iPhone, each the app offers) and take one screenshot of each of F34, F37, F41, F46 in each theme. Switch back to Dark when done.
 - [ ] **An ephemeral reply.** Posting cannot make one: it is a reply to an interaction. If a bot of yours answers a command with a message only you can see, run it in the test channel and screenshot the reply. Otherwise skip this.
+- [ ] **A modal.** Posting cannot open one: a modal is a bot's answer to a button or a command. If a bot of yours opens a modal with a text input, a select or a checkbox in it, open it in the test channel and screenshot it as it opens; then type in one field, leave a required one empty, press Submit and screenshot it again. Otherwise skip this.
 
 ### Markdown cases: 21 screenshots, on your computer only
 

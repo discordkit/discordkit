@@ -149,12 +149,37 @@ describe(`render`, () => {
       ]);
     });
 
-    it(`returns no image and an error finding, not a thrown error, for a component the renderer cannot draw yet`, async () => {
+    it(`returns no image and an error finding, not a thrown error, for a component the renderer cannot draw`, async () => {
       const result = await draw({
         flags: 32768,
         components: [
           {
-            // A text input belongs in a modal, and the modal components are not drawn yet.
+            // An action row inside an action row, which nothing draws.
+            type: ComponentType.ActionRow,
+            components: [
+              {
+                type: ComponentType.ActionRow,
+                components: [{ type: 2, style: 2, label: `Go`, customId: `go` }]
+              }
+            ]
+          }
+        ]
+      });
+      expect(result.image).toBeUndefined();
+      expect(result.valid).toBe(false);
+      expect(result.findings).toContainEqual(
+        expect.objectContaining({
+          code: `component-unsupported`,
+          severity: `error`,
+          path: [`components`, 0, `components`, 0]
+        })
+      );
+    });
+
+    it(`returns no image for a modal's text input in a message, with a finding that says it belongs in a modal`, async () => {
+      const result = await draw({
+        components: [
+          {
             type: ComponentType.ActionRow,
             components: [
               {
@@ -168,10 +193,9 @@ describe(`render`, () => {
         ]
       });
       expect(result.image).toBeUndefined();
-      expect(result.valid).toBe(false);
       expect(result.findings).toContainEqual(
         expect.objectContaining({
-          code: `component-unsupported`,
+          code: `component-modal-only`,
           severity: `error`,
           path: [`components`, 0, `components`, 0]
         })

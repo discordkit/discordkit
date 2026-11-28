@@ -69,7 +69,18 @@ const whatHappened = (issue: Issue, field: string, last: unknown): string => {
   }
 };
 
-const why = `@discordkit/client's schema for a message body rejects it, so Discord would refuse to send the message.`;
+/** What the payload being validated is: a message's body, or a modal's. */
+export type Body = `message` | `modal`;
+
+const whys: Record<Body, string> = {
+  message: `@discordkit/client's schema for a message body rejects it, so Discord would refuse to send the message.`,
+  modal: `@discordkit/client's schema for a modal rejects it, so Discord would refuse to open the modal.`
+};
+
+const places: Record<Body, string> = {
+  message: `such as a message's top level or a container`,
+  modal: `such as a modal's top level or a Label`
+};
 
 const nextStep = (issue: Issue): string =>
   issue.received === `undefined`
@@ -98,9 +109,11 @@ export const issueFindings = (
   issues: readonly Issue[],
   prefix: readonly PathSegment[],
   translate: Translate,
-  code: IntakeCode = `schema`
+  code: IntakeCode = `schema`,
+  body: Body = `message`
 ): Finding[] => {
   const findings: Finding[] = [];
+  const why = whys[body];
   const leaf = (issue: Issue, at: Path): void => {
     const path = translate(at);
     const field = fieldName(path);
@@ -123,7 +136,7 @@ export const issueFindings = (
         code: `schema-position`,
         severity: `error`,
         path,
-        message: `A ${componentName(input.type)} component is not allowed at ${path.length === 0 ? `the top of the input` : `this position`}. ${why} Move it to a place Discord's component reference allows it, such as a message's top level or a container, or use a component that belongs here.`
+        message: `A ${componentName(input.type)} component is not allowed at ${path.length === 0 ? `the top of the input` : `this position`}. ${why} Move it to a place Discord's component reference allows it, ${places[body]}, or use a component that belongs here.`
       });
     } else {
       walk(result.issues, at);

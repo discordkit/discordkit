@@ -4,7 +4,7 @@ import { parseArgs } from "node:util";
 import type * as Playwright from "playwright";
 import type { Browser } from "playwright";
 import { findDevice } from "../devices.js";
-import { hasErrors } from "../findings.js";
+import { hasErrors, placementCodes } from "../findings.js";
 import { resolveClock } from "../format/timestamp.js";
 import { lint } from "../lint/index.js";
 import { cjkFonts } from "../node/fonts.js";
@@ -37,7 +37,7 @@ import {
 
 export const renderUsage = `Usage: ${program} render [input...] [options]
 
-Draws each input the way the Discord web client would and writes a PNG (or, with --html, a self-contained HTML file). An input is a JSON file holding a scene, a message payload, an array of components or one component, in snake_case or camelCase. With no input, or \`-\`, it reads standard input. Several inputs share one browser, so render them in one call.
+Draws each input the way the Discord web client would and writes a PNG (or, with --html, a self-contained HTML file). An input is a JSON file holding a scene, a message payload, a modal, an array of components or one component, in snake_case or camelCase. With no input, or \`-\`, it reads standard input. Several inputs share one browser, so render them in one call.
 
 The image is written even when the message has errors, as long as it can be drawn. A message holding a component the renderer does not support yet is not drawn, and a finding says so.
 
@@ -392,7 +392,7 @@ export const runRender = async (args: readonly string[]): Promise<number> => {
     const { scene, findings } = lint(input.text);
     return (
       scene !== undefined &&
-      !findings.some((finding) => finding.code === `component-unsupported`)
+      !findings.some((finding) => placementCodes.has(finding.code))
     );
   });
   const browser = drawable ? await launchBrowser(values.channel) : undefined;

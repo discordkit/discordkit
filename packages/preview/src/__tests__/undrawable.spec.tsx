@@ -64,6 +64,61 @@ const cases: [string, unknown][] = [
   [
     `a modal's text input in a message`,
     { messages: [{ payload: { flags: v2, components: [textInput] } }] }
+  ],
+  [
+    `a modal's label in a message`,
+    {
+      messages: [
+        {
+          payload: {
+            flags: v2,
+            components: [
+              { type: 18, label: `Name`, component: textInput.components[0] }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  [
+    `a drawable modal over an empty channel, filled in and submitted`,
+    {
+      messages: [],
+      modal: {
+        payload: {
+          custom_id: `form`,
+          title: `Form`,
+          components: [
+            { type: 18, label: `Name`, component: textInput.components[0] },
+            textInput
+          ]
+        },
+        values: { name: `Rook` },
+        submitted: true
+      }
+    }
+  ],
+  [
+    `a select at a modal's top level, outside a Label`,
+    {
+      messages: [],
+      modal: {
+        payload: {
+          custom_id: `form`,
+          title: `Form`,
+          components: [select.components[0]]
+        }
+      }
+    }
+  ],
+  [
+    `a button in a modal`,
+    {
+      messages: [],
+      modal: {
+        payload: { custom_id: `form`, title: `Form`, components: [button] }
+      }
+    }
   ]
 ];
 

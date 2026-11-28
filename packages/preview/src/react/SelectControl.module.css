@@ -17,7 +17,8 @@
   gap: 8px;
   align-items: center;
   box-sizing: border-box;
-  width: 400px;
+  /* 400px in a message; a modal's field sets `--dkp-select-width` to fill its width (`FieldFrame.module.css`). */
+  width: var(--dkp-select-width, 400px);
   max-width: 100%;
   min-height: var(--control-input-height-md);
   padding-block: 8px;
