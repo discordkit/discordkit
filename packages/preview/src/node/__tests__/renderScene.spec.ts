@@ -17,6 +17,7 @@ import { ComponentType } from "@discordkit/client/components/types/ComponentType
 import { componentFixtures, fixtures } from "../../__tests__/fixtures.js";
 import type * as Fonts from "../fonts.js";
 import { loadAssets } from "../assets.js";
+import { decodePng } from "../png.js";
 import type * as NodeApi from "../index.js";
 
 /**
@@ -164,7 +165,47 @@ describe(`renderScene`, () => {
     ]);
   });
 
-  it(`sizes a lone gallery picture from its own shape when the payload does not give one, so a tall picture draws taller than a wide one`, async () => {
+  it(`draws a timestamp chip 18px tall, as the desktop client draws one at 14px, because Noto Sans is given gg sans's ascent and descent`, async () => {
+    const chipScene: NodeApi.Scene = {
+      now: `2026-11-25T16:05:00Z`,
+      messages: [
+        {
+          payload: {
+            components: [
+              {
+                type: ComponentType.Container,
+                components: [
+                  {
+                    type: ComponentType.TextDisplay,
+                    content: `ends <t:${String(Date.parse(`2026-11-25T16:05:45Z`) / 1000)}:R>`
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    };
+    const { png } = await renderScene(chipScene, { browser, cacheDir });
+    const bitmap = decodePng(png);
+    // The chip is the normal modifier (#97979f at 16.1%) over the container's #242429: #36363c. Its height is the longest vertical run of that colour.
+    const chip = [0x36, 0x36, 0x3c];
+    let longest = 0;
+    for (let x = 0; x < bitmap.width; x++) {
+      let run = 0;
+      for (let y = 0; y < bitmap.height; y++) {
+        const at = (y * bitmap.width + x) * 4;
+        const same = chip.every(
+          (channel, index) => Math.abs(bitmap.data[at + index] - channel) <= 2
+        );
+        run = same ? run + 1 : 0;
+        longest = Math.max(longest, run);
+      }
+    }
+    expect(longest).toBe(18);
+  });
+
+  it(`sizes a lone gallery picture from its own file when the payload does not give one, drawing it at the file's own size as the desktop client does`, async () => {
     const galleryOf = (file: string): NodeApi.Scene => ({
       context: {
         attachments: {
@@ -197,8 +238,8 @@ describe(`renderScene`, () => {
       cacheDir
     });
     expect(wide.findings).toStrictEqual([]);
-    // A 3:4 picture reaches the 350px cap; a 21:9 one is as wide as the 504px column allows, 216px tall.
-    expect(tall.height - wide.height).toBe(350 - 216);
+    // Neither file is scaled: the 192×256 portrait is drawn 256px tall and the 336×144 panorama 144px tall. Before calibration both were scaled up, which the captures showed was wrong.
+    expect(tall.height - wide.height).toBe(256 - 144);
   });
 
   it(`draws a placeholder where an image was missing, so the miss is visible in the image itself`, async () => {

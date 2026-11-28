@@ -1,22 +1,32 @@
 import { useMemo, type ReactElement, type SyntheticEvent } from "react";
 import type { MediaGallery as MediaGalleryComponent } from "@discordkit/client/components/types/MediaGallery";
 import type { MediaGalleryItem } from "@discordkit/client/components/types/MediaGalleryItem";
-import { arrangeGallery, type GalleryLayout } from "../format/galleryLayout.js";
-import { Image } from "./Image.js";
+import {
+  arrangeGallery,
+  gallerySizing,
+  type GalleryLayout
+} from "../format/galleryLayout.js";
+import { Image, missingAttribute } from "./Image.js";
 import { useInspect } from "./Inspect.js";
 import { useSceneSettings } from "./SceneContext.js";
 import styles from "./MediaGallery.module.css";
 
 /**
- * Marks an item whose aspect ratio is not in the payload and has to be read from its picture once it loads. The Node renderer finds these after every image has decoded and writes each picture's ratio onto its item as `--dkp-ratio`, as the `onLoad` below does in a browser.
+ * Marks an item whose size is not in the payload and has to be read from its picture once it loads. The Node renderer finds these after every image has decoded and writes each picture's width and aspect ratio onto its item as `--dkp-width` and `--dkp-ratio`, as the `onLoad` below does in a browser. A placeholder is not measured: its one-pixel image says nothing about the picture it stands in for.
  */
 export const measureAttribute = `data-discordkit-preview-measure`;
 
-/** Writes a loaded picture's natural aspect ratio onto the item that holds it. */
+/** Writes a loaded picture's natural width and aspect ratio onto the item that holds it. */
 const measure = (event: SyntheticEvent<HTMLImageElement>): void => {
   const image = event.currentTarget;
   const item = image.closest<HTMLElement>(`[${measureAttribute}]`);
-  if (item && image.naturalWidth > 0 && image.naturalHeight > 0) {
+  if (
+    item &&
+    !image.hasAttribute(missingAttribute) &&
+    image.naturalWidth > 0 &&
+    image.naturalHeight > 0
+  ) {
+    item.style.setProperty(`--dkp-width`, String(image.naturalWidth));
     item.style.setProperty(
       `--dkp-ratio`,
       String(image.naturalWidth / image.naturalHeight)
@@ -52,16 +62,20 @@ const GalleryItem = ({ item, className }: GalleryItemProps): ReactElement => {
     typeof height === `number` &&
     width > 0 &&
     height > 0;
-  const ratio = known ? width / height : undefined;
-  // React's style type has no entries for custom properties; this is the one the gallery's rules read.
+  // React's style type has no entries for custom properties; these are the ones the gallery's rules read.
   const style = useMemo(
     (): Record<string, string> | undefined =>
-      ratio === undefined ? undefined : { "--dkp-ratio": String(ratio) },
-    [ratio]
+      known
+        ? {
+            "--dkp-width": String(width),
+            "--dkp-ratio": String(width / height)
+          }
+        : undefined,
+    [known, width, height]
   );
   const measured = useMemo(
-    () => (ratio === undefined ? { [measureAttribute]: `` } : {}),
-    [ratio]
+    () => (known ? {} : { [measureAttribute]: `` }),
+    [known]
   );
   const image = (
     <Image
@@ -105,10 +119,15 @@ export const MediaGallery = ({
 }: MediaGalleryProps): ReactElement => {
   // Payload order is the identity of every band and item below; none has a stable key of its own.
   const inspect = useInspect(component);
+  const bands = arrangeGallery(component.items);
+  const className =
+    gallerySizing(component.items.length) === `own`
+      ? `${styles.gallery} ${styles.ownSize}`
+      : styles.gallery;
   /* oxlint-disable react/no-array-index-key */
   return (
-    <div className={styles.gallery} {...inspect}>
-      {arrangeGallery(component.items).map(({ layout, items }, band) => (
+    <div className={className} {...inspect}>
+      {bands.map(({ layout, items }, band) => (
         <div key={band} className={bandClasses[layout]}>
           {layout === `oneByTwoLayoutThree` ? (
             <>

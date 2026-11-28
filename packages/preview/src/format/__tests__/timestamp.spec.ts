@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it } from "vite-plus/test";
 import type { TimestampStyle } from "../../markdown/ast.js";
 import {
+  formatHeaderTime,
   formatMessageTime,
   formatTimestamp,
   resolveClock
@@ -130,7 +131,28 @@ describe(`formatTimestamp`, () => {
   });
 });
 
-describe(`formatMessageTime`, () => {
+describe(`formatHeaderTime`, () => {
+  it(`writes only the time for a message sent on the viewer's current day, as every desktop capture of a header shows`, () => {
+    expect(formatHeaderTime(moment * 1000, later)).toBe(`4:20 PM`);
+  });
+
+  it(`decides "today" in the viewer's zone: in Tokyo the moment is already the next day`, () => {
+    const clock = clockAt(`2021-04-21T03:00:00Z`, `Asia/Tokyo`);
+    expect(formatHeaderTime(moment * 1000, clock)).toBe(`1:20 AM`);
+  });
+
+  it(`writes a short date and the time for an older message, as the iOS app does (no desktop capture shows one)`, () => {
+    const clock = clockAt(`2021-04-25T12:00:00Z`);
+    expect(formatHeaderTime(moment * 1000, clock)).toBe(`4/20/21, 4:20 PM`);
+  });
+
+  it(`says "Yesterday at" for the day before (unobserved)`, () => {
+    const clock = clockAt(`2021-04-21T00:30:00Z`);
+    expect(formatHeaderTime(moment * 1000, clock)).toBe(`Yesterday at 4:20 PM`);
+  });
+});
+
+describe(`formatMessageTime, an embed footer's time`, () => {
   it(`says "Today at" for a message sent on the viewer's current day`, () => {
     expect(formatMessageTime(moment * 1000, later)).toBe(`Today at 4:20 PM`);
   });

@@ -98,7 +98,11 @@
   white-space: break-spaces;
 }
 
-/* `code.inline`, on top of the `code` rule every code element gets. */
+/*
+ * `code.inline`, on top of the `code` rule every code element gets.
+ *
+ * One value is ours. Discord gives inline code a `line-height` of 1.125rem, and with gg mono that box fits inside the line around it: lines holding code are 19.25px apart in a container, the same as lines without (spec §7b). gg mono is not ours to ship, and the code font that stands in for it is whatever the machine has (Source Code Pro, else Consolas on Windows), whose ascent and descent sit the 18px box lower, so it reached below the line and pushed every line holding code to 20px or more. A line height of 0 keeps the code from changing the line's height at all, whatever the font. It changes nothing that is painted: an inline box's background and border follow the font, not the line height.
+ */
 .inlineCode {
   margin: -0.2em 0;
   padding: 0 0.2em;
@@ -107,7 +111,7 @@
   background: var(--background-code);
   font-family: var(--font-code);
   font-size: 85%;
-  line-height: 1.125rem;
+  line-height: 0;
   text-indent: 0;
   white-space: pre-wrap;
 }

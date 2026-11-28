@@ -116,7 +116,6 @@ describe(`code`, () => {
     const code = find(mountText(`count \`3\``), `code`);
     const computed = style(code);
     expect(px(computed.fontSize)).toBeCloseTo(14 * 0.85, 2);
-    expect(computed.lineHeight).toBe(`18px`);
     expect(computed.borderTopWidth).toBe(`1px`);
     expect(computed.borderTopStyle).toBe(`solid`);
     expectColor(computed.borderTopColor, dark.borderNormal);
@@ -124,6 +123,14 @@ describe(`code`, () => {
     expectColor(computed.backgroundColor, dark.backgroundCode);
     // 0.2em of its own size on each side.
     expect(px(computed.paddingLeft)).toBeCloseTo(14 * 0.85 * 0.2, 2);
+  });
+
+  it(`leaves lines holding inline code and fallback-font bars 19.25px apart, as the desktop client keeps a vote chart's rows, whatever code font this machine has`, () => {
+    const rows = [`A`, `B`, `C`, `D`].map(
+      (letter, index) => `\`${letter}\` ░░░░██████ \`${String(index)}\` 4700`
+    );
+    const text = mountText(rows.join(`\n`));
+    expect(text.getBoundingClientRect().height).toBe(4 * 19.25);
   });
 
   it(`draws a code block as a padded, bordered box at 14px on an 18px line, 6px below what precedes it, across the text display's full width`, () => {
