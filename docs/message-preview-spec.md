@@ -340,8 +340,7 @@ The flag rule is advisory in lint and not a schema error, because an edit to an 
 Emits the style both bots already write:
 
 ```ts
-import { ButtonStyle, ComponentType } from "@discordkit/client";
-import type { MessageComponent } from "@discordkit/client";
+import { ComponentType, type MessageComponent } from "@discordkit/client";
 
 export const components: MessageComponent = [
   {
@@ -354,7 +353,25 @@ export const components: MessageComponent = [
 ];
 ```
 
-Enum members instead of numbers, hex for colours, backtick strings per the house style, and output that passes `vp check` unchanged.
+Enum members instead of numbers, hex for colours, backtick strings per the house style, one import statement naming only what the output uses, and output that passes `vp check` unchanged.
+
+### 10a. As built (slice 4a)
+
+Three subpaths with no React, DOM or Node built-ins, each returning plain data a CLI can print as JSON.
+
+- **`readScene(input)`** (`./scene`) accepts a scene, a message payload, a component array or a single component, as an object or a JSON string, in snake_case, camelCase or a mix. It never throws. It validates with `createMessageSchema`'s body from `@discordkit/client`. Keys that are data are left alone: context maps are keyed by id and attachments by filename.
+- **`lint(input)`** (`./lint`) is the one call an agent needs: intake findings plus lint findings, the counts, and `valid`. A finding is `{ code, severity, path, message }`, and its path uses the caller's own spelling, so `accent_color` stays `accent_color`. A count is `{ metric, used, limit, summary }`, reported whether or not a limit is broken.
+- **`codegen(input, options)`** (`./codegen`) returns source typed as `MessageComponent`, `Embed[]` or a message body.
+- 26 lint rules, each with a stable code, and each limit a named constant citing its source in Discord's documentation as read on 2026-11-25. Removing any one rule fails a test.
+- Generated source is proven by type-checking it against `@discordkit/client` and by evaluating it back to the input, for every fixture. All of it passed the formatter and linter unchanged. Not implemented: the formatter's "fill" layout for long arrays of numbers.
+- One list, `supportedComponents`, says which component types can be drawn where. Lint and the renderer both read it, and a spec renders every type in every position to prove they agree.
+
+Open after this slice:
+
+- **Character counting.** Lint counts Unicode code points; the client schemas count UTF-16 units. Which Discord uses, and whether it trims first, is unverified.
+- **`valid` can be true for a scene the renderer will refuse**, because an undrawable component is a warning. The CLI decides whether `render` stops first.
+- **Two `Finding` types exist**: the Node renderer's for assets and this one. The CLI slice merges them.
+- **Misspelled keys pass silently**, since the schemas drop unknown keys. A candidate rule.
 
 ## 11. Prerequisite fixes in `@discordkit/client`
 
@@ -365,7 +382,15 @@ Shipped as their own pull request before the preview package, since they are bug
 3. **Webhook embeds require every field.** `executeWebhook` rebuilds the embed object without `partial` ([executeWebhook.ts](../packages/client/src/webhook/executeWebhook.ts)). Sibling endpoints are checked for the same pattern.
 4. **The 40-component limit is counted at the top level only**, though the schema's own comment says it counts the whole tree ([MessageComponent.ts](../packages/client/src/messages/types/MessageComponent.ts)). The 4000-character text limit is not checked at all.
 
-Also to verify against the cached docs: `createMessage` bounds `content` at 20000, where the documented limit is 2000.
+`createMessage` also bounded `content` at 20000, where the documented limit is 2000; that is fixed in the same pull request (#106).
+
+Found later, while building intake against these schemas, and not yet fixed:
+
+- A Unicode emoji on a button needs `id: null`. Discord accepts `{ name: "🔥" }` alone; the schema requires the `id` key.
+- Core's `boundedArray` replaces every nested issue's message with its own "Expected an array with a length", so a missing field deep inside a bounded array reports the wrong problem.
+- `createMessage` does not cap `embeds` at 10.
+- The interaction-callback body puts no maximum on `content` and accepts any integer for `flags`.
+- The message-body type the interaction callbacks use lacks `stickerIds` and `messageReference`.
 
 ## 12. The editor (`apps/studio`)
 
@@ -387,7 +412,8 @@ Each slice is implemented by a sub-agent from a written brief and reviewed again
 | 2   | Markdown parser. **Implemented.**                                                 | Every quirk in §6 is a passing test; rule sets per context are data.                                                                                                                                                     |
 | 3a  | Text rendering, scene context, message chrome, asset loader. **Implemented.**     | Markdown, mentions, timestamps and emoji render to Discord's styles against a fixed clock; a render reaches nothing on the network.                                                                                      |
 | 3b  | Separator, media gallery, action row and buttons, legacy embeds. **Implemented.** | Inbou's and Tome's real cards render completely, in all four themes, each component with computed-style specs.                                                                                                           |
-| 4   | Node API, CLI, lint, codegen                                                      | An agent can render, lint and generate code for a fixture with one command each and read the result as JSON.                                                                                                             |
+| 4a  | Scene intake, lint, codegen. **Implemented.**                                     | An agent can hand over snake_case JSON and get back a normalised scene, findings with counts, and TypeScript that compiles and round-trips.                                                                              |
+| 4b  | CLI, font options (bring-your-own gg sans, CJK pinning), HTML output, image diff  | An agent can render, lint, generate code and compare two renders with one command each, and read every result as JSON.                                                                                                   |
 | 5   | Dogfood                                                                           | Inbou and Tome render their real cards through the tool from their own specs; Tome's `sample:post` is no longer needed for layout review.                                                                                |
 | C   | Calibration (parallel, needs the owner)                                           | Reference files exist for the fixture set from the live client; every deviation found is fixed or recorded.                                                                                                              |
 | 6   | Remaining message components                                                      | Section, thumbnail, file, all five selects.                                                                                                                                                                              |
