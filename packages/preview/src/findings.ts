@@ -1,5 +1,5 @@
 /**
- * What scene intake, lint and codegen report, in one shape so a caller can print them together as JSON.
+ * What scene intake, lint, codegen and the Node renderer report, in one shape so a caller can print them together as JSON.
  */
 
 /** `error`: Discord would refuse the message, or the preview cannot draw the scene as written. `warning`: it would send, but probably not look or behave as intended. */
@@ -48,7 +48,16 @@ export type LintCode =
   | `mention-literal`
   | `link-scheme`;
 
-export type FindingCode = IntakeCode | LintCode;
+/** Rendering: an image the Node renderer drew as a placeholder (`attachment-missing` is lint's code, shared), or a scene it could not draw at all. */
+export type RenderCode =
+  | `asset-offline`
+  | `asset-fetch-failed`
+  | `asset-unsupported`
+  | `asset-undecodable`
+  | `attachment-unreadable`
+  | `scene-undrawable`;
+
+export type FindingCode = IntakeCode | LintCode | RenderCode;
 
 export interface Finding {
   /** Stable identifier for the rule, for matching on in code. */
@@ -57,6 +66,8 @@ export interface Finding {
   path: Path;
   /** What happened, why it matters, and what to change. */
   message: string;
+  /** For a finding about an image: the image as the scene names it, a URL or `attachment://name`. An image named in text (a Unicode emoji) has an empty `path`, and this says which it was. */
+  asset?: string;
 }
 
 const identifier = /^[A-Za-z_$][\w$]*$/;
