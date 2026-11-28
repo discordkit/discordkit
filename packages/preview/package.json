@@ -34,10 +34,16 @@
       "types": "./dist/node/index.d.mts",
       "import": "./dist/node/index.mjs"
     },
+    "./markdown": {
+      "@discordkit/source": "./src/markdown/index.ts",
+      "types": "./dist/markdown/index.d.mts",
+      "import": "./dist/markdown/index.mjs"
+    },
     "./package.json": "./package.json"
   },
   "files": [
-    "dist/**/*"
+    "dist/**/*",
+    "THIRD_PARTY_NOTICES.md"
   ],
   "sideEffects": [
     "**/*.css"
