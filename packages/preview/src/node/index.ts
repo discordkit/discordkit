@@ -19,6 +19,8 @@ export { devices, findDevice, layouts } from "../devices.js";
 export type { Device, LayoutId, Platform } from "../devices.js";
 export { resolveViewport, UnknownDeviceError } from "../viewport.js";
 export type { ResolvedViewport, SceneViewport } from "../viewport.js";
+export { parts, sceneParts, viewportFidelity } from "../parts.js";
+export type { PartId, UnobservedPart, ViewportFidelity } from "../parts.js";
 export type {
   MessagePayload,
   Scene,

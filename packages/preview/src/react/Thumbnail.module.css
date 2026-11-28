@@ -28,3 +28,13 @@
   width: 85px;
   height: 85px;
 }
+
+/* The iOS layout: a 60-point square (109 px at 1.8041 px per point on `tome-029`, 90 px at 1.5038 on `tome-028`), with corners of about 8, the picture cropped to fill it. A spoilered thumbnail has not been seen in the app; its cover takes the same size. */
+[data-discordkit-preview-layout="ios"] .thumbnail {
+  --__thumbnail-size: 60px;
+}
+
+[data-discordkit-preview-layout="ios"] .cover {
+  width: 60px;
+  height: 60px;
+}

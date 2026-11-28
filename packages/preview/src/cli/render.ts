@@ -14,6 +14,7 @@ import {
   type RenderInputResult
 } from "../node/render.js";
 import type { Box } from "../node/diff.js";
+import { fidelitySummary, type ReportedViewport } from "../parts.js";
 import type { Theme } from "../scene.js";
 import {
   unknownDeviceMessage,
@@ -56,10 +57,12 @@ Options:
                           image, each captioned with its device, size and
                           layout. \`${program} devices\` lists them. With
                           --device or --width, the scene's own viewports are
-                          not used. Phones and tablets are drawn with
-                          Discord's desktop web layout at their width, which
-                          is not what the iOS and Android apps show, and their
-                          captions say so.
+                          not used. An iPhone is drawn with Discord's iOS
+                          layout, measured from the app; anything in the
+                          message that has not been seen in the app is listed
+                          in its caption and in --json. Android devices are
+                          drawn with the desktop web layout at their width,
+                          which is not what the app shows, and say so.
       --member-list <state>
                           open (default) or closed: whether a desktop window's
                           member list takes 264 pixels from the chat.
@@ -68,6 +71,14 @@ Options:
                           viewports. With --device, drawn beside the devices.
       --separate          Write one image per viewport, named
                           <input>.<device>.png, instead of one side by side.
+      --frame <what>      chat (default): a phone's drawing is its chat
+                          column. screen: its whole screen, with plain
+                          placeholders for the status bar, channel header and
+                          message box at their measured heights and the
+                          message at the bottom of the chat, as at the end of
+                          a channel, so that with --scale device the image is
+                          the size of a screenshot from the phone and can be
+                          compared with one by \`${program} diff\`.
       --scale <n>         Device pixels per CSS pixel, above 0 and at most 4,
                           or \`device\` for each device's own pixel density
                           (an iPhone 14 Pro at 3x is 1179 pixels wide, as a
@@ -185,8 +196,8 @@ const outputPaths = (
   return paths;
 };
 
-/** One viewport as `--json` reports it: the resolved viewport, the scale it was drawn at, and where it is. */
-interface ViewportEntry extends ResolvedViewport {
+/** One viewport as `--json` reports it: the resolved viewport, what in this message it draws unobserved, the scale it was drawn at, and where it is. */
+interface ViewportEntry extends ReportedViewport {
   /** Device pixels per CSS pixel it was drawn at. */
   scale: number;
   /** The file it is in: the side-by-side image, or with --separate its own. */
@@ -231,6 +242,9 @@ const printEntry = (entry: Entry): void => {
       `  ${viewport.label}${entry.output === null ? `: ${viewport.output} (${String(viewport.box.width)}x${String(viewport.box.height)})` : ``}`
     );
     if (viewport.note !== null) print(`    note: ${viewport.note}`);
+    const summary = fidelitySummary(viewport, viewport);
+    if (summary !== null && viewport.calibrated) print(`    ${summary}`);
+    for (const limit of viewport.limits) print(`    limit: ${limit}`);
     if (viewport.visibleChat !== null && viewport.fitsOneScreen !== null) {
       print(
         `    ${viewport.fitsOneScreen ? `fits on one screen` : `taller than one screen`} (about ${String(viewport.visibleChat.height)} px of chat show at once; approximate)`
@@ -301,6 +315,7 @@ export const runRender = async (args: readonly string[]): Promise<number> => {
       "member-list": { type: `string` },
       width: { type: `string` },
       separate: { type: `boolean`, default: false },
+      frame: { type: `string` },
       scale: { type: `string` },
       now: { type: `string` },
       "time-zone": { type: `string` },
@@ -361,6 +376,7 @@ export const runRender = async (args: readonly string[]): Promise<number> => {
         : resolve(values[`cache-dir`]),
     scale,
     separate: values.separate,
+    frame: choiceOption(`frame`, values.frame, [`chat`, `screen`] as const),
     html: values.html
   };
   const inputs = await readInputs(positionals);

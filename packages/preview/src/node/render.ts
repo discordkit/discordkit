@@ -1,6 +1,7 @@
 import type { Finding } from "../findings.js";
 import { hasErrors } from "../findings.js";
 import { lint, type Count } from "../lint/index.js";
+import { viewportFidelity, type ReportedViewport } from "../parts.js";
 import type { InputKind } from "../scene/intake.js";
 import type { Scene } from "../scene.js";
 import {
@@ -43,8 +44,8 @@ export interface RenderInputResult {
   counts: Count[];
   /** No finding is an error: Discord would accept every message, and an image was drawn. */
   valid: boolean;
-  /** The views drawn, in order, each with its device, layout and chat column. Empty when nothing could be drawn. */
-  viewports: ResolvedViewport[];
+  /** The views drawn, in order, each with its device, layout and chat column, and which parts of this scene it draws from rules nobody has observed on its platform (`unobserved`) with any other limit of the drawing (`limits`). Empty when nothing could be drawn. */
+  viewports: ReportedViewport[];
   /** The drawing, with every viewport side by side, when there is one and `separate` was not asked for. Absent when the input could not be read or the scene cannot be drawn, and the findings say why. Present even when the findings hold errors, since seeing a broken message is often the point. */
   image?: RenderedImage;
   /** With `separate`: one image per viewport, in the order of `viewports`. */
@@ -202,7 +203,10 @@ export const render = async (
     findings: all,
     counts: linted.counts,
     valid: !hasErrors(all),
-    viewports,
+    viewports: viewports.map((viewport) => ({
+      ...viewport,
+      ...viewportFidelity(scene, viewport)
+    })),
     ...(separate ? { images } : { image: images[0] })
   };
 };

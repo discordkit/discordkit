@@ -4,3 +4,12 @@
   border-radius: 3px;
   background-color: var(--background-mod-normal);
 }
+
+/*
+ * The iOS layout's chip (`tome-019`, `tome-054`, `tome-056`): as tall as the line (19.6 to 20 points, which the text's own box is at 15 points with this font's metrics), in a darker fill (#313137 on #242429, the subtle grey at about 12%, where desktop's is 16%), and when it wraps, which it does mid-phrase ("ends 2 / days ago"), each piece is filled and padded on its own. Its corners show no rounding at the captures' scale; 2 points is ours.
+ */
+[data-discordkit-preview-layout="ios"] .timestamp {
+  border-radius: 2px;
+  background-color: var(--background-mod-subtle);
+  box-decoration-break: clone;
+}

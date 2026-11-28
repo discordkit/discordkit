@@ -94,30 +94,37 @@ describe(`a desktop window's chat column`, () => {
 });
 
 describe(`a phone`, () => {
-  it(`is drawn with the desktop web layout at its screen's width, and says plainly that this is not its app`, () => {
+  it(`is drawn, on an iPhone, with the iOS app's layout at its screen's width, which was measured on an iPhone, so it needs no warning`, () => {
     for (const device of devices.filter(
-      (candidate) => candidate.platform !== `desktop`
+      (candidate) => candidate.platform === `ios` && candidate.form === `phone`
     )) {
       const viewport = resolveViewport({ device: device.id });
-      expect(viewport.layout).toBe(`desktop`);
-      expect(viewport.requestedLayout).toBe(device.platform);
-      expect(viewport.calibrated).toBe(false);
+      expect(viewport.layout).toBe(`ios`);
+      expect(viewport.calibrated).toBe(true);
       expect(viewport.chatWidth).toBe(device.width);
-      expect(viewport.note).toMatch(
-        device.platform === `ios`
-          ? /not as the iOS app/
-          : /not as the Android app/
-      );
+      expect(viewport.note).toBeNull();
     }
   });
 
-  it(`picks up a calibrated layout for its platform without any change to the device: only the layout list decides`, () => {
-    // Every phone already asks for its own client's layout; today none exists, so it falls back to the desktop one and is not calibrated.
+  it(`is drawn, on Android, with the desktop web layout at its screen's width, and says plainly that this is not its app, since nothing of the Android app has been measured`, () => {
+    for (const device of devices.filter(
+      (candidate) => candidate.platform === `android`
+    )) {
+      const viewport = resolveViewport({ device: device.id });
+      expect(viewport.layout).toBe(`desktop`);
+      expect(viewport.requestedLayout).toBe(`android`);
+      expect(viewport.calibrated).toBe(false);
+      expect(viewport.note).toMatch(/not as the Android app/);
+    }
+  });
+
+  it(`picks up a layout for its platform without any change to the device: only the layout list decides`, () => {
     expect(findDevice(`iphone-14-pro`)?.layout).toBe(`ios`);
-    expect(drawnLayout(`ios`)).toBe(`desktop`);
-    expect(drawnLayout(`desktop`)).toBe(`desktop`);
+    expect(drawnLayout(`ios`)).toBe(`ios`);
+    expect(drawnLayout(`android`)).toBe(`desktop`);
     expect(isCalibrated(`desktop`, `desktop`)).toBe(true);
     expect(isCalibrated(`desktop`, `ios`)).toBe(false);
+    expect(isCalibrated(`ios`, `ios`, `phone`)).toBe(true);
   });
 
   it(`knows roughly how much chat one screen shows, measured on the iPhone 14 Pro and worked out for the rest`, () => {
@@ -134,6 +141,20 @@ describe(`a phone`, () => {
     expect(resolveViewport({ device: `desktop-1280x800` }).visibleChat).toBe(
       null
     );
+  });
+});
+
+describe(`an iPad`, () => {
+  it(`is drawn with the iOS app's layout, since it runs the same app, but is not calibrated and says why: nothing has been captured on an iPad`, () => {
+    for (const device of devices.filter(
+      (candidate) => candidate.platform === `ios` && candidate.form === `tablet`
+    )) {
+      const viewport = resolveViewport({ device: device.id });
+      expect(viewport.layout).toBe(`ios`);
+      expect(viewport.calibrated).toBe(false);
+      expect(viewport.note).toMatch(/measured on an iPhone/);
+      expect(viewport.note).not.toMatch(/web layout/);
+    }
   });
 });
 

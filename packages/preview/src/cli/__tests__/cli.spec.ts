@@ -359,9 +359,12 @@ describe(`discordkit-preview`, () => {
     interface Placed {
       key: string;
       platform: string | null;
+      layout: string;
       calibrated: boolean;
       chatWidth: number;
       note: string | null;
+      unobserved: { part: string; name: string }[];
+      limits: string[];
       output: string;
       box: { x: number; y: number; width: number; height: number };
       drawing: { x: number; y: number; width: number; height: number };
@@ -394,7 +397,7 @@ describe(`discordkit-preview`, () => {
     };
 
     it(
-      `draws a desktop window and the iPhone 14 Pro side by side in one image, reports where each is, and the phone's says it is not the iOS app`,
+      `draws a desktop window and the iPhone 14 Pro side by side in one image, reports where each is, and lists for the phone the parts of this message nobody has seen in the iOS app`,
       async () => {
         const output = join(out, `both.png`);
         const result = await run([
@@ -421,16 +424,25 @@ describe(`discordkit-preview`, () => {
           calibrated: true,
           chatWidth: 732,
           note: null,
+          unobserved: [],
           output
         });
         expect(phone).toMatchObject({
           platform: `ios`,
-          calibrated: false,
+          layout: `ios`,
+          calibrated: true,
           chatWidth: 393,
+          note: null,
           output,
           fitsOneScreen: expect.any(Boolean)
         });
-        expect(phone.note).toMatch(/not as the iOS app draws it/);
+        // Inbou's question card holds subtext and a button row outside its container, which no capture of the iOS app shows, so the phone's drawing of them is flagged for checking on a real phone.
+        expect(phone.unobserved.map(({ part }) => part)).toStrictEqual(
+          expect.arrayContaining([`subtext`, `topLevel`])
+        );
+        expect(phone.unobserved.map(({ part }) => part)).not.toContain(
+          `container`
+        );
         // Side by side, left to right, each inside the image, with its drawing as wide as its chat column.
         expect(phone.box.x).toBeGreaterThan(desktop.box.x + desktop.box.width);
         for (const viewport of entry.viewports) {
@@ -505,7 +517,7 @@ describe(`discordkit-preview`, () => {
           if (alone.readUInt32BE(at) !== cropped.readUInt32BE(at)) different++;
         }
         expect(different / (alone.length / 4)).toBeLessThan(0.001);
-        // The phone's file carries its caption too, so nobody takes it for the app.
+        // The phone's file carries its caption too, since the message holds parts nobody has seen in the iOS app, and the caption lists them.
         const phone = entry.viewports[1];
         expect(phone.box.height).toBeGreaterThan(phone.drawing.height);
       },
@@ -531,6 +543,43 @@ describe(`discordkit-preview`, () => {
         expect(result.code).toBe(0);
         expect(results(result)[0]).toMatchObject({ width: 1179 });
         expect((await readFile(output)).readUInt32BE(16)).toBe(1179);
+      },
+      renderTimeout
+    );
+
+    it(
+      `frames a phone as its whole screen with --frame screen, so at its own density the image is exactly the size of a screenshot from it (1179 × 2556 on an iPhone 14 Pro) and can be laid over one`,
+      async () => {
+        const output = join(out, `screen.png`);
+        const result = await run([
+          `render`,
+          fixture,
+          `--device`,
+          `iphone-14-pro`,
+          `--scale`,
+          `device`,
+          `--frame`,
+          `screen`,
+          `--out`,
+          output,
+          `--json`,
+          ...offline()
+        ]);
+        expect(result.code).toBe(0);
+        const [entry] = results(result);
+        expect(entry).toMatchObject({ width: 1179, height: 2556 });
+        // The screen is the whole image, with no caption above it, though the message holds unobserved parts: the JSON lists them instead.
+        expect(entry.viewports[0].drawing).toStrictEqual({
+          x: 0,
+          y: 0,
+          width: 1179,
+          height: 2556
+        });
+        expect(entry.viewports[0].unobserved.length).toBeGreaterThan(0);
+        const png = await readFile(output);
+        expect([png.readUInt32BE(16), png.readUInt32BE(20)]).toStrictEqual([
+          1179, 2556
+        ]);
       },
       renderTimeout
     );
@@ -585,7 +634,10 @@ describe(`discordkit-preview`, () => {
       expect(text.stdout).toMatch(
         /iphone-14-pro\s+iPhone 14 Pro\s+393 × 852 @3x/
       );
-      expect(text.stdout).toMatch(/not as the iOS and Android apps draw them/);
+      expect(text.stdout).toMatch(
+        /iPhones are drawn with Discord's iOS layout/
+      );
+      expect(text.stdout).toMatch(/not as the Android app draws them/);
       const listed = await run([`devices`, `--json`]);
       expect(listed.code).toBe(0);
       const { devices } = json(listed) as {
@@ -594,10 +646,18 @@ describe(`discordkit-preview`, () => {
       expect(devices).toContainEqual(
         expect.objectContaining({
           id: `iphone-14-pro`,
-          layout: `desktop`,
+          layout: `ios`,
           requestedLayout: `ios`,
-          calibrated: false,
+          calibrated: true,
           chatWidth: 393
+        })
+      );
+      expect(devices).toContainEqual(
+        expect.objectContaining({
+          id: `pixel-7`,
+          layout: `desktop`,
+          requestedLayout: `android`,
+          calibrated: false
         })
       );
       expect(devices).toContainEqual(

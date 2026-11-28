@@ -464,7 +464,7 @@ describe(`discordkit-preview studio, editing with the tree and the forms`, () =>
       page
         .getByRole(`region`, { name: `iPhone SE (2nd and 3rd gen) viewport` })
         .textContent()
-    ).resolves.toContain(`Web layout, not the app.`);
+    ).resolves.toContain(`Not yet seen in the iOS app`);
 
     // The command line reads the same viewports from the file.
     const rendered = await runCommand([
@@ -482,7 +482,7 @@ describe(`discordkit-preview studio, editing with the tree and the forms`, () =>
     };
     expect(results[0].viewports).toMatchObject([
       { key: `desktop-1280x800`, calibrated: true },
-      { key: `iphone-se`, calibrated: false }
+      { key: `iphone-se`, calibrated: true }
     ]);
   }, 120_000);
 });

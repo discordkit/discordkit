@@ -20,6 +20,19 @@
   position: relative;
 }
 
+/*
+ * The iOS layout (spec §7b, `tome-019`, `tome-054`, `tome-056`): the same fill, 8-point radius, 16-point padding, 8-point gap and 4-point accent bar, with a hairline border of the same colour, and the app's larger text. A container fills the content column (309 points on a 393-point screen) whatever it holds (`tome-023`: a card holding only a 256-point picture is still 309 wide).
+ */
+[data-discordkit-preview-layout="ios"] .container {
+  /* The 16 points are measured from the card's outer edge (`tome-054`: 38 px at 2.3461 px per point from the edge to the content, which is 277 points wide), so the hairline is inside them. */
+  padding: calc(var(--space-16) - var(--dkp-ios-hairline));
+  border-width: var(--dkp-ios-hairline);
+  --dkp-markup-font-size: var(--dkp-ios-text-size);
+  --dkp-markup-line-height: var(--dkp-ios-text-line-height);
+  --dkp-markup-small-font-size: var(--dkp-ios-subtext-size);
+  --dkp-markup-small-line-height: var(--dkp-ios-subtext-line-height);
+}
+
 .withAccentColor::before {
   position: absolute;
   top: 0;
