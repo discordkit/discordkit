@@ -39,3 +39,31 @@ describe(`createMessageSchema content`, () => {
     ).toBe(false);
   });
 });
+
+describe(`createMessageSchema embeds`, () => {
+  const request = (count: number) => ({
+    channel: `1234567890123456789`,
+    body: {
+      embeds: Array.from({ length: count }, (_, i) => ({ title: `Embed ${i}` }))
+    }
+  });
+
+  it(`accepts ten embeds`, () => {
+    expect(v.safeParse(createMessageSchema, request(10)).success).toBe(true);
+  });
+
+  it(`rejects more than ten embeds`, () => {
+    // Discord allows at most 10 embeds on a message. Without the cap an eleventh passed validation here and only failed at the API.
+    expect(v.safeParse(createMessageSchema, request(11)).success).toBe(false);
+  });
+
+  it(`still accepts an empty embeds array`, () => {
+    // Adding the cap must not start rejecting `embeds: []`, which the schema accepted before and Discord accepts alongside other content.
+    expect(
+      v.safeParse(createMessageSchema, {
+        channel: `1234567890123456789`,
+        body: { content: `Hello`, embeds: [] }
+      }).success
+    ).toBe(true);
+  });
+});

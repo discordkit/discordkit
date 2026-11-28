@@ -1,7 +1,11 @@
 ﻿import * as v from "valibot";
 import { boundedInteger } from "@discordkit/core/validations/boundedInteger";
 import { boundedString } from "@discordkit/core/validations/boundedString";
-import { pickFields, schema } from "@discordkit/core/validations/schema";
+import {
+  partialSchema,
+  pickFields,
+  schema
+} from "@discordkit/core/validations/schema";
 import { snowflake } from "@discordkit/core/validations/snowflake";
 import { url } from "@discordkit/core/validations/url";
 import { emojiSchema } from "../../emoji/types/Emoji.js";
@@ -17,8 +21,10 @@ const _buttonSchema = v.object({
   style: buttonStyleSchema,
   /** Text that appears on the button; max 80 characters */
   label: v.exactOptional(boundedString({ max: 80 })),
-  /** `name`, `id`, and `animated` */
-  emoji: v.exactOptional(pickFields(emojiSchema, [`id`, `name`, `animated`])),
+  /** A partial emoji: `name`, `id`, and `animated`, each optional. A Unicode emoji needs only its `name`. */
+  emoji: v.exactOptional(
+    partialSchema(pickFields(emojiSchema, [`id`, `name`, `animated`]))
+  ),
   /** Developer-defined identifier for the button; 1-100 characters */
   customId: v.exactOptional(boundedString({ max: 100 })),
   /** Identifier for a purchasable SKU, only available when using premium-style buttons */

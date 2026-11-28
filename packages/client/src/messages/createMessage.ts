@@ -21,8 +21,8 @@ export const createMessageSchema = v.object({
       content: boundedString({ max: 2000 }),
       /** true if this is a TTS message */
       tts: v.boolean(),
-      /** Embedded rich content (up to 6000 characters) */
-      embeds: v.array(embedSchema),
+      /** Up to 10 rich embeds (up to 6000 characters) */
+      embeds: boundedArray(embedSchema, { min: 0, max: 10 }),
       /** allowed mention object	Allowed mentions for the message */
       allowedMentions: allowedMentionSchema,
       /** Include to make your message a reply */

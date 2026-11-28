@@ -30,6 +30,10 @@ import {
 import { embedFlag, EmbedFlags } from "../messages/types/EmbedFlags.js";
 import { messageFlag, MessageFlag } from "../messages/types/MessageFlag.js";
 import {
+  interactionCallbackMessageFlag,
+  InteractionCallbackMessageFlags
+} from "../interactions/types/InteractionCallbackData.js";
+import {
   contentScanMetadataFlag,
   ContentScanMetadataFlags
 } from "../components/types/ContentScanMetadataFlags.js";
@@ -63,6 +67,10 @@ export const mockUtils = new MockUtils(discord, {
     [systemChannelFlag, MockUtils.flagMatcher(SystemChannelFlags)],
     [attachmentFlag, MockUtils.flagMatcher(AttachmentFlags)],
     [messageFlag, MockUtils.flagMatcher(MessageFlag)],
+    [
+      interactionCallbackMessageFlag,
+      MockUtils.flagMatcher(InteractionCallbackMessageFlags)
+    ],
     [permissionFlag, MockUtils.flagMatcher(Permissions)],
     [roleFlag, MockUtils.flagMatcher(RoleFlags)],
     [userFlag, MockUtils.flagMatcher(UserFlags)],

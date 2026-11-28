@@ -1,7 +1,6 @@
 import * as v from "valibot";
 import { boundedString } from "@discordkit/core/validations/boundedString";
 import { componentTypeSchema } from "../../components/types/ComponentType.js";
-import { selectOptionSchema } from "../../components/types/SelectOption.js";
 import { resolvedDataSchema } from "./ResolvedData.js";
 
 export const messageComponentData = v.object({
@@ -9,8 +8,8 @@ export const messageComponentData = v.object({
   customId: boundedString({ max: 100 }),
   /** type of the component */
   componentType: componentTypeSchema,
-  /** Values the user selected in a select menu component */
-  values: v.exactOptional(v.array(selectOptionSchema)),
+  /** Values the user selected in a select menu component: the `value` of each chosen option, or the ID of each chosen user, role or channel */
+  values: v.exactOptional(v.array(v.string())),
   /** Resolved entities from selected options */
   resolved: v.exactOptional(resolvedDataSchema)
 });

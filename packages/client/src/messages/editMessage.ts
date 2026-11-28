@@ -19,8 +19,8 @@ export const editMessageSchema = v.object({
     {
       /** Message contents (up to 2000 characters) */
       content: boundedString({ max: 2000 }),
-      /** Up to 10 rich embeds (up to 6000 characters) */
-      embeds: boundedArray(embedSchema, { max: 10 }),
+      /** Up to 10 rich embeds (up to 6000 characters); an empty array removes the message's embeds */
+      embeds: boundedArray(embedSchema, { min: 0, max: 10 }),
       /** Edit the flags of a message (only SUPPRESS_EMBEDS can currently be set/unset) */
       flags: asInteger(messageFlag),
       /** Allowed mentions for the message */

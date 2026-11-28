@@ -14,8 +14,8 @@ const _textInputSchema = v.object({
   customId: boundedString({ max: 100 }),
   /** The Text Input Style */
   style: textInputStyleSchema,
-  /** Label for this component; max 45 characters */
-  label: boundedString({ max: 45 }),
+  /** Deprecated by Discord: put the text input in a Label and set the label there. Only a text input in a legacy action row still uses this; max 45 characters */
+  label: v.exactOptional(boundedString({ max: 45 })),
   /** Minimum input length for a text input; min 0, max 4000 */
   minLength: v.exactOptional(boundedInteger({ min: 0, max: 4000 })),
   /** Maximum input length for a text input; min 1, max 4000 */

@@ -49,4 +49,36 @@ describe(`boundedArray`, () => {
       `Expected an array with a length >= 1, received: 0`
     );
   });
+
+  it(`keeps the message of an issue inside an element`, () => {
+    // A bounded array is often the outer layer of a deep tree, such as a message's components. When something deep inside is wrong, the error must name that problem; reporting the array's length message instead sends the caller looking at a length that is fine.
+    const schema = boundedArray(
+      v.object({
+        name: v.string(`Expected the element's name to be a string`)
+      }),
+      { max: 5 }
+    );
+    const issues = v.safeParse(schema, [{ name: 1 }]).issues!;
+
+    expect(issues[0].message).toBe(
+      `Expected the element's name to be a string`
+    );
+  });
+
+  it(`keeps valibot's own message for an element without a custom one`, () => {
+    // A missing key carries no custom message; it must still get valibot's default, which names the key, not the array's length message.
+    const issues = v.safeParse(boundedArray(v.object({ name: v.string() })), [
+      {}
+    ]).issues!;
+
+    expect(issues[0].message).not.toMatch(/Expected an array with a length/);
+    expect(issues[0].message).toMatch(/name/);
+  });
+
+  it(`still reports its own message when the input is not an array`, () => {
+    expect(
+      v.safeParse(boundedArray(v.string(), { max: 2 }), `DiscordKit`).issues![0]
+        .message
+    ).toMatch(/^Expected an array with a length >= 1 && <= 2/);
+  });
 });
