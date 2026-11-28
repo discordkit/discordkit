@@ -1,0 +1,6 @@
+/* Discord build 679963: `.timestamp_*` in the markup stylesheet, the pill a `<t:…>` is drawn in. */
+.timestamp {
+  padding: 0 2px;
+  border-radius: 3px;
+  background-color: var(--background-mod-normal);
+}

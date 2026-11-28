@@ -1,0 +1,142 @@
+/*
+ * Discord build 679963: the message markup stylesheet (`.markup_*`), one class per element it styles. Discord's stylesheet first resets margins, padding, font size and weight on every element, so each rule here also sets what the browser's own defaults would otherwise change.
+ *
+ * Where Discord's rule is `.markup h2`, the class here is `.h2`. Rules specific to a Text Display (headings losing their outer margins, quotes and code using the full width) are in TextDisplay.module.css.
+ */
+
+.bold {
+  font-weight: var(--font-weight-bold);
+}
+
+.italic {
+  font-style: italic;
+}
+
+/* `<u>` and `<s>` keep the browser's own line. */
+.underline {
+  text-decoration: underline;
+}
+
+.strikethrough {
+  text-decoration: line-through;
+}
+
+/* `--link-decoration` is set only by the "always underline links" setting, which is off by default, so a link has no underline until hovered. */
+.link {
+  color: var(--text-link);
+  text-decoration: none;
+  word-break: break-word;
+  cursor: pointer;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+/* `h1`–`h6`, then each level's size and margins. */
+.heading {
+  margin: 16px 0 8px;
+  color: var(--text-strong);
+  font-family: var(--font-primary);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.375em;
+}
+
+.h1 {
+  font-size: 1.5rem;
+}
+
+.h2 {
+  font-size: 1.25rem;
+}
+
+.h3 {
+  font-size: 1rem;
+}
+
+.h1:first-child,
+.h2:first-child {
+  margin-top: 8px;
+}
+
+.h3:first-child {
+  margin-top: 4px;
+}
+
+/* `small:not(.inlineFormat_*)`: subtext. An enclosing Container passes its reduced size down (the `sizeReduced` rule for `small`: 0.75rem, line height scaled to match). */
+.subtext {
+  display: block;
+  color: var(--text-subtle);
+  font-size: var(--dkp-markup-small-font-size, 0.875rem);
+  line-height: var(--dkp-markup-small-line-height, 1.20313rem);
+}
+
+/* `ol`, `ul` and `li`. */
+.list {
+  margin-block: 4px 0;
+  margin-inline: 16px 0;
+  padding: 0;
+  list-style-position: outside;
+}
+
+.bulleted {
+  list-style-type: disc;
+}
+
+/* The indent grows with the widest number, which Discord passes in as `--totalCharacters`. */
+.numbered {
+  margin-inline-start: calc(0.4em + var(--totalCharacters) * 0.6em);
+  list-style-type: decimal;
+}
+
+.list .bulleted {
+  list-style-type: circle;
+}
+
+.item {
+  margin-bottom: 4px;
+  white-space: break-spaces;
+}
+
+/* `code.inline`, on top of the `code` rule every code element gets. */
+.inlineCode {
+  margin: -0.2em 0;
+  padding: 0 0.2em;
+  border: 1px solid var(--border-normal);
+  border-radius: 4px;
+  background: var(--background-code);
+  font-family: var(--font-code);
+  font-size: 85%;
+  line-height: 1.125rem;
+  text-indent: 0;
+  white-space: pre-wrap;
+}
+
+/* `pre`, and the code element inside it: the `code` rule plus `.hljs`, whose own background loses to the `code` rule's. */
+.pre {
+  box-sizing: border-box;
+  max-width: 90%;
+  margin: 6px 0 0;
+  padding: 0;
+  border-radius: 4px;
+  background-clip: border-box;
+  font-family: var(--font-code);
+  font-size: 0.75rem;
+  line-height: 1rem;
+  white-space: pre-wrap;
+}
+
+.codeBlock {
+  display: block;
+  overflow-x: auto;
+  padding: 0.5em;
+  border: 1px solid var(--border-normal);
+  border-radius: 4px;
+  background: var(--background-code);
+  color: var(--text-code);
+  font-family: var(--font-code);
+  font-size: 0.875rem;
+  line-height: 1.125rem;
+  text-indent: 0;
+  white-space: pre-wrap;
+}

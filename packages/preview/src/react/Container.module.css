@@ -8,9 +8,11 @@
   background: var(--background-surface-high);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
-  /* Text inside a container is drawn at Discord's reduced markup size (the `sizeReduced` rule: 0.875rem, line height scaled by the same factor). Passed down as inherited properties so TextDisplay needs no prop for where it sits. */
+  /* Text inside a container is drawn at Discord's reduced markup size (the `sizeReduced` rule: 0.875rem, line height scaled by the same factor, and 0.75rem for subtext). Passed down as inherited properties so TextDisplay needs no prop for where it sits. */
   --dkp-markup-font-size: 0.875rem;
   --dkp-markup-line-height: calc(var(--chat-markup-line-height) * 0.875);
+  --dkp-markup-small-font-size: 0.75rem;
+  --dkp-markup-small-line-height: calc(var(--chat-markup-line-height) * 0.75);
 }
 
 /* The accent is a 4px bar on the leading edge, inside the border, clipped by the container's radius. The colour arrives as an inline custom property, as it does in Discord. */
