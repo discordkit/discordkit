@@ -1,0 +1,68 @@
+{
+  "name": "@discordkit/preview",
+  "description": "Render Discord messages (Components V2 and embeds) the way the Discord web client draws them, in React or to a PNG from Node",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "author": "Drake Costa <drake@saeris.gg> (https://saeris.gg)",
+  "keywords": [
+    "discord",
+    "components-v2",
+    "preview",
+    "react",
+    "screenshot"
+  ],
+  "homepage": "https://github.com/discordkit/discordkit#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/discordkit/discordkit.git",
+    "directory": "packages/preview"
+  },
+  "bugs": {
+    "url": "https://github.com/discordkit/discordkit/issues"
+  },
+  "type": "module",
+  "exports": {
+    "./react": {
+      "@discordkit/source": "./src/react/index.ts",
+      "types": "./dist/react/index.d.mts",
+      "import": "./dist/react/index.mjs"
+    },
+    "./react/styles.css": "./dist/styles.css",
+    "./node": {
+      "@discordkit/source": "./src/node/index.ts",
+      "types": "./dist/node/index.d.mts",
+      "import": "./dist/node/index.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist/**/*"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "dependencies": {
+    "@discordkit/client": "workspace:^",
+    "@fontsource-variable/noto-sans": "5.3.0"
+  },
+  "devDependencies": {
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "playwright": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "valibot": "catalog:"
+  },
+  "peerDependencies": {
+    "playwright": ">= 1.50.0",
+    "react": ">= 19.0.0",
+    "react-dom": ">= 19.0.0",
+    "valibot": ">= 1.4.0"
+  },
+  "peerDependenciesMeta": {
+    "playwright": {
+      "optional": true
+    }
+  }
+}

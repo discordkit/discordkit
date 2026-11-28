@@ -1,0 +1,9 @@
+/* The chat column behind the messages. The 16px inset and the 16px between messages are ours, not Discord measurements: they keep a container's edge visible against the background until message chrome (avatar gutter, margins, grouping) is drawn. */
+.scene {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  background: var(--background-base-lowest);
+}

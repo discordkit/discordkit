@@ -1,0 +1,9 @@
+/* Discord build 679963: the message markup rule. Size and line height default to top-level message text and are overridden by an enclosing Container. */
+.textDisplay {
+  margin: 0;
+  color: var(--text-default);
+  font-size: var(--dkp-markup-font-size, 1rem);
+  line-height: var(--dkp-markup-line-height, var(--chat-markup-line-height));
+  white-space: break-spaces;
+  overflow-wrap: break-word;
+}

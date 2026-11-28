@@ -1,0 +1,29 @@
+/* Discord build 679963: the Components V2 container rule, and its `withAccentColor` modifier. */
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  overflow: hidden;
+  padding: var(--space-16);
+  background: var(--background-surface-high);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  /* Text inside a container is drawn at Discord's reduced markup size (the `sizeReduced` rule: 0.875rem, line height scaled by the same factor). Passed down as inherited properties so TextDisplay needs no prop for where it sits. */
+  --dkp-markup-font-size: 0.875rem;
+  --dkp-markup-line-height: calc(var(--chat-markup-line-height) * 0.875);
+}
+
+/* The accent is a 4px bar on the leading edge, inside the border, clipped by the container's radius. The colour arrives as an inline custom property, as it does in Discord. */
+.withAccentColor {
+  position: relative;
+}
+
+.withAccentColor::before {
+  position: absolute;
+  top: 0;
+  inset-inline-start: 0;
+  width: 4px;
+  height: 100%;
+  background-color: var(--__accent-color);
+  content: "";
+}

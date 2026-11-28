@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.json",
+  "include": ["src/**/*", "vite.config.ts"],
+  "compilerOptions": {
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
+    // `vite-plus/client` declares `*.module.css` imports as a class-name map, for the type checker and for `vp pack`'s declaration emit.
+    "types": ["node", "vite-plus/client"]
+  }
+}
