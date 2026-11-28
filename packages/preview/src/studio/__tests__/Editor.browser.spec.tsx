@@ -98,8 +98,9 @@ const card = `{
 }
 `;
 
+/** The first viewport's drawing. */
 const preview = (): HTMLElement => {
-  const element = document.querySelector(`[data-testid="preview"]`);
+  const element = document.querySelector(`[data-testid="preview-viewport"]`);
   if (!(element instanceof HTMLElement)) throw new Error(`No preview.`);
   return element;
 };

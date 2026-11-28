@@ -12,7 +12,12 @@ import {
 import { useForm, useWatch } from "react-hook-form";
 import { Tab, TabList, TabPanel, Tabs, type Key } from "react-aria-components";
 import { codegen } from "../codegen/index.js";
-import { formatPath, type Finding, type Path } from "../findings.js";
+import {
+  formatPath,
+  undrawableCodes,
+  type Finding,
+  type Path
+} from "../findings.js";
 import type { AssetUrl } from "../react/SceneContext.js";
 import { readScene, type InputKind } from "../scene/intake.js";
 import type { Scene } from "../scene.js";
@@ -238,6 +243,10 @@ export const Studio = ({ backend }: { backend: Backend }): ReactElement => {
     () => (current?.scene === undefined ? undefined : lintScene(scene)),
     [current?.scene, scene]
   );
+  // Lint and the renderer read the same lists of what can be drawn, so a scene lint says the renderer refuses is not handed to it: the preview says why instead (see DrawBoundary).
+  const refusal = linted?.findings.find((finding) =>
+    undrawableCodes.has(finding.code)
+  )?.message;
   const shape = current?.scene === undefined ? undefined : current.shape;
   const findings: ShownFinding[] = useMemo(() => {
     if (current !== undefined && current.scene === undefined) {
@@ -357,8 +366,10 @@ export const Studio = ({ backend }: { backend: Backend }): ReactElement => {
         case `theme`:
           form.setValue(`theme`, change.value);
           break;
-        case `width`:
-          form.setValue(`width`, change.value);
+        case `viewports`:
+          form.setValue(`viewports`, change.value);
+          // The viewports say which views to draw, so a width beside them would be unused (lint says so); it is replaced by them.
+          form.setValue(`width`, undefined);
           break;
         case `revealSpoilers`:
           form.setValue(`revealSpoilers`, change.value);
@@ -383,7 +394,7 @@ export const Studio = ({ backend }: { backend: Backend }): ReactElement => {
 
   const { errors } = form.formState;
   const fieldError = useCallback(
-    (field: `locale` | `timeZone` | `now` | `width`): string | undefined =>
+    (field: `locale` | `timeZone` | `now`): string | undefined =>
       errors[field]?.message,
     [errors]
   );
@@ -545,6 +556,7 @@ export const Studio = ({ backend }: { backend: Backend }): ReactElement => {
       disabledReason={disabledReason}
       fieldError={fieldError}
       onProblem={setDrawProblem}
+      refusal={refusal}
       staleNote={staleNote}
       selected={selected?.id}
       onSelect={onSelectFromPreview}

@@ -31,7 +31,8 @@ export const viewFields = [
   `now`,
   `timeZone`,
   `locale`,
-  `revealSpoilers`
+  `revealSpoilers`,
+  `viewports`
 ] as const;
 
 /** Where the file's own value sits inside the scene `readScene` makes of it. */

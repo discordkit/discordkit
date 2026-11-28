@@ -35,6 +35,8 @@ import {
   maxTextDisplayCharacters,
   minSectionComponents
 } from "./limits.js";
+import { findDevice } from "../devices.js";
+import { unknownDeviceMessage } from "../viewport.js";
 import { markdownFindings } from "./markdown.js";
 
 /** What a count measures. */
@@ -647,6 +649,28 @@ export const lintScene = (scene: Scene): LintSceneResult => {
 
     checkAttachments(payload, base);
   });
+
+  // The views the scene asks for. They decide how it is drawn, never what is wrong with the message, so nothing above depends on them.
+  const viewports = list(scene.viewports);
+  viewports.forEach((viewport: unknown, index) => {
+    const device = isObject(viewport) ? text(viewport.device) : undefined;
+    if (device !== undefined && findDevice(device) === undefined) {
+      add(
+        `viewport-device-unknown`,
+        `error`,
+        [`viewports`, index, `device`],
+        `${unknownDeviceMessage(device)} The preview cannot draw a device it does not know.`
+      );
+    }
+  });
+  if (viewports.length > 0 && scene.width !== undefined) {
+    add(
+      `viewport-width-ignored`,
+      `warning`,
+      [`width`],
+      `The scene sets both \`width\` and \`viewports\`. \`viewports\` says which views to draw, so \`width\` (${String(scene.width)}) is not used. Remove \`width\`, or add it to \`viewports\` as \`{ "width": ${String(scene.width)} }\` to keep that view.`
+    );
+  }
 
   return { findings, counts };
 };

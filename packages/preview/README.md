@@ -35,6 +35,7 @@ discordkit-preview render  [input...]   Draw each input to a PNG (or HTML with -
 discordkit-preview lint    [input...]   Check each input against Discord's schemas and limits
 discordkit-preview codegen [input]      Print TypeScript source for an input
 discordkit-preview diff    <a> <b>      Compare two PNGs and write a diff image
+discordkit-preview devices              List the devices render --device can draw for
 discordkit-preview studio  [file]       Open an editor on a scene file, with a live preview
 ```
 
@@ -120,12 +121,70 @@ With `--json`, the same render prints:
 | `-o, --out <file>` / `--out-dir <dir>`                | Where to write. Default: beside each input file, or `preview.png` in the working directory for stdin. |
 | `--html`                                              | Write one self-contained HTML file instead of a PNG (see [HTML output](#-html-output)).               |
 | `--theme <light\|ash\|dark\|onyx>`                    | Discord's appearance setting. Replaces the scene's. Default `dark`.                                   |
-| `--width <px>`                                        | Width of the chat column in CSS pixels. Default 600.                                                  |
-| `--scale <n>`                                         | Device pixels per CSS pixel, up to 4. Default 1.                                                      |
+| `--device <id>`                                       | Draw for this device; give it several times for several side by side (see [Devices](#devices)).       |
+| `--member-list <open\|closed>`                        | Whether a desktop window's member list is open. Default `open`.                                       |
+| `--width <px>`                                        | Width of the chat column in CSS pixels, with no device. Default 600.                                  |
+| `--separate`                                          | Write one image per viewport instead of one side by side.                                             |
+| `--scale <n\|device>`                                 | Device pixels per CSS pixel, up to 4, or `device` for each device's own density. Default 1.           |
 | `--now <iso>`, `--time-zone <iana>`, `--locale <tag>` | The viewer's clock, zone and Discord language. Defaults: a fixed instant, `UTC`, `en-US`.             |
 | `--gg-sans <path>`, `--cjk <font>`                    | Font options (see [Fonts](#-fonts)).                                                                  |
 | `--offline`, `--cache-dir <dir>`                      | Draw only images already in the asset cache; where that cache is.                                     |
 | `--channel <name>`                                    | Drive an installed browser (`chrome`, `msedge`, …) instead of Playwright's Chromium.                  |
+
+### Devices
+
+A message can be drawn for a device instead of a bare width, and for several at once, side by side, the way a browser's device toolbar shows a page. A phone's chat fills its screen. A desktop window's chat column is the window less Discord's server rail (72px), channel list (196px), member list (264px, when open) and the message list's scrollbar (16px), as Discord's stylesheet sets them, so a 1280 × 800 window leaves 732 pixels for the chat.
+
+> **A phone is drawn with the desktop web layout at the phone's width, not as the iOS or Android app draws it.** The apps have their own text sizes, button widths and gallery sizes. Drawn this way, a phone shows how a message wraps and overflows at that width, not what a phone user sees. Every image of a phone says so in its caption, and its JSON has `"calibrated": false` and a `note`.
+
+```bash
+discordkit-preview render question.json --device desktop-1280x800 --device iphone-14-pro
+```
+
+This writes one image with both viewports side by side, each under a caption naming its device, size and layout, and on a phone a dashed line where the first screen of chat ends (about 647 points on an iPhone 14 Pro, measured from the iOS app; approximate on every phone) when the message is taller than that. `--separate` writes one image per viewport instead, named `question.desktop-1280x800.png` and `question.iphone-14-pro.png`, which is what comparing renders needs.
+
+**Scale.** One image has one scale, `--scale` (default 1), whatever its viewports. A device drawn alone can use its own pixel density with `--scale device`, so an iPhone 14 Pro render is 1179 pixels wide, as a screenshot taken on one is, and the two can be compared with `diff`:
+
+```bash
+discordkit-preview render question.json --device iphone-14-pro --scale device --out question-phone.png
+discordkit-preview diff question-phone.png screenshot-from-the-phone.png --tolerance 8
+```
+
+(The render still carries its caption above the drawing, and the phone's screenshot its status bar and channel header, so expect the two to differ in height and position; the widths match.) `--scale device` on one image of devices with different densities is refused, with a pointer to `--separate`.
+
+**JSON.** Each result lists its viewports, with where each one is in the image so it can be cropped out (`box` is the caption and drawing, `drawing` the drawing alone, both in image pixels), and findings and counts once, since they are about the message, not the view. From the command above, the phone's entry:
+
+```json
+{
+  "key": "iphone-14-pro",
+  "device": "iphone-14-pro",
+  "name": "iPhone 14 Pro",
+  "platform": "ios",
+  "screen": { "width": 393, "height": 852 },
+  "pixelRatio": 3,
+  "memberList": null,
+  "layout": "desktop",
+  "requestedLayout": "ios",
+  "calibrated": false,
+  "chatWidth": 393,
+  "visibleChat": {
+    "height": 647,
+    "approximate": true,
+    "basis": "Measured from a full-screen capture of the iOS app on this phone: the chat runs from under the channel header to the top of the message box."
+  },
+  "label": "iPhone 14 Pro · 393 × 852 · 3x",
+  "note": "Drawn with Discord's desktop web layout at 393 pixels wide, not as the iOS app draws it. The app has its own text sizes, button widths and gallery sizes, so this shows how the message wraps and overflows at this width, not what a phone user sees.",
+  "scale": 1,
+  "output": "/path/to/question.png",
+  "box": { "x": 772, "y": 16, "width": 393, "height": 823 },
+  "drawing": { "x": 772, "y": 199, "width": 393, "height": 640 },
+  "fitsOneScreen": true
+}
+```
+
+The entry also has `outputs`, every file written. With `--separate`, `output`, `width` and `height` are null and each viewport's `output` is its own file. Without `--device`, a render draws the scene's own `viewports` (see [The scene](#-the-scene)), or one 600-pixel column when it names none, exactly as before.
+
+`discordkit-preview devices` lists every device (`--json` too), grouped by platform: iPhones from the SE to the 17 Pro Max with the iPhone 14 Pro among them, Android phones from the folded Galaxy Z Fold 5 to the Pixel 9 Pro XL, two iPads and a Galaxy Tab, and desktop windows from 1024 × 768 to 1920 × 1080. The iPhones' sizes, densities and safe areas come from Use Your Loaf's screen-size tables, the Android phones' and tablets' from Chrome DevTools' device list; the desktop window sizes are chosen, not measured. A device id that does not exist is refused with the closest matches.
 
 ### `lint`
 
@@ -233,7 +292,8 @@ Studio is an editor for one file that you and a coding agent can work in at the 
 - **Adding and arranging.** _Add_ offers only what Discord allows where the selected component is: inside it, or after it in its parent, with the reason when something cannot go there (a sixth button in a row, a select beside buttons). Duplicate, move up and down, and remove are beside it, and on the focused row as Ctrl+D, Alt+↑ and Alt+↓, and Delete. A duplicate keeps its `customId`, so the duplicate is reported at once on the copy's field.
 - **Findings where they belong.** A finding shows under the field it is about, a component with findings anywhere beneath it is marked in the tree, and choosing a finding in the findings list selects its component and puts the cursor in its field.
 - **Starting points.** An empty scene (`{ "messages": [] }`, or an empty file) offers an empty Components V2 message, a classic message with an embed, and Inbou's question and Tome's reveal from the package's fixtures, rather than a blank page.
-- **Preview settings.** Discord theme, chat-column width (with Desktop 600 and Phone 390 presets), locale, time zone, the scene's clock, revealing spoilers, and which String Select is drawn open. In a scene file they are scene fields, so they are saved to it; a file holding only a message payload or components has no place for them, so they stay in Studio and the toolbar says so.
+- **Viewports.** The preview shows the scene's viewports side by side: a 1280 × 800 desktop window and an iPhone 14 Pro when the scene names none, or one column of the scene's `width` when it has only that. Each viewport has its own device chooser, like the device list in a browser's device toolbar: grouped by platform, searchable by typing, with "Responsive" (a free width, with a width field) first, and for a desktop window a member-list switch. _New viewport_ adds one and the bin removes one. A phone's viewport says above its drawing that it is the web layout and not the app, and marks where its first screen of chat ends when the message reaches it. When the viewports do not fit side by side they are scaled down together, to no less than 50%, and the zoom is shown on each; past that, the ones that do not fit wrap onto the next line. _Fit_ and _100%_ switch between that and actual size. Clicking a component in any viewport selects it, and it is outlined in all of them.
+- **Preview settings.** Discord theme, locale, time zone, the scene's clock, revealing spoilers, and which String Select is drawn open, shared by every viewport. In a scene file they and the viewports are scene fields, so they are saved to it (choosing viewports replaces a `width` the file had); a file holding only a message payload or components has no place for them, so they stay in Studio and the toolbar says so.
 - **Editing the JSON.** The preview and findings follow as you type. The text is written to the file once it parses, in exactly the form you typed. While it does not parse, nothing is written, the preview keeps the last version that did, and the pane says what is wrong and on which line and column.
 - **Saving keeps the file's shape and formatting.** A change made in a form goes back in the file's own shape and key style: a snake_case component array stays a snake_case component array, keys keep their spelling, and line endings are kept. Only the text of what changed is rewritten, so a hand-formatted file keeps its layout (a row of buttons kept one to a line stays that way) and a one-word edit is a one-line diff; new values are written in the style of their neighbours. A form change that leaves the content as it was writes nothing. A cleared optional field is removed from the file, never left as an empty string or `null`.
 - **When the file and you disagree.** A change to the file from elsewhere replaces the pane's text when nothing in it is unsaved. When you have unsaved text (half-typed JSON, or a form edit not yet written, since writes wait for a pause in typing), Studio keeps it, stops saving, shows the file's new version in the preview and the forms, pauses the forms, and asks: _Discard mine, load the file_, or _Overwrite the file with mine_. A write is always based on the version it was edited from, and the server refuses it if the file has changed since, so an agent's change is never overwritten by a tab that had not seen it.
@@ -263,20 +323,20 @@ const { valid, findings, counts, image } = await render(payload, {
 if (image) await writeFile(`preview.png`, image.png);
 ```
 
-| Import                         | What                                                                                                                                                                                                                                                         |
-| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `@discordkit/preview/node`     | `render(input, options)`: what the `render` command runs per input; reads any input, lints it and draws it, with one findings list. `renderScene(scene, options)`: draws an already normalised scene. `diffImages(a, b, { tolerance })`: the `diff` command. |
-| `@discordkit/preview/lint`     | `lint(input)`: findings, counts and `valid`, with no browser.                                                                                                                                                                                                |
-| `@discordkit/preview/codegen`  | `codegen(input, { shape, name })`: TypeScript source.                                                                                                                                                                                                        |
-| `@discordkit/preview/scene`    | `readScene(input)`: any input as a normalised camelCase scene, with intake findings.                                                                                                                                                                         |
-| `@discordkit/preview/markdown` | `parseMarkdown(source, context)`: Discord-flavoured markdown to a typed AST.                                                                                                                                                                                 |
-| `@discordkit/preview/react`    | `<Scene>` and the components it draws with, for showing a preview in your own React app (import `@discordkit/preview/react/styles.css` too).                                                                                                                 |
+| Import                         | What                                                                                                                                                                                                                                                                                                                                         |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@discordkit/preview/node`     | `render(input, options)`: what the `render` command runs per input; reads any input, lints it and draws it, with one findings list; `viewports`, `separate` and `scale: "device"` do what the command's options do. `renderScene(scene, options)`: draws an already normalised scene. `diffImages(a, b, { tolerance })`: the `diff` command. |
+| `@discordkit/preview/lint`     | `lint(input)`: findings, counts and `valid`, with no browser.                                                                                                                                                                                                                                                                                |
+| `@discordkit/preview/codegen`  | `codegen(input, { shape, name })`: TypeScript source.                                                                                                                                                                                                                                                                                        |
+| `@discordkit/preview/scene`    | `readScene(input)`: any input as a normalised camelCase scene, with intake findings. `devices`, `layouts` and `resolveViewport(viewport)`: the device registry and what a viewport draws.                                                                                                                                                    |
+| `@discordkit/preview/markdown` | `parseMarkdown(source, context)`: Discord-flavoured markdown to a typed AST.                                                                                                                                                                                                                                                                 |
+| `@discordkit/preview/react`    | `<Scene>` and the components it draws with, for showing a preview in your own React app (import `@discordkit/preview/react/styles.css` too).                                                                                                                                                                                                 |
 
 `scene`, `lint`, `codegen` and `markdown` use no Node built-ins, React or Playwright, so they run anywhere. Pass a `browser` you launched yourself to `render` or `renderScene` to reuse it across renders; it must be Chromium.
 
 ## 🎬 The scene
 
-A bare payload is enough to draw one message from an app called "App". A scene adds what a payload does not carry: who sent each message, what mentions and custom emoji resolve to, local files for `attachment://` images, and the viewer's clock, zone, language, theme and window width.
+A bare payload is enough to draw one message from an app called "App". A scene adds what a payload does not carry: who sent each message, what mentions and custom emoji resolve to, local files for `attachment://` images, and the viewer's clock, zone, language, theme and devices.
 
 ```json
 {
@@ -319,9 +379,11 @@ A bare payload is enough to draw one message from an app called "App". A scene a
   "timeZone": "Asia/Tokyo",
   "locale": "en-US",
   "theme": "dark",
-  "width": 600
+  "viewports": [{ "device": "desktop-1280x800" }, { "device": "iphone-14-pro" }]
 }
 ```
+
+`viewports` names the views the scene is meant to be checked in, which Studio shows and `render` draws side by side: a device (`{ "device": "iphone-14-pro" }`; a desktop window can add `"memberList": false`) or a free width (`{ "width": 600 }`). `width` alone still means one column of that width; with `viewports` it is unused, and lint says so. A device the registry does not have is a `viewport-device-unknown` error naming the closest matches.
 
 To see a String Select's options, give its message `"openSelect"` with the select's `custom_id`: the select is drawn open, with every option's emoji, label and description listed under it and the ones marked `default` selected, hanging over whatever is below as the client's list does, and the image grows to fit it. Only a string select can be drawn open, since the other selects list members, roles or channels the client fetches; lint reports an `openSelect` that names anything else. A File component's size comes from its `size` (Discord's responses carry one) or from its file's entry in `context.attachments`, as `"size": <bytes>`; with neither, only the name is drawn.
 
@@ -350,7 +412,7 @@ Every render reports which fonts drew the text (`fonts.used`: the family name in
 - **Components**: every component a message can hold is drawn. The components only a modal holds (Label, Text Input, File Upload, and radio and checkbox groups) are not; a message holding one gets a `component-unsupported` finding and no image. Modals, polls, reactions, replies, threads and forwarded messages are not drawn.
 - **Selects**: only a String Select can be drawn open. The closed control's fill and border, and the text sizes in it and in the open list, are inferred, and the open list shows every option where the client's scrolls.
 - **Calibration**: values come from Discord's stylesheet, checked against screenshots of the real desktop client in the dark theme. Layout Discord decides in JavaScript is calibrated where a screenshot showed it (galleries of one, two and four pictures, the header's time for a message sent today, where "(edited)" sits on a Components V2 message) and inferred elsewhere: galleries of three and of five or more on desktop, a pair of large or differently shaped pictures, the header's time for an older message, embed text sizes, relative-timestamp wording, file sizes' wording. The light, ash and onyx themes have not been checked against the client.
-- **Mobile**: previews match the web client at the width you give, not the native mobile apps.
+- **Mobile**: phones and tablets are drawn with the web client's layout at their width, not as the native apps draw them, and say so. Where a phone's first screen of chat ends was measured once, on an iPhone 14 Pro; for other iPhones it is worked out from their safe areas, and for Android and tablets it is an estimate. The desktop channel list is drawn at its default width; people can drag theirs wider.
 - **Markdown**: no syntax highlighting in code blocks.
 - **Lint**: misspelled keys pass silently, because the client schemas drop unknown keys; character counts use Unicode code points, and whether Discord counts UTF-16 units instead is unverified.
 - **Validation of selects and files**: until a fix to `@discordkit/client` lands, its schemas reject a select menu in an action row's array (the shape Discord expects) and a File component without `name` and `size` (which only Discord's responses carry), so a correct payload holding either gets `schema` errors. They are still drawn, and Studio's forms write the shape Discord expects, so those two findings show in Studio too until the fix lands.

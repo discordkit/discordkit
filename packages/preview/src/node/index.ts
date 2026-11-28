@@ -15,6 +15,10 @@ export type {
   RenderCode,
   Severity
 } from "../findings.js";
+export { devices, findDevice, layouts } from "../devices.js";
+export type { Device, LayoutId, Platform } from "../devices.js";
+export { resolveViewport, UnknownDeviceError } from "../viewport.js";
+export type { ResolvedViewport, SceneViewport } from "../viewport.js";
 export type {
   MessagePayload,
   Scene,

@@ -1,5 +1,8 @@
 import type { Embed } from "@discordkit/client/messages/types/Embed";
 import type { MessageComponent } from "@discordkit/client/messages/types/MessageComponent";
+import type { SceneViewport } from "./viewport.js";
+
+export type { SceneViewport } from "./viewport.js";
 
 /** Discord's four appearance settings, by the names its settings UI uses. */
 export type Theme = `light` | `ash` | `dark` | `onyx`;
@@ -99,8 +102,10 @@ export interface Scene {
   revealSpoilers?: boolean;
   /** Defaults to `dark`, Discord's default appearance. */
   theme?: Theme;
-  /** Width of the chat column in CSS pixels. Defaults to 600. */
+  /** Width of the chat column in CSS pixels. Defaults to 600. The same as one free-width viewport; ignored when `viewports` is set. */
   width?: number;
+  /** The views the scene is meant to be checked in, side by side: devices from the registry (`{ "device": "iphone-14-pro" }`, a desktop window with `"memberList": false` to close the member list) or free widths (`{ "width": 600 }`). Studio shows these, and `render` draws them all into one image. */
+  viewports?: SceneViewport[];
 }
 
 export const defaultTheme: Theme = `dark`;

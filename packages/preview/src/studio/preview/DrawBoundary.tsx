@@ -1,4 +1,5 @@
 import { Component, useEffect, type ReactElement, type ReactNode } from "react";
+import type { LayoutId } from "../../devices.js";
 import { Scene } from "../../react/Scene.js";
 import type { AssetUrl } from "../../react/SceneContext.js";
 import type { Scene as SceneData } from "../../scene.js";
@@ -6,7 +7,11 @@ import styles from "./PreviewPane.module.css";
 
 interface DrawProps {
   scene: SceneData;
+  /** Which client's layout to draw (see `devices.ts`). */
+  layout: LayoutId;
   assetUrl: AssetUrl;
+  /** Why the scene cannot be drawn, when that is known before drawing it: lint's finding for something the renderer refuses (see `undrawableCodes`). The scene is then not rendered at all, so nothing throws. */
+  refusal: string | undefined;
   /** Called with the renderer's reason when the scene cannot be drawn, and with undefined once it can. */
   onProblem: (message: string | undefined) => void;
 }
@@ -14,37 +19,39 @@ interface DrawProps {
 /** Draws the scene, and tells Studio it could. */
 const Drawn = ({
   scene,
+  layout,
   assetUrl,
   onDrawn
-}: Omit<DrawProps, `onProblem`> & {
+}: Omit<DrawProps, `onProblem` | `refusal`> & {
   onDrawn: (scene: SceneData) => void;
 }): ReactElement => {
   useEffect(() => onDrawn(scene));
-  return <Scene {...scene} assetUrl={assetUrl} />;
+  return <Scene {...scene} layout={layout} assetUrl={assetUrl} />;
 };
 
 /** What the preview shows when the scene cannot be drawn: why, over the last scene that could be, faded. */
 const Undrawn = ({
-  error,
+  message,
   lastGood,
+  layout,
   assetUrl,
   onProblem
-}: Omit<DrawProps, `scene`> & {
-  error: Error;
+}: Omit<DrawProps, `scene` | `refusal`> & {
+  message: string;
   lastGood: SceneData | undefined;
 }): ReactElement => {
-  useEffect(() => onProblem(error.message), [error, onProblem]);
+  useEffect(() => onProblem(message), [message, onProblem]);
   return (
     <div className={styles.undrawn}>
       <p role="alert" className={styles.undrawnMessage}>
-        <strong>This scene cannot be drawn.</strong> {error.message}
+        <strong>This scene cannot be drawn.</strong> {message}
         {lastGood === undefined
           ? null
           : ` Below is the last version that could be.`}
       </p>
       {lastGood === undefined ? null : (
         <div className={styles.stale} aria-hidden="true">
-          <Scene {...lastGood} assetUrl={assetUrl} />
+          <Scene {...lastGood} layout={layout} assetUrl={assetUrl} />
         </div>
       )}
     </div>
@@ -58,7 +65,9 @@ interface State {
 }
 
 /**
- * Draws a scene, and catches one the renderer refuses (an open select that names nothing, a component it cannot draw where it sits) so the rest of Studio keeps working: it shows why, over the last scene that could be drawn. React has no hook for catching a render error, so this is a class.
+ * Draws a scene, or says why it cannot, over the last scene that could be drawn, so the rest of Studio keeps working.
+ *
+ * A scene lint already knows the renderer refuses (an open select that names nothing, a component it cannot draw where it sits) arrives with its `refusal` and is never rendered. That matters beyond tidiness: the preview is drawn from a deferred copy of the form, and when a deferred render throws, React retries the whole root synchronously, where `useDeferredValue` can hand back the previous scene, which draws; React then reports the first throw as a recoverable error, which a test run counts as unhandled. Catching render errors stays as the net for anything lint did not foresee. React has no hook for that, so this is a class.
  */
 export class DrawBoundary extends Component<DrawProps, State> {
   override state: State = { error: undefined, failed: undefined };
@@ -87,13 +96,20 @@ export class DrawBoundary extends Component<DrawProps, State> {
   };
 
   override render(): ReactNode {
-    const { scene, assetUrl, onProblem } = this.props;
-    return this.state.error === undefined ? (
-      <Drawn scene={scene} assetUrl={assetUrl} onDrawn={this.onDrawn} />
+    const { scene, layout, assetUrl, refusal, onProblem } = this.props;
+    const message = refusal ?? this.state.error?.message;
+    return message === undefined ? (
+      <Drawn
+        scene={scene}
+        layout={layout}
+        assetUrl={assetUrl}
+        onDrawn={this.onDrawn}
+      />
     ) : (
       <Undrawn
-        error={this.state.error}
+        message={message}
         lastGood={this.lastGood}
+        layout={layout}
         assetUrl={assetUrl}
         onProblem={onProblem}
       />

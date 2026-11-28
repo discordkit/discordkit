@@ -25,8 +25,20 @@ import {
   type AssetFinding,
   type LoadedAsset
 } from "./assets.js";
+import type { ResolvedViewport } from "../viewport.js";
+import type { Box } from "./diff.js";
 import { describeFonts, hasCjk, type FontReport } from "./fontReport.js";
 import { loadFonts, type CjkFont, type DeclaredFace } from "./fonts.js";
+import {
+  fitAttribute,
+  foldAttribute,
+  panelAttribute,
+  Sheet,
+  sheetAttribute,
+  sheetCss,
+  sheetGap,
+  sheetPadding
+} from "./Sheet.js";
 
 export interface RenderOptions {
   /** Device pixels per CSS pixel. Defaults to 1. */
@@ -43,6 +55,18 @@ export interface RenderOptions {
   cjk?: CjkFont;
   /** Also return the page as one self-contained HTML document, with its stylesheet, fonts and images inlined. Defaults to false. */
   html?: boolean;
+  /** Draw the scene once per viewport, side by side in one image, each under a caption naming its device, size and layout (see `Sheet.tsx`). Without it the scene is drawn once, bare, at its own `width`. */
+  viewports?: readonly ResolvedViewport[];
+}
+
+/** Where one viewport landed in the image, so it can be cropped out, and whether the message fits on one of its screens. */
+export interface ViewportPlacement {
+  /** The viewport's caption and drawing together. */
+  box: Box;
+  /** The drawing alone, without the caption. */
+  drawing: Box;
+  /** For a phone or tablet: whether the drawing is no taller than the chat one screen shows (`visibleChat`), approximately. Null for a desktop window or a free width. */
+  fitsOneScreen: boolean | null;
 }
 
 export interface RenderResult {
@@ -57,6 +81,8 @@ export interface RenderResult {
   fonts: FontReport;
   /** The page as one file that opens anywhere with no scripts and no network: present when `html` was asked for. Spoilers reveal on click. Only the font files the text uses are inlined; with `cjk: "system"`, CJK text uses the viewer's own fonts. */
   html?: string;
+  /** Where each of `viewports` was drawn, in the order given. Empty when none were given. */
+  placements: ViewportPlacement[];
 }
 
 /** Thrown by {@link renderScene} when the scene itself cannot be drawn, such as a component the renderer does not support yet, as opposed to a browser or file that failed. Its message says what to change in the scene. */
@@ -213,7 +239,8 @@ const selfContained = async ({
   requested,
   served,
   stylesheet,
-  stack
+  stack,
+  frame
 }: {
   page: Page;
   locale: string;
@@ -222,6 +249,8 @@ const selfContained = async ({
   served: ReadonlyMap<string, LoadedAsset>;
   stylesheet: string;
   stack: string;
+  /** The sheet's styles, when the page is a sheet. */
+  frame: string;
 }): Promise<string> => {
   const inlined = await Promise.all(
     faces
@@ -240,7 +269,18 @@ const selfContained = async ({
       return asset ? dataUri(asset.contentType, asset.body) : transparentPixel;
     }
   );
-  return `<!doctype html><html lang="${locale}"><head><meta charset="utf-8"><title>Discord message preview</title><style>${inlined.join(`\n`)}</style><style>${stylesheet}</style><style>${stack}${determinism}</style></head><body>${body}</body></html>`;
+  return `<!doctype html><html lang="${locale}"><head><meta charset="utf-8"><title>Discord message preview</title><style>${inlined.join(`\n`)}</style><style>${stylesheet}</style><style>${stack}${determinism}${frame}</style></head><body>${body}</body></html>`;
+};
+
+/** The browser window a sheet needs to lay every viewport out side by side without wrapping. */
+const sheetWidth = (viewports: readonly ResolvedViewport[]): number => {
+  const columns = viewports.reduce(
+    (sum, viewport) => sum + viewport.chatWidth,
+    0
+  );
+  return viewports.length === 1
+    ? columns
+    : columns + sheetGap * (viewports.length - 1) + sheetPadding * 2;
 };
 
 /**
@@ -259,9 +299,15 @@ export const renderScene = async (
     offline = false,
     ggSans,
     cjk = `system`,
-    html: wantHtml = false
+    html: wantHtml = false,
+    viewports
   }: RenderOptions = {}
 ): Promise<RenderResult> => {
+  if (viewports?.length === 0) {
+    throw new Error(
+      `@discordkit/preview/node was asked to draw a scene in no viewports, so there is nothing to draw. Pass at least one viewport, or leave \`viewports\` out to draw the scene once at its own width.`
+    );
+  }
   // Checked first, so a bad clock, zone or locale fails before anything is fetched. The canonical locale is also safe to write into the page.
   const { locale } = resolveClock(scene);
   const references = collectReferences(scene);
@@ -276,11 +322,33 @@ export const renderScene = async (
     })
   ]);
   const { assetUrl, served } = serveAssets(references, loaded.assets);
+  // One viewport drawn with its own client's layout needs no caption, so it is drawn bare, as a scene without viewports is: the image is the chat column and nothing else. Anything else is drawn on a sheet, captioned.
+  const single = viewports?.length === 1 ? viewports[0] : undefined;
+  const sheet =
+    viewports !== undefined && (single === undefined || !single.calibrated)
+      ? viewports
+      : undefined;
+  const bareScene: Scene =
+    single === undefined ? scene : { ...scene, width: single.chatWidth };
   const markup = renderToStaticMarkup(
-    createElement(SceneView, { ...scene, assetUrl })
+    sheet === undefined
+      ? createElement(SceneView, {
+          ...bareScene,
+          assetUrl,
+          ...(single === undefined ? {} : { layout: single.layout })
+        })
+      : createElement(Sheet, {
+          scene: { ...scene, assetUrl },
+          viewports: sheet
+        })
   );
+  const frame = sheet === undefined ? `` : sheetCss(sheet);
+  /** What is screenshotted: the scene, or the sheet of viewports around it. */
+  const target = sheet === undefined ? sceneSelector : `[${sheetAttribute}]`;
+  const windowWidth =
+    sheet === undefined ? (bareScene.width ?? defaultWidth) : sheetWidth(sheet);
   const faceCss = fonts.faces.map((declared) => declared.rule).join(`\n`);
-  const html = `<!doctype html><html lang="${locale}"><head><meta charset="utf-8"><style>${faceCss}</style><style>${stylesheet}</style><style>${fonts.stack}${determinism}</style></head><body>${markup}</body></html>`;
+  const html = `<!doctype html><html lang="${locale}"><head><meta charset="utf-8"><style>${faceCss}</style><style>${stylesheet}</style><style>${fonts.stack}${determinism}${frame}</style></head><body>${markup}</body></html>`;
   const faceByUrl = new Map(
     fonts.faces.map((declared) => [declared.url, declared])
   );
@@ -290,7 +358,7 @@ export const renderScene = async (
   const browser = givenBrowser ?? (await launchChromium());
   try {
     const context = await browser.newContext({
-      viewport: { width: scene.width ?? defaultWidth, height: 600 },
+      viewport: { width: windowWidth, height: 600 },
       deviceScaleFactor: scale,
       locale,
       timezoneId: `UTC`,
@@ -403,24 +471,110 @@ export const renderScene = async (
       // An open select's list hangs over what is below it, as the client's does, and can reach past the last message. The screenshot is of the scene's box, so grow the box's bottom padding until the list fits inside it with the usual space below.
       await page.evaluate(
         ({ scene, overlay }) => {
-          const root = document.querySelector<HTMLElement>(scene);
-          if (!root) return;
-          const box = root.getBoundingClientRect();
-          const padding = Number.parseFloat(
-            getComputedStyle(root).paddingBottom
-          );
-          const reach = Math.max(
-            box.bottom - padding,
-            ...[...root.querySelectorAll(`[${overlay}]`)].map(
-              (element) => element.getBoundingClientRect().bottom
-            )
-          );
-          const over = reach - (box.bottom - padding);
-          if (over > 0)
-            root.style.paddingBottom = `${String(padding + over)}px`;
+          for (const root of document.querySelectorAll<HTMLElement>(scene)) {
+            const box = root.getBoundingClientRect();
+            const padding = Number.parseFloat(
+              getComputedStyle(root).paddingBottom
+            );
+            const reach = Math.max(
+              box.bottom - padding,
+              ...[...root.querySelectorAll(`[${overlay}]`)].map(
+                (element) => element.getBoundingClientRect().bottom
+              )
+            );
+            const over = reach - (box.bottom - padding);
+            if (over > 0)
+              root.style.paddingBottom = `${String(padding + over)}px`;
+            // A scene's height is rarely a whole number of pixels, since line heights are fractional, and where the fraction lands depends on the fonts a machine has. A screenshot of the scene alone takes the whole pixels that enclose it, while its place inside a sheet of viewports is measured and rounded, so the two could disagree by a row: on Linux a viewport cropped out of a sheet at its reported box was one row shorter than the same viewport drawn alone. Padding the scene to the next whole pixel makes its height the same number wherever it is drawn.
+            const height = root.getBoundingClientRect().height;
+            const short = Math.ceil(height) - height;
+            if (short > 0.001) {
+              const now = Number.parseFloat(
+                getComputedStyle(root).paddingBottom
+              );
+              root.style.paddingBottom = `${String(now + short)}px`;
+            }
+          }
         },
         { scene: sceneSelector, overlay: overlayAttribute }
       );
+      // Each phone's caption says whether the drawing fits in the chat one screen shows, and every viewport's place in the image is measured, so a caller can crop one out.
+      const placements =
+        viewports === undefined
+          ? []
+          : await page.evaluate(
+              ({ target, panel, scene, fit, fold, scale, visible }) => {
+                const origin = document
+                  .querySelector(target)
+                  ?.getBoundingClientRect() ?? { left: 0, top: 0 };
+                const box = (
+                  rect: DOMRect
+                ): { x: number; y: number; width: number; height: number } => ({
+                  x: Math.round((rect.left - origin.left) * scale),
+                  y: Math.round((rect.top - origin.top) * scale),
+                  width: Math.round(rect.width * scale),
+                  height: Math.round(rect.height * scale)
+                });
+                // A bare drawing is its own one panel.
+                const panels = [
+                  ...document.querySelectorAll<HTMLElement>(panel)
+                ].map((element, index) => {
+                  const drawn = element.matches(scene)
+                    ? element
+                    : element.querySelector(scene);
+                  const height = drawn?.getBoundingClientRect().height ?? 0;
+                  const limit = visible[index];
+                  return {
+                    element,
+                    drawn,
+                    height,
+                    limit,
+                    fits: limit === null ? null : height <= limit
+                  };
+                });
+                // Captions first, since they share a row and a longer one moves every drawing down; then measure.
+                for (const { element, height, limit, fits } of panels) {
+                  const line = element.querySelector(`[${fit}]`);
+                  if (line !== null && limit !== null) {
+                    line.textContent = fits
+                      ? `Fits on one screen: about ${String(limit)} px of chat show at once, and this drawing is ${String(Math.round(height))} px tall (approximate).`
+                      : `Taller than one screen: about ${String(limit)} px of chat show at once (approximate); the dashed line is where the screen ends.`;
+                  }
+                  // The line only means something when the drawing reaches it.
+                  if (fits === true)
+                    element.querySelector(`[${fold}]`)?.remove();
+                }
+                return panels.map(({ element, drawn, fits }) => {
+                  const outer = element.getBoundingClientRect();
+                  const inner = drawn?.getBoundingClientRect() ?? outer;
+                  // A panel is as tall as the tallest beside it; its box ends where its own drawing does.
+                  return {
+                    box: box(
+                      new DOMRect(
+                        outer.left,
+                        outer.top,
+                        outer.width,
+                        inner.bottom - outer.top
+                      )
+                    ),
+                    drawing: box(inner),
+                    fitsOneScreen: fits
+                  };
+                });
+              },
+              {
+                target,
+                panel:
+                  sheet === undefined ? sceneSelector : `[${panelAttribute}]`,
+                scene: sceneSelector,
+                fit: fitAttribute,
+                fold: foldAttribute,
+                scale,
+                visible: viewports.map(
+                  (viewport) => viewport.visibleChat?.height ?? null
+                )
+              }
+            );
       const findings = [
         ...loaded.findings,
         ...[...new Set(broken)].map((url) =>
@@ -428,7 +582,10 @@ export const renderScene = async (
         )
       ].map((finding) => ({ ...finding, path: locate(scene, finding.asset) }));
       const text = await page.evaluate(
-        (selector) => document.querySelector(selector)?.textContent ?? ``,
+        (selector) =>
+          [...document.querySelectorAll(selector)]
+            .map((element) => element.textContent)
+            .join(``),
         sceneSelector
       );
       const report = describeFonts(await fontsUsed(page), {
@@ -436,13 +593,14 @@ export const renderScene = async (
         cjk
       });
       const png = await page
-        .locator(sceneSelector)
+        .locator(target)
         .screenshot({ animations: `disabled`, caret: `hide`, scale: `device` });
       return {
         png,
         ...pngSize(png),
         findings,
         fonts: report,
+        placements,
         ...(wantHtml
           ? {
               html: await selfContained({
@@ -452,7 +610,8 @@ export const renderScene = async (
                 requested,
                 served,
                 stylesheet,
-                stack: fonts.stack
+                stack: fonts.stack,
+                frame
               })
             }
           : {})
