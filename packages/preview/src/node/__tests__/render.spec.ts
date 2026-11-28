@@ -10,7 +10,8 @@ import {
   beforeEach,
   describe,
   expect,
-  it
+  it,
+  vi
 } from "vite-plus/test";
 import { chromium, type Browser } from "playwright";
 import { ComponentType } from "@discordkit/client/components/types/ComponentType";
@@ -26,6 +27,9 @@ const entry = new URL(`node/index.mjs`, dist);
 
 // Launching a browser is the slow part of this spec, and on a cold two-core CI runner it has taken longer than Vitest's default 10 second hook limit.
 const launchTimeout = 60_000;
+
+// Every test in this file draws through a real browser, and on a slow CI runner single tests in a file like it have run past Vitest's default 5 second limit, so the whole file gets a limit with room in it.
+vi.setConfig({ testTimeout: 60_000 });
 
 const require = createRequire(import.meta.url);
 /** An open font that is not Noto Sans, standing in for gg sans, which cannot be in the repository. */

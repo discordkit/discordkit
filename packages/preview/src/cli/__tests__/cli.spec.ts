@@ -4,7 +4,14 @@ import { copyFile, mkdir, mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { beforeAll, beforeEach, describe, expect, it } from "vite-plus/test";
+import {
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi
+} from "vite-plus/test";
 
 /**
  * The command line is what a coding agent calls in its loop: change a message, run one command, read JSON, look at an image. So these specs run the built `discordkit-preview` as a child process, exactly as an agent would, and hold it to what an agent relies on: exactly one JSON document on standard output with `--json`, an exit status that separates "fine", "the message has errors" and "could not run", and messages that say what to do next.
@@ -22,6 +29,9 @@ const asset = (name: string): string =>
 
 // Every `render` here launches a browser in a child process, which on a cold two-core CI runner has taken longer than Vitest's default limits.
 const renderTimeout = 60_000;
+
+// Every test in this file starts the command as its own process, and several of those draw through a real browser. On a slow CI runner tests like these have run past Vitest's default 5 second limit, so the whole file gets a limit with room in it.
+vi.setConfig({ testTimeout: 60_000 });
 
 /** CI drives the Chrome its runner image ships, as the other browser specs do. */
 const channel = process.env.CI ? [`--channel`, `chrome`] : [];
