@@ -1,0 +1,136 @@
+.pane {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  background: var(--st-surface-sunken);
+}
+
+.toolbar {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--st-space-3);
+  padding: var(--st-space-4) var(--st-space-5);
+  border-bottom: 1px solid var(--st-border);
+  background: var(--st-surface);
+}
+
+.heading {
+  margin: 0;
+  color: var(--st-text-muted);
+  font-size: var(--st-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.controls {
+  display: flex;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--st-space-4) var(--st-space-5);
+}
+
+.note {
+  margin: 0;
+  max-width: 80ch;
+  color: var(--st-text-muted);
+  font-size: var(--st-text-sm);
+}
+
+.note code {
+  font-family: var(--st-font-code);
+  font-size: var(--st-text-xs);
+}
+
+.stage {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: var(--st-space-6);
+}
+
+.frame {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--st-space-3);
+  width: max-content;
+  min-width: 100%;
+}
+
+.caption {
+  display: flex;
+  gap: var(--st-space-4);
+  margin: 0;
+  color: var(--st-text-muted);
+  font-family: var(--st-font-code);
+  font-size: var(--st-text-xs);
+}
+
+.staleNote {
+  color: var(--st-warn);
+  font-family: var(--st-font-ui);
+}
+
+/*
+ * The preview's own box. `all: initial` resets every inherited property (font, colour, line height) to the browser's initial value, as on the blank page the Node renderer draws into, so nothing of Studio's text styles reaches it. Custom properties are not reset by `all`, which is safe because Studio's are all prefixed `--st-`.
+ *
+ * The brand font is set to the bundled Noto Sans, as the Node renderer does without a gg sans of its own, so a gg sans installed on this machine does not make Studio differ from `render`.
+ */
+.isolate {
+  all: initial;
+  display: block;
+  box-shadow:
+    0 0 0 1px var(--st-border),
+    var(--st-shadow);
+  --dkp-font-brand: "Noto Sans Variable";
+  --dkp-font-code-brand: "Source Code Pro";
+}
+
+.empty {
+  margin: 0;
+  padding: var(--st-space-7);
+  color: var(--st-text-muted);
+  font-family: var(--st-font-ui);
+  font-size: var(--st-text-md);
+}
+
+.undrawn {
+  display: flex;
+  flex-direction: column;
+}
+
+.undrawnMessage {
+  box-sizing: border-box;
+  max-width: 600px;
+  margin: 0;
+  padding: var(--st-space-4) var(--st-space-5);
+  border-left: 3px solid var(--st-error);
+  background: var(--st-error-soft);
+  color: var(--st-text);
+  font-family: var(--st-font-ui);
+  font-size: var(--st-text-sm);
+  line-height: 1.45;
+}
+
+.stale {
+  opacity: 0.45;
+  filter: grayscale(0.6);
+  pointer-events: none;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

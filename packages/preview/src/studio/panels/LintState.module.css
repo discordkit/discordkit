@@ -1,0 +1,47 @@
+.badge {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--st-space-2);
+  height: 22px;
+  padding: 0 var(--st-space-4) 0 var(--st-space-3);
+  border: 1px solid transparent;
+  border-radius: 11px;
+  font-size: var(--st-text-sm);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.icon {
+  flex: none;
+  width: 14px;
+  height: 14px;
+}
+
+.valid {
+  composes: badge;
+  border-color: color-mix(in srgb, var(--st-ok) 35%, transparent);
+  background: var(--st-ok-soft);
+  color: var(--st-ok);
+}
+
+.warnings {
+  composes: badge;
+  border-color: color-mix(in srgb, var(--st-warn) 40%, transparent);
+  background: var(--st-warn-soft);
+  color: var(--st-warn);
+}
+
+.errors {
+  composes: badge;
+  border-color: color-mix(in srgb, var(--st-error) 40%, transparent);
+  background: var(--st-error-soft);
+  color: var(--st-error);
+}
+
+/* The worst state is filled, so it reads differently from "errors" at a glance and not by colour alone. */
+.undrawable {
+  composes: badge;
+  background: var(--st-error);
+  color: var(--st-surface);
+}

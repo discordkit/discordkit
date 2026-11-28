@@ -1,0 +1,103 @@
+.bar {
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--st-space-3) var(--st-space-6);
+  min-height: 44px;
+  padding: var(--st-space-3) var(--st-space-5);
+  border-bottom: 1px solid var(--st-border);
+  background: var(--st-surface);
+}
+
+.identity {
+  display: flex;
+  flex: 1 1 0;
+  align-items: baseline;
+  gap: var(--st-space-4);
+  min-width: 0;
+}
+
+@media (max-width: 720px) {
+  .identity {
+    flex-basis: 100%;
+  }
+}
+
+.product {
+  color: var(--st-text-muted);
+  font-family: var(--st-font-code);
+  font-size: var(--st-text-sm);
+  white-space: nowrap;
+}
+
+.productName {
+  color: var(--st-text);
+  font-family: var(--st-font-ui);
+  font-weight: 600;
+}
+
+.divider {
+  align-self: stretch;
+  width: 1px;
+  background: var(--st-border);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--st-text-lg);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.path {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--st-text-muted);
+  font-family: var(--st-font-code);
+  font-size: var(--st-text-xs);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.state {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--st-space-4);
+}
+
+.status {
+  margin: 0;
+  font-size: var(--st-text-sm);
+}
+
+.statusQuiet {
+  composes: status;
+  color: var(--st-text-muted);
+}
+
+.statusAttention {
+  composes: status;
+  color: var(--st-warn);
+  font-weight: 500;
+}
+
+.statusProblem {
+  composes: status;
+  color: var(--st-error);
+  font-weight: 500;
+}
+
+.actions {
+  display: flex;
+  gap: var(--st-space-3);
+}
+
+@media (max-width: 720px) {
+  .path {
+    display: none;
+  }
+}

@@ -874,7 +874,9 @@ __metadata:
     "@types/react-dom": "catalog:"
     playwright: "catalog:"
     react: "catalog:"
+    react-aria-components: "catalog:"
     react-dom: "catalog:"
+    react-hook-form: "npm:^7.92.0"
     typescript: "catalog:"
     valibot: "catalog:"
   peerDependencies:
