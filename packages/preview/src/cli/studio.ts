@@ -34,6 +34,10 @@ Options:
                      piped or --json is given, as when an agent runs it.
       --json         Print one JSON document on standard output once Studio is
                      ready: { "url", "port", "file", "opened" }.
+      --channel <name>
+                     The installed browser Studio's PNG export drives (chrome,
+                     msedge, …), as render --channel takes it. Default:
+                     Playwright's Chromium.
   -h, --help         Show this help.
 
 Exit status: 0 stopped with Ctrl+C, 2 could not start.`;
@@ -83,6 +87,7 @@ export const runStudio = async (args: readonly string[]): Promise<number> => {
       open: { type: `boolean`, default: false },
       "no-open": { type: `boolean`, default: false },
       json: { type: `boolean`, default: false },
+      channel: { type: `string` },
       help: { type: `boolean`, short: `h`, default: false }
     }
   });
@@ -111,7 +116,12 @@ export const runStudio = async (args: readonly string[]): Promise<number> => {
 
   let server;
   try {
-    server = await startStudioServer({ file, staticDir, port });
+    server = await startStudioServer({
+      file,
+      staticDir,
+      port,
+      channel: values.channel
+    });
   } catch (error) {
     if (error instanceof StudioServerError) {
       throw new CliError(error.message, { cause: error });

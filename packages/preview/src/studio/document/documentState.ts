@@ -4,6 +4,41 @@
  * Text here always has line feeds only: a browser's text area turns every line break into a line feed, so comparing against a Windows file's `\r\n` would see a change on every line. The file's own line ending is kept in `disk.eol` and put back on save.
  */
 
+/** What the person sees at one point in the history: the pane's text, and for a file with no place for them (a bare payload), the view settings Studio keeps beside it. */
+export interface Snapshot {
+  text: string;
+  /** Opaque here: Studio's own view settings, restored by Studio when a step that changed them is undone. */
+  view?: unknown;
+}
+
+/** One step of the history: a change the person made, or one that arrived from the file. */
+export interface HistoryStep {
+  before: Snapshot;
+  after: Snapshot;
+  /** `mine`: an edit made in this tab. `file`: a change that arrived from disk (an agent, an editor), or the file loaded over the person's text. */
+  origin: `mine` | `file`;
+  /** What it was, for the undo button, the history list and what a screen reader announces: "Edit Content", "Change on disk". */
+  label: string;
+  /** Edits with the same group made in quick succession are one step: the keystrokes of one field. */
+  group?: string;
+  at: number;
+}
+
+/** How an edit is described in the history. */
+export interface StepInfo {
+  label: string;
+  /** Edits with the same group, each within {@link coalesceMs} of the last, are one step. */
+  group?: string;
+  /** The view settings before and after, for a file whose text does not hold them. */
+  view?: { before: unknown; after: unknown };
+}
+
+/** How long typing in one field can pause and still be the same step. */
+export const coalesceMs = 1000;
+
+/** The most steps kept; older ones are let go. */
+export const historyLimit = 200;
+
 /** What the person sees and how it relates to the file. */
 export interface DocumentState {
   /** The file as last read or written, or null before the first read. */
@@ -24,6 +59,12 @@ export interface DocumentState {
     | { event: `refused`; at: number; message: string }
     | { event: `failed`; at: number; message: string }
     | null;
+  /**
+   * One history of what the pane has shown, in the order it was shown: the person's edits and the changes that arrived from the file, interleaved. Undo steps back exactly one step and redo forward one, so an undo can never skip over a change from the file to reach an older edit of the person's: to get past an agent's change, the person undoes that change, by name. Every text undo or redo restores was on screen in this tab, and it is saved on top of the version on disk the tab knows, so a change on disk it has not seen yet refuses the write and becomes a conflict, never a silent overwrite. A new change of either kind clears what was undone, so redo cannot bring back text written before a newer change from the file.
+   */
+  history: { done: HistoryStep[]; undone: HistoryStep[] };
+  /** The snapshot an undo or redo just restored, so Studio can put back what the text does not hold (the view settings of a bare payload). */
+  restored: { snapshot: Snapshot; at: number } | null;
 }
 
 export type DocumentAction =
@@ -35,7 +76,16 @@ export type DocumentAction =
       version?: string;
       at: number;
     }
-  | { type: `edited`; text: string }
+  /** The person changed the pane's text, by typing in it or through a form, the tree or a setting. `step` describes it for the history. */
+  | { type: `edited`; text: string; step?: StepInfo; at?: number }
+  /** The person changed a setting the text has no place for (a bare payload's view settings): a step in the history with the same text. */
+  | {
+      type: `viewChanged`;
+      step: StepInfo & { view: NonNullable<StepInfo[`view`]> };
+      at: number;
+    }
+  | { type: `undo`; at: number }
+  | { type: `redo`; at: number }
   | { type: `saveStarted`; text: string; baseVersion: string }
   | { type: `saveAccepted`; version: string; at: number }
   | {
@@ -58,7 +108,37 @@ export const initialDocument: DocumentState = {
   pane: ``,
   saving: null,
   conflict: false,
-  last: null
+  last: null,
+  history: { done: [], undone: [] },
+  restored: null
+};
+
+/** Whether the latest step can be undone now: not while a conflict waits on the person's choice, which is about what the pane holds. */
+export const canUndo = (state: DocumentState): boolean =>
+  !state.conflict && state.history.done.length > 0;
+
+export const canRedo = (state: DocumentState): boolean =>
+  !state.conflict && state.history.undone.length > 0;
+
+/** The state with a step added: merged into the last when it is the same field typed on, otherwise pushed, and what was undone dropped. */
+const record = (state: DocumentState, step: HistoryStep): DocumentState => {
+  const { done } = state.history;
+  const top = done.at(-1);
+  const merged =
+    top !== undefined &&
+    step.origin === `mine` &&
+    top.origin === `mine` &&
+    step.group !== undefined &&
+    top.group === step.group &&
+    step.at - top.at <= coalesceMs &&
+    top.after.text === step.before.text;
+  const next = merged
+    ? [...done.slice(0, -1), { ...top, after: step.after, at: step.at }]
+    : [...done, step];
+  return {
+    ...state,
+    history: { done: next.slice(-historyLimit), undone: [] }
+  };
 };
 
 const lineFeeds = (text: string): string => text.replace(/\r\n?/g, `\n`);
@@ -100,15 +180,24 @@ const receive = (
   if (text === state.pane || text === state.saving?.text) {
     return { ...state, disk, missing: false };
   }
-  // Nothing unsaved in the pane: take the file's new content.
+  // Nothing unsaved in the pane: take the file's new content, as a step of the history the person can see and undo by name.
   if (state.pane === state.disk.text && !state.conflict) {
-    return {
-      ...state,
-      disk,
-      missing: false,
-      pane: text,
-      last: { event: `external`, at }
-    };
+    return record(
+      {
+        ...state,
+        disk,
+        missing: false,
+        pane: text,
+        last: { event: `external`, at }
+      },
+      {
+        before: { text: state.pane },
+        after: { text },
+        origin: `file`,
+        label: `Change on disk`,
+        at
+      }
+    );
   }
   return {
     ...state,
@@ -133,8 +222,56 @@ export const documentReducer = (
         return { ...state, missing: true };
       }
       return receive(state, action.text, action.version, action.at);
-    case `edited`:
-      return { ...state, pane: lineFeeds(action.text) };
+    case `edited`: {
+      const text = lineFeeds(action.text);
+      if (text === state.pane) return state;
+      const edited = { ...state, pane: text };
+      // Before the first read there is nothing to step back to.
+      if (state.disk === null) return edited;
+      return record(edited, {
+        before: { text: state.pane, view: action.step?.view?.before },
+        after: { text, view: action.step?.view?.after },
+        origin: `mine`,
+        label: action.step?.label ?? `Edit`,
+        group: action.step?.group,
+        at: action.at ?? 0
+      });
+    }
+    case `viewChanged`:
+      return record(state, {
+        before: { text: state.pane, view: action.step.view.before },
+        after: { text: state.pane, view: action.step.view.after },
+        origin: `mine`,
+        label: action.step.label,
+        group: action.step.group,
+        at: action.at
+      });
+    case `undo`: {
+      const step = state.history.done.at(-1);
+      if (step === undefined || state.conflict) return state;
+      return {
+        ...state,
+        pane: step.before.text,
+        history: {
+          done: state.history.done.slice(0, -1),
+          undone: [...state.history.undone, step]
+        },
+        restored: { snapshot: step.before, at: action.at }
+      };
+    }
+    case `redo`: {
+      const step = state.history.undone.at(-1);
+      if (step === undefined || state.conflict) return state;
+      return {
+        ...state,
+        pane: step.after.text,
+        history: {
+          done: [...state.history.done, step],
+          undone: state.history.undone.slice(0, -1)
+        },
+        restored: { snapshot: step.after, at: action.at }
+      };
+    }
     case `saveStarted`:
       return {
         ...state,
@@ -181,9 +318,19 @@ export const documentReducer = (
         last: { event: `failed`, at: action.at, message: action.message }
       };
     case `loadFile`:
+      // The person's text is not thrown away: it is the step before, and undo brings it back.
       return state.disk === null
         ? state
-        : { ...state, pane: state.disk.text, conflict: false };
+        : record(
+            { ...state, pane: state.disk.text, conflict: false },
+            {
+              before: { text: state.pane },
+              after: { text: state.disk.text },
+              origin: `file`,
+              label: `Load the file over your edits`,
+              at: state.last?.at ?? 0
+            }
+          );
     case `keepMine`:
       return { ...state, conflict: false };
   }

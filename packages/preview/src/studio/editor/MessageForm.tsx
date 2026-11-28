@@ -13,6 +13,7 @@ import { isComponentsV2 } from "../../components.js";
 import { maxContentCharacters } from "../../lint/limits.js";
 import type { Scene, SceneMessage } from "../../scene.js";
 import controls from "../controls/Fields.module.css";
+import { ConvertToScene } from "./ConvertToScene.js";
 import { setValueAt } from "./edits.js";
 import { useEditor } from "./EditorContext.js";
 import {
@@ -184,7 +185,7 @@ const KindControl = ({ name }: { name: string }): ReactElement => {
                     ? `To keep the text, copy it into a Text Display first.`
                     : `Action rows are kept.`}
                   {` `}
-                  {`There is no undo yet; the JSON pane and your editor's history are the way back.`}
+                  {`Undo brings it back.`}
                 </p>
                 <div className={dialog.actions}>
                   {/* oxlint-disable-next-line jsx-a11y/no-autofocus -- an alert dialog starts on its least destructive choice. */}
@@ -214,7 +215,8 @@ const KindControl = ({ name }: { name: string }): ReactElement => {
 const noAuthor = `none`;
 
 const AuthorControl = ({ name }: { name: string }): ReactElement => {
-  const { scene, apply, disabledReason, fileKind } = useEditor();
+  const { scene, apply, disabledReason, fileKind, fileName, convertToScene } =
+    useEditor();
   const author = useSceneValue(`${name}.author`);
   const users: NonNullable<NonNullable<Scene[`context`]>[`users`]> =
     scene().context?.users ?? {};
@@ -228,36 +230,48 @@ const AuthorControl = ({ name }: { name: string }): ReactElement => {
   ];
   const sceneFile = fileKind === `scene`;
   return (
-    <ListChoice
-      label="Author"
-      fieldPath={`${name}.author`}
-      value={typeof author === `string` ? author : noAuthor}
-      options={
-        typeof author === `string` && !(author in users)
-          ? [
-              ...options,
-              { id: author, label: author, detail: `Not in the scene's users` }
-            ]
-          : options
-      }
-      isDisabled={disabledReason !== undefined || !sceneFile}
-      help={
-        sceneFile
-          ? `Who sent it, from the scene's users. Add people to context.users in the JSON pane; a form for them comes next.`
-          : `Not in this file: it holds a bare payload, which has no author. Make it a scene to set one.`
-      }
-      onChange={(id) => {
-        const path = parsePathKey(name);
-        apply((current) =>
-          setValueAt(
-            current,
-            [...path, `author`],
-            id === noAuthor ? undefined : id,
-            path
-          )
-        );
-      }}
-    />
+    <>
+      <ListChoice
+        label="Author"
+        fieldPath={`${name}.author`}
+        value={typeof author === `string` ? author : noAuthor}
+        options={
+          typeof author === `string` && !(author in users)
+            ? [
+                ...options,
+                {
+                  id: author,
+                  label: author,
+                  detail: `Not in the scene's users`
+                }
+              ]
+            : options
+        }
+        isDisabled={disabledReason !== undefined || !sceneFile}
+        help={
+          sceneFile
+            ? `Who sent it, from the scene's users, which are defined in the Surroundings tab.`
+            : `Not in this file: it holds a bare payload, which has no author, and only one message. Make it a scene to set one, or to add messages.`
+        }
+        onChange={(id) => {
+          const path = parsePathKey(name);
+          apply((current) =>
+            setValueAt(
+              current,
+              [...path, `author`],
+              id === noAuthor ? undefined : id,
+              path
+            )
+          );
+        }}
+      />
+      <ConvertToScene
+        fileKind={fileKind}
+        fileName={fileName}
+        onConvert={convertToScene}
+        isDisabled={disabledReason !== undefined}
+      />
+    </>
   );
 };
 

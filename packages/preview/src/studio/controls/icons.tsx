@@ -87,6 +87,27 @@ export const ChevronRightIcon = (props: IconProps): ReactElement => (
   </Icon>
 );
 
+export const InfoIcon = (props: IconProps): ReactElement => (
+  <Icon {...props}>
+    <circle cx="8" cy="8" r="6" />
+    <path d="M8 7.25V11M8 5h.01" />
+  </Icon>
+);
+
+export const UndoIcon = (props: IconProps): ReactElement => (
+  <Icon {...props}>
+    <path d="M5.5 3.5 2.5 6.5l3 3" />
+    <path d="M2.5 6.5h7a3.5 3.5 0 0 1 0 7h-2" />
+  </Icon>
+);
+
+export const RedoIcon = (props: IconProps): ReactElement => (
+  <Icon {...props}>
+    <path d="m10.5 3.5 3 3-3 3" />
+    <path d="M13.5 6.5h-7a3.5 3.5 0 0 0 0 7h2" />
+  </Icon>
+);
+
 export const OkIcon = (props: IconProps): ReactElement => (
   <Icon {...props}>
     <circle cx="8" cy="8" r="6" />

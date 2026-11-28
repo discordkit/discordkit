@@ -31,7 +31,9 @@ import {
 import { ChevronIcon, ErrorIcon, WarningIcon } from "../controls/icons.js";
 import controls from "../controls/Fields.module.css";
 import { colorToHexOrUndefined, hexToColor } from "./color.js";
+import { unknownAt } from "./contextUsage.js";
 import { useEditor } from "./EditorContext.js";
+import { UnknownNotes } from "./UnknownNotes.js";
 import { fieldPath } from "./paths.js";
 import { optionalText } from "./prune.js";
 import styles from "./Form.module.css";
@@ -129,20 +131,31 @@ export const ObjectFindings = ({
   return <Findings error={asFindingError(get(errors, `${name}.root`))} />;
 };
 
-/** A field's help line and its findings, in the one element its control is described by. */
+/** A field's help line, its findings, and what its text uses that the scene does not describe (each with the action that starts describing it), in the one element its control is described by. */
 const Description = ({
   help,
-  error
+  error,
+  name
 }: {
   help: ReactNode | undefined;
   error: FindingError | undefined;
-}): ReactElement | null =>
-  help === undefined && messagesOf(error).length === 0 ? null : (
+  /** The field's scene path, when its text can mention users, roles, channels or emoji. */
+  name?: string;
+}): ReactElement | null => {
+  const { report } = useEditor();
+  const unknown = name === undefined ? 0 : unknownAt(report, name).length;
+  return help === undefined &&
+    messagesOf(error).length === 0 &&
+    unknown === 0 ? null : (
     <Text slot="description" className={styles.description}>
       {help === undefined ? null : <span className={styles.help}>{help}</span>}
       <Findings error={error} />
+      {name === undefined || unknown === 0 ? null : (
+        <UnknownNotes name={name} />
+      )}
     </Text>
   );
+};
 
 interface BoundProps {
   /** The scene path of the value, as a field name. */
@@ -161,10 +174,12 @@ interface Bound {
   isError: boolean;
   isDisabled: boolean;
   /** Sets the value and writes the scene. */
-  commit: (value: unknown) => void;
+  /** `step` names the change in the history, when "Edit <label>" does not say it. */
+  commit: (value: unknown, step?: string) => void;
 }
 
-const useBound = (name: string): Bound => {
+/** A field bound to its scene path. `label` names its edits in the history; typing in one field is one step until it pauses. */
+const useBound = (name: string, label: string): Bound => {
   const editor = useEditor();
   const { field, fieldState } = useController({
     control: editor.control,
@@ -178,9 +193,9 @@ const useBound = (name: string): Bound => {
     error,
     isError: error?.type === `error`,
     isDisabled: editor.disabledReason !== undefined,
-    commit: (value: unknown): void => {
+    commit: (value: unknown, step = `Edit ${label}`): void => {
       field.onChange(value);
-      editor.write();
+      editor.write({ label: step, group: name });
     }
   };
 };
@@ -201,7 +216,7 @@ export const TextControl = ({
   placeholder?: string;
 }): ReactElement => {
   const { value, onBlur, attach, error, isError, isDisabled, commit } =
-    useBound(name);
+    useBound(name, label);
   return (
     <TextField
       className={styles.field}
@@ -220,7 +235,7 @@ export const TextControl = ({
         spellCheck={!code}
         autoComplete="off"
       />
-      <Description help={help} error={error} />
+      <Description help={help} error={error} name={name} />
     </TextField>
   );
 };
@@ -234,7 +249,7 @@ export const TextAreaControl = ({
   rows = 4
 }: BoundProps & { optional?: boolean; rows?: number }): ReactElement => {
   const { value, onBlur, attach, error, isError, isDisabled, commit } =
-    useBound(name);
+    useBound(name, label);
   return (
     <TextField
       className={styles.field}
@@ -256,7 +271,7 @@ export const TextAreaControl = ({
         }}
         spellCheck
       />
-      <Description help={help} error={error} />
+      <Description help={help} error={error} name={name} />
     </TextField>
   );
 };
@@ -276,7 +291,7 @@ export const NumberControl = ({
   placeholder?: string;
 }): ReactElement => {
   const { value, onBlur, attach, error, isError, isDisabled, commit } =
-    useBound(name);
+    useBound(name, label);
   return (
     <NumberField
       className={styles.field}
@@ -312,13 +327,18 @@ export const SwitchControl = ({
   /** What Discord takes the field to be when it is absent. */
   defaultValue?: boolean;
 }): ReactElement => {
-  const { value, attach, error, isDisabled, commit } = useBound(name);
+  const { value, attach, error, isDisabled, commit } = useBound(name, label);
   const isSelected = typeof value === `boolean` ? value : defaultValue;
   return (
     <div className={styles.field} data-field-path={name}>
       <SwitchField
         isSelected={isSelected}
-        onChange={(next) => commit(next === defaultValue ? undefined : next)}
+        onChange={(next) =>
+          commit(
+            next === defaultValue ? undefined : next,
+            `Turn ${label} ${next ? `on` : `off`}`
+          )
+        }
         isDisabled={isDisabled}
         inputRef={attach}
       >
@@ -350,7 +370,7 @@ export const ChoiceControl = <T extends string | number>({
   /** What Discord takes the field to be when it is absent. */
   defaultValue?: T;
 }): ReactElement => {
-  const { value, error, isDisabled, commit } = useBound(name);
+  const { value, error, isDisabled, commit } = useBound(name, label);
   const labelId = useId();
   const current: unknown = value ?? defaultValue;
   return (
@@ -434,7 +454,7 @@ export const ListChoice = <T extends string | number>({
       </SelectValue>
       <ChevronIcon className={controls.chevron} />
     </Button>
-    <Description help={help} error={error} />
+    <Description help={help} error={error} name={fieldPath} />
     <Popover className={controls.popover} placement="bottom start">
       <ListBox
         className={controls.listBox}
@@ -466,7 +486,10 @@ export const ColorControl = ({
   label,
   help
 }: BoundProps): ReactElement => {
-  const { value, attach, error, isError, isDisabled, commit } = useBound(name);
+  const { value, attach, error, isError, isDisabled, commit } = useBound(
+    name,
+    label
+  );
   const labelId = useId();
   const hex = colorToHexOrUndefined(
     typeof value === `number` ? value : undefined
@@ -562,7 +585,13 @@ export const EmojiControl = ({
   name: string;
   label: string;
 }): ReactElement => {
-  const { value: bound, attach, error, isDisabled, commit } = useBound(name);
+  const {
+    value: bound,
+    attach,
+    error,
+    isDisabled,
+    commit
+  } = useBound(name, label);
   const value: EmojiValue =
     typeof bound === `object` && bound !== null ? bound : {};
   const update = (next: EmojiValue): void => {

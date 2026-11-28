@@ -1,0 +1,151 @@
+/* Undo, redo and the history list, in the top bar. */
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: var(--st-space-2);
+}
+
+.button {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--st-space-2);
+  height: 26px;
+  padding: 0 var(--st-space-4);
+  border: 1px solid var(--st-control-border);
+  border-radius: var(--st-radius-sm);
+  background: var(--st-surface);
+  color: var(--st-text);
+  font: inherit;
+  font-size: var(--st-text-sm);
+  white-space: nowrap;
+  outline: none;
+}
+
+.button[data-hovered] {
+  background: var(--st-surface-hover);
+}
+
+.button[data-pressed] {
+  background: var(--st-surface-selected);
+}
+
+.button[data-focus-visible] {
+  outline: var(--st-focus-width) solid var(--st-focus);
+  outline-offset: 1px;
+}
+
+.button[data-disabled] {
+  opacity: 0.45;
+}
+
+.icon {
+  flex: none;
+  width: 14px;
+  height: 14px;
+}
+
+.popover {
+  box-sizing: border-box;
+  width: min(380px, calc(100vw - 32px));
+  max-height: 70dvh;
+  overflow: auto;
+  border: 1px solid var(--st-control-border);
+  border-radius: var(--st-radius-md);
+  background: var(--st-surface-raised);
+  box-shadow: var(--st-shadow);
+  color: var(--st-text);
+  font-family: var(--st-font-ui);
+}
+
+.dialog {
+  display: flex;
+  flex-direction: column;
+  gap: var(--st-space-4);
+  padding: var(--st-space-5);
+  outline: none;
+}
+
+.heading {
+  margin: 0;
+  font-size: var(--st-text-md);
+  font-weight: 600;
+}
+
+.help,
+.empty {
+  margin: 0;
+  color: var(--st-text-muted);
+  font-size: var(--st-text-xs);
+  line-height: 1.45;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step,
+.undone {
+  display: grid;
+  grid-template-columns: 8.5em minmax(0, 1fr) auto;
+  gap: var(--st-space-4);
+  align-items: baseline;
+  padding: var(--st-space-3) var(--st-space-3);
+  border-radius: var(--st-radius-sm);
+  font-size: var(--st-text-sm);
+}
+
+/* The step the document is at now. */
+.step[aria-current="step"] {
+  background: var(--st-accent-soft);
+  font-weight: 600;
+}
+
+/* Undone, and so what redo would bring back. */
+.undone {
+  color: var(--st-text-muted);
+  text-decoration: line-through;
+}
+
+.mine,
+.file {
+  font-size: var(--st-text-xs);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.mine {
+  color: var(--st-text-muted);
+}
+
+.file {
+  color: var(--st-warn);
+}
+
+.label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.time {
+  color: var(--st-text-muted);
+  font-family: var(--st-font-code);
+  font-size: var(--st-text-xs);
+  font-weight: 400;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

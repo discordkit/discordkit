@@ -20,6 +20,8 @@ export interface TopBarProps {
   /** Draft mode: import a file's text, and export the draft. */
   onImport?: (text: string, name: string) => void;
   onExport?: () => void;
+  /** Undo, redo and the history, and the PNG export: before the status. */
+  children?: ReactNode;
 }
 
 const jsonTypes = [`application/json`, `.json`];
@@ -36,7 +38,8 @@ export const TopBar = ({
   status,
   overall,
   onImport,
-  onExport
+  onExport,
+  children
 }: TopBarProps): ReactElement => {
   let actions: ReactNode = null;
   if (onImport !== undefined && onExport !== undefined) {
@@ -74,6 +77,7 @@ export const TopBar = ({
         )}
       </div>
       <div className={styles.state}>
+        {children}
         {/* An `output` is a polite live region, so a change of status is announced without moving focus. */}
         <output className={toneClass[status.tone]}>{status.text}</output>
         <LintState overall={overall} />

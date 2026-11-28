@@ -44,6 +44,14 @@
   font-size: var(--st-text-sm);
 }
 
+/* A bare payload's note, with the way to make the file a scene beside it. */
+.convert {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--st-space-3) var(--st-space-5);
+}
+
 .note code {
   font-family: var(--st-font-code);
   font-size: var(--st-text-xs);

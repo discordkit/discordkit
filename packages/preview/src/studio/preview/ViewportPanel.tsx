@@ -1,11 +1,17 @@
 import {
   memo,
+  useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
   type ReactElement
 } from "react";
 import { fidelitySummary, viewportFidelity } from "../../parts.js";
+import {
+  missingAttribute,
+  placeholderClass,
+  transparentPixel
+} from "../../react/Image.js";
 import { InspectContext, type Inspect } from "../../react/Inspect.js";
 import type { AssetUrl } from "../../react/SceneContext.js";
 import type { Scene as SceneData } from "../../scene.js";
@@ -105,6 +111,22 @@ export const ViewportPanel = memo(function ViewportPanel({
     return (): void => observer.disconnect();
   }, [zoom, fold, scene]);
 
+  // An image that does not arrive (a file the studio command cannot serve, a URL that is gone) is drawn as the placeholder the Node renderer draws in its place, not as the browser's broken-image icon. Error events do not bubble, so they are caught on the way down.
+  useEffect(() => {
+    const drawing = drawingRef.current;
+    if (drawing === null) return;
+    const onError = (event: Event): void => {
+      const image = event.target;
+      if (!(image instanceof HTMLImageElement)) return;
+      if (image.getAttribute(`src`) === transparentPixel) return;
+      image.setAttribute(missingAttribute, image.getAttribute(`src`) ?? ``);
+      image.classList.add(placeholderClass);
+      image.src = transparentPixel;
+    };
+    drawing.addEventListener(`error`, onError, true);
+    return (): void => drawing.removeEventListener(`error`, onError, true);
+  }, []);
+
   // React's style type has no entries for custom properties; these are the ones ViewportPanel.module.css reads.
   const sizes = useMemo(
     (): Record<string, string> => ({
@@ -125,84 +147,89 @@ export const ViewportPanel = memo(function ViewportPanel({
       style={sizes}
       aria-label={`${resolved.name} viewport`}
     >
-      <div className={styles.controls}>
-        <DeviceChooser
-          value={chooserKey(viewport)}
-          onChange={(key) => onChange(chooseViewport(viewport, key))}
-          isDisabled={isDisabled}
-        />
-        {isDeviceViewport(viewport) ? null : (
-          <NumberInputField
-            label="Width (px)"
-            value={viewport.width}
-            minValue={1}
-            maxValue={4096}
-            width={4}
-            onChange={(width) => onChange({ width })}
-            isDisabled={isDisabled}
-          />
-        )}
-        {resolved.memberList === null ? null : (
-          <ToggleField
-            label="Member list"
-            isSelected={resolved.memberList}
-            onChange={(memberList) =>
-              onChange(
-                isDeviceViewport(viewport)
-                  ? { device: viewport.device, memberList }
-                  : viewport
-              )
-            }
-            isDisabled={isDisabled}
-          />
-        )}
-        {onRemove === undefined ? null : (
-          <div className={styles.remove}>
-            <QuietButton
-              aria-label={`Remove the ${resolved.name} viewport`}
-              onPress={onRemove}
+      {/* Everything above the drawing. The pane makes the heads in one row as tall as the tallest, so drawings side by side start level (see `useLevelHeads`). */}
+      <div className={styles.head} data-viewport-head>
+        <div className={styles.headInner}>
+          <div className={styles.controls}>
+            <DeviceChooser
+              value={chooserKey(viewport)}
+              onChange={(key) => onChange(chooseViewport(viewport, key))}
               isDisabled={isDisabled}
-            >
-              <RemoveIcon className={buttons.icon} />
-            </QuietButton>
+            />
+            {isDeviceViewport(viewport) ? null : (
+              <NumberInputField
+                label="Width (px)"
+                value={viewport.width}
+                minValue={1}
+                maxValue={4096}
+                width={4}
+                onChange={(width) => onChange({ width })}
+                isDisabled={isDisabled}
+              />
+            )}
+            {resolved.memberList === null ? null : (
+              <ToggleField
+                label="Member list"
+                isSelected={resolved.memberList}
+                onChange={(memberList) =>
+                  onChange(
+                    isDeviceViewport(viewport)
+                      ? { device: viewport.device, memberList }
+                      : viewport
+                  )
+                }
+                isDisabled={isDisabled}
+              />
+            )}
+            {onRemove === undefined ? null : (
+              <div className={styles.remove}>
+                <QuietButton
+                  aria-label={`Remove the ${resolved.name} viewport`}
+                  onPress={onRemove}
+                  isDisabled={isDisabled}
+                >
+                  <RemoveIcon className={buttons.icon} />
+                </QuietButton>
+              </div>
+            )}
           </div>
-        )}
+          <p className={styles.caption}>
+            {screen}
+            {String(resolved.chatWidth)} px chat
+            {resolved.memberList === null
+              ? ``
+              : ` · member list ${resolved.memberList ? `open` : `closed`}`}
+            {zoom === 1 ? `` : ` · shown at ${String(Math.round(zoom * 100))}%`}
+          </p>
+          {resolved.note === null ? null : (
+            <p className={styles.note}>
+              <strong>
+                {resolved.layout === resolved.requestedLayout
+                  ? `Not measured on this device.`
+                  : `Web layout, not the app.`}
+              </strong>{" "}
+              {resolved.note}
+            </p>
+          )}
+          {fidelity === null ||
+          fidelity.summary === null ||
+          !resolved.calibrated ? null : (
+            <p
+              className={
+                fidelity.unobserved.length === 0 ? styles.checked : styles.note
+              }
+              data-testid="viewport-fidelity"
+            >
+              {fidelity.summary}
+            </p>
+          )}
+          {fidelity?.limits.map((limit) => (
+            <p key={limit} className={styles.limit}>
+              {limit}
+            </p>
+          ))}
+        </div>
       </div>
-      <p className={styles.caption}>
-        {screen}
-        {String(resolved.chatWidth)} px chat
-        {resolved.memberList === null
-          ? ``
-          : ` · member list ${resolved.memberList ? `open` : `closed`}`}
-        {zoom === 1 ? `` : ` · shown at ${String(Math.round(zoom * 100))}%`}
-      </p>
-      {resolved.note === null ? null : (
-        <p className={styles.note}>
-          <strong>
-            {resolved.layout === resolved.requestedLayout
-              ? `Not measured on this device.`
-              : `Web layout, not the app.`}
-          </strong>{" "}
-          {resolved.note}
-        </p>
-      )}
-      {fidelity === null ||
-      fidelity.summary === null ||
-      !resolved.calibrated ? null : (
-        <p
-          className={
-            fidelity.unobserved.length === 0 ? styles.checked : styles.note
-          }
-          data-testid="viewport-fidelity"
-        >
-          {fidelity.summary}
-        </p>
-      )}
-      {fidelity?.limits.map((limit) => (
-        <p key={limit} className={styles.limit}>
-          {limit}
-        </p>
-      ))}
       <div ref={frameRef} className={styles.frame}>
         <div ref={sizerRef} className={styles.sizer}>
           <div className={styles.scaled}>

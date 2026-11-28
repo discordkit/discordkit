@@ -39,6 +39,8 @@ export interface ComponentTreeProps {
   onRemove: (id: string) => void;
   onDuplicate: (id: string) => void;
   isDisabled: boolean;
+  /** Whether a row can be copied, moved and removed: a message only in a scene file. */
+  isMovable: (path: TreeNode[`path`]) => boolean;
 }
 
 const markerText = ({ errors, warnings }: Marker): string =>
@@ -67,7 +69,8 @@ export const ComponentTree = memo(function ComponentTree({
   onMove,
   onRemove,
   onDuplicate,
-  isDisabled
+  isDisabled,
+  isMovable
 }: ComponentTreeProps): ReactElement {
   const all = useMemo(() => flatten(nodes), [nodes]);
   const byId = useMemo(
@@ -103,9 +106,7 @@ export const ComponentTree = memo(function ComponentTree({
   }, [focusRequest, nodes]);
 
   const movable = (node: TreeNode | undefined): node is TreeNode =>
-    node !== undefined &&
-    typeof node.path.at(-1) === `number` &&
-    node.path.length > 2;
+    node !== undefined && isMovable(node.path);
 
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
     if (isDisabled) return;

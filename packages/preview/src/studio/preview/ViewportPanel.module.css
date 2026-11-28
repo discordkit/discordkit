@@ -8,6 +8,18 @@
   width: max(calc(var(--vp-width) * var(--vp-zoom)), 13em);
 }
 
+/* The controls, caption and notes above the drawing. Its height is set from the pane so every head in a row matches; the inner box is what is measured. */
+.head {
+  display: flex;
+  flex-direction: column;
+}
+
+.headInner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--st-space-3);
+}
+
 .controls {
   display: flex;
   flex-wrap: wrap;
@@ -119,14 +131,13 @@
   display: none;
 }
 
-/* The selected node's outline: Studio's own element over the preview, never a style inside it. Clicks pass through to the preview. */
+/* The selected node's outline: Studio's own element over the preview, never a style inside it. Clicks pass through to the preview. It stands clear of the node by a few pixels with nothing painted in between, so what is drawn at the node's edge (a container's accent bar, a button's border) stays in sight; a glow there hid the accent bar. */
 .selection {
   position: absolute;
   box-sizing: border-box;
-  border-radius: 3px;
+  border-radius: 4px;
   outline: 2px solid var(--st-focus);
-  outline-offset: 2px;
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--st-focus) 25%, transparent);
+  outline-offset: 3px;
   pointer-events: none;
 }
 

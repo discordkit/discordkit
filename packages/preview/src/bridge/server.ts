@@ -7,7 +7,9 @@ import {
   type ServerResponse
 } from "node:http";
 import { basename, extname, isAbsolute, relative, resolve } from "node:path";
-import { imageTypes } from "../node/assets.js";
+import { isObject } from "@discordkit/core/utils/isObject";
+import { twemojiBase } from "../format/emoji.js";
+import { defaultCacheDir, imageTypes, loadAssets } from "../node/assets.js";
 import { readScene } from "../scene/intake.js";
 import {
   bridgeMetaName,
@@ -16,8 +18,14 @@ import {
   type BridgeError,
   type FileSnapshot,
   type FileVersion,
+  type RenderRequest,
   type SaveResult
 } from "./protocol.js";
+import {
+  createExporter,
+  ExportError,
+  type ExporterOptions
+} from "./exporter.js";
 import { watchFile, type WatchOptions } from "./watch.js";
 
 /** Where Studio is served when no port is asked for and this one is free. A fixed port keeps the page's origin, and so its stored draft, the same from one run to the next. */
@@ -38,7 +46,50 @@ export interface StudioServerOptions {
   /** The per-run secret. Generated when not given; tests pass their own. */
   secret?: string;
   watch?: WatchOptions;
+  /** Where the renderer's asset cache is, which the emoji route reads and fills, as `render` does. Defaults to `render`'s own. */
+  cacheDir?: string;
+  /** How a missing emoji is fetched into the cache. Tests pass their own. */
+  fetch?: typeof globalThis.fetch;
+  /** The installed browser the PNG export drives (`chrome`, `msedge`), as `render --channel` takes it. */
+  channel?: string;
+  /** Limits and stand-ins for the PNG export; tests pass their own. */
+  exporter?: Omit<ExporterOptions, `channel` | `cwd`>;
 }
+
+/** The largest export request the bridge reads: a version and a few view settings. */
+export const maxExportBodyBytes = 64 * 1024;
+
+const themes = new Set([`light`, `ash`, `dark`, `onyx`]);
+
+const isShortString = (value: unknown): value is string =>
+  typeof value === `string` && value.length <= 100;
+
+/** Whether a body is a {@link RenderRequest} the renderer can take: a version, and at most a handful of viewports and settings of the right kinds. */
+const isRenderRequest = (value: unknown): value is RenderRequest => {
+  if (!isObject(value) || !isShortString(value.baseVersion)) return false;
+  const { viewports, theme, now, timeZone, locale } = value;
+  const viewportsOk =
+    viewports === undefined ||
+    (Array.isArray(viewports) &&
+      viewports.length <= 8 &&
+      viewports.every(
+        (viewport: unknown) =>
+          isObject(viewport) &&
+          (isShortString(viewport.device)
+            ? viewport.memberList === undefined ||
+              typeof viewport.memberList === `boolean`
+            : Number.isInteger(viewport.width) &&
+              Number(viewport.width) >= 1 &&
+              Number(viewport.width) <= 4096)
+      ));
+  return (
+    viewportsOk &&
+    (theme === undefined || (typeof theme === `string` && themes.has(theme))) &&
+    [now, timeZone, locale].every(
+      (field) => field === undefined || isShortString(field)
+    )
+  );
+};
 
 export interface StudioServer {
   /** The address to open, with the secret in it. */
@@ -235,7 +286,11 @@ export const startStudioServer = async ({
   port,
   cwd = process.cwd(),
   secret = randomBytes(16).toString(`hex`),
-  watch: watchOptions
+  watch: watchOptions,
+  cacheDir = defaultCacheDir(),
+  fetch = globalThis.fetch,
+  channel,
+  exporter: exporterOptions
 }: StudioServerOptions): Promise<StudioServer> => {
   const root = resolve(staticDir);
   const index = resolve(root, `index.html`);
@@ -599,6 +654,165 @@ export const startStudioServer = async ({
     });
   };
 
+  const exporter = createExporter({ channel, cwd, ...exporterOptions });
+
+  /**
+   * `GET`: whether this machine can draw a PNG. `POST`: the scene file drawn as `render` draws it, returned as `image/png`. It draws the file as it is on disk, and only at the version the person is looking at: a file that has changed since is refused, so the PNG is never of something they have not seen. It reads only what `render` reads for that file (the file, the images its scene lists, the network for images named by URL) and writes nothing but the renderer's asset cache; the bounds on it are in `exporter.ts`.
+   */
+  const serveRender = async (
+    request: IncomingMessage,
+    response: ServerResponse
+  ): Promise<void> => {
+    if (request.method === `GET`) {
+      sendJson(response, 200, await exporter.status());
+      return;
+    }
+    if (request.method !== `POST`) {
+      refuse(
+        response,
+        405,
+        `A PNG is asked for with POST, and whether one can be drawn with GET.`,
+        { Allow: `GET, POST` }
+      );
+      return;
+    }
+    const type = (request.headers[`content-type`] ?? ``).split(`;`)[0].trim();
+    if (type !== `application/json`) {
+      refuse(
+        response,
+        415,
+        `An export must be asked for as application/json, as { "baseVersion" } and the view settings to draw with. Studio sends it that way; another client should too.`
+      );
+      return;
+    }
+    const body = await readBody(request, maxExportBodyBytes);
+    if (body === undefined) {
+      refuse(
+        response,
+        413,
+        `The export was refused because its request is larger than ${String(maxExportBodyBytes / 1024)} KB, far more than a version and a few settings. Check what is being sent.`
+      );
+      return;
+    }
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(body.toString(`utf8`));
+    } catch {
+      parsed = undefined;
+    }
+    if (!isRenderRequest(parsed)) {
+      refuse(
+        response,
+        400,
+        `The export was refused because its request is not { "baseVersion": string } with, optionally, up to 8 viewports ({ "device" } or { "width" } from 1 to 4096), a theme (light, ash, dark or onyx), and now, timeZone and locale as strings. Send the version of the file being looked at, from the last read.`
+      );
+      return;
+    }
+    const snapshot = await refresh();
+    if (!snapshot.exists) {
+      refuse(
+        response,
+        409,
+        `${name} is no longer on disk, so there is nothing to draw. Restore the file, then export again.`
+      );
+      return;
+    }
+    if (snapshot.version !== parsed.baseVersion) {
+      refuse(
+        response,
+        409,
+        `${name} has changed on disk since the version this export was asked for, so drawing it now would give a PNG of something not yet seen in Studio. Studio shows the new version in a moment; export again then.`
+      );
+      return;
+    }
+    let png: Buffer;
+    try {
+      png = await exporter.draw(snapshot.text, parsed);
+    } catch (error) {
+      if (!(error instanceof ExportError)) throw error;
+      refuse(
+        response,
+        error.status,
+        error.message,
+        error.retryAfter === undefined
+          ? {}
+          : { "Retry-After": String(error.retryAfter) }
+      );
+      return;
+    }
+    send(response, 200, png, {
+      "Content-Type": `image/png`,
+      "Content-Disposition": `attachment; filename*=UTF-8''${encodeURIComponent(`${basename(name, extname(name))}.png`)}`,
+      "Content-Security-Policy": `sandbox; default-src 'none'`
+    });
+  };
+
+  // One fetch per emoji however many images on the page ask for it at once.
+  const emojiLoads = new Map<string, ReturnType<typeof loadAssets>>();
+  /**
+   * A Twemoji image, from the renderer's own asset cache: fetched from the pinned release once, on the first miss, and from disk after that, by Studio and `render` alike. So the preview does not wait on a CDN each time the page loads, draws what `render` draws, and works offline for every emoji drawn once. Only names of Twemoji's own shape are accepted, so this can fetch nothing but Twemoji's files.
+   */
+  const serveEmoji = async (
+    request: IncomingMessage,
+    response: ServerResponse,
+    fileName: string
+  ): Promise<void> => {
+    if (request.method !== `GET` && request.method !== `HEAD`) {
+      refuse(response, 405, `Emoji images can only be read.`, {
+        Allow: `GET, HEAD`
+      });
+      return;
+    }
+    if (!/^[0-9a-f]{2,6}(?:-[0-9a-f]{2,6}){0,15}\.svg$/.test(fileName)) {
+      refuse(
+        response,
+        404,
+        `${JSON.stringify(fileName)} is not a Twemoji file name, which is the emoji's code points in lowercase hex joined by "-", then ".svg" (such as "1f525.svg"). The bridge serves only Twemoji's images here.`
+      );
+      return;
+    }
+    const url = `${twemojiBase}/${fileName}`;
+    let pending = emojiLoads.get(url);
+    if (pending === undefined) {
+      const load = async (): ReturnType<typeof loadAssets> => {
+        try {
+          return await loadAssets([url], {
+            cacheDir,
+            offline: false,
+            attachments: undefined,
+            fetch
+          });
+        } finally {
+          emojiLoads.delete(url);
+        }
+      };
+      pending = load();
+      emojiLoads.set(url, pending);
+    }
+    const { assets, findings } = await pending;
+    const asset = assets.get(url);
+    if (asset === undefined) {
+      refuse(
+        response,
+        502,
+        findings.at(0)?.message ??
+          `The emoji ${fileName} could not be loaded from ${url}.`
+      );
+      return;
+    }
+    send(
+      response,
+      200,
+      request.method === `HEAD` ? Buffer.alloc(0) : asset.body,
+      {
+        "Content-Type": asset.contentType,
+        // The release is pinned, so the image at this address never changes; the browser may keep it for the run.
+        "Cache-Control": `private, max-age=86400, immutable`,
+        "Content-Security-Policy": `sandbox; default-src 'none'; style-src 'unsafe-inline'; img-src data:`
+      }
+    );
+  };
+
   server.on(`request`, (request, response) => {
     const handle = async (): Promise<void> => {
       if (!hosts.has(request.headers.host ?? ``)) {
@@ -636,9 +850,18 @@ export const startStudioServer = async ({
         return;
       }
       const route = url.pathname.slice(prefix.length);
+      if (route.startsWith(bridgeRoutes.emoji)) {
+        await serveEmoji(
+          request,
+          response,
+          route.slice(bridgeRoutes.emoji.length)
+        );
+        return;
+      }
       if (
         route === bridgeRoutes.file ||
         route === bridgeRoutes.events ||
+        route === bridgeRoutes.render ||
         route.startsWith(bridgeRoutes.attachments)
       ) {
         if (file === undefined) {
@@ -653,6 +876,8 @@ export const startStudioServer = async ({
           await serveFile(request, response);
         } else if (route === bridgeRoutes.events) {
           serveEvents(request, response);
+        } else if (route === bridgeRoutes.render) {
+          await serveRender(request, response);
         } else {
           await serveAttachment(
             request,
@@ -722,6 +947,7 @@ export const startStudioServer = async ({
     close: async () => {
       watcher?.close();
       clearInterval(heartbeat);
+      await exporter.close();
       for (const client of clients) client.end();
       clients.clear();
       await new Promise<void>((resolve) => {

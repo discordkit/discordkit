@@ -252,7 +252,13 @@ export const buildTree = (scene: Scene): TreeNode[] =>
         scene.messages.length === 1
           ? `Message`
           : `Message ${String(index + 1)}`,
-      summary: [v2 ? `Components V2` : `Classic`, author]
+      // What tells one message of a sequence from the next: who sent it, and whether it is drawn edited or ephemeral.
+      summary: [
+        v2 ? `Components V2` : `Classic`,
+        author,
+        message.edited === true ? `edited` : undefined,
+        message.ephemeral === true ? `ephemeral` : undefined
+      ]
         .filter(Boolean)
         .join(` · `),
       children
