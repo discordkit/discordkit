@@ -1,5 +1,6 @@
 import { useMemo, type ReactElement, type ReactNode } from "react";
 import { ChevronDownIcon, CloseIcon } from "./icons.js";
+import { useInspect } from "./Inspect.js";
 import styles from "./SelectControl.module.css";
 
 /** What a select menu shows when nothing is chosen and the payload sets no `placeholder`. The client supplies this text; unverified. */
@@ -15,6 +16,8 @@ export interface SelectValue {
 export type SelectValueStyle = `single` | `tags` | `pills`;
 
 export interface SelectControlProps {
+  /** The select component this draws, for an inspecting tool (see `Inspect.ts`). */
+  select: object;
   values: readonly SelectValue[];
   valueStyle: SelectValueStyle;
   placeholder: string | undefined;
@@ -81,12 +84,14 @@ const Values = ({
  * What every select menu in a message shares when closed: the 40px box up to 400px wide, the placeholder or the chosen values, the chevron, and the disabled state. Each select type is its own component around this, deciding what its chosen values are.
  */
 export const SelectControl = ({
+  select,
   values,
   valueStyle,
   placeholder,
   disabled,
   anchorName
 }: SelectControlProps): ReactElement => {
+  const inspect = useInspect(select);
   // React's style type has no entry for `anchor-name` yet.
   const style = useMemo(
     (): Record<string, string> | undefined =>
@@ -102,7 +107,7 @@ export const SelectControl = ({
     .filter(Boolean)
     .join(` `);
   return (
-    <div className={styles.container}>
+    <div className={styles.container} {...inspect}>
       <div className={classes} style={style}>
         {values.length === 0 ? (
           <span className={styles.placeholder}>

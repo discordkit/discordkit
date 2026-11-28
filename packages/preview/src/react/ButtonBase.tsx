@@ -1,5 +1,6 @@
 import type { ReactElement, ReactNode } from "react";
 import type { Button } from "@discordkit/client/components/types/Button";
+import { useInspect } from "./Inspect.js";
 import { PartialEmoji } from "./PartialEmoji.js";
 import styles from "./ButtonBase.module.css";
 
@@ -26,6 +27,7 @@ export const ButtonBase = ({
   trailing
 }: ButtonBaseProps): ReactElement => {
   const hasLabel = label !== undefined && label !== ``;
+  const inspect = useInspect(button);
   return (
     <button
       type="button"
@@ -33,6 +35,7 @@ export const ButtonBase = ({
       disabled={button.disabled ?? false}
       // A button with only an emoji is named by the emoji, as a screen reader would read it.
       aria-label={hasLabel ? undefined : (button.emoji?.name ?? undefined)}
+      {...inspect}
     >
       <div className={styles.contents}>
         <div className={styles.content}>

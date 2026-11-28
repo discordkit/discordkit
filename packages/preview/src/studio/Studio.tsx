@@ -1,7 +1,10 @@
 import {
   useCallback,
+  useDeferredValue,
   useEffect,
+  useLayoutEffect,
   useMemo,
+  useRef,
   useState,
   useSyncExternalStore,
   type ReactElement
@@ -9,7 +12,7 @@ import {
 import { useForm, useWatch } from "react-hook-form";
 import { Tab, TabList, TabPanel, Tabs, type Key } from "react-aria-components";
 import { codegen } from "../codegen/index.js";
-import { formatPath, type Finding } from "../findings.js";
+import { formatPath, type Finding, type Path } from "../findings.js";
 import type { AssetUrl } from "../react/SceneContext.js";
 import { readScene, type InputKind } from "../scene/intake.js";
 import type { Scene } from "../scene.js";
@@ -19,16 +22,24 @@ import { useDocument } from "./document/useDocument.js";
 import {
   readFileShape,
   toFilePath,
-  toFileText,
+  toFileTextOver,
   toFileValue,
   withViewSettings,
   type FileShape
 } from "./document/fileShape.js";
 import { findJsonError } from "./document/jsonError.js";
+import type { Marker } from "./editor/ComponentTree.js";
+import type { EditResult } from "./editor/edits.js";
+import { EditorContext, type Editor } from "./editor/EditorContext.js";
+import { EditPanel } from "./editor/EditPanel.js";
+import { isWithin, parsePathKey, pathKey } from "./editor/paths.js";
+import { prune } from "./editor/prune.js";
+import type { StartingPoint } from "./editor/startingPoints.js";
+import { buildTree, flatten, nodeFor } from "./editor/tree.js";
 import { lintResolver, lintScene } from "./form/lintResolver.js";
 import { CodePane } from "./panels/CodePane.js";
 import { FindingsPanel, type ShownFinding } from "./panels/FindingsPanel.js";
-import { JsonPane } from "./panels/JsonPane.js";
+import { ConflictBanner, JsonPane } from "./panels/JsonPane.js";
 import type { OverallState } from "./panels/LintState.js";
 import { TopBar, type SyncStatus } from "./panels/TopBar.js";
 import { PreviewPane, type ViewChange } from "./preview/PreviewPane.js";
@@ -39,6 +50,22 @@ import styles from "./Studio.module.css";
 type Read =
   | { kind: Exclude<InputKind, `unknown`>; scene: Scene; shape: FileShape }
   | { kind: InputKind; scene: undefined; findings: Finding[] };
+
+/** How an empty file is written once something is put in it: a camelCase scene, two spaces to a level. */
+const emptyFileShape: FileShape = {
+  kind: `scene`,
+  style: `camel`,
+  raw: {},
+  indent: `  `,
+  finalNewline: true
+};
+
+/** An empty file reads as an empty scene, so a new file opens on the starting points rather than on a JSON error. (An emptied pane does not: that is text being typed, and the preview keeps the last that parsed.) */
+const emptyFile: Read = {
+  kind: `scene`,
+  scene: { messages: [] },
+  shape: emptyFileShape
+};
 
 const readText = (text: string): Read | undefined => {
   if (findJsonError(text) !== undefined) return undefined;
@@ -51,6 +78,13 @@ const readText = (text: string): Read | undefined => {
     scene: read.scene,
     shape: readFileShape(text, read.kind)
   };
+};
+
+/** The same text reads as the same object, so reading it again (after the form takes it) changes nothing downstream. */
+let lastRead: { text: string; read: Read | undefined } | undefined;
+const readTextOnce = (text: string): Read | undefined => {
+  if (lastRead?.text !== text) lastRead = { text, read: readText(text) };
+  return lastRead.read;
 };
 
 const useMediaQuery = (query: string): boolean =>
@@ -94,10 +128,13 @@ const syncStatus = (doc: DocumentHandle, backend: Backend): SyncStatus => {
   if (state.conflict) {
     return {
       tone: `attention`,
-      text: `Changed on disk while you were editing: see the JSON pane.`
+      text: `Changed on disk while you were editing: choose which version to keep.`
     };
   }
-  if (doc.paneError !== undefined) {
+  if (
+    doc.paneError !== undefined &&
+    state.disk.text.trim() !== state.pane.trim()
+  ) {
     return { tone: `attention`, text: `Not saved: the JSON does not parse.` };
   }
   if (state.saving !== null || doc.unsaved)
@@ -142,37 +179,64 @@ const download = (text: string, name: string): void => {
 /** Studio itself, on whichever backend holds the document. */
 export const Studio = ({ backend }: { backend: Backend }): ReactElement => {
   const doc = useDocument(backend);
+  const { edit } = doc;
   const form = useForm<Scene>({
     resolver: lintResolver,
-    mode: `onChange`,
+    // Lint runs when Studio asks (`relint`), a moment after typing pauses, not inside every keystroke: on a 40-component message it is the costliest thing a keystroke would do.
+    mode: `onSubmit`,
     defaultValues: { messages: [] }
   });
-  // The whole scene, re-rendering on every change. `compute` is what gives it the form's own type rather than a deep partial.
+  const relintTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const relint = useCallback((): void => {
+    clearTimeout(relintTimer.current);
+    relintTimer.current = setTimeout(() => void form.trigger(), 60);
+  }, [form]);
+  useEffect(() => (): void => clearTimeout(relintTimer.current), []);
+  // The whole scene as the form holds it, re-rendering on every change. `compute` is what gives it the form's own type rather than a deep partial.
   const values = useWatch({
     control: form.control,
     compute: (scene: Scene) => scene
   });
-  const { errors } = form.formState;
+  // The tree and the selected form follow every keystroke. The preview, lint and code are drawn from a deferred copy, so typing is never held up by redrawing a large message: React draws them when it has time, and drops a stale draw when the next keystroke comes.
+  const editScene = useMemo(() => prune(values), [values]);
+  const deferred = useDeferredValue(values);
+  const scene = useMemo(() => prune(deferred), [deferred]);
 
-  // The last text that parsed: while the pane's text does not, the preview, findings and code keep showing this.
-  const read = useMemo(() => readText(doc.shown), [doc.shown]);
+  // The text Studio last wrote from the form. The pane holding it is the form's own echo: it is not read back into the form, which already holds it (and reading it back would reset every field array under the person's caret).
+  const [echo, setEcho] = useState<string>();
+  const loaded = doc.state.disk !== null;
+  const fileIsEmpty =
+    doc.state.disk?.text.trim() === `` && doc.shown.trim() === ``;
+  const read = useMemo(
+    () =>
+      !loaded || doc.shown === echo
+        ? undefined
+        : fileIsEmpty
+          ? emptyFile
+          : readTextOnce(doc.shown),
+    [loaded, doc.shown, echo, fileIsEmpty]
+  );
   const [current, setCurrent] = useState<Read>();
-  // Adjusted while rendering, as React recommends over an effect; `read` is memoised per text, so this settles at once.
-  if (read !== undefined && read !== current) setCurrent(read);
+  // Adjusted while rendering, as React recommends over an effect; `read` is the same object for the same text, so this settles at once. The form is about to take this text, not the last one it wrote, so the echo no longer applies.
+  if (read !== undefined && read !== current) {
+    setCurrent(read);
+    setEcho(undefined);
+  }
 
   // The form takes each scene the text reads as. For a file that has no place for view settings, the ones the person chose are kept.
   useEffect(() => {
     if (current?.scene === undefined) return;
     form.reset(withViewSettings(current.scene, form.getValues(), current.kind));
-    void form.trigger();
-  }, [current, form]);
+    relint();
+  }, [current, form, relint]);
 
   const [drawProblem, setDrawProblem] = useState<string>();
-  const hasScene = current?.scene !== undefined && values.messages.length > 0;
+  const hasScene = current?.scene !== undefined && scene.messages.length > 0;
 
+  // An empty scene is linted too, so it says it needs a message rather than calling itself valid.
   const linted = useMemo(
-    () => (hasScene ? lintScene(values) : undefined),
-    [hasScene, values]
+    () => (current?.scene === undefined ? undefined : lintScene(scene)),
+    [current?.scene, scene]
   );
   const shape = current?.scene === undefined ? undefined : current.shape;
   const findings: ShownFinding[] = useMemo(() => {
@@ -225,9 +289,9 @@ export const Studio = ({ backend }: { backend: Backend }): ReactElement => {
   const source = useMemo(
     () =>
       hasScene && shape !== undefined
-        ? codegen(toFileValue(values, shape)).source
+        ? codegen(toFileValue(scene, shape)).source
         : undefined,
-    [hasScene, shape, values]
+    [hasScene, shape, scene]
   );
 
   const assetUrl: AssetUrl = useCallback(
@@ -238,68 +302,227 @@ export const Studio = ({ backend }: { backend: Backend }): ReactElement => {
     [backend]
   );
 
+  const paneProblem = doc.paneError !== undefined && !fileIsEmpty;
   const sceneFile = shape?.kind === `scene`;
   const disabledReason = !sceneFile
     ? undefined
     : doc.state.conflict
-      ? `Settle the conflict in the JSON pane first: these settings are written to the file.`
-      : doc.paneError === undefined
-        ? undefined
-        : `Fix the JSON first: these settings are written to the file, which would replace the text that does not parse.`;
+      ? `Settle the conflict first: these settings are written to the file.`
+      : paneProblem
+        ? `Fix the JSON first: these settings are written to the file, which would replace the text that does not parse.`
+        : undefined;
 
-  const onViewChange = (change: ViewChange): void => {
-    switch (change.field) {
-      case `theme`:
-        form.setValue(`theme`, change.value);
-        break;
-      case `width`:
-        form.setValue(`width`, change.value);
-        break;
-      case `revealSpoilers`:
-        form.setValue(`revealSpoilers`, change.value);
-        break;
-      case `openSelect`:
-        form.setValue(
-          `messages`,
-          withOpenSelect(form.getValues(), change.value)
-        );
-        break;
-      case `locale`:
-      case `timeZone`:
-      case `now`:
-        form.setValue(change.field, change.value);
-        break;
+  // Why the structured editor cannot write now. Each case would otherwise overwrite something the person has not chosen to lose.
+  const editDisabledReason = !loaded
+    ? `Loading the file…`
+    : doc.state.conflict
+      ? `The file changed on disk while you had unsaved edits. The forms show the file's version and are paused until you choose a version in the banner above.`
+      : paneProblem
+        ? `The JSON pane holds text that does not parse. Fix it there first: an edit here would replace it.`
+        : current?.scene === undefined
+          ? `The file is not a scene, a message or components Studio can read. Fix it in the JSON pane.`
+          : undefined;
+
+  // The latest pane text, shape and editability, for the writer, which runs from event handlers after the render that set them.
+  const latest = useRef({
+    pane: doc.state.pane,
+    shape,
+    blocked: editDisabledReason !== undefined
+  });
+  useLayoutEffect(() => {
+    latest.current = {
+      pane: doc.state.pane,
+      shape,
+      blocked: editDisabledReason !== undefined
+    };
+  });
+
+  /** Writes the form to the file in the file's own shape, changing only the text of what changed, and only when something did. */
+  const write = useCallback((): void => {
+    const { pane, shape: fileShape, blocked } = latest.current;
+    if (!blocked && fileShape !== undefined) {
+      const text = toFileTextOver(pane, prune(form.getValues()), fileShape);
+      if (text !== pane) {
+        latest.current = { ...latest.current, pane: text };
+        setEcho(text);
+        edit(text);
+      }
     }
-    void form.trigger();
-    if (shape?.kind === `scene`) doc.edit(toFileText(form.getValues(), shape));
-  };
+    relint();
+  }, [edit, form, relint]);
 
-  const fieldError = (
-    field: `locale` | `timeZone` | `now` | `width`
-  ): string | undefined => errors[field]?.message;
+  const onViewChange = useCallback(
+    (change: ViewChange): void => {
+      switch (change.field) {
+        case `theme`:
+          form.setValue(`theme`, change.value);
+          break;
+        case `width`:
+          form.setValue(`width`, change.value);
+          break;
+        case `revealSpoilers`:
+          form.setValue(`revealSpoilers`, change.value);
+          break;
+        case `openSelect`:
+          form.setValue(
+            `messages`,
+            withOpenSelect(form.getValues(), change.value)
+          );
+          break;
+        case `locale`:
+        case `timeZone`:
+        case `now`:
+          form.setValue(change.field, change.value);
+          break;
+      }
+      // A bare payload has no place for these, so nothing changes in its text and nothing is written.
+      write();
+    },
+    [form, write]
+  );
+
+  const { errors } = form.formState;
+  const fieldError = useCallback(
+    (field: `locale` | `timeZone` | `now` | `width`): string | undefined =>
+      errors[field]?.message,
+    [errors]
+  );
 
   const staleNote = doc.state.conflict
     ? `Showing the file on disk, not your unsaved text`
-    : doc.paneError === undefined
-      ? undefined
-      : `Showing the last JSON that parsed`;
+    : paneProblem
+      ? `Showing the last JSON that parsed`
+      : undefined;
+
+  // The tree and the selection.
+  // Built from the deferred scene, like the preview: a keystroke changes a summary, which can wait for the preview's redraw.
+  const nodes = useMemo(() => buildTree(scene), [scene]);
+  const all = useMemo(() => flatten(nodes), [nodes]);
+  const [selectedId, setSelectedId] = useState<string>();
+  const selected = useMemo(() => {
+    if (selectedId !== undefined) {
+      const found = nodeFor(nodes, parsePathKey(selectedId));
+      if (found !== undefined) return found;
+    }
+    return nodes.at(0);
+  }, [nodes, selectedId]);
+  const [collapsed, setCollapsed] = useState<ReadonlySet<string>>(new Set());
+
+  const markers = useMemo(() => {
+    const ids = new Set(all.map((node) => node.id));
+    const result = new Map<string, Marker>();
+    for (const finding of linted?.findings ?? []) {
+      for (let length = 2; length <= finding.path.length; length++) {
+        const id = pathKey(finding.path.slice(0, length));
+        if (!ids.has(id)) continue;
+        const marker = result.get(id) ?? { errors: 0, warnings: 0 };
+        if (finding.severity === `error`) marker.errors++;
+        else marker.warnings++;
+        result.set(id, marker);
+      }
+    }
+    return result;
+  }, [all, linted]);
+
+  const apply = useCallback(
+    (change: (scene: Scene) => EditResult): string => {
+      const result = change(prune(form.getValues()));
+      form.setValue(`messages`, result.scene.messages);
+      write();
+      const id = pathKey(result.selected);
+      setSelectedId(id);
+      setCollapsed(
+        (previous) =>
+          new Set(
+            [...previous]
+              .map((key) => result.remap(parsePathKey(key)))
+              .filter((path): path is Path => path !== undefined)
+              .map(pathKey)
+          )
+      );
+      return id;
+    },
+    [form, write]
+  );
+
+  const editor: Editor = useMemo(
+    () => ({
+      control: form.control,
+      write,
+      disabledReason: editDisabledReason,
+      fileKind: shape?.kind ?? `scene`,
+      scene: () => prune(form.getValues()),
+      apply: (change) => {
+        apply(change);
+      }
+    }),
+    [form, write, editDisabledReason, shape?.kind, apply]
+  );
+
+  const onStart = useCallback(
+    (point: StartingPoint): void => {
+      const { pane, shape: fileShape } = latest.current;
+      // Whatever else the empty scene file held (context, a theme) is kept; the starting point's messages and clock go in.
+      const base = current?.scene ?? { messages: [] };
+      const context = { ...base.context, ...point.scene.context };
+      const next: Scene = {
+        ...base,
+        ...point.scene,
+        ...(Object.keys(context).length === 0 ? {} : { context })
+      };
+      const text =
+        fileShape === undefined ||
+        fileShape.kind !== `scene` ||
+        pane.trim() === ``
+          ? `${JSON.stringify(next, null, 2)}\n`
+          : toFileTextOver(pane, next, fileShape);
+      setSelectedId(undefined);
+      edit(text);
+    },
+    [current, edit]
+  );
 
   const wide = useMediaQuery(`(min-width: 1280px)`);
   const stacked = !useMediaQuery(`(min-width: 820px)`);
-  const [tab, setTab] = useState<Key>(`json`);
-  const selectedTab = wide && tab === `findings` ? `json` : tab;
+  const [tab, setTab] = useState<Key>(`edit`);
+  const selectedTab = wide && tab === `findings` ? `edit` : tab;
+
+  const [focusField, setFocusField] = useState<{ path: Path; at: number }>();
+  const canChoose = useCallback(
+    (finding: ShownFinding): boolean =>
+      finding.path[0] === `messages` &&
+      nodeFor(nodes, finding.path) !== undefined,
+    [nodes]
+  );
+  const onChooseFinding = useCallback(
+    (finding: ShownFinding): void => {
+      const node = nodeFor(nodes, finding.path);
+      if (node === undefined) return;
+      setSelectedId(node.id);
+      // Folded ancestors open, so the row can be seen.
+      setCollapsed(
+        (previous) =>
+          new Set(
+            [...previous].filter((id) => !isWithin(node.path, parsePathKey(id)))
+          )
+      );
+      setTab(`edit`);
+      setFocusField({ path: finding.path, at: Date.now() });
+    },
+    [nodes]
+  );
+  const onSelectFromPreview = useCallback((id: string): void => {
+    setSelectedId(id);
+    setTab(`edit`);
+  }, []);
 
   const findingsLabel = `Findings${findings.length === 0 ? `` : ` (${String(findings.length)})`}`;
   const jsonPane = (
     <JsonPane
       text={doc.state.pane}
       onChange={doc.edit}
-      error={doc.paneError}
-      conflict={doc.state.conflict}
-      fileName={doc.file?.name ?? `The file`}
-      onLoadFile={doc.loadFile}
-      onKeepMine={doc.keepMine}
-      isDisabled={doc.state.disk === null}
+      error={paneProblem ? doc.paneError : undefined}
+      isDisabled={!loaded}
     />
   );
   const findingsPanel = (
@@ -308,12 +531,14 @@ export const Studio = ({ backend }: { backend: Backend }): ReactElement => {
       drawProblem={drawProblem}
       findings={findings}
       counts={counts}
+      onChoose={onChooseFinding}
+      canChoose={canChoose}
     />
   );
   const draft = backend.kind === `draft`;
   const previewPane = (
     <PreviewPane
-      scene={hasScene ? values : undefined}
+      scene={hasScene ? scene : undefined}
       kind={current?.kind}
       assetUrl={assetUrl}
       onChange={onViewChange}
@@ -321,6 +546,8 @@ export const Studio = ({ backend }: { backend: Backend }): ReactElement => {
       fieldError={fieldError}
       onProblem={setDrawProblem}
       staleNote={staleNote}
+      selected={selected?.id}
+      onSelect={onSelectFromPreview}
     />
   );
 
@@ -350,12 +577,25 @@ export const Studio = ({ backend }: { backend: Backend }): ReactElement => {
         {/* In one column the preview comes first, in reading and focus order as well as on screen. */}
         {stacked ? previewPane : null}
         <aside className={styles.side} aria-label="Source">
+          {doc.state.conflict ? (
+            <div className={styles.banner}>
+              <ConflictBanner
+                fileName={doc.file?.name ?? `The file`}
+                onLoadFile={doc.loadFile}
+                onKeepMine={doc.keepMine}
+                canKeepMine={doc.paneError === undefined}
+              />
+            </div>
+          ) : null}
           <Tabs
             className={styles.tabs}
             selectedKey={selectedTab}
             onSelectionChange={setTab}
           >
             <TabList className={styles.tabList} aria-label="Source views">
+              <Tab id="edit" className={styles.tab}>
+                Edit
+              </Tab>
               <Tab id="json" className={styles.tab}>
                 JSON
               </Tab>
@@ -368,6 +608,28 @@ export const Studio = ({ backend }: { backend: Backend }): ReactElement => {
                 TypeScript
               </Tab>
             </TabList>
+            <TabPanel id="edit" className={styles.tabPanel}>
+              <EditorContext value={editor}>
+                <EditPanel
+                  scene={editScene}
+                  nodes={nodes}
+                  selected={selected}
+                  onSelect={setSelectedId}
+                  markers={markers}
+                  collapsed={collapsed}
+                  onCollapsedChange={setCollapsed}
+                  apply={apply}
+                  disabledReason={editDisabledReason}
+                  empty={
+                    loaded &&
+                    current?.scene?.messages.length === 0 &&
+                    values.messages.length === 0
+                  }
+                  onStart={onStart}
+                  focusField={focusField}
+                />
+              </EditorContext>
+            </TabPanel>
             <TabPanel id="json" className={styles.tabPanel}>
               {jsonPane}
             </TabPanel>

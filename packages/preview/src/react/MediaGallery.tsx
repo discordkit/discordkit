@@ -3,6 +3,7 @@ import type { MediaGallery as MediaGalleryComponent } from "@discordkit/client/c
 import type { MediaGalleryItem } from "@discordkit/client/components/types/MediaGalleryItem";
 import { arrangeGallery, type GalleryLayout } from "../format/galleryLayout.js";
 import { Image } from "./Image.js";
+import { useInspect } from "./Inspect.js";
 import { useSceneSettings } from "./SceneContext.js";
 import styles from "./MediaGallery.module.css";
 
@@ -103,9 +104,10 @@ export const MediaGallery = ({
   component
 }: MediaGalleryProps): ReactElement => {
   // Payload order is the identity of every band and item below; none has a stable key of its own.
+  const inspect = useInspect(component);
   /* oxlint-disable react/no-array-index-key */
   return (
-    <div className={styles.gallery}>
+    <div className={styles.gallery} {...inspect}>
       {arrangeGallery(component.items).map(({ layout, items }, band) => (
         <div key={band} className={bandClasses[layout]}>
           {layout === `oneByTwoLayoutThree` ? (

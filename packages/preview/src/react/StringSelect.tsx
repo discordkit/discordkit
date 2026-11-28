@@ -26,6 +26,7 @@ export const StringSelect = ({ select }: StringSelectProps): ReactElement => {
   const multi = isMultiSelect(select);
   return (
     <SelectControl
+      select={select}
       values={multi ? values : values.slice(0, 1)}
       valueStyle={multi ? `tags` : `single`}
       placeholder={select.placeholder}

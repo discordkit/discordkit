@@ -55,6 +55,38 @@ export const WarningIcon = (props: IconProps): ReactElement => (
   </Icon>
 );
 
+export const PlusIcon = (props: IconProps): ReactElement => (
+  <Icon {...props}>
+    <path d="M8 3.5v9M3.5 8h9" />
+  </Icon>
+);
+
+export const UpIcon = (props: IconProps): ReactElement => (
+  <Icon {...props}>
+    <path d="M8 12.5v-9M4.5 7 8 3.5 11.5 7" />
+  </Icon>
+);
+
+export const DownIcon = (props: IconProps): ReactElement => (
+  <Icon {...props}>
+    <path d="M8 3.5v9M4.5 9 8 12.5 11.5 9" />
+  </Icon>
+);
+
+export const RemoveIcon = (props: IconProps): ReactElement => (
+  <Icon {...props}>
+    <path d="M3 4.5h10M6.5 4.5v-1a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1M4.5 4.5l.6 8.1a1 1 0 0 0 1 .9h3.8a1 1 0 0 0 1-.9l.6-8.1" />
+  </Icon>
+);
+
+export const DuplicateIcon = CopyIcon;
+
+export const ChevronRightIcon = (props: IconProps): ReactElement => (
+  <Icon {...props}>
+    <path d="m6.5 4.5 3.5 3.5-3.5 3.5" />
+  </Icon>
+);
+
 export const OkIcon = (props: IconProps): ReactElement => (
   <Icon {...props}>
     <circle cx="8" cy="8" r="6" />

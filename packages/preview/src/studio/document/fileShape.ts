@@ -5,6 +5,7 @@ import { findOpenSelect } from "../../components.js";
 import type { Path, PathSegment } from "../../findings.js";
 import { isDataKeyed, type InputKind } from "../../scene/intake.js";
 import type { Scene } from "../../scene.js";
+import { preserveFormat } from "./preserveFormat.js";
 
 /**
  * How a scene file is written, so that Studio saves it the way it found it: a snake_case component array stays a snake_case component array.
@@ -154,6 +155,15 @@ export const toFileText = (scene: Scene, shape: FileShape): string => {
   const text = JSON.stringify(toFileValue(scene, shape), null, shape.indent);
   return shape.finalNewline ? `${text}\n` : text;
 };
+
+/**
+ * {@link toFileText} printed over the file's current text, so that only what changed is written differently: a hand-formatted file keeps its formatting through every form edit (see `preserveFormat.ts`).
+ */
+export const toFileTextOver = (
+  oldText: string,
+  scene: Scene,
+  shape: FileShape
+): string => preserveFormat(oldText, toFileValue(scene, shape), shape.indent);
 
 /**
  * A path into the scene as a path into the file, spelled as the file spells it, so a finding can be shown where a person or agent will find it in the file. Undefined for a path outside what the file holds (a view setting on a bare payload).

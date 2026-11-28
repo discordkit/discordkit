@@ -1,0 +1,100 @@
+/* The warning before a message's kind is switched: a small alert dialog over a dimmed Studio. */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--st-space-6);
+  background: rgb(0 0 0 / 0.45);
+}
+
+.modal {
+  box-sizing: border-box;
+  width: min(440px, 100%);
+  border: 1px solid var(--st-control-border);
+  border-radius: var(--st-radius-md);
+  background: var(--st-surface-raised);
+  box-shadow: var(--st-shadow);
+  color: var(--st-text);
+  font-family: var(--st-font-ui);
+}
+
+.dialog {
+  display: flex;
+  flex-direction: column;
+  gap: var(--st-space-4);
+  padding: var(--st-space-6);
+  outline: none;
+}
+
+.title {
+  margin: 0;
+  font-size: var(--st-text-lg);
+  font-weight: 600;
+}
+
+.text {
+  margin: 0;
+  color: var(--st-text);
+  font-size: var(--st-text-md);
+  line-height: 1.45;
+}
+
+.list {
+  margin: 0;
+  padding: var(--st-space-4) var(--st-space-5) var(--st-space-4)
+    var(--st-space-7);
+  border-left: 3px solid var(--st-error);
+  background: var(--st-error-soft);
+  font-size: var(--st-text-md);
+  line-height: 1.5;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--st-space-4);
+  margin-top: var(--st-space-3);
+}
+
+.button {
+  box-sizing: border-box;
+  height: 32px;
+  padding: 0 var(--st-space-5);
+  border: 1px solid transparent;
+  border-radius: var(--st-radius-sm);
+  font: inherit;
+  font-size: var(--st-text-sm);
+  font-weight: 500;
+  outline: none;
+}
+
+.button[data-focus-visible] {
+  outline: var(--st-focus-width) solid var(--st-focus);
+  outline-offset: 2px;
+}
+
+.cancel {
+  composes: button;
+  border-color: var(--st-control-border);
+  background: var(--st-surface);
+  color: var(--st-text);
+}
+
+.cancel[data-hovered] {
+  background: var(--st-surface-hover);
+}
+
+.confirm {
+  composes: button;
+  background: var(--st-error);
+  color: var(--st-accent-text);
+}
+
+.confirm[data-hovered] {
+  filter: brightness(1.08);
+}

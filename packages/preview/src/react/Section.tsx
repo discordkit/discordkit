@@ -1,6 +1,7 @@
 import type { ReactElement } from "react";
 import { ComponentType } from "@discordkit/client/components/types/ComponentType";
 import type { Section as SectionComponent } from "@discordkit/client/components/types/Section";
+import { useInspect } from "./Inspect.js";
 import { MessageButton } from "./MessageButton.js";
 import { TextDisplay } from "./TextDisplay.js";
 import { Thumbnail } from "./Thumbnail.js";
@@ -45,7 +46,7 @@ const Accessory = ({
  * A Section: one to three text displays stacked on the left, and an accessory on the right, a thumbnail or a button, aligned to the top.
  */
 export const Section = ({ component }: SectionProps): ReactElement => (
-  <div className={styles.section}>
+  <div className={styles.section} {...useInspect(component)}>
     <div className={styles.children}>
       <div className={styles.textChildren}>
         {component.components.map((child, index) => {

@@ -91,14 +91,20 @@ const sceneRoot = (): HTMLElement => {
   return element;
 };
 
+/** The JSON pane's text area. Studio opens on the Edit tab, so the JSON tab is shown first (see `showJson`). */
 const editor = (): HTMLTextAreaElement => {
-  const element = document.querySelector(`textarea`);
+  const element = page.getByRole(`textbox`, { name: `Scene JSON` }).element();
   if (!(element instanceof HTMLTextAreaElement)) throw new Error(`No editor.`);
   return element;
 };
 
+const showJson = async (): Promise<void> => {
+  await userEvent.click(page.getByRole(`tab`, { name: `JSON` }));
+};
+
 /** Replaces the editor's text as typing would, through React's change handling. */
 const typeInto = async (text: string): Promise<void> => {
+  await showJson();
   await userEvent.clear(editor());
   await userEvent.fill(editor(), text);
 };
@@ -114,6 +120,7 @@ describe(`the Studio editor`, () => {
     await drawn(`From the agent`);
     file.change(payload(`Changed on disk`));
     await drawn(`Changed on disk`);
+    await showJson();
     expect(editor().value).toBe(payload(`Changed on disk`));
     expect(file.saves).toEqual([]);
   });
