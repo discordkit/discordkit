@@ -8,8 +8,15 @@ const _textDisplaySchema = v.object({
   type: v.literal(ComponentType.TextDisplay),
   /** Optional identifier for component */
   id: v.exactOptional(boundedInteger()),
-  /** Text that will be displayed similar to a message */
-  content: v.string()
+  /** Text that will be displayed similar to a message; max 4000 characters */
+  content: v.pipe(
+    v.string(),
+    v.maxLength(
+      4000,
+      (issue) =>
+        `Expected a text display of at most 4000 characters, received: ${issue.received} characters. Discord limits each text display, and all the text displays in a message or modal together, to 4000 characters. Shorten the text, or split it across more than one message.`
+    )
+  ) as v.GenericSchema<string>
 });
 
 export interface TextDisplay extends v.InferOutput<typeof _textDisplaySchema> {}

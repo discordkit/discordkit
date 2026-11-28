@@ -1,6 +1,7 @@
 ﻿import * as v from "valibot";
 import { post, type Fetcher } from "@discordkit/core/requests/methods";
 import { asInteger } from "@discordkit/core/validations/asInteger";
+import { boundedArray } from "@discordkit/core/validations/boundedArray";
 import { multipart, fileUpload } from "@discordkit/core/validations/fileUpload";
 import { snowflake } from "@discordkit/core/validations/snowflake";
 import { threadChannelEntries } from "./types/Channel.js";
@@ -28,8 +29,8 @@ export const startThreadInForumOrMediaChannelSchema = v.object({
       v.object({
         /** Message contents (up to 2000 characters) */
         content: v.pipe(v.string(), v.minLength(1), v.maxLength(2000)),
-        /** Embedded rich content (up to 6000 characters) */
-        embeds: v.array(embedSchema),
+        /** Up to 10 rich embeds (up to 6000 characters) */
+        embeds: boundedArray(embedSchema, { min: 0, max: 10 }),
         /** Allowed mentions for the message */
         allowedMentions: allowedMentionSchema,
         /** Components to include with the message */

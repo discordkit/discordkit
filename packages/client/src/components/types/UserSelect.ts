@@ -20,6 +20,8 @@ const _userSelectSchema = v.object({
   minValues: v.exactOptional(boundedInteger({ min: 0, max: 25 })),
   /** Maximum number of items that can be chosen (defaults to 1); max 25 */
   maxValues: v.exactOptional(boundedInteger({ min: 1, max: 25 })),
+  /** Whether the select must be answered to submit a modal (defaults to `true`); ignored in messages */
+  required: v.exactOptional(v.boolean()),
   /** Whether select menu is disabled (defaults to `false`) */
   disabled: v.exactOptional(v.boolean())
 });

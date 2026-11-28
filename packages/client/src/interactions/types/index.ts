@@ -1,5 +1,6 @@
 export * from "./ApplicationCommandData.js";
 export * from "./ApplicationCommandInteractionDataOption.js";
+export * from "./ComponentInteractionResponse.js";
 export * from "./Interaction.js";
 export * from "./InteractionCallback.js";
 export * from "./InteractionCallbackActivityInstance.js";
