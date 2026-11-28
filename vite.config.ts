@@ -78,6 +78,27 @@ export default defineConfig({
       "docs:gateway": {
         command: `node --experimental-strip-types scripts/docs/parse-gateway.ts`,
         cache: false
+      },
+      // The calibration kit (scripts/calibration, spec §7 "Calibration"): a bot posts the capture set to a test channel, the owner screenshots it, and these file the screenshots. `calibration:post` only prints what it would send unless given --send. Secrets come from the environment only (DISCORD_CALIBRATION_BOT_TOKEN, DISCORD_CALIBRATION_WEBHOOK_URL, DISCORD_CALIBRATION_CHANNEL_ID); scripts/calibration/CAPTURE.md has the steps. It reads the packages' dist/, so build first.
+      "calibration:post": {
+        command: `node --experimental-strip-types scripts/calibration/cli.ts post`,
+        cache: false
+      },
+      "calibration:delete": {
+        command: `node --experimental-strip-types scripts/calibration/cli.ts delete`,
+        cache: false
+      },
+      "calibration:ingest": {
+        command: `node --experimental-strip-types scripts/calibration/cli.ts ingest`,
+        cache: false
+      },
+      "calibration:scenes": {
+        command: `node --experimental-strip-types scripts/calibration/cli.ts scenes`,
+        cache: false
+      },
+      "calibration:instructions": {
+        command: `node --experimental-strip-types scripts/calibration/cli.ts instructions`,
+        cache: false
       }
     }
   },
