@@ -35,6 +35,40 @@ export const HashIcon = ({ className }: IconProps): ReactElement => (
   </svg>
 );
 
+/** An arrow leaving a box, after a Link button's label: the button opens a page outside Discord. */
+export const LaunchIcon = ({ className }: IconProps): ReactElement => (
+  <svg className={className} viewBox="0 0 24 24" aria-hidden="true">
+    <path
+      d="M14 4h6v6M20 4l-9 9M18 14v4.5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 4 18.5v-11A1.5 1.5 0 0 1 5.5 6H10"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+/** A shopping bag, before a Premium button's product name. */
+export const ShopIcon = ({ className }: IconProps): ReactElement => (
+  <svg className={className} viewBox="0 0 24 24" aria-hidden="true">
+    <path
+      d="M5 8h14l-1 12H6L5 8Z"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M9 8V6.5a3 3 0 0 1 6 0V8"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+
 /** An open eye, for the "Only you can see this" line under an ephemeral message. */
 export const EyeIcon = ({ className }: IconProps): ReactElement => (
   <svg className={className} viewBox="0 0 24 24" aria-hidden="true">

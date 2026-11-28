@@ -1,0 +1,7 @@
+/* Discord build 679963: `.launchIcon_*`, 8px after the label. Its 16px size is set in JavaScript; unverified. */
+.launchIcon {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  margin-inline-start: 8px;
+}

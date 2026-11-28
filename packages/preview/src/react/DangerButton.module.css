@@ -1,0 +1,6 @@
+/* Discord build 679963: `.lookFilled_*.colorRed_*`, red with white text. */
+.danger {
+  border-color: var(--control-critical-primary-border-default);
+  background-color: var(--control-critical-primary-background-default);
+  color: var(--white);
+}

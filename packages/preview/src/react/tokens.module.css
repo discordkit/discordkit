@@ -16,6 +16,7 @@
   /* `:root` spacing scale. */
   --space-4: 4px;
   --space-8: 8px;
+  --space-12: 12px;
   --space-16: 16px;
   /* `.density-default` (Discord's default density): `--space-xl` is `--space-24`. */
   --space-xl: 24px;
@@ -64,6 +65,26 @@
   --mention-background: hsl(234.935 85.556% 64.706% / 0.23921568627450981);
   /* white, #ffffff */
   --white: hsl(0 0% 100%);
+  /*
+   * Button fills. Discord defines these per theme, with the same value in all four, so they are set once here. Primary is blurple-50 (#5865f2) with white text; success is `--control-connected-*`, green-new-50 (#008545); danger is `--control-critical-primary-*`, red-new-50 (#d22d39). Each has a white border at 7.8% (opacity-white-8). Secondary is opacity-12 (#97979f at 12.2%), with its text and border set per theme below.
+   */
+  --control-primary-background-default: hsl(234.935 85.556% 64.706%);
+  --control-primary-border-default: hsl(0 0% 100% / 0.0784313725490196);
+  --control-primary-text-default: hsl(0 0% 100%);
+  --control-secondary-background-default: hsl(
+    240 4% 60.784% / 0.12156862745098039
+  );
+  --control-connected-background-default: hsl(151.128 100% 26.078%);
+  --control-connected-border-default: hsl(0 0% 100% / 0.0784313725490196);
+  --control-critical-primary-background-default: hsl(355.636 64.706% 50%);
+  --control-critical-primary-border-default: hsl(
+    0 0% 100% / 0.0784313725490196
+  );
+  /* `:root`: how far a spoilered attachment is blurred. */
+  --custom-message-attachment-spoiler-blur-radius: 44px;
+  /* The "Spoiler" pill over a hidden attachment: `--__spoiler-warning-background-color` is opacity-black-60, and `--__spoiler-warning-text-color` is primary-200, which `.visual-refresh` maps to neutral-8 (#e4e4e6). */
+  --opacity-black-60: hsl(0 0% 0% / 0.6);
+  --primary-200: hsl(240 3.846% 89.804%);
 
   font-family: var(--font-primary);
 }
@@ -133,6 +154,14 @@
   --spine-default: hsl(228 4.505% 78.235%);
   /* neutral-31, #8f9097 */
   --spoiler-hidden-background: hsl(232.5 3.704% 57.647%);
+  /* opacity-24: #97979f at 23.9% */
+  --background-mod-strong: hsl(240 4% 60.784% / 0.23921568627450981);
+  /* neutral-2, #fbfbfb */
+  --background-base-low: hsl(0 0% 98.431%);
+  /* opacity-20: #97979f at 20%. Also `--control-secondary-border-default`. */
+  --border-muted: hsl(240 4% 60.784% / 0.2);
+  /* neutral-76, #28282d */
+  --control-secondary-text-default: hsl(240 5.882% 16.667%);
 }
 
 /* `@media (-webkit-max-device-pixel-ratio: 1) { .theme-light … }`: on a 1x screen, Discord sets light-theme text one step heavier, message markup and the ephemeral notice at medium and user names at semibold. These are ours, not Discord tokens: they carry that rule to the components. */
@@ -140,6 +169,8 @@
   .light {
     --dkp-light-text-weight: var(--font-weight-medium);
     --dkp-light-username-weight: var(--font-weight-semibold);
+    /* `.theme-light .embedAuthorName_*`: an embed's author name drops from semibold to medium. */
+    --dkp-light-embed-author-weight: var(--font-weight-medium);
   }
 }
 
@@ -179,6 +210,14 @@
   --spine-default: hsl(234 5.319% 36.863%);
   /* neutral-36, #7d7e87 */
   --spoiler-hidden-background: hsl(234 4% 50.98%);
+  /* opacity-20: #97979f at 20% */
+  --background-mod-strong: hsl(240 4% 60.784% / 0.2);
+  /* neutral-66, #36373e */
+  --background-base-low: hsl(232.5 6.897% 22.745%);
+  /* opacity-4: #97979f at 3.9%. Also `--control-secondary-border-default`. */
+  --border-muted: hsl(240 4% 60.784% / 0.0392156862745098);
+  /* neutral-1, #ffffff */
+  --control-secondary-text-default: hsl(0 0% 100%);
 }
 
 /* Discord's "Dark" setting: `.theme-darker`. */
@@ -217,6 +256,14 @@
   --spine-default: hsl(234 6.579% 29.804%);
   /* neutral-43, #666770 */
   --spoiler-hidden-background: hsl(234 4.673% 41.961%);
+  /* opacity-20: #97979f at 20% */
+  --background-mod-strong: hsl(240 4% 60.784% / 0.2);
+  /* neutral-82, #202024 */
+  --background-base-low: hsl(240 5.882% 13.333%);
+  /* opacity-4: #97979f at 3.9%. Also `--control-secondary-border-default`. */
+  --border-muted: hsl(240 4% 60.784% / 0.0392156862745098);
+  /* neutral-2, #fbfbfb */
+  --control-secondary-text-default: hsl(0 0% 98.431%);
 }
 
 /* Discord's "Onyx" setting: `.theme-midnight`. */
@@ -255,4 +302,12 @@
   --spine-default: hsl(232.5 6.667% 23.529%);
   /* neutral-47, #595a63 */
   --spoiler-hidden-background: hsl(234 5.319% 36.863%);
+  /* opacity-24: #97979f at 23.9% */
+  --background-mod-strong: hsl(240 4% 60.784% / 0.23921568627450981);
+  /* neutral-100, #000000 */
+  --background-base-low: hsl(0 0% 0%);
+  /* opacity-16: #97979f at 16.1%. Also `--control-secondary-border-default`. */
+  --border-muted: hsl(240 4% 60.784% / 0.1607843137254902);
+  /* neutral-10, #dcdcdf */
+  --control-secondary-text-default: hsl(240 4.478% 86.863%);
 }

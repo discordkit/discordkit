@@ -1,0 +1,11 @@
+/* Discord build 679963: the action row (`.container_*` and `.children_*`, beside the container and section rules). Its buttons sit 8px apart and wrap onto a new line, 8px below, when the row is too narrow for them. */
+.actionRow {
+  display: flex;
+  flex-direction: column;
+}
+
+.children {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+}

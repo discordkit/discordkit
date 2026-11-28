@@ -86,6 +86,7 @@ export const Scene = ({
               message={message}
               sentAt={times[index]}
               groupStart={groupStart}
+              index={index}
             />
           );
         })}

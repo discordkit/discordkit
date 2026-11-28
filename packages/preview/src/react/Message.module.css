@@ -84,11 +84,14 @@
   margin-inline-start: 0.25rem;
 }
 
-/* The content line, which for a Components V2 message holds only the edited mark. It is message markup, so it takes the markup size and line height. */
+/* The content line: a classic message's `content`, drawn as Discord's message markup (`.markup_*`), or for a Components V2 message only the edited mark. */
 .content {
   color: var(--text-default);
   font-size: 1rem;
+  font-weight: var(--dkp-light-text-weight, var(--font-weight-normal));
   line-height: var(--chat-markup-line-height);
+  white-space: break-spaces;
+  overflow-wrap: break-word;
 }
 
 .edited {

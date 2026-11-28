@@ -1,0 +1,212 @@
+/*
+ * Discord build 679963: a rich embed (`.embed_*`, `.embedFull_*`, `.grid_*`, `.embedMargin_*` and the `.embed*_*` rules for each part). From the stylesheet: the 4px leading bar in `--border-normal` unless the embed has a colour, the 1px subtle border, the 4px radius, padding of 2px above, 16px right and below and 12px left, 8px above each part, the author's 24px round icon and 14px semibold name, the 16px semibold title, the thumbnail's column with 16px before it, the image 16px below the text, the field grid's 8px gap and 2px under a field name, the footer's 20px round icon and its bullet 4px either side, emoji at 18px (or 1.375em in a heading), and which text is the strong colour.
+ *
+ * Not in the stylesheet, so set from what Discord's embeds are commonly measured at and unverified: the description, field and author text sizes and every line height (Discord sets these through a text component in JavaScript), the footer's 12px medium text, the thumbnail's 80px and the image's 400px by 300px limits.
+ */
+.embed {
+  /* `.embed_* .emoji` and `.embed_* :is(h1, …) .emoji`. */
+  --custom-emoji-size-emoji: 18px;
+  position: relative;
+  display: grid;
+  box-sizing: border-box;
+  max-width: max-content;
+  border: 1px solid var(--border-subtle);
+  border-inline-start: 4px solid var(--border-normal);
+  border-radius: 4px;
+  background: var(--background-surface-high);
+}
+
+.embed :is(h1, h2, h3) {
+  --custom-emoji-size-emoji: 1.375em;
+}
+
+.gridContainer {
+  max-width: 516px;
+}
+
+.grid {
+  display: grid;
+  grid-template-rows: auto;
+  grid-template-columns: auto;
+  overflow: hidden;
+  padding-block: 0.125rem 1rem;
+  padding-inline: 0.75rem 1rem;
+}
+
+.hasThumbnail {
+  grid-template-columns: minmax(0, 1fr) min-content;
+}
+
+.embedMargin {
+  margin-top: 8px;
+}
+
+.text {
+  min-width: 0;
+  text-align: start;
+  unicode-bidi: plaintext;
+}
+
+.author {
+  display: flex;
+  grid-column: 1 / 1;
+  align-items: center;
+  min-width: 0;
+}
+
+.authorIcon {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  margin-inline-end: 8px;
+  border-radius: 50%;
+  object-fit: contain;
+}
+
+.authorName {
+  flex: 1;
+  min-width: 0;
+  color: var(--text-strong);
+  font-size: 0.875rem;
+  font-weight: var(
+    --dkp-light-embed-author-weight,
+    var(--font-weight-semibold)
+  );
+  line-height: 1.375rem;
+  text-decoration: none;
+}
+
+.title {
+  display: inline-block;
+  grid-column: 1 / 1;
+  min-width: 0;
+  color: var(--text-strong);
+  font-size: 1rem;
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.375rem;
+}
+
+.titleLink {
+  color: var(--text-link);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.description {
+  grid-column: 1 / 1;
+  min-width: 0;
+  color: var(--text-default);
+  font-size: 0.875rem;
+  font-weight: var(--dkp-light-text-weight, var(--font-weight-normal));
+  line-height: 1.125rem;
+  white-space: pre-line;
+}
+
+.fields {
+  display: grid;
+  grid-column: 1 / 1;
+  gap: 8px;
+  min-width: 0;
+  margin-top: 8px;
+}
+
+.field {
+  min-width: 0;
+}
+
+.fieldName {
+  min-width: 0;
+  margin-bottom: 2px;
+  color: var(--text-strong);
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.125rem;
+}
+
+/* `.theme-light .embedFieldValue_*` keeps the normal weight on a 1x screen, where other light-theme text turns medium. */
+.fieldValue {
+  min-width: 0;
+  color: var(--text-default);
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-normal);
+  line-height: 1.125rem;
+  white-space: pre-line;
+}
+
+.media {
+  grid-column: 1 / 1;
+  min-width: 0;
+  margin-top: 16px;
+  border-radius: 4px;
+  contain: paint;
+}
+
+.hasThumbnail .media,
+.hasThumbnail .footer {
+  grid-column: 1 / 3;
+}
+
+.image {
+  display: block;
+  max-width: min(400px, 100%);
+  max-height: 300px;
+  border-radius: 4px;
+}
+
+/* A missing picture has no size of its own; it is drawn as a 16:9 box at the image's full width. */
+.image[data-discordkit-preview-missing] {
+  width: 400px;
+  aspect-ratio: 16 / 9;
+}
+
+.thumbnail {
+  flex-shrink: 0;
+  grid-row: 1 / 8;
+  grid-column: 2 / 2;
+  justify-self: end;
+  margin-top: 8px;
+  margin-inline-start: 16px;
+}
+
+.thumbnailImage {
+  display: block;
+  max-width: 80px;
+  max-height: 80px;
+  border-radius: 4px;
+}
+
+.thumbnailImage[data-discordkit-preview-missing] {
+  width: 80px;
+  height: 80px;
+}
+
+.footer {
+  display: flex;
+  grid-row: auto / auto;
+  grid-column: 1 / 1;
+  align-items: center;
+  min-width: 0;
+}
+
+.footerIcon {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin-inline-end: 8px;
+  border-radius: 50%;
+  object-fit: contain;
+}
+
+.footerText {
+  color: var(--text-default);
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-medium);
+  line-height: 1rem;
+}
+
+.footerSeparator {
+  display: inline-block;
+  margin: 0 4px;
+  color: var(--text-default);
+  font-weight: var(--font-weight-medium);
+}

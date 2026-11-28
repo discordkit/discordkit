@@ -1,0 +1,9 @@
+/* Discord build 679963: `.shopIcon_*`, 4px before the product name. Its 16px size is set in JavaScript; unverified. */
+.shopIcon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  width: 16px;
+  height: 16px;
+  margin-inline-end: 4px;
+}
