@@ -1,6 +1,6 @@
 import { existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { afterAll, beforeAll, describe, expect, it } from "vite-plus/test";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vite-plus/test";
 import { chromium, type Browser } from "playwright";
 import { ComponentType } from "@discordkit/client/components/types/ComponentType";
 import type * as NodeApi from "../index.js";
@@ -38,6 +38,9 @@ const pngSignature = Buffer.from([
 
 // Launching a browser is the slow part of this spec, and on a cold two-core CI runner it has taken longer than Vitest's default 10 second hook limit. The hooks that launch one get this much instead.
 const launchTimeout = 60_000;
+
+// Every test in this file draws through a real browser, and the first to run also pays for the first page and the fonts. On a slow CI runner single tests have run past Vitest's default 5 second limit, a different one each time, so the whole file gets a limit with room in it.
+vi.setConfig({ testTimeout: 60_000 });
 
 describe(`renderScene`, () => {
   let renderScene: typeof NodeApi.renderScene;
