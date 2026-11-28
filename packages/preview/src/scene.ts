@@ -28,6 +28,8 @@ export interface SceneMessage {
   edited?: boolean;
   /** When the message was sent, as an ISO 8601 string. Defaults to the scene's `now`. Drives the header time and whether the message joins the group above it. */
   timestamp?: string;
+  /** The `customId` of a String Select in this message to draw open, with its options listed below it, as the client shows them after a click. Only a string select can be drawn open: the other selects list members, roles or channels the client fetches. */
+  openSelect?: string;
 }
 
 export interface SceneUser {
@@ -62,6 +64,7 @@ export interface SceneEmoji {
 export interface SceneAttachment {
   /** Path to the file on disk, resolved against the working directory. */
   path: string;
+  /** The file's size in bytes, which a File component shows under its name. The renderer does not read it from the file. */
   size?: number;
 }
 

@@ -1,8 +1,14 @@
 import { fileURLToPath } from "node:url";
 import { ButtonStyle } from "@discordkit/client/components/types/ButtonStyle";
 import { ComponentType } from "@discordkit/client/components/types/ComponentType";
+import type { ActionRow } from "@discordkit/client/components/types/ActionRow";
 import type { Button } from "@discordkit/client/components/types/Button";
+import type { File } from "@discordkit/client/components/types/File";
 import type { MediaGalleryItem } from "@discordkit/client/components/types/MediaGalleryItem";
+import type { Section } from "@discordkit/client/components/types/Section";
+import type { Select } from "@discordkit/client/components/types/Select";
+import type { SelectOption } from "@discordkit/client/components/types/SelectOption";
+import type { TextDisplay } from "@discordkit/client/components/types/TextDisplay";
 import { MessageFlag } from "@discordkit/client/messages/types/MessageFlag";
 import type { MessageComponent } from "@discordkit/client/messages/types/MessageComponent";
 import type { Scene, SceneAttachment } from "../scene.js";
@@ -594,3 +600,753 @@ export const embedSheet: Scene = {
     }
   ]
 };
+
+/*
+ * Sections, thumbnails, files, select menus and spoilered containers. Neither bot posts these yet, so the cards below are shaped like ones they plausibly would: a hero card, a study pack, a settings panel and a spoilered answer. Each is followed by a review sheet that puts one component through its cases.
+ *
+ * Two schema defects in @discordkit/client affect these, both fixed in #106: the client's `ActionRow` type holds a select as a bare object where Discord expects an array, and its `File` type requires `name` and `size`, which only Discord's responses carry. The payloads here are written the way Discord expects, so they are cast past the client's types, and intake reports `schema` errors for every select row and every File without `name` and `size` until #106 lands. Tighten the specs that note this once it has.
+ */
+
+const text = (content: string): TextDisplay => ({
+  type: ComponentType.TextDisplay,
+  content
+});
+
+/** A select menu in its action row, in the array Discord expects. Cast past the client's `ActionRow` type, which holds a select as a bare object (#106). */
+const selectRow = (select: Select): ActionRow =>
+  ({
+    type: ComponentType.ActionRow,
+    components: [select]
+  }) as unknown as ActionRow;
+
+/** A File component as a request sends it, naming an uploaded file. Discord fills in `name` and `size` on the message it returns; the client's `File` type requires them (#106), so this is cast. */
+const fileComponent = (name: string, spoiler = false): File =>
+  ({
+    type: ComponentType.File,
+    file: { url: `attachment://${name}` },
+    ...(spoiler ? { spoiler } : {})
+  }) as unknown as File;
+
+/** A section of text beside a thumbnail of one of the test pictures. */
+const thumbnailSection = (
+  content: readonly string[],
+  picture: string,
+  extra: { spoiler?: boolean; description?: string } = {}
+): Section => ({
+  type: ComponentType.Section,
+  components: content.map(text),
+  accessory: {
+    type: ComponentType.Thumbnail,
+    media: { url: `attachment://${picture}` },
+    description: extra.description ?? `Portrait`,
+    ...(extra.spoiler === undefined ? {} : { spoiler: extra.spoiler })
+  }
+});
+
+/** A section of text beside a button. */
+const buttonSection = (
+  content: readonly string[],
+  accessory: Button
+): Section => ({
+  type: ComponentType.Section,
+  components: content.map(text),
+  accessory
+});
+
+const roles = {
+  n5: `1311000000000000201`,
+  n4: `1311000000000000202`,
+  leads: `1311000000000000203`,
+  lurkers: `1311000000000000204`
+};
+
+const channels = {
+  studyHall: `1311000000000000301`,
+  dailyQuiz: `1311000000000000302`,
+  voiceLounge: `1311000000000000303`
+};
+
+/** Custom emoji drawn from the test pictures, so an option's emoji needs no network. */
+const emoji = {
+  sprout: `1311000000000000801`,
+  bamboo: `1311000000000000802`,
+  blossom: `1311000000000000803`,
+  torii: `1311000000000000804`
+};
+
+/** The files a File component names, with their sizes in bytes as Discord would report them. */
+const files: Record<string, SceneAttachment> = {
+  "n5-vocabulary.csv": { ...asset(`n5-vocabulary.csv`), size: 160 },
+  "n5-kanji.txt": { ...asset(`n5-kanji.txt`), size: 1594 },
+  "answer-key.txt": { ...asset(`answer-key.txt`), size: 84 }
+};
+
+/** Everything the new cards resolve: the players plus one with a picture, the server's roles and channels, the option emoji, and the pictures and files. */
+const componentContext: Scene[`context`] = {
+  users: {
+    ...users,
+    [players.rook]: {
+      name: `Rook of Ages`,
+      avatar: `attachment://square-128-c.png`
+    }
+  },
+  roles: {
+    [roles.n5]: { name: `N5 learners`, color: 0x34_98_db },
+    [roles.n4]: { name: `N4 learners`, color: 0x2e_cc_71 },
+    [roles.leads]: { name: `Study leads`, color: 0xe6_7e_22 },
+    [roles.lurkers]: { name: `Lurkers` }
+  },
+  channels: {
+    [channels.studyHall]: { name: `study-hall`, type: 0 },
+    [channels.dailyQuiz]: { name: `daily-quiz`, type: 0 },
+    [channels.voiceLounge]: { name: `voice-lounge`, type: 2 }
+  },
+  emoji: {
+    [emoji.sprout]: { name: `sprout`, url: `attachment://square-128-b.png` },
+    [emoji.bamboo]: { name: `bamboo`, url: `attachment://square-128-c.png` },
+    [emoji.blossom]: { name: `blossom`, url: `attachment://square-128-d.png` },
+    [emoji.torii]: { name: `torii`, url: `attachment://icon-32.png` }
+  },
+  attachments: { ...attachments, ...files },
+  skus: { "1311000000000000900": { name: `Hint pack`, price: `$0.99` } }
+};
+
+/** The JLPT levels as string select options, each with an emoji and a description. */
+const levels: readonly [string, string, string | undefined][] = [
+  [`N5`, `Basic phrases, hiragana and katakana, about 100 kanji`, emoji.sprout],
+  [`N4`, `Everyday conversation at a slow pace, about 300 kanji`, emoji.bamboo],
+  [
+    `N3`,
+    `Everyday topics at near-natural speed, about 650 kanji`,
+    emoji.blossom
+  ],
+  [`N2`, `Newspapers and the news, about 1,000 kanji`, emoji.torii],
+  [`N1`, `Abstract and logical writing, about 2,000 kanji`, undefined]
+];
+
+const levelOptions = (chosen: readonly string[] = []): SelectOption[] =>
+  levels.map(([label, description, id]) => ({
+    label,
+    value: label.toLowerCase(),
+    description,
+    ...(id === undefined ? {} : { emoji: { id, name: `level` } }),
+    ...(chosen.includes(label) ? { default: true } : {})
+  }));
+
+const levelSelect = (
+  chosen: readonly string[] = [],
+  extra: Partial<Select> = {}
+): Select => ({
+  type: ComponentType.StringSelect,
+  customId: `settings:level`,
+  placeholder: `Choose your level`,
+  options: levelOptions(chosen),
+  ...extra
+});
+
+/** Tome's hero card: the hero's portrait beside their name and role, what their ability does, then this week's standouts, each beside a button to read more. */
+export const tomeHeroCard: Scene = {
+  now,
+  timeZone: `America/New_York`,
+  locale: `en-US`,
+  context: componentContext,
+  messages: [
+    {
+      author: tome,
+      payload: {
+        flags: v2,
+        components: [
+          {
+            type: ComponentType.Container,
+            accentColor: indigo,
+            components: [
+              thumbnailSection(
+                [`## Ember Knight`, `-# Vanguard · Fire · Since season 2`],
+                `square-128.png`,
+                {
+                  description: `Ember Knight, in red armour, holding a burning sword`
+                }
+              ),
+              text(
+                `Calls down **Starfall**: a burning star strikes every enemy in a line after a one-second delay. Pairs well with heroes who hold enemies in place.`
+              ),
+              { type: ComponentType.Separator, divider: true, spacing: 1 },
+              buttonSection(
+                [
+                  `**Tidecaller** was the most picked hero this week, in 41% of games.`
+                ],
+                button(ButtonStyle.Secondary, `Compare`)
+              ),
+              buttonSection(
+                [`**Ashen Seer** had the lowest win rate, at 44%.`],
+                button(ButtonStyle.Link, `Patch notes`)
+              )
+            ]
+          }
+        ]
+      }
+    }
+  ]
+};
+
+/** Inbou's weekly study pack: two files to review, and the mock test's answer key as a spoiler. */
+export const inbouStudyPack: Scene = {
+  now,
+  timeZone: `Asia/Tokyo`,
+  locale: `en-US`,
+  context: componentContext,
+  messages: [
+    {
+      author: inbou,
+      payload: {
+        flags: v2,
+        components: [
+          {
+            type: ComponentType.Container,
+            accentColor: moss,
+            components: [
+              text(`## Week 3 study pack`),
+              text(
+                `Everything from this week's sessions, for review before Friday's mock test.`
+              ),
+              fileComponent(`n5-vocabulary.csv`),
+              fileComponent(`n5-kanji.txt`),
+              { type: ComponentType.Separator, divider: true, spacing: 1 },
+              text(
+                `-# The answer key stays hidden until you have tried the test.`
+              ),
+              fileComponent(`answer-key.txt`, true)
+            ]
+          }
+        ]
+      }
+    }
+  ]
+};
+
+/** Inbou's settings panel: a level picker with its current level chosen, a study buddy, the roles to ping, and where quizzes are posted. */
+export const inbouSettings: Scene = {
+  now,
+  timeZone: `Asia/Tokyo`,
+  locale: `en-US`,
+  context: componentContext,
+  messages: [
+    {
+      author: inbou,
+      ephemeral: true,
+      payload: {
+        flags: v2,
+        components: [
+          {
+            type: ComponentType.Container,
+            components: [
+              text(`## Study settings\n-# Only you can change these.`),
+              text(`**Level**`),
+              selectRow(levelSelect([`N4`])),
+              text(`**Study buddy**`),
+              selectRow({
+                type: ComponentType.UserSelect,
+                customId: `settings:buddy`,
+                placeholder: `Pick someone to study with`,
+                defaultValues: [{ id: players.rook, type: `user` }]
+              }),
+              text(`**Ping these roles for new quizzes**`),
+              selectRow({
+                type: ComponentType.RoleSelect,
+                customId: `settings:roles`,
+                maxValues: 3,
+                defaultValues: [
+                  { id: roles.n5, type: `role` },
+                  { id: roles.n4, type: `role` }
+                ]
+              }),
+              text(`**Post quizzes in**`),
+              selectRow({
+                type: ComponentType.ChannelSelect,
+                customId: `settings:channel`,
+                channelTypes: [0],
+                defaultValues: [{ id: channels.dailyQuiz, type: `channel` }]
+              })
+            ]
+          }
+        ]
+      }
+    }
+  ]
+};
+
+/** The same level picker as it looks once clicked, before a level is chosen: the list open under it, each level with its emoji and description. */
+export const inbouLevelPicker: Scene = {
+  now,
+  timeZone: `Asia/Tokyo`,
+  locale: `en-US`,
+  context: componentContext,
+  messages: [
+    {
+      author: inbou,
+      openSelect: `settings:level`,
+      payload: {
+        flags: v2,
+        components: [
+          {
+            type: ComponentType.Container,
+            accentColor: indigo,
+            components: [
+              text(
+                `## Welcome to Inbou\nWhich JLPT level are you studying for?`
+              ),
+              selectRow(levelSelect())
+            ]
+          }
+        ]
+      }
+    }
+  ]
+};
+
+/** Tome's question, then the answer in a spoilered card under it, so the channel can try before it looks. */
+export const tomeSpoilerAnswer: Scene = {
+  now,
+  timeZone: `America/New_York`,
+  locale: `en-US`,
+  context: componentContext,
+  messages: [
+    {
+      author: tome,
+      payload: {
+        flags: v2,
+        components: [
+          {
+            type: ComponentType.Container,
+            accentColor: indigo,
+            components: [
+              text(`**Bonus question** · Who forged the Moonblade?`),
+              text(`-# The answer is below. Try it before you click.`)
+            ]
+          },
+          {
+            type: ComponentType.Container,
+            accentColor: moss,
+            spoiler: true,
+            components: [
+              thumbnailSection(
+                [
+                  `## Grove Warden`,
+                  `Forged it from a fallen star in the age before the tides.`
+                ],
+                `square-128-d.png`,
+                { description: `Grove Warden at an anvil` }
+              )
+            ]
+          }
+        ]
+      }
+    }
+  ]
+};
+
+/** The cards for the components added after the bots' own, each rendered in all four themes by the Node spec. */
+export const componentFixtures = {
+  tomeHeroCard,
+  inbouStudyPack,
+  inbouSettings,
+  inbouLevelPicker,
+  tomeSpoilerAnswer
+} as const;
+
+/** Every way a section lays out: one to three text displays, long text, a thumbnail or a button of each kind, top level and in a container. Rendered at 600px and at a phone's 360px. */
+export const sectionSheet: Scene = {
+  now,
+  context: componentContext,
+  messages: [
+    {
+      author: tome,
+      payload: {
+        flags: v2,
+        components: [
+          thumbnailSection(
+            [
+              `A section at the top level, with one text display and a thumbnail.`
+            ],
+            `square-128.png`
+          ),
+          {
+            type: ComponentType.Container,
+            components: [
+              thumbnailSection(
+                [
+                  `## Two text displays`,
+                  `4px apart, beside an 85px thumbnail.`
+                ],
+                `square-128-b.png`
+              ),
+              thumbnailSection(
+                [
+                  `## Three text displays`,
+                  `The most a section takes.`,
+                  `-# The third one is subtext.`
+                ],
+                `square-128-c.png`
+              ),
+              thumbnailSection(
+                [
+                  `A long paragraph beside a thumbnail wraps in the space the thumbnail leaves, 12px from it, and the thumbnail stays at the top: the section does not centre the text against it. Discord's longest text display is 4,000 characters, so this can go on for a while, and on a phone the column is narrow enough that every line breaks early.`
+                ],
+                `landscape-16x9.png`
+              )
+            ]
+          }
+        ]
+      }
+    },
+    {
+      author: tome,
+      payload: {
+        flags: v2,
+        components: [
+          {
+            type: ComponentType.Container,
+            components: [
+              buttonSection(
+                [`A short button.`],
+                button(ButtonStyle.Primary, `Join`)
+              ),
+              buttonSection(
+                [
+                  `A long label is cut at half the section's width, less the 12px gap.`
+                ],
+                button(
+                  ButtonStyle.Secondary,
+                  `Register for the Saturday mock test session`
+                )
+              ),
+              buttonSection(
+                [`A link button, and two lines of text`, `-# beside it.`],
+                button(ButtonStyle.Link, `Guide`)
+              ),
+              buttonSection(
+                [`A disabled button with an emoji.`],
+                button(ButtonStyle.Danger, `Closed`, {
+                  disabled: true,
+                  emoji: { id: emoji.torii, name: `torii` }
+                })
+              ),
+              buttonSection(
+                [`A premium button.`],
+                button(ButtonStyle.Premium, undefined)
+              )
+            ]
+          }
+        ]
+      }
+    }
+  ]
+};
+
+/** Thumbnails of every shape the test pictures have, cropped to the square; one whose picture is missing, drawn as the empty loading box; and one spoilered. */
+export const thumbnailSheet: Scene = {
+  now,
+  context: componentContext,
+  messages: [
+    {
+      author: tome,
+      payload: {
+        flags: v2,
+        components: [
+          {
+            type: ComponentType.Container,
+            components: [
+              thumbnailSection([`**Square**, drawn whole.`], `square-128.png`),
+              thumbnailSection(
+                [`**Wide** (16:9), cropped to its middle.`],
+                `landscape-16x9.png`
+              ),
+              thumbnailSection(
+                [`**Tall** (9:16), cropped to its middle.`],
+                `portrait-9x16.png`
+              ),
+              thumbnailSection(
+                [`**Tiny** (32px), scaled up to fill the box.`],
+                `icon-32.png`
+              ),
+              thumbnailSection(
+                [
+                  `**Missing**: the scene has no such file, so the empty loading box is drawn.`
+                ],
+                `not-uploaded.png`
+              ),
+              thumbnailSection(
+                [`**Spoiler**: blurred, with the pill over it.`],
+                `square-128-d.png`,
+                { spoiler: true }
+              )
+            ]
+          }
+        ]
+      }
+    }
+  ]
+};
+
+/** File rows: at the top level and in a container, sizes in bytes and kilobytes, one whose size the scene does not know, one whose name is too long for the row, one as Discord returns it with `name` and `size`, and one spoilered. */
+export const fileSheet: Scene = {
+  now,
+  context: {
+    ...componentContext,
+    attachments: {
+      ...componentContext.attachments,
+      "size-unknown.csv": asset(`n5-vocabulary.csv`),
+      "an-extremely-long-file-name-for-the-week-three-vocabulary-review-session.csv":
+        { ...asset(`n5-vocabulary.csv`), size: 160 }
+    }
+  },
+  messages: [
+    {
+      author: inbou,
+      payload: {
+        flags: v2,
+        components: [
+          fileComponent(`n5-vocabulary.csv`),
+          {
+            type: ComponentType.Container,
+            components: [
+              text(`In a container:`),
+              fileComponent(`n5-kanji.txt`),
+              fileComponent(`size-unknown.csv`),
+              fileComponent(
+                `an-extremely-long-file-name-for-the-week-three-vocabulary-review-session.csv`
+              ),
+              {
+                type: ComponentType.File,
+                file: { url: `attachment://n5-kanji.txt` },
+                name: `n5-kanji.txt`,
+                size: 1594
+              },
+              fileComponent(`answer-key.txt`, true)
+            ]
+          }
+        ]
+      }
+    }
+  ]
+};
+
+/** All five select menus, closed: with a placeholder and without, with one default and several, disabled, and with ids the scene does not know. Rendered at 600px and at a phone's 360px. */
+export const selectSheet: Scene = {
+  now,
+  context: componentContext,
+  messages: [
+    {
+      author: inbou,
+      payload: {
+        flags: v2,
+        components: [
+          {
+            type: ComponentType.Container,
+            components: [
+              text(
+                `**String select**: placeholder, one default with its emoji, several as tags, disabled`
+              ),
+              selectRow(levelSelect([], { customId: `s:1` })),
+              selectRow(levelSelect([`N3`], { customId: `s:2` })),
+              selectRow(
+                levelSelect([`N5`, `N4`, `N1`], {
+                  customId: `s:3`,
+                  maxValues: 5
+                })
+              ),
+              selectRow(
+                levelSelect([`N2`], { customId: `s:4`, disabled: true })
+              ),
+              selectRow({
+                type: ComponentType.StringSelect,
+                customId: `s:5`,
+                options: [{ label: `Only option`, value: `only` }]
+              })
+            ]
+          }
+        ]
+      }
+    },
+    {
+      author: inbou,
+      payload: {
+        flags: v2,
+        components: [
+          {
+            type: ComponentType.Container,
+            components: [
+              text(`**User, role, mentionable and channel selects**`),
+              selectRow({
+                type: ComponentType.UserSelect,
+                customId: `u:1`,
+                placeholder: `Pick a study buddy`
+              }),
+              selectRow({
+                type: ComponentType.UserSelect,
+                customId: `u:2`,
+                defaultValues: [{ id: players.rook, type: `user` }]
+              }),
+              selectRow({
+                type: ComponentType.UserSelect,
+                customId: `u:3`,
+                maxValues: 4,
+                defaultValues: [
+                  { id: players.ember, type: `user` },
+                  { id: players.quill, type: `user` },
+                  { id: `1311000000000000199`, type: `user` }
+                ]
+              }),
+              selectRow({
+                type: ComponentType.RoleSelect,
+                customId: `r:1`,
+                maxValues: 4,
+                defaultValues: [
+                  { id: roles.leads, type: `role` },
+                  { id: roles.lurkers, type: `role` }
+                ]
+              }),
+              selectRow({
+                type: ComponentType.MentionableSelect,
+                customId: `m:1`,
+                maxValues: 2,
+                defaultValues: [
+                  { id: players.quill, type: `user` },
+                  { id: roles.n5, type: `role` }
+                ]
+              }),
+              selectRow({
+                type: ComponentType.ChannelSelect,
+                customId: `c:1`,
+                defaultValues: [{ id: channels.studyHall, type: `channel` }],
+                disabled: true
+              })
+            ]
+          }
+        ]
+      }
+    }
+  ]
+};
+
+/** A single-choice string select drawn open, with N4 chosen: the chosen option highlighted and marked. */
+export const openSelectSheet: Scene = {
+  now,
+  context: componentContext,
+  messages: [
+    {
+      author: inbou,
+      openSelect: `settings:level`,
+      payload: {
+        flags: v2,
+        components: [
+          {
+            type: ComponentType.Container,
+            components: [
+              text(`**Open, one choice**`),
+              selectRow(levelSelect([`N4`]))
+            ]
+          }
+        ]
+      }
+    }
+  ]
+};
+
+/** A string select that takes several values, drawn open, with two chosen: a box per option, ticked for the chosen ones, and options without descriptions. */
+export const openMultiSelectSheet: Scene = {
+  now,
+  context: componentContext,
+  messages: [
+    {
+      author: inbou,
+      openSelect: `quiz:topics`,
+      payload: {
+        flags: v2,
+        components: [
+          {
+            type: ComponentType.Container,
+            components: [
+              text(`**Open, several choices**`),
+              selectRow({
+                type: ComponentType.StringSelect,
+                customId: `quiz:topics`,
+                placeholder: `Topics to quiz`,
+                minValues: 1,
+                maxValues: 4,
+                options: [
+                  { label: `Vocabulary`, value: `vocab`, default: true },
+                  {
+                    label: `Kanji`,
+                    value: `kanji`,
+                    emoji: { id: emoji.blossom, name: `blossom` }
+                  },
+                  { label: `Grammar`, value: `grammar`, default: true },
+                  { label: `Listening`, value: `listening` }
+                ]
+              })
+            ]
+          }
+        ]
+      }
+    }
+  ]
+};
+
+/** A spoilered container, thumbnail and file, hidden as a posted message shows them. */
+export const spoilerSheet: Scene = {
+  now,
+  context: componentContext,
+  messages: [
+    {
+      author: tome,
+      payload: {
+        flags: v2,
+        components: [
+          {
+            type: ComponentType.Container,
+            accentColor: vermilion,
+            spoiler: true,
+            components: [
+              text(`## A spoilered container`),
+              text(
+                `Its text, its accent bar and everything in it are blurred together.`
+              ),
+              {
+                type: ComponentType.ActionRow,
+                components: [button(ButtonStyle.Primary, `Even buttons`)]
+              }
+            ]
+          },
+          {
+            type: ComponentType.Container,
+            components: [
+              thumbnailSection([`A spoilered thumbnail.`], `square-128-b.png`, {
+                spoiler: true
+              }),
+              fileComponent(`answer-key.txt`, true)
+            ]
+          }
+        ]
+      }
+    }
+  ]
+};
+
+/** The same, as they look once clicked. */
+export const spoilerSheetRevealed: Scene = {
+  ...spoilerSheet,
+  revealSpoilers: true
+};
+
+/** The review sheets for the components added after the bots' own. */
+export const componentSheets = {
+  sectionSheet,
+  thumbnailSheet,
+  fileSheet,
+  selectSheet,
+  openSelectSheet,
+  openMultiSelectSheet,
+  spoilerSheet,
+  spoilerSheetRevealed
+} as const;

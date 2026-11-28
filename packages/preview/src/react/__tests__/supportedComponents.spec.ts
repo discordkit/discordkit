@@ -33,22 +33,72 @@ const samples: Partial<Record<number, Record<string, unknown>>> = {
     type: ComponentType.ActionRow,
     components: [button]
   },
-  [ComponentType.Button]: button
+  [ComponentType.Button]: button,
+  [ComponentType.Section]: {
+    type: ComponentType.Section,
+    components: [{ type: ComponentType.TextDisplay, content: `x` }],
+    accessory: button
+  },
+  [ComponentType.Thumbnail]: {
+    type: ComponentType.Thumbnail,
+    media: { url: `https://cdn.example/a.png` }
+  },
+  [ComponentType.File]: {
+    type: ComponentType.File,
+    file: { url: `attachment://a.txt` }
+  },
+  [ComponentType.StringSelect]: {
+    type: ComponentType.StringSelect,
+    customId: `s`,
+    options: [{ label: `A`, value: `a` }]
+  },
+  [ComponentType.UserSelect]: { type: ComponentType.UserSelect, customId: `u` },
+  [ComponentType.RoleSelect]: { type: ComponentType.RoleSelect, customId: `r` },
+  [ComponentType.MentionableSelect]: {
+    type: ComponentType.MentionableSelect,
+    customId: `m`
+  },
+  [ComponentType.ChannelSelect]: {
+    type: ComponentType.ChannelSelect,
+    customId: `c`
+  }
 };
 
 const types = Object.values(ComponentType).filter(
   (value): value is ComponentType => typeof value === `number`
 );
 
+const text = { type: ComponentType.TextDisplay, content: `x` };
+
 const placed = (
   parent: ComponentParent,
   component: Record<string, unknown>
-): unknown[] =>
-  parent === `message`
-    ? [component]
-    : parent === `container`
-      ? [{ type: ComponentType.Container, components: [component] }]
-      : [{ type: ComponentType.ActionRow, components: [component] }];
+): unknown[] => {
+  switch (parent) {
+    case `message`:
+      return [component];
+    case `container`:
+      return [{ type: ComponentType.Container, components: [component] }];
+    case `actionRow`:
+      return [{ type: ComponentType.ActionRow, components: [component] }];
+    case `section`:
+      return [
+        {
+          type: ComponentType.Section,
+          components: [component],
+          accessory: button
+        }
+      ];
+    case `accessory`:
+      return [
+        {
+          type: ComponentType.Section,
+          components: [text],
+          accessory: component
+        }
+      ];
+  }
+};
 
 /** Whether the renderer draws the component, or throws its "cannot draw" error. Any other exception fails the test. */
 const draws = (parent: ComponentParent, type: ComponentType): boolean => {
@@ -68,7 +118,13 @@ const draws = (parent: ComponentParent, type: ComponentType): boolean => {
 
 /** Lint reports `component-unsupported` from `supportedComponents`, and the renderer decides with its own switch statements. If the two disagreed, lint would pass a payload the renderer then throws on, or warn about one it draws fine. */
 describe(`supportedComponents agrees with the renderer`, () => {
-  const parents: ComponentParent[] = [`message`, `container`, `actionRow`];
+  const parents: ComponentParent[] = [
+    `message`,
+    `container`,
+    `actionRow`,
+    `section`,
+    `accessory`
+  ];
   const cases = parents.flatMap((parent) =>
     types.map((type): [ComponentParent, ComponentType] => [parent, type])
   );

@@ -14,7 +14,7 @@ import {
 } from "vite-plus/test";
 import { chromium, type Browser } from "playwright";
 import { ComponentType } from "@discordkit/client/components/types/ComponentType";
-import { fixtures } from "../../__tests__/fixtures.js";
+import { componentFixtures, fixtures } from "../../__tests__/fixtures.js";
 import type * as Fonts from "../fonts.js";
 import { loadAssets } from "../assets.js";
 import type * as NodeApi from "../index.js";
@@ -214,27 +214,36 @@ describe(`renderScene`, () => {
   });
 
   it(`refuses a component it cannot draw yet, instead of leaving it out and returning an image unlike the real message`, async () => {
-    const withSection: NodeApi.Scene = {
+    // A label belongs in a modal, and the modal components are not drawn yet.
+    const withLabel = {
       messages: [
         {
           payload: {
-            components: [
-              {
-                type: ComponentType.Section,
-                components: [{ type: ComponentType.TextDisplay, content: `x` }],
-                accessory: {
-                  type: ComponentType.Thumbnail,
-                  media: { url: `https://cdn.example/a.png` }
-                }
-              }
-            ]
+            flags: 32768,
+            components: [{ type: ComponentType.Label, label: `Name` }]
           }
         }
       ]
+    } as unknown as NodeApi.Scene;
+    await expect(renderScene(withLabel, { browser, cacheDir })).rejects.toThrow(
+      /cannot draw a Label component inside a message/
+    );
+  });
+
+  it(`makes room in the image for an open select's list, which hangs below the card as the client's does`, async () => {
+    const { inbouLevelPicker } = componentFixtures;
+    const closed: NodeApi.Scene = {
+      ...inbouLevelPicker,
+      messages: inbouLevelPicker.messages.map((message) => ({
+        ...message,
+        openSelect: undefined
+      }))
     };
-    await expect(
-      renderScene(withSection, { browser, cacheDir })
-    ).rejects.toThrow(/cannot draw a Section component inside a message/);
+    const open = await renderScene(inbouLevelPicker, { browser, cacheDir });
+    const shut = await renderScene(closed, { browser, cacheDir });
+    expect(open.findings).toStrictEqual([]);
+    // Five options of two lines each, 8px below the control: far taller than the closed card alone.
+    expect(open.height - shut.height).toBeGreaterThan(250);
   });
 
   it(`draws each theme differently, so the theme actually reaches the stylesheet`, async () => {
@@ -256,31 +265,34 @@ describe(`renderScene`, () => {
     ).rejects.toThrow(/scene's `now`/);
   });
 
-  describe.each(Object.entries(fixtures))(`the %s fixture`, (_, fixture) => {
-    it(`renders in all four themes, the same bytes every time, with nothing missing`, async () => {
-      await warm(fixture);
-      const themes = [`light`, `ash`, `dark`, `onyx`] as const;
-      const renders = [];
-      for (const theme of themes) {
-        const first = await renderScene(
-          { ...fixture, theme },
-          { browser, cacheDir }
+  describe.each(Object.entries({ ...fixtures, ...componentFixtures }))(
+    `the %s fixture`,
+    (_, fixture) => {
+      it(`renders in all four themes, the same bytes every time, with nothing missing`, async () => {
+        await warm(fixture);
+        const themes = [`light`, `ash`, `dark`, `onyx`] as const;
+        const renders = [];
+        for (const theme of themes) {
+          const first = await renderScene(
+            { ...fixture, theme },
+            { browser, cacheDir }
+          );
+          const again = await renderScene(
+            { ...fixture, theme },
+            { browser, cacheDir, offline: true }
+          );
+          expect(first.findings).toStrictEqual([]);
+          expect(first.width).toBe(600);
+          expect(Buffer.compare(first.png, again.png)).toBe(0);
+          renders.push(first.png);
+        }
+        expect(new Set(renders.map((png) => png.toString(`base64`))).size).toBe(
+          4
         );
-        const again = await renderScene(
-          { ...fixture, theme },
-          { browser, cacheDir, offline: true }
-        );
-        expect(first.findings).toStrictEqual([]);
-        expect(first.width).toBe(600);
-        expect(Buffer.compare(first.png, again.png)).toBe(0);
-        renders.push(first.png);
-      }
-      expect(new Set(renders.map((png) => png.toString(`base64`))).size).toBe(
-        4
-      );
-      // Nine renders in one test; each is a few hundred milliseconds with the browser reused.
-    }, 30_000);
-  });
+        // Nine renders in one test; each is a few hundred milliseconds with the browser reused.
+      }, 30_000);
+    }
+  );
 });
 
 describe(`the Node renderer's font stack`, () => {

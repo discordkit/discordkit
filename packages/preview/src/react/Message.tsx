@@ -1,4 +1,4 @@
-import type { ReactElement } from "react";
+import { useMemo, type ReactElement } from "react";
 import { isComponentsV2 } from "../components.js";
 import { resolveAuthor } from "../format/resolve.js";
 import { formatMessageTime } from "../format/timestamp.js";
@@ -12,7 +12,13 @@ import { EyeIcon } from "./icons.js";
 import { Image } from "./Image.js";
 import { Markup } from "./Markup.js";
 import { MessageComponents } from "./MessageComponents.js";
+import {
+  OpenSelectContext,
+  openSelectAnchor,
+  openStringSelect
+} from "./OpenSelect.js";
 import { useSceneSettings } from "./SceneContext.js";
+import { SelectPopout } from "./SelectPopout.js";
 import styles from "./Message.module.css";
 
 export interface MessageProps {
@@ -112,6 +118,22 @@ export const Message = ({
 }: MessageProps): ReactElement => {
   const { context, clock } = useSceneSettings();
   const author = resolveAuthor(message.author, context);
+  const openSelect = useMemo(() => {
+    if (message.openSelect === undefined) return null;
+    const select = openStringSelect(
+      message.payload.components,
+      message.openSelect,
+      index
+    );
+    if (select instanceof Error) throw select;
+    return {
+      select,
+      context: {
+        customId: message.openSelect,
+        anchorName: openSelectAnchor(index)
+      }
+    };
+  }, [message.openSelect, message.payload.components, index]);
   const className = [
     styles.message,
     groupStart ? styles.groupStart : ``,
@@ -143,12 +165,20 @@ export const Message = ({
           </h3>
         </>
       ) : null}
-      {isComponentsV2(message.payload) ? (
-        <ComponentsBody message={message} index={index} />
-      ) : (
-        <ClassicBody message={message} />
-      )}
+      <OpenSelectContext value={openSelect?.context ?? null}>
+        {isComponentsV2(message.payload) ? (
+          <ComponentsBody message={message} index={index} />
+        ) : (
+          <ClassicBody message={message} />
+        )}
+      </OpenSelectContext>
       {message.ephemeral ? <EphemeralNotice /> : null}
+      {openSelect ? (
+        <SelectPopout
+          select={openSelect.select}
+          anchorName={openSelect.context.anchorName}
+        />
+      ) : null}
     </div>
   );
 };

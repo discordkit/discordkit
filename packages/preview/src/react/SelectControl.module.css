@@ -1,0 +1,175 @@
+/*
+ * Discord build 679963: a select menu in a message, closed. The message's own select rules (`.container_*`, `.select_*`, `.disabled_*`, `.singleValue_*`, `.smallEmoji_*`, `.value_*`, `.optionTag_*`, `.tag_*`, in the stylesheet that also holds the member, role and channel select's `.iconContainer_*`) sit on Discord's general select (`.select_*`, `.placeholder_*`, `.icons_*`, `.wrapper_*` and `.optionPill_*`, with `.lookFilled_*` and `.multiSelectCheckbox_*`).
+ *
+ * From the stylesheet: up to 400px wide, never wider than the row; at least 40px tall (`--control-input-height-md`); padded 8px, 12px at the start; the value and the chevron in a two-column grid 8px apart; text in the default colour at medium weight; the placeholder in the subtle colour; a value cut with an ellipsis; 60% opacity when disabled. A chosen option is drawn at 16px with a 16px emoji 8px before it. Several chosen options are tags 4px apart, each on the low background in the active text colour, 3px corners, padded 6px by 8px, at most 230px wide, holding a 20px line. A member, role or channel select's chosen values are pills: the low background inside a 1px muted border, 4px corners, 14px text on a 20px line, padded 4px by 8px, 6px apart and 4px below the control's edge, with the icon 8px before the name and a 16px cross 8px after it.
+ *
+ * Ours, because the stylesheet does not say: the control's fill, border and corners, which the general select no longer defines and which are taken from Discord's input field (`.wrapper_*` in the form controls: `--input-background-default`, a 1px `--input-border-default` border, `--radius-sm`); the 16px size of the placeholder and tags, inherited from the message in the client; the 20px line; the chevron's 20px box (the size of the newer select field's `.chevronIcon_*`, and the largest that keeps the control at its 40px). All unverified.
+ */
+.container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.select {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+  box-sizing: border-box;
+  width: 400px;
+  max-width: 100%;
+  min-height: var(--control-input-height-md);
+  padding-block: 8px;
+  padding-inline: 12px 8px;
+  border: 1px solid var(--input-border-default);
+  border-radius: var(--radius-sm);
+  background-color: var(--input-background-default);
+  color: var(--text-default);
+  font-size: 16px;
+  font-weight: var(--font-weight-medium);
+  line-height: 20px;
+  cursor: pointer;
+}
+
+/* `.wrapper_* .select_*.multi_*`: a member, role or channel select holding pills hugs them. */
+.withPills {
+  padding-block: 0 6px;
+  padding-inline-start: 6px;
+}
+
+.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.placeholder {
+  overflow: hidden;
+  color: var(--text-subtle);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.singleValue {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  overflow: hidden;
+  font-size: 16px;
+}
+
+.singleValueLabel {
+  display: block;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* The emoji or icon before a chosen value. */
+.smallEmoji {
+  display: flex;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  margin-inline-end: 8px;
+}
+
+/* Doubled, so it outranks the emoji's own size whatever order the stylesheets join in. */
+.smallEmoji.smallEmoji > img {
+  width: 16px;
+  height: 16px;
+}
+
+.value {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+  overflow: hidden;
+}
+
+.optionTag {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  box-sizing: border-box;
+  max-width: 230px;
+  padding: 6px 8px;
+  border-radius: 3px;
+  background: var(--background-base-low);
+  color: var(--interactive-text-active);
+}
+
+.tag {
+  display: flex;
+  align-items: center;
+  height: 20px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tagLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pills {
+  display: block;
+  overflow: hidden;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  max-width: 100%;
+  margin-top: var(--space-4);
+  margin-inline-end: 6px;
+  padding: var(--space-4) var(--space-8);
+  border: 1px solid var(--border-muted);
+  border-radius: var(--radius-xs);
+  background: var(--background-base-low);
+  color: var(--interactive-text-active);
+  font-size: 14px;
+  line-height: 20px;
+  vertical-align: top;
+}
+
+.pillPrefix {
+  display: flex;
+  flex-shrink: 0;
+  margin-inline-end: 8px;
+}
+
+.pillLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.deleteOptionIcon {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  margin-inline-start: 8px;
+  color: var(--interactive-text-default);
+}
+
+.icons {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.dropdownIcon {
+  display: block;
+  width: 20px;
+  height: 20px;
+}
+
+/* An open select turns its chevron over, as the client does. */
+.open .dropdownIcon {
+  transform: rotate(180deg);
+}

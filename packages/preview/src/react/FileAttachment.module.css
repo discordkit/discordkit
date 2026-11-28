@@ -1,0 +1,61 @@
+/*
+ * Discord build 679963: a file attachment (`.fileWrapper_*`, `.file_*`, `.fileInner_*`, `.icon_*`, `.filenameLinkWrapper_*` and `.metadata_*`, in the stylesheet with the upload progress rules). Up to 432px wide; a row padded 16px on the surface colour, with a 1px subtle border, 8px corners and the low shadow; a 30 by 40 icon 8px before the text; the name in the link colour on a 1.25 line, cut with an ellipsis; the size muted.
+ *
+ * Ours, because the client sets them in JavaScript: the name at the message's 16px and normal weight (the upload row's `.filename_*` rule), and the size at 12px on a 16px line. Discord's file icons are not copied: the page drawn here is our own, in the muted text colour. No download button is drawn; the stylesheet shows the attachment's buttons only on hover. All unverified.
+ */
+.fileWrapper {
+  position: relative;
+  width: 432px;
+  max-width: 100%;
+}
+
+.file {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 16px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  background-color: var(--background-surface-high);
+  box-shadow: var(--shadow-low);
+  letter-spacing: 0;
+}
+
+.icon {
+  flex-shrink: 0;
+  width: 30px;
+  height: 40px;
+  margin-inline-end: 8px;
+  color: var(--text-muted);
+}
+
+.fileInner {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.filenameLinkWrapper {
+  overflow: hidden;
+  color: var(--text-link);
+  font-size: 16px;
+  font-weight: var(--dkp-light-text-weight, var(--font-weight-normal));
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fileNameLink {
+  color: inherit;
+  text-decoration: none;
+}
+
+.metadata {
+  margin-inline-end: 8px;
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 16px;
+}

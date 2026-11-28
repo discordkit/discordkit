@@ -1,0 +1,30 @@
+/*
+ * Discord build 679963: `.imgContainer_*`, the thumbnail's box, with `--__thumbnail-size: 85px`, `--radius-sm` corners and `overflow: auto`, and `.img_*`, `object-fit: cover`. The picture filling the box, and drawing it as a block so no line box adds space below it, are ours.
+ *
+ * A picture that has not arrived is drawn in the image loader's colour, as a Media Gallery's is (`.imagePlaceholder_*`, `--background-base-low`); whether a thumbnail uses the same loading box is unverified.
+ */
+.thumbnail {
+  --__thumbnail-size: 85px;
+  --dkp-placeholder-background: var(--background-base-low);
+  flex-shrink: 0;
+  width: var(--__thumbnail-size);
+  max-width: var(--__thumbnail-size);
+  height: var(--__thumbnail-size);
+  max-height: var(--__thumbnail-size);
+  overflow: auto;
+  border-radius: var(--radius-sm);
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* A spoilered thumbnail: the cover takes the thumbnail's size, and its 8px corners are the thumbnail's own. */
+.cover {
+  flex-shrink: 0;
+  width: 85px;
+  height: 85px;
+}
