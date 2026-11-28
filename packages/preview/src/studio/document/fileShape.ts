@@ -39,6 +39,7 @@ export const viewFields = [
 const prefixes: Record<FileShape[`kind`], Path> = {
   scene: [],
   message: [`messages`, 0, `payload`],
+  modal: [`modal`, `payload`],
   components: [`messages`, 0, `payload`, `components`],
   component: [`messages`, 0, `payload`, `components`, 0]
 };

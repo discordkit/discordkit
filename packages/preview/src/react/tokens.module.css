@@ -23,6 +23,7 @@
   /* `:root` radius scale. */
   --radius-xs: 4px;
   --radius-sm: 8px;
+  --radius-md: 12px;
   /* `:root`: the height of a medium form control, which a select menu is at least. */
   --control-input-height-md: 40px;
   /* `:root` font weights. */
@@ -397,4 +398,73 @@
   --border-strong: hsl(240 4% 60.784% / 0.4392156862745098);
   /* 0 1px 4px black at 14% */
   --shadow-low: 0 1px 4px 0 hsl(0 0% 0% / 0.14);
+}
+
+/*
+ * What a modal and its fields read, from the same build. These were resolved from the token file's theme blocks to hex (with `--saturation-factor` at 1) rather than copied in Discord's HSL form; the hex is exact to the byte. Values the same in every theme are on `.root` above or repeated here only where a theme differs.
+ */
+.root {
+  /* `:root`: the modal's backdrop. The modal layer paints `--black` and sets its opacity in JavaScript, so the opacity is not in the stylesheet; `--background-scrim`, which Discord's other full-window overlays paint, is used instead: black at 72.2% in the three dark themes, 52.2% in light (below). Unverified for a modal. */
+  --background-scrim: rgb(0 0 0 / 0.7215686274509804);
+  /* `:root`: `--shadow-high`, the modal's shadow in the three dark themes. */
+  --shadow-high: 0 12px 24px 0 rgb(0 0 0 / 0.24);
+  /* The warning callout's fill: `--background-feedback-mod-warning`, #f8a300 at 7.8%, in every theme. */
+  --background-feedback-mod-warning: rgb(248 163 0 / 0.0784313725490196);
+  /* A field in error: `--input-background-error-default`, #d22d39 at 3.9%, in every theme. */
+  --input-background-error-default: rgb(210 45 57 / 0.0392156862745098);
+  /* A ticked checkbox and a chosen radio: `--checkbox-background-selected-default` and `--radio-background-selected-default`, blurple in every theme, with a white tick or dot (`--checkbox-icon-active`, `--radio-thumb-background-active`). */
+  --checkbox-background-selected-default: #5865f2;
+  --checkbox-icon-active: #ffffff;
+  /* An unticked box's fill, `--checkbox-background-default`: black at 7.8% in the three dark themes. */
+  --checkbox-background-default: rgb(0 0 0 / 0.0784313725490196);
+  /* An unchosen radio's fill, `--radio-background-default`: the same in the three dark themes. */
+  --radio-background-default: rgb(0 0 0 / 0.0784313725490196);
+  /* An unticked box's border, `--checkbox-border-default` (and the radio ring's, `--radio-border-default`): opacity-64 in the three dark themes. */
+  --checkbox-border-default: hsl(240 4% 60.784% / 0.6392156862745098);
+}
+
+.light {
+  --background-scrim: rgb(0 0 0 / 0.5215686274509804);
+  --shadow-high: 0 12px 36px 0 rgb(0 0 0 / 0.12);
+  --text-feedback-critical: #b92733;
+  --input-border-error-default: #b92733;
+  --icon-feedback-warning: #945300;
+  --input-placeholder-text-default: #696a73;
+  --control-icon-only-icon-default: #595a63;
+  --checkbox-background-default: rgb(0 0 0 / 0.0392156862745098);
+  /* opacity-4 */
+  --radio-background-default: hsl(240 4% 60.784% / 0.0392156862745098);
+  --checkbox-border-default: #84858d;
+  /* opacity-28 */
+  --checkbox-border-selected-default: hsl(240 4% 60.784% / 0.2784313725490196);
+}
+
+.ash {
+  --text-feedback-critical: #ffa09b;
+  --input-border-error-default: #ffa09b;
+  --icon-feedback-warning: #fcb529;
+  --input-placeholder-text-default: #a4a5ab;
+  --control-icon-only-icon-default: #c5c6ca;
+  /* opacity-12 */
+  --checkbox-border-selected-default: hsl(240 4% 60.784% / 0.12156862745098039);
+}
+
+.dark {
+  --text-feedback-critical: #f87e7a;
+  --input-border-error-default: #f87e7a;
+  --icon-feedback-warning: #ea9800;
+  --input-placeholder-text-default: #8f9097;
+  --control-icon-only-icon-default: #abacb2;
+  /* opacity-12 */
+  --checkbox-border-selected-default: hsl(240 4% 60.784% / 0.12156862745098039);
+}
+
+.onyx {
+  --text-feedback-critical: #eb5f5e;
+  --input-border-error-default: #eb5f5e;
+  --icon-feedback-warning: #ce8100;
+  --input-placeholder-text-default: #7d7e87;
+  --control-icon-only-icon-default: #96979e;
+  /* opacity-20 */
+  --checkbox-border-selected-default: hsl(240 4% 60.784% / 0.2);
 }

@@ -28,6 +28,14 @@ import {
 } from "./fields.js";
 import { ItemList } from "./ItemList.js";
 import { MessageForm } from "./MessageForm.js";
+import {
+  CheckboxForm,
+  FileUploadForm,
+  GroupForm,
+  LabelForm,
+  ModalForm,
+  TextInputForm
+} from "./ModalForms.js";
 import { parsePathKey, valueAt } from "./paths.js";
 import { pruneRecord } from "./prune.js";
 import { buttonStyleName, type TreeNode } from "./tree.js";
@@ -408,7 +416,17 @@ const SelectForm = ({
         placeholder="1"
       />
     </div>
-    <SwitchControl name={at(name, `disabled`)} label="Disabled" />
+    {/* In a modal a select can be required, and Discord refuses one that is disabled; in a message it is the other way round. */}
+    {name.startsWith(`modal.`) ? (
+      <SwitchControl
+        name={at(name, `required`)}
+        label="Required"
+        defaultValue
+        help="Discord's default is required. Turn it off to let the modal be submitted without a choice."
+      />
+    ) : (
+      <SwitchControl name={at(name, `disabled`)} label="Disabled" />
+    )}
     {type === ComponentType.StringSelect ? (
       <ItemList
         name={at(name, `options`)}
@@ -585,18 +603,22 @@ const componentForm = (node: TreeNode): ReactElement => {
     case ComponentType.MentionableSelect:
     case ComponentType.ChannelSelect:
       return <SelectForm name={name} type={node.type} />;
-    // Only a modal holds these, and the renderer cannot draw them in a message; lint reports them as unsupported.
-    case ComponentType.TextInput:
     case ComponentType.Label:
+      return <LabelForm name={name} />;
+    case ComponentType.TextInput:
+      return <TextInputForm name={name} />;
     case ComponentType.FileUpload:
+      return <FileUploadForm name={name} />;
     case ComponentType.RadioGroup:
     case ComponentType.CheckboxGroup:
+      return <GroupForm name={name} type={node.type} />;
     case ComponentType.Checkbox:
+      return <CheckboxForm name={name} />;
     case undefined:
       return (
         <p className={styles.note}>
-          Studio has no form for this component: it belongs in a modal, not a
-          message. Edit or remove it in the JSON pane.
+          Studio has no form for a component without a type. Edit or remove it
+          in the JSON pane.
         </p>
       );
   }
@@ -623,11 +645,18 @@ export const NodeForm = ({ node }: { node: TreeNode }): ReactElement => {
           <ObjectFindings name={`${node.id}.payload.components`} />
           <ObjectFindings name={`${node.id}.payload.embeds`} />
         </>
+      ) : node.kind === `modal` ? (
+        <>
+          <ObjectFindings name="modal.payload" />
+          <ObjectFindings name="modal.payload.components" />
+        </>
       ) : (
         <ObjectFindings name={`${node.id}.components`} />
       )}
       {node.kind === `message` ? (
         <MessageForm name={node.id} />
+      ) : node.kind === `modal` ? (
+        <ModalForm />
       ) : node.kind === `embed` ? (
         <EmbedForm name={node.id} />
       ) : (

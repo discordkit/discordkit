@@ -15,7 +15,7 @@ import {
 
 export const usage = `Usage: ${program} <command> [options]
 
-Draws Discord messages the way the Discord web client does, so you can see one without posting it. Inputs are JSON: a scene, a message payload, an array of components or one component, in snake_case or camelCase.
+Draws Discord messages the way the Discord web client does, so you can see one without posting it. Inputs are JSON: a scene, a message payload, a modal, an array of components or one component, in snake_case or camelCase.
 
 Commands:
   render [input...]   Draw each input to a PNG (or HTML with --html).

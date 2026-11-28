@@ -13,6 +13,7 @@ import {
   maxActionRowButtons,
   maxClassicActionRows,
   maxEmbeds,
+  maxModalComponents,
   maxSectionComponents
 } from "../../lint/limits.js";
 import type { Scene, SceneMessage } from "../../scene.js";
@@ -27,7 +28,12 @@ import { pathKey, valueAt } from "./paths.js";
 /** What can be added to a list: a component type, or an embed on a classic message. */
 export type ChildType = ComponentType | `embed`;
 
-export type NodeKind = `message` | `component` | `embed` | `accessory`;
+export type NodeKind =
+  | `message`
+  | `modal`
+  | `component`
+  | `embed`
+  | `accessory`;
 
 export interface TreeNode {
   /** The node's path as a field name, also its id in the tree. */
@@ -153,6 +159,19 @@ export const summarise = (component: Record<string, unknown>): string => {
       const text = [emoji, label].filter(Boolean).join(` `);
       return `${shorten(text) || `(no label)`} · ${buttonStyleName(component.style)}`;
     }
+    case ComponentType.Label:
+      return shorten(stringAt(component, `label`)) || `(no label)`;
+    case ComponentType.TextInput:
+      return `${shorten(stringAt(component, `placeholder`) || stringAt(component, `label`) || stringAt(component, `customId`)) || `(no id)`} · ${component.style === 2 ? `paragraph` : `short`}`;
+    case ComponentType.RadioGroup:
+    case ComponentType.CheckboxGroup:
+      return plural(
+        Array.isArray(component.options) ? component.options.length : 0,
+        `option`
+      );
+    case ComponentType.FileUpload:
+    case ComponentType.Checkbox:
+      return shorten(stringAt(component, `customId`)) || `(no id)`;
     default:
       if (isSelectType(component.type)) {
         return (
@@ -196,6 +215,10 @@ const componentNode = (
       componentNode(component.accessory, [...path, `accessory`], `accessory`)
     );
   }
+  // A Label holds one component, at `component` rather than in a list.
+  if (component.type === ComponentType.Label && isRecord(component.component)) {
+    children.push(componentNode(component.component, [...path, `component`]));
+  }
   return {
     id: pathKey(path),
     path,
@@ -214,9 +237,31 @@ const componentNode = (
 export const isV2 = (message: SceneMessage | undefined): boolean =>
   message !== undefined && isComponentsV2(message.payload);
 
-/** The editor's tree: one node per message, with its embeds and components under it. */
-export const buildTree = (scene: Scene): TreeNode[] =>
-  scene.messages.map((message, index) => {
+/** The scene's modal as a tree node, with its components under it, or none. */
+const modalNode = (scene: Scene): TreeNode[] => {
+  const modal = scene.modal;
+  if (modal === undefined || !isRecord(modal.payload)) return [];
+  const path: Path = [`modal`];
+  return [
+    {
+      id: pathKey(path),
+      path,
+      kind: `modal`,
+      name: `Modal`,
+      summary:
+        shorten(
+          typeof modal.payload.title === `string` ? modal.payload.title : ``
+        ) || `(no title)`,
+      children: asList(modal.payload.components).map((component, position) =>
+        componentNode(component, [...path, `payload`, `components`, position])
+      )
+    }
+  ];
+};
+
+/** The editor's tree: one node per message, with its embeds and components under it, then the modal open over them, if any. */
+export const buildTree = (scene: Scene): TreeNode[] => [
+  ...scene.messages.map((message, index): TreeNode => {
     const path: Path = [`messages`, index];
     const payload = isRecord(message.payload) ? message.payload : {};
     const v2 = isV2(message);
@@ -263,7 +308,9 @@ export const buildTree = (scene: Scene): TreeNode[] =>
         .join(` · `),
       children
     };
-  });
+  }),
+  ...modalNode(scene)
+];
 
 /** Every node of the tree, depth first, for lookups. */
 export const flatten = (nodes: readonly TreeNode[]): TreeNode[] =>
@@ -293,10 +340,41 @@ const v2OnlyReason = `Only a Components V2 message can hold this. Switch the mes
 const slotsFor = (
   owner: Record<string, unknown>,
   list: Path,
-  kind: `v2Message` | `classicMessage` | `component`
+  kind: `v2Message` | `classicMessage` | `modal` | `component`,
+  inModal = false
 ): ChildSlot[] => {
   if (kind === `v2Message`) {
     return supportedComponents.message.map((type) => ({ type, list }));
+  }
+  if (kind === `modal`) {
+    const full = asList(owner.components).length >= maxModalComponents;
+    return supportedComponents.modal.map((type) =>
+      full
+        ? {
+            type,
+            list,
+            unavailable: `A modal holds at most ${String(maxModalComponents)} components at its top level.`
+          }
+        : type === ComponentType.ActionRow
+          ? {
+              type,
+              list,
+              unavailable: `An action row in a modal is the older way to hold a text input, which Discord calls deprecated. Add a Label instead.`
+            }
+          : { type, list }
+    );
+  }
+  if (inModal && owner.type === ComponentType.ActionRow) {
+    const full = asList(owner.components).length > 0;
+    return supportedComponents.modalActionRow.map((type) =>
+      full
+        ? {
+            type,
+            list,
+            unavailable: `An action row in a modal holds one text input.`
+          }
+        : { type, list }
+    );
   }
   if (kind === `classicMessage`) {
     const rows = asList(owner.components).length;
@@ -368,6 +446,13 @@ export const childSlots = (
 ): ChildSlot[] => {
   const node = valueAt(scene, path);
   if (!isRecord(node)) return [];
+  if (path.length === 1 && path[0] === `modal`) {
+    const payload = isRecord(node.payload) ? node.payload : {};
+    return slotsFor(payload, [...path, `payload`, `components`], `modal`);
+  }
+  if (path[0] === `modal`) {
+    return slotsFor(node, [...path, `components`], `component`, true);
+  }
   if (path.length === 2 && path[0] === `messages`) {
     const payload = isRecord(node.payload) ? node.payload : {};
     const list: Path = [...path, `payload`, `components`];

@@ -17,11 +17,11 @@ import {
 export { templateLiteral } from "./print.js";
 export type { Finding } from "../findings.js";
 
-/** What the generated declaration holds, and so which `@discordkit/client` type it is annotated with. */
-export type CodegenShape = `components` | `embeds` | `message`;
+/** What the generated declaration holds, and so which `@discordkit/client` type it is annotated with. `modal` is a modal's callback data: what a bot passes as `data` when it answers an interaction with a `MODAL` response. */
+export type CodegenShape = `components` | `embeds` | `message` | `modal`;
 
 export interface CodegenOptions {
-  /** Defaults to `components` for components, and `message` for a message body or a scene. */
+  /** Defaults to `components` for components, `modal` for a modal, and `message` for a message body or a scene (whose modal, when it has one, follows its messages as a `ModalCallbackData`). */
   shape?: CodegenShape;
   /** The declared constant's name. Defaults to the shape's name; with several messages, each gets its number after it (`message1`, `message2`). */
   name?: string;
@@ -38,7 +38,8 @@ export interface CodegenResult {
 const shapeTypes: Record<CodegenShape, string> = {
   components: `MessageComponent`,
   embeds: `Embed[]`,
-  message: `MessagesCallbackData`
+  message: `MessagesCallbackData`,
+  modal: `ModalCallbackData`
 };
 
 const client = `@discordkit/client`;
@@ -137,7 +138,7 @@ const toDoc = (value: unknown, place: Place, enums: Enums): Doc => {
       special = typeof item === `number` ? flagsSource(enums, item) : undefined;
     }
     const childPlace: Place =
-      key === `components` || key === `accessory`
+      key === `components` || key === `accessory` || key === `component`
         ? `component`
         : key === `embeds`
           ? `embed`
@@ -151,11 +152,14 @@ const toDoc = (value: unknown, place: Place, enums: Enums): Doc => {
   return { kind: `object`, entries };
 };
 
-const importLine = (values: string[], type: string): string => {
-  const names = [...values, `type ${type}`].sort((a, b) =>
-    a.replace(/^type /, ``).localeCompare(b.replace(/^type /, ``), `en`)
+const importLine = (values: string[], types: string[]): string => {
+  const names = [...values, ...types.map((type) => `type ${type}`)].sort(
+    (a, b) =>
+      a.replace(/^type /, ``).localeCompare(b.replace(/^type /, ``), `en`)
   );
-  if (values.length === 0) return `import type { ${type} } from "${client}";`;
+  if (values.length === 0) {
+    return `import type { ${types.join(`, `)} } from "${client}";`;
+  }
   const line = `import { ${names.join(`, `)} } from "${client}";`;
   return line.length <= width
     ? line
@@ -175,7 +179,9 @@ const declaration = (name: string, type: string, doc: Doc): string => {
 export const toSource = (
   values: readonly unknown[],
   shape: CodegenShape,
-  name: string = shape
+  name: string = shape,
+  /** A modal to declare after the values, as `modal` typed `ModalCallbackData`: a scene's modal beside its messages. */
+  modal?: unknown
 ): string => {
   const enums: Enums = { used: new Set() };
   const place: Place =
@@ -183,7 +189,8 @@ export const toSource = (
       ? `component`
       : shape === `embeds`
         ? `embed`
-        : `message`;
+        : // A modal's own keys are its `customId`, `title` and `components`, like a message body's: only `components` holds components.
+          `message`;
   const declarations = values.map((value, index) =>
     declaration(
       values.length === 1 ? name : `${name}${String(index + 1)}`,
@@ -191,8 +198,14 @@ export const toSource = (
       toDoc(value, place, enums)
     )
   );
-  const type = shapeTypes[shape].replace(`[]`, ``);
-  return `${importLine([...enums.used], type)}\n\n${declarations.join(`\n\n`)}\n`;
+  const types = [shapeTypes[shape].replace(`[]`, ``)];
+  if (modal !== undefined) {
+    declarations.push(
+      declaration(`modal`, shapeTypes.modal, toDoc(modal, `message`, enums))
+    );
+    types.push(shapeTypes.modal);
+  }
+  return `${importLine([...enums.used], types)}\n\n${declarations.join(`\n\n`)}\n`;
 };
 
 /**
@@ -213,7 +226,20 @@ export const codegen = (
     options.shape ??
     (read.kind === `components` || read.kind === `component`
       ? `components`
-      : `message`);
+      : read.kind === `modal`
+        ? `modal`
+        : `message`);
+  const modal =
+    isObject(read.scene.modal) && isObject(read.scene.modal.payload)
+      ? read.scene.modal.payload
+      : undefined;
+  if (shape === `modal`) {
+    return {
+      kind: read.kind,
+      source: toSource(modal === undefined ? [] : [modal], shape, options.name),
+      findings: read.findings
+    };
+  }
   const payloads = read.scene.messages.map((message) =>
     isObject(message) && isObject(message.payload) ? message.payload : {}
   );
@@ -226,7 +252,12 @@ export const codegen = (
   );
   return {
     kind: read.kind,
-    source: toSource(values, shape, options.name),
+    source: toSource(
+      values,
+      shape,
+      options.name,
+      shape === `message` ? modal : undefined
+    ),
     findings: read.findings
   };
 };

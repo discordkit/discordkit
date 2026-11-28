@@ -13,6 +13,7 @@ import type { Container } from "@discordkit/client/components/types/Container";
 import type { Section } from "@discordkit/client/components/types/Section";
 import type { Select } from "@discordkit/client/components/types/Select";
 import type { TextInput } from "@discordkit/client/components/types/TextInput";
+import { TextInputStyle } from "@discordkit/client/components/types/TextInputStyle";
 import type { MessageComponent } from "@discordkit/client/messages/types/MessageComponent";
 import { isComponentsV2 } from "./components.js";
 import type { Platform } from "./devices.js";
@@ -20,7 +21,13 @@ import { groupStarts, sentTimes } from "./format/groups.js";
 import { resolveClock } from "./format/timestamp.js";
 import type { MarkdownNode } from "./markdown/ast.js";
 import { parseMarkdown } from "./markdown/parse.js";
-import type { Scene, SceneMessage } from "./scene.js";
+import {
+  fieldCount,
+  fieldProblem,
+  fieldValue,
+  type FieldLike
+} from "./modal.js";
+import type { Scene, SceneMessage, SceneModal } from "./scene.js";
 import type { ResolvedViewport } from "./viewport.js";
 
 export interface PartInfo {
@@ -98,6 +105,16 @@ export const parts = {
   select: { name: `select menu`, ios: null },
   file: { name: `file`, ios: null },
   spoiler: { name: `spoiler`, ios: null },
+  modal: { name: `modal`, ios: null },
+  modalLabel: { name: `modal field's label and description`, ios: null },
+  shortTextInput: { name: `single-line text input`, ios: null },
+  paragraphTextInput: { name: `paragraph text input`, ios: null },
+  modalSelect: { name: `select menu in a modal`, ios: null },
+  fileUpload: { name: `file upload`, ios: null },
+  radioGroup: { name: `radio group`, ios: null },
+  checkboxGroup: { name: `checkbox group`, ios: null },
+  checkbox: { name: `checkbox`, ios: null },
+  modalError: { name: `modal field's error after Submit`, ios: null },
   lightTheme: { name: `light theme`, ios: null },
   ashTheme: { name: `ash theme`, ios: null },
   onyxTheme: { name: `onyx theme`, ios: null }
@@ -112,6 +129,14 @@ export interface SceneParts {
   /** Whether it draws a Unicode emoji, which the iOS app draws as Apple's and this package as Twemoji. */
   unicodeEmoji: boolean;
 }
+
+/** The part for each field a Label can wrap but a text input (by its style) and a select (any of the five). */
+const fieldParts: Partial<Record<ComponentType, PartId>> = {
+  [ComponentType.FileUpload]: `fileUpload`,
+  [ComponentType.RadioGroup]: `radioGroup`,
+  [ComponentType.CheckboxGroup]: `checkboxGroup`,
+  [ComponentType.Checkbox]: `checkbox`
+};
 
 const buttonParts: Record<ButtonStyle, PartId> = {
   [ButtonStyle.Primary]: `primaryButton`,
@@ -314,6 +339,44 @@ export const sceneParts = (scene: Scene): SceneParts => {
     for (const top of components) component(top);
   };
 
+  /** A modal, as `Modal` draws it: the dialog, each field by its type, and the errors `submitted` shows, by the rule the fields use. */
+  const modal = (target: SceneModal): void => {
+    add(`modal`);
+    const field = (input: FieldLike & { style?: number }): void => {
+      add(
+        input.type === ComponentType.TextInput
+          ? input.style === TextInputStyle.Paragraph
+            ? `paragraphTextInput`
+            : `shortTextInput`
+          : (fieldParts[input.type] ?? `modalSelect`)
+      );
+      if (
+        target.submitted === true &&
+        fieldProblem(
+          input,
+          fieldCount(input, fieldValue(target.values, input))
+        ) !== null
+      ) {
+        add(`modalError`);
+      }
+    };
+    for (const top of target.payload.components) {
+      if (top.type === ComponentType.TextDisplay) {
+        text(top.content);
+      } else if (top.type === ComponentType.Label) {
+        add(`modalLabel`);
+        field(top.component);
+      } else if (top.type === ComponentType.ActionRow) {
+        add(`modalLabel`);
+        // As `LegacyTextInputRow` reads it: an array, or a bare text input (the client's schema).
+        const children: ReadonlyArray<Button | Select | TextInput> =
+          Array.isArray(top.components) ? top.components : [top.components];
+        for (const child of children) field(child);
+      }
+      // Whatever else the renderer refuses is reported by lint; it draws nothing here.
+    }
+  };
+
   const clock = resolveClock(scene);
   const starts = groupStarts(
     scene.messages,
@@ -326,6 +389,7 @@ export const sceneParts = (scene: Scene): SceneParts => {
     if (message.openSelect !== undefined) add(`select`);
     body(message);
   });
+  if (scene.modal !== undefined) modal(scene.modal);
   if (scene.theme === `light`) add(`lightTheme`);
   if (scene.theme === `ash`) add(`ashTheme`);
   if (scene.theme === `onyx`) add(`onyxTheme`);

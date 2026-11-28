@@ -1,5 +1,6 @@
 import * as v from "valibot";
 import { isObject } from "@discordkit/core/utils/isObject";
+import { modalCallbackDataSchema } from "@discordkit/client/interactions/types/InteractionCallbackData";
 import { createMessageSchema } from "@discordkit/client/messages/createMessage";
 import { componentsV2Flag, isComponentsV2 } from "../components.js";
 import type { Finding, PathSegment } from "../findings.js";
@@ -8,10 +9,11 @@ import type { Scene } from "../scene.js";
 import { issueFindings, type Translate } from "./issues.js";
 import { camelise, toInputPath, type Origins } from "./normalise.js";
 
-/** What the input turned out to be. `unknown` means none of the others, and comes with a finding saying so. */
+/** What the input turned out to be. `modal` is a modal's callback data (`custom_id`, `title`, `components`). `unknown` means none of the others, and comes with a finding saying so. */
 export type InputKind =
   | `scene`
   | `message`
+  | `modal`
   | `components`
   | `component`
   | `unknown`;
@@ -33,6 +35,9 @@ export interface Intake extends ReadSceneResult {
  * The body @discordkit/client validates for `createMessage`: `content`, `embeds`, `components`, `flags` and the rest. Validating against it means "valid here" is "valid to send".
  */
 const messageBodySchema = createMessageSchema.entries.body;
+
+/** The body @discordkit/client validates for a modal: the `data` of an interaction response of type `MODAL`. */
+const modalBodySchema = modalCallbackDataSchema;
 
 /** Fields only a message body has, for telling a bare payload from a scene or a component. Checked before key conversion, so in both spellings. */
 const payloadKeys = [
@@ -61,12 +66,13 @@ const dataKeyedContext = new Set([
   `skus`
 ]);
 
-/** Whether the object at this path in a scene is keyed by data (ids, file names) rather than field names. Studio reads it too, to put keys back in a file's own spelling without touching these. */
+/** Whether the object at this path in a scene is keyed by data (ids, file names, a modal's field ids) rather than field names. Studio reads it too, to put keys back in a file's own spelling without touching these. */
 export const isDataKeyed = (path: readonly PathSegment[]): boolean =>
   path.length === 2 &&
-  path[0] === `context` &&
-  typeof path[1] === `string` &&
-  dataKeyedContext.has(path[1]);
+  ((path[0] === `context` &&
+    typeof path[1] === `string` &&
+    dataKeyedContext.has(path[1])) ||
+    (path[0] === `modal` && path[1] === `values`));
 
 const errorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : String(error);
@@ -89,26 +95,37 @@ const optionalBoolean = v.exactOptional(v.boolean());
 
 /** The scene around the payloads: what the renderer needs that a payload does not carry. Each payload is validated separately, against the client's schema. */
 const sceneSchema = v.object({
-  messages: v.pipe(
-    v.array(
-      v.object({
-        payload: v.looseObject({}),
-        author: optionalString,
-        ephemeral: optionalBoolean,
-        edited: optionalBoolean,
-        timestamp: v.exactOptional(
-          v.pipe(
-            v.string(),
-            v.check(
-              (value) => !Number.isNaN(Date.parse(value)),
-              `It is when the message was sent, which the header shows. Write it as an ISO 8601 date-time like "2026-11-25T16:05:00Z", or leave it out to use the scene's \`now\`.`
-            )
+  // At least one, unless the scene has a modal: checked in `intake`, which can see both.
+  messages: v.array(
+    v.object({
+      payload: v.looseObject({}),
+      author: optionalString,
+      ephemeral: optionalBoolean,
+      edited: optionalBoolean,
+      timestamp: v.exactOptional(
+        v.pipe(
+          v.string(),
+          v.check(
+            (value) => !Number.isNaN(Date.parse(value)),
+            `It is when the message was sent, which the header shows. Write it as an ISO 8601 date-time like "2026-11-25T16:05:00Z", or leave it out to use the scene's \`now\`.`
           )
-        ),
-        openSelect: optionalString
-      })
-    ),
-    v.minLength(1, `A scene needs at least one message to draw. Add one.`)
+        )
+      ),
+      openSelect: optionalString
+    })
+  ),
+  modal: v.exactOptional(
+    v.object({
+      payload: v.looseObject({}),
+      author: optionalString,
+      values: v.exactOptional(
+        v.record(
+          v.string(),
+          v.union([v.string(), v.array(v.string()), v.boolean()])
+        )
+      ),
+      submitted: optionalBoolean
+    })
   ),
   context: v.exactOptional(
     v.object({
@@ -187,8 +204,24 @@ const unrecognised = (detail: string): Finding => ({
   code: `input-unrecognised`,
   severity: `error`,
   path: [],
-  message: `The input is ${detail}, which is not a scene, a message payload or components. Pass a scene (an object with \`messages\`), a message body (an object with \`content\`, \`embeds\`, \`components\` or \`flags\`), an array of components, or one component (an object with a numeric \`type\`), in snake_case or camelCase.`
+  message: `The input is ${detail}, which is not a scene, a message payload, a modal or components. Pass a scene (an object with \`messages\`), a message body (an object with \`content\`, \`embeds\`, \`components\` or \`flags\`), a modal (an object with \`title\`, \`custom_id\` and \`components\`), an array of components, or one component (an object with a numeric \`type\`), in snake_case or camelCase.`
 });
+
+/** `MODAL` in Discord's interaction callback types: a whole interaction response that opens a modal is `{ "type": 9, "data": … }`. */
+const modalCallbackType = 9;
+
+const modalResponse: Finding = {
+  code: `input-unrecognised`,
+  severity: `error`,
+  path: [],
+  message: `The input looks like a whole interaction response that opens a modal (\`type\` 9 with \`data\`). The preview reads a modal as the \`data\` alone, which is what @discordkit/client's \`createInteractionResponse\` takes as \`data\`, and would otherwise read \`type\` 9 as a Section. Pass the \`data\` object.`
+};
+
+/** Whether a value is a modal's callback data: a title and an id beside the components, in either spelling, and no `type`. */
+const isModal = (value: Record<string, unknown>): boolean =>
+  typeof value.title === `string` &&
+  (`custom_id` in value || `customId` in value) &&
+  !(`type` in value);
 
 const parseJson = (input: string): { value?: unknown; finding?: Finding } => {
   try {
@@ -209,6 +242,7 @@ const classify = (value: unknown): InputKind => {
   if (Array.isArray(value)) return `components`;
   if (!isObject(value)) return `unknown`;
   if (`messages` in value) return `scene`;
+  if (isModal(value)) return `modal`;
   // A component can have `components` too, but a message body never has a `type`.
   if (typeof value.type === `number`) return `component`;
   if (payloadKeys.some((key) => key in value)) return `message`;
@@ -248,6 +282,8 @@ const wrap = (kind: InputKind, value: unknown): unknown => {
       };
     case `component`:
       return { messages: [{ payload: componentsPayload([value]) }] };
+    case `modal`:
+      return { messages: [], modal: { payload: value } };
     case `scene`:
     case `unknown`:
       return value;
@@ -259,11 +295,11 @@ const isSceneShaped = (value: unknown): value is Scene =>
   isObject(value) && Array.isArray(value.messages);
 
 /**
- * Reads whatever an agent hands over as a scene: a full scene, one message body, an array of components or one component, as an object or a JSON string, in Discord's snake_case or discordkit's camelCase or a mix. Keys are normalised to camelCase except where they are data (the ids and file names keying a scene's context).
+ * Reads whatever an agent hands over as a scene: a full scene, one message body, one modal (the `data` of a `MODAL` interaction response), an array of components or one component, as an object or a JSON string, in Discord's snake_case or discordkit's camelCase or a mix. Keys are normalised to camelCase except where they are data (the ids and file names keying a scene's context, and the field ids keying a modal's `values`).
  *
- * Every payload is validated with @discordkit/client's own schema for a message body, so a payload with no findings is one the client would send. Never throws: anything wrong with the input is a finding, with a path into the input as the caller wrote it.
+ * Every message payload is validated with @discordkit/client's own schema for a message body, and a modal with its schema for a modal's callback data, so a payload with no findings is one the client would send. Never throws: anything wrong with the input is a finding, with a path into the input as the caller wrote it.
  *
- * Bare components are wrapped in a message, with the `IS_COMPONENTS_V2` flag added when they hold a layout component.
+ * Bare components are wrapped in a message, with the `IS_COMPONENTS_V2` flag added when they hold a layout component. A bare modal becomes a scene with no messages and that modal.
  *
  * @example
  * const { kind, scene, findings } = readScene(`{"components":[{"type":17,"accent_color":3099502,"components":[]}],"flags":32768}`);
@@ -283,6 +319,18 @@ export const intake = (input: unknown): Intake => {
     raw = parsed.value;
   }
   const kind = classify(raw);
+  if (
+    kind === `component` &&
+    isObject(raw) &&
+    raw.type === modalCallbackType &&
+    isObject(raw.data)
+  ) {
+    return {
+      kind: `unknown`,
+      findings: [modalResponse],
+      toInputPath: identity
+    };
+  }
   if (kind === `unknown`) {
     return {
       kind,
@@ -315,6 +363,29 @@ export const intake = (input: unknown): Intake => {
         );
       }
     });
+    const modal = isObject(scene.modal) ? scene.modal : undefined;
+    if (messages.length === 0 && modal === undefined) {
+      findings.push({
+        code: `scene`,
+        severity: `error`,
+        path: toInput([`messages`]),
+        message: `\`messages\` is empty and the scene has no \`modal\`, so there is nothing to draw. Add a message, or a modal to draw over an empty channel.`
+      });
+    }
+    if (modal !== undefined && isObject(modal.payload)) {
+      const result = v.safeParse(modalBodySchema, modal.payload);
+      if (!result.success) {
+        findings.push(
+          ...issueFindings(
+            result.issues,
+            [`modal`, `payload`],
+            toInput,
+            `schema`,
+            `modal`
+          )
+        );
+      }
+    }
   }
   return {
     kind,

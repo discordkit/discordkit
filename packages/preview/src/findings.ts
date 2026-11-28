@@ -50,6 +50,30 @@ export type LintCode =
   | `open-select-missing`
   | `attachment-missing`
   | `component-unsupported`
+  | `component-modal-only`
+  | `component-message-only`
+  | `modal-component-position`
+  | `modal-component-count`
+  | `modal-title-length`
+  | `modal-action-row`
+  | `modal-disabled`
+  | `modal-value-invalid`
+  | `label-length`
+  | `label-description-length`
+  | `text-input-length-range`
+  | `text-input-value-length`
+  | `text-input-value-range`
+  | `text-input-placeholder-length`
+  | `text-input-label`
+  | `text-input-legacy-row`
+  | `select-required-in-message`
+  | `min-values-required`
+  | `group-option-count`
+  | `group-option-length`
+  | `radio-default-count`
+  | `values-range`
+  | `file-types`
+  | `checkbox-required`
   | `subtext-missing-space`
   | `heading-missing-space`
   | `heading-not-at-line-start`
@@ -98,9 +122,17 @@ export const formatPath = (path: readonly PathSegment[]): string =>
     )
     .join(``);
 
-/** Lint's codes for a scene the renderer refuses to draw: it throws for exactly these, a component outside `supportedComponents` where it sits and an `openSelect` that names no String Select, reading the same lists lint does. Studio checks for them before drawing, so it never renders a scene that would throw. */
-export const undrawableCodes: ReadonlySet<FindingCode> = new Set<FindingCode>([
+/** Lint's codes for a component outside `supportedComponents` where it sits: a gap in the preview, or a modal's component in a message, a message's component in a modal, or a modal's component in the wrong place in it. The renderer throws for exactly these, reading the same list. */
+export const placementCodes: ReadonlySet<FindingCode> = new Set<FindingCode>([
   `component-unsupported`,
+  `component-modal-only`,
+  `component-message-only`,
+  `modal-component-position`
+]);
+
+/** Lint's codes for a scene the renderer refuses to draw: it throws for exactly these, a component outside `supportedComponents` where it sits (`placementCodes`) and an `openSelect` that names no String Select, reading the same lists lint does. Studio checks for them before drawing, so it never renders a scene that would throw. */
+export const undrawableCodes: ReadonlySet<FindingCode> = new Set<FindingCode>([
+  ...placementCodes,
   `open-select-missing`
 ]);
 

@@ -1,0 +1,62 @@
+/*
+ * Discord build 679963: the design-system radio group (`.group_*`: a column 16px apart, padded 8px above and 4px below; `.radioGroupOption_*`: a 20px radio, the text 12px after it; `.description_*`: 4px under the label). The radio is an SVG whose ring is stroked 2px in `--radio-border-default` over `--radio-background-default`, both filled blurple when chosen (`--radio-background-selected-default`) with a white dot (`--radio-thumb-background-active`). The ring and fill tokens have the checkbox's values in every theme but light, where the fill is opacity-4; the dot's 8px is from Discord's screenshot, since the SVG's geometry is set in JavaScript.
+ *
+ * The text sizes are measured from Discord's screenshot of a radio group in its component reference: the label at 16px medium on a 20px line, the description at 14px on an 18px line in the subtle colour.
+ */
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 8px 0 4px;
+}
+
+.option {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.ring {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--checkbox-border-default);
+  border-radius: 50%;
+  background: var(--radio-background-default);
+}
+
+.chosen {
+  border-color: var(--checkbox-background-selected-default);
+  background: var(--checkbox-background-selected-default);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--checkbox-icon-active);
+}
+
+.text {
+  min-width: 0;
+}
+
+.label {
+  overflow-wrap: anywhere;
+  color: var(--text-default);
+  font-size: 16px;
+  font-weight: var(--font-weight-medium);
+  line-height: 20px;
+}
+
+.description {
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+  color: var(--text-subtle);
+  font-size: 14px;
+  line-height: 18px;
+}

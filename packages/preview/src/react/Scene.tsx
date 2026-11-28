@@ -9,6 +9,7 @@ import {
 } from "../scene.js";
 import { LayoutContext } from "./Layout.js";
 import { Message } from "./Message.js";
+import { Modal } from "./Modal.js";
 import {
   browserAssetUrl,
   SceneSettingsContext,
@@ -30,9 +31,10 @@ export interface SceneProps extends SceneData {
   layout?: LayoutId;
 }
 
-/** A chat column holding the scene's messages, top to bottom, in the scene's theme. The tokens every component reads are set here, so components must render inside a Scene. */
+/** A chat column holding the scene's messages, top to bottom, in the scene's theme, with the scene's modal open over them when it has one. The tokens every component reads are set here, so components must render inside a Scene. */
 export const Scene = ({
   messages,
+  modal,
   context,
   now,
   timeZone,
@@ -53,6 +55,16 @@ export const Scene = ({
   );
   const times = sentTimes(messages, clock.now);
   const starts = groupStarts(messages, times);
+  const list = messages.map((message, index) => (
+    <Message
+      // oxlint-disable-next-line react/no-array-index-key -- scene order is the identity; messages have no id of their own.
+      key={index}
+      message={message}
+      sentAt={times[index]}
+      groupStart={starts[index]}
+      index={index}
+    />
+  ));
   return (
     <SceneSettingsContext value={settings}>
       <LayoutContext value={layout}>
@@ -60,19 +72,17 @@ export const Scene = ({
           data-discordkit-preview-scene=""
           lang={clock.locale}
           data-discordkit-preview-layout={layout}
-          className={`${tokens.root} ${tokens[theme]} ${styles.scene}`}
+          className={`${tokens.root} ${tokens[theme]} ${styles.scene}${modal === undefined ? `` : ` ${styles.withModal}`}`}
           style={{ width }}
         >
-          {messages.map((message, index) => (
-            <Message
-              // oxlint-disable-next-line react/no-array-index-key -- scene order is the identity; messages have no id of their own.
-              key={index}
-              message={message}
-              sentAt={times[index]}
-              groupStart={starts[index]}
-              index={index}
-            />
-          ))}
+          {modal === undefined ? (
+            list
+          ) : (
+            <>
+              <div className={styles.messages}>{list}</div>
+              <Modal modal={modal} />
+            </>
+          )}
         </div>
       </LayoutContext>
     </SceneSettingsContext>

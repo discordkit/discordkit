@@ -1,0 +1,6 @@
+/* A modal's fields, stacked. The 24px between them is measured from Discord's screenshots of the dialog in its component reference (the select's bottom to the next label's top), since the stylesheet leaves it to JavaScript. */
+.components {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}

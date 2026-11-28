@@ -1,0 +1,189 @@
+/*
+ * Discord build 679963: the dialog a bot's `MODAL` response opens, which the build draws with its newer design-system modal (`.container_*`, `.size-md_*`, `.padding-size-sm_*`, `.section_*`, `.headerLayout_*`, `.actionBar_*`, in the stylesheet other modules call the "Mana" modal), in its modal layer (`.layer_*`, `.backdrop_*`). Its warning callout is `.root_*.warning_*`; its buttons are the design-system button at its medium size (`.button_*`, `.md_*`, `.fullWidth_*`, `.primary_*`, `.secondary_*`).
+ *
+ * From the stylesheet: up to 480px wide; the surface-high fill, a 1px subtle border, 12px corners and the high shadow; 24px either side; the app's icon a 24px circle 12px before the title; the callout padded 8px with 4px corners, a 1px border and the fill in the warning colours, its icon 20px and 10px before the text; two buttons sharing the width 8px apart, 40px tall with 8px corners and a 1px border.
+ *
+ * From Discord's own screenshots of this dialog in its component reference (the dark theme, at 2x and 1x), because the stylesheet leaves them to JavaScript: the title at 24px semibold on a 32px line, 24px below the top; 24px from the title to the callout and 16px from the callout to the first field; the callout's text at 14px on 18px lines with the app's name bold; the buttons' labels at 16px semibold; 24px above the buttons and below them. The close button's box is ours: the 40px of an icon-only button at the medium size, 8px from the top and the end, holding a 24px cross.
+ *
+ * The backdrop's darkness is set in JavaScript; `--background-scrim` stands in for it (see `tokens.module.css`). Discord centres the dialog in the whole window; here it is centred in the chat column the scene draws, over the messages, which are kept at the bottom as at the end of a channel. Unverified: no capture shows a modal over a channel.
+ */
+/* Not positioned, so the backdrop covers the whole scene (which is), padding included, and not only the layer's cell. */
+.layer {
+  display: flex;
+  grid-area: 1 / 1;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 24px 16px;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background-color: var(--background-scrim);
+}
+
+/* A `<dialog open>`, so the browser's own dialog styles are undone here: its absolute position, margins, padding and fit-content height. */
+.modal {
+  position: relative;
+  inset: auto;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 480px;
+  height: auto;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--background-surface-high);
+  box-shadow: var(--shadow-high);
+  color: var(--text-default);
+}
+
+/* The icon is top-aligned (`.headerLeading_*`: `align-items: flex-start`), centred on the title's first line, so a title that wraps keeps it beside its start. */
+.header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 24px 24px 8px;
+}
+
+.appIcon {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  margin-top: 4px;
+  border-radius: 50%;
+  object-fit: cover;
+  font-size: 12px;
+}
+
+.title {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  padding-inline-end: 24px;
+  overflow-wrap: anywhere;
+  color: var(--text-strong);
+  font-size: 24px;
+  font-weight: var(--font-weight-semibold);
+  line-height: 32px;
+}
+
+.close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  color: var(--control-icon-only-icon-default);
+}
+
+.closeIcon {
+  width: 24px;
+  height: 24px;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 24px 8px;
+}
+
+.notice {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 8px;
+  border: 1px solid var(--icon-feedback-warning);
+  border-radius: var(--radius-xs);
+  background-color: var(--background-feedback-mod-warning);
+}
+
+.noticeIcon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin-inline-end: 10px;
+  color: var(--icon-feedback-warning);
+}
+
+.noticeText {
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  line-height: 18px;
+}
+
+.appName {
+  font-weight: var(--font-weight-bold);
+}
+
+.footer {
+  display: flex;
+  gap: 8px;
+  padding: 16px 24px 24px;
+}
+
+.button {
+  flex: 1;
+  box-sizing: border-box;
+  min-width: 0;
+  height: 40px;
+  margin: 0;
+  padding: 7px 15px;
+  overflow: hidden;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-primary);
+  font-size: 16px;
+  font-weight: var(--font-weight-semibold);
+  line-height: 24px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.cancel {
+  border-color: var(--border-muted);
+  background-color: var(--control-secondary-background-default);
+  color: var(--control-secondary-text-default);
+}
+
+.submit {
+  border-color: var(--control-primary-border-default);
+  background-color: var(--control-primary-background-default);
+  color: var(--control-primary-text-default);
+}
+
+/*
+ * The iOS layout. Nothing about a modal has been captured in the app, and the app is native, so there is no stylesheet to read: every part of this is a choice, and each render reports it as unobserved (`parts.ts`). The choice is the desktop dialog presented the way iOS presents a form, as a sheet rising from the bottom of the screen: as wide as the screen, its top corners rounded, no border at its sides or foot, and a little of the dimmed channel left showing above it. Its contents keep desktop's design and sizes, except that a Label's description sits under its field (`FieldFrame.module.css`), as Discord's reference says some platforms draw it.
+ */
+[data-discordkit-preview-layout="ios"] .layer {
+  align-items: flex-end;
+  padding: 40px 0 0;
+}
+
+[data-discordkit-preview-layout="ios"] .modal {
+  max-width: none;
+  border-width: var(--dkp-ios-hairline) 0 0;
+  border-radius: 16px 16px 0 0;
+  box-shadow: none;
+}
+
+[data-discordkit-preview-layout="ios"] .header {
+  padding-inline: 16px;
+}
+
+[data-discordkit-preview-layout="ios"] .body {
+  padding-inline: 16px;
+}
+
+[data-discordkit-preview-layout="ios"] .footer {
+  padding-inline: 16px;
+}

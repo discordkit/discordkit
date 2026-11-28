@@ -1403,6 +1403,14 @@ export const manualSteps: readonly ManualStep[] = [
     steps: `Posting cannot make one: it is a reply to an interaction. If a bot of yours answers a command with a message only you can see, run it in the test channel and screenshot the reply. Otherwise skip this.`,
     settles: `The ephemeral reply's tint and its "Only you can see this" line, never captured on iPhone and measured on desktop only against the wrong background.`,
     screenshots: 1
+  },
+  {
+    title: `A modal`,
+    tier: `extended`,
+    platforms: both,
+    steps: `Posting cannot open one: a modal is a bot's answer to a button or a command. If a bot of yours opens a modal with a text input, a select or a checkbox in it, open it in the test channel and screenshot it as it opens; then type in one field, leave a required one empty, press Submit and screenshot it again. Otherwise skip this.`,
+    settles: `The modal on both platforms. On desktop its size, header, warning, fields and buttons are drawn from Discord's stylesheet and the screenshots in its documentation, but the error under a field after Submit (its wording, size and colour), the counter in a paragraph and the backdrop's darkness are not. On iPhone nothing about a modal has been seen: whether it is a sheet, where a field's description sits, and how the buttons are laid out.`,
+    screenshots: 2
   }
 ];
 

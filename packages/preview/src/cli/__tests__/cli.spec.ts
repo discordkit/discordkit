@@ -72,13 +72,48 @@ const pngSignature = Buffer.from([
   0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a
 ]);
 
-/** A text input, which only a modal holds and the renderer does not draw yet. */
+/** An action row inside an action row, which the renderer does not draw. */
 const unsupported = JSON.stringify({
   flags: 32768,
   components: [
     {
       type: 1,
-      components: [{ type: 4, custom_id: `name`, style: 1, label: `Name` }]
+      components: [
+        {
+          type: 1,
+          components: [{ type: 2, style: 2, label: `Go`, custom_id: `go` }]
+        }
+      ]
+    }
+  ]
+});
+
+/** A modal in Discord's wire format, as a bot passes it as a `MODAL` response's `data`, holding only fields @discordkit/client's schema accepts as Discord does. */
+const modal = JSON.stringify({
+  custom_id: `class_modal`,
+  title: `Class Selection`,
+  components: [
+    {
+      type: 18,
+      label: `Choose your class`,
+      description: `Your class decides how you play.`,
+      component: {
+        type: 21,
+        custom_id: `class`,
+        options: [
+          {
+            label: `Warrior`,
+            value: `warrior`,
+            description: `Strong and brave`
+          },
+          { label: `Rogue`, value: `rogue` }
+        ]
+      }
+    },
+    {
+      type: 18,
+      label: `Send me a copy`,
+      component: { type: 23, custom_id: `copy` }
     }
   ]
 });
@@ -294,6 +329,101 @@ describe(`discordkit-preview`, () => {
       expect(result.stderr).not.toMatch(/\n\s+at /);
       expect(existsSync(join(out, `x.png`))).toBe(false);
     });
+
+    it(`refuses a modal's component in a message, naming where it belongs, and draws nothing`, async () => {
+      const result = await run(
+        [`render`, `--out`, join(out, `x.png`), `--json`, ...offline()],
+        JSON.stringify({
+          flags: 32768,
+          components: [
+            {
+              type: 18,
+              label: `Name`,
+              component: { type: 4, custom_id: `name`, style: 1 }
+            }
+          ]
+        })
+      );
+      expect(result.code).toBe(1);
+      expect(json(result)).toMatchObject({
+        results: [
+          {
+            output: null,
+            findings: expect.arrayContaining([
+              expect.objectContaining({
+                code: `component-modal-only`,
+                severity: `error`,
+                message: expect.stringMatching(/scene's `modal`/)
+              })
+            ])
+          }
+        ]
+      });
+      expect(existsSync(join(out, `x.png`))).toBe(false);
+    });
+
+    it(
+      `draws a bare modal for a desktop window and an iPhone side by side, reporting the iPhone's modal parts as unobserved, and lints and prints it with the same commands as a message`,
+      async () => {
+        const output = join(out, `modal.png`);
+        const rendered = await run(
+          [
+            `render`,
+            `--device`,
+            `desktop-1280x800`,
+            `--device`,
+            `iphone-14-pro`,
+            `--out`,
+            output,
+            `--json`,
+            ...offline()
+          ],
+          modal
+        );
+        expect(rendered.code).toBe(0);
+        const [entry] = (
+          json(rendered) as {
+            results: {
+              kind: string;
+              viewports: { unobserved: { part: string }[] }[];
+            }[];
+          }
+        ).results;
+        expect(entry.kind).toBe(`modal`);
+        expect(entry.viewports).toHaveLength(2);
+        expect(entry.viewports[0].unobserved).toStrictEqual([]);
+        expect(
+          entry.viewports[1].unobserved.map(
+            ({ part }: { part: string }) => part
+          )
+        ).toEqual(expect.arrayContaining([`modal`, `radioGroup`, `checkbox`]));
+        const png = decodePng(await readFile(output));
+        expect(png.width).toBeGreaterThan(1000);
+
+        const linted = await run([`lint`, `--json`], modal);
+        expect(linted.code).toBe(0);
+        expect(json(linted)).toMatchObject({
+          results: [
+            {
+              valid: true,
+              counts: expect.arrayContaining([
+                expect.objectContaining({
+                  summary: `2 of 5 top-level modal components`
+                })
+              ])
+            }
+          ]
+        });
+
+        const printed = await run([`codegen`], modal);
+        expect(printed.code).toBe(0);
+        expect(printed.stdout).toContain(
+          `export const modal: ModalCallbackData = {`
+        );
+        expect(printed.stdout).toContain(`type: ComponentType.RadioGroup,`);
+      },
+      renderTimeout
+    );
 
     it(
       `writes one HTML file with no scripts and nothing to fetch, with --html`,

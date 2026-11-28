@@ -88,11 +88,23 @@ describe(`the capture set`, () => {
       `ephemeral`,
       `lightTheme`,
       `ashTheme`,
-      `onyxTheme`
+      `onyxTheme`,
+      // A modal is a bot's answer to an interaction, which posting cannot make.
+      `modal`,
+      `modalLabel`,
+      `shortTextInput`,
+      `paragraphTextInput`,
+      `modalSelect`,
+      `fileUpload`,
+      `radioGroup`,
+      `checkboxGroup`,
+      `checkbox`,
+      `modalError`
     ]);
     const steps = manualSteps.map((step) => step.title).join(` `);
     expect(steps).toMatch(/ephemeral/i);
     expect(steps).toMatch(/themes/i);
+    expect(steps).toMatch(/modal/i);
     // And these the kit names as not covered, with the reason.
     const declared = new Set(
       notCovered.flatMap(({ part }) => (part ? [part] : []))

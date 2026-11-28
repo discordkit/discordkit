@@ -1,5 +1,5 @@
 import type { Finding } from "../findings.js";
-import { hasErrors } from "../findings.js";
+import { hasErrors, placementCodes } from "../findings.js";
 import { lint, type Count } from "../lint/index.js";
 import { viewportFidelity, type ReportedViewport } from "../parts.js";
 import type { InputKind } from "../scene/intake.js";
@@ -70,7 +70,7 @@ const scaleFor = (
 /**
  * Reads anything `readScene` accepts, lints it and draws it, in one call: what the `render` command runs for each input.
  *
- * A scene with a component the renderer cannot draw yet is not drawn: lint's `component-unsupported` finding is raised to an error here, since it means there is no image. So is a scene naming a device the registry does not have (`viewport-device-unknown`). Any other scene the components refuse becomes a `scene-undrawable` finding. None of these throw. A browser that cannot launch, a stylesheet that is missing (the package is not built), a supplied font that cannot be read, or options that cannot be used together still throw, since those are about the call, not the input.
+ * A scene with a component the renderer cannot draw where it sits is not drawn: lint's `component-unsupported` finding is raised to an error here, since it means there is no image, and the findings for a component in the wrong kind of surface (`placementCodes`), already errors, stop the drawing the same way. So is a scene naming a device the registry does not have (`viewport-device-unknown`). Any other scene the components refuse becomes a `scene-undrawable` finding. None of these throw. A browser that cannot launch, a stylesheet that is missing (the package is not built), a supplied font that cannot be read, or options that cannot be used together still throw, since those are about the call, not the input.
  *
  * @example
  * const { valid, findings, image } = await render(payloadJson, { scale: 2, cjk: `noto-sans-jp` });
@@ -122,7 +122,7 @@ export const render = async (
     valid: false,
     viewports: []
   };
-  if (findings.some((finding) => finding.code === `component-unsupported`)) {
+  if (findings.some((finding) => placementCodes.has(finding.code))) {
     return { ...unrendered, findings };
   }
   if (

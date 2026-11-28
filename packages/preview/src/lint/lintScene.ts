@@ -3,8 +3,10 @@ import { ButtonStyle } from "@discordkit/client/components/types/ButtonStyle";
 import { ComponentType } from "@discordkit/client/components/types/ComponentType";
 import {
   componentName,
+  componentSurface,
   findOpenSelect,
   isComponentsV2,
+  modalParents,
   selectTypes,
   supportedComponents,
   type ComponentParent
@@ -32,11 +34,16 @@ import {
   maxSelectOptionValue,
   maxSelectPlaceholder,
   maxSelectValues,
+  maxModalComponents,
+  maxModalTitle,
   maxTextDisplayCharacters,
+  minModalComponents,
   minSectionComponents
 } from "./limits.js";
 import { findDevice } from "../devices.js";
+import { modalValueShape } from "../modal.js";
 import { unknownDeviceMessage } from "../viewport.js";
+import { fieldFindings } from "./fields.js";
 import { markdownFindings } from "./markdown.js";
 
 /** What a count measures. */
@@ -46,7 +53,8 @@ export type CountMetric =
   | `contentCharacters`
   | `actionRows`
   | `embeds`
-  | `embedCharacters`;
+  | `embedCharacters`
+  | `modalComponents`;
 
 /** How much of one of Discord's limits a message uses, reported whether or not it is exceeded, so a caller can see the headroom. */
 export interface Count {
@@ -74,7 +82,8 @@ const countWords: Record<CountMetric, string> = {
   contentCharacters: `content characters`,
   actionRows: `top-level action rows`,
   embeds: `embeds`,
-  embedCharacters: `embed characters`
+  embedCharacters: `embed characters`,
+  modalComponents: `top-level modal components`
 };
 
 const text = (value: unknown): string | undefined =>
@@ -96,8 +105,12 @@ interface Visit {
   insideUnsupported: boolean;
 }
 
-/** Every component in a tree, depth first in payload order, with nested components and a section's accessory. */
-const visitComponents = (components: unknown, base: Path): Visit[] => {
+/** Every component in a tree, depth first in payload order, with nested components, a section's accessory and a label's component. `root` is where the top level sits: a message's or a modal's. */
+const visitComponents = (
+  components: unknown,
+  base: Path,
+  root: `message` | `modal` = `message`
+): Visit[] => {
   const visits: Visit[] = [];
   const walk = (
     items: unknown,
@@ -123,18 +136,26 @@ const visitComponents = (components: unknown, base: Path): Visit[] => {
           walk(item.components, [...at, `components`], `container`, inside);
           break;
         case ComponentType.ActionRow:
-          walk(item.components, [...at, `components`], `actionRow`, inside);
+          walk(
+            item.components,
+            [...at, `components`],
+            modalParents.includes(position) ? `modalActionRow` : `actionRow`,
+            inside
+          );
           break;
         case ComponentType.Section:
           walk(item.components, [...at, `components`], `section`, inside);
           walk(item.accessory, [...at, `accessory`], `accessory`, inside);
+          break;
+        case ComponentType.Label:
+          walk(item.component, [...at, `component`], `label`, inside);
           break;
         default:
           break;
       }
     }
   };
-  walk(components, base, `message`, false);
+  walk(components, base, root, false);
   return visits;
 };
 
@@ -166,7 +187,59 @@ const positionNames: Record<Position, string> = {
   container: `a Container`,
   actionRow: `an Action Row`,
   section: `a Section`,
-  accessory: `a Section's accessory`
+  accessory: `a Section's accessory`,
+  modal: `a modal`,
+  label: `a Label`,
+  modalActionRow: `a modal's Action Row`
+};
+
+/** The components a Label wraps, as a sentence lists them. */
+const labelChildren = `a text input, a select menu, a file upload, a radio group, a checkbox group or a checkbox`;
+
+/**
+ * The finding for a component the renderer does not draw where it sits, which is also a place Discord's reference does not allow it (`supportedComponents` is both). It says where the component belongs when that is a different kind of surface or a different place in a modal; otherwise it is a gap in the preview, `component-unsupported`, as before modals were drawn.
+ */
+const placementFinding = (
+  type: unknown,
+  position: Position,
+  path: Path
+): Finding => {
+  const name = componentName(type);
+  const surface = componentSurface(type);
+  const inModal = modalParents.includes(position);
+  if (!inModal && surface === `modal`) {
+    return {
+      code: `component-modal-only`,
+      severity: `error`,
+      path,
+      message: `A ${name} component belongs only in a modal, the dialog a bot opens in answer to a button or a command, and Discord refuses it in a message. Move it into the scene's \`modal\` (${type === ComponentType.Label ? `at its top level` : `inside a Label`}), and open the modal from a button in this message by answering its interaction with a \`MODAL\` response. To show text in the message itself, use a Text Display.`
+    };
+  }
+  if (inModal && surface === `message`) {
+    return {
+      code: `component-message-only`,
+      severity: `error`,
+      path,
+      message: `A ${name} component belongs only in a message, and Discord refuses it in a modal. A modal's top level holds Labels and Text Displays, and each Label wraps ${labelChildren}; the modal's own Submit and Cancel stand in for buttons. Move it to a message, or use one of those here.`
+    };
+  }
+  if (inModal && surface !== `neither`) {
+    const toLabel = isSupported(`label`, type);
+    return {
+      code: `modal-component-position`,
+      severity: `error`,
+      path,
+      message: toLabel
+        ? `A ${name} component in a modal must be the \`component\` of a Label, which gives it the title above it, but here it is inside ${positionNames[position]}, so Discord refuses the modal. Wrap it: \`{ "type": 18, "label": "…", "component": <this> }\`.`
+        : `A ${name} component goes at a modal's top level, but here it is inside ${positionNames[position]}, so Discord refuses the modal. A Label holds exactly one of ${labelChildren}; move this out to the top level.`
+    };
+  }
+  return {
+    code: `component-unsupported`,
+    severity: `warning`,
+    path,
+    message: `The preview cannot draw a ${name} component inside ${positionNames[position]} yet, so rendering this scene fails rather than leave it out. Discord may accept it; this is a gap in @discordkit/preview, not a problem with the payload. Remove it to preview the rest of the message.`
+  };
 };
 
 /**
@@ -227,127 +300,17 @@ export const lintScene = (scene: Scene): LintSceneResult => {
   checkAttachments(scene.context?.users, [`context`, `users`]);
   checkAttachments(scene.context?.emoji, [`context`, `emoji`]);
 
-  list(scene.messages).forEach((message: unknown, index) => {
-    if (!isObject(message) || !isObject(message.payload)) return;
-    const payload: Node = message.payload;
-    const base: Path = [`messages`, index, `payload`];
-    const content = text(payload.content) ?? ``;
-    const embeds = list(payload.embeds);
-    const components = list(payload.components);
-    const flags = typeof payload.flags === `number` ? payload.flags : 0;
-    const flagged = isComponentsV2({ flags });
-    const layout = components
-      .filter(isObject)
-      .filter((component) => component.type !== ComponentType.ActionRow);
-    const v2 = isComponentsV2({ flags, components: layout });
-
-    if (
-      content === `` &&
-      embeds.length === 0 &&
-      components.length === 0 &&
-      list(payload.attachments).length === 0 &&
-      list(payload.stickerIds).length === 0 &&
-      payload.poll === undefined
-    ) {
-      add(
-        `message-empty`,
-        `error`,
-        base,
-        `This message has no content, embeds or components, so there is nothing to draw, and Discord refuses to create a message without at least one of them. Add \`components\` (with the Components V2 flag) or \`content\`.`
-      );
-    }
-
-    if (!flagged && layout.length > 0) {
-      add(
-        `components-v2-flag-missing`,
-        `warning`,
-        [...base, `flags`],
-        `This message holds layout components (${[...new Set(layout.map((component) => componentName(component.type)))].join(`, `)}) but its \`flags\` do not include IS_COMPONENTS_V2 (32768). Discord refuses layout components in a message created without that flag. An edit to a message that already has the flag may leave \`flags\` out, so this is only a warning; when creating the message, set \`flags\` to include \`MessageFlag.IS_COMPONENTS_V2\`.`
-      );
-    }
-    if (v2 && content !== ``) {
-      add(
-        `components-v2-content`,
-        `error`,
-        [...base, `content`],
-        `This is a Components V2 message (${flagged ? `it has the IS_COMPONENTS_V2 flag` : `it holds layout components`}) but also has \`content\`. Discord refuses \`content\` on a V2 message, and the preview cannot draw it. Move the text into a Text Display component; when editing a message into V2, send \`content: null\`.`
-      );
-    }
-    if (v2 && embeds.length > 0) {
-      add(
-        `components-v2-content`,
-        `error`,
-        [...base, `embeds`],
-        `This is a Components V2 message (${flagged ? `it has the IS_COMPONENTS_V2 flag` : `it holds layout components`}) but also has \`embeds\`. Discord refuses embeds on a V2 message, and the preview cannot draw them. Rebuild the embed as a Container with Text Displays; when editing a message into V2, send \`embeds: []\`.`
-      );
-    }
-
-    const contentUsed = characters(content);
-    if (content !== ``) {
-      count(`contentCharacters`, base, contentUsed, maxContentCharacters);
-    }
-    if (contentUsed > maxContentCharacters) {
-      add(
-        `content-length`,
-        `error`,
-        [...base, `content`],
-        `\`content\` is ${contentUsed.toLocaleString(`en-US`)} characters, over Discord's limit of ${maxContentCharacters.toLocaleString(`en-US`)}, so Discord would refuse the message. Shorten it, split it across messages, or send it as Components V2, whose Text Displays allow ${maxTextDisplayCharacters.toLocaleString(`en-US`)} characters in total.`
-      );
-    }
-    markdown(payload.content, `message`, [...base, `content`]);
-
-    const visits = visitComponents(payload.components, [...base, `components`]);
-    if (v2) {
-      count(`components`, base, visits.length, maxComponents);
-      if (visits.length > maxComponents) {
-        add(
-          `components-total`,
-          `error`,
-          [...base, `components`],
-          `This message has ${String(visits.length)} components counting every nested one and each section's accessory, over Discord's limit of ${String(maxComponents)} for the whole tree, so Discord would refuse it. Merge adjacent Text Displays into one (a single Text Display can hold several lines), drop separators that only add space, or split the message in two.`
-        );
-      }
-      const textDisplays = visits.filter(
-        (visit) => visit.node.type === ComponentType.TextDisplay
-      );
-      const used = textDisplays.reduce(
-        (sum, visit) => sum + characters(text(visit.node.content) ?? ``),
-        0
-      );
-      count(`textDisplayCharacters`, base, used, maxTextDisplayCharacters);
-      if (used > maxTextDisplayCharacters) {
-        add(
-          `text-display-length`,
-          `error`,
-          [...base, `components`],
-          `This message's Text Displays hold ${used.toLocaleString(`en-US`)} characters together, over Discord's limit of ${maxTextDisplayCharacters.toLocaleString(`en-US`)} across all of them, so Discord would refuse it. Shorten the text, or split it across two messages.`
-        );
-      }
-    } else if (components.length > 0) {
-      const rows = components.length;
-      count(`actionRows`, base, rows, maxClassicActionRows);
-      if (rows > maxClassicActionRows) {
-        add(
-          `classic-action-rows`,
-          `error`,
-          [...base, `components`],
-          `This message has ${String(rows)} action rows without the Components V2 flag, over Discord's limit of ${String(maxClassicActionRows)} for a classic message, so Discord would refuse it. Remove a row, or set the IS_COMPONENTS_V2 flag, which allows up to ${String(maxComponents)} components (and then rules out \`content\` and \`embeds\`).`
-        );
-      }
-    }
-
+  /** The checks each component gets wherever it sits, in a message or in a modal. `surface` names which, for the wording of a finding. */
+  const checkComponents = (
+    visits: readonly Visit[],
+    surface: `message` | `modal`
+  ): void => {
     const customIds = new Map<string, Path>();
+    const whole = `the ${surface}`;
     for (const { node, path, position, insideUnsupported } of visits) {
       const type = node.type;
-      if (!insideUnsupported) {
-        if (!isSupported(position, type)) {
-          add(
-            `component-unsupported`,
-            `warning`,
-            path,
-            `The preview cannot draw a ${componentName(type)} component inside ${positionNames[position]} yet, so rendering this scene fails rather than leave it out. Discord may accept it; this is a gap in @discordkit/preview, not a problem with the payload. Remove it to preview the rest of the message.`
-          );
-        }
+      if (!insideUnsupported && !isSupported(position, type)) {
+        findings.push(placementFinding(type, position, path));
       }
 
       const customId = text(node.customId);
@@ -358,7 +321,7 @@ export const lintScene = (scene: Scene): LintSceneResult => {
             `custom-id-length`,
             `error`,
             [...path, `customId`],
-            `This \`customId\` is ${String(used)} characters, over Discord's limit of ${String(maxCustomId)}, so Discord would refuse the message. Keep the id short, and look up any longer state from it when the interaction arrives.`
+            `This \`customId\` is ${String(used)} characters, over Discord's limit of ${String(maxCustomId)}, so Discord would refuse ${whole}. Keep the id short, and look up any longer state from it when the interaction arrives.`
           );
         }
         const first = customIds.get(customId);
@@ -369,7 +332,9 @@ export const lintScene = (scene: Scene): LintSceneResult => {
             `custom-id-duplicate`,
             `error`,
             [...path, `customId`],
-            `The \`customId\` ${JSON.stringify(customId)} is already used by another component in this message, and Discord requires every \`customId\` in a message to be unique, so it would refuse the message (and could not tell the two apart when one is clicked). Give each component its own id, for example by adding the option to it.`
+            surface === `message`
+              ? `The \`customId\` ${JSON.stringify(customId)} is already used by another component in this message, and Discord requires every \`customId\` in a message to be unique, so it would refuse the message (and could not tell the two apart when one is clicked). Give each component its own id, for example by adding the option to it.`
+              : `The \`customId\` ${JSON.stringify(customId)} is already used by another field in this modal, and Discord requires every \`customId\` in a modal to be unique, so it would refuse the modal (and the submission could not say which answer is which). Give each field its own id.`
           );
         }
       }
@@ -510,7 +475,7 @@ export const lintScene = (scene: Scene): LintSceneResult => {
             `select-placeholder-length`,
             `error`,
             [...path, `placeholder`],
-            `This select menu's placeholder is ${String(characters(placeholder))} characters, over Discord's limit of ${String(maxSelectPlaceholder)}, so Discord would refuse the message. The box shows one line of it anyway; shorten it to a prompt and put any explanation in a Text Display above the menu.`
+            `This select menu's placeholder is ${String(characters(placeholder))} characters, over Discord's limit of ${String(maxSelectPlaceholder)}, so Discord would refuse ${whole}. The box shows one line of it anyway; shorten it to a prompt and put any explanation in a Text Display above the menu.`
           );
         }
         for (const field of [`minValues`, `maxValues`] as const) {
@@ -523,7 +488,7 @@ export const lintScene = (scene: Scene): LintSceneResult => {
               `select-values-range`,
               `error`,
               [...path, field],
-              `\`${field}\` is ${String(value)}, outside the 0 to ${String(maxSelectValues)} Discord allows for how many values a select menu takes, so Discord would refuse the message. Set it between 0 and ${String(maxSelectValues)}, or leave it out for Discord's default of ${String(defaultSelectValues)}.`
+              `\`${field}\` is ${String(value)}, outside the 0 to ${String(maxSelectValues)} Discord allows for how many values a select menu takes, so Discord would refuse ${whole}. Set it between 0 and ${String(maxSelectValues)}, or leave it out for Discord's default of ${String(defaultSelectValues)}.`
             );
           }
         }
@@ -545,7 +510,7 @@ export const lintScene = (scene: Scene): LintSceneResult => {
             `select-default-count`,
             `error`,
             [...path, `defaultValues`],
-            `This select menu has ${String(defaults.length)} default values, but Discord requires the number of defaults to be within its \`minValues\` and \`maxValues\` (${min === max ? `exactly ${String(min)}` : `${String(min)} to ${String(max)}`}${node.minValues === undefined && node.maxValues === undefined ? `, Discord's default when neither is set` : ``}), so it would refuse the message. ${defaults.length > max ? `Raise \`maxValues\` to at least ${String(defaults.length)} to let people keep them all, or remove defaults.` : `Lower \`minValues\`, or add defaults.`}`
+            `This select menu has ${String(defaults.length)} default values, but Discord requires the number of defaults to be within its \`minValues\` and \`maxValues\` (${min === max ? `exactly ${String(min)}` : `${String(min)} to ${String(max)}`}${node.minValues === undefined && node.maxValues === undefined ? `, Discord's default when neither is set` : ``}), so it would refuse ${whole}. ${defaults.length > max ? `Raise \`maxValues\` to at least ${String(defaults.length)} to let people keep them all, or remove defaults.` : `Lower \`minValues\`, or add defaults.`}`
           );
         }
       }
@@ -557,7 +522,7 @@ export const lintScene = (scene: Scene): LintSceneResult => {
             `select-option-count`,
             `error`,
             [...path, `options`],
-            `This string select has ${String(options.length)} options, over Discord's limit of ${String(maxSelectOptions)}, so Discord would refuse the message. Split the choices across two selects, or, for a list of members, roles or channels, use the select for that kind, which the client fills for you.`
+            `This string select has ${String(options.length)} options, over Discord's limit of ${String(maxSelectOptions)}, so Discord would refuse ${whole}. Split the choices across two selects, or, for a list of members, roles or channels, use the select for that kind, which the client fills for you.`
           );
         }
         const optionLimits = [
@@ -578,12 +543,166 @@ export const lintScene = (scene: Scene): LintSceneResult => {
               code,
               `error`,
               [...path, `options`, optionIndex, field],
-              `This option's \`${field}\` is ${String(characters(value))} characters, over Discord's limit of ${String(limit)} for an option's ${field}, so Discord would refuse the message. ${field === `value` ? `The value only identifies the choice to your app; use a short key and look the rest up when the interaction arrives.` : `The open list cuts long text short anyway; shorten it, and put anything longer in a Text Display beside the menu.`}`
+              `This option's \`${field}\` is ${String(characters(value))} characters, over Discord's limit of ${String(limit)} for an option's ${field}, so Discord would refuse ${whole}. ${field === `value` ? `The value only identifies the choice to your app; use a short key and look the rest up when the interaction arrives.` : `The open list cuts long text short anyway; shorten it, and put anything longer in a Text Display beside the menu.`}`
             );
           }
         });
       }
+
+      findings.push(...fieldFindings(node, path, surface));
+
+      if (type === ComponentType.TextInput && position === `label`) {
+        if (node.label !== undefined) {
+          add(
+            `text-input-label`,
+            `warning`,
+            [...path, `label`],
+            `This text input sits in a Label and also has a \`label\` of its own, which Discord's reference calls deprecated in favour of the Label's \`label\` and \`description\`; the client shows the Label's. Remove the text input's \`label\`. (@discordkit/client's schema still requires it, which is a defect in the schema.)`
+          );
+        }
+      }
+      if (position === `modalActionRow` && type === ComponentType.TextInput) {
+        if (node.label === undefined) {
+          add(
+            `text-input-label`,
+            `error`,
+            [...path, `label`],
+            `This text input sits directly in an Action Row, the older form of a modal, where its own \`label\` is the only title it has, and Discord requires one there. Better, move it into a Label (\`{ "type": 18, "label": "…", "component": <this> }\`); otherwise give it a \`label\`.`
+          );
+        }
+      }
+      if (type === ComponentType.ActionRow && surface === `modal`) {
+        const children = Array.isArray(node.components)
+          ? node.components
+          : [node.components];
+        add(
+          `text-input-legacy-row`,
+          `warning`,
+          path,
+          `This Action Row is the older way to put a text input in a modal, which Discord's reference now calls deprecated: "Going forward all Text Inputs should be placed inside a Label". It still draws. Replace the row with a Label that wraps the text input, and move the text input's \`label\` to the Label.`
+        );
+        if (children.length !== 1) {
+          add(
+            `modal-action-row`,
+            `error`,
+            [...path, `components`],
+            `This Action Row in a modal holds ${String(children.length)} components, but in a modal a row holds exactly one text input, so Discord would refuse the modal. Give each text input its own Label${children.length === 0 ? `, or remove the empty row` : ``}.`
+          );
+        }
+      }
     }
+  };
+
+  list(scene.messages).forEach((message: unknown, index) => {
+    if (!isObject(message) || !isObject(message.payload)) return;
+    const payload: Node = message.payload;
+    const base: Path = [`messages`, index, `payload`];
+    const content = text(payload.content) ?? ``;
+    const embeds = list(payload.embeds);
+    const components = list(payload.components);
+    const flags = typeof payload.flags === `number` ? payload.flags : 0;
+    const flagged = isComponentsV2({ flags });
+    const layout = components
+      .filter(isObject)
+      .filter((component) => component.type !== ComponentType.ActionRow);
+    const v2 = isComponentsV2({ flags, components: layout });
+
+    if (
+      content === `` &&
+      embeds.length === 0 &&
+      components.length === 0 &&
+      list(payload.attachments).length === 0 &&
+      list(payload.stickerIds).length === 0 &&
+      payload.poll === undefined
+    ) {
+      add(
+        `message-empty`,
+        `error`,
+        base,
+        `This message has no content, embeds or components, so there is nothing to draw, and Discord refuses to create a message without at least one of them. Add \`components\` (with the Components V2 flag) or \`content\`.`
+      );
+    }
+
+    if (!flagged && layout.length > 0) {
+      add(
+        `components-v2-flag-missing`,
+        `warning`,
+        [...base, `flags`],
+        `This message holds layout components (${[...new Set(layout.map((component) => componentName(component.type)))].join(`, `)}) but its \`flags\` do not include IS_COMPONENTS_V2 (32768). Discord refuses layout components in a message created without that flag. An edit to a message that already has the flag may leave \`flags\` out, so this is only a warning; when creating the message, set \`flags\` to include \`MessageFlag.IS_COMPONENTS_V2\`.`
+      );
+    }
+    if (v2 && content !== ``) {
+      add(
+        `components-v2-content`,
+        `error`,
+        [...base, `content`],
+        `This is a Components V2 message (${flagged ? `it has the IS_COMPONENTS_V2 flag` : `it holds layout components`}) but also has \`content\`. Discord refuses \`content\` on a V2 message, and the preview cannot draw it. Move the text into a Text Display component; when editing a message into V2, send \`content: null\`.`
+      );
+    }
+    if (v2 && embeds.length > 0) {
+      add(
+        `components-v2-content`,
+        `error`,
+        [...base, `embeds`],
+        `This is a Components V2 message (${flagged ? `it has the IS_COMPONENTS_V2 flag` : `it holds layout components`}) but also has \`embeds\`. Discord refuses embeds on a V2 message, and the preview cannot draw them. Rebuild the embed as a Container with Text Displays; when editing a message into V2, send \`embeds: []\`.`
+      );
+    }
+
+    const contentUsed = characters(content);
+    if (content !== ``) {
+      count(`contentCharacters`, base, contentUsed, maxContentCharacters);
+    }
+    if (contentUsed > maxContentCharacters) {
+      add(
+        `content-length`,
+        `error`,
+        [...base, `content`],
+        `\`content\` is ${contentUsed.toLocaleString(`en-US`)} characters, over Discord's limit of ${maxContentCharacters.toLocaleString(`en-US`)}, so Discord would refuse the message. Shorten it, split it across messages, or send it as Components V2, whose Text Displays allow ${maxTextDisplayCharacters.toLocaleString(`en-US`)} characters in total.`
+      );
+    }
+    markdown(payload.content, `message`, [...base, `content`]);
+
+    const visits = visitComponents(payload.components, [...base, `components`]);
+    if (v2) {
+      count(`components`, base, visits.length, maxComponents);
+      if (visits.length > maxComponents) {
+        add(
+          `components-total`,
+          `error`,
+          [...base, `components`],
+          `This message has ${String(visits.length)} components counting every nested one and each section's accessory, over Discord's limit of ${String(maxComponents)} for the whole tree, so Discord would refuse it. Merge adjacent Text Displays into one (a single Text Display can hold several lines), drop separators that only add space, or split the message in two.`
+        );
+      }
+      const textDisplays = visits.filter(
+        (visit) => visit.node.type === ComponentType.TextDisplay
+      );
+      const used = textDisplays.reduce(
+        (sum, visit) => sum + characters(text(visit.node.content) ?? ``),
+        0
+      );
+      count(`textDisplayCharacters`, base, used, maxTextDisplayCharacters);
+      if (used > maxTextDisplayCharacters) {
+        add(
+          `text-display-length`,
+          `error`,
+          [...base, `components`],
+          `This message's Text Displays hold ${used.toLocaleString(`en-US`)} characters together, over Discord's limit of ${maxTextDisplayCharacters.toLocaleString(`en-US`)} across all of them, so Discord would refuse it. Shorten the text, or split it across two messages.`
+        );
+      }
+    } else if (components.length > 0) {
+      const rows = components.length;
+      count(`actionRows`, base, rows, maxClassicActionRows);
+      if (rows > maxClassicActionRows) {
+        add(
+          `classic-action-rows`,
+          `error`,
+          [...base, `components`],
+          `This message has ${String(rows)} action rows without the Components V2 flag, over Discord's limit of ${String(maxClassicActionRows)} for a classic message, so Discord would refuse it. Remove a row, or set the IS_COMPONENTS_V2 flag, which allows up to ${String(maxComponents)} components (and then rules out \`content\` and \`embeds\`).`
+        );
+      }
+    }
+
+    checkComponents(visits, `message`);
 
     const openSelect = isObject(message) ? text(message.openSelect) : undefined;
     if (openSelect !== undefined) {
@@ -649,6 +768,91 @@ export const lintScene = (scene: Scene): LintSceneResult => {
 
     checkAttachments(payload, base);
   });
+
+  const modal = isObject(scene.modal) ? scene.modal : undefined;
+  if (modal !== undefined && isObject(modal.payload)) {
+    const payload: Node = modal.payload;
+    const base: Path = [`modal`, `payload`];
+    const top = list(payload.components);
+    count(`modalComponents`, base, top.length, maxModalComponents);
+    if (top.length < minModalComponents || top.length > maxModalComponents) {
+      add(
+        `modal-component-count`,
+        `error`,
+        [...base, `components`],
+        `This modal holds ${String(top.length)} components at its top level, but Discord requires ${String(minModalComponents)} to ${String(maxModalComponents)}, so it would refuse the modal. ${top.length === 0 ? `Add a Label with a field, or a Text Display.` : `Ask fewer questions in one modal (merge related text into one Text Display), or split them across two modals, opening the second from a button in the reply to the first.`}`
+      );
+    }
+    const title = text(payload.title);
+    if (title !== undefined && characters(title) > maxModalTitle) {
+      add(
+        `modal-title-length`,
+        `error`,
+        [...base, `title`],
+        `This modal's title is ${String(characters(title))} characters, over Discord's limit of ${String(maxModalTitle)}, so Discord would refuse the modal. The title sits on one line above the fields; shorten it, and put any explanation in a Text Display at the top of the modal.`
+      );
+    }
+    const visits = visitComponents(
+      payload.components,
+      [...base, `components`],
+      `modal`
+    );
+    const used = visits
+      .filter((visit) => visit.node.type === ComponentType.TextDisplay)
+      .reduce(
+        (sum, visit) => sum + characters(text(visit.node.content) ?? ``),
+        0
+      );
+    count(`textDisplayCharacters`, base, used, maxTextDisplayCharacters);
+    if (used > maxTextDisplayCharacters) {
+      add(
+        `text-display-length`,
+        `error`,
+        [...base, `components`],
+        `This modal's Text Displays hold ${used.toLocaleString(`en-US`)} characters together, over Discord's limit of ${maxTextDisplayCharacters.toLocaleString(`en-US`)} across all of them, so Discord would refuse it. Shorten the text; a modal is a form, and a long explanation is better in the message that opens it.`
+      );
+    }
+    const modalId = text(payload.customId);
+    if (modalId !== undefined && characters(modalId) > maxCustomId) {
+      add(
+        `custom-id-length`,
+        `error`,
+        [...base, `customId`],
+        `This modal's \`customId\` is ${String(characters(modalId))} characters, over Discord's limit of ${String(maxCustomId)}, so Discord would refuse the modal. Keep the id short, and look up any longer state from it when the submission arrives.`
+      );
+    }
+    checkComponents(visits, `modal`);
+
+    // What the scene says has been filled in. Scene data, not part of the payload: the preview draws it, and Discord never sees it.
+    const fields = new Map<string, Node>();
+    for (const { node } of visits) {
+      const id = text(node.customId);
+      if (id !== undefined && !fields.has(id)) fields.set(id, node);
+    }
+    const values = isObject(modal.values) ? modal.values : {};
+    for (const [id, value] of Object.entries(values)) {
+      const at: Path = [`modal`, `values`, id];
+      const field = fields.get(id);
+      if (field === undefined) {
+        add(
+          `modal-value-invalid`,
+          `warning`,
+          at,
+          `\`modal.values\` has an entry for ${JSON.stringify(id)}, but no field in the modal has that \`customId\`, so it is not drawn. It is scene data, keyed by each field's \`customId\`; correct the key${fields.size > 0 ? ` (the modal's fields are ${[...fields.keys()].map((key) => JSON.stringify(key)).join(`, `)})` : ``}, or remove it.`
+        );
+        continue;
+      }
+      const expected = modalValueShape(field.type);
+      if (expected !== undefined && !expected.accepts(value)) {
+        add(
+          `modal-value-invalid`,
+          `warning`,
+          at,
+          `${JSON.stringify(id)} is a ${componentName(field.type)}, whose value is ${expected.description}, but \`modal.values\` gives it ${JSON.stringify(value)}, so it is drawn empty. Write ${expected.description}.`
+        );
+      }
+    }
+  }
 
   // The views the scene asks for. They decide how it is drawn, never what is wrong with the message, so nothing above depends on them.
   const viewports = list(scene.viewports);

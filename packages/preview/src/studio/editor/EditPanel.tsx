@@ -25,6 +25,7 @@ import {
   duplicateAt,
   insertChild,
   insertMessage,
+  insertModal,
   moveBy,
   newChild,
   removeAt,
@@ -251,6 +252,11 @@ export const EditPanel = ({
   const messageUnavailable = sceneFile
     ? undefined
     : `This file holds one message's payload, with no room for another. Make it a scene first (Convert to a scene, in the message's form).`;
+  const modalUnavailable = !sceneFile
+    ? `This file holds one payload, with no room for a modal beside it. Make it a scene first (Convert to a scene).`
+    : scene.modal === undefined
+      ? undefined
+      : `The scene already has a modal; Discord shows one at a time.`;
   const addMessage = (kind: `v2` | `classic`): void => {
     run(
       (current) => insertMessage(current, kind, messageIndex),
@@ -377,6 +383,26 @@ export const EditPanel = ({
                       </Text>
                     </MenuItem>
                   ))}
+                </MenuSection>
+                <MenuSection className={styles.menuSection}>
+                  <Header className={styles.menuHeader}>
+                    Over the channel
+                  </Header>
+                  <MenuItem
+                    id="modal"
+                    textValue="Modal"
+                    className={styles.menuItem}
+                    isDisabled={modalUnavailable !== undefined}
+                    onAction={() => {
+                      run(insertModal, `tree`, `Add a modal`);
+                    }}
+                  >
+                    <Text slot="label">Modal</Text>
+                    <Text slot="description" className={styles.menuDetail}>
+                      {modalUnavailable ??
+                        `The form a button or command opens, drawn over the messages`}
+                    </Text>
+                  </MenuItem>
                 </MenuSection>
               </Menu>
             </Popover>

@@ -193,9 +193,86 @@ export const startingPoints: readonly StartingPoint[] = [
         }
       ]
     }
+  },
+  {
+    id: `modal`,
+    name: `A button that opens a modal`,
+    description: `A message with a button, and the form it opens drawn over it: a radio group, a checkbox group and a checkbox, each in a Label.`,
+    scene: {
+      messages: [
+        {
+          payload: {
+            flags: componentsV2Flag,
+            components: [
+              {
+                type: ComponentType.Container,
+                components: [
+                  text(`## Feedback\nTell us how the quiz went.`),
+                  {
+                    type: ComponentType.ActionRow,
+                    components: [
+                      {
+                        type: ComponentType.Button,
+                        style: ButtonStyle.Primary,
+                        label: `Give feedback`,
+                        customId: `open_feedback`
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      modal: {
+        payload: {
+          customId: `feedback`,
+          title: `Quiz feedback`,
+          components: [
+            {
+              type: ComponentType.Label,
+              label: `How hard was it?`,
+              component: {
+                type: ComponentType.RadioGroup,
+                customId: `difficulty`,
+                options: [
+                  { label: `Too easy`, value: `easy` },
+                  { label: `About right`, value: `right` },
+                  { label: `Too hard`, value: `hard` }
+                ]
+              }
+            },
+            // No Text Input here, though it is the commonest field: @discordkit/client's TextInput requires the deprecated `label` that a Text Input in a Label leaves out, so a correct one would open Studio on a schema error. Adding a Label from the tree starts one around a text input.
+            {
+              type: ComponentType.Label,
+              label: `Which part?`,
+              description: `Choose every part you would change.`,
+              component: {
+                type: ComponentType.CheckboxGroup,
+                customId: `parts`,
+                required: false,
+                minValues: 0,
+                options: [
+                  { label: `The questions`, value: `questions` },
+                  { label: `The timer`, value: `timer` },
+                  { label: `The scoring`, value: `scoring` }
+                ]
+              }
+            },
+            {
+              type: ComponentType.Label,
+              label: `Tell me when it changes`,
+              component: { type: ComponentType.Checkbox, customId: `notify` }
+            }
+          ]
+        }
+      }
+    }
   }
 ];
 
 /** Whether a scene has nothing in it to edit yet, so Studio offers the starting points. */
 export const isEmptyScene = (scene: Scene | undefined): boolean =>
-  scene === undefined || scene.messages.length === 0;
+  scene === undefined ||
+  (scene.messages.length === 0 && scene.modal === undefined);

@@ -19,6 +19,13 @@ import {
   iosQuestionCard,
   iosSections
 } from "./fixtures.js";
+import {
+  checkboxSheet,
+  legacyTextInputSheet,
+  modalFilled,
+  modalOpening,
+  radioGroupSheet
+} from "./modalFixtures.js";
 
 /**
  * Which parts of a scene each viewport draws from rules nobody has observed on its platform. What this holds to: an iPhone drawing of a card built only from what the captures of the app show carries no warning, one holding anything else names exactly that, an iPad (never captured) warns about everything, desktop warns about nothing (it draws from Discord's own stylesheet), and the walk finds a part wherever the components would draw it.
@@ -195,6 +202,55 @@ describe(`an iPhone's report`, () => {
     for (const scene of Object.values({ ...fixtures, ...componentFixtures })) {
       expect(sceneParts(scene)).toStrictEqual(sceneParts(scene));
     }
+  });
+});
+
+describe(`modals on an iPhone`, () => {
+  it(`reports every part of a modal as unobserved, since no modal has been captured in the app`, () => {
+    for (const part of [
+      `modal`,
+      `modalLabel`,
+      `shortTextInput`,
+      `paragraphTextInput`,
+      `modalSelect`,
+      `fileUpload`,
+      `radioGroup`,
+      `checkboxGroup`,
+      `checkbox`,
+      `modalError`
+    ] as const) {
+      expect(parts[part].ios).toBeNull();
+    }
+    expect(unobserved(modalFilled)).toEqual(
+      expect.arrayContaining([
+        `modal`,
+        `modalLabel`,
+        `shortTextInput`,
+        `paragraphTextInput`,
+        `modalSelect`,
+        `fileUpload`,
+        `modalError`
+      ])
+    );
+  });
+
+  it(`finds each field by its type, and an error only where Submit would show one`, () => {
+    expect(sceneParts(radioGroupSheet).parts).toEqual(
+      expect.arrayContaining([`radioGroup`, `modalError`])
+    );
+    expect(sceneParts(checkboxSheet).parts).toContain(`checkbox`);
+    // A checkbox cannot be required, so its sheet shows no error even after Submit.
+    expect(sceneParts(checkboxSheet).parts).not.toContain(`modalError`);
+    expect(sceneParts(modalOpening).parts).not.toContain(`modalError`);
+    expect(sceneParts(legacyTextInputSheet).parts).toEqual(
+      expect.arrayContaining([`text`, `shortTextInput`, `paragraphTextInput`])
+    );
+  });
+
+  it(`says so in the caption`, () => {
+    expect(
+      fidelitySummary(viewportFidelity(checkboxSheet, iphone), iphone)
+    ).toMatch(/Not yet seen in the iOS app.*modal.*checkbox/);
   });
 });
 

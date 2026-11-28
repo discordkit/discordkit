@@ -1,3 +1,4 @@
+import type { ModalCallbackData } from "@discordkit/client/interactions/types/InteractionCallbackData";
 import type { Embed } from "@discordkit/client/messages/types/Embed";
 import type { MessageComponent } from "@discordkit/client/messages/types/MessageComponent";
 import type { SceneViewport } from "./viewport.js";
@@ -33,6 +34,27 @@ export interface SceneMessage {
   timestamp?: string;
   /** The `customId` of a String Select in this message to draw open, with its options listed below it, as the client shows them after a click. Only a string select can be drawn open: the other selects list members, roles or channels the client fetches. */
   openSelect?: string;
+}
+
+/** The modal a bot opens: the `data` of an interaction response of type `MODAL` (9), as you would pass it to `createInteractionResponse`. Its `components` are Labels and Text Displays, or the older Action Rows of one Text Input. */
+export type ModalPayload = ModalCallbackData;
+
+/** What a person has put into one field of a modal: the text of a Text Input or the chosen value of a Radio Group (a string); the chosen values of a select, the checked options of a Checkbox Group, or the names of the files in a File Upload (strings); whether a Checkbox is ticked (a boolean). */
+export type ModalValue = string | string[] | boolean;
+
+/**
+ * A modal open over the channel, as the client shows it after a button or command opens it. There is one at most, drawn over every message in the scene, so a scene of "the message with the button, then the modal it opens" is the message plus this.
+ *
+ * Without `values` the modal is drawn as it opens: empty, except for what the payload fills in (a Text Input's `value`, options marked `default`).
+ */
+export interface SceneModal {
+  payload: ModalPayload;
+  /** Key into `context.users`: the app the form is submitted to, whose avatar and name the modal shows. Without one it is the app named "App" a message without an author is from. */
+  author?: string;
+  /** What has been filled in, keyed by each field's `customId`, drawn in place of the payload's own value or defaults. */
+  values?: Record<string, ModalValue>;
+  /** Drawn as after Submit was pressed with something missing: every required field left empty, and every text shorter than its `minLength`, shows the error the client shows under it. */
+  submitted?: boolean;
 }
 
 export interface SceneUser {
@@ -88,9 +110,12 @@ export interface SceneContext {
   skus?: Record<string, SceneSku>;
 }
 
-/** One or more messages, drawn top to bottom as they would stack in a channel. */
+/** One or more messages, drawn top to bottom as they would stack in a channel, and optionally a modal open over them. */
 export interface Scene {
+  /** The channel's messages. May be empty only when the scene has a `modal`, which is then drawn over an empty channel. */
   messages: SceneMessage[];
+  /** A modal open over the messages. */
+  modal?: SceneModal;
   context?: SceneContext;
   /** The scene's clock, as an ISO 8601 string. Relative timestamps and "Today at" are measured from it, so the same scene renders the same on any day. Defaults to `defaultNow`. */
   now?: string;

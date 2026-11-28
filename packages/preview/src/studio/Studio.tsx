@@ -300,7 +300,9 @@ export const Studio = ({ backend }: { backend: Backend }): ReactElement => {
   useFocusRescue(appRef);
 
   const [drawProblem, setDrawProblem] = useState<string>();
-  const hasScene = current?.scene !== undefined && scene.messages.length > 0;
+  const hasScene =
+    current?.scene !== undefined &&
+    (scene.messages.length > 0 || scene.modal !== undefined);
 
   // An empty scene is linted too, so it says it needs a message rather than calling itself valid.
   const linted = useMemo(
@@ -532,7 +534,8 @@ export const Studio = ({ backend }: { backend: Backend }): ReactElement => {
     const ids = new Set(all.map((node) => node.id));
     const result = new Map<string, Marker>();
     for (const finding of linted?.findings ?? []) {
-      for (let length = 2; length <= finding.path.length; length++) {
+      // From one segment, so a finding inside the modal marks the modal's own row (`modal`); a message's row is two (`messages.0`).
+      for (let length = 1; length <= finding.path.length; length++) {
         const id = pathKey(finding.path.slice(0, length));
         if (!ids.has(id)) continue;
         const marker = result.get(id) ?? { errors: 0, warnings: 0 };
@@ -548,6 +551,10 @@ export const Studio = ({ backend }: { backend: Backend }): ReactElement => {
     (change: (scene: Scene) => EditResult, label?: string): string => {
       const result = change(prune(form.getValues()));
       form.setValue(`messages`, result.scene.messages);
+      // An edit inside the modal, adding one or removing it; a scene without one is left without the key.
+      if (result.scene.modal !== form.getValues(`modal`)) {
+        form.setValue(`modal`, result.scene.modal);
+      }
       // A change made in a form (a style, a flag, an item of a list) is named after what it changed.
       write({
         label:
@@ -987,8 +994,10 @@ export const Studio = ({ backend }: { backend: Backend }): ReactElement => {
                   empty={
                     loaded &&
                     values.messages.length === 0 &&
+                    values.modal === undefined &&
                     // The file read has none, or the form removed the last (its own write, not yet read back): not the moment before the form first takes the file.
-                    (current?.scene?.messages.length === 0 ||
+                    ((current?.scene?.messages.length === 0 &&
+                      current.scene.modal === undefined) ||
                       echo !== undefined)
                   }
                   onStart={onStart}
